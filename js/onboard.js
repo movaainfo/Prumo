@@ -37,8 +37,9 @@ const defaults = () => { const p = OS.one('profile'), d = OS.one('diet'), sp = O
     est: p.uni ? 'uni' : '', inst: p.uni || '', curso: p.course || '', ano: p.curYear || '', subs: '',
     trab: p.jobRole ? 'emp' : '', cargo: p.jobRole || '', empresa: p.employer || '', horas: p.workHours || '',
     obj: '', nivel: 'Iniciante', dias: '', onde: '', desp: [], peso: '', altura: d.h || '', idade: d.age || '', sexo: d.sex || '',
-    moeda: p.cur || CUR[cc] || 'EUR', dinh: [], poup: '20', acordar: p.wakeTime || '', deitar: p.sleepTime || '', hab: [], metas: ['', '', ''] }; };
+    rel: (OS.one('faith') || {}).rel || '', moeda: p.cur || CUR[cc] || 'EUR', dinh: [], poup: '20', acordar: p.wakeTime || '', deitar: p.sleepTime || '', hab: [], metas: ['', '', ''] }; };
 
+const habits = a => HABITS.map(h => h[0] === 'fe' && OS.Rel ? [h[0], OS.Rel.habit(a.rel || 'evangelica')].concat(h.slice(2)) : h);
 /* ---------- os passos ---------- */
 const on = (a, ...ks) => ks.some(k => !new Set(a.hide).has(k));
 const chips = (a, k, opts, multi) => `<div class="onb-chips">${opts.map(([v, l]) => { const sel = multi ? (a[k] || []).includes(v) : String(a[k]) === String(v); return `<button type="button" class="chip onb-c ${sel ? 'on' : ''}" data-o${multi ? 'm' : 'c'}="${k}" data-v="${esc(v)}" aria-pressed="${sel}">${esc(l)}</button>`; }).join('')}</div>`;
@@ -47,6 +48,7 @@ const STEPS = [
   { id: 'tu', t: 'Vamos fazer o Prumo à tua medida', s: 'São dois minutos. Tudo fica editável depois, e podes saltar quando quiseres.',
     b: a => `${inp(a, 'short', 'Como te chamas?', { ph: 'O teu nome' })}<div class="onb-2">${`<label class="onb-f"><span>País onde vives</span><select class="field" data-ok="country">${(OS.Pais ? OS.Pais.list() : [['PT', 'Portugal'], ['BR', 'Brasil']]).map(c => `<option value="${c[0]}"${c[0] === a.country ? ' selected' : ''}>${OS.Pais ? OS.Pais.flag(c[0]) + ' ' : ''}${esc(c[1])}</option>`).join('')}</select></label>`}${inp(a, 'city', 'Cidade', { ph: 'ex.: Lisboa, São Paulo' })}</div>
       ${OS.Lang ? `<label class="onb-f"><span>Língua do app</span><select class="field" data-ok="lang" data-notr>${OS.Lang.list().map(c => `<option value="${c}"${c === a.lang ? ' selected' : ''}>${esc(OS.Lang.name(c))}</option>`).join('')}</select></label>` : ''}
+      ${OS.Rel ? `<label class="onb-f"><span>Religião (a aba Fé muda conforme a tua: livro sagrado, orações e práticas)</span>${OS.Rel.select(a.rel || '', 'data-ok="rel"')}</label>` : ''}
       <div class="onb-f"><span>Como queres chamar a tua IA? (é por este nome que a chamas por voz)</span>${chips(a, 'ia', NAMES.map(n => [n, n]))}<input class="field" data-ok="ia" value="${esc(NAMES.includes(a.ia) ? '' : a.ia)}" placeholder="Ou escreve outro nome"></div>
       <div class="onb-f"><span>E a voz? (toca para ouvir)</span>${chips(a, 'voz', VOZ)}</div>` },
   { id: 'areas', t: 'O que queres no teu Prumo?', s: 'Toca para escolher as abas que vais usar. As outras ficam escondidas do menu e podes ligá-las quando quiseres em Definições.',
@@ -74,7 +76,7 @@ const STEPS = [
       <div class="onb-f"><span>Quanto do que ganhas queres poupar?</span>${chips(a, 'poup', [['10', '10%'], ['15', '15%'], ['20', '20%'], ['30', '30%']])}</div>` },
   { id: 'rotina', t: 'A tua rotina e as tuas metas', s: 'Os hábitos entram no teu quadro de hábitos; as metas entram em Metas e no jogo.',
     b: a => `<div class="onb-2">${inp(a, 'acordar', 'Acordo às', { t: 'time' })}${inp(a, 'deitar', 'Deito-me às', { t: 'time' })}</div>
-      <div class="onb-f"><span>Hábitos que queres ter</span>${chips(a, 'hab', HABITS.filter(h => (h[0] !== 'fe' || on(a, 'fe')) && (h[0] !== 'estudo' || (a.est && a.est !== 'nao')) && (h[0] !== 'treino' || +a.dias || (a.desp || []).length) && (h[0] !== 'gastos' || on(a, 'financas', 'gasto'))).map(h => [h[0], h[1]]), 1)}</div>
+      <div class="onb-f"><span>Hábitos que queres ter</span>${chips(a, 'hab', habits(a).filter(h => (h[0] !== 'fe' || on(a, 'fe')) && (h[0] !== 'estudo' || (a.est && a.est !== 'nao')) && (h[0] !== 'treino' || +a.dias || (a.desp || []).length) && (h[0] !== 'gastos' || on(a, 'financas', 'gasto'))).map(h => [h[0], h[1]]), 1)}</div>
       <div class="onb-f"><span>Três coisas que queres conseguir nos próximos 12 meses</span>${[0, 1, 2].map(i => `<input class="field onb-m" data-om3="${i}" value="${esc(a.metas[i] || '')}" placeholder="${['ex.: Passar a todas as cadeiras', 'ex.: Juntar 1000 € de reserva', 'ex.: Correr 10 km'][i]}">`).join('')}</div>` },
   { id: 'fim', t: 'Pronto para criar o teu Prumo', s: 'Isto é o que vou preparar para ti. Muda o que quiseres depois.',
     b: a => `<ul class="onb-sum">${plan(a).map(x => `<li>${UI.ic('check')}<span>${esc(x)}</span></li>`).join('')}</ul>` }];
@@ -84,6 +86,7 @@ const subsOf = a => (Array.isArray(a.subs) ? a.subs.map(String) : String(a.subs 
 const metasOf = a => (a.metas || []).map(s => String(s || '').trim()).filter(Boolean).slice(0, 3);
 const plan = a => { const L = [], S = subsOf(a), d = +a.dias || 0, hid = new Set(a.hide);
   L.push(hid.size ? `Menu com as abas que escolheste (${groups().reduce((n, [, it]) => n + it.filter(([k]) => !hid.has(k)).length, 0)} de ${groups().reduce((n, [, it]) => n + it.length, 0)})` : 'Menu com todas as abas');
+  if (a.rel && OS.Rel && a.rel !== 'nenhuma' && on(a, 'fe')) L.push(`Aba Fé: ${OS.Rel.name(a.rel)} (livro sagrado, orações e práticas)`);
   if (a.country) L.push(`País: ${((OS.Country && OS.Country.list || []).find(c => c[0] === a.country) || [, a.country])[1]} (feriados, moeda e sotaque da voz)`);
   if (S.length) L.push(`${S.length} disciplina${S.length > 1 ? 's' : ''} em ${a.est === 'sec' ? 'Estudos' : 'Universidade'}`);
   if (d) L.push(`Plano de treino de ${d} dia${d > 1 ? 's' : ''} por semana (${a.onde === 'casa' ? 'em casa' : a.onde === 'fora' ? 'ao ar livre' : 'ginásio'})`);
@@ -134,7 +137,7 @@ const marcosFor = a => { const m = { int: [], for: [], cor: [], inf: [], esp: []
   if (d) m.cor.push(`Treinar ${d} vezes por semana durante 12 semanas seguidas`);
   if ((a.desp || []).includes('corrida')) m.cor.push(a.nivel === 'Avançado' ? 'Correr uma meia maratona' : a.nivel === 'Intermédio' ? 'Correr 10 km em menos de 60 minutos' : 'Correr 5 km sem parar');
   (a.desp || []).filter(k => k !== 'corrida').slice(0, 2).forEach(k => m.cor.push(`Praticar ${(SPORTS.find(s => s[0] === k) || [, k])[1]} 2 vezes por semana durante 3 meses`));
-  if (on(a, 'fe')) m.esp.push('Ler o Novo Testamento todo', 'Orar todos os dias durante 30 dias seguidos');
+  if (on(a, 'fe')) m.esp.push(...(OS.Rel && a.rel && OS.Rel.marcos(a.rel).length ? OS.Rel.marcos(a.rel) : ['Ler o Novo Testamento todo', 'Orar todos os dias durante 30 dias seguidos']));
   return m; };
 const apply = async a => { const t = U.today(), S = subsOf(a), done = [];
   if (OS.seedBase) OS.seedBase();
@@ -155,6 +158,7 @@ const apply = async a => { const t = U.today(), S = subsOf(a), done = [];
   try { OS.Spyke && OS.Spyke.setWakeName && OS.Spyke.setWakeName(); } catch (e) { }
   if (['PT', 'BR'].includes(a.country)) OS.setOne('news', { tabs: a.country === 'BR' ? ['BR', 'PT'] : ['PT', 'BR'] }); else if (OS.News && OS.News.has && OS.News.has(a.country)) OS.setOne('news', { tabs: [a.country] });
   OS.Areas.set(a.hide || []);
+  if (a.rel && OS.Rel) OS.Rel.set(a.rel, true);
   // moeda das contas (só enquanto não há movimentos)
   if (a.moeda && !OS.all('transactions').length) OS.all('accounts').forEach(x => { if (x.currency !== a.moeda) OS.upd('accounts', x.id, { currency: a.moeda }, { silent: true }); });
   // disciplinas
@@ -177,7 +181,7 @@ const apply = async a => { const t = U.today(), S = subsOf(a), done = [];
   if (+a.altura || +a.idade || a.sexo || a.obj) { const d = +a.dias || 0; OS.setOne('diet', Object.assign({}, +a.altura ? { h: +a.altura } : {}, +a.idade ? { age: +a.idade } : {}, a.sexo ? { sex: a.sexo } : {}, { act: d >= 6 ? '1.725' : d >= 3 ? '1.55' : d >= 1 ? '1.375' : '1.2', goal: a.obj === 'cut' ? 'cut' : a.obj === 'bulk' ? 'bulk' : 'keep' }));
     try { const g = OS.Diet && OS.Diet.suggest && OS.Diet.suggest(); if (g && g.kcal) { OS.setOne('diet', { kcal: g.kcal, p: g.p, c: g.c, f: g.f, water: Math.round(g.w * 35 / 250) * 250 }); done.push(`meta de ${g.kcal} kcal`); } } catch (e) { } }
   // hábitos: os escolhidos ficam ativos; os que vieram de origem e não escolheste ficam desligados
-  if ((a.hab || []).length) { const pick = HABITS.filter(h => a.hab.includes(h[0])), names = new Set(pick.map(h => h[1].toLowerCase()));
+  if ((a.hab || []).length) { const pick = habits(a).filter(h => a.hab.includes(h[0])), names = new Set(pick.map(h => h[1].toLowerCase()));
     OS.all('habits').forEach(h => { if (!names.has(String(h.name || '').toLowerCase()) && h.active !== false && !Object.keys(h.log || {}).length) OS.upd('habits', h.id, { active: false }, { silent: true }); });
     const ex = new Set(OS.all('habits').map(h => String(h.name || '').toLowerCase()));
     pick.forEach(([k, name, group, core, auto]) => { const tr = k === 'treino' && +a.dias ? { freq: 'X por semana', perWeek: +a.dias } : {};
@@ -189,14 +193,14 @@ const apply = async a => { const t = U.today(), S = subsOf(a), done = [];
   metasOf(a).forEach(m => { if (gt.has(m.toLowerCase())) return; const p = pillarOf(m); OS.add('goals', { title: m.charAt(0).toUpperCase() + m.slice(1), cat: p === 'for' ? 'Finanças' : p === 'cor' ? 'Academia' : p === 'int' ? 'Estudos' : 'Desenvolvimento pessoal', horizon: '1 ano', metric: 'manual', status: 'Ativa', start: t, due: U.addDays(t, 365), importance: 4, steps: [] }, { silent: true }); });
   // marcos do Dominus (primeiro os feitos aqui; a IA acrescenta mais à medida, sem esperar)
   let nm = 0; const M = marcosFor(a); if (OS.Dom && OS.Dom.legAddMine) Object.entries(M).forEach(([p, L]) => { nm += OS.Dom.legAddMine(p, L); });
-  if (!on(a, 'fe') && OS.Dom && OS.Dom.legOffWhere) OS.Dom.legOffWhere('esp', /Bíblia|biblia|oração|orar|igreja|Deus|jejum|devocional|fé\b|Cristo|batismo|culto|louvor/i);
+  if ((!on(a, 'fe') || (a.rel && OS.Rel && !OS.Rel.christian(a.rel))) && OS.Dom && OS.Dom.legOffWhere) OS.Dom.legOffWhere('esp', /Bíblia|biblia|oração|orar|igreja|Deus|jejum|devocional|fé\b|Cristo|batismo|culto|louvor/i);
   if (nm) done.push(`${nm} marco${nm > 1 ? 's' : ''} no Dominus`);
   OS.setOne('onb', { done: 'ok', at: new Date().toISOString(), ans: Object.assign({}, a, { subs: S.join('\n') }) });
   OS.request(); aiMarcos(a); return done; };
 
 /* ---------- IA: disciplinas sugeridas e marcos afinados ---------- */
 const aiOn = () => !!(OS.AI && OS.AI.key && OS.AI.key());
-const ctxOf = a => JSON.stringify({ nome: a.short, pais: a.country, cidade: a.city, estudos: a.est, instituicao: a.inst, curso: a.curso, ano: a.ano, trabalho: a.trab, cargo: a.cargo, objetivo_corpo: a.obj, dias_treino: a.dias, desportos: a.desp, dinheiro: a.dinh, metas: metasOf(a), fe: on(a, 'fe') });
+const ctxOf = a => JSON.stringify({ nome: a.short, pais: a.country, cidade: a.city, estudos: a.est, instituicao: a.inst, curso: a.curso, ano: a.ano, trabalho: a.trab, cargo: a.cargo, objetivo_corpo: a.obj, dias_treino: a.dias, desportos: a.desp, dinheiro: a.dinh, metas: metasOf(a), fe: on(a, 'fe'), religiao: a.rel && OS.Rel ? OS.Rel.name(a.rel) : '' });
 A.onbSug = async () => { if (!W || W.sug) return; if (!aiOn()) { W.sugErr = 'A IA ainda não está ligada nesta conta.'; return draw(); } W.sug = true; W.sugErr = ''; draw();
   try { const a = W.a, o = await OS.AI.json([{ text: `Lista as disciplinas (unidades curriculares) típicas do ${a.est === 'sec' ? (a.ano || '') + '.º ano do ensino secundário' : (a.ano ? a.ano + '.º ano' : '1.º ano') + ' do curso de ' + a.curso + (a.inst ? ' em ' + a.inst : '')}, no semestre atual (${semNow()}), em ${a.country === 'BR' ? 'Brasil' : a.country === 'PT' ? 'Portugal' : OS.Pais ? OS.Pais.name(a.country, 'pt') : a.country}. Usa os nomes oficiais mais prováveis, ${a.country === 'BR' ? 'em português do Brasil' : a.country === 'PT' ? 'em português de Portugal' : 'na língua em que são ensinadas nesse país'}. Se não tiveres a certeza, dá as mais comuns desse curso e ano. Entre 4 e 8.
 JSON: {"disciplinas":["…"]}` }], .2);
@@ -206,7 +210,7 @@ JSON: {"disciplinas":["…"]}` }], .2);
   W.sug = false; draw(); };
 const aiMarcos = async a => { if (!aiOn() || !OS.Dom || !OS.Dom.legAddMine) return;
   try { const o = await OS.AI.json([{ text: `És o mestre de jogo do Dominus, o RPG da vida real da app Prumo. Cria marcos (conquistas reais da vida, difíceis mas possíveis, concretos e verificáveis, com números quando fizer sentido) para esta pessoa, a partir do que ela contou. Português de Portugal, frases curtas (máx. 90 caracteres), sem emojis.
-Pilares: "int" (Intelecto: estudos, línguas, leitura, competências), "for" (Fortuna: dinheiro, trabalho, carreira, negócio), "cor" (Corpo: treino, saúde, desporto, sono), "inf" (Influência: família, amizades, relações, rede), "esp" (Espírito: ${on(a, 'fe') ? 'fé, oração, gratidão, paz interior' : 'paz interior, gratidão, propósito, sem religião'}).
+Pilares: "int" (Intelecto: estudos, línguas, leitura, competências), "for" (Fortuna: dinheiro, trabalho, carreira, negócio), "cor" (Corpo: treino, saúde, desporto, sono), "inf" (Influência: família, amizades, relações, rede), "esp" (Espírito: ${on(a, 'fe') ? (a.rel && OS.Rel ? 'a fé dela (' + OS.Rel.name(a.rel) + '), oração e prática, gratidão, paz interior' : 'fé, oração, gratidão, paz interior') : 'paz interior, gratidão, propósito, sem religião'}).
 Dá 3 marcos por pilar, do mais próximo ao mais ambicioso, ligados à vida dela (curso, trabalho, desportos, metas). Não repitas estes: ${JSON.stringify(marcosFor(a))}.
 A pessoa: ${ctxOf(a)}
 JSON: {"int":["…"],"for":["…"],"cor":["…"],"inf":["…"],"esp":["…"]}` }], .5);
@@ -232,6 +236,7 @@ const close = () => { const h = document.getElementById('onb'); if (h) { h.hidde
 // a língua muda logo, para o resto das perguntas já aparecer nela
 const langNow = c => { if (OS.Lang && OS.Lang.ok(c)) OS.Lang.set(c); };
 const onInput = e => { if (!W) return; const el = e.target, k = el.dataset.ok, m3 = el.dataset.om3; if (k) { W.a[k] = el.value; if (k === 'ia') { /* nome escrito à mão */ } if (k === 'country' && e.type === 'change') { W.a.moeda = CUR[el.value] || W.a.moeda; if (OS.Pais && !W.langSet) { W.a.lang = OS.Pais.langOf(el.value); langNow(W.a.lang); } draw(); }
+    if (k === 'rel' && e.type === 'change') { const h = new Set(W.a.hide); if (el.value === 'nenhuma') h.add('fe'); else h.delete('fe'); W.a.hide = [...h]; }
     if (k === 'lang' && e.type === 'change') { W.langSet = 1; langNow(el.value); draw(); } }
   if (m3 != null) W.a.metas[+m3] = el.value; };
 const onClick = async e => { if (!W) return; const b = e.target.closest('button'); if (!b || b.disabled) return; const a = W.a, hide = new Set(a.hide);

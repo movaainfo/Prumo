@@ -15,6 +15,7 @@ let data = U.ls.get(K, null), busy = null;
 const geo = async name => { const g = U.ls.get('os2wxgeo', null), k = name + '|' + cc(); if (g && (g.k || g.n) === k) return g;
   const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=' + (OS.Lang ? OS.Lang.base() : 'pt') + (cc() ? '&countryCode=' + cc() : '') + '&name=' + encodeURIComponent(name)), j = await r.json(), x = (j.results || [])[0];
   const o = x ? { n: name, k, lat: x.latitude, lon: x.longitude, label: x.name } : { n: name, k, lat: 40.6405, lon: -8.6538, label: 'Aveiro' }; U.ls.set('os2wxgeo', o); return o; };
+W.where = () => geo(W.city());   // { lat, lon, label } da cidade da pessoa (para os horários de oração, o Shabat…)
 W.get = async force => { const city = W.city(); if (!force && data && data.city === city && !!data.imp === imp() && Date.now() - data.at < 30 * 6e4) return data; if (busy) return busy;
   busy = (async () => { try { const g = await geo(city);
     const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${g.lat}&longitude=${g.lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation,relative_humidity_2m&hourly=precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset&timezone=${cc() && cc() !== 'PT' ? 'auto' : 'Europe%2FLisbon'}&forecast_days=4${imp() ? '&temperature_unit=fahrenheit&wind_speed_unit=mph' : ''}`);

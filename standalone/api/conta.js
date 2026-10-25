@@ -39,7 +39,24 @@ const session = async req => { const t = await N.readToken(req); if (!t) throw N
   const a = await readAcc(t.a); if (!a || a.rec.uid !== t.u || (a.rec.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   return { t, eid: t.a, rec: a.rec }; };
 const needPw = async (rec, pw) => { if (!(await N.checkPw(pw, rec.pw))) throw N.err('senha', 'A senha não está certa.', 403); };
-const dropData = async (uid, pid) => { const s = N.store(), sub = pid ? pid + '/' : ''; const L = (await s.list('d/' + uid + '/' + sub)).concat(await s.list('i/' + uid + '/' + sub), pid ? await s.list('m/' + uid + '/' + pid) : await s.list('m/' + uid + '/'), await s.list('g/' + uid + '/' + (pid || ''))); if (L.length) await s.del(L); };
+const dropData = async (uid, pid) => { const s = N.store(), sub = pid ? pid + '/' : ''; const L = (await s.list('d/' + uid + '/' + sub)).concat(await s.list('i/' + uid + '/' + sub), pid ? await s.list('m/' + uid + '/' + pid) : await s.list('m/' + uid + '/'), await s.list('g/' + uid + '/' + (pid || '')), await s.list('r/' + uid + '/' + (pid || ''))); if (L.length) await s.del(L); RK.rows = null; };
+
+/* ---------- ranking: a disciplina de cada perfil (0–100 por dia) e os dias de foco seguidos ---------- */
+// r/<conta>/<perfil>: { d: { dia: pontos }, n: nome, c: cor, av, anon, at, t (conta de teste) }. Só se vê a lista: sem perfis, sem mensagens.
+const FOCO = 60, RK = { at: 0, rows: null }, TESTE = /@nautilo\.test$/i;
+const isoDay = ms => new Date(ms).toISOString().slice(0, 10), addD = (d, n) => isoDay(Date.parse(d + 'T12:00:00Z') + n * 864e5);
+const rankRows = async () => { if (RK.rows && Date.now() - RK.at < 30e3) return RK.rows;
+  const s = N.store(), key = await N.accKey(), L = await s.list('r/'), rows = []; let i = 0;
+  await Promise.all(Array.from({ length: Math.min(16, L.length) }, async () => { while (i < L.length) { const x = L[i++]; try { const g = await s.get(x.pathname); if (g) rows.push(Object.assign(N.open(key, g.buf), { path: x.pathname })); } catch (e) { } } }));
+  RK.rows = rows; RK.at = Date.now(); return rows; };
+// dias de foco seguidos: termina no dia mais recente (amanhã, hoje ou ontem em UTC, por causa dos fusos) que conta
+const streakOf = (d, today) => { let e = [addD(today, 1), today, addD(today, -1)].find(x => (d[x] || 0) >= FOCO); if (!e) return 0; let n = 0; while ((d[e] || 0) >= FOCO && n < 5000) { n++; e = addD(e, -1); } return n; };
+const bestOf = d => { let b = 0, run = 0, prev = ''; Object.keys(d).sort().forEach(x => { if (d[x] >= FOCO) { run = prev && addD(prev, 1) === x ? run + 1 : 1; prev = x; b = Math.max(b, run); } }); return b; };
+const rowOut = (r, today, me) => { const d = r.d || {}, ks = Object.keys(d).sort(), sum = from => ks.filter(x => x > from && x <= addD(today, 1)).reduce((a, x) => a + d[x], 0);
+  const p7 = sum(addD(today, -7)), p30 = sum(addD(today, -30)), pa = ks.reduce((a, x) => a + d[x], 0), span = ks.length ? Math.max(1, Math.round((Date.parse(today) - Date.parse(ks[0])) / 864e5) + 1) : 1;
+  const last = [addD(today, 1), today, addD(today, -1)].find(x => d[x] != null);
+  return { n: r.anon && !me ? '' : r.n || '', c: r.c || '', av: r.anon && !me ? '' : r.av || '', anon: !!r.anon, me: !!me, s: streakOf(d, today), b: Math.max(r.b || 0, bestOf(d)), h: last ? d[last] : null,
+    p7, p30, pa, q7: Math.round(p7 / Math.min(7, span)), q30: Math.round(p30 / Math.min(30, span)), qa: Math.round(pa / span), dias: ks.length }; };
 
 const OPS = {
   async registar(req, b) {
@@ -148,6 +165,24 @@ const OPS = {
     const P = await s.list('p/'), pedidos = []; await pool(P.slice(-300), async x => { const g = await s.get(x.pathname); if (g) pedidos.push(N.open(key, g.buf)); });
     pedidos.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos }; },
+
+  // a app manda a pontuação dos últimos dias deste perfil (só dos últimos 8 dias: o passado não se muda)
+  async rank(req, b) { const s = await session(req), p = (s.rec.perfis || []).find(x => x.id === b.id); if (!p) throw N.err('perfil', 'Esse perfil já não existe.', 404);
+    if (N.limit(req, 'rank|' + s.rec.uid, 240, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
+    const st = N.store(), key = await N.accKey(), path = 'r/' + s.rec.uid + '/' + p.id, today = isoDay(Date.now()), lo = addD(today, -8), hi = addD(today, 1);
+    for (let i = 0; i < 4; i++) { const g = await st.get(path); let r = { d: {} }; try { if (g) r = N.open(key, g.buf); } catch (e) { }
+      r.d = r.d || {}; Object.entries(b.dias || {}).forEach(([d, v]) => { const n = Math.round(Number(v)); if (/^\d{4}-\d{2}-\d{2}$/.test(d) && d >= lo && d <= hi && n >= 0 && n <= 100) r.d[d] = n; });
+      const ks = Object.keys(r.d).sort(); ks.slice(0, Math.max(0, ks.length - 400)).forEach(k => delete r.d[k]);
+      Object.assign(r, { n: p.nome || '', c: p.cor || '', av: p.av || '', anon: !!b.anon, at: Date.now(), t: TESTE.test(s.rec.email) ? 1 : 0, b: bestOf(r.d) });
+      try { await st.put(path, N.seal(key, r), g ? { ifMatch: g.etag } : { overwrite: false });
+        if (RK.rows) { const k = RK.rows.findIndex(x => x.path === path); const nr = Object.assign({}, r, { path }); if (k >= 0) RK.rows[k] = nr; else RK.rows.push(nr); }
+        return { eu: rowOut(r, today, true) }; } catch (e) { if (e.code !== 'conflict' && e.code !== 'exists') throw e; await N.sleep(60 + Math.random() * 150); } }
+    return { eu: null }; },
+
+  // o ranking de todos os perfis de todas as contas (as contas de teste não aparecem); só leitura
+  async ranking(req, b) { const s = await session(req), mine = 'r/' + s.rec.uid + '/' + String(b.id || ''), today = isoDay(Date.now());
+    const lista = (await rankRows()).filter(r => !r.t || r.path === mine).map(r => rowOut(r, today, r.path === mine));
+    return { lista, foco: FOCO, hoje: today }; },
 
   async nome(req, b) { const s = await session(req); const rec = await change(s.eid, r => { r.nome = cleanName(b.nome, 40); }); return { conta: pub(rec) }; },
 

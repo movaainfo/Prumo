@@ -1,397 +1,427 @@
 [
  {
-  "p": "IA",
-  "name": "IA: descobre sozinha os modelos que o Google tem hoje (sem voz, imagem nem embeddings)",
-  "pass": true,
-  "info": "gemini-3.5-flash, gemini-3.5-flash-lite, gemini-2.0-flash-lite, gemma-3-27b-it"
- },
- {
-  "p": "IA",
-  "name": "IA: cota de um modelo esgotada → passa logo ao seguinte, sem esperar",
-  "pass": true,
-  "info": "google · gemini-3.5-flash > gemini-3.5-flash-lite"
- },
- {
-  "p": "IA",
-  "name": "IA: modelo desligado pelo Google (como o gemini-2.0) fica de lado e usa outro",
-  "pass": true,
-  "info": "google · gemini-3.5-flash-lite > gemini-2.0-flash-lite > gemma-3-27b-it"
- },
- {
-  "p": "IA",
-  "name": "IA: com toda a cota do Google esgotada responde a IA grátis de reserva (sem esperar)",
-  "pass": true,
-  "info": "reserva"
- },
- {
-  "p": "IA",
-  "name": "IA: texto (resumos) também passa à reserva",
-  "pass": true,
-  "info": "Primeiro parágrafo do resumo da reserva.\n\nSegundo parágrafo "
- },
- {
-  "p": "IA",
-  "name": "IA: o Spyke continua a pensar e a agir com a reserva (criou a tarefa)",
-  "pass": true,
-  "info": "Criei a tarefa, chefe. | Tarefa: Tarefa criada pela reserva"
- },
- {
-  "p": "IA",
-  "name": "IA: notícia bloqueada e Google sem cota → o Spyke faz o resumo com o que os jornais publicaram (não mostra erro em inglês)",
-  "pass": true,
-  "info": "Estadão · agora Notícia bloqueada RESUMO FEITO PELO SPYKE COM O QUE 2 JORNAIS PUBLICARAM Primeiro parágrafo do resumo da reserva. Segundo parágrafo do resumo. Fontes consultadas: Estadão · O Globo Spy"
- },
- {
-  "p": "IA",
-  "name": "IA: se desligares a reserva, nada vai para fora do Google",
+  "p": "Boas-vindas",
+  "name": "Primeira vez numa conta: abre \"Vamos fazer o Prumo à tua medida\" (com Saltar)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "IA",
-  "name": "sem erros de JavaScript (IA)",
+  "p": "Boas-vindas",
+  "name": "Abas: todas escolhidas de início, o Painel não se pode tirar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Aparelho novo: abre o ecrã da conta (criar conta ou entrar) e não o código pessoal",
-  "pass": true,
-  "info": "{\"gate\":true,\"lock\":false,\"mode\":true}"
- },
- {
-  "p": "Contas",
-  "name": "Criar conta sem aceitar os termos: não cria (as três caixas são obrigatórias)",
-  "pass": true,
-  "info": "{\"gate\":true,\"msg\":\" Please check this box if you want to proceed.\"}"
- },
- {
-  "p": "Contas",
-  "name": "Criar conta: mostra o código de recuperação (só uma vez)",
-  "pass": true,
-  "info": "AR6G-2S5J-2LB6-HXXP"
- },
- {
-  "p": "Contas",
-  "name": "Depois pede o primeiro perfil, já com o nome",
+  "p": "Boas-vindas",
+  "name": "Estudos: \"Sugerir as disciplinas com IA\" preenche as disciplinas do curso",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Códigos diferentes: avisa e não cria",
+  "p": "Boas-vindas",
+  "name": "Sem a área Carreira, salta a pergunta do trabalho (e, por ser do Brasil, já em português do Brasil)",
+  "pass": true,
+  "info": "pt-BR Seu corpo"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Rotina: sem a Fé, não sugere o hábito de oração",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Perfis como na Netflix: \"Quem está a usar\", a bolinha do perfil e \"Adicionar perfil\"",
-  "pass": true,
-  "info": "{\"n\":1,\"name\":\"Ana\",\"av\":\"🌊\",\"add\":true,\"title\":\"Quem está a usar o Prumo?\"}"
- },
- {
-  "p": "Contas",
-  "name": "Escolher o perfil abre o mesmo ecrã de bloqueio, com o nome do perfil e \"Trocar de perfil\"",
+  "p": "Boas-vindas",
+  "name": "Fim: resume o que vai criar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "O código pessoal (do Ryan) não abre um perfil de uma conta",
+  "p": "Boas-vindas",
+  "name": "Perfil: nome, país (Brasil), cidade, curso e horário",
+  "pass": true,
+  "info": "{\"name\":\"Beatriz\",\"short\":\"Bia\",\"city\":\"Belo Horizonte\",\"uni\":\"UFMG\",\"course\":\"Administração\",\"year\":\"\",\"semester\":\"1.º Semestre 26/27\",\"semStart\":\"\",\"semEnd\":\"\",\"ectsTotal\":180,\"employer\":\"\",\"jobRole"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "País: feriados do Brasil (Consciência Negra, sem o 25 de Abril), moeda BRL e voz brasileira",
+  "pass": true,
+  "info": "Consciência Negra||BRL|BR"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "IA chamada \"Luna\" (no feminino)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Perfil novo começa limpo: nada do Ryan (sem disciplinas, candidaturas, contactos, metas), com o nome do perfil",
+  "p": "Boas-vindas",
+  "name": "Universidade: as disciplinas do curso dela",
   "pass": true,
-  "info": "{\"subj\":0,\"apps\":0,\"contacts\":0,\"goals\":0,\"short\":\"Ana\",\"uni\":\"\",\"hab\":6,\"acc\":2,\"bub\":true,\"mova\":\"O meu negócio\"}"
+  "info": "5"
  },
  {
-  "p": "Contas",
-  "name": "A bolinha do perfil aparece na barra de cima",
+  "p": "Boas-vindas",
+  "name": "Treino: 3 dias (seg, qua, sex), corrida ao sábado, rotinas com os exercícios e 3×12 para perder gordura",
   "pass": true,
-  "info": ""
+  "info": "[[\"Corpo inteiro A\",5,3,12],[\"Corpo inteiro B\",5,3,12],[\"Corpo inteiro C\",5,3,12]]"
  },
  {
-  "p": "Contas",
-  "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
+  "p": "Boas-vindas",
+  "name": "Desportos: corrida e voleibol",
   "pass": true,
-  "info": "16 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+  "info": "corrida,voleibol"
  },
  {
-  "p": "Contas",
-  "name": "Senha errada: mensagem clara",
+  "p": "Boas-vindas",
+  "name": "Dieta: meta de calorias e proteína para ela (a perder gordura)",
   "pass": true,
-  "info": ""
+  "info": "{\"k\":1840,\"p\":150}"
  },
  {
-  "p": "Contas",
-  "name": "Noutro aparelho (computador): entra com a mesma conta e vê os mesmos dados",
+  "p": "Boas-vindas",
+  "name": "Hábitos: os escolhidos ativos (sem duplicar os que a conta já tinha), os outros desligados",
   "pass": true,
-  "info": ""
+  "info": "2 blocos de foco (100 min)|Acordar à hora, sem snooze|Beber 2 litros de água|Treino ou corrida"
  },
  {
-  "p": "Contas",
-  "name": "Sincroniza nos dois sentidos em segundos (computador → telemóvel)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Segundo perfil na mesma conta: dados separados (não vê as tarefas da Ana)",
-  "pass": true,
-  "info": "{\"t\":[],\"short\":\"Bruno\",\"p\":\"Bruno\"}"
- },
- {
-  "p": "Contas",
-  "name": "Definições › Conta e perfis: blocos fechados com seta; abertos mostram e-mail, perfis, sincronização, senha, sair e apagar a conta",
+  "p": "Boas-vindas",
+  "name": "Metas: as 2 que escreveu",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Editar perfil: escolher um personagem do Dominus (heróis e monstros em pixel art) passa a ser a bolinha do perfil",
+  "p": "Boas-vindas",
+  "name": "Marcos do Dominus feitos para ela (curso, reserva, peso) e sem os de oração",
   "pass": true,
-  "info": "{\"n\":24,\"ok\":true,\"img\":\"data:image/png;base64,\",\"bub\":true,\"modal\":false}"
+  "info": "{\"int\":[\"Passar a todas as cadeiras do 1.º ano\",\"Fechar o 1.º ano de Administração sem nenhuma cadeira em atraso\",\"Média do semestre igual ou acima de 7\"],\"for\":[\"Juntar 3000 reais de reserva\",\"Juntar um fundo de emergência com 3 meses de despesas\",\"Juntar 1500 até ao verão\"],\"cor\":[\"Perder 5 kg com"
  },
  {
-  "p": "Contas",
-  "name": "Editar perfil: uma foto tua fica cortada em quadrado (160 px, leve) e guardada no perfil, em todos os aparelhos",
-  "pass": true,
-  "info": "[{\"jpg\":true,\"len\":1991,\"prev\":true},{\"w\":160,\"h\":160,\"jpg\":true}]"
- },
- {
-  "p": "Contas",
-  "name": "Ecrã \"Quem está a usar\": o perfil aparece com a foto",
+  "p": "Boas-vindas",
+  "name": "Menu: sem Fé nem Carreira (escondidas), com o resto",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Gerir perfis › Editar: tirar a foto volta ao emoji",
+  "p": "Boas-vindas",
+  "name": "Definições › Geral: \"O teu Prumo\" abre só as abas do menu",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Conta de administração: aparece o separador \"Admin\" no fim do menu (ou em \"Mais\", se não couber)",
-  "pass": true,
-  "info": "{\"adm\":true,\"nav\":\"Admin\",\"shown\":true,\"side\":true}"
- },
- {
-  "p": "Contas",
-  "name": "Administração: lista as contas (e-mail, nome, perfis), último acesso, última entrada e minutos por dia, sem senhas",
-  "pass": true,
-  "info": "{\"r\":[\"ana teste ana@exemplo.pt ana bruno\"],\"contas\":true,\"ana\":true,\"hoje\":true,\"kpi\":7,\"senha\":false}"
- },
- {
-  "p": "Contas",
-  "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
-  "pass": true,
-  "info": "{\"ok\":true,\"contas\":[{\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-10-24T13:07:10.864Z\",\"perfis\":[\"Ana\",\"Bruno\"],\"ultEntrada\":1792847234981,\"entra"
- },
- {
-  "p": "Contas",
-  "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
-  "pass": true,
-  "info": "{\"ult\":1792847247633,\"ent\":1,\"dias\":{\"2026-10-24\":49}}"
- },
- {
-  "p": "Contas",
-  "name": "Tocar numa conta mostra o detalhe: perfis, criada, última entrada, último acesso e o gráfico dos 30 dias",
+  "p": "Boas-vindas",
+  "name": "Pôr a Fé de volta no menu",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Modo pessoal (aparelho que já tinha o Prumo): igual a antes, sem ecrã de conta nem bolinha",
+  "p": "Boas-vindas",
+  "name": "Explorar: \"Pôr no menu\" devolve uma aba escondida",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Sair da conta limpa este aparelho e volta ao ecrã de entrar",
+  "p": "Boas-vindas",
+  "name": "Responder outra vez não duplica disciplinas, rotinas, metas nem hábitos",
+  "pass": true,
+  "info": "5,3,2,4 → 5,3,2,4"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Depois de respondido, não volta a abrir sozinho",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Esqueci a senha: o código de recuperação muda a senha e dá um código novo",
+  "p": "Boas-vindas",
+  "name": "Saltar: fecha, guarda que saltou e não muda nada",
+  "pass": true,
+  "info": "{\"d\":\"skip\",\"open\":false,\"hide\":0}"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Perfil do Ryan (ps): sem questionário",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas",
-  "name": "Com a senha mudada, os outros aparelhos pedem para entrar outra vez",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Atalho de gastos do iPhone numa conta sem script: o link do perfil regista e o gasto entra nas finanças desse perfil",
-  "pass": true,
-  "info": "✓ 12,4 € registado no Prumo / 403"
- },
- {
-  "p": "Contas",
-  "name": "Definições › Atalhos do iPhone mostra o link do perfil (sem pedir o script Google)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Sono numa conta: o atalho do app Saúde envia para o link do perfil (tipo=sono) e a noite entra no Painel",
-  "pass": true,
-  "info": "{\"lk\":true,\"r1\":\"✓ Sono enviado para o Prumo\",\"sl\":[{\"d\":\"2026-10-24\",\"m\":450,\"src\":\"saude\"}]}"
- },
- {
-  "p": "Contas",
-  "name": "Jornal numa conta sem script: as notícias vêm do servidor do Prumo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Conta nova: pergunta o nome da IA uma vez, e a IA já está ligada sem chave nenhuma",
-  "pass": true,
-  "info": "{\"ask\":true,\"key\":\"nautilo-servidor\",\"own\":\"\"}"
- },
- {
-  "p": "Contas",
-  "name": "Nome da IA: \"Luna\" (é ela) — chama-se por voz pelo nome e o texto fica no feminino",
-  "pass": true,
-  "info": "{\"n\":\"Luna\",\"f\":true,\"w1\":true,\"w2\":false,\"t\":\"Cérebro da Luna · fala com a Luna\"}"
- },
- {
-  "p": "Contas",
-  "name": "Definições: o separador e os blocos usam o nome da IA (sem \"Spyke\")",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "IA sem configurar (servidor do Prumo → IA grátis): responde, e o pedido leva o nome dela",
-  "pass": true,
-  "info": "Olá! Aqui é a tua IA. · {\"model\":\"openai\",\"messages\":[{\"role\":\"user\",\"content\":\"Diz olá à Luna\"}],\"temperature\":0.4,\"private\":true,\"referrer\":\"nautilo\"}"
- },
- {
-  "p": "Contas",
-  "name": "IA sem configurar: pedidos em JSON (decisões, resumos, tutor) também funcionam",
-  "pass": true,
-  "info": "{\"ok\":true,\"resposta\":\"feito\"}"
- },
- {
-  "p": "Contas",
-  "name": "Fotos sem a chave Google: mensagem clara a explicar como ligar (sem ficar a carregar)",
-  "pass": true,
-  "info": "A IA não respondeu (Ler fotos, PDFs e voz precisa da IA do Google. Liga a tua chave grátis em Definições › Spyke › Cérebro.). Verifica a internet e tenta de novo."
- },
- {
-  "p": "Contas",
-  "name": "A IA do servidor só responde a quem tem sessão numa conta",
-  "pass": true,
-  "info": "401"
- },
- {
-  "p": "Contas",
-  "name": "Modo pessoal: Definições tem \"Conta Prumo\" para guardar o Prumo numa conta",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Ao guardar numa conta nova, o código de recuperação da senha aparece uma vez",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Guardar na conta: este aparelho passa a usar a conta com o mesmo código e os mesmos dados; o perfil continua o do Ryan (marcos e textos dele)",
-  "pass": true,
-  "info": "{\"on\":true,\"pub\":false,\"ps\":true,\"t\":true,\"g\":true,\"short\":\"Ryan\",\"leg\":100,\"who\":\"o Ryan (brasileiro)\",\"bub\":true}"
- },
- {
-  "p": "Contas",
-  "name": "Conta sem administração: sem o separador \"Admin\" e o servidor recusa a lista de contas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Noutro aparelho: entra na conta do Ryan e aparece tudo o que estava no Prumo pessoal",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Outro aparelho no modo pessoal: \"Entrar na conta neste aparelho\" leva ao ecrã de entrar, com o e-mail (os dados pessoais deste aparelho saem)",
-  "pass": true,
-  "info": "{\"has\":true,\"em\":\"ryan@exemplo.pt\",\"keys\":[],\"meta\":null,\"tasks\":0}"
- },
- {
-  "p": "Contas",
-  "name": "O servidor recusa criar conta sem a aceitação dos termos",
-  "pass": true,
-  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.\",\"code\":\"term"
- },
- {
-  "p": "Contas",
-  "name": "Ecrã de entrar: Termos, Privacidade, Cookies e Acessibilidade abrem por cima (LGPD e RGPD, ANPD e CNPD) e fecham com Esc",
-  "pass": true,
-  "info": "{\"open\":true,\"t\":\"Política de Privacidade\",\"lgpd\":true,\"tabs\":6}"
- },
- {
-  "p": "Contas",
-  "name": "Conta que ainda não aceitou esta versão: ao entrar, pede para aceitar os termos uma vez",
-  "pass": true,
-  "info": "{\"termos\":true,\"boxes\":3}"
- },
- {
-  "p": "Contas",
-  "name": "Aceitar fica guardado na conta (versão e data) e segue para os perfis",
-  "pass": true,
-  "info": "{\"still\":true,\"t\":\"2026-10-22\"}"
- },
- {
-  "p": "Contas",
-  "name": "Depois de aceitar não volta a pedir (nem ao recarregar)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Definições › Privacidade e termos: os 6 documentos, o que aceitaste e quando",
-  "pass": true,
-  "info": "{\"tab\":true,\"docs\":6,\"ac\":true}"
- },
- {
-  "p": "Contas",
-  "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
-  "pass": true,
-  "info": "20261024130756-206353"
- },
- {
-  "p": "Contas",
-  "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
-  "pass": true,
-  "info": "{\"id\":\"20261024130756-206353\",\"uid\":\"80e33b10a9e6aad94dfc5676\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
- },
- {
-  "p": "Contas",
-  "name": "Administração: marcar o pedido como respondido; o que falta configurar (chave da IA) só para o administrador; o Gmail já não está pendente (chave do Google verificada)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Contas públicas mostram as mesmas fotos dos alimentos",
-  "pass": true,
-  "info": "{\"pub\":true,\"pin\":true}"
- },
- {
-  "p": "Contas",
+  "p": "Boas-vindas",
   "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Línguas",
+  "name": "Dicionários das línguas principais vêm com o app (inglês com mais de 15 mil textos)",
+  "pass": true,
+  "info": "18811"
+ },
+ {
+  "p": "Línguas",
+  "name": "Estados Unidos: o app passa a inglês (títulos traduzidos)",
+  "pass": true,
+  "info": "{\"h1\":\"Finance\",\"want\":\"Finance\"}"
+ },
+ {
+  "p": "Línguas",
+  "name": "Estados Unidos: dólares, datas e números à americana, notas de 0 a 100",
+  "pass": true,
+  "info": "{\"lang\":\"en\",\"h1\":\"Finance\",\"cur\":\"USD\",\"eur\":\"$1,234.50\",\"date\":\"Saturday, October 24\",\"d\":\"10/24/2026\",\"g\":\"0–100\",\"html\":\"en\"}"
+ },
+ {
+  "p": "Línguas",
+  "name": "Traduz frases com números, plurais, ícones e contagens, sem mexer no que a pessoa escreveu",
+  "pass": true,
+  "info": "{\"plural\":\"Do 4 more workouts this week\",\"um\":\"Do 1 more workout this week\",\"icone\":\"Animations\",\"conta\":\"2 of 3\",\"par\":\"Completed (3)\",\"ponto\":\"Experience · 40%\",\"verso\":true,\"casa\":\"Casa de praia\",\"prova\":\"Prova de Matemática\",\"com\":\"comprimida\"}"
+ },
+ {
+  "p": "Línguas",
+  "name": "Saudação na língua da pessoa (\"Good …, Sam\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Línguas",
+  "name": "Feriados de qualquer país (4 de julho nos EUA)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Línguas",
+  "name": "Páginas principais em inglês quase sem português à vista",
+  "pass": true,
+  "info": "4 textos"
+ },
+ {
+  "p": "Línguas",
+  "name": "A IA responde na língua da pessoa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Línguas",
+  "name": "Definições › País, língua e moeda: escolher espanhol traduz tudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Línguas",
+  "name": "Brasil: português do Brasil e reais",
+  "pass": true,
+  "info": "pt-BR R$ 1.234,50"
+ },
+ {
+  "p": "Línguas",
+  "name": "Outra língua qualquer (japonês): a IA do servidor prepara o dicionário aos poucos",
+  "pass": true,
+  "info": "{\"t\":18811,\"f\":160}"
+ },
+ {
+  "p": "Línguas",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Línguas",
+  "name": "Perfil do Ryan: português de Portugal e euros (mesmo num aparelho em inglês)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Línguas",
+  "name": "Aparelho novo em en-US: o ecrã da conta abre em inglês",
+  "pass": true,
+  "info": "{\"code\":\"en\",\"tabs\":[\"Log in\",\"Create account\"]}"
+ },
+ {
+  "p": "Línguas",
+  "name": "Aparelho novo em pt-BR: o ecrã da conta abre em português do Brasil",
+  "pass": true,
+  "info": "{\"code\":\"pt-BR\",\"tabs\":[\"Entrar\",\"Criar conta\"]}"
+ },
+ {
+  "p": "Religiões",
+  "name": "sem escolha fica como sempre: Bíblia de 66 livros e \"Hoje com Deus\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "Definições › Tu: escolher a religião",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "católica: Bíblia com 73 livros (Tobias, Judite, Sabedoria, Sirácida, Baruc, Macabeus)",
+  "pass": true,
+  "info": "73"
+ },
+ {
+  "p": "Religiões",
+  "name": "católica: terço guiado com os mistérios do dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "islâmica: Alcorão com 114 suratas e versículo do dia do Alcorão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "islâmica: \"2:255\" abre a surata Al-Baqara no versículo do Trono",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "islâmica: Alcorão em árabe, da direita para a esquerda",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "islâmica: tasbih conta 33 e passa para Alhamdulillah",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "judaica: Tanakh (39 livros, Torá, Profetas e Escritos) e versículo só do Tanakh",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "hindu: Bhagavad Gita (18 capítulos, 701 versos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "budista: Dhammapada e o dia de Uposatha (lua)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "espírita: O Evangelho segundo o Espiritismo e o Evangelho no Lar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "Umbanda e Candomblé: Orixá do dia, sem livro nem planos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "nenhuma: a aba Fé sai do menu",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "voltar a escolher (evangélica) devolve a aba e a Bíblia de 66 livros",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Religiões",
+  "name": "questionário: a religião escolhida (islâmica) muda a aba Fé, o hábito e os marcos do Dominus",
+  "pass": true,
+  "info": "{\"r\":\"islamica\",\"h\":[\"As cinco orações (salah)\"],\"e\":[\"Ler o Alcorão todo\",\"Fazer as cinco orações todos os dias durante 30 dias\",\"3 gratidões escritas por dia durante 7 dias\",\"1 hora sem telemóvel (silêncio) 7 dias seguidos\",\"30 dias de gratidão seguidos\",\"Ler um livro bíblico inteiro\",\"Ler os 4 Ev"
+ },
+ {
+  "p": "Religiões",
+  "name": "sem erros de JavaScript (religiões)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ranking",
+  "name": "servidor: guarda a disciplina de cada dia e conta os dias de foco seguidos",
+  "pass": true,
+  "info": "{\"n\":\"Bruno\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":false,\"me\":true,\"s\":4,\"b\":4,\"h\":95,\"p7\":335,\"p30\":335,\"pa\":335,\"q7\":84,\"q30\":84,\"qa\":84,\"dias\":4}"
+ },
+ {
+  "p": "Ranking",
+  "name": "servidor: o passado (mais de 8 dias) não se muda",
+  "pass": true,
+  "info": "{\"n\":\"Carla\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":false,\"me\":true,\"s\":1,\"b\":1,\"h\":50,\"p7\":150,\"p30\":150,\"pa\":150,\"q7\":75,\"q30\":75,\"qa\":75,\"dias\":2}"
+ },
+ {
+  "p": "Ranking",
+  "name": "servidor: ninguém escreve no perfil de outra conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ranking",
+  "name": "servidor: a lista tem todas as contas (sem as de teste) e nenhum identificador",
+  "pass": true,
+  "info": "{\"ok\":true,\"lista\":[{\"n\":\"Bruno\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":false,\"me\":false,\"s\":4,\"b\":4,\"h\":95,\"p7\":335,\"p30\":335,\"pa\":335,\"q7\":84,\"q30\":84,\"qa\":84,\"dias\":4},{\"n\":\"Sam\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\""
+ },
+ {
+  "p": "Ranking",
+  "name": "servidor: sem sessão não se vê o ranking",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ranking",
+  "name": "o fogo dos dias de foco no topo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ranking",
+  "name": "pontos do dia: só entrar = 20",
+  "pass": true,
+  "info": "{\"pts\":20,\"tasks\":[0,2],\"habits\":[0,2],\"all\":false,\"plan\":4}"
+ },
+ {
+  "p": "Ranking",
+  "name": "pontos do dia: metade feita = 53 (ainda não é dia de foco)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ranking",
+  "name": "tudo feito = 100 pontos, \"Dia 1 de foco!\" sem tapar o ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ranking",
+  "name": "dias de foco seguidos: \"Dia 3 de foco\" no topo e no Hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ranking",
+  "name": "página Ranking: todas as contas com posição, % e pontos (sem a de teste)",
+  "pass": true,
+  "info": "[\"1 B Bruno 4 dias de foco · 84% 335pts\",\"2 A Ana tu 3 dias de foco · 81% 244pts\",\"3 C Carla 1 dia de foco · 75% 150pts\",\"4.º S Sam 0 dias de foco · 40% 40pts\",\"4.º B Beatriz 0 dias de foco · 40% 40pts\"]"
+ },
+ {
+  "p": "Ranking",
+  "name": "só se vê a lista: nada clicável (sem perfis nem mensagens)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ranking",
+  "name": "Definições › Tu › Ranking: sem mostrar o nome, os outros veem \"Pessoa anónima\"",
+  "pass": true,
+  "info": "[[\"Bruno\",false,335],[\"Sam\",false,40],[\"Beatriz\",false,40],[\"Carla\",false,150],[\"\",true,244]]"
+ },
+ {
+  "p": "Ranking",
+  "name": "sem erros de JavaScript (ranking)",
   "pass": true,
   "info": ""
  }

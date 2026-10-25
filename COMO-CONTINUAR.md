@@ -34,3 +34,22 @@ O app é escrito em português de Portugal; `js/lingua.js` traduz o ecrã na hor
 - `js/pais.js`: países, moedas, feriados, escalas de notas e unidades.
 
 O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e euros.
+
+## Religiões (aba Fé)
+- `js/religiao.js` (`OS.Rel`): as religiões (Católica, Evangélica, Ortodoxa, Espírita, Islâmica, Judaica, Hindu, Budista,
+  Umbanda/Candomblé, espiritualidade sem religião, Nenhuma), o livro de cada uma por língua (`LIBS`), o texto do dia, os planos,
+  as orações, as práticas guiadas (terço, Oração de Jesus, tasbih, japa, meditação, metta, Evangelho no Lar, Shemá, Orixá do dia)
+  e os painéis do dia (horários de oração e Qibla, Shabat, lua, Orixá).
+- `js/faith.js`: a aba Fé, que usa `OS.Rel`. Sem religião escolhida fica como sempre foi (Bíblia Livre / Almeida, 66 livros).
+- A escolha fica em `OS.one('faith').rel` (Definições › Tu › Fé e religião, ou no questionário inicial). "Nenhuma" esconde a aba Fé.
+- Os livros estão em `standalone/vendor/sagrado/` e as ferramentas que os fizeram em `standalone/textos-sagrados/` (ver o LEIA-ME de lá).
+- Testes: `node suite.js --only=religiao`.
+
+## Ranking e dias de foco
+- `js/ranking.js` (`OS.Foco`): a pontuação de disciplina de cada dia (0–100: entrar 20, tarefas e hábitos do dia até 65, tudo concluído 15;
+  sem nada marcado vale 40), guardada em `OS.one('foco').dias`. Dia de foco = 60 pontos ou mais; os dias seguidos são a sequência ("Dia 5 de foco"),
+  com o fogo no topo, no Hoje e no Painel, e uma celebração quando o dia passa a contar.
+- Servidor (`api/conta.js`): `op: 'rank'` guarda os últimos 8 dias do perfil em `r/<conta>/<perfil>` (o passado não se muda);
+  `op: 'ranking'` devolve a lista de todos os perfis (sem identificadores; as contas `@nautilo.test` não aparecem). Só leitura: sem perfis nem mensagens.
+- Definições › Tu › Ranking: "Mostrar o meu nome" (sem isto aparece como "Pessoa anónima").
+- Testes: `node suite.js --only=ranking`.

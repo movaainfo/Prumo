@@ -346,6 +346,7 @@ OS.on('ready', () => setTimeout(() => sendUse(0), 4000));
 Acc.adm = () => !!(S && S.adm);
 Acc.token = () => (S && S.t) || '';
 Acc.pid = () => pid();
+Acc.call = (op, body) => S && cur() ? conta(op, body) : Promise.reject(Object.assign(new Error('Sem conta.'), { status: 401 })); // ranking e outras funções do servidor
 Acc.navAdm = () => { const N = OS.NAV; if (!N) return; const i = N.findIndex(g => g[0] === 'Admin');
   if (Acc.adm() && i < 0) { N.push(['Admin', [['admin', 'Administração', 'shield']]]); OS.request && OS.request(); } else if (!Acc.adm() && i >= 0) { N.splice(i, 1); OS.request && OS.request(); } };
 let ADM = null, admBusy = false, admErr = '';

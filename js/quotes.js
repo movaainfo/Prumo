@@ -132,7 +132,8 @@ const PUSH = [
   'Começa onde estás, usa o que tens, faz o que podes.',
   'Hoje: menos desculpas, mais execução.'
 ];
-const pick = (arr, salt) => arr[(U.hash(U.today() + salt) + (OS.ui['q_' + salt] || 0)) % arr.length];
+const fit = arr => OS.Rel && OS.Rel.chosen() && ['budista', 'hindu', 'espiritual', 'nenhuma'].includes(OS.Rel.meta().fam) ? arr.filter(t => !/\bDeus\b|Jesus|Bíblia|orar\b|oração/i.test(t)) : arr;
+const pick = (arr0, salt) => { const arr = fit(arr0); return arr[(U.hash(U.today() + salt) + (OS.ui['q_' + salt] || 0)) % arr.length]; };
 A.qNext = b => { OS.setUI('q_' + b.dataset.k, (OS.ui['q_' + b.dataset.k] || 0) + 1); };
 const truthCard = () => `<div class="pn q-truth"><div class="pn-h"><h3>Verdade do dia</h3><button class="icon-btn" data-act="qNext" data-k="t" aria-label="Outra verdade" title="Outra">${OS.UI.ic('right')}</button></div><p>${esc(pick(TRUTH, 't'))}</p></div>`;
 const pushLine = () => `<p class="q-push">${esc(pick(PUSH, 'p'))} <button class="q-more" data-act="qNext" data-k="p" aria-label="Outra frase">↻</button></p>`;
