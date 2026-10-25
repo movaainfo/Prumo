@@ -132,12 +132,14 @@ const shrink = file => new Promise((res, rej) => { const u = URL.createObjectURL
     const x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u); res(c.toDataURL('image/jpeg', .84)); };
   im.onerror = () => { URL.revokeObjectURL(u); rej(new Error('Não consegui abrir esta imagem. Experimenta outra (JPG ou PNG).')); }; im.src = u; });
 
+// quem pediu ao sistema menos movimento vê sempre o fundo parado
+const calmo = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
 const F = OS.Fundo = { list: NAMES, get,
   // o fundo escolhido, à medida do ecrã
   // fundo animado: ligado por omissão; cada aparelho pode desligar
   anim: () => LS.get('nau:bganim', '1') !== '0',
   setAnim: on => { LS.set('nau:bganim', on ? '1' : '0'); F.refresh(); },
-  html: (W, H, o = {}) => { const k = get(), p = pid(), mv = !!o.anim && F.anim(), oo = Object.assign({}, o, { anim: mv ? 1 : 0 });
+  html: (W, H, o = {}) => { const k = get(), p = pid(), mv = !!o.anim && F.anim() && !calmo(), oo = Object.assign({}, o, { anim: mv ? 1 : 0 });
     if (k === 'foto') { if (PH[p]) return `<div class="fd-photo${mv ? ' fd-kb' : ''}" style="background-image:url('${PH[p]}')"></div>`; if (PH[p] == null) loadPhoto(p).then(v => { if (v) F.refresh(); }); return S.svg(W, H, oo); }
     if (k === 'farol') return S.svg(W, H, oo);
     ANIM = mv; try { return MODELS[k](W, H, oo); } catch (e) { return S.svg(W, H, oo); } finally { ANIM = false; } },
@@ -148,11 +150,21 @@ const F = OS.Fundo = { list: NAMES, get,
   refresh: () => document.querySelectorAll('.lk-scene').forEach(sc => { const g = sc.querySelector('.lk-grain'), W = Math.max(320, innerWidth), H = Math.max(480, innerHeight), id = sc.closest('#acc') ? 'acs' : 'lks';
     sc.innerHTML = F.html(W, H, { anim: 1, id }) + (g ? g.outerHTML : ''); sc.classList.toggle('fd-isphoto', get() === 'foto'); }) };
 loadPhoto(pid());
+// dentro do app (Painel e Hoje): o mesmo fundo, animado só enquanto está no ecrã (e a app à vista)
+// no modo leve escolhido à mão o fundo fica parado; no automático (Android, pouca memória) mexe na mesma, só enquanto se vê
+const leve = () => { try { return localStorage.getItem('os2lite') === '1'; } catch (e) { return false; } };
+F.live = (W, H, id) => `<div class="fd-live${get() === 'foto' ? ' fd-isphoto' : ''}" aria-hidden="true">${F.html(W, H, { anim: leve() ? 0 : 1, id })}</div>`;
+let IOL = null; const io = () => IOL || (IOL = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('fd-on', e.isIntersecting && !document.hidden)), { threshold: .05 }) : null);
+const watch = () => document.querySelectorAll('#view .fd-live:not([data-io])').forEach(el => { el.dataset.io = '1'; const o = io(); if (o) o.observe(el); else el.classList.add('fd-on'); });
+// a página troca por render ou por mudança de endereço: vigia o #view e liga os fundos novos
+let WQ = 0; const wsoon = () => { if (!WQ) WQ = requestAnimationFrame(() => { WQ = 0; watch(); }); };
+OS.on('render', wsoon); try { new MutationObserver(wsoon).observe(document.getElementById('view'), { childList: true }); } catch (e) { }
+document.addEventListener('visibilitychange', () => document.querySelectorAll('.fd-live').forEach(el => { if (document.hidden) el.classList.remove('fd-on'); else if (io()) { io().unobserve(el); io().observe(el); } }));
 
 /* ---------- escolher: folha com os modelos e a galeria ---------- */
 const close = () => { const s = document.getElementById('fdSheet'); if (s) s.remove(); };
 F.open = () => { close(); const portrait = innerHeight > innerWidth, tw = portrait ? 74 : 112, th = portrait ? 132 : 70, cur = get(), p = pid();
-  const mvT = (k, W, H, o) => { ANIM = F.anim(); try { return MODELS[k](W, H, Object.assign(o, { anim: ANIM ? 1 : 0 })); } finally { ANIM = false; } };
+  const mvT = (k, W, H, o) => { ANIM = F.anim() && !calmo(); try { return MODELS[k](W, H, Object.assign(o, { anim: ANIM ? 1 : 0 })); } finally { ANIM = false; } };
   const tile = (k, n) => `<button type="button" class="fd-t${k === cur ? ' on' : ''}" data-fd="${k}" aria-pressed="${k === cur}"><span class="fd-th">${mvT(k, tw * 3, th * 3, { id: 'fdt' + k })}</span><b>${n}</b></button>`;
   const ph = PH[p] ? `<button type="button" class="fd-t${cur === 'foto' ? ' on' : ''}" data-fd="foto" aria-pressed="${cur === 'foto'}"><span class="fd-th" style="background:url('${PH[p]}') center/cover"></span><b>A tua foto</b></button>` : '';
   const el = document.createElement('div'); el.id = 'fdSheet'; el.className = 'fd-sheet'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Escolher o fundo');

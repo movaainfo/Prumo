@@ -139,7 +139,7 @@ async function profileTests(b, prof) {
   await p.fill('#lkCode', 'errado'); await p.click('.lk-go'); await sleep(400); ok('código errado é recusado', /incorreto/i.test(await E(p, () => document.getElementById('lkMsg').textContent)));
   await unlock(p); ok('código certo abre a Visão Geral', await E(p, () => !!document.querySelector('.dash')));
   // P · leveza
-  const heavy = await E(p, () => { let inf = 0, bf = 0; document.querySelectorAll('*').forEach(el => { const cs = getComputedStyle(el); if (cs.animationName !== 'none' && cs.animationIterationCount === 'infinite') inf++; if (cs.backdropFilter && cs.backdropFilter !== 'none') bf++; }); return { inf, bf, fixedBg: getComputedStyle(document.body).backgroundAttachment }; });
+  const heavy = await E(p, () => { let inf = 0, bf = 0; document.querySelectorAll('*').forEach(el => { const cs = getComputedStyle(el); if (cs.animationName !== 'none' && cs.animationIterationCount === 'infinite' && !el.closest('.fd-live')) inf++; if (cs.backdropFilter && cs.backdropFilter !== 'none') bf++; }); return { inf, bf, fixedBg: getComputedStyle(document.body).backgroundAttachment }; });
   ok('sem animações infinitas nem desfoque de fundo', heavy.inf === 0 && heavy.bf === 0 && heavy.fixedBg !== 'fixed', JSON.stringify(heavy));
   // C · não se redesenha sozinho
   await E(p, () => { window.__r = 0; OS.on('render', () => window.__r++); }); await sleep(4000); const idle = await E(p, () => window.__r);

@@ -46,8 +46,9 @@ V.hoje = () => {
   const shifts = OS.all('shifts').filter(s => s.date === t);
   const tl = timed.map(x => { const s = U.t2m(x.start), e = U.t2m(x.end || x.start) || s + 30; const cls = e < nowM ? 'past' : s <= nowM && nowM <= e ? 'now' : ''; return `<div class="tl-it ${cls}" ${x.edit ? `data-edit="${x.edit}" style="cursor:pointer"` : ''}><span class="h">${x.start}</span><span class="ax"><i style="${cls !== 'now' ? `border-color:${(x.color || OS.srcColor(x.src))}` : ''}"></i></span><div class="c"><b>${esc(x.title)}</b><small>${esc([x.end ? x.start + '–' + x.end : '', Cal.src[x.src][0], x.sub].filter(Boolean).join(' · '))}</small></div></div>`; }).join('');
   const allDay = todayItems.filter(x => !x.start && !x.planned);
+  const hjW = Math.max(320, Math.min(1280, innerWidth < 860 ? innerWidth : innerWidth - 60)), hjSc = OS.Fundo ? `<div class="hj-sc">${OS.Fundo.live(hjW, innerWidth < 860 ? 380 : 300, 'hjs')}</div>` : '';
   return `<div class="today">
-  <div><div class="eyebrow">${U.longDate(t)} · ${esc(p.city || '')}</div>
+  <div class="${hjSc ? 'hj-top' : ''}">${hjSc}<div class="eyebrow">${U.longDate(t)} · ${esc(p.city || '')}</div>
     <div class="row between gap16" style="align-items:flex-end;margin-top:6px"><div><h1 style="margin:0;font-size:24px;font-weight:600;letter-spacing:-.02em">${greet()}, ${esc(p.short || OS.who())}.</h1>
     <p class="tx2" style="margin:4px 0 0">${nextIt ? `A seguir: <b style="color:var(--tx)">${esc(nextIt.title)}</b> às ${nextIt.start}` : 'Sem mais compromissos com hora hoje.'}</p></div><div class="today-clock" data-clock>${U.hm()}</div></div>
     <p class="today-q" style="margin-top:14px">${esc(dayQuote())}</p></div>

@@ -1,9 +1,9 @@
 {
- "n": 151,
- "hash": "1ce61a1acc61",
+ "n": 152,
+ "hash": "4260dc42e419",
  "notes": [
-  "Spotify só para quem o administrador escolher (ele e mais até 4 contas, no Admin); para as outras pessoas não aparece.",
-  "Admin: dar e tirar o acesso ao Spotify em cada conta."
+  "Painel e Hoje com o fundo animado (o mesmo do ecrã de entrada): aves, árvores ao vento, água e estrelas a mexer enquanto o fundo está à vista.",
+  "O fundo pára sozinho fora do ecrã e com a app em segundo plano; desliga-se em Fundo → Fundo animado, no modo Leve ou com \"reduzir movimento\" do sistema."
  ],
  "date": "25/10/2026"
 }

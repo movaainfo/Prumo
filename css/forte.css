@@ -314,18 +314,18 @@ body.onb-open{overflow:hidden}
 .fd-msg{margin:10px 0 0;font:13px var(--sans);color:#F0A29D}
 .fd-msg:empty{display:none}
 /* fundos animados: só mexem enquanto o ecrã de entrada (ou o da conta) está à vista; leves (opacidade e deslocações) */
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-glint{animation:scGlint var(--du,4.5s) ease-in-out var(--dl,0s) infinite!important}:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-boat{animation:scBoat var(--du,5s) ease-in-out var(--dl,0s) infinite!important}:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-beam{animation:scBeam var(--du,9s) linear var(--dl,0s) infinite!important}:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-cloud{animation:scCloud var(--du,60s) ease-in-out var(--dl,0s) infinite alternate!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-tw{animation:fdTw var(--du,3.6s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-drift{animation:fdDrift var(--du,50s) ease-in-out var(--dl,0s) infinite alternate!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-mist{animation:fdMist var(--du,26s) ease-in-out var(--dl,0s) infinite alternate!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-glow{animation:fdGlow var(--du,7s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-shim{animation:fdShim var(--du,2.8s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-spin{animation:fdSpin var(--du,140s) linear var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-aur{transform-box:fill-box;animation:fdAur var(--du,14s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-shoot{animation:fdShoot var(--du,11s) ease-in var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-wave{transform-box:fill-box;animation:fdWave var(--du,16s) linear var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-rain{transform-box:fill-box;animation:fdRain var(--du,1.3s) linear var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-kb{animation:fdKb var(--du,34s) ease-in-out var(--dl,0s) infinite alternate!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-glint{animation:scGlint var(--du,4.5s) ease-in-out var(--dl,0s) infinite!important}:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-boat{animation:scBoat var(--du,5s) ease-in-out var(--dl,0s) infinite!important}:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-beam{animation:scBeam var(--du,9s) linear var(--dl,0s) infinite!important}:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-cloud{animation:scCloud var(--du,60s) ease-in-out var(--dl,0s) infinite alternate!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-tw{animation:fdTw var(--du,3.6s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-drift{animation:fdDrift var(--du,50s) ease-in-out var(--dl,0s) infinite alternate!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-mist{animation:fdMist var(--du,26s) ease-in-out var(--dl,0s) infinite alternate!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-glow{animation:fdGlow var(--du,7s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-shim{animation:fdShim var(--du,2.8s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-spin{animation:fdSpin var(--du,140s) linear var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-aur{transform-box:fill-box;animation:fdAur var(--du,14s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-shoot{animation:fdShoot var(--du,11s) ease-in var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-wave{transform-box:fill-box;animation:fdWave var(--du,16s) linear var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-rain{transform-box:fill-box;animation:fdRain var(--du,1.3s) linear var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-kb{animation:fdKb var(--du,34s) ease-in-out var(--dl,0s) infinite alternate!important}
 @keyframes fdTw{0%,100%{opacity:.18}50%{opacity:1}}
 @keyframes fdDrift{from{transform:translateX(-3%)}to{transform:translateX(4%)}}
 @keyframes fdMist{from{transform:translateX(-5%)}to{transform:translateX(5%)}}
@@ -338,25 +338,25 @@ body.onb-open{overflow:hidden}
 @keyframes fdRain{from{transform:translateY(-50%)}to{transform:translateY(0)}}
 @keyframes fdKb{from{transform:scale(1)}to{transform:scale(1.08) translate(-1%,-1%)}}
 /* v2.48: mais vida em todos os fundos (o farol gira também de dia, gaivotas e aves a voar, mato e árvores a abanar, ondulação, relâmpagos, areia, carros, avião) */
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-boat{transform-box:fill-box;transform-origin:50% 100%}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-bdrift{animation:scDrift var(--du,38s) ease-in-out var(--dl,0s) infinite alternate!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-lamp{transform-box:fill-box;transform-origin:center;animation:scLamp var(--du,9s) linear var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-tw,:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-tw2{animation:fdTw var(--du,3.6s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) :is(.sc-anim .sc-gl,.fd-anim .fd-fly){animation:fdFly var(--du,50s) linear var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) :is(.sc-anim .sc-flap,.fd-anim .fd-flap){transform-box:fill-box;transform-origin:center;animation:fdFlap var(--du,.9s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-sw{animation:scSw var(--du,8s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .sc-anim .sc-foam{animation:scFoam var(--du,6.5s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) :is(.sc-anim .sc-grass,.fd-anim .fd-sway){animation:fdSway var(--du,3.6s) ease-in-out var(--dl,0s) infinite alternate!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-skew{animation:fdSkew var(--du,5.5s) ease-in-out var(--dl,0s) infinite alternate!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-blink{animation:fdBlink var(--du,1.4s) steps(1) var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-flash{animation:fdFlash var(--du,13s) linear var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-rip{transform-box:fill-box;transform-origin:center;animation:fdRip var(--du,2.4s) ease-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-sand{animation:fdSand var(--du,6s) linear var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-bob{transform-box:fill-box;transform-origin:50% 100%;animation:fdBob var(--du,4.5s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-ring{animation:fdSpin var(--du,120s) linear var(--dl,0s) infinite var(--dr,normal)!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-ripple{transform-box:fill-box;transform-origin:center;animation:fdRipple var(--du,5s) ease-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-orb{animation:fdOrb var(--du,32s) ease-in-out var(--dl,0s) infinite!important}
-:is(#splash:not([hidden]):not(.out),#acc,#fdSheet) .fd-anim .fd-heat{animation:fdShim var(--du,4.5s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-boat{transform-box:fill-box;transform-origin:50% 100%}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-bdrift{animation:scDrift var(--du,38s) ease-in-out var(--dl,0s) infinite alternate!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-lamp{transform-box:fill-box;transform-origin:center;animation:scLamp var(--du,9s) linear var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-tw,:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-tw2{animation:fdTw var(--du,3.6s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) :is(.sc-anim .sc-gl,.fd-anim .fd-fly){animation:fdFly var(--du,50s) linear var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) :is(.sc-anim .sc-flap,.fd-anim .fd-flap){transform-box:fill-box;transform-origin:center;animation:fdFlap var(--du,.9s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-sw{animation:scSw var(--du,8s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .sc-foam{animation:scFoam var(--du,6.5s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) :is(.sc-anim .sc-grass,.fd-anim .fd-sway){animation:fdSway var(--du,3.6s) ease-in-out var(--dl,0s) infinite alternate!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-skew{animation:fdSkew var(--du,5.5s) ease-in-out var(--dl,0s) infinite alternate!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-blink{animation:fdBlink var(--du,1.4s) steps(1) var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-flash{animation:fdFlash var(--du,13s) linear var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-rip{transform-box:fill-box;transform-origin:center;animation:fdRip var(--du,2.4s) ease-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-sand{animation:fdSand var(--du,6s) linear var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-bob{transform-box:fill-box;transform-origin:50% 100%;animation:fdBob var(--du,4.5s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-ring{animation:fdSpin var(--du,120s) linear var(--dl,0s) infinite var(--dr,normal)!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-ripple{transform-box:fill-box;transform-origin:center;animation:fdRipple var(--du,5s) ease-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-orb{animation:fdOrb var(--du,32s) ease-in-out var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-heat{animation:fdShim var(--du,4.5s) ease-in-out var(--dl,0s) infinite!important}
 @keyframes scDrift{from{transform:translateX(-14px)}to{transform:translateX(18px)}}
 @keyframes scLamp{0%,50%,100%{transform:scale(1)}25%,75%{transform:scale(1.7)}}
 @keyframes scSw{0%{opacity:0;transform:translateX(calc(var(--d) * -1))}50%{opacity:.42}100%{opacity:0;transform:translateX(var(--d))}}
@@ -388,3 +388,13 @@ body.onb-open{overflow:hidden}
 .spy-vc.on{border-color:#F2C48D;background:rgba(242,196,141,.10)}.spy-vc.on b{color:#F5E2C8}
 .spy-vc:focus-visible{outline:2px solid #F2C48D;outline-offset:2px}
 .spy-dv{margin-top:10px}.spy-dv summary{cursor:pointer;font-size:13px;margin-bottom:8px}
+
+/* o fundo escolhido no Painel e no Hoje */
+.fd-live{position:absolute;inset:0}.fd-live>svg{display:block;width:100%;height:100%}
+.hj-top{position:relative;overflow:hidden;isolation:isolate;min-height:250px;display:flex;flex-direction:column;justify-content:flex-end;padding:22px 24px 20px;border-radius:22px;border:1px solid var(--line);background:#0A1422}
+.hj-sc{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.hj-sc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,13,22,.3) 0%,rgba(7,13,22,0) 30%,rgba(7,13,22,.35) 55%,rgba(7,13,22,.9) 100%)}
+.hj-top .eyebrow{color:#F5D2A6;text-shadow:0 1px 10px rgba(0,0,0,.6)}.hj-top h1{color:#F6F1E8;text-shadow:0 2px 18px rgba(0,0,0,.5)}
+.hj-top .tx2,.hj-top .today-q{color:rgba(243,245,248,.82)!important;text-shadow:0 1px 8px rgba(0,0,0,.5)}.hj-top .today-clock{color:#F6F1E8;text-shadow:0 2px 14px rgba(0,0,0,.5)}
+@media (max-width:860px){.hj-top{margin:-16px -16px 0;border-radius:0;border:0;border-bottom:1px solid var(--line);padding:18px;min-height:300px}}
+@media (prefers-reduced-motion:reduce){.fd-live *{animation:none!important}}
