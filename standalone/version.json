@@ -1,11 +1,9 @@
 {
- "n": 146,
- "hash": "e73074b0abd6",
+ "n": 147,
+ "hash": "747cf21c6635",
  "notes": [
-  "Novo: Ranking (Visão Geral › Ranking). Todas as pessoas com conta no Prumo numa lista com a posição, a percentagem de disciplina, os pontos e os dias de foco. Só se vê a lista: não dá para abrir o perfil de ninguém nem mandar mensagens.",
-  "Os pontos vêm da tua disciplina de cada dia (até 100): entrar no Prumo (20), fazer as tarefas e os hábitos do dia (até 65) e concluir tudo (mais 15). Vês o ranking da semana, do mês ou de sempre.",
-  "Dias de foco: cada dia com 60 pontos ou mais conta, e os dias seguidos fazem a tua sequência (\"Dia 5 de foco\"). O fogo com o número fica no topo do app, no Hoje e no Painel, e há uma pequena celebração quando o dia passa a contar.",
-  "Em Definições › Tu › Ranking podes aparecer como \"Pessoa anónima\"."
+  "Francês completo: os textos novos (religiões, ranking e dias de foco) já aparecem em francês.",
+  "O servidor das traduções já não fica preso num lote difícil: tenta lotes mais pequenos e segue."
  ],
  "date": "25/10/2026"
 }

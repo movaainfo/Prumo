@@ -1,155 +1,5 @@
 [
  {
-  "p": "Boas-vindas",
-  "name": "Primeira vez numa conta: abre \"Vamos fazer o Prumo à tua medida\" (com Saltar)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Abas: todas escolhidas de início, o Painel não se pode tirar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Estudos: \"Sugerir as disciplinas com IA\" preenche as disciplinas do curso",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Sem a área Carreira, salta a pergunta do trabalho (e, por ser do Brasil, já em português do Brasil)",
-  "pass": true,
-  "info": "pt-BR Seu corpo"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Rotina: sem a Fé, não sugere o hábito de oração",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Fim: resume o que vai criar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Perfil: nome, país (Brasil), cidade, curso e horário",
-  "pass": true,
-  "info": "{\"name\":\"Beatriz\",\"short\":\"Bia\",\"city\":\"Belo Horizonte\",\"uni\":\"UFMG\",\"course\":\"Administração\",\"year\":\"\",\"semester\":\"1.º Semestre 26/27\",\"semStart\":\"\",\"semEnd\":\"\",\"ectsTotal\":180,\"employer\":\"\",\"jobRole"
- },
- {
-  "p": "Boas-vindas",
-  "name": "País: feriados do Brasil (Consciência Negra, sem o 25 de Abril), moeda BRL e voz brasileira",
-  "pass": true,
-  "info": "Consciência Negra||BRL|BR"
- },
- {
-  "p": "Boas-vindas",
-  "name": "IA chamada \"Luna\" (no feminino)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Universidade: as disciplinas do curso dela",
-  "pass": true,
-  "info": "5"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Treino: 3 dias (seg, qua, sex), corrida ao sábado, rotinas com os exercícios e 3×12 para perder gordura",
-  "pass": true,
-  "info": "[[\"Corpo inteiro A\",5,3,12],[\"Corpo inteiro B\",5,3,12],[\"Corpo inteiro C\",5,3,12]]"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Desportos: corrida e voleibol",
-  "pass": true,
-  "info": "corrida,voleibol"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Dieta: meta de calorias e proteína para ela (a perder gordura)",
-  "pass": true,
-  "info": "{\"k\":1840,\"p\":150}"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Hábitos: os escolhidos ativos (sem duplicar os que a conta já tinha), os outros desligados",
-  "pass": true,
-  "info": "2 blocos de foco (100 min)|Acordar à hora, sem snooze|Beber 2 litros de água|Treino ou corrida"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Metas: as 2 que escreveu",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Marcos do Dominus feitos para ela (curso, reserva, peso) e sem os de oração",
-  "pass": true,
-  "info": "{\"int\":[\"Passar a todas as cadeiras do 1.º ano\",\"Fechar o 1.º ano de Administração sem nenhuma cadeira em atraso\",\"Média do semestre igual ou acima de 7\"],\"for\":[\"Juntar 3000 reais de reserva\",\"Juntar um fundo de emergência com 3 meses de despesas\",\"Juntar 1500 até ao verão\"],\"cor\":[\"Perder 5 kg com"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Menu: sem Fé nem Carreira (escondidas), com o resto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Definições › Geral: \"O teu Prumo\" abre só as abas do menu",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Pôr a Fé de volta no menu",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Explorar: \"Pôr no menu\" devolve uma aba escondida",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Responder outra vez não duplica disciplinas, rotinas, metas nem hábitos",
-  "pass": true,
-  "info": "5,3,2,4 → 5,3,2,4"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Depois de respondido, não volta a abrir sozinho",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Saltar: fecha, guarda que saltou e não muda nada",
-  "pass": true,
-  "info": "{\"d\":\"skip\",\"open\":false,\"hide\":0}"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Perfil do Ryan (ps): sem questionário",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "sem erros de JavaScript",
-  "pass": true,
-  "info": ""
- },
- {
   "p": "Línguas",
   "name": "Dicionários das línguas principais vêm com o app (inglês com mais de 15 mil textos)",
   "pass": true,
@@ -363,7 +213,7 @@
   "p": "Ranking",
   "name": "servidor: a lista tem todas as contas (sem as de teste) e nenhum identificador",
   "pass": true,
-  "info": "{\"ok\":true,\"lista\":[{\"n\":\"Bruno\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":false,\"me\":false,\"s\":4,\"b\":4,\"h\":95,\"p7\":335,\"p30\":335,\"pa\":335,\"q7\":84,\"q30\":84,\"qa\":84,\"dias\":4},{\"n\":\"Sam\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\""
+  "info": "{\"ok\":true,\"lista\":[{\"n\":\"Sam\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":false,\"me\":false,\"s\":0,\"b\":0,\"h\":40,\"p7\":40,\"p30\":40,\"pa\":40,\"q7\":40,\"q30\":40,\"qa\":40,\"dias\":1},{\"n\":\"Bruno\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":fa"
  },
  {
   "p": "Ranking",
@@ -405,7 +255,7 @@
   "p": "Ranking",
   "name": "página Ranking: todas as contas com posição, % e pontos (sem a de teste)",
   "pass": true,
-  "info": "[\"1 B Bruno 4 dias de foco · 84% 335pts\",\"2 A Ana tu 3 dias de foco · 81% 244pts\",\"3 C Carla 1 dia de foco · 75% 150pts\",\"4.º S Sam 0 dias de foco · 40% 40pts\",\"4.º B Beatriz 0 dias de foco · 40% 40pts\"]"
+  "info": "[\"1 B Bruno 4 dias de foco · 84% 335pts\",\"2 A Ana tu 3 dias de foco · 81% 244pts\",\"3 C Carla 1 dia de foco · 75% 150pts\",\"4.º S Sam 0 dias de foco · 40% 40pts\"]"
  },
  {
   "p": "Ranking",
@@ -417,7 +267,7 @@
   "p": "Ranking",
   "name": "Definições › Tu › Ranking: sem mostrar o nome, os outros veem \"Pessoa anónima\"",
   "pass": true,
-  "info": "[[\"Bruno\",false,335],[\"Sam\",false,40],[\"Beatriz\",false,40],[\"Carla\",false,150],[\"\",true,244]]"
+  "info": "[[\"Sam\",false,40],[\"Bruno\",false,335],[\"Carla\",false,150],[\"\",true,244]]"
  },
  {
   "p": "Ranking",
