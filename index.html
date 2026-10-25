@@ -2632,6 +2632,50 @@ html.spy-ear #jvFab{box-shadow:0 0 0 4px rgba(34,211,238,.35),0 10px 26px rgba(3
 .gg-card .btn.pri{display:inline-flex}
 .gg-steps{margin:12px 0 0;padding-left:20px;font-size:13px;color:var(--tx2,#A9B6C6)}.gg-steps li{margin:0 0 4px}
 .gg-card .ib-st{background:rgba(242,196,141,.10);color:var(--tx,#E6EDF5);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+/* ---------- religiões (js/religiao.js): livros, orações, práticas guiadas e painéis do dia ---------- */
+.fe-pre .fe-t,.fe-pre.fe-pass,.fe-v blockquote.fe-pre,.fe-word blockquote.fe-pre,.fe-mini .fe-pre{white-space:pre-line}
+.fe-read h2 small{display:block;font-size:.55em;font-weight:500;color:var(--tx2);margin-top:2px}
+.fe-read [dir=rtl]{font-size:1.15em;line-height:2.1}.fe-read [lang=ar],.fe-v [dir=rtl],.fe-pass[dir=rtl]{font-family:'Geeza Pro','Noto Naskh Arabic','Amiri',serif}.fe-read [lang=he]{font-family:'Times New Roman','SBL Hebrew',serif}
+.fe-pick.one{grid-template-columns:1fr}
+.fe-chl{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:4px;max-height:52vh;overflow:auto;overscroll-behavior:contain}
+.fe-chl button{display:flex;align-items:baseline;gap:8px;text-align:left;padding:6px 8px;border:1px solid var(--line2);border-radius:8px;background:transparent;color:var(--tx2);font-size:12.5px;cursor:pointer;min-width:0}
+.fe-chl button b{min-width:2em;color:var(--accent);font-variant-numeric:tabular-nums}.fe-chl button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fe-chl button.rd{border-color:color-mix(in srgb,var(--pos) 60%,transparent)}.fe-chl button.rd b{color:var(--pos)}
+.fe-prl{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.fe-pri{display:flex;flex-direction:column;gap:3px;text-align:left;padding:10px 12px;border:1px solid var(--line2);border-radius:12px;background:var(--pn2,transparent);color:var(--tx);cursor:pointer;font:inherit}
+.fe-pri b{font-size:14px}.fe-pri small{color:var(--tx2);font-size:12px;line-height:1.4}.fe-pri:hover{border-color:var(--accent)}
+.fe-prx{font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.65;white-space:pre-line;margin:14px 0 6px;color:var(--tx)}
+.rl-pick select{max-width:440px}
+/* práticas guiadas (janela) */
+.rl-pr{padding:18px 20px 22px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.rl-pr>.row.between{align-self:stretch}.rl-pr h2{margin:2px 0;font-size:22px;line-height:1.25}.rl-pr h2.rl-big{font-size:25px;color:var(--accent)}
+.rl-step{font-size:12px;color:var(--tx2);font-variant-numeric:tabular-nums}
+.rl-int{color:var(--tx2);font-style:italic;margin:0;max-width:34em}
+.rl-x{font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.6;white-space:pre-line;margin:2px 0;max-width:34em;text-align:left;border-left:2px solid var(--line3);padding-left:12px}
+.rl-beads{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;max-width:340px}
+.rl-beads i{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--line3);transition:background .2s,border-color .2s,scale .2s}
+.rl-beads i.on{background:var(--accent);border-color:var(--accent)}.rl-beads i.on:last-of-type{scale:1.15}
+.rl-beads.sm{gap:3px;max-width:380px}.rl-beads.sm i{width:7px;height:7px;border-width:1px}
+.rl-n{color:var(--tx2);font-variant-numeric:tabular-nums}.rl-go{min-width:210px}
+.rl-tap{width:184px;height:184px;border-radius:50%;border:2px solid var(--accent);background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--accent) 24%,transparent),transparent 70%);color:var(--tx);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:scale .12s}
+.rl-tap b{font-size:52px;line-height:1;font-variant-numeric:tabular-nums}.rl-tap small{color:var(--tx2)}.rl-tap:active{scale:.95}
+.rl-ring{--p:0;width:172px;height:172px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p) * 360deg),var(--line2) 0);display:grid;place-items:center;position:relative}
+.rl-ring::before{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--pn,#0f1b2d)}.rl-ring b{position:relative;font-size:36px;font-variant-numeric:tabular-nums}
+.rl-t{font-size:30px;color:var(--accent);font-variant-numeric:tabular-nums}
+.rl-bar{align-self:stretch;height:4px;border-radius:2px;background:var(--line2);overflow:hidden}.rl-bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.rl-ms{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:420px}
+/* painéis do dia: horários de oração, Shabat, lua, Orixá */
+.rl-pn{margin-top:14px}
+.rl-times{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px}
+.rl-times>div{border:1px solid var(--line2);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.rl-times small{color:var(--tx2);font-size:11.5px}.rl-times b{font-size:19px;font-variant-numeric:tabular-nums}
+.rl-times .on{border-color:var(--accent);background:var(--accentBg)}.rl-times .past{opacity:.55}
+.rl-qibla{display:flex;align-items:center;gap:10px;margin:10px 0 6px}
+.rl-arrow{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);font-size:20px;color:var(--accent);rotate:var(--a)}
+.rl-moon{width:58px;height:58px;border-radius:50%;background:#e9eef6;position:relative;overflow:hidden;margin:6px 0;box-shadow:0 0 18px color-mix(in srgb,#e9eef6 30%,transparent)}
+.rl-moon i{position:absolute;inset:0;border-radius:50%;background:var(--pn,#0f1b2d);translate:var(--x,0) 0}
+.rl-ox{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-bottom:1px solid var(--line2)}.rl-ox:last-of-type{border-bottom:0}.rl-ox b{font-size:17px}.rl-sd{color:var(--accent);font-weight:600}
+@media (max-width:700px){.fe-chl{grid-template-columns:1fr 1fr}.rl-tap{width:164px;height:164px}}
 
 </style>
 <style>
@@ -3545,7 +3589,7 @@ html.vv-rm .vv-press:not(:disabled){scale:1}
 
 </style>
 <style>[hidden]{display:none!important}</style>
-<script>window.OCEANUM_VERSION={"v": "2.44", "date": "24/10/2026", "notes": ["Muito mais movimento dentro do app: as páginas entram em cascata, os títulos desenham-se, os números contam, os gráficos crescem e as linhas desenham-se, os cartões aparecem ao rolar, os botões espalham uma onda ao toque e há uma pequena explosão quando concluis uma tarefa ou marcas um hábito.", "Em Definições › Aplicação › Animações, \"Completas\" mostra tudo mesmo que o iPhone tenha \"Reduzir movimento\" ligado (antes ficava tudo parado)."]};</script>
+<script>window.OCEANUM_VERSION={"v": "2.45", "date": "24/10/2026", "notes": ["A aba Fé agora é para todas as religiões: em Definições › Tu › Fé e religião (ou no questionário inicial) escolhes a tua — Católica, Evangélica, Ortodoxa, Espírita, Islâmica, Judaica, Hindu, Budista, Umbanda e Candomblé, ou espiritualidade sem religião — e a aba muda toda: o livro, o texto do dia, as orações, as práticas, os planos de leitura e a IA.", "O livro sagrado de cada fé, sem internet e na tua língua: a Bíblia católica com 73 livros, o Tanakh (também em hebraico), o Alcorão (também em árabe), a Bhagavad Gita (também em sânscrito), o Dhammapada, O Evangelho segundo o Espiritismo, o Tao Te Ching e as Meditações de Marco Aurélio.", "Práticas guiadas: o terço com os mistérios do dia, a Oração de Jesus com contas, o tasbih (33 × 3), a japa com mala de 108, meditação com sino, metta, o Evangelho no Lar, o Shemá e a saudação ao Orixá do dia.", "Painéis do dia: horários das cinco orações e direção de Meca, horários do Shabat e a parashá da semana, dias de lua cheia e nova (Uposatha) e o Orixá do dia.", "Quem escolhe \"Nenhuma\" deixa de ver a aba Fé no menu (e as frases do dia deixam de falar de Deus)."]};</script>
 <script>(function(){try{var n=navigator,ua=n.userAgent||"",low=(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||/Android/i.test(ua)||matchMedia("(prefers-reduced-motion: reduce)").matches;var f=localStorage.getItem("os2lite");if(f==="1"||(f!=="0"&&low))document.documentElement.classList.add("lite")}catch(e){}})();</script>
 <script src="config.js"></script>
 <script>
@@ -9120,6 +9164,300 @@ OS.FaithData = {"vod": ["GEN 1:1", "GEN 28:15", "EXO 14:14", "EXO 33:14", "NUM 6
 
 </script>
 <script>
+/* PRUMO — religiões. Cada pessoa escolhe a sua (Definições › Tu › Fé e religião, ou no questionário inicial) e a aba Fé muda toda:
+   o livro sagrado (na tradução da língua dela, sem internet), o texto do dia, as orações, a prática guiada, os planos de leitura e a IA.
+   Católica · Evangélica · Ortodoxa · Espírita · Islâmica · Judaica · Hindu · Budista · Umbanda e Candomblé · Espiritualidade sem religião
+   · Nenhuma (a aba Fé sai do menu). Sem escolha, fica como sempre foi (cristã, Bíblia de 66 livros). */
+(() => {
+'use strict';
+const U = OS.U, UI = OS.UI, A = OS.act, esc = U.esc;
+
+/* ---------- livros ---------- */
+const sp = s => s.split(' ');
+const ORDER_P = sp('GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JON MIC NAM HAB ZEP HAG ZEC MAL MAT MRK LUK JHN ACT ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT PHM HEB JAS 1PE 2PE 1JN 2JN 3JN JUD REV');
+const NT = ORDER_P.slice(39);
+const ORDER_C = sp('GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH EZR NEH TOB JDT EST 1MA 2MA JOB PSA PRO ECC SNG WIS SIR ISA JER LAM BAR EZK DAN HOS JOL AMO OBA JON MIC NAM HAB ZEP HAG ZEC MAL').concat(NT);
+const ORDER_O = sp('GEN EXO LEV NUM DEU JOS JDG RUT 1SA 2SA 1KI 2KI 1CH 2CH MAN 1ES EZR NEH TOB JDT EST 1MA 2MA 3MA PSA PSX JOB PRO ECC SNG WIS SIR ISA JER LAM BAR EZK DAN HOS JOL AMO OBA JON MIC NAM HAB ZEP HAG ZEC MAL').concat(NT);
+const ORDER_T = sp('GEN EXO LEV NUM DEU JOS JDG 1SA 2SA 1KI 2KI ISA JER EZK HOS JOL AMO OBA JON MIC NAM HAB ZEP HAG ZEC MAL PSA PRO JOB SNG RUT LAM ECC EST DAN EZR NEH 1CH 2CH');
+const HEB = { GEN: 'Bereshit', EXO: 'Shemot', LEV: 'Vayikra', NUM: 'Bamidbar', DEU: 'Devarim', JOS: 'Yehoshua', JDG: 'Shoftim', '1SA': 'Shmuel I', '2SA': 'Shmuel II', '1KI': 'Melachim I', '2KI': 'Melachim II', ISA: 'Yeshayahu', JER: 'Yirmeyahu', EZK: 'Yechezkel', HOS: 'Hoshea', JOL: 'Yoel', AMO: 'Amos', OBA: 'Ovadia', JON: 'Yona', MIC: 'Micha', NAM: 'Nachum', HAB: 'Chavakuk', ZEP: 'Tzefania', HAG: 'Chagai', ZEC: 'Zecharia', MAL: 'Malachi', PSA: 'Tehilim', PRO: 'Mishlei', JOB: 'Iyov', SNG: 'Shir HaShirim', RUT: 'Rut', LAM: 'Eicha', ECC: 'Kohelet', EST: 'Ester', DAN: 'Daniel', EZR: 'Ezra', NEH: 'Nechemia', '1CH': 'Divrei HaYamim I', '2CH': 'Divrei HaYamim II' };
+const ALIAS = { EST: 'ESG', DAN: 'DNG' };   // católicos e ortodoxos leem Ester e Daniel na forma grega (com os acrescentos)
+const v = (id, n, f, o) => Object.assign({ id, n, f }, o || {});
+const BIBLE_GROUPS = B => { const i = B.b.findIndex(b => b[0] === 'MAT'); return i > 0 ? [['Antigo Testamento', 0, i], ['Novo Testamento', i, B.b.length]] : [['', 0, B.b.length]]; };
+const TANAKH_GROUPS = () => [['Torá', 0, 5], ['Nevi’im (Profetas)', 5, 26], ['Ketuvim (Escritos)', 26, 39]];
+const cat = (id, n, f) => v(id, n, f, { order: ORDER_C, alias: ALIAS });
+const ort = (id, n, f) => v(id, n, f, { order: ORDER_O, alias: ALIAS });
+const tnk = (id, n, f, o) => v(id, n, f, Object.assign({ order: ORDER_T, heb: 1, groups: TANAKH_GROUPS }, o || {}));
+const WLC = tnk('wlc', 'Tanakh em hebraico (Codex de Leningrado)', ['hebwlc'], { dir: 'rtl' });
+const QAR = v('qar', 'Alcorão em árabe (Hafs)', ['quran-ar'], { dir: 'rtl' });
+const LIBS = {
+  evangelica: { pt: [v('livre', 'Bíblia Livre (2018)', ['biblia/livre']), v('almeida', 'Almeida (1911)', ['biblia/almeida'])], en: [v('web', 'World English Bible', ['eng-web-c'], { order: ORDER_P })], es: [v('rv', 'Reina-Valera 1909', ['spaRV1909'])], fr: [v('lsg', 'Louis Segond 1910', ['fraLSG'])], de: [v('lut', 'Lutherbibel 1912', ['deu1912'])], it: [v('riv', 'Riveduta 1927', ['ita1927'])] },
+  catolica: { pt: [cat('bpm', 'Bíblia Portuguesa Mundial (73 livros)', ['porbrbsl'])], en: [cat('webc', 'World English Bible, Catholic edition', ['eng-web-c'])], es: [cat('blm', 'Biblia Libre para el Mundo', ['spablm'])], fr: [cat('sbl', 'Sainte Bible Libre pour le monde', ['frasbl'])], de: [cat('lutc', 'Lutherbibel 1912 + Spätschriften', ['deu1912', 'dc-de'])], it: [cat('rivc', 'Riveduta 1927 + libri deuterocanonici', ['ita1927', 'dc-it'])] },
+  ortodoxa: { pt: [ort('bpm', 'Bíblia Portuguesa Mundial (cânone ortodoxo)', ['porbrbsl'])], en: [ort('webc', 'World English Bible + deuterocanon', ['eng-web-c', 'ort-en'])], es: [ort('blm', 'Biblia Libre para el Mundo', ['spablm'])], fr: [ort('sbl', 'Sainte Bible Libre pour le monde', ['frasbl'])], de: [ort('lutc', 'Lutherbibel 1912 + Spätschriften', ['deu1912', 'dc-de', 'ort-de'])], it: [ort('rivc', 'Riveduta 1927 + libri deuterocanonici', ['ita1927', 'dc-it', 'ort-it'])] },
+  judaica: { pt: [tnk('tnk', 'Tanakh (Bíblia Portuguesa Mundial)', ['porbrbsl']), WLC], en: [tnk('jps', 'JPS Tanakh 1917', ['engjps']), WLC], es: [tnk('rv', 'Tanaj (Reina-Valera 1909)', ['spaRV1909']), WLC], fr: [tnk('lsg', 'Tanakh (Louis Segond 1910)', ['fraLSG']), WLC], de: [tnk('lut', 'Tanach (Luther 1912)', ['deu1912']), WLC], it: [tnk('riv', 'Tanakh (Riveduta 1927)', ['ita1927']), WLC] },
+  islamica: { pt: [v('nasr', 'Alcorão · Helmi Nasr', ['quran-pt']), QAR], en: [v('pick', 'The Quran · Pickthall', ['quran-en']), QAR], es: [v('cortes', 'El Corán · Julio Cortés', ['quran-es']), QAR], fr: [v('ham', 'Le Coran · Hamidullah', ['quran-fr']), QAR], de: [v('bub', 'Der Koran · Bubenheim & Elyas', ['quran-de']), QAR], it: [v('pic', 'Il Corano · Piccardo', ['quran-it']), QAR] },
+  hindu: { '*': [v('gita', 'Bhagavad Gita', ['gita-XX|gita-en']), v('sa', 'Bhagavad Gita em sânscrito', ['gita-sa'], { pre: 1 })] },
+  budista: { '*': [v('dhp', 'Dhammapada', ['dhammapada-XX|dhammapada-en'])] },
+  espirita: { '*': [v('ese', 'O Evangelho segundo o Espiritismo', ['evangelho-XX|evangelho-pt'], { pre: 1 })] },
+  espiritual: { '*': [v('sab', 'Tao Te Ching e Meditações de Marco Aurélio', ['tao-XX|tao-en', 'meditacoes-XX|meditacoes-en'], { pre: 1 })] } };
+
+/* ---------- as religiões ---------- */
+const REL = {
+  catolica: { n: 'Católica', s: '✝', fam: 'crista', book: 'Bíblia', daily: 'Versículo do dia', hoje: 'Hoje com Deus', sub: 'Um tempo dedicado a Deus: a Palavra, o terço, a oração e o que Ele te diz hoje.', req: 'Intenções de oração', hab: 'Oração e leitura da Bíblia', who: 'católico', marcos: ['Ler o Novo Testamento todo', 'Rezar o terço todos os dias durante 30 dias'] },
+  evangelica: { n: 'Evangélica / Protestante', s: '✝', fam: 'crista', book: 'Bíblia', daily: 'Versículo do dia', hoje: 'Hoje com Deus', sub: 'Um tempo dedicado a Deus: a Palavra, a oração e o que Ele te diz hoje.', req: 'Pedidos de oração', hab: 'Oração e leitura da Bíblia', who: 'cristão evangélico', marcos: ['Ler o Novo Testamento todo', 'Orar todos os dias durante 30 dias seguidos'] },
+  ortodoxa: { n: 'Cristã ortodoxa', s: '☦', fam: 'crista', book: 'Bíblia', daily: 'Versículo do dia', hoje: 'Hoje com Deus', sub: 'Um tempo dedicado a Deus: as Escrituras, a Oração de Jesus e o silêncio.', req: 'Pedidos de oração', hab: 'Oração e leitura das Escrituras', who: 'cristão ortodoxo', marcos: ['Ler os quatro Evangelhos', 'Rezar a Oração de Jesus todos os dias durante 30 dias'] },
+  espirita: { n: 'Espírita', s: '✧', fam: 'espirita', book: 'Evangelho', daily: 'Mensagem do dia', hoje: 'Hoje', sub: 'Um tempo para o Evangelho, a prece e a caridade.', req: 'Preces e vibrações', hab: 'Prece e leitura do Evangelho', who: 'espírita', marcos: ['Ler O Evangelho segundo o Espiritismo todo', 'Fazer o Evangelho no Lar 12 semanas seguidas'] },
+  islamica: { n: 'Islâmica (muçulmana)', s: '☪', fam: 'islam', book: 'Alcorão', daily: 'Versículo do dia', hoje: 'Hoje', sub: 'Um tempo para Allah: o Alcorão, a oração (salah) e a lembrança (dhikr).', req: 'Duas (súplicas)', hab: 'As cinco orações (salah)', who: 'muçulmano', marcos: ['Ler o Alcorão todo', 'Fazer as cinco orações todos os dias durante 30 dias'] },
+  judaica: { n: 'Judaica', s: '✡', fam: 'judaica', book: 'Torá', daily: 'Versículo do dia', hoje: 'Hoje', sub: 'O teu tempo com HaShem: a Torá, as orações e o Shabat.', req: 'Pedidos (tefilá)', hab: 'Shemá e leitura da Torá', who: 'judeu', marcos: ['Ler a Torá toda (os cinco livros)', 'Guardar o Shabat 8 semanas seguidas'] },
+  hindu: { n: 'Hindu', s: 'ॐ', fam: 'hindu', book: 'Gita', daily: 'Verso do dia', hoje: 'Hoje', sub: 'Um tempo para o sagrado: a Bhagavad Gita, os mantras e a meditação.', req: 'Intenções', hab: 'Mantra e leitura da Gita', who: 'hindu', marcos: ['Ler a Bhagavad Gita toda', 'Japa (108 repetições) todos os dias durante 30 dias'] },
+  budista: { n: 'Budista', s: '☸', fam: 'budista', book: 'Dhammapada', daily: 'Verso do dia', hoje: 'Hoje', sub: 'Um tempo para a mente: o Dhamma, a meditação e a compaixão.', req: 'Intenções', hab: 'Meditação e leitura do Dhamma', who: 'budista', marcos: ['Ler o Dhammapada todo', 'Meditar todos os dias durante 30 dias'] },
+  afro: { n: 'Umbanda / Candomblé', s: '✦', fam: 'afro', book: '', daily: 'Orixá do dia', hoje: 'Hoje', sub: 'Axé! Um tempo para os teus Orixás, as tuas preces e a tua gratidão.', req: 'Pedidos e agradecimentos', hab: 'Prece e saudação aos Orixás', who: 'de religião de matriz africana (Umbanda ou Candomblé)', marcos: ['Fazer a prece aos Orixás todas as semanas durante 3 meses', 'Visitar o terreiro todos os meses durante um ano'] },
+  espiritual: { n: 'Espiritualidade, sem religião', s: '☯', fam: 'espiritual', book: 'Livros', daily: 'Reflexão do dia', hoje: 'Hoje', sub: 'Um tempo para ti: reflexão, meditação e gratidão.', req: 'Intenções', hab: 'Meditar e agradecer', who: 'sem religião, com vida espiritual', marcos: ['Ler as Meditações de Marco Aurélio', 'Meditar todos os dias durante 30 dias'] },
+  nenhuma: { n: 'Nenhuma (tirar a aba Fé do menu)', s: '·', fam: 'nenhuma' } };
+const ORD = ['catolica', 'evangelica', 'ortodoxa', 'espirita', 'islamica', 'judaica', 'hindu', 'budista', 'afro', 'espiritual', 'nenhuma'];
+const cfg = () => OS.one('faith');
+const id = () => { const r = cfg().rel; return REL[r] ? r : 'evangelica'; };
+const lang = () => { const c = OS.Lang ? OS.Lang.code() : 'pt-PT'; return /^pt/.test(c) ? 'pt' : ['en', 'es', 'fr', 'de', 'it'].includes(c) ? c : 'en'; };
+const R = OS.Rel = {
+  ORD, REL, ORDER_P, ORDER_C, ORDER_T, HEB, NT,
+  id, meta: (r = id()) => REL[r] || REL.evangelica, name: (r = id()) => (REL[r] || REL.evangelica).n,
+  christian: (r = id()) => (REL[r] || {}).fam === 'crista', bibleFam: (r = id()) => ['crista', 'judaica'].includes((REL[r] || {}).fam),
+  chosen: () => !!REL[cfg().rel], lang,
+  versions: (r = id()) => { const L = LIBS[r]; if (!L) return []; const l = lang(), list = L[l] || L['*'] || L.pt || L.en; return (list || []).map(x => Object.assign({}, x, { f: x.f.map(f => f.replace(/XX/g, l)) })); },
+  habit: (r = id()) => (REL[r] || REL.evangelica).hab || 'Oração', marcos: (r = id()) => (REL[r] || {}).marcos || [] };
+
+/* ---------- montar a biblioteca (os ficheiros + a ordem e os nomes da religião) ---------- */
+const FILES = {};
+const getFile = f => FILES[f] || (FILES[f] = (async () => { for (const alt of f.split('|')) { const path = alt.startsWith('biblia/') ? 'vendor/' + alt + '.json' : 'vendor/sagrado/' + alt + '.json';
+  try { const r = await fetch(path); if (r.ok) return await r.json(); } catch (e) { } } return null; })().then(d => { if (!d) delete FILES[f]; return d; }));
+R.assemble = async spec => { const ds = (await Promise.all(spec.f.map(getFile))).filter(Boolean); if (!ds.length) throw new Error('livro indisponível');
+  const books = {}, order = []; ds.forEach(d => d.b.forEach(b => { if (!books[b[0]]) { books[b[0]] = b; order.push(b[0]); } }));
+  let ids = spec.order ? spec.order.filter(x => books[(spec.alias && spec.alias[x] && books[spec.alias[x]]) ? spec.alias[x] : x]) : order.filter(x => !(spec.alias && Object.values(spec.alias).includes(x)) && !['ESG', 'DNG'].includes(x));
+  const b = ids.map(x => { const src = books[(spec.alias && spec.alias[x] && books[spec.alias[x]]) ? spec.alias[x] : x]; const o = src.slice(); o[0] = x;
+    if (spec.heb && HEB[x] && !spec.dir) o[1] = HEB[x] + ' (' + src[1] + ')'; return o; });
+  const L = { n: spec.n, a: ds.map(d => d.a).filter(Boolean).join(' · '), dir: spec.dir || ds[0].dir || '', pre: spec.pre || ds[0].pre || 0, ai: ds.some(d => d.ai), b, id: spec.id };
+  L.idx = {}; L.b.forEach((x, i) => L.idx[x[0]] = i); L.groups = (spec.groups || BIBLE_GROUPS)(L); return L; };
+
+/* ---------- texto do dia ---------- */
+const hashDay = d => { let h = 0; for (const ch of d) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
+const QV = ['1:1-7', '2:152-153', '2:186', '2:255', '2:286', '3:139', '3:159', '3:190-191', '3:200', '4:135', '5:8', '6:162', '7:56', '9:51', '10:57', '13:11', '13:28', '14:7', '16:90', '16:97', '16:128', '17:23-24', '17:82', '18:10', '20:114', '21:87', '23:1-6', '24:35', '25:63', '28:77', '29:69', '31:17-19', '33:41-42', '39:10', '39:53', '40:60', '41:34', '42:36-37', '49:10', '49:13', '50:16', '55:13', '57:4', '59:18', '64:11', '65:2-3', '67:2', '76:8-9', '89:27-30', '93:3-5', '94:5-8', '99:7-8', '103:1-3', '112:1-4', '113:1-5', '114:1-6'].map(x => 'QUR ' + x);
+const GV = ['2:13', '2:14', '2:20', '2:22', '2:38', '2:47', '2:48', '2:50', '2:56', '2:62-63', '2:70', '3:8', '3:19', '3:21', '3:30', '3:35', '4:7-8', '4:38', '4:39', '5:10', '5:18', '6:5', '6:6', '6:17', '6:26', '6:35', '7:19', '9:22', '9:26', '9:29', '10:20', '11:55', '12:13-14', '12:15', '13:28', '15:15', '16:1-3', '16:21', '17:15', '18:20', '18:46', '18:66', '18:78'].map(x => 'BG ' + x);
+R.daily = (B, FD, d = U.today()) => { const r = id(), h = hashDay(d + 'oc'), fam = (REL[r] || {}).fam;
+  if (fam === 'crista') return FD.vod[h % FD.vod.length];
+  if (fam === 'judaica') { const L2 = FD.vod.filter(x => ORDER_T.includes(x.split(' ')[0])); return L2[h % L2.length]; }
+  if (fam === 'islam') return QV[h % QV.length];
+  if (fam === 'hindu') return GV[h % GV.length];
+  if (!B) return null;
+  // Dhammapada, Evangelho, Tao/Meditações: um trecho do livro (curto o bastante para se ler de uma vez)
+  const pool = []; B.b.forEach(b => b[3].forEach((ch, ci) => { if (b[0] === 'TAO') { pool.push(b[0] + ' ' + (ci + 1)); return; } ch.forEach((t, vi) => { if (t && t.length > 60 && t.length < 900) pool.push(b[0] + ' ' + (ci + 1) + ':' + (vi + 1)); }); }));
+  return pool.length ? pool[h % pool.length] : null; };
+
+/* ---------- planos de leitura ---------- */
+const chs = (B, ids) => ids.flatMap(i => { const b = B.b[B.idx[i]]; return b ? b[3].map((c, k) => ({ r: i + '.' + (k + 1), n: c.length || 1 })) : []; });
+const split = (list, days) => { const tot = list.reduce((a, x) => a + x.n, 0), per = tot / days, out = []; let cur = [], acc = 0, k = 1; list.forEach(x => { cur.push(x.r); acc += x.n; if (acc >= per * k && out.length < days - 1) { out.push(cur); cur = []; k++; } }); if (cur.length) out.push(cur); return out; };
+const each = (B, ids) => chs(B, ids).map(x => [x.r]);
+const all = B => B.b.map(b => b[0]);
+R.plans = B => { const r = id(), fam = (REL[r] || {}).fam, nt = B.b.findIndex(b => b[0] === 'MAT');
+  if (fam === 'crista') return { ano: ['Bíblia em 1 ano', 'Do Génesis ao Apocalipse, ~15 min por dia', () => split(chs(B, all(B)), 365)],
+    nt90: ['Novo Testamento em 90 dias', 'Os Evangelhos, Atos, as cartas e o Apocalipse', () => split(chs(B, all(B).slice(nt)), 90)],
+    evang: ['Evangelhos em 30 dias', 'A vida de Jesus: Mateus, Marcos, Lucas e João', () => split(chs(B, ['MAT', 'MRK', 'LUK', 'JHN']), 30)],
+    sp: ['Salmos e Provérbios em 31 dias', '5 Salmos e 1 Provérbio por dia', () => Array.from({ length: 31 }, (_, i) => [...Array.from({ length: 5 }, (_, k) => 'PSA.' + (i * 5 + k + 1)).filter(x => +x.split('.')[1] <= 150), 'PRO.' + (i + 1)])],
+    cartas: ['Cartas de Paulo em 40 dias', 'De Romanos a Filémon', () => split(chs(B, ['ROM', '1CO', '2CO', 'GAL', 'EPH', 'PHP', 'COL', '1TH', '2TH', '1TI', '2TI', 'TIT', 'PHM']), 40)] };
+  if (fam === 'judaica') return { tora: ['A Torá num ano', 'Os cinco livros de Moisés, ~10 min por dia', () => split(chs(B, ['GEN', 'EXO', 'LEV', 'NUM', 'DEU']), 365)],
+    tanakh: ['O Tanakh em 1 ano', 'Torá, Profetas e Escritos', () => split(chs(B, all(B)), 365)], tehilim: ['Tehilim (Salmos) em 30 dias', 'Como é costume ler os Salmos num mês', () => split(chs(B, ['PSA']), 30)], mishlei: ['Mishlei (Provérbios) em 31 dias', 'Um capítulo por dia', () => each(B, ['PRO'])] };
+  if (fam === 'islam') return { q30: ['O Alcorão em 30 dias', 'Mais ou menos um juz por dia (como no Ramadão)', () => split(chs(B, ['QUR']), 30)], q60: ['O Alcorão em 60 dias', 'Meio juz por dia', () => split(chs(B, ['QUR']), 60)], q365: ['O Alcorão em 1 ano', 'Uns minutos por dia', () => split(chs(B, ['QUR']), 365)] };
+  if (fam === 'hindu') return { g18: ['A Gita em 18 dias', 'Um capítulo por dia', () => each(B, ['BG'])], g40: ['A Gita em 40 dias', 'Com calma, uns versos por dia', () => split(chs(B, ['BG']), 40)] };
+  if (fam === 'budista') return { d26: ['O Dhammapada em 26 dias', 'Um capítulo por dia', () => each(B, ['DHP'])] };
+  if (fam === 'espirita') return { e28: ['O Evangelho em 28 dias', 'Um capítulo por dia', () => each(B, ['ESE'])], e60: ['O Evangelho em 60 dias', 'Com calma, um bocado por dia', () => split(chs(B, ['ESI', 'ESE']), 60)] };
+  if (fam === 'espiritual') return { tao: ['O Tao Te Ching em 81 dias', 'Um capítulo por dia', () => each(B, ['TAO'])], med: ['As Meditações em 12 semanas', 'Um livro por semana, lido aos poucos', () => split(chs(B, ['MED']), 84)] };
+  return {}; };
+
+/* ---------- orações ---------- */
+const P = (t, x, ref) => ({ t, x, ref });
+const PAI = 'Pai nosso, que estais nos céus, santificado seja o vosso nome; venha a nós o vosso reino; seja feita a vossa vontade, assim na terra como no céu. O pão nosso de cada dia nos dai hoje; perdoai-nos as nossas ofensas, assim como nós perdoamos a quem nos tem ofendido; e não nos deixeis cair em tentação, mas livrai-nos do mal. Amém.';
+const AVE = 'Ave Maria, cheia de graça, o Senhor é convosco; bendita sois vós entre as mulheres, e bendito é o fruto do vosso ventre, Jesus. Santa Maria, Mãe de Deus, rogai por nós, pecadores, agora e na hora da nossa morte. Amém.';
+const GLORIA = 'Glória ao Pai, ao Filho e ao Espírito Santo. Como era no princípio, agora e sempre. Amém.';
+const CREDO = 'Creio em Deus Pai todo-poderoso, criador do céu e da terra; e em Jesus Cristo, seu único Filho, nosso Senhor, que foi concebido pelo poder do Espírito Santo; nasceu da Virgem Maria; padeceu sob Pôncio Pilatos, foi crucificado, morto e sepultado; desceu à mansão dos mortos; ressuscitou ao terceiro dia; subiu aos céus; está sentado à direita de Deus Pai todo-poderoso, donde há de vir a julgar os vivos e os mortos. Creio no Espírito Santo, na santa Igreja católica, na comunhão dos santos, na remissão dos pecados, na ressurreição da carne, na vida eterna. Amém.';
+const SALVE = 'Salve, Rainha, Mãe de misericórdia, vida, doçura e esperança nossa, salve! A vós bradamos, os degredados filhos de Eva; a vós suspiramos, gemendo e chorando neste vale de lágrimas. Eia, pois, advogada nossa, esses vossos olhos misericordiosos a nós volvei; e depois deste desterro, mostrai-nos Jesus, bendito fruto do vosso ventre, ó clemente, ó piedosa, ó doce sempre Virgem Maria. Rogai por nós, santa Mãe de Deus, para que sejamos dignos das promessas de Cristo. Amém.';
+const FATIMA = 'Ó meu Jesus, perdoai-nos, livrai-nos do fogo do inferno, levai as almas todas para o céu e socorrei principalmente as que mais precisarem.';
+const SINAL = 'Pelo sinal da Santa Cruz, livrai-nos, Deus, nosso Senhor, dos nossos inimigos. Em nome do Pai, e do Filho, e do Espírito Santo. Amém.';
+const JESUS = 'Senhor Jesus Cristo, Filho de Deus, tem piedade de mim, pecador.';
+const CARITAS = 'Deus, nosso Pai, que tendes poder e bondade, dai a força àquele que passa pela provação, dai a luz àquele que procura a verdade, ponde no coração do homem a compaixão e a caridade. Deus, dai ao viajor a estrela guia, ao aflito a consolação, ao doente o repouso. Pai, dai ao culpado o arrependimento, ao espírito a verdade, à criança o guia, ao órfão o pai. Senhor, que a vossa bondade se estenda sobre tudo o que criastes. Piedade, Senhor, para aqueles que vos não conhecem, esperança para aqueles que sofrem. Que a vossa bondade permita aos Espíritos consoladores derramarem por toda a parte a paz, a esperança e a fé. Deus, um raio, uma faísca do vosso amor pode abrasar a Terra; deixai-nos beber nas fontes dessa bondade fecunda e infinita, e todas as lágrimas secarão, todas as dores acalmar-se-ão. Um só coração, um só pensamento subirá até vós, como um grito de reconhecimento e de amor. Como Moisés sobre a montanha, nós vos esperamos com os braços abertos, oh! Poder, oh! Bondade, oh! Beleza, oh! Perfeição, e queremos de alguma sorte merecer a vossa misericórdia. Deus, dai-nos a força de ajudar o progresso a fim de subirmos até vós; dai-nos a caridade pura, dai-nos a fé e a razão; dai-nos a simplicidade que fará de nossas almas o espelho onde deve refletir a vossa imagem.';
+const METTA = 'Que eu esteja bem. Que eu esteja em paz. Que eu esteja livre de sofrimento. Que eu seja feliz.\nQue tu estejas bem. Que tu estejas em paz. Que tu estejas livre de sofrimento. Que tu sejas feliz.\nQue todos os seres estejam bem, em paz, livres de sofrimento e felizes.';
+const PRAYERS = {
+  catolica: [P('Sinal da Cruz', SINAL), P('Pai-Nosso', PAI), P('Ave-Maria', AVE), P('Glória ao Pai', GLORIA), P('Credo (Símbolo dos Apóstolos)', CREDO), P('Salve-Rainha', SALVE), P('Santo Anjo', 'Santo Anjo do Senhor, meu zeloso guardador, se a ti me confiou a piedade divina, sempre me rege, me guarda, me governa e me ilumina. Amém.'),
+    P('Ato de Contrição', 'Meu Deus, porque sois infinitamente bom e Vos amo de todo o meu coração, pesa-me de Vos ter ofendido; e, com o auxílio da Vossa divina graça, proponho firmemente emendar-me e nunca mais Vos tornar a ofender. Peço e espero o perdão das minhas culpas pela Vossa infinita misericórdia. Amém.'),
+    P('Oração a São Miguel Arcanjo', 'São Miguel Arcanjo, defendei-nos no combate; sede o nosso refúgio contra as maldades e ciladas do demónio. Ordene-lhe Deus, instantemente o pedimos; e vós, Príncipe da milícia celeste, pela virtude divina, precipitai no inferno a Satanás e aos outros espíritos malignos que andam pelo mundo para perder as almas. Amém.'),
+    P('Ó meu Jesus (Fátima)', FATIMA), P('Magnificat', '', 'LUK 1:46-55')],
+  evangelica: [P('Pai Nosso', '', 'MAT 6:9-13'), P('Salmo 23', '', 'PSA 23:1-6'), P('Salmo 91', '', 'PSA 91:1-16'), P('Bênção sacerdotal', '', 'NUM 6:24-26'), P('O amor (1 Coríntios 13)', '', '1CO 13:4-8')],
+  ortodoxa: [P('Oração de Jesus', JESUS), P('Trisagion', 'Santo Deus, Santo Forte, Santo Imortal, tende piedade de nós. (três vezes)\nGlória ao Pai, e ao Filho, e ao Espírito Santo, agora e sempre e pelos séculos dos séculos. Amém.'), P('Pai-Nosso', PAI),
+    P('Credo (Niceno-Constantinopolitano)', 'Creio em um só Deus, Pai todo-poderoso, criador do céu e da terra, de todas as coisas visíveis e invisíveis. E em um só Senhor Jesus Cristo, Filho Unigénito de Deus, gerado do Pai antes de todos os séculos: Luz da Luz, Deus verdadeiro de Deus verdadeiro, gerado, não criado, consubstancial ao Pai; por Ele todas as coisas foram feitas. E por nós, homens, e para a nossa salvação, desceu dos céus e encarnou pelo Espírito Santo e da Virgem Maria, e se fez homem. Foi crucificado por nós sob Pôncio Pilatos, padeceu e foi sepultado. Ressuscitou ao terceiro dia, conforme as Escrituras, e subiu aos céus, onde está sentado à direita do Pai. E de novo há de vir, em glória, para julgar os vivos e os mortos; e o seu reino não terá fim. E no Espírito Santo, Senhor que dá a vida, que procede do Pai; e com o Pai e o Filho é adorado e glorificado: Ele que falou pelos profetas. E na Igreja una, santa, católica e apostólica. Professo um só batismo para a remissão dos pecados. E espero a ressurreição dos mortos e a vida do século que há de vir. Amém.'),
+    P('Hino à Mãe de Deus', 'Virgem Mãe de Deus, alegra-te, ó cheia de graça, Maria, o Senhor é contigo; bendita és tu entre as mulheres e bendito é o fruto do teu ventre, porque deste à luz o Salvador das nossas almas.'), P('Salmo 50 (51)', '', 'PSA 51:1-19')],
+  espirita: [P('Pai-Nosso (Oração dominical)', PAI), P('Prece de Cáritas', CARITAS), P('Prece de abertura', 'Senhor, que os bons Espíritos nos assistam neste momento. Afasta de nós os pensamentos inferiores e abre o nosso coração para compreender e viver o Evangelho. Que a paz esteja neste lar. Assim seja.'),
+    P('Coletânea de preces espíritas', '', 'ESE 28:1-5')],
+  islamica: [P('Al-Fátiha (A Abertura)', '', 'QUR 1:1-7'), P('Ayat al-Kursi (O Trono)', '', 'QUR 2:255'), P('Al-Ikhlas (A Sinceridade)', '', 'QUR 112:1-4'), P('Al-Falaq (A Alvorada)', '', 'QUR 113:1-5'), P('An-Nas (Os Homens)', '', 'QUR 114:1-6'),
+    P('Dhikr (lembrança de Allah)', 'Bismillah ar-Rahman ar-Rahim — Em nome de Allah, o Clemente, o Misericordioso.\nSubhanallah — Glorificado seja Allah.\nAlhamdulillah — Louvado seja Allah.\nAllahu Akbar — Allah é o Maior.\nLa ilaha illa Allah — Não há divindade além de Allah.\nAstaghfirullah — Peço perdão a Allah.'),
+    P('Súplica de Yunus (Jonas)', 'La ilaha illa anta, subhanaka, inni kuntu min az-zalimin — Não há divindade além de Ti. Glorificado sejas! Eu fui dos injustos.', 'QUR 21:87')],
+  judaica: [P('Shemá Israel', '', 'DEU 6:4-9'), P('Modé Ani (ao acordar)', 'Modé ani lefanecha, Melech chai vekayam, shehechezarta bi nishmati bechemlá, rabá emunatecha.\nAgradeço-Te, Rei vivo e eterno, por me teres devolvido a minha alma com compaixão; grande é a Tua fidelidade.'),
+    P('Bênção sacerdotal (Birkat Kohanim)', '', 'NUM 6:24-26'), P('Tehilim 23', '', 'PSA 23:1-6'), P('Tehilim 121', '', 'PSA 121:1-8'), P('Ein Keloheinu', 'Ein Keloheinu, ein kadoneinu, ein k’malkeinu, ein k’moshieinu.\nNão há ninguém como o nosso Deus, ninguém como o nosso Senhor, ninguém como o nosso Rei, ninguém como o nosso Salvador.')],
+  hindu: [P('Gayatri Mantra', 'Om bhūr bhuvaḥ svaḥ, tat savitur vareṇyaṃ, bhargo devasya dhīmahi, dhiyo yo naḥ pracodayāt.\nMeditamos na luz gloriosa do Divino; que ela ilumine o nosso entendimento.'),
+    P('Mahamrityunjaya Mantra', 'Om tryambakaṃ yajāmahe sugandhiṃ puṣṭivardhanam, urvārukam iva bandhanān mṛtyor mukṣīya māmṛtāt.\nAdoramos o Senhor de três olhos, que nutre todos os seres; que Ele nos liberte da morte, como o fruto maduro se solta do caule, e nos conduza à imortalidade.'),
+    P('Asato mā (Brihadaranyaka Upanishad)', 'Asato mā sad gamaya, tamaso mā jyotir gamaya, mṛtyor mā amṛtaṃ gamaya. Om śānti śānti śāntiḥ.\nConduz-me do irreal ao real, das trevas à luz, da morte à imortalidade. Paz, paz, paz.'),
+    P('Om Namah Shivaya', 'Om Namah Shivaya — Saudação a Shiva, o Ser auspicioso.'), P('Hare Krishna (Maha-mantra)', 'Hare Krishna Hare Krishna, Krishna Krishna Hare Hare, Hare Rama Hare Rama, Rama Rama Hare Hare.'), P('O caminho da ação (Gita 2:47)', '', 'BG 2:47')],
+  budista: [P('Três Refúgios', 'Buddhaṃ saraṇaṃ gacchāmi. Dhammaṃ saraṇaṃ gacchāmi. Saṅghaṃ saraṇaṃ gacchāmi.\nTomo refúgio no Buda. Tomo refúgio no Dhamma. Tomo refúgio na Sangha.'),
+    P('Cinco Preceitos', 'Comprometo-me a não tirar a vida.\nComprometo-me a não tomar o que não me é dado.\nComprometo-me a não ter conduta sexual imprópria.\nComprometo-me a não mentir nem falar com dureza.\nComprometo-me a não tomar substâncias que turvam a mente.'),
+    P('Metta (amor bondoso)', METTA), P('Os versos gémeos', '', 'DHP 1:1-2'), P('O ódio não acaba com o ódio', '', 'DHP 1:5')],
+  afro: [P('Saudações aos Orixás', 'Exu: Laroyê!\nOgum: Ogunhê! (Patacori)\nOxóssi: Okê Arô!\nXangô: Kaô Kabecilê!\nIansã: Eparrei, Oyá!\nOxum: Ora Yê Yê Ô!\nIemanjá: Odoyá!\nNanã: Saluba, Nanã!\nOmolu / Obaluaê: Atotô!\nOxumaré: Arroboboi!\nOxalá: Epa Babá!\nIbeji (Erês): Onipê Ibejada!'), P('Prece de Cáritas', CARITAS), P('Pai-Nosso', PAI)],
+  espiritual: [P('Oração da serenidade', 'Concede-me a serenidade para aceitar as coisas que não posso mudar, a coragem para mudar as que posso, e a sabedoria para distinguir umas das outras.'), P('Metta (amor bondoso)', METTA),
+    P('Para começar o dia (Marco Aurélio)', 'Ao amanhecer, diz a ti mesmo: hoje vou encontrar pessoas difíceis. Mas eu vi a natureza do bem e do mal, e ninguém me pode fazer mal se eu não o permitir. Vou fazer a minha parte, com calma e com justiça.'),
+    P('Gratidão', 'Antes de dormir, lembra três coisas boas do dia e quem as tornou possíveis. Agradece em silêncio.')] };
+R.prayers = (r = id()) => PRAYERS[r] || PRAYERS.evangelica;
+
+/* ---------- práticas guiadas ---------- */
+const MYST = { g: ['Gozosos', ['A Anunciação do Anjo a Maria', 'A visita de Maria a Isabel', 'O nascimento de Jesus em Belém', 'A apresentação de Jesus no Templo', 'Jesus encontrado no Templo']],
+  l: ['Luminosos', ['O batismo de Jesus no Jordão', 'As bodas de Caná', 'O anúncio do Reino de Deus', 'A Transfiguração', 'A instituição da Eucaristia']],
+  d: ['Dolorosos', ['A agonia de Jesus no Horto', 'A flagelação', 'A coroação de espinhos', 'Jesus carrega a cruz', 'A crucificação e morte de Jesus']],
+  q: ['Gloriosos', ['A Ressurreição', 'A Ascensão de Jesus ao céu', 'A vinda do Espírito Santo', 'A Assunção de Maria', 'A coroação de Maria']] };
+const mystOf = d => MYST[['q', 'g', 'd', 'q', 'l', 'd', 'g'][new Date(d + 'T12:00').getDay()]];   // dom gloriosos, seg gozosos, ter dolorosos, qua gloriosos, qui luminosos, sex dolorosos, sáb gozosos
+const terco = () => { const [nm, ms] = mystOf(U.today()), S = [{ t: 'Sinal da Cruz', x: SINAL }, { t: 'Credo', x: CREDO }, { t: 'Pai-Nosso', x: PAI }, { t: 'Ave-Maria', x: AVE, n: 3, h: 'Pela fé, a esperança e a caridade' }, { t: 'Glória', x: GLORIA }];
+  ms.forEach((m, i) => S.push({ t: `${i + 1}.º Mistério ${nm.replace(/s$/, '')}`, x: m, big: 1 }, { t: 'Pai-Nosso', x: PAI }, { t: 'Ave-Maria', x: AVE, n: 10, h: m }, { t: 'Glória', x: GLORIA }, { t: 'Ó meu Jesus', x: FATIMA }));
+  S.push({ t: 'Salve-Rainha', x: SALVE }, { t: 'Sinal da Cruz', x: SINAL }); return { name: 'Terço · Mistérios ' + nm, steps: S }; };
+const MANTRAS = [['Om Namah Shivaya', 'Saudação a Shiva'], ['Hare Krishna Hare Krishna, Krishna Krishna Hare Hare, Hare Rama Hare Rama, Rama Rama Hare Hare', 'Maha-mantra'], ['Om', 'O som primordial'], ['Om Namo Narayanaya', 'Saudação a Vishnu'], ['Gayatri: Om bhūr bhuvaḥ svaḥ…', 'Gayatri Mantra']];
+R.practices = (r = id()) => ({
+  catolica: [['terco', 'Terço guiado (mistérios de hoje)'], ['acts', 'Oração guiada (10 min)']],
+  evangelica: [['acts', 'Oração guiada (10 min)']],
+  ortodoxa: [['jesus', 'Oração de Jesus (com contas)'], ['acts', 'Oração guiada (10 min)']],
+  espirita: [['lar', 'Evangelho no Lar (guiado)'], ['med', 'Prece e meditação']],
+  islamica: [['tasbih', 'Tasbih depois da oração (33 × 3)'], ['med', 'Momento de dhikr (silêncio)']],
+  judaica: [['shema', 'Shemá guiado'], ['med', 'Hitbodedut (momento a sós)']],
+  hindu: [['japa', 'Japa (mala de 108)'], ['med', 'Meditação']],
+  budista: [['med', 'Meditação (respiração)'], ['metta', 'Metta guiada (amor bondoso)']],
+  afro: [['orixa', 'Saudação ao Orixá do dia'], ['med', 'Momento de prece (silêncio)']],
+  espiritual: [['med', 'Meditação guiada'], ['metta', 'Metta (amor bondoso)']] }[r] || [['acts', 'Oração guiada (10 min)']]);
+
+/* modais de prática: contas (terço, tasbih, japa, Oração de Jesus), passos com tempo e meditação com sino */
+let PR = null;
+const bell = (f = 528, d = 2.6) => { try { const C = PR && PR.ac || new (window.AudioContext || window.webkitAudioContext)(); if (PR) PR.ac = C; const o = C.createOscillator(), g = C.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.0001, C.currentTime); g.gain.exponentialRampToValueAtTime(.35, C.currentTime + .02); g.gain.exponentialRampToValueAtTime(.0001, C.currentTime + d); o.connect(g).connect(C.destination); o.start(); o.stop(C.currentTime + d + .1); } catch (e) { } };
+const buzz = (n = 12) => { try { navigator.vibrate && navigator.vibrate(n); } catch (e) { } };
+const beads = (name, steps, done) => { PR = { kind: 'beads', name, steps, i: 0, k: 0, done }; draw(); };
+const draw = () => { if (!PR) return; let h = '';
+  if (PR.kind === 'beads') { const s = PR.steps[PR.i], tot = PR.steps.length, n = s.n || 1, end = PR.i >= tot;
+    h = end ? `<h2>Amém</h2><p>Que a paz esteja contigo.</p><button class="btn pri" data-act="rlStop">Fechar</button>`
+      : `<div class="rl-step">${PR.i + 1} / ${tot}</div><h2 class="${s.big ? 'rl-big' : ''}">${esc(s.t)}</h2>${s.h && n > 1 ? `<p class="rl-int">${esc(s.h)}</p>` : ''}<blockquote class="rl-x">${esc(s.x)}</blockquote>
+        ${n > 1 ? `<div class="rl-beads">${Array.from({ length: n }, (_, j) => `<i class="${j < PR.k ? 'on' : ''}"></i>`).join('')}</div><div class="rl-n">${PR.k} / ${n}</div>` : ''}
+        <button class="btn pri rl-go" data-act="rlNext">${n > 1 && PR.k < n - 1 ? 'Conta seguinte' : PR.i < tot - 1 ? 'Seguinte →' : 'Terminar'}</button>`;
+    h = `<div class="rl-bar"><i style="width:${Math.round(Math.min(1, (PR.i + (PR.k / (s && s.n || 1))) / PR.steps.length) * 100)}%"></i></div>` + h; }
+  else if (PR.kind === 'count') { const c = PR.cur, n = PR.n; h = `<div class="rl-step">${esc(PR.name)}</div><h2>${esc(c.t)}</h2>${c.x ? `<p class="rl-int">${esc(c.x)}</p>` : ''}<button class="rl-tap" data-act="rlTap" aria-label="Contar"><b>${PR.k}</b><small>de ${n}</small></button>
+      <div class="rl-beads sm">${Array.from({ length: Math.min(n, 108) }, (_, j) => `<i class="${j < PR.k ? 'on' : ''}"></i>`).join('')}</div>${PR.sel || ''}<p class="mut" style="font-size:12px">Toca no círculo a cada repetição. Vibra a cada conta e no fim de cada volta.</p>`; }
+  else if (PR.kind === 'timer') { const m = Math.floor(PR.left / 60), s = PR.left % 60; h = `<div class="rl-step">${esc(PR.name)}</div><h2>${PR.on ? esc(PR.cue || 'Respira') : PR.left <= 0 ? 'Terminado' : 'Meditação'}</h2>
+      <div class="rl-ring" style="--p:${PR.tot ? 1 - PR.left / PR.tot : 0}"><b>${m}:${U.pad(s)}</b></div>
+      ${PR.on ? `<p class="rl-int">${esc(PR.tip || '')}</p><button class="btn" data-act="rlPause">Pausa</button>` : PR.left > 0 && PR.started ? '<button class="btn pri" data-act="rlPause">Continuar</button>' : PR.left <= 0 ? '<button class="btn pri" data-act="rlStop">Fechar</button>' : `<div class="seg" role="group">${[5, 10, 15, 20, 30].map(x => `<button class="${PR.tot === x * 60 ? 'on' : ''}" data-act="rlDur" data-v="${x}">${x} min</button>`).join('')}</div><button class="btn pri rl-go" data-act="rlStart">Começar</button>`}`; }
+  else if (PR.kind === 'steps') { const s = PR.steps[PR.i]; h = `<div class="rl-bar"><i style="width:${Math.round(PR.i / PR.steps.length * 100)}%"></i></div><div class="rl-step">${esc(PR.name)} · ${PR.i + 1}/${PR.steps.length}</div><h2>${esc(s.t)}</h2>${s.dur ? `<div class="rl-t">${Math.floor(PR.left / 60)}:${U.pad(PR.left % 60)}</div>` : ''}<p>${esc(s.x)}</p>${s.html || ''}<button class="btn pri rl-go" data-act="rlStepNext">${PR.i < PR.steps.length - 1 ? 'Seguinte →' : 'Terminar'}</button>`; }
+  const html = `<div class="rl-pr" id="rlPr"><div class="row between"><span class="eyebrow">${esc(R.name())}</span><button class="icon-btn" data-act="rlStop" aria-label="Fechar">${UI.ic('x')}</button></div>${h}</div>`;
+  const el = document.getElementById('rlPr'); if (el) el.outerHTML = html; else UI.modal(html, 'rl-m'); };
+const finish = () => { if (PR && PR.done) try { PR.done(); } catch (e) { } };
+A.rlNext = () => { if (!PR || PR.kind !== 'beads') return; const s = PR.steps[PR.i], n = s.n || 1; buzz(); if (n > 1 && PR.k < n - 1) { PR.k++; } else { PR.i++; PR.k = 0; if (PR.i >= PR.steps.length) { buzz([30, 60, 30]); finish(); } } draw(); };
+A.rlTap = () => { if (!PR || PR.kind !== 'count') return; PR.k++; buzz(); if (PR.k >= PR.n) { buzz([40, 60, 40]); if (PR.seq && PR.si < PR.seq.length - 1) { PR.si++; PR.cur = PR.seq[PR.si]; PR.n = PR.cur.n; PR.k = 0; } else { PR.k = PR.n; finish(); if (OS.Vivo && OS.Vivo.burst) OS.Vivo.burst(innerWidth / 2, innerHeight / 2); setTimeout(() => { PR = null; UI.closeModal(); UI.toast('Concluído. Que a paz esteja contigo.', 'pos'); }, 400); return; } } draw(); };
+A.rlMantra = b => { if (!PR) return; PR.cur = { t: MANTRAS[+b.dataset.v][0], x: MANTRAS[+b.dataset.v][1], n: 108 }; PR.mi = +b.dataset.v; PR.sel = mantraSel(); draw(); };
+const mantraSel = () => `<div class="rl-ms">${MANTRAS.map((m, i) => `<button class="chip ${PR && PR.mi === i ? 'on' : ''}" data-act="rlMantra" data-v="${i}">${esc(m[1])}</button>`).join('')}</div>`;
+let TT = 0;
+const tick = () => { clearInterval(TT); TT = setInterval(() => { if (!PR) return clearInterval(TT); if (PR.kind === 'timer' && PR.on) { PR.left--; if (PR.left === Math.floor(PR.tot / 2)) bell(660, 1.6);
+    if (PR.left <= 0) { PR.on = false; bell(528, 4); bell(792, 4); finish(); clearInterval(TT); } else if (PR.left % 45 === 0) PR.cue = PR.cues[(PR.tot - PR.left) / 45 % PR.cues.length | 0]; }
+  if (PR.kind === 'steps' && PR.steps[PR.i].dur && PR.left > 0) { PR.left--; if (PR.left === 0) bell(660, 1.4); }
+  if (!document.getElementById('rlPr')) { PR = null; return clearInterval(TT); } draw(); }, 1000); };
+A.rlDur = b => { if (PR) { PR.tot = PR.left = +b.dataset.v * 60; draw(); } };
+A.rlStart = () => { if (!PR) return; PR.on = true; PR.started = true; bell(528, 3); tick(); draw(); };
+A.rlPause = () => { if (!PR) return; PR.on = !PR.on; draw(); };
+A.rlStepNext = () => { if (!PR) return; if (PR.i < PR.steps.length - 1) { PR.i++; PR.left = PR.steps[PR.i].dur || 0; bell(660, 1.2); draw(); } else { finish(); PR = null; UI.closeModal(); UI.toast('Que a paz esteja contigo.', 'pos'); } };
+A.rlStop = () => { clearInterval(TT); PR = null; UI.closeModal(); OS.request && OS.request(); };
+const CUES = { budista: ['Sente o ar a entrar e a sair', 'Se a mente fugir, volta com gentileza à respiração', 'Nota o corpo, sem julgar', 'Só este momento'], espiritual: ['Respira devagar', 'Deixa os pensamentos passar como nuvens', 'Volta à respiração', 'Só este momento'], islamica: ['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'Lembra-te de Allah no silêncio'], hindu: ['Om', 'Respira com o mantra', 'Observa sem te prenderes', 'Paz'], '*': ['Respira devagar', 'Entrega o que te pesa', 'Fica em silêncio', 'Agradece'] };
+R.start = (k, done) => { const r = id();
+  if (k === 'terco') { const t = terco(); return beads(t.name, t.steps, done); }
+  if (k === 'jesus') { PR = { kind: 'count', name: 'Oração de Jesus', cur: { t: JESUS, x: 'Diz devagar, ao ritmo da respiração.', n: 100 }, n: 100, k: 0, done }; return draw(); }
+  if (k === 'tasbih') { const seq = [{ t: 'Subhanallah', x: 'Glorificado seja Allah', n: 33 }, { t: 'Alhamdulillah', x: 'Louvado seja Allah', n: 33 }, { t: 'Allahu Akbar', x: 'Allah é o Maior', n: 34 }]; PR = { kind: 'count', name: 'Tasbih', seq, si: 0, cur: seq[0], n: 33, k: 0, done }; return draw(); }
+  if (k === 'japa') { PR = { kind: 'count', name: 'Japa', cur: { t: MANTRAS[0][0], x: MANTRAS[0][1], n: 108 }, n: 108, k: 0, mi: 0, done }; PR.sel = mantraSel(); return draw(); }
+  if (k === 'med') { PR = { kind: 'timer', name: 'Meditação', tot: 600, left: 600, on: false, cues: CUES[r] || CUES['*'], tip: 'Senta-te direito, olhos fechados ou baixos. Quando ouvires o sino, começa.', done }; PR.cue = PR.cues[0]; return draw(); }
+  const steps = { metta: [{ t: 'Para ti', x: 'Que eu esteja bem. Que eu esteja em paz. Que eu seja feliz.', dur: 90 }, { t: 'Para alguém querido', x: 'Pensa numa pessoa que amas. Que estejas bem. Que estejas em paz. Que sejas feliz.', dur: 90 }, { t: 'Para alguém neutro', x: 'Alguém que vês sem conhecer. Que estejas bem, em paz, feliz.', dur: 90 }, { t: 'Para alguém difícil', x: 'Alguém com quem tens conflito. Com sinceridade: que estejas bem, em paz, feliz.', dur: 90 }, { t: 'Para todos os seres', x: 'Que todos os seres estejam bem, em paz, livres de sofrimento e felizes.', dur: 90 }],
+    lar: [{ t: 'Prece inicial', x: 'Reúne a família (ou fica a sós) num horário fixo da semana. Uma prece simples, do coração, a pedir a presença dos bons Espíritos.', dur: 120 }, { t: 'Leitura do Evangelho', x: 'Lê um trecho de O Evangelho segundo o Espiritismo, seguindo a ordem ou abrindo ao acaso.', dur: 300, html: '<button class="btn sm" data-act="rlOpenEse">Abrir o Evangelho</button>' }, { t: 'Comentário', x: 'Cada um diz o que entendeu e como o aplicar na vida desta semana. Sem discussões: com amor.', dur: 300 }, { t: 'Vibrações', x: 'Em silêncio, envia pensamentos de paz: para este lar, para os doentes, para quem sofre, para o mundo. Os teus pedidos aparecem em baixo.', dur: 180 }, { t: 'Prece final', x: 'Agradece e encerra. Se for costume, a água fluidificada pode ser bebida agora.', dur: 60 }],
+    shema: [{ t: 'Prepara-te', x: 'Cobre os olhos com a mão direita e concentra-te.', dur: 15 }, { t: 'Shemá Israel', x: 'Shemá Israel, Adonai Eloheinu, Adonai Echad. — Ouve, Israel: o Senhor é nosso Deus, o Senhor é Um.', dur: 30 }, { t: 'Baruch Shem', x: 'Baruch shem kevod malchutó le’olam va’ed. — Bendito seja o nome da glória do Seu reino para todo o sempre. (em voz baixa)', dur: 20 }, { t: 'Veahavtá', x: 'Amarás o Senhor teu Deus com todo o teu coração, com toda a tua alma e com todas as tuas forças. (Devarim 6:5-9)', dur: 90 }],
+    orixa: [{ t: 'Orixá do dia', x: orixaToday().map(o => `${o.n}: ${o.s}`).join(' · '), dur: 30 }, { t: 'Firmeza', x: 'Acende uma vela (se for o teu costume), respira e concentra-te no Orixá do dia, nas suas cores e no seu elemento.', dur: 60 }, { t: 'Prece', x: 'Fala com o teu Orixá com as tuas palavras: agradece, pede proteção e força para o dia.', dur: 120 }, { t: 'Saudação', x: 'Termina com a saudação: ' + orixaToday().map(o => o.s).join(' '), dur: 15 }],
+    acts: [] }[k];
+  if (steps && steps.length) { PR = { kind: 'steps', name: (R.practices(r).find(x => x[0] === k) || [])[1] || '', steps, i: 0, left: steps[0].dur || 0, done }; bell(528, 2); tick(); return draw(); }
+  return false; };
+A.rlOpenEse = () => { A.rlStop(); location.hash = 'fe.biblia'; };
+
+/* ---------- Orixás ---------- */
+const ORX = { exu: { n: 'Exu', s: 'Laroyê!', c: 'vermelho e preto', e: 'os caminhos e a comunicação' }, ogum: { n: 'Ogum', s: 'Ogunhê!', c: 'azul-escuro (no Candomblé) ou vermelho (na Umbanda)', e: 'o ferro, o trabalho e as batalhas' }, oxossi: { n: 'Oxóssi', s: 'Okê Arô!', c: 'verde', e: 'as matas, a fartura e o conhecimento' },
+  xango: { n: 'Xangô', s: 'Kaô Kabecilê!', c: 'vermelho e branco', e: 'a justiça e os trovões' }, iansa: { n: 'Iansã', s: 'Eparrei, Oyá!', c: 'amarelo e coral', e: 'os ventos, as tempestades e a mudança' }, oxum: { n: 'Oxum', s: 'Ora Yê Yê Ô!', c: 'amarelo-dourado', e: 'as águas doces, o amor e a prosperidade' },
+  iemanja: { n: 'Iemanjá', s: 'Odoyá!', c: 'azul-claro e branco', e: 'o mar e a maternidade' }, nana: { n: 'Nanã', s: 'Saluba, Nanã!', c: 'lilás', e: 'a sabedoria dos mais velhos e a lama primordial' }, omolu: { n: 'Omolu / Obaluaê', s: 'Atotô!', c: 'preto, branco e palha', e: 'a saúde e a cura' },
+  oxala: { n: 'Oxalá', s: 'Epa Babá!', c: 'branco', e: 'a paz, a fé e a criação' }, ibeji: { n: 'Ibeji (Erês)', s: 'Onipê Ibejada!', c: 'cores alegres', e: 'a alegria e a infância' } };
+// dia da semana mais comum na Umbanda (varia de casa para casa): domingo Ibeji, segunda Exu e Omolu, terça Ogum, quarta Xangô e Iansã, quinta Oxóssi, sexta Oxalá, sábado Iemanjá, Oxum e Nanã
+const DOW = [['ibeji'], ['exu', 'omolu'], ['ogum'], ['xango', 'iansa'], ['oxossi'], ['oxala'], ['iemanja', 'oxum', 'nana']];
+const orixaToday = (d = U.today()) => DOW[new Date(d + 'T12:00').getDay()].map(k => ORX[k]);
+R.orixas = orixaToday; R.ORX = ORX;
+
+/* ---------- painéis do dia (salah, Shabat, lua, Orixá) ---------- */
+const where = () => OS.Weather && OS.Weather.where ? OS.Weather.where().catch(() => null) : Promise.resolve(null);
+const dd = d => d.split('-').reverse().join('-');
+const SAL = { Fajr: 'Fajr (alvorada)', Sunrise: 'Nascer do sol', Dhuhr: 'Dhuhr (meio-dia)', Asr: 'Asr (tarde)', Maghrib: 'Maghrib (pôr do sol)', Isha: 'Isha (noite)' };
+let SB = null;
+const salah = async () => { const k = 'os2salah', c = U.ls.get(k, null); if (c && c.d === U.today()) return c; if (SB) return SB;
+  SB = (async () => { const g = await where(); if (!g) return null; const r = await fetch(`https://api.aladhan.com/v1/timings/${dd(U.today())}?latitude=${g.lat}&longitude=${g.lon}&method=3`), j = await r.json(); const t = j.data && j.data.timings; if (!t) return null;
+    const o = { d: U.today(), city: g.label, t: Object.fromEntries(Object.keys(SAL).map(x => [x, String(t[x]).slice(0, 5)])), hijri: j.data.date && j.data.date.hijri ? j.data.date.hijri.day + ' ' + (j.data.date.hijri.month.en || '') + ' ' + j.data.date.hijri.year : '', q: qibla(g.lat, g.lon) };
+    U.ls.set(k, o); OS.request && OS.request(); return o; })().catch(() => null).finally(() => { SB = null; }); return SB; };
+const qibla = (la, lo) => { const r = x => x * Math.PI / 180, K = [21.4225, 39.8262], dl = r(K[1] - lo), y = Math.sin(dl) * Math.cos(r(K[0])), x = Math.cos(r(la)) * Math.sin(r(K[0])) - Math.sin(r(la)) * Math.cos(r(K[0])) * Math.cos(dl); return Math.round((Math.atan2(y, x) * 180 / Math.PI + 360) % 360); };
+let HB = null;
+const shabbat = async () => { const k = 'os2shab', c = U.ls.get(k, null); if (c && c.d === U.today()) return c; if (HB) return HB;
+  HB = (async () => { const g = await where(); if (!g) return null; const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Lisbon';
+    const r = await fetch(`https://www.hebcal.com/shabbat?cfg=json&latitude=${g.lat}&longitude=${g.lon}&tzid=${encodeURIComponent(tz)}&M=on&lg=s`), j = await r.json(); const it = j.items || [];
+    const f = c2 => it.find(x => x.category === c2); const cand = f('candles'), hav = f('havdalah'), par = f('parashat');
+    const o = { d: U.today(), city: g.label, cand: cand && cand.date, hav: hav && hav.date, par: par ? { t: par.title, h: par.hebrew, l: par.leyning && par.leyning.torah } : null }; U.ls.set(k, o); OS.request && OS.request(); return o; })().catch(() => null).finally(() => { HB = null; }); return HB; };
+const moon = d => { const jd = new Date(d + 'T12:00Z').getTime() / 864e5 + 2440587.5, age = ((jd - 2451550.1) / 29.530588853) % 1; return age < 0 ? age + 1 : age; };
+const nextPhase = (target) => { let d = U.today(); for (let i = 0; i < 31; i++) { const a = moon(d), b = moon(U.addDays(d, 1)); if ((target === .5 && a <= .5 && b > .5) || (target === 0 && a > b)) return { d: U.addDays(d, a > b || target === .5 ? 1 : 0), i: i + 1 }; d = U.addDays(d, 1); } return null; };
+const hm = s => { if (!s) return ''; const x = new Date(s); return isNaN(x) ? '' : x.toLocaleTimeString(OS.loc ? OS.loc() : 'pt-PT', { hour: '2-digit', minute: '2-digit' }); };
+const dayN = s => { if (!s) return ''; const x = new Date(s); return isNaN(x) ? '' : x.toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long' }); };
+const calDate = cal => { try { return new Intl.DateTimeFormat((OS.loc ? OS.loc() : 'pt-PT') + '-u-ca-' + cal, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()); } catch (e) { return ''; } };
+R.panel = () => { const r = id(), fam = (REL[r] || {}).fam;
+  if (fam === 'islam') { const s = U.ls.get('os2salah', null); salah(); const now = new Date().toTimeString().slice(0, 5);
+    if (!s || s.d !== U.today()) return `<div class="pn rl-pn"><div class="pn-h"><h3>${UI.ic('clock')}Horários de oração</h3></div><p class="mut">A calcular os horários para a tua cidade…</p></div>`;
+    const nx = Object.keys(SAL).filter(k => k !== 'Sunrise').find(k => s.t[k] > now);
+    return `<div class="pn rl-pn"><div class="pn-h"><h3>${UI.ic('clock')}Horários de oração · ${esc(s.city || '')}</h3><span class="mut" style="font-size:12px">${esc(calDate('islamic-umalqura') || s.hijri)}</span></div>
+      <div class="rl-times">${Object.keys(SAL).map(k => `<div class="${k === nx ? 'on' : ''} ${s.t[k] < now && k !== nx ? 'past' : ''}"><small>${esc(SAL[k])}</small><b>${esc(s.t[k])}</b></div>`).join('')}</div>
+      <div class="rl-qibla"><span class="rl-arrow" style="--a:${s.q}deg" aria-hidden="true">↑</span><span>Qibla: <b>${s.q}°</b> a partir do norte (na direção de Meca)</span></div>
+      <small class="mut">Método da Liga Muçulmana Mundial · aladhan.com. Confirma com a tua mesquita.</small></div>`; }
+  if (fam === 'judaica') { const s = U.ls.get('os2shab', null); shabbat(); const hd = calDate('hebrew');
+    if (!s || s.d !== U.today()) return `<div class="pn rl-pn"><div class="pn-h"><h3>${UI.ic('star')}Shabat</h3><span class="mut" style="font-size:12px">${esc(hd)}</span></div><p class="mut">A procurar os horários para a tua cidade…</p></div>`;
+    const lr = s.par && s.par.l ? s.par.l.split(/[-–]/)[0].trim() : '', m = lr.match(/^([1-2]?\s?[A-Za-z]+)\s+(\d+)/), BK = { Genesis: 'GEN', Exodus: 'EXO', Leviticus: 'LEV', Numbers: 'NUM', Deuteronomy: 'DEU' }, go = m && BK[m[1]] ? BK[m[1]] + '.' + m[2] : '';
+    return `<div class="pn rl-pn"><div class="pn-h"><h3>${UI.ic('star')}Shabat · ${esc(s.city || '')}</h3><span class="mut" style="font-size:12px">${esc(hd)}</span></div>
+      <div class="rl-times">${s.cand ? `<div><small>Acender as velas (${esc(dayN(s.cand))})</small><b>${esc(hm(s.cand))}</b></div>` : ''}${s.hav ? `<div><small>Havdalá (${esc(dayN(s.hav))})</small><b>${esc(hm(s.hav))}</b></div>` : ''}</div>
+      ${s.par ? `<p style="margin:8px 0 0">Parashá da semana: <b>${esc(s.par.t)}</b> <span dir="rtl">${esc(s.par.h || '')}</span>${s.par.l ? ` · <span class="mut">${esc(s.par.l)}</span>` : ''}</p>${go ? `<button class="btn xs" data-act="feGo" data-r="${go}" style="margin-top:6px">Ler a parashá</button>` : ''}` : ''}
+      <small class="mut" style="display:block;margin-top:6px">Horários de hebcal.com para a tua cidade.</small></div>`; }
+  if (fam === 'budista') { const a = moon(U.today()), full = nextPhase(.5), nw = nextPhase(0), ph = a < .03 || a > .97 ? 'Lua nova' : Math.abs(a - .5) < .03 ? 'Lua cheia' : a < .5 ? 'Lua crescente' : 'Lua minguante', up = /cheia|nova/.test(ph);
+    return `<div class="pn rl-pn"><div class="pn-h"><h3>${UI.ic('sun')}Uposatha</h3><span class="mut" style="font-size:12px">${esc(ph)}</span></div><div class="rl-moon" aria-hidden="true"><i style="--x:${(a < .5 ? -a * 200 : (1 - a) * 200).toFixed(1)}%"></i></div>
+      <p style="margin:6px 0 0">${up ? '<b>Hoje é dia de Uposatha</b>: um bom dia para meditar mais, guardar os preceitos e ouvir o Dhamma.' : `Próxima lua cheia: <b>${full ? U.fmtD(full.d) : '—'}</b>${full ? ` (daqui a ${full.i} dias)` : ''} · lua nova: ${nw ? U.fmtD(nw.d) : '—'}.`}</p></div>`; }
+  if (fam === 'afro') { const os = orixaToday();
+    return `<div class="pn rl-pn rl-orixa"><div class="pn-h"><h3>${UI.ic('star')}Orixá do dia</h3><span class="mut" style="font-size:12px">${esc(new Date().toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long' }))}</span></div>
+      ${os.map(o => `<div class="rl-ox"><b>${esc(o.n)}</b><span class="rl-sd">${esc(o.s)}</span><small class="mut">Cores: ${esc(o.c)} · ${esc(o.e)}</small></div>`).join('')}
+      <small class="mut">Os dias de cada Orixá variam de casa para casa; segue sempre o que aprendeste no teu terreiro.</small></div>`; }
+  return ''; };
+
+/* ---------- escolher a religião (Definições e questionário) ---------- */
+const areas = () => OS.one('areas');
+R.set = (r, quiet) => { if (!REL[r]) return; const c = cfg(), prev = c.rel; if (prev === r) return; c.rel = r; c.word = null; c.vodx = null; c.plan = ''; OS.touch('faith');
+  // "nenhuma" tira a aba Fé do menu; escolher uma religião depois de "nenhuma" volta a pô-la
+  try { const h = new Set((areas() || {}).hide || []); if (r === 'nenhuma') h.add('fe'); else if (prev === 'nenhuma' || !quiet) h.delete('fe'); if (OS.Areas) OS.Areas.set([...h]); else { areas().hide = [...h]; OS.touch('areas'); } } catch (e) { }
+  OS.emit && OS.emit('rel', r);
+  if (!quiet) UI.toast(r === 'nenhuma' ? 'A aba Fé saiu do menu. Podes voltar a pô-la aqui.' : 'A aba Fé agora é ' + R.name(r).toLowerCase(), 'pos'); OS.request && OS.request(); };
+A.relSet = b => R.set(b.value || b.dataset.v);
+document.addEventListener('change', e => { const el = e.target; if (el && el.dataset && el.dataset.rel === 'set') R.set(el.value); });
+R.select = (cur = cfg().rel, attr = 'data-rel="set"') => `<select class="field" ${attr} aria-label="Religião">${R.chosen() || cur ? '' : '<option value="">Escolhe…</option>'}${ORD.map(k => `<option value="${k}" ${k === cur ? 'selected' : ''}>${REL[k].s} ${esc(REL[k].n)}</option>`).join('')}</select>`;
+OS.on && OS.on('ready', () => { const o = OS.views.definicoes; if (!o || o._rl) return; OS.views.definicoes = sub => { const h = o(sub); if (String(sub || '') !== '') return h;
+  const panel = `<div class="pn" id="relSet"><div class="pn-h"><h3>${UI.ic('heart')}Fé e religião</h3><span class="mut" style="font-size:12px">${esc(R.chosen() ? R.name() : 'por escolher')}</span></div>
+    <p class="mut" style="margin:0 0 10px">A aba Fé muda conforme a tua religião: o livro sagrado (na tua língua), as orações, a prática guiada, os planos de leitura e a IA. Podes mudar quando quiseres; o que já escreveste fica guardado.</p>${R.select()}</div>`;
+  const i = h.indexOf('<div class="pn" id="onbSet"'); return i > 0 ? h.slice(0, i) + panel + h.slice(i) : h + panel; }; OS.views.definicoes._rl = 1; });
+})();
+
+</script>
+<script>
 /* PRUMO — Fé & Devoção: uma parte dedicada a Deus.
    Hoje com Deus (versículo do dia, como estás, uma palavra para hoje pela IA com base no teu dia, leitura, oração guiada) ·
    Bíblia completa (Bíblia Livre 2018 e Almeida 1911, sem internet), com pesquisa, destaques e notas ·
@@ -9143,27 +9481,64 @@ OS.S.prayers = { label: 'Pedido de oração', title: r => r.title, fields: [
   { k: 'answer', l: 'Como Deus respondeu (testemunho)', t: 'area', rows: 3, show: r => r.status === 'Respondida' }, { k: 'answeredAt', l: 'Respondida em', t: 'date', show: r => r.status === 'Respondida' }],
   defaults: () => ({ date: today(), status: 'A orar', who: 'Eu' }), after: (r) => { if (r.status === 'Respondida' && !r.answeredAt) OS.upd('prayers', r.id, { answeredAt: today() }, { silent: true }); } };
 
-/* ---------- Bíblia ---------- */
-const VERS = { livre: 'Bíblia Livre (2018)', almeida: 'Almeida (1911)' };
-const BIB = {}, BL = {};
-const loadBible = v => BL[v] || (BL[v] = fetch('vendor/biblia/' + v + '.json').then(r => r.json()).then(d => { d.idx = {}; d.b.forEach((b, i) => d.idx[b[0]] = i); BIB[v] = d; OS.request(); return d; }).catch(e => { delete BL[v]; throw e; }));
-const ver = () => BIB[cfg().ver] ? cfg().ver : BIB.livre ? 'livre' : cfg().ver || 'livre';
-const bible = () => { const v = cfg().ver || 'livre'; if (!BIB[v]) loadBible(v).catch(() => { }); return BIB[v] || BIB.livre || null; };
+/* ---------- a religião (js/religiao.js) ---------- */
+const Rel = OS.Rel;
+const RM = () => Rel.meta(), fam = () => RM().fam, xian = () => fam() === 'crista', noBook = () => !Rel.versions().length;
+// quem fala com a pessoa na IA, e quem é "Deus" em cada fé
+const PER = { catolica: 'um conselheiro espiritual católico, fiel à Bíblia e à tradição da Igreja', evangelica: 'um conselheiro devocional cristão, fiel à Bíblia', ortodoxa: 'um conselheiro espiritual cristão ortodoxo, fiel às Escrituras e aos Padres da Igreja',
+  espirita: 'um orientador espírita, fiel a O Evangelho segundo o Espiritismo de Allan Kardec', islamica: 'um conselheiro espiritual muçulmano, fiel ao Alcorão e à Sunnah, respeitoso', judaica: 'um conselheiro espiritual judeu, fiel ao Tanakh e à tradição judaica',
+  hindu: 'um guia espiritual hindu, fiel à Bhagavad Gita e à tradição védica', budista: 'um professor do Dhamma, fiel aos ensinamentos do Buda', afro: 'um conselheiro espiritual de Umbanda e Candomblé, respeitoso das tradições de cada terreiro',
+  espiritual: 'um guia de vida contemplativa, sem religião, inspirado no Tao Te Ching, nas Meditações de Marco Aurélio e na sabedoria das tradições' };
+const GOD = { crista: 'Deus', espirita: 'Deus', islam: 'Allah', judaica: 'HaShem', hindu: 'o Divino', afro: 'os teus Orixás' };
+const TO = { espirita: 'a Deus', islam: 'a Allah', judaica: 'a HaShem', hindu: 'ao Divino', afro: 'aos teus Orixás' };
+const TIME = { crista: 'Tempo com Deus', islam: 'Tempo com Allah', judaica: 'Tempo com HaShem', espirita: 'Tempo de prece', afro: 'Tempo de prece', hindu: 'Tempo de prática' };
+const REQ1 = { islam: 'Dua (súplica)', judaica: 'Pedido (tefilá)', espirita: 'Prece', hindu: 'Intenção', budista: 'Intenção', espiritual: 'Intenção', afro: 'Pedido' };
+const quiet = () => ['budista', 'espiritual'].includes(fam());   // sem "orar": intenções que se cumprem
+const UNIT = { QUR: ['surata', 'suratas'], MED: ['livro', 'livros'], ESI: ['parte', 'partes'] };
+const unit = (id, pl) => (UNIT[id] || ['capítulo', 'capítulos'])[pl ? 1 : 0];
+const readTxt = id => 'Ler ' + (id === 'QUR' ? 'a surata' : id === 'MED' ? 'o livro' : id === 'ESI' ? 'a parte' : 'o capítulo');
+/* devocional (cristãos) ou diário (as outras), com as palavras de cada fé */
+const DV = () => { const f = fam(); if (f === 'crista') return { tab: 'Meu devocional', h: 'Devocional de hoje', m: 'Método <b>SOAP</b>: lê a <b>Escritura</b>, escreve a tua <b>Observação</b>, a <b>Aplicação</b> à tua vida e termina em <b>Oração</b>.', ref: 'Escritura — o que vais ler hoje', key: ['O versículo que mais me tocou', 'Copia ou escreve o versículo'], obs: ['Observação — o que o texto diz?', 'O que aprendo sobre Deus, sobre mim, sobre a vida?'], app: ['Aplicação — o que Deus me pede hoje?', 'Uma atitude concreta para hoje…'], pr: ['Oração', 'Fala com Deus sobre isto…'], list: 'Os meus devocionais', first: 'O teu primeiro devocional fica guardado aqui.' };
+  const pr = { islam: ['Dua (súplica)', 'Fala com Allah sobre isto…'], judaica: ['Tefilá (oração)', 'Fala com HaShem sobre isto…'], espirita: ['Prece', 'Uma prece simples, do coração…'], hindu: ['Prece ou mantra', 'Oferece isto ao Divino…'], afro: ['Prece', 'Fala com os teus Orixás sobre isto…'] }[f] || ['Intenção', 'Que intenção levas para hoje?'];
+  return { tab: 'Meu diário', h: 'Diário de hoje', m: 'Lê um trecho, escreve o que <b>observas</b>, o que vais <b>aplicar</b> hoje e termina com uma <b>' + esc(pr[0].split(' ')[0].toLowerCase()) + '</b>.', ref: 'Leitura — o que vais ler hoje', key: ['O que mais me tocou', 'Copia ou escreve o trecho'], obs: ['Observação — o que o texto diz?', 'O que aprendo sobre mim e sobre a vida?'], app: ['Aplicação — o que levo para hoje?', 'Uma atitude concreta para hoje…'], pr, list: 'O meu diário', first: 'O teu primeiro dia de diário fica guardado aqui.' }; };
+const relabel = () => { const d = DV(), F = OS.S.devos.fields, f = k => F.find(x => x.k === k); OS.S.devos.label = xian() ? 'Devocional' : 'Diário'; OS.S.devos.title = r => OS.S.devos.label + ' · ' + U.fmtD(r.date);
+  f('ref').l = xian() ? 'Leitura (passagem)' : 'Leitura'; f('key').l = d.key[0]; f('obs').l = d.obs[0]; f('app').l = d.app[0]; f('prayer').l = d.pr[0];
+  OS.S.prayers.label = xian() ? 'Pedido de oração' : REQ1[fam()] || 'Pedido'; const a = OS.S.prayers.fields.find(x => x.k === 'answer'); if (a) a.l = xian() ? 'Como Deus respondeu (testemunho)' : quiet() ? 'Como se cumpriu' : 'Como foi respondida'; };
+
+/* ---------- o livro sagrado (Bíblia, Torá, Alcorão, Gita, Dhammapada, Evangelho espírita, Tao) ---------- */
+const LIB = {}, LP = {}, LAST = {};
+const specs = () => Rel.versions();
+const legacyVer = () => Rel.id() === 'evangelica' && Rel.lang() === 'pt';   // Bíblia Livre / Almeida, como sempre foi
+const curSpec = () => { const L = specs(); if (!L.length) return null; const c = cfg(), want = legacyVer() ? c.ver : (c.vv || {})[Rel.id() + '.' + Rel.lang()]; return L.find(x => x.id === want) || L[0]; };
+const keyOf = s => Rel.id() + '|' + s.id + '|' + s.f.join('+');
+const loadLib = s => { const k = keyOf(s), r = Rel.id(); return LP[k] || (LP[k] = Rel.assemble(s).then(L => { LIB[k] = L; LAST[r] = L; OS.request(); return L; }).catch(e => { delete LP[k]; throw e; })); };
+const bible = () => { const s = curSpec(); if (!s) return null; const k = keyOf(s); if (!LIB[k]) { loadLib(s).catch(() => { }); return LAST[Rel.id()] || null; } return LIB[k]; };
+const loadBible = v => { const s = specs().find(x => x.id === v) || curSpec(); return s ? loadLib(s) : Promise.reject(new Error('sem livro')); };
+const vname = () => { const B = bible(); return B ? B.n : ''; };
 const FB = OS.Faith = { loadBible, bible };
 const bookOf = id => { const B = bible(); return B ? B.b[B.idx[id]] : null; };
 const parseRef = r => { const m = String(r || '').match(/^([1-3]?[A-Z]{2,3})\s+(\d+)(?::(\d+)(?:-(\d+))?)?$/); return m ? { b: m[1], c: +m[2], v1: m[3] ? +m[3] : null, v2: m[4] ? +m[4] : m[3] ? +m[3] : null } : null; };
-const label = R => { const b = bookOf(R.b); return (b ? b[1] : R.b) + ' ' + R.c + (R.v1 ? ':' + R.v1 + (R.v2 && R.v2 !== R.v1 ? '-' + R.v2 : '') : ''); };
-const verses = R => { const b = bookOf(R.b); if (!b) return []; const ch = b[3][R.c - 1] || []; const v1 = R.v1 || 1, v2 = R.v2 || (R.v1 ? R.v1 : ch.length); return ch.slice(v1 - 1, v2).map((t, i) => [v1 + i, t]); };
+const offOf = (b, c) => b && b[5] && b[5][c - 1] ? b[5][c - 1] - 1 : 0;   // Dhammapada: versos numerados de 1 a 423 ao longo dos capítulos
+const titleOf = (b, c) => { const t = b && b[4] && b[4][c - 1]; return t && !/^\d+$/.test(t) ? t : ''; };
+const label = R => { if (!R) return ''; const b = bookOf(R.b), o = offOf(b, R.c); if (o && R.v1) return b[1] + ' ' + (o + R.v1) + (R.v2 && R.v2 !== R.v1 ? '-' + (o + R.v2) : '');
+  return (b ? b[1] : R.b) + ' ' + R.c + (R.v1 ? ':' + R.v1 + (R.v2 && R.v2 !== R.v1 ? '-' + R.v2 : '') : ''); };
+const verses = R => { if (!R) return []; const b = bookOf(R.b); if (!b) return []; const ch = b[3][R.c - 1] || [], o = offOf(b, R.c); const v1 = R.v1 || 1, v2 = R.v2 || (R.v1 ? R.v1 : ch.length); return ch.slice(v1 - 1, v2).map((t, i) => [o + v1 + i, t]).filter(x => x[1] && String(x[1]).trim()); };
 const textOf = R => verses(R).map(x => x[1]).join(' ');
+const dirA = () => { const B = bible(); return B && B.dir ? ` dir="${B.dir}"` : ''; };
+const preC = () => { const B = bible(); return B && B.pre ? ' fe-pre' : ''; };
 FB.parseRef = parseRef; FB.textOf = textOf; FB.label = label;
-/* passagem escrita por extenso: "Romanos 8", "Rm 8:28", "1 Coríntios 13:4-7", "sl 23" */
-FB.parseHuman = s => { const B = bible(); if (!B) return null; const m = norm(s).trim().match(/^([1-3]?\s*[a-zÀ-ſ. ]+?)\s*(\d+)(?:[:.,](\d+)(?:\s*-\s*(\d+))?)?$/); if (!m) return null; const nm = m[1].replace(/[.\s]/g, '');
-  const b = B.b.find(x => norm(x[1]).replace(/\s/g, '') === nm) || B.b.find(x => norm(x[2]).replace(/\s/g, '') === nm) || B.b.find(x => norm(x[1]).replace(/\s/g, '').startsWith(nm) && nm.length >= 3);
+/* passagem escrita por extenso: "Romanos 8", "Rm 8:28", "1 Coríntios 13:4-7", "sl 23"; num livro só (Alcorão, Gita…): "2:255", "18" */
+const nms = x => [x[1], x[2] || ''].concat(String(x[1]).match(/\(([^)]+)\)/) ? [RegExp.$1, x[1].replace(/\s*\(.*\)\s*/, '')] : []).map(s => norm(s).replace(/[.\s]/g, '')).filter(Boolean);
+FB.parseHuman = s => { const B = bible(); if (!B) return null; const q = norm(s).trim(), m0 = q.match(/^(\d+)(?:[:.,](\d+)(?:\s*-\s*(\d+))?)?$/);
+  if (m0 && B.b.length <= 2) { const b = B.b.reduce((a, x) => x[3].length > a[3].length ? x : a, B.b[0]); if (+m0[1] < 1 || +m0[1] > b[3].length) return null; return { b: b[0], c: +m0[1], v1: m0[2] ? +m0[2] : null, v2: m0[3] ? +m0[3] : m0[2] ? +m0[2] : null }; }
+  const m = q.match(/^([1-3]?\s*[a-zÀ-ſ.'’ -]+?)\s*(\d+)(?:[:.,](\d+)(?:\s*-\s*(\d+))?)?$/); if (!m) return null; const nm = m[1].replace(/[.\s]/g, '');
+  const b = B.b.find(x => norm(x[1]).replace(/\s/g, '') === nm) || B.b.find(x => norm(x[2]).replace(/\s/g, '') === nm) || B.b.find(x => nms(x).includes(nm)) || B.b.find(x => nms(x).some(n => n.startsWith(nm)) && nm.length >= 3);
   if (!b || +m[2] > b[3].length) return null; return { b: b[0], c: +m[2], v1: m[3] ? +m[3] : null, v2: m[4] ? +m[4] : m[3] ? +m[3] : null }; };
 const hashDay = d => { let h = 0; for (const ch of d) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
-FB.vod = (d = today()) => parseRef(FD.vod[hashDay(d + 'oc') % FD.vod.length]);
+FB.vod = (d = today()) => { const r = Rel.daily(bible(), FD, d); return r ? parseRef(r) : null; };
 const crisis = t => /suic|me matar|quero morrer|acabar com (a minha|tudo)|n[aã]o quero (mais )?viver|n[aã]o aguento mais viver|tirar a (minha )?vida/i.test(t || '');
-const HELP = `<div class="fe-help"><b>Não estás sozinho.</b> Se estás a pensar em fazer-te mal, fala já com alguém: <b>SOS Voz Amiga</b> 213 544 545 · 912 802 669 · <b>SNS 24</b> 808 24 24 24 (opção 4, aconselhamento psicológico) · emergência <b>112</b>. No Brasil: <b>CVV 188</b>. Deus está perto dos que têm o coração quebrantado (Salmos 34:18), e há pessoas prontas para te ouvir agora.</div>`;
+const HELP = () => `<div class="fe-help"><b>Não estás sozinho.</b> Se estás a pensar em fazer-te mal, fala já com alguém: <b>SOS Voz Amiga</b> 213 544 545 · 912 802 669 · <b>SNS 24</b> 808 24 24 24 (opção 4, aconselhamento psicológico) · emergência <b>112</b>. No Brasil: <b>CVV 188</b>. ${xian() ? 'Deus está perto dos que têm o coração quebrantado (Salmos 34:18), e há' : 'Há'} pessoas prontas para te ouvir agora.</div>`;
+OS.on('rel', () => { OS.ui.bRef = ''; OS.ui.bSel = []; OS.ui.bBook = ''; OS.ui.bPick = false; SRES = null; SQ = ''; relabel(); });
 
 /* ---------- registo do dia ---------- */
 const todayDevo = () => OS.all('devos').find(d => d.date === today());
@@ -9182,77 +9557,91 @@ const dayContext = () => { const t = today(), d = todayDevo() || {}, safe = f =>
     treinos_ultimos_7_dias: safe(() => OS.all('workouts').filter(w => w.date >= U.addDays(t, -7)).length), corridas_7_dias: safe(() => OS.all('runs').filter(r => r.date >= U.addDays(t, -7)).length),
     alertas_da_vida: safe(() => OS.Intel.alerts().slice(0, 6).map(a => a.title + (a.detail ? ' — ' + a.detail : ''))),
     devocional: { dias_seguidos: streak().s, pedidos_de_oracao_abertos: OS.all('prayers').filter(p => p.status !== 'Respondida').map(p => p.title).slice(0, 5) } }; };
-const pickByMood = (moods, seed) => { const pool = (moods || []).flatMap(m => FD.mood[m] || []); const list = pool.length ? pool : FD.vod; return parseRef(list[hashDay(today() + (seed || '')) % list.length]); };
+const pickByMood = (moods, seed) => { const f = fam();
+  if (f === 'crista' || f === 'judaica') { let pool = (moods || []).flatMap(m => FD.mood[m] || []); if (f === 'judaica') pool = pool.filter(r => Rel.ORDER_T.includes(r.split(' ')[0]));
+    if (pool.length || f === 'crista') { const list = pool.length ? pool : FD.vod; return parseRef(list[hashDay(today() + (seed || '')) % list.length]); } }
+  const r = Rel.daily(bible(), FD, today() + (seed || '') + (moods || []).join()); return r ? parseRef(r) : null; };
+// as mesmas palavras, sem falar de Deus (para quem não é cristão)
+const PHR0 = { ansioso: 'Larga o que não controlas. O amanhã cuida de si; hoje só precisas do próximo passo.', cansado: 'Descansar também é sabedoria. Hoje, recebe em vez de provar.', triste: 'A tristeza passa como as nuvens. Sê gentil contigo hoje.', 'com medo': 'O medo fala alto, mas não tem a última palavra. Não estás sozinho nisto.', sobrecarregado: 'Não tens de carregar tudo hoje. Faz a próxima coisa certa e deixa o resto para depois.', desanimado: 'Cada pequeno passo conta. O que começaste ainda pode florescer.', sozinho: 'Estás ligado a muito mais do que vês. Procura hoje uma pessoa.', culpado: 'Reconhecer o erro já é começar de novo. Repara o que puderes e segue.', tentado: 'Há sempre uma saída. Escolhe hoje o caminho de que te vais orgulhar.', irritado: 'Antes de responderes, respira. A calma também é força.', confuso: 'Faz silêncio e pergunta com calma: a resposta costuma vir devagar.', grato: 'Agradecer abre os olhos para tudo o que já recebeste.', alegre: 'Partilha a tua alegria: ela cresce quando se dá.', 'em paz': 'Guarda esta paz: ela é presente, não conquista.', motivado: 'Faz tudo de coração; os resultados vêm a seguir.', 'preocupado com dinheiro': 'Faz hoje o que está ao teu alcance e não deixes o medo decidir por ti.', 'pressionado nos estudos': 'Estuda com cuidado e descansa: tu não és uma nota.', doente: 'O teu corpo pede cuidado. Descansa e deixa-te ajudar.' };
+const DAY0 = () => ({ crista: 'Deus está contigo neste dia — em cada tarefa, em cada conversa, em cada silêncio.', islam: 'Allah está perto de ti neste dia — em cada tarefa, em cada conversa, em cada silêncio.', judaica: 'HaShem está contigo neste dia — em cada tarefa, em cada conversa, em cada silêncio.', espirita: 'Os bons Espíritos estão contigo neste dia — em cada tarefa, em cada conversa, em cada silêncio.', afro: 'Que os teus Orixás te guiem neste dia — em cada tarefa, em cada conversa, em cada silêncio.' }[fam()] || 'Este dia é uma oportunidade — em cada tarefa, em cada conversa, em cada silêncio.');
 const PHR = { ansioso: 'Entrega a Deus o que não controlas. Ele cuida do amanhã; tu só precisas do passo de hoje.', cansado: 'Descansar também é fé. Hoje, recebe em vez de provar.', triste: 'A tristeza não te afasta de Deus: Ele está mais perto do coração quebrantado.', 'com medo': 'O medo fala alto, mas não tem a última palavra. Não estás sozinho nisto.', sobrecarregado: 'Não tens de carregar tudo hoje. Faz a próxima coisa certa e deixa o resto com Ele.', desanimado: 'O que Deus começou em ti, Ele não abandona a meio.', sozinho: 'Mesmo quando ninguém vê, Deus vê-te pelo nome.', culpado: 'Arrepender-se é voltar para casa — e a porta está aberta.', tentado: 'Há sempre uma saída. Hoje, escolhe a porta que Deus abre.', irritado: 'Antes de responderes, respira e ora. A mansidão também é força.', confuso: 'Pede sabedoria: Deus dá a quem pede, sem te humilhar por perguntares.', grato: 'Agradecer abre os olhos para tudo o que já recebeste.', alegre: 'Que a tua alegria hoje seja também louvor.', 'em paz': 'Guarda esta paz: ela é presente, não conquista.', motivado: 'Faz tudo de coração, como para Deus — os resultados são d\'Ele.', 'preocupado com dinheiro': 'Busca primeiro o Reino; Deus conhece cada conta que tens.', 'pressionado nos estudos': 'Estuda com diligência e descansa em Deus: a tua identidade não é uma nota.', doente: 'O teu corpo está cansado, mas a tua vida está nas mãos d\'Ele.' };
 let WB = false, WERR = '';
-A.feWord = async () => { if (WB) return; const d = todayDevo() || {}, ctx = dayContext();
-  if (!(OS.AI && OS.AI.key())) { const R = pickByMood(d.moods, 'w'); cfg().word = { date: today(), ref: R.b + ' ' + R.c + ':' + R.v1 + (R.v2 !== R.v1 ? '-' + R.v2 : ''), frase: (d.moods || []).map(m => PHR[m]).filter(Boolean)[0] || 'Deus está contigo neste dia — em cada tarefa, em cada conversa, em cada silêncio.', porque: (d.moods || []).length ? 'Escolhido para quem hoje se sente ' + d.moods.join(', ') + '.' : 'O versículo do dia.', ai: false }; OS.touch('faith'); return; }
+const refStr = R => R ? R.b + ' ' + R.c + ':' + (R.v1 || 1) + (R.v2 && R.v2 !== R.v1 ? '-' + R.v2 : '') : '';
+// os códigos dos livros que a IA pode escolher (os da biblioteca instalada)
+const codes = () => { const B = bible(); if (!B) return ''; if (B.b.length <= 6) return B.b.map(b => `${b[0]} (${b[1]}, ${b[3].length} ${unit(b[0], 1)})`).join(', ');
+  return 'código USFM de 3 letras (' + (fam() === 'judaica' ? 'GEN, EXO, LEV, NUM, DEU, JOS, 1SA, 2SA, 1KI, ISA, JER, EZK, PSA, PRO, JOB, ECC, RUT, LAM…' : 'GEN, EXO, PSA, PRO, ISA, MAT, MRK, LUK, JHN, ACT, ROM, 1CO, 2CO, GAL, EPH, PHP, COL, 1TH, 2TI, HEB, JAS, 1PE, 1JN, REV' + (B.idx.SIR != null ? ', TOB, WIS, SIR, BAR, 1MA' : '') + '…') + ')'; };
+const bookName = () => { const B = bible(); return B ? B.b.length > 2 ? RM().book : B.b[B.b.length - 1][1] : ''; };
+const whoAI = (ryan, prep) => OS.whoCtx(ryan, prep) + (Rel.chosen() && OS.Acc && OS.Acc.pub ? ' — ' + RM().who : '');
+A.feWord = async () => { if (WB) return; const d = todayDevo() || {}, ctx = dayContext(), nb = noBook();
+  if (!(OS.AI && OS.AI.key())) { const R = nb ? null : pickByMood(d.moods, 'w'); cfg().word = { date: today(), ref: refStr(R), frase: (d.moods || []).map(m => (xian() ? PHR : PHR0)[m]).filter(Boolean)[0] || DAY0(), porque: (d.moods || []).length ? 'Escolhido para quem hoje se sente ' + d.moods.join(', ') + '.' : xian() ? 'O versículo do dia.' : 'Para o teu dia.', ai: false }; OS.touch('faith'); return; }
   WB = true; WERR = ''; OS.request();
-  try { const o = await OS.AI.json([{ text: `És um conselheiro devocional cristão, fiel à Bíblia, caloroso e sem julgamentos, a falar com ${OS.whoCtx('o Ryan (brasileiro, vive em Aveiro, Portugal, estudante)')}. Com base em como ele está hoje e no que a vida dele mostra (dados do Prumo abaixo), escolhe a palavra de Deus que ele provavelmente PRECISA de ouvir hoje.
+  const x = xian(), god = GOD[fam()] || '';
+  try { const o = await OS.AI.json([{ text: `És ${PER[Rel.id()] || PER.evangelica}, caloroso e sem julgamentos, a falar com ${whoAI('o Ryan (brasileiro, vive em Aveiro, Portugal, estudante)')}. Com base em como ele está hoje e no que a vida dele mostra (dados do Prumo abaixo), escolhe ${x ? 'a palavra de Deus' : nb ? 'a palavra de sabedoria da tua tradição' : 'o texto de ' + bookName()} que ele provavelmente PRECISA de ouvir hoje.
 DADOS DE HOJE: ${JSON.stringify(ctx)}
-Regras: usa versículos reais e adequados ao contexto (não tires versículos do contexto para prometer riqueza ou sucesso); não inventes factos sobre a vida dele; português de Portugal, 2.ª pessoa (tu); a frase deve ser curta e memorável; se houver sinais de sofrimento grave ou risco, preenche "alerta" com uma mensagem de cuidado.
-Responde APENAS JSON: {"frase":"máx 25 palavras","ref":{"livro":"código USFM de 3 letras (GEN, EXO, PSA, PRO, ISA, MAT, MRK, LUK, JHN, ACT, ROM, 1CO, 2CO, GAL, EPH, PHP, COL, 1TH, 2TI, HEB, JAS, 1PE, 1JN, REV…)","cap":numero,"v1":numero,"v2":numero},"porque":"1–2 frases a ligar a palavra ao dia dele, concreto","reflexao":"3 a 5 frases","oracao":"oração curta em 1.ª pessoa","passo":"um passo prático de fé para hoje","alerta":null}` }], .4);
-    const r = o.ref || {}, R = { b: String(r.livro || '').toUpperCase(), c: +r.cap, v1: +r.v1 || 1, v2: +r.v2 || +r.v1 || 1 }; const ok = bookOf(R.b) && verses(R).length && verses(R).length <= 8;
-    const RR = ok ? R : pickByMood(d.moods, 'w');
-    cfg().word = { date: today(), ref: RR.b + ' ' + RR.c + ':' + RR.v1 + (RR.v2 !== RR.v1 ? '-' + RR.v2 : ''), frase: String(o.frase || '').slice(0, 220), porque: String(o.porque || '').slice(0, 400), reflexao: String(o.reflexao || '').slice(0, 1200), oracao: String(o.oracao || '').slice(0, 800), passo: String(o.passo || '').slice(0, 300), alerta: o.alerta ? String(o.alerta).slice(0, 400) : '', ai: true, fixed: !ok }; OS.touch('faith'); }
+Regras: ${nb ? 'não cites livros nem inventes citações; fala a partir da sabedoria da tradição' : 'usa ' + (x ? 'versículos' : 'passagens') + ' reais e adequad' + (x ? 'os' : 'as') + ' ao contexto (não tires ' + (x ? 'versículos' : 'passagens') + ' do contexto para prometer riqueza ou sucesso)'}; não inventes factos sobre a vida dele; português de Portugal, 2.ª pessoa (tu); a frase deve ser curta e memorável; se houver sinais de sofrimento grave ou risco, preenche "alerta" com uma mensagem de cuidado.
+Responde APENAS JSON: {"frase":"máx 25 palavras",${nb ? '' : `"ref":{"livro":"${codes()}","cap":numero,"v1":numero,"v2":numero},`}"porque":"1–2 frases a ligar a palavra ao dia dele, concreto","reflexao":"3 a 5 frases","oracao":"${x ? 'oração curta em 1.ª pessoa' : god ? 'prece curta em 1.ª pessoa, dirigida a ' + god : 'intenção curta em 1.ª pessoa'}","passo":"um passo prático ${x ? 'de fé ' : ''}para hoje","alerta":null}` }], .4);
+    const r = o.ref || {}, R = nb ? null : { b: String(r.livro || '').toUpperCase(), c: +r.cap, v1: +r.v1 || 1, v2: +r.v2 || +r.v1 || 1 }; const ok = !!R && bookOf(R.b) && verses(R).length && verses(R).length <= 8;
+    const RR = nb ? null : ok ? R : pickByMood(d.moods, 'w');
+    cfg().word = { date: today(), ref: refStr(RR), frase: String(o.frase || '').slice(0, 220), porque: String(o.porque || '').slice(0, 400), reflexao: String(o.reflexao || '').slice(0, 1200), oracao: String(o.oracao || '').slice(0, 800), passo: String(o.passo || '').slice(0, 300), alerta: o.alerta ? String(o.alerta).slice(0, 400) : '', ai: true, fixed: !nb && !ok }; OS.touch('faith'); }
   catch (e) { WERR = e.message || 'A IA não respondeu.'; }
   WB = false; OS.request(); };
 
-/* ---------- planos de leitura ---------- */
-const NT0 = 39;
-const chaptersOf = ids => { const B = bible(); if (!B) return []; return ids.flatMap(id => { const b = B.b[B.idx[id]]; return b ? b[3].map((ch, i) => ({ r: id + '.' + (i + 1), n: ch.length })) : []; }); };
-const split = (list, days) => { const tot = U.sum(list, x => x.n), per = tot / days, out = []; let cur = [], acc = 0, k = 1; list.forEach(x => { cur.push(x.r); acc += x.n; if (acc >= per * k && out.length < days - 1) { out.push(cur); cur = []; k++; } }); if (cur.length) out.push(cur); return out; };
-const PLANS = { ano: ['Bíblia em 1 ano', 'Do Génesis ao Apocalipse, ~15 min por dia', () => { const B = bible(); return split(chaptersOf(B.b.map(b => b[0])), 365); }],
-  nt90: ['Novo Testamento em 90 dias', 'Os Evangelhos, Atos, as cartas e o Apocalipse', () => { const B = bible(); return split(chaptersOf(B.b.slice(NT0).map(b => b[0])), 90); }],
-  evang: ['Evangelhos em 30 dias', 'A vida de Jesus: Mateus, Marcos, Lucas e João', () => split(chaptersOf(['MAT', 'MRK', 'LUK', 'JHN']), 30)],
-  sp: ['Salmos e Provérbios em 31 dias', '5 Salmos e 1 Provérbio por dia', () => Array.from({ length: 31 }, (_, i) => [...Array.from({ length: 5 }, (_, k) => 'PSA.' + (i * 5 + k + 1)).filter(r => +r.split('.')[1] <= 150), 'PRO.' + (i + 1)])],
-  cartas: ['Cartas de Paulo em 40 dias', 'De Romanos a Filémon', () => split(chaptersOf(['ROM', '1CO', '2CO', 'GAL', 'EPH', 'PHP', 'COL', '1TH', '2TH', '1TI', '2TI', 'TIT', 'PHM']), 40)] };
-const SCH = {};
-const schedule = k => { if (!PLANS[k] || !bible()) return null; return SCH[k] || (SCH[k] = PLANS[k][2]()); };
+/* ---------- planos de leitura (os de cada fé, em js/religiao.js) ---------- */
+let PLB = null, PLV = {}, SCH = {};
+const plans = () => { const B = bible(); if (!B) return {}; if (PLB !== B) { PLB = B; PLV = Rel.plans(B); SCH = {}; } return PLV; };
+const schedule = k => { const P = plans(); if (!P[k]) return null; return SCH[k] || (SCH[k] = P[k][2]()); };
 const readSet = () => new Set(OS.all('bread').map(r => r.ref));
 const planToday = () => { const k = cfg().plan, S = k && schedule(k); if (!S) return null; const di = Math.max(0, Math.min(S.length - 1, U.diff(today(), cfg().planStart || today()))), rs = readSet();
   const done = S.flat().filter(r => rs.has(r)).length, total = S.flat().length, behind = S.slice(0, di).flat().filter(r => !rs.has(r)).length; return { k, di, day: S[di], done, total, behind, all: S }; };
 const refLabel = r => { const [b, c] = r.split('.'); const bk = bookOf(b); return (bk ? bk[1] : b) + ' ' + c; };
 const groupRefs = rs => { const out = []; rs.forEach(r => { const [b, c] = r.split('.'); const last = out[out.length - 1]; if (last && last.b === b && last.c2 === +c - 1) last.c2 = +c; else out.push({ b, c1: +c, c2: +c }); }); return out.map(g => { const bk = bookOf(g.b); return (bk ? bk[1] : g.b) + ' ' + g.c1 + (g.c2 !== g.c1 ? '–' + g.c2 : ''); }).join(', '); };
-A.fePlan = b => { const c = cfg(); c.plan = b.dataset.k; c.planStart = today(); OS.touch('faith'); UI.toast('Plano iniciado: ' + PLANS[b.dataset.k][0], 'pos'); };
+A.fePlan = b => { const c = cfg(); c.plan = b.dataset.k; c.planStart = today(); OS.touch('faith'); UI.toast('Plano iniciado: ' + plans()[b.dataset.k][0], 'pos'); };
 A.fePlanStop = () => UI.ask('Parar o plano de leitura?', 'O que já leste continua registado.', 'Parar', () => { cfg().plan = ''; OS.touch('faith'); });
 A.feRead = b => { const r = b.dataset.r; const ex = OS.all('bread').find(x => x.ref === r); if (ex) OS.del('bread', ex.id); else { OS.add('bread', { ref: r, date: today() }); devoSet('read', 1); UI.toast(refLabel(r) + ' lido ✓', 'pos'); } };
 A.feGo = b => { OS.setUI('bRef', b.dataset.r); OS.setUI('bSel', []); location.hash = 'fe.biblia'; };
 
 /* ---------- ecrã principal ---------- */
-const TABS = [['', 'Hoje com Deus'], ['biblia', 'Bíblia'], ['devocional', 'Meu devocional'], ['oracoes', 'Orações'], ['planos', 'Planos de leitura']];
-V.fe = sub => { bible(); const h = new Date().getHours(), nm = (OS.one('profile').short || OS.who());
-  return UI.head(`${(g => OS.Lang ? OS.Lang.t(g) : g)(h < 12 ? 'Bom dia' : h < 19 ? 'Boa tarde' : 'Boa noite')}, ${esc(nm)}`, 'Um tempo dedicado a Deus: a Palavra, a oração e o que Ele te diz hoje.', '', 'Fé & Devoção') + UI.tabs('fe', TABS, sub || '') + `<div class="fe">${(T[sub || ''] || T[''])()}</div>`; };
+const TABS = () => { const f = fam(), nb = noBook(); return [['', RM().hoje || 'Hoje com Deus']].concat(nb ? [] : [['biblia', RM().book || 'Livro']], [['devocional', DV().tab], ['oracoes', quiet() ? 'Práticas' : 'Orações']], nb ? [] : [['planos', 'Planos de leitura']]); };
+const relPick = () => `<div class="pn rl-pick"><div class="pn-h"><h3>${UI.ic('heart')}A tua fé</h3></div><p class="mut" style="margin:0 0 10px">Escolheste não ter a aba Fé. Se quiseres voltar a tê-la, escolhe a tua religião (ou espiritualidade sem religião):</p>${Rel.select('nenhuma')}</div>`;
+V.fe = sub => { relabel(); bible(); const h = new Date().getHours(), nm = (OS.one('profile').short || OS.who());
+  const head = UI.head(`${(g => OS.Lang ? OS.Lang.t(g) : g)(h < 12 ? 'Bom dia' : h < 19 ? 'Boa tarde' : 'Boa noite')}, ${esc(nm)}`, RM().sub || 'Um tempo dedicado a Deus: a Palavra, a oração e o que Ele te diz hoje.', '', xian() || !Rel.chosen() ? 'Fé & Devoção' : RM().s + ' ' + RM().n);
+  if (fam() === 'nenhuma') return head + relPick();
+  const tb = TABS(), s = tb.some(t => t[0] === (sub || '')) ? sub || '' : ''; return head + UI.tabs('fe', tb, s) + `<div class="fe fe-${esc(fam())}">${(T[s] || T[''])()}</div>`; };
 const T = {};
-const verseCard = (R, title, extra = '') => { const vs = verses(R); return `<div class="fe-v"><div class="eyebrow">${title}</div><blockquote>${vs.map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' ') || '…'}</blockquote><div class="fe-vr"><b>${esc(label(R))}</b><span class="mut">${esc(VERS[ver()])}</span></div>
-  <div class="row gap6" style="flex-wrap:wrap;margin-top:10px"><button class="btn xs" data-act="feGo" data-r="${R.b}.${R.c}">Ler o capítulo</button><button class="btn xs ghost" data-act="feCopy" data-ref="${R.b} ${R.c}:${R.v1 || 1}${R.v2 && R.v2 !== R.v1 ? '-' + R.v2 : ''}">Copiar</button><button class="btn xs ghost" data-act="feUse" data-ref="${R.b} ${R.c}:${R.v1 || 1}${R.v2 && R.v2 !== R.v1 ? '-' + R.v2 : ''}">Usar no devocional</button>${extra}</div></div>`; };
-A.feCopy = async b => { const R = parseRef(b.dataset.ref); const t = `"${textOf(R)}" — ${label(R)} (${VERS[ver()]})`; try { await navigator.clipboard.writeText(t); UI.toast('Copiado', 'pos'); } catch (e) { UI.toast(t, ''); } };
-A.feUse = b => { const R = parseRef(b.dataset.ref); devoSet('ref', label(R)); devoSet('key', textOf(R) + ' (' + label(R) + ')'); UI.toast('No devocional de hoje', 'pos'); location.hash = 'fe.devocional'; };
-/* explicação do versículo do dia (IA, uma vez por dia, ligada ao teu dia) */
+const verseCard = (R, title, extra = '') => { const vs = verses(R), rs = refStr(R); return `<div class="fe-v"><div class="eyebrow">${title}</div><blockquote class="${preC()}"${dirA()}>${vs.map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' ') || '…'}</blockquote><div class="fe-vr"><b>${esc(label(R))}</b><span class="mut">${esc(vname())}</span></div>
+  <div class="row gap6" style="flex-wrap:wrap;margin-top:10px"><button class="btn xs" data-act="feGo" data-r="${R.b}.${R.c}">${readTxt(R.b)}</button><button class="btn xs ghost" data-act="feCopy" data-ref="${rs}">Copiar</button><button class="btn xs ghost" data-act="feUse" data-ref="${rs}">${xian() ? 'Usar no devocional' : 'Usar no diário'}</button>${extra}</div></div>`; };
+A.feCopy = async b => { const R = parseRef(b.dataset.ref); const t = `"${textOf(R)}" — ${label(R)} (${vname()})`; try { await navigator.clipboard.writeText(t); UI.toast('Copiado', 'pos'); } catch (e) { UI.toast(t, ''); } };
+A.feUse = b => { const R = parseRef(b.dataset.ref); devoSet('ref', label(R)); devoSet('key', textOf(R) + ' (' + label(R) + ')'); UI.toast(xian() ? 'No devocional de hoje' : 'No diário de hoje', 'pos'); location.hash = 'fe.devocional'; };
+/* explicação do texto do dia (IA, uma vez por dia, ligada ao teu dia) */
 let VXB = false;
-const vodExplain = (force) => { const R = FB.vod(), key = R.b + ' ' + R.c + ':' + R.v1, c = cfg(); if (VXB || !(OS.AI && OS.AI.key())) return; if (!force && c.vodx && c.vodx.date === today() && c.vodx.ref === key) return; VXB = true;
-  OS.AI.json([{ text: `Explica o versículo do dia ${OS.whoCtx('ao Ryan (cristão, estudante, vive em Aveiro)', 'a')} de forma fiel à Bíblia, simples e calorosa, em português de Portugal. Versículo: ${label(R)} — "${textOf(R)}". Contexto do capítulo: "${verses({ b: R.b, c: R.c }).map(x => x[1]).join(' ').slice(0, 2500)}". O dia dele: ${JSON.stringify(dayContext())}.
-Responde APENAS JSON: {"contexto":"quem escreveu, para quem e em que situação (1–2 frases)","significado":"o que o versículo quer dizer (2–3 frases)","hoje":"como viver isto hoje, ligado ao dia dele quando fizer sentido (1–2 frases)"}` }], .3)
+const vodExplain = (force) => { const R = FB.vod(); if (!R) return; const key = R.b + ' ' + R.c + ':' + R.v1, c = cfg(); if (VXB || !(OS.AI && OS.AI.key())) return; if (!force && c.vodx && c.vodx.date === today() && c.vodx.ref === key) return; VXB = true;
+  const x = xian(), what = x ? 'o versículo do dia' : 'o texto do dia (' + bookName() + ')';
+  OS.AI.json([{ text: `Explica ${what} ${x ? OS.whoCtx('ao Ryan (cristão, estudante, vive em Aveiro)', 'a') : whoAI('ao Ryan', 'a')} de forma fiel ${x ? 'à Bíblia' : 'ao texto e à tradição ' + RM().n.toLowerCase().replace(/\s*\(.*\)/, '')}, simples e calorosa, em português de Portugal. ${x ? 'Versículo' : 'Texto'}: ${label(R)} — "${textOf(R).slice(0, 1500)}". Contexto do capítulo: "${verses({ b: R.b, c: R.c }).map(x => x[1]).join(' ').slice(0, 2500)}". O dia dele: ${JSON.stringify(dayContext())}.
+Responde APENAS JSON: {"contexto":"quem escreveu, para quem e em que situação (1–2 frases)","significado":"o que ${x ? 'o versículo' : 'o texto'} quer dizer (2–3 frases)","hoje":"como viver isto hoje, ligado ao dia dele quando fizer sentido (1–2 frases)"}` }], .3)
     .then(o => { c.vodx = { date: today(), ref: key, contexto: String(o.contexto || '').slice(0, 400), significado: String(o.significado || '').slice(0, 700), hoje: String(o.hoje || '').slice(0, 400) }; OS.touch('faith'); })
     .catch(() => { }).finally(() => { VXB = false; OS.request(); }); };
 A.feVodX = () => vodExplain(true);
-const vodBox = () => { const R = FB.vod(), key = R.b + ' ' + R.c + ':' + R.v1, x = cfg().vodx && cfg().vodx.date === today() && cfg().vodx.ref === key ? cfg().vodx : null; if (!x) { vodExplain(); return VXB ? '<div class="sai-busy" style="margin-top:10px"><div class="fd-spin"></div><span>A preparar a explicação…</span></div>' : (OS.AI && OS.AI.key() ? '' : '<p class="mut" style="font-size:12px;margin:10px 0 0">Com a IA ligada, aparece aqui a explicação do versículo e como o viver hoje.</p>'); }
+const vodBox = () => { const R = FB.vod(); if (!R) return ''; const key = R.b + ' ' + R.c + ':' + R.v1, x = cfg().vodx && cfg().vodx.date === today() && cfg().vodx.ref === key ? cfg().vodx : null; if (!x) { vodExplain(); return VXB ? '<div class="sai-busy" style="margin-top:10px"><div class="fd-spin"></div><span>A preparar a explicação…</span></div>' : (OS.AI && OS.AI.key() ? '' : `<p class="mut" style="font-size:12px;margin:10px 0 0">Com a IA ligada, aparece aqui a explicação ${xian() ? 'do versículo' : 'do texto'} e como o viver hoje.</p>`); }
   return `<div class="fe-vx">${x.contexto ? `<p class="mut">${esc(x.contexto)}</p>` : ''}<p><b>O que significa:</b> ${esc(x.significado)}</p>${x.hoje ? `<p><b>Para hoje:</b> ${esc(x.hoje)}</p>` : ''}</div>`; };
-T[''] = () => { if (!bible()) return `<div class="pn"><div class="sai-busy"><div class="fd-spin"></div><span>A abrir a Bíblia…</span></div></div>`;
-  const d = todayDevo() || {}, W = cfg().word && cfg().word.date === today() ? cfg().word : null, P = planToday(), st = streak(), open = OS.all('prayers').filter(p => p.status !== 'Respondida'), ans = OS.all('prayers').filter(p => p.status === 'Respondida');
-  const WR = W && parseRef(W.ref), hasAI = OS.AI && OS.AI.key(), danger = crisis(d.note) || (W && W.alerta);
-  return `${danger ? HELP : ''}<div class="g g-main"><div>${verseCard(FB.vod(), 'Versículo do dia').replace(/<\/div>$/, vodBox() + '</div>')}</div>
+const opening = () => `<div class="pn"><div class="sai-busy"><div class="fd-spin"></div><span>${xian() || !Rel.chosen() ? 'A abrir a Bíblia…' : 'A abrir ' + esc(RM().book === 'Torá' ? 'a Torá' : RM().book === 'Gita' ? 'a Gita' : RM().book === 'Livros' ? 'os livros' : 'o ' + RM().book) + '…'}</span></div></div>`;
+const practiceBtn = (cls = 'btn sm', st = 'margin-top:8px') => { const p = Rel.practices()[0]; return p ? `<button class="${cls}" ${p[0] === 'acts' ? 'data-act="fePrayStart"' : `data-act="fePractice" data-k="${p[0]}"`} style="${st}">${esc(p[1])}</button>` : ''; };
+T[''] = () => { const nb = noBook(), B = bible(); if (!nb && !B) return opening();
+  const d = todayDevo() || {}, W = cfg().word && cfg().word.date === today() ? cfg().word : null, P = nb ? null : planToday(), st = streak(), open = OS.all('prayers').filter(p => p.status !== 'Respondida'), ans = OS.all('prayers').filter(p => p.status === 'Respondida');
+  const WR = W && W.ref ? parseRef(W.ref) : null, hasAI = OS.AI && OS.AI.key(), danger = crisis(d.note) || (W && W.alerta), x = xian(), VD = FB.vod(), q = quiet();
+  const left = nb ? Rel.panel() : VD ? verseCard(VD, esc(RM().daily || 'Versículo do dia')).replace(/<\/div>$/, vodBox() + '</div>') : '';
+  return `${danger ? HELP() : ''}<div class="g g-main"><div>${left}</div>
     <div class="pn fe-day"><div class="pn-h"><h3>Como estás hoje?</h3><span class="mut" style="font-size:12px">só tu vês isto</span></div><div class="fe-moods">${MOODS.map(m => `<button class="chip ${(d.moods || []).includes(m) ? 'on' : ''}" data-act="feMood" data-m="${esc(m)}">${esc(m)}</button>`).join('')}</div>
       <textarea class="field" data-dv="note" data-fk="feNote" rows="2" style="width:100%;margin-top:8px" placeholder="O que te pesa ou alegra hoje? (opcional)">${esc(d.note || '')}</textarea>
       <button class="btn pri" data-act="feWord" style="margin-top:8px" ${WB ? 'disabled' : ''}>${WB ? 'A ouvir o teu dia…' : W ? 'Receber outra palavra' : 'Receber a palavra de hoje'}</button>${WERR ? `<p class="neg">${esc(WERR)}</p>` : ''}
-      ${!hasAI ? '<p class="mut" style="font-size:12px;margin:6px 0 0">Sem a IA ligada, a palavra é escolhida pelo teu estado de alma. Com a IA (a mesma chave Gemini), ela olha também para o teu dia: agenda, tarefas, avaliações, treino e finanças.</p>' : ''}</div></div>
-  ${W ? `<div class="pn fe-word"><div class="eyebrow">Uma palavra para ti hoje</div><div class="fe-phrase">“${esc(W.frase)}”</div>${WR ? `<blockquote>${verses(WR).map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' ')}<footer>${esc(label(WR))}</footer></blockquote>` : ''}
-    ${W.porque ? `<p class="mut">${esc(W.porque)}</p>` : ''}${W.reflexao ? `<p>${esc(W.reflexao)}</p>` : ''}${W.passo ? `<div class="fe-step"><b>Passo de fé para hoje:</b> ${esc(W.passo)}</div>` : ''}${W.oracao ? `<div class="fe-pray"><b>Oração</b><p>${esc(W.oracao)}</p></div>` : ''}
-    <div class="row gap6" style="flex-wrap:wrap">${WR ? `<button class="btn xs" data-act="feGo" data-r="${WR.b}.${WR.c}">Ler o capítulo</button><button class="btn xs ghost" data-act="feUse" data-ref="${esc(W.ref)}">Usar no devocional</button>` : ''}</div></div>` : ''}
-  <div class="g g3"><div class="pn"><div class="pn-h"><h3>${UI.ic('book')}Leitura de hoje</h3><a class="acc" href="#fe.planos" style="font-size:12px">planos →</a></div>${P ? `<p style="margin:0 0 6px"><b>${esc(groupRefs(P.day))}</b></p><div class="fe-chs">${P.day.map(r => `<button class="chip ${readSet().has(r) ? 'on' : ''}" data-act="feGo" data-r="${r}">${esc(refLabel(r))}${readSet().has(r) ? ' ✓' : ''}</button>`).join('')}</div>${UI.bar(P.done / P.total, 'pos')}<small class="mut">${esc(PLANS[P.k][0])} · dia ${P.di + 1} de ${P.all.length} · ${U.pct(P.done / P.total)}${P.behind ? ` · <span class="warn">${P.behind} capítulo(s) em atraso</span>` : ''}</small>` : `<p class="mut">Escolhe um plano ou abre a Bíblia e lê o que Deus puser no teu coração.</p><a class="btn sm" href="#fe.planos">Escolher plano</a>`}</div>
-    <div class="pn"><div class="pn-h"><h3>${UI.ic('flame')}Tempo com Deus</h3></div><div class="fe-streak"><b>${st.s}</b><small>${st.s === 1 ? 'dia seguido' : 'dias seguidos'}</small></div>${grid(st.days)}<button class="btn sm" data-act="fePrayStart" style="margin-top:8px">Oração guiada (10 min)</button></div>
-    <div class="pn"><div class="pn-h"><h3>${UI.ic('heart')}Orações</h3><a class="acc" href="#fe.oracoes" style="font-size:12px">ver todas →</a></div><div class="co-own"><div><b>${open.length}</b><small>a orar</small></div><div><b class="pos">${ans.length}</b><small>respondidas</small></div></div>${open.slice(0, 3).map(p => `<div class="li click" data-edit="prayers:${p.id}"><div class="li-t"><b>${esc(p.title)}</b><small>${esc(p.who || '')} · desde ${U.fmtD(p.date)}</small></div></div>`).join('')}${UI.addBtn('prayers', 'Pedido de oração', null, 'sm')}</div></div>
-  <div class="pn"><div class="pn-h"><h3>Gratidão de hoje</h3><span class="mut" style="font-size:12px">3 coisas pelas quais agradeces a Deus</span></div><div class="fe-grat">${[1, 2, 3].map(i => `<input class="field" data-dv="g${i}" data-fk="feg${i}" value="${esc(d['g' + i] || '')}" placeholder="${['Hoje agradeço por…', 'E também por…', 'E por…'][i - 1]}">`).join('')}</div></div>`; };
+      ${!hasAI ? `<p class="mut" style="font-size:12px;margin:6px 0 0">${nb ? 'Sem a IA ligada, a palavra é escolhida pelo teu estado de alma.' : 'Sem a IA ligada, a palavra é escolhida pelo teu estado de alma.'} Com a IA (a mesma chave Gemini), ela olha também para o teu dia: agenda, tarefas, avaliações, treino e finanças.</p>` : ''}</div></div>
+  ${W ? `<div class="pn fe-word"><div class="eyebrow">Uma palavra para ti hoje</div><div class="fe-phrase">“${esc(W.frase)}”</div>${WR ? `<blockquote class="${preC()}"${dirA()}>${verses(WR).map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' ')}<footer>${esc(label(WR))}</footer></blockquote>` : ''}
+    ${W.porque ? `<p class="mut">${esc(W.porque)}</p>` : ''}${W.reflexao ? `<p>${esc(W.reflexao)}</p>` : ''}${W.passo ? `<div class="fe-step"><b>${x ? 'Passo de fé para hoje' : 'Um passo para hoje'}:</b> ${esc(W.passo)}</div>` : ''}${W.oracao ? `<div class="fe-pray"><b>${esc(DV().pr[0])}</b><p>${esc(W.oracao)}</p></div>` : ''}
+    <div class="row gap6" style="flex-wrap:wrap">${WR ? `<button class="btn xs" data-act="feGo" data-r="${WR.b}.${WR.c}">${readTxt(WR.b)}</button><button class="btn xs ghost" data-act="feUse" data-ref="${esc(W.ref)}">${x ? 'Usar no devocional' : 'Usar no diário'}</button>` : ''}</div></div>` : ''}
+  ${nb ? '' : Rel.panel()}
+  <div class="g g3">${nb ? '' : `<div class="pn"><div class="pn-h"><h3>${UI.ic('book')}Leitura de hoje</h3><a class="acc" href="#fe.planos" style="font-size:12px">planos →</a></div>${P ? `<p style="margin:0 0 6px"><b>${esc(groupRefs(P.day))}</b></p><div class="fe-chs">${P.day.map(r => `<button class="chip ${readSet().has(r) ? 'on' : ''}" data-act="feGo" data-r="${r}">${esc(refLabel(r))}${readSet().has(r) ? ' ✓' : ''}</button>`).join('')}</div>${UI.bar(P.done / P.total, 'pos')}<small class="mut">${esc(plans()[P.k][0])} · dia ${P.di + 1} de ${P.all.length} · ${U.pct(P.done / P.total)}${P.behind ? ` · <span class="warn">${P.behind} ${unit(P.day[0].split('.')[0])}(s) em atraso</span>` : ''}</small>` : `<p class="mut">${x || !Rel.chosen() ? 'Escolhe um plano ou abre a Bíblia e lê o que Deus puser no teu coração.' : 'Escolhe um plano ou abre o livro e lê com calma, um bocado por dia.'}</p><a class="btn sm" href="#fe.planos">Escolher plano</a>`}</div>`}
+    <div class="pn"><div class="pn-h"><h3>${UI.ic('flame')}${esc(TIME[fam()] || 'Tempo de prática')}</h3></div><div class="fe-streak"><b>${st.s}</b><small>${st.s === 1 ? 'dia seguido' : 'dias seguidos'}</small></div>${grid(st.days)}${practiceBtn()}</div>
+    <div class="pn"><div class="pn-h"><h3>${UI.ic('heart')}${esc(x || !Rel.chosen() ? 'Orações' : RM().req)}</h3><a class="acc" href="#fe.oracoes" style="font-size:12px">ver todas →</a></div><div class="co-own"><div><b>${open.length}</b><small>${q ? 'em aberto' : 'a orar'}</small></div><div><b class="pos">${ans.length}</b><small>${q ? 'cumpridas' : 'respondidas'}</small></div></div>${open.slice(0, 3).map(p => `<div class="li click" data-edit="prayers:${p.id}"><div class="li-t"><b>${esc(p.title)}</b><small>${esc(p.who || '')} · desde ${U.fmtD(p.date)}</small></div></div>`).join('')}${UI.addBtn('prayers', x || !Rel.chosen() ? 'Pedido de oração' : REQ1[fam()] || 'Pedido', null, 'sm')}</div></div>
+  <div class="pn"><div class="pn-h"><h3>Gratidão de hoje</h3><span class="mut" style="font-size:12px">${x || !Rel.chosen() ? '3 coisas pelas quais agradeces a Deus' : TO[fam()] ? '3 coisas pelas quais agradeces ' + esc(TO[fam()]) : '3 coisas boas de hoje'}</span></div><div class="fe-grat">${[1, 2, 3].map(i => `<input class="field" data-dv="g${i}" data-fk="feg${i}" value="${esc(d['g' + i] || '')}" placeholder="${['Hoje agradeço por…', 'E também por…', 'E por…'][i - 1]}">`).join('')}</div></div>`; };
 const grid = days => { const end = today(), cells = []; for (let i = 83; i >= 0; i--) { const d = U.addDays(end, -i); cells.push(`<i class="${days.has(d) ? 'on' : ''}" title="${U.fmtD(d)}"></i>`); } return `<div class="fe-grid">${cells.join('')}</div>`; };
 
 /* ---------- Bíblia (leitor) ---------- */
@@ -9267,37 +9656,43 @@ const chMarks = (bid, c) => { const W = {}, P = {}; OS.all('bmarks').filter(m =>
 const wholeMark = r => OS.all('bmarks').find(m => m.ref === r && !m.w);
 const vsHtml = (t, parts) => { if (!parts || !parts.length) return esc(t); const L = t.length, k = new Set([0, L]); parts.forEach(p => { k.add(Math.max(0, Math.min(L, p.w[0]))); k.add(Math.max(0, Math.min(L, p.w[1]))); });
   const pts = [...k].sort((a, b) => a - b); let o = ''; for (let i = 0; i < pts.length - 1; i++) { const a = pts[i], b = pts[i + 1]; if (a >= b) continue; const p = parts.filter(x => x.w[0] <= a && x.w[1] >= b).pop(); o += p ? `<mark class="hl-${p.color || 'y'}">${esc(t.slice(a, b))}</mark>` : esc(t.slice(a, b)); } return o; };
-T.biblia = () => { const B = bible(); if (!B) return `<div class="pn"><div class="sai-busy"><div class="fd-spin"></div><span>A abrir a Bíblia…</span></div></div>`;
-  const ref = OS.ui.bRef || 'GEN.1', [bid, cs] = ref.split('.'), bk = B.b[B.idx[bid]] || B.b[0], c = Math.min(+cs || 1, bk[3].length), sel = OS.ui.bSel || [], fs = fsz(), rs = readSet(), r = bk[0] + '.' + c, mode = !!OS.ui.bMode, col = hlCol(), en = OS.ui.bNote;
-  const { W, P } = chMarks(bk[0], c);
+const curRef = () => { const B = bible(), [bid, cs] = String(OS.ui.bRef || '').split('.'); if (!B) return OS.ui.bRef || 'GEN.1'; const bk = B.b[B.idx[bid]] || B.b[0]; return bk[0] + '.' + Math.max(1, Math.min(+cs || 1, bk[3].length)); };
+const vShort = x => x.id === 'livre' ? 'Livre' : x.id === 'almeida' ? 'Almeida 1911' : x.id === 'qar' ? 'Árabe' : x.id === 'wlc' ? 'Hebraico' : x.id === 'sa' ? 'Sânscrito' : x.n.split(' · ').pop().replace(/\s*\(.*\)\s*$/, '');
+const EX = { islam: '2:255, 36, misericórdia', hindu: '2:47, 12, dever', budista: '1, 5:3, ódio', espirita: '5, caridade', espiritual: 'Tao 8, Meditações 4, calma', judaica: 'Bereshit 1, Tehilim 23, paz' };
+T.biblia = () => { const B = bible(); if (!B) return opening();
+  const ref = curRef(), [bid, cs] = ref.split('.'), bk = B.b[B.idx[bid]], c = +cs, sel = OS.ui.bSel || [], fs = fsz(), rs = readSet(), r = bk[0] + '.' + c, mode = !!OS.ui.bMode, col = hlCol(), en = OS.ui.bNote, cv = curSpec(), VL = specs(), o = offOf(bk, c), tt = titleOf(bk, c), x = xian();
+  const { W, P } = chMarks(bk[0], c), selR = sel.length ? { b: bk[0], c, v1: Math.min(...sel), v2: Math.max(...sel) } : null, selS = selR ? refStr(selR) : '';
   const bi = B.idx[bk[0]], prev = c > 1 ? bk[0] + '.' + (c - 1) : bi > 0 ? B.b[bi - 1][0] + '.' + B.b[bi - 1][3].length : null, next = c < bk[3].length ? bk[0] + '.' + (c + 1) : bi < B.b.length - 1 ? B.b[bi + 1][0] + '.1' : null;
   const noteBox = v => { const rv = r + '.' + v, m = W[v], t = ND && ND.r === rv ? ND.t : (m && m.note) || '';
-    if (en === v) return `<span class="fe-ned"><textarea class="field" id="feNoteIn" data-r="${rv}" rows="3" placeholder="Escreve aqui a tua nota sobre o versículo ${v}…">${esc(t)}</textarea><span class="row gap8"><small class="mut grow">Guarda sozinho</small>${m && m.note ? `<button class="btn xs ghost" data-act="feNoteDel" data-r="${rv}">Apagar nota</button>` : ''}<button class="btn xs pri" data-act="feNoteDone">Concluir</button></span></span>`;
+    if (en === v) return `<span class="fe-ned"><textarea class="field" id="feNoteIn" data-r="${rv}" rows="3" placeholder="Escreve aqui a tua nota sobre o verso ${o + v}…">${esc(t)}</textarea><span class="row gap8"><small class="mut grow">Guarda sozinho</small>${m && m.note ? `<button class="btn xs ghost" data-act="feNoteDel" data-r="${rv}">Apagar nota</button>` : ''}<button class="btn xs pri" data-act="feNoteDone">Concluir</button></span></span>`;
     return m && m.note ? `<span class="fe-ni" data-act="feNoteEdit" data-v="${v}" title="Editar nota">✎ ${esc(m.note)}</span>` : ''; };
   return `<div class="pn fe-bar"><div class="row gap8" style="flex-wrap:wrap;align-items:center"><button class="btn sm" data-act="fePick">${esc(bk[1])} ${c} ${UI.ic('down')}</button>
-      <div class="seg" role="group">${Object.entries(VERS).map(([k, l]) => `<button class="${ver() === k ? 'on' : ''}" data-act="feVer" data-v="${k}">${k === 'livre' ? 'Livre' : 'Almeida 1911'}</button>`).join('')}</div>
-      <form class="row gap6 grow" data-form="feSearch" style="min-width:200px"><input class="field grow" name="q" value="${esc(SQ)}" placeholder="Pesquisar ou ir para (ex.: Romanos 8, amor, ansiosos)" aria-label="Pesquisar na Bíblia"><button class="btn sm">Ir</button></form></div>
+      ${VL.length > 1 ? `<div class="seg" role="group">${VL.map(v => `<button class="${cv && cv.id === v.id ? 'on' : ''}" data-act="feVer" data-v="${v.id}">${esc(vShort(v))}</button>`).join('')}</div>` : ''}
+      <form class="row gap6 grow" data-form="feSearch" style="min-width:200px"><input class="field grow" name="q" value="${esc(SQ)}" placeholder="Pesquisar ou ir para (ex.: ${esc(x ? 'Romanos 8, amor, ansiosos' : EX[fam()] || '1, paz')})" aria-label="${x ? 'Pesquisar na Bíblia' : 'Pesquisar no livro'}"><button class="btn sm">Ir</button></form></div>
     ${OS.ui.bPick ? picker(B, bk[0]) : ''}${SRES ? searchRes() : ''}</div>
   <div class="fe-rbar" role="toolbar" aria-label="Leitura">
-    <div class="fe-rb-nav">${prev ? `<button class="icon-btn" data-act="feGo" data-r="${prev}" aria-label="Capítulo anterior">‹</button>` : ''}<button class="btn xs ghost" data-act="fePick">${esc(bk[2] || bk[1])} ${c}</button>${next ? `<button class="icon-btn" data-act="feGo" data-r="${next}" aria-label="Capítulo seguinte">›</button>` : ''}</div>
+    <div class="fe-rb-nav">${prev ? `<button class="icon-btn" data-act="feGo" data-r="${prev}" aria-label="Anterior">‹</button>` : ''}<button class="btn xs ghost" data-act="fePick">${esc(bk[2] || bk[1])} ${c}</button>${next ? `<button class="icon-btn" data-act="feGo" data-r="${next}" aria-label="Seguinte">›</button>` : ''}</div>
     <div class="seg fe-zoom" role="group" aria-label="Tamanho da letra"><button data-act="feFs" data-d="-1" aria-label="Letra mais pequena" ${fs <= FSMIN ? 'disabled' : ''}>A−</button><button class="fe-pct" data-act="feFs0" title="Repor tamanho normal">${pctOf(fs)}</button><button data-act="feFs" data-d="1" aria-label="Letra maior" ${fs >= FSMAX ? 'disabled' : ''}>A+</button></div>
     <button class="btn xs ${mode ? 'pri' : 'ghost'}" data-act="feMode" aria-pressed="${mode}">✎ Grifar${mode ? ' (ligado)' : ''}</button>
     ${mode ? `<span class="fe-cols">${Object.keys(COLS).map(k => `<button class="fe-dot hl-${k} ${col === k ? 'on' : ''}" data-act="feCol" data-c="${k}" aria-label="${COLS[k]}"></button>`).join('')}</span>` : ''}
     <button class="btn xs pri" id="feSelHl" data-act="feHlSel" ${SELR ? '' : 'hidden'}>Grifar seleção</button></div>
-  ${mode ? `<p class="fe-hint mut">Toca num versículo para o grifar com a cor escolhida (toca de novo para tirar), ou seleciona só algumas palavras e carrega em <b>Grifar seleção</b>.</p>` : ''}
-  <div class="pn fe-read ${mode ? 'mode-hl' : ''}" style="--fs:${fs}px"><div class="fe-txt"><h2>${esc(bk[1])} ${c}</h2>${bk[3][c - 1].map((t, i) => { const v = i + 1, m = W[v]; return `<span class="fe-vs ${sel.includes(v) ? 'sel' : ''} ${m && m.color ? 'hl-' + m.color : ''}" data-act="feSel" data-v="${v}"><sup>${v}</sup><span class="fe-t" data-v="${v}">${vsHtml(t, P[v])}</span></span>${noteBox(v)} `; }).join('')}</div>
+  ${mode ? `<p class="fe-hint mut">Toca num ${x ? 'versículo' : 'verso'} para o grifar com a cor escolhida (toca de novo para tirar), ou seleciona só algumas palavras e carrega em <b>Grifar seleção</b>.</p>` : ''}
+  <div class="pn fe-read ${mode ? 'mode-hl' : ''}${B.pre ? ' fe-pre' : ''}" style="--fs:${fs}px"><div class="fe-txt"${B.dir ? ` dir="${B.dir}" lang="${B.dir === 'rtl' && bk[0] === 'QUR' ? 'ar' : 'he'}"` : ''}><h2>${esc(bk[1])} ${c}${tt ? ` <small>${esc(tt)}</small>` : ''}</h2>${bk[3][c - 1].map((t, i) => { if (!t || !String(t).trim()) return ''; const v = i + 1, m = W[v]; return `<span class="fe-vs ${sel.includes(v) ? 'sel' : ''} ${m && m.color ? 'hl-' + m.color : ''}" data-act="feSel" data-v="${v}"><sup>${o + v}</sup><span class="fe-t" data-v="${v}">${vsHtml(t, P[v])}</span></span>${noteBox(v)} `; }).join('')}</div>
     <div class="row between gap8" style="margin-top:18px;flex-wrap:wrap">${prev ? `<button class="btn sm ghost" data-act="feGo" data-r="${prev}">← ${esc(refLabel(prev))}</button>` : '<span></span>'}<button class="btn sm ${rs.has(r) ? 'pri' : ''}" data-act="feRead" data-r="${r}">${rs.has(r) ? '✓ Lido' : 'Marcar como lido'}</button>${next ? `<button class="btn sm ghost" data-act="feGo" data-r="${next}">${esc(refLabel(next))} →</button>` : '<span></span>'}</div>
-    <p class="mut" style="font-size:11.5px;margin:14px 0 0">${esc(B.a)} · Dica: aproxima ou afasta dois dedos sobre o texto para mudar o tamanho da letra.</p></div>
-  ${sel.length ? `<div class="fe-tool"><b>${esc(bk[1])} ${c}:${sel.length > 1 ? Math.min(...sel) + '-' + Math.max(...sel) : sel[0]}</b>${Object.keys(COLS).map(k => `<button class="fe-dot hl-${k}" data-act="feHl" data-c="${k}" aria-label="Destacar a ${COLS[k]}"></button>`).join('')}<button class="btn xs ghost" data-act="feHl" data-c="">Tirar</button><button class="btn xs ghost" data-act="feNoteV">Nota</button><button class="btn xs ghost" data-act="feCopy" data-ref="${bk[0]} ${c}:${Math.min(...sel)}${sel.length > 1 ? '-' + Math.max(...sel) : ''}">Copiar</button><button class="btn xs" data-act="feUse" data-ref="${bk[0]} ${c}:${Math.min(...sel)}${sel.length > 1 ? '-' + Math.max(...sel) : ''}">Devocional</button><button class="icon-btn" data-act="feSelClear" aria-label="Fechar">${UI.ic('x')}</button></div>` : ''}
-  ${(() => { const all = OS.all('bmarks'), M = U.sortBy(all, m => (m.date || '') + (m._u || 0), -1).slice(0, 30); return M.length ? UI.toggle(`Os meus destaques e notas (${all.length})`, `<div class="list">${M.map(m => { const [b2, c2, v2] = m.ref.split('.'), R = { b: b2, c: +c2, v1: +v2, v2: +v2 }, tx = textOf(R), q = m.w ? '“' + tx.slice(m.w[0], m.w[1]).trim() + '”' : tx.slice(0, 140); return `<div class="li click" data-act="feGo" data-r="${b2}.${c2}"><div class="li-t"><b>${m.color ? `<span class="fe-dot hl-${m.color}"></span> ` : '✎ '}${esc(label(R))}</b><small>${esc(q)}${m.note ? ' — ✎ ' + esc(m.note) : ''}</small></div></div>`; }).join('')}</div>`, 'feMarks', 'star') : ''; })()}`; };
-const picker = (B, cur) => { const sb = OS.ui.bBook || cur, b = B.b[B.idx[sb]];
-  return `<div class="fe-pick"><div><div class="eyebrow">Antigo Testamento</div><div class="fe-books">${B.b.slice(0, NT0).map(x => `<button class="${x[0] === sb ? 'on' : ''}" data-act="feBook" data-b="${x[0]}" title="${esc(x[1])}">${esc(x[2] || x[1].slice(0, 3))}</button>`).join('')}</div>
-    <div class="eyebrow" style="margin-top:8px">Novo Testamento</div><div class="fe-books">${B.b.slice(NT0).map(x => `<button class="${x[0] === sb ? 'on' : ''}" data-act="feBook" data-b="${x[0]}" title="${esc(x[1])}">${esc(x[2] || x[1].slice(0, 3))}</button>`).join('')}</div></div>
-    <div><div class="eyebrow">${esc(b[1])} · capítulos</div><div class="fe-books">${b[3].map((_, i) => `<button class="${readSet().has(b[0] + '.' + (i + 1)) ? 'rd' : ''}" data-act="feGo" data-r="${b[0]}.${i + 1}">${i + 1}</button>`).join('')}</div></div></div>`; };
-const searchRes = () => `<div class="fe-sr"><div class="row between"><b>${SRES.length >= 150 ? '150+' : SRES.length} resultado(s) para “${esc(SQ)}”</b><button class="icon-btn" data-act="feSClear" aria-label="Fechar">${UI.ic('x')}</button></div>${SRES.slice(0, 150).map(x => `<div class="li click" data-act="feGo" data-r="${x.b}.${x.c}"><div class="li-t"><b>${esc(x.l)}</b><small>${esc(x.t)}</small></div></div>`).join('')}</div>`;
+    <p class="mut" style="font-size:11.5px;margin:14px 0 0">${esc(B.a)}${B.ai ? ' · Tradução para a tua língua feita com IA a partir de uma tradução de domínio público.' : ''} · Dica: aproxima ou afasta dois dedos sobre o texto para mudar o tamanho da letra.</p></div>
+  ${sel.length ? `<div class="fe-tool"><b>${esc(label(selR))}</b>${Object.keys(COLS).map(k => `<button class="fe-dot hl-${k}" data-act="feHl" data-c="${k}" aria-label="Destacar a ${COLS[k]}"></button>`).join('')}<button class="btn xs ghost" data-act="feHl" data-c="">Tirar</button><button class="btn xs ghost" data-act="feNoteV">Nota</button><button class="btn xs ghost" data-act="feCopy" data-ref="${selS}">Copiar</button><button class="btn xs" data-act="feUse" data-ref="${selS}">${x ? 'Devocional' : 'Diário'}</button><button class="icon-btn" data-act="feSelClear" aria-label="Fechar">${UI.ic('x')}</button></div>` : ''}
+  ${(() => { const all = OS.all('bmarks').filter(m => B.idx[m.ref.split('.')[0]] != null), M = U.sortBy(all, m => (m.date || '') + (m._u || 0), -1).slice(0, 30); return M.length ? UI.toggle(`Os meus destaques e notas (${all.length})`, `<div class="list">${M.map(m => { const [b2, c2, v2] = m.ref.split('.'), R = { b: b2, c: +c2, v1: +v2, v2: +v2 }, tx = textOf(R), q = m.w ? '“' + tx.slice(m.w[0], m.w[1]).trim() + '”' : tx.slice(0, 140); return `<div class="li click" data-act="feGo" data-r="${b2}.${c2}"><div class="li-t"><b>${m.color ? `<span class="fe-dot hl-${m.color}"></span> ` : '✎ '}${esc(label(R))}</b><small>${esc(q)}${m.note ? ' — ✎ ' + esc(m.note) : ''}</small></div></div>`; }).join('')}</div>`, 'feMarks', 'star') : ''; })()}`; };
+const chList = b => { const rs = readSet(), T2 = b[4] && b[4].some(t => t && !/^\d+$/.test(t));
+  return T2 ? `<div class="fe-chl">${b[3].map((_, i) => `<button class="${rs.has(b[0] + '.' + (i + 1)) ? 'rd' : ''}" data-act="feGo" data-r="${b[0]}.${i + 1}"><b>${i + 1}</b><span>${esc(b[4][i] || '')}</span></button>`).join('')}</div>`
+    : `<div class="fe-books">${b[3].map((_, i) => `<button class="${rs.has(b[0] + '.' + (i + 1)) ? 'rd' : ''}" data-act="feGo" data-r="${b[0]}.${i + 1}">${i + 1}</button>`).join('')}</div>`; };
+const picker = (B, cur) => { const sb = OS.ui.bBook || cur, b = B.b[B.idx[sb]] || B.b[0];
+  if (B.b.length === 1) return `<div class="fe-pick one"><div><div class="eyebrow">${esc(b[1])} · ${unit(b[0], 1)}</div>${chList(b)}</div></div>`;
+  return `<div class="fe-pick"><div>${B.groups.map(([g, a, z], gi) => `<div class="eyebrow"${gi ? ' style="margin-top:8px"' : ''}>${esc(g || 'Livros')}</div><div class="fe-books">${B.b.slice(a, z).map(x => `<button class="${x[0] === sb ? 'on' : ''}" data-act="feBook" data-b="${x[0]}" title="${esc(x[1])}">${esc(x[2] || x[1].slice(0, 3))}</button>`).join('')}</div>`).join('')}</div>
+    <div><div class="eyebrow">${esc(b[1])} · ${unit(b[0], 1)}</div>${chList(b)}</div></div>`; };
+const searchRes = () => `<div class="fe-sr"><div class="row between"><b>${SRES.length >= 150 ? '150+' : SRES.length} resultado(s) para “${esc(SQ)}”</b><button class="icon-btn" data-act="feSClear" aria-label="Fechar">${UI.ic('x')}</button></div>${SRES.slice(0, 150).map(x => `<div class="li click" data-act="feGo" data-r="${x.b}.${x.c}"><div class="li-t"><b>${esc(x.l)}</b><small${dirA()}>${esc(x.t)}</small></div></div>`).join('')}</div>`;
 A.fePick = () => { const o = !OS.ui.bPick; OS.setUI('bPick', o); OS.setUI('bBook', ''); if (o) window.scrollTo({ top: 0, behavior: 'smooth' }); };
 A.feBook = b => OS.setUI('bBook', b.dataset.b);
-A.feVer = b => { cfg().ver = b.dataset.v; OS.touch('faith'); loadBible(b.dataset.v).catch(() => UI.toast('Não consegui abrir esta versão agora', 'neg')); };
+A.feVer = b => { const v = b.dataset.v, c = cfg(); if (legacyVer()) c.ver = v; else c.vv = Object.assign({}, c.vv, { [Rel.id() + '.' + Rel.lang()]: v }); OS.touch('faith'); loadBible(v).catch(() => UI.toast('Não consegui abrir esta versão agora', 'neg')); };
 A.feFs = b => setFs(fsz() + +b.dataset.d * 2);
 A.feFs0 = () => setFs(FS0);
 A.feMode = () => { OS.setUI('bMode', !OS.ui.bMode); OS.setUI('bSel', []); };
@@ -9305,13 +9700,13 @@ A.feCol = b => { OS.setUI('bCol', b.dataset.c); U.ls.set('oc_fecol', b.dataset.c
 const hasSel = () => { const s = window.getSelection && getSelection(); return !!(s && !s.isCollapsed && String(s).trim()); };
 const setWhole = (r, color) => { const ex = wholeMark(r); if (ex) { if (!color && !ex.note) OS.del('bmarks', ex.id, { silent: true }); else OS.upd('bmarks', ex.id, { color }, { silent: true }); } else if (color) OS.add('bmarks', { ref: r, color, date: today() }, { silent: true }); };
 const clearParts = r => OS.all('bmarks').filter(m => m.ref === r && m.w).forEach(m => OS.del('bmarks', m.id, { silent: true }));
-A.feSel = b => { if (hasSel()) return; const v = +b.dataset.v, ref = OS.ui.bRef || 'GEN.1';
+A.feSel = b => { if (hasSel()) return; const v = +b.dataset.v, ref = curRef();
   if (OS.ui.bMode) { const r = ref + '.' + v, ex = wholeMark(r), parts = OS.all('bmarks').some(m => m.ref === r && m.w), c = hlCol(); if ((ex && ex.color === c) || (!ex && parts)) { setWhole(r, ''); clearParts(r); } else { clearParts(r); setWhole(r, c); } OS.request(); return; }
   const cur = OS.ui.bSel || []; OS.setUI('bSel', cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v].sort((x, y) => x - y)); };
 A.feSelClear = () => OS.setUI('bSel', []);
 A.feSClear = () => { SRES = null; SQ = ''; OS.request(); };
 const _go = A.feGo; A.feGo = b => { OS.ui.bPick = false; OS.ui.bNote = null; ND = null; SRES = null; _go(b); };
-A.feHl = b => { const ref = OS.ui.bRef || 'GEN.1', sel = OS.ui.bSel || []; sel.forEach(v => { const r = ref + '.' + v; if (!b.dataset.c) clearParts(r); setWhole(r, b.dataset.c); }); OS.setUI('bSel', []); OS.request(); };
+A.feHl = b => { const ref = curRef(), sel = OS.ui.bSel || []; sel.forEach(v => { const r = ref + '.' + v; if (!b.dataset.c) clearParts(r); setWhole(r, b.dataset.c); }); OS.setUI('bSel', []); OS.request(); };
 /* notas dentro do texto */
 const saveNote = (r, t) => { t = String(t || '').trim(); const ex = wholeMark(r); if (ex) { if (!t && !ex.color) OS.del('bmarks', ex.id); else if ((ex.note || '') !== t) OS.upd('bmarks', ex.id, { note: t }); } else if (t) OS.add('bmarks', { ref: r, color: '', note: t, date: today() }); };
 A.feNoteV = () => { const sel = OS.ui.bSel || []; ND = null; OS.ui.bSel = []; OS.setUI('bNote', sel[0] || null); setTimeout(() => { const t = document.getElementById('feNoteIn'); if (t) { t.focus(); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); } }, 60); };
@@ -9326,7 +9721,7 @@ const selRanges = () => { const s = window.getSelection && getSelection(); if (!
     let a = el.contains(rg.startContainer) ? off(rg.startContainer, rg.startOffset) : 0, z = el.contains(rg.endContainer) ? off(rg.endContainer, rg.endOffset) : L;
     while (a > 0 && /\S/.test(t[a - 1])) a--; while (z < L && /\S/.test(t[z])) z++; while (a < z && /\s/.test(t[a])) a++; while (z > a && /\s/.test(t[z - 1])) z--;
     if (z > a) out.push({ v: +el.dataset.v, s: a, e: z, L }); }); return out.length ? out : null; };
-const applySel = R => { const ref = OS.ui.bRef || 'GEN.1', c = hlCol(); R.forEach(x => { const r = ref + '.' + x.v; if (x.s === 0 && x.e === x.L) { clearParts(r); setWhole(r, c); } else OS.add('bmarks', { ref: r, color: c, w: [x.s, x.e], date: today() }, { silent: true }); }); SELR = null; try { getSelection().removeAllRanges(); } catch (e) { } OS.request(); UI.toast('Grifado ✓'); };
+const applySel = R => { const ref = curRef(), c = hlCol(); R.forEach(x => { const r = ref + '.' + x.v; if (x.s === 0 && x.e === x.L) { clearParts(r); setWhole(r, c); } else OS.add('bmarks', { ref: r, color: c, w: [x.s, x.e], date: today() }, { silent: true }); }); SELR = null; try { getSelection().removeAllRanges(); } catch (e) { } OS.request(); UI.toast('Grifado ✓'); };
 A.feHlSel = () => { const R = selRanges() || SELR; if (R) applySel(R); else UI.toast('Seleciona primeiro as palavras no texto'); };
 let selT = 0; document.addEventListener('selectionchange', () => { clearTimeout(selT); selT = setTimeout(() => { if (!document.querySelector('#view .fe-read')) return; const R = selRanges(); if (R) SELR = R; else if (!hasSel()) SELR = null; const bt = document.getElementById('feSelHl'); if (bt) bt.hidden = !SELR; }, 120); });
 document.addEventListener('mouseup', e => { if (!OS.ui.bMode || !e.target.closest || !e.target.closest('#view .fe-read')) return; setTimeout(() => { const R = selRanges(); if (R) applySel(R); }, 20); });
@@ -9342,37 +9737,42 @@ document.addEventListener('gesturestart', e => { if (e.target.closest && e.targe
 document.addEventListener('wheel', e => { if (!e.ctrlKey) return; const rd = e.target.closest && e.target.closest('#view .fe-read'); if (!rd) return; e.preventDefault(); wF = clampFs((wF || fsz()) - e.deltaY * .08); live(rd, wF); clearTimeout(wT); wT = setTimeout(() => { setFs(wF); wF = 0; }, 250); }, { passive: false });
 OS.forms = OS.forms || {};
 OS.forms.feSearch = (f, val) => { const q = String(val('q') || '').trim(); if (!q) return; SQ = q; const R = FB.parseHuman(q); if (R) { SRES = null; OS.setUI('bRef', R.b + '.' + R.c); OS.setUI('bSel', R.v1 ? Array.from({ length: (R.v2 || R.v1) - R.v1 + 1 }, (_, i) => R.v1 + i) : []); OS.ui.bPick = false; return; }
-  const B = bible(), nq = norm(q), out = []; for (const b of B.b) { b[3].forEach((ch, ci) => ch.forEach((t, vi) => { if (out.length < 150 && norm(t).includes(nq)) out.push({ b: b[0], c: ci + 1, l: b[1] + ' ' + (ci + 1) + ':' + (vi + 1), t }); })); if (out.length >= 150) break; } SRES = out; OS.request(); };
+  const B = bible(), nq = norm(q), out = []; for (const b of B.b) { b[3].forEach((ch, ci) => ch.forEach((t, vi) => { if (out.length < 150 && norm(t).includes(nq)) out.push({ b: b[0], c: ci + 1, l: label({ b: b[0], c: ci + 1, v1: vi + 1, v2: vi + 1 }), t }); })); if (out.length >= 150) break; } SRES = out; OS.request(); };
 
-/* ---------- devocional ---------- */
+/* ---------- devocional (ou diário) ---------- */
 let RB = false, RERR = '';
-T.devocional = () => { const d = todayDevo() || {}, R = d.ref ? FB.parseHuman(d.ref) : null, hist = U.sortBy(OS.all('devos').filter(x => x.obs || x.app || x.prayer || x.key), x => x.date, -1);
+const PH_REF = { islam: 'Ex.: 2:255, 18, 55:1-13', hindu: 'Ex.: 2:47, 12, 18:66', budista: 'Ex.: 1, 5:3, 26', espirita: 'Ex.: 5, 11:8, 17', espiritual: 'Ex.: Tao Te Ching 8, Meditações 4', judaica: 'Ex.: Bereshit 1, Tehilim 23, Devarim 6:4-9' };
+T.devocional = () => { const d = todayDevo() || {}, R = d.ref ? FB.parseHuman(d.ref) : null, hist = U.sortBy(OS.all('devos').filter(x => x.obs || x.app || x.prayer || x.key), x => x.date, -1), D = DV(), nb = noBook(), x = xian();
   const fld = (k, l, ph, rows = 3) => `<label class="fe-f"><b>${l}</b><textarea class="field" data-dv="${k}" data-fk="fed${k}" rows="${rows}" placeholder="${esc(ph)}">${esc(d[k] || '')}</textarea></label>`;
-  return `<div class="g g-main"><div class="pn fe-devo"><div class="pn-h"><h3>Devocional de hoje · ${U.fmtD(today())}</h3><span class="mut" style="font-size:12px">guarda sozinho</span></div>
-      <p class="mut" style="font-size:13px;margin:0 0 10px">Método <b>SOAP</b>: lê a <b>Escritura</b>, escreve a tua <b>Observação</b>, a <b>Aplicação</b> à tua vida e termina em <b>Oração</b>.</p>
-      <label class="fe-f"><b>Escritura — o que vais ler hoje</b><div class="row gap8"><input class="field grow" data-dv="ref" data-fk="fedref" value="${esc(d.ref || '')}" placeholder="Ex.: Salmos 23, Romanos 8:28-39, João 15">${R ? `<button class="btn sm" data-act="feGo" data-r="${R.b}.${R.c}">Abrir</button>` : ''}</div></label>
-      ${R ? `<blockquote class="fe-pass">${verses(R).slice(0, 40).map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' ')}${verses(R).length > 40 ? ' …' : ''}<footer>${esc(label(R))} · ${esc(VERS[ver()])}</footer></blockquote>` : d.ref ? '<p class="warn" style="font-size:12.5px">Não reconheci a passagem. Escreve como "Livro capítulo:versículos".</p>' : ''}
-      ${fld('key', 'O versículo que mais me tocou', 'Copia ou escreve o versículo', 2)}${fld('obs', 'Observação — o que o texto diz?', 'O que aprendo sobre Deus, sobre mim, sobre a vida?')}${fld('app', 'Aplicação — o que Deus me pede hoje?', 'Uma atitude concreta para hoje…')}${fld('prayer', 'Oração', 'Fala com Deus sobre isto…', 4)}
+  return `<div class="g g-main"><div class="pn fe-devo"><div class="pn-h"><h3>${esc(D.h)} · ${U.fmtD(today())}</h3><span class="mut" style="font-size:12px">guarda sozinho</span></div>
+      <p class="mut" style="font-size:13px;margin:0 0 10px">${D.m}</p>
+      ${nb ? '' : `<label class="fe-f"><b>${esc(D.ref)}</b><div class="row gap8"><input class="field grow" data-dv="ref" data-fk="fedref" value="${esc(d.ref || '')}" placeholder="${esc(x ? 'Ex.: Salmos 23, Romanos 8:28-39, João 15' : PH_REF[fam()] || 'Ex.: 1, 2:3')}">${R ? `<button class="btn sm" data-act="feGo" data-r="${R.b}.${R.c}">Abrir</button>` : ''}</div></label>
+      ${R ? `<blockquote class="fe-pass${preC()}"${dirA()}>${verses(R).slice(0, 40).map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' ')}${verses(R).length > 40 ? ' …' : ''}<footer>${esc(label(R))} · ${esc(vname())}</footer></blockquote>` : d.ref ? `<p class="warn" style="font-size:12.5px">Não reconheci a passagem. Escreve como "${x ? 'Livro capítulo:versículos' : 'capítulo:versos'}".</p>` : ''}`}
+      ${fld('key', D.key[0], D.key[1], 2)}${fld('obs', D.obs[0], D.obs[1])}${fld('app', D.app[0], D.app[1])}${fld('prayer', D.pr[0], D.pr[1], 4)}
       <div class="fe-grat">${[1, 2, 3].map(i => `<input class="field" data-dv="g${i}" data-fk="fedg${i}" value="${esc(d['g' + i] || '')}" placeholder="Gratidão ${i}">`).join('')}</div>
-      <div class="row gap8" style="margin-top:10px;flex-wrap:wrap"><button class="btn" data-act="feReflect" ${RB || !R ? 'disabled' : ''}>${UI.ic('zap')}${RB ? 'A refletir…' : 'Reflexão da IA sobre esta leitura'}</button></div>${RERR ? `<p class="neg">${esc(RERR)}</p>` : ''}
-      ${d.refl && d.refl.ref === d.ref ? reflHTML(d.refl) : ''}</div>
-    <div class="pn"><div class="pn-h"><h3>Os meus devocionais</h3><span class="mut" style="font-size:12px">${hist.length}</span></div>${hist.length ? `<div class="list">${hist.slice(0, 30).map(x => `<div class="li click" data-edit="devos:${x.id}"><span class="when">${U.fmtD(x.date)}</span><div class="li-t"><b>${esc(x.ref || 'Sem passagem')}</b><small>${esc((x.app || x.obs || x.prayer || x.key || '').slice(0, 120))}</small></div></div>`).join('')}</div>` : UI.empty('O teu primeiro devocional fica guardado aqui.')}</div></div>`; };
-const reflHTML = r => `<div class="fe-refl"><div class="eyebrow">Reflexão</div>${r.contexto ? `<p class="mut">${esc(r.contexto)}</p>` : ''}<p>${esc(r.mensagem || '')}</p>${(r.licoes || []).length ? `<b>O que aprender</b><ul>${r.licoes.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}${(r.perguntas || []).length ? `<b>Perguntas para meditar</b><ul>${r.perguntas.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}${r.oracao ? `<div class="fe-pray"><b>Oração</b><p>${esc(r.oracao)}</p></div>` : ''}${(r.ligacoes || []).length ? `<small class="mut">Para aprofundar: ${r.ligacoes.map(esc).join(' · ')}</small>` : ''}</div>`;
+      ${nb ? '' : `<div class="row gap8" style="margin-top:10px;flex-wrap:wrap"><button class="btn" data-act="feReflect" ${RB || !R ? 'disabled' : ''}>${UI.ic('zap')}${RB ? 'A refletir…' : 'Reflexão da IA sobre esta leitura'}</button></div>${RERR ? `<p class="neg">${esc(RERR)}</p>` : ''}
+      ${d.refl && d.refl.ref === d.ref ? reflHTML(d.refl) : ''}`}</div>
+    <div class="pn"><div class="pn-h"><h3>${esc(D.list)}</h3><span class="mut" style="font-size:12px">${hist.length}</span></div>${hist.length ? `<div class="list">${hist.slice(0, 30).map(x => `<div class="li click" data-edit="devos:${x.id}"><span class="when">${U.fmtD(x.date)}</span><div class="li-t"><b>${esc(x.ref || (nb ? 'Diário' : 'Sem passagem'))}</b><small>${esc((x.app || x.obs || x.prayer || x.key || '').slice(0, 120))}</small></div></div>`).join('')}</div>` : UI.empty(D.first)}</div></div>`; };
+const reflHTML = r => `<div class="fe-refl"><div class="eyebrow">Reflexão</div>${r.contexto ? `<p class="mut">${esc(r.contexto)}</p>` : ''}<p>${esc(r.mensagem || '')}</p>${(r.licoes || []).length ? `<b>O que aprender</b><ul>${r.licoes.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}${(r.perguntas || []).length ? `<b>Perguntas para meditar</b><ul>${r.perguntas.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}${r.oracao ? `<div class="fe-pray"><b>${esc(DV().pr[0])}</b><p>${esc(r.oracao)}</p></div>` : ''}${(r.ligacoes || []).length ? `<small class="mut">Para aprofundar: ${r.ligacoes.map(esc).join(' · ')}</small>` : ''}</div>`;
 A.feReflect = async () => { const d = todayDevo() || {}, R = d.ref ? FB.parseHuman(d.ref) : null; if (!R || RB) return; if (!(OS.AI && OS.AI.key())) { UI.toast('Liga o Spyke (IA) em Definições → Spyke', 'warn'); return; }
-  RB = true; RERR = ''; OS.request();
-  try { const o = await OS.AI.json([{ text: `És um mestre da Palavra, fiel às Escrituras, que ajuda num devocional pessoal (${OS.whoFlat('o Ryan, cristão, estudante em Portugal')}). Passagem: ${label(R)} (${VERS[ver()]}): "${textOf(R).slice(0, 6000)}"
+  RB = true; RERR = ''; OS.request(); const x = xian(), god = GOD[fam()];
+  try { const o = await OS.AI.json([{ text: `${x ? 'És um mestre da Palavra, fiel às Escrituras, que ajuda num devocional pessoal' : 'És ' + (PER[Rel.id()] || '') + ', que ajuda num diário espiritual pessoal'} (${OS.whoFlat(x ? 'o Ryan, cristão, estudante em Portugal' : 'o Ryan, estudante em Portugal')}${!x ? ', ' + RM().who : ''}). Passagem: ${label(R)} (${vname()}): "${textOf(R).slice(0, 6000)}"
 O que ele escreveu: observação: "${d.obs || ''}"; aplicação: "${d.app || ''}"; como está hoje: ${(d.moods || []).join(', ') || 'não disse'}.
-Dá uma reflexão devocional sólida (contexto histórico e literário breve, mensagem central, aplicação prática), em português de Portugal, sem inventar e sem forçar o texto. Responde APENAS JSON: {"contexto":"1–2 frases de contexto","mensagem":"4–6 frases","licoes":["…"],"perguntas":["2–3 perguntas para meditar"],"oracao":"oração curta em 1.ª pessoa","ligacoes":["2–3 passagens relacionadas, ex.: Salmos 23"]}` }], .3);
+Dá uma reflexão ${x ? 'devocional sólida' : 'sólida e fiel ao texto e à tradição'} (contexto histórico e literário breve, mensagem central, aplicação prática), em português de Portugal, sem inventar e sem forçar o texto. Responde APENAS JSON: {"contexto":"1–2 frases de contexto","mensagem":"4–6 frases","licoes":["…"],"perguntas":["2–3 perguntas para meditar"],"oracao":"${x ? 'oração curta em 1.ª pessoa' : god ? 'prece curta em 1.ª pessoa, dirigida a ' + god : 'intenção curta em 1.ª pessoa'}","ligacoes":["2–3 passagens relacionadas, ex.: ${x ? 'Salmos 23' : esc(label(R))}"]}` }], .3);
     devoSet('refl', { ref: d.ref, contexto: String(o.contexto || '').slice(0, 500), mensagem: String(o.mensagem || '').slice(0, 1500), licoes: (o.licoes || []).slice(0, 4).map(String), perguntas: (o.perguntas || []).slice(0, 3).map(String), oracao: String(o.oracao || '').slice(0, 800), ligacoes: (o.ligacoes || []).slice(0, 3).map(String) }); }
   catch (e) { RERR = e.message || 'A IA não respondeu.'; }
   RB = false; OS.request(); };
 
-/* ---------- orações ---------- */
-T.oracoes = () => { const P = OS.all('prayers'), open = U.sortBy(P.filter(p => p.status !== 'Respondida'), p => p.date || '', -1), ans = U.sortBy(P.filter(p => p.status === 'Respondida'), p => p.answeredAt || '', -1);
-  return `<div class="row gap8" style="margin-bottom:12px;flex-wrap:wrap">${UI.addBtn('prayers', 'Novo pedido de oração', null, 'pri')}<button class="btn" data-act="fePrayStart">Oração guiada (10 min)</button><button class="btn ghost" data-act="feLord">Pai Nosso</button></div>
-  <div class="g g-main"><div class="pn"><div class="pn-h"><h3>A orar</h3><span class="mut" style="font-size:12px">${open.length}</span></div>${open.length ? `<div class="list">${open.map(p => `<div class="li"><div class="li-t click" data-edit="prayers:${p.id}"><b>${esc(p.title)}</b><small>${esc(p.who || '')} · há ${Math.max(0, U.diff(today(), p.date || today()))} dias${p.details ? ' · ' + esc(p.details.slice(0, 80)) : ''}</small></div><button class="btn xs" data-act="feAns" data-id="${p.id}">Deus respondeu</button></div>`).join('')}</div>` : UI.empty('Escreve os teus pedidos: por ti, pela família, pelos amigos, pelos estudos. Ver as respostas ao longo do tempo fortalece a fé.')}</div>
-    <div class="pn"><div class="pn-h"><h3>Respondidas</h3><span class="mut" style="font-size:12px">${ans.length}</span></div>${ans.length ? `<div class="list">${ans.map(p => `<div class="li click" data-edit="prayers:${p.id}"><div class="li-t"><b>${esc(p.title)}</b><small>${p.answeredAt ? U.fmtD(p.answeredAt) + ' · ' : ''}${esc((p.answer || '').slice(0, 120))}</small></div></div>`).join('')}</div>` : '<p class="mut">As orações respondidas e os testemunhos ficam aqui, para te lembrares do que Deus já fez.</p>'}</div></div>`; };
-A.feAns = b => UI.openForm('prayers', b.dataset.id, { status: 'Respondida', answeredAt: today() }, { title: 'Como Deus respondeu?' });
+/* ---------- orações (e práticas: terço, tasbih, japa, meditação…) ---------- */
+T.oracoes = () => { const P = OS.all('prayers'), open = U.sortBy(P.filter(p => p.status !== 'Respondida'), p => p.date || '', -1), ans = U.sortBy(P.filter(p => p.status === 'Respondida'), p => p.answeredAt || '', -1), x = xian(), q = quiet(), PL = Rel.prayers(), PR = Rel.practices();
+  return `<div class="row gap8" style="margin-bottom:12px;flex-wrap:wrap">${UI.addBtn('prayers', x ? 'Novo pedido de oração' : 'Nova ' + (q ? 'intenção' : 'prece ou pedido'), null, 'pri')}${PR.map(([k, l]) => `<button class="btn" ${k === 'acts' ? 'data-act="fePrayStart"' : `data-act="fePractice" data-k="${k}"`}>${esc(l)}</button>`).join('')}</div>
+  <div class="g g-main"><div class="pn"><div class="pn-h"><h3>${q ? 'Em aberto' : 'A orar'}</h3><span class="mut" style="font-size:12px">${open.length}</span></div>${open.length ? `<div class="list">${open.map(p => `<div class="li"><div class="li-t click" data-edit="prayers:${p.id}"><b>${esc(p.title)}</b><small>${esc(p.who || '')} · há ${Math.max(0, U.diff(today(), p.date || today()))} dias${p.details ? ' · ' + esc(p.details.slice(0, 80)) : ''}</small></div><button class="btn xs" data-act="feAns" data-id="${p.id}">${x ? 'Deus respondeu' : q ? 'Cumpriu-se' : 'Foi respondida'}</button></div>`).join('')}</div>` : UI.empty(x ? 'Escreve os teus pedidos: por ti, pela família, pelos amigos, pelos estudos. Ver as respostas ao longo do tempo fortalece a fé.' : 'Escreve as tuas intenções: por ti, pela família, pelos amigos, pelos estudos. Ver o caminho ao longo do tempo dá força.')}</div>
+    <div class="pn"><div class="pn-h"><h3>${q ? 'Cumpridas' : 'Respondidas'}</h3><span class="mut" style="font-size:12px">${ans.length}</span></div>${ans.length ? `<div class="list">${ans.map(p => `<div class="li click" data-edit="prayers:${p.id}"><div class="li-t"><b>${esc(p.title)}</b><small>${p.answeredAt ? U.fmtD(p.answeredAt) + ' · ' : ''}${esc((p.answer || '').slice(0, 120))}</small></div></div>`).join('')}</div>` : `<p class="mut">${x ? 'As orações respondidas e os testemunhos ficam aqui, para te lembrares do que Deus já fez.' : 'O que se cumpriu fica aqui, para te lembrares do caminho que já fizeste.'}</p>`}</div></div>
+  <div class="pn"><div class="pn-h"><h3>${UI.ic('book')}${q ? 'Textos para a prática' : 'Orações'}</h3><span class="mut" style="font-size:12px">${PL.length}</span></div><div class="fe-prl">${PL.map((p, i) => `<button class="fe-pri" data-act="fePrayer" data-i="${i}"><b>${esc(p.t)}</b><small>${esc((p.x || (p.ref ? textOf(parseRef(p.ref)) : '') || '').replace(/\n/g, ' ').slice(0, 90))}…</small></button>`).join('')}</div></div>`; };
+A.feAns = b => UI.openForm('prayers', b.dataset.id, { status: 'Respondida', answeredAt: today() }, { title: xian() ? 'Como Deus respondeu?' : quiet() ? 'Como se cumpriu?' : 'Como foi respondida?' });
+A.fePrayer = b => { const p = Rel.prayers()[+b.dataset.i]; if (!p) return; const R = p.ref ? parseRef(p.ref) : null, vs = R ? verses(R) : [];
+  UI.modal(`<div style="padding:20px"><div class="row between"><h3 style="margin:0">${esc(p.t)}</h3><button class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div>${p.x ? `<div class="fe-prx">${esc(p.x)}</div>` : ''}${vs.length ? `<blockquote class="fe-pass${preC()}" style="font-size:18px;max-height:none"${dirA()}>${vs.map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' ')}<footer>${esc(label(R))}</footer></blockquote>` : ''}${!p.x && !vs.length ? '<p class="mut">A abrir o livro… tenta outra vez daqui a um instante.</p>' : ''}</div>`); };
+A.fePractice = b => { const k = b.dataset.k; if (k === 'acts' || Rel.start(k, () => devoSet('prayed', 1)) === false) A.fePrayStart(); };
 A.feLord = () => { const R = { b: 'MAT', c: 6, v1: 9, v2: 13 }; UI.modal(`<div style="padding:20px"><div class="row between"><h3 style="margin:0">Pai Nosso</h3><button class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div><blockquote class="fe-pass" style="font-size:18px">${verses(R).map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' ')}<footer>${esc(label(R))}</footer></blockquote></div>`); };
 /* oração guiada ACTS: Adoração, Confissão, Gratidão, Súplica */
 const STEPS = [['Silêncio', 60, 'Respira devagar. Deixa o barulho do dia assentar. "Aquietai-vos e sabei que eu sou Deus."', 'PSA 46:10'], ['Adoração', 120, 'Louva a Deus por quem Ele é: fiel, bom, presente, Pai. Diz-Lhe o que admiras n\'Ele.', 'PSA 145:18'], ['Confissão', 120, 'Com sinceridade, entrega o que fizeste mal. Ele é fiel para perdoar.', '1JN 1:9'], ['Gratidão', 120, 'Agradece por coisas concretas de hoje e desta semana.', '1TH 5:16-18'], ['Súplica', 180, 'Apresenta os teus pedidos e intercede pelos outros (os teus pedidos de oração aparecem abaixo).', 'PHP 4:6-7']];
@@ -9387,16 +9787,19 @@ A.fePrayNext = () => { if (!PG) return; if (PG.i < STEPS.length - 1) { PG.i++; P
 A.fePrayStop = () => { if (PG && PG.t) clearInterval(PG.t); PG = null; UI.closeModal(); OS.request(); };
 
 /* ---------- planos ---------- */
-T.planos = () => { if (!bible()) return `<div class="pn"><div class="sai-busy"><div class="fd-spin"></div><span>A abrir a Bíblia…</span></div></div>`; const P = planToday(), B = bible(), rs = readSet();
+T.planos = () => { if (!bible()) return opening(); const P = planToday(), B = bible(), rs = readSet(), U1 = unit(B.b[B.b.length - 1][0], 1);
   const byBook = B.b.map(b => ({ b, n: b[3].length, r: b[3].filter((_, i) => rs.has(b[0] + '.' + (i + 1))).length })), tot = U.sum(byBook, x => x.n), rd = U.sum(byBook, x => x.r);
-  return `${P ? `<div class="pn"><div class="pn-h"><h3>${esc(PLANS[P.k][0])}</h3><button class="btn xs ghost" data-act="fePlanStop">Parar plano</button></div><div class="kpis">${UI.kpi('Dia', (P.di + 1) + ' / ' + P.all.length)}${UI.kpi('Progresso', U.pct(P.done / P.total), P.done + ' de ' + P.total + ' capítulos')}${UI.kpi('Em atraso', P.behind ? P.behind + ' cap.' : 'em dia', '', { tone: P.behind ? 'warn' : 'pos' })}</div>
+  return `${P ? `<div class="pn"><div class="pn-h"><h3>${esc(plans()[P.k][0])}</h3><button class="btn xs ghost" data-act="fePlanStop">Parar plano</button></div><div class="kpis">${UI.kpi('Dia', (P.di + 1) + ' / ' + P.all.length)}${UI.kpi('Progresso', U.pct(P.done / P.total), P.done + ' de ' + P.total + ' ' + U1)}${UI.kpi('Em atraso', P.behind ? P.behind + ' cap.' : 'em dia', '', { tone: P.behind ? 'warn' : 'pos' })}</div>
     <div class="fe-days">${P.all.map((d, i) => { const all = d.every(r => rs.has(r)); return `<button class="${all ? 'done' : ''} ${i === P.di ? 'cur' : ''}" data-act="feGo" data-r="${d.find(r => !rs.has(r)) || d[0]}" title="Dia ${i + 1}: ${esc(groupRefs(d))}">${i + 1}</button>`; }).join('')}</div></div>` : ''}
-  <div class="pn"><div class="pn-h"><h3>Escolher um plano</h3></div><div class="fe-plans">${Object.entries(PLANS).map(([k, [nm, ds]]) => `<div class="fe-plan ${P && P.k === k ? 'on' : ''}"><b>${esc(nm)}</b><small class="mut">${esc(ds)}</small><button class="btn sm ${P && P.k === k ? '' : 'pri'}" data-act="fePlan" data-k="${k}">${P && P.k === k ? 'Recomeçar' : 'Começar hoje'}</button></div>`).join('')}</div></div>
-  <div class="pn"><div class="pn-h"><h3>A Bíblia que já leste</h3><span class="mut" style="font-size:12px">${rd} de ${tot} capítulos · ${U.pct(rd / tot, 1)}</span></div>${UI.bar(rd / tot, 'pos')}
-    <div class="fe-bk">${byBook.map(x => `<button data-act="feGo" data-r="${x.b[0]}.${(x.b[3].findIndex((_, i) => !rs.has(x.b[0] + '.' + (i + 1))) + 1) || 1}" title="${esc(x.b[1])}: ${x.r}/${x.n}"><span>${esc(x.b[2] || x.b[1])}</span><i style="width:${x.r / x.n * 100}%"></i></button>`).join('')}</div></div>`; };
+  <div class="pn"><div class="pn-h"><h3>Escolher um plano</h3></div><div class="fe-plans">${Object.entries(plans()).map(([k, [nm, ds]]) => `<div class="fe-plan ${P && P.k === k ? 'on' : ''}"><b>${esc(nm)}</b><small class="mut">${esc(ds)}</small><button class="btn sm ${P && P.k === k ? '' : 'pri'}" data-act="fePlan" data-k="${k}">${P && P.k === k ? 'Recomeçar' : 'Começar hoje'}</button></div>`).join('')}</div></div>
+  <div class="pn"><div class="pn-h"><h3>${xian() || !Rel.chosen() ? 'A Bíblia que já leste' : 'O que já leste'}</h3><span class="mut" style="font-size:12px">${rd} de ${tot} ${U1} · ${U.pct(rd / tot, 1)}</span></div>${UI.bar(rd / tot, 'pos')}
+    ${B.b.length <= 2 ? B.b.map(b => (B.b.length > 1 ? `<div class="eyebrow" style="margin-top:8px">${esc(b[1])}</div>` : '') + chList(b)).join('') : ''}<div class="fe-bk"${B.b.length <= 2 ? ' hidden' : ''}>${byBook.map(x => `<button data-act="feGo" data-r="${x.b[0]}.${(x.b[3].findIndex((_, i) => !rs.has(x.b[0] + '.' + (i + 1))) + 1) || 1}" title="${esc(x.b[1])}: ${x.r}/${x.n}"><span>${esc(x.b[2] || x.b[1])}</span><i style="width:${x.r / x.n * 100}%"></i></button>`).join('')}</div></div>`; };
 
-/* ---------- versículo do dia na página Hoje ---------- */
-OS.on('ready', () => { const h = V.hoje; if (h && !h._fe) { V.hoje = s => { const base = h(s); const B = bible(); if (!B) return base; const R = FB.vod(); const vs = textOf(R); const card = `<a class="pn fe-mini" href="#fe"><span class="eyebrow">Versículo do dia</span><span>“${esc(vs.length > 220 ? vs.slice(0, 217) + '…' : vs)}”</span><b>${esc(label(R))}</b></a>`; const i = base.indexOf('</header>'); return i > 0 ? base.slice(0, i + 9) + card + base.slice(i + 9) : card + base; }; V.hoje._fe = 1; } });
+/* ---------- texto do dia na página Hoje (ou o Orixá do dia) ---------- */
+const mini = () => { if (OS.Areas && !OS.Areas.on('fe')) return ''; if (fam() === 'afro') { const os = Rel.orixas(); return `<a class="pn fe-mini" href="#fe"><span class="eyebrow">Orixá do dia</span><span>${os.map(o => esc(o.n) + ' — ' + esc(o.s)).join(' · ')}</span><b>${esc(os.map(o => o.e).join(' · '))}</b></a>`; }
+  const B = bible(); if (!B) return ''; const R = FB.vod(); if (!R) return ''; const vs = textOf(R); if (!vs) return '';
+  return `<a class="pn fe-mini" href="#fe"><span class="eyebrow">${esc(RM().daily || 'Versículo do dia')}</span><span class="${preC()}"${dirA()}>“${esc(vs.length > 220 ? vs.slice(0, 217) + '…' : vs)}”</span><b>${esc(label(R))}</b></a>`; };
+OS.on('ready', () => { const h = V.hoje; if (h && !h._fe) { V.hoje = s => { const base = h(s), card = mini(); if (!card) return base; const i = base.indexOf('</header>'); return i > 0 ? base.slice(0, i + 9) + card + base.slice(i + 9) : card + base; }; V.hoje._fe = 1; } relabel(); });
 })();
 
 </script>
@@ -12290,7 +12693,8 @@ const PUSH = [
   'Começa onde estás, usa o que tens, faz o que podes.',
   'Hoje: menos desculpas, mais execução.'
 ];
-const pick = (arr, salt) => arr[(U.hash(U.today() + salt) + (OS.ui['q_' + salt] || 0)) % arr.length];
+const fit = arr => OS.Rel && OS.Rel.chosen() && ['budista', 'hindu', 'espiritual', 'nenhuma'].includes(OS.Rel.meta().fam) ? arr.filter(t => !/\bDeus\b|Jesus|Bíblia|orar\b|oração/i.test(t)) : arr;
+const pick = (arr0, salt) => { const arr = fit(arr0); return arr[(U.hash(U.today() + salt) + (OS.ui['q_' + salt] || 0)) % arr.length]; };
 A.qNext = b => { OS.setUI('q_' + b.dataset.k, (OS.ui['q_' + b.dataset.k] || 0) + 1); };
 const truthCard = () => `<div class="pn q-truth"><div class="pn-h"><h3>Verdade do dia</h3><button class="icon-btn" data-act="qNext" data-k="t" aria-label="Outra verdade" title="Outra">${OS.UI.ic('right')}</button></div><p>${esc(pick(TRUTH, 't'))}</p></div>`;
 const pushLine = () => `<p class="q-push">${esc(pick(PUSH, 'p'))} <button class="q-more" data-act="qNext" data-k="p" aria-label="Outra frase">↻</button></p>`;
@@ -13034,6 +13438,7 @@ let data = U.ls.get(K, null), busy = null;
 const geo = async name => { const g = U.ls.get('os2wxgeo', null), k = name + '|' + cc(); if (g && (g.k || g.n) === k) return g;
   const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=' + (OS.Lang ? OS.Lang.base() : 'pt') + (cc() ? '&countryCode=' + cc() : '') + '&name=' + encodeURIComponent(name)), j = await r.json(), x = (j.results || [])[0];
   const o = x ? { n: name, k, lat: x.latitude, lon: x.longitude, label: x.name } : { n: name, k, lat: 40.6405, lon: -8.6538, label: 'Aveiro' }; U.ls.set('os2wxgeo', o); return o; };
+W.where = () => geo(W.city());   // { lat, lon, label } da cidade da pessoa (para os horários de oração, o Shabat…)
 W.get = async force => { const city = W.city(); if (!force && data && data.city === city && !!data.imp === imp() && Date.now() - data.at < 30 * 6e4) return data; if (busy) return busy;
   busy = (async () => { try { const g = await geo(city);
     const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${g.lat}&longitude=${g.lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation,relative_humidity_2m&hourly=precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset&timezone=${cc() && cc() !== 'PT' ? 'auto' : 'Europe%2FLisbon'}&forecast_days=4${imp() ? '&temperature_unit=fahrenheit&wind_speed_unit=mph' : ''}`);
@@ -17489,8 +17894,9 @@ const defaults = () => { const p = OS.one('profile'), d = OS.one('diet'), sp = O
     est: p.uni ? 'uni' : '', inst: p.uni || '', curso: p.course || '', ano: p.curYear || '', subs: '',
     trab: p.jobRole ? 'emp' : '', cargo: p.jobRole || '', empresa: p.employer || '', horas: p.workHours || '',
     obj: '', nivel: 'Iniciante', dias: '', onde: '', desp: [], peso: '', altura: d.h || '', idade: d.age || '', sexo: d.sex || '',
-    moeda: p.cur || CUR[cc] || 'EUR', dinh: [], poup: '20', acordar: p.wakeTime || '', deitar: p.sleepTime || '', hab: [], metas: ['', '', ''] }; };
+    rel: (OS.one('faith') || {}).rel || '', moeda: p.cur || CUR[cc] || 'EUR', dinh: [], poup: '20', acordar: p.wakeTime || '', deitar: p.sleepTime || '', hab: [], metas: ['', '', ''] }; };
 
+const habits = a => HABITS.map(h => h[0] === 'fe' && OS.Rel ? [h[0], OS.Rel.habit(a.rel || 'evangelica')].concat(h.slice(2)) : h);
 /* ---------- os passos ---------- */
 const on = (a, ...ks) => ks.some(k => !new Set(a.hide).has(k));
 const chips = (a, k, opts, multi) => `<div class="onb-chips">${opts.map(([v, l]) => { const sel = multi ? (a[k] || []).includes(v) : String(a[k]) === String(v); return `<button type="button" class="chip onb-c ${sel ? 'on' : ''}" data-o${multi ? 'm' : 'c'}="${k}" data-v="${esc(v)}" aria-pressed="${sel}">${esc(l)}</button>`; }).join('')}</div>`;
@@ -17499,6 +17905,7 @@ const STEPS = [
   { id: 'tu', t: 'Vamos fazer o Prumo à tua medida', s: 'São dois minutos. Tudo fica editável depois, e podes saltar quando quiseres.',
     b: a => `${inp(a, 'short', 'Como te chamas?', { ph: 'O teu nome' })}<div class="onb-2">${`<label class="onb-f"><span>País onde vives</span><select class="field" data-ok="country">${(OS.Pais ? OS.Pais.list() : [['PT', 'Portugal'], ['BR', 'Brasil']]).map(c => `<option value="${c[0]}"${c[0] === a.country ? ' selected' : ''}>${OS.Pais ? OS.Pais.flag(c[0]) + ' ' : ''}${esc(c[1])}</option>`).join('')}</select></label>`}${inp(a, 'city', 'Cidade', { ph: 'ex.: Lisboa, São Paulo' })}</div>
       ${OS.Lang ? `<label class="onb-f"><span>Língua do app</span><select class="field" data-ok="lang" data-notr>${OS.Lang.list().map(c => `<option value="${c}"${c === a.lang ? ' selected' : ''}>${esc(OS.Lang.name(c))}</option>`).join('')}</select></label>` : ''}
+      ${OS.Rel ? `<label class="onb-f"><span>Religião (a aba Fé muda conforme a tua: livro sagrado, orações e práticas)</span>${OS.Rel.select(a.rel || '', 'data-ok="rel"')}</label>` : ''}
       <div class="onb-f"><span>Como queres chamar a tua IA? (é por este nome que a chamas por voz)</span>${chips(a, 'ia', NAMES.map(n => [n, n]))}<input class="field" data-ok="ia" value="${esc(NAMES.includes(a.ia) ? '' : a.ia)}" placeholder="Ou escreve outro nome"></div>
       <div class="onb-f"><span>E a voz? (toca para ouvir)</span>${chips(a, 'voz', VOZ)}</div>` },
   { id: 'areas', t: 'O que queres no teu Prumo?', s: 'Toca para escolher as abas que vais usar. As outras ficam escondidas do menu e podes ligá-las quando quiseres em Definições.',
@@ -17526,7 +17933,7 @@ const STEPS = [
       <div class="onb-f"><span>Quanto do que ganhas queres poupar?</span>${chips(a, 'poup', [['10', '10%'], ['15', '15%'], ['20', '20%'], ['30', '30%']])}</div>` },
   { id: 'rotina', t: 'A tua rotina e as tuas metas', s: 'Os hábitos entram no teu quadro de hábitos; as metas entram em Metas e no jogo.',
     b: a => `<div class="onb-2">${inp(a, 'acordar', 'Acordo às', { t: 'time' })}${inp(a, 'deitar', 'Deito-me às', { t: 'time' })}</div>
-      <div class="onb-f"><span>Hábitos que queres ter</span>${chips(a, 'hab', HABITS.filter(h => (h[0] !== 'fe' || on(a, 'fe')) && (h[0] !== 'estudo' || (a.est && a.est !== 'nao')) && (h[0] !== 'treino' || +a.dias || (a.desp || []).length) && (h[0] !== 'gastos' || on(a, 'financas', 'gasto'))).map(h => [h[0], h[1]]), 1)}</div>
+      <div class="onb-f"><span>Hábitos que queres ter</span>${chips(a, 'hab', habits(a).filter(h => (h[0] !== 'fe' || on(a, 'fe')) && (h[0] !== 'estudo' || (a.est && a.est !== 'nao')) && (h[0] !== 'treino' || +a.dias || (a.desp || []).length) && (h[0] !== 'gastos' || on(a, 'financas', 'gasto'))).map(h => [h[0], h[1]]), 1)}</div>
       <div class="onb-f"><span>Três coisas que queres conseguir nos próximos 12 meses</span>${[0, 1, 2].map(i => `<input class="field onb-m" data-om3="${i}" value="${esc(a.metas[i] || '')}" placeholder="${['ex.: Passar a todas as cadeiras', 'ex.: Juntar 1000 € de reserva', 'ex.: Correr 10 km'][i]}">`).join('')}</div>` },
   { id: 'fim', t: 'Pronto para criar o teu Prumo', s: 'Isto é o que vou preparar para ti. Muda o que quiseres depois.',
     b: a => `<ul class="onb-sum">${plan(a).map(x => `<li>${UI.ic('check')}<span>${esc(x)}</span></li>`).join('')}</ul>` }];
@@ -17536,6 +17943,7 @@ const subsOf = a => (Array.isArray(a.subs) ? a.subs.map(String) : String(a.subs 
 const metasOf = a => (a.metas || []).map(s => String(s || '').trim()).filter(Boolean).slice(0, 3);
 const plan = a => { const L = [], S = subsOf(a), d = +a.dias || 0, hid = new Set(a.hide);
   L.push(hid.size ? `Menu com as abas que escolheste (${groups().reduce((n, [, it]) => n + it.filter(([k]) => !hid.has(k)).length, 0)} de ${groups().reduce((n, [, it]) => n + it.length, 0)})` : 'Menu com todas as abas');
+  if (a.rel && OS.Rel && a.rel !== 'nenhuma' && on(a, 'fe')) L.push(`Aba Fé: ${OS.Rel.name(a.rel)} (livro sagrado, orações e práticas)`);
   if (a.country) L.push(`País: ${((OS.Country && OS.Country.list || []).find(c => c[0] === a.country) || [, a.country])[1]} (feriados, moeda e sotaque da voz)`);
   if (S.length) L.push(`${S.length} disciplina${S.length > 1 ? 's' : ''} em ${a.est === 'sec' ? 'Estudos' : 'Universidade'}`);
   if (d) L.push(`Plano de treino de ${d} dia${d > 1 ? 's' : ''} por semana (${a.onde === 'casa' ? 'em casa' : a.onde === 'fora' ? 'ao ar livre' : 'ginásio'})`);
@@ -17586,7 +17994,7 @@ const marcosFor = a => { const m = { int: [], for: [], cor: [], inf: [], esp: []
   if (d) m.cor.push(`Treinar ${d} vezes por semana durante 12 semanas seguidas`);
   if ((a.desp || []).includes('corrida')) m.cor.push(a.nivel === 'Avançado' ? 'Correr uma meia maratona' : a.nivel === 'Intermédio' ? 'Correr 10 km em menos de 60 minutos' : 'Correr 5 km sem parar');
   (a.desp || []).filter(k => k !== 'corrida').slice(0, 2).forEach(k => m.cor.push(`Praticar ${(SPORTS.find(s => s[0] === k) || [, k])[1]} 2 vezes por semana durante 3 meses`));
-  if (on(a, 'fe')) m.esp.push('Ler o Novo Testamento todo', 'Orar todos os dias durante 30 dias seguidos');
+  if (on(a, 'fe')) m.esp.push(...(OS.Rel && a.rel && OS.Rel.marcos(a.rel).length ? OS.Rel.marcos(a.rel) : ['Ler o Novo Testamento todo', 'Orar todos os dias durante 30 dias seguidos']));
   return m; };
 const apply = async a => { const t = U.today(), S = subsOf(a), done = [];
   if (OS.seedBase) OS.seedBase();
@@ -17607,6 +18015,7 @@ const apply = async a => { const t = U.today(), S = subsOf(a), done = [];
   try { OS.Spyke && OS.Spyke.setWakeName && OS.Spyke.setWakeName(); } catch (e) { }
   if (['PT', 'BR'].includes(a.country)) OS.setOne('news', { tabs: a.country === 'BR' ? ['BR', 'PT'] : ['PT', 'BR'] }); else if (OS.News && OS.News.has && OS.News.has(a.country)) OS.setOne('news', { tabs: [a.country] });
   OS.Areas.set(a.hide || []);
+  if (a.rel && OS.Rel) OS.Rel.set(a.rel, true);
   // moeda das contas (só enquanto não há movimentos)
   if (a.moeda && !OS.all('transactions').length) OS.all('accounts').forEach(x => { if (x.currency !== a.moeda) OS.upd('accounts', x.id, { currency: a.moeda }, { silent: true }); });
   // disciplinas
@@ -17629,7 +18038,7 @@ const apply = async a => { const t = U.today(), S = subsOf(a), done = [];
   if (+a.altura || +a.idade || a.sexo || a.obj) { const d = +a.dias || 0; OS.setOne('diet', Object.assign({}, +a.altura ? { h: +a.altura } : {}, +a.idade ? { age: +a.idade } : {}, a.sexo ? { sex: a.sexo } : {}, { act: d >= 6 ? '1.725' : d >= 3 ? '1.55' : d >= 1 ? '1.375' : '1.2', goal: a.obj === 'cut' ? 'cut' : a.obj === 'bulk' ? 'bulk' : 'keep' }));
     try { const g = OS.Diet && OS.Diet.suggest && OS.Diet.suggest(); if (g && g.kcal) { OS.setOne('diet', { kcal: g.kcal, p: g.p, c: g.c, f: g.f, water: Math.round(g.w * 35 / 250) * 250 }); done.push(`meta de ${g.kcal} kcal`); } } catch (e) { } }
   // hábitos: os escolhidos ficam ativos; os que vieram de origem e não escolheste ficam desligados
-  if ((a.hab || []).length) { const pick = HABITS.filter(h => a.hab.includes(h[0])), names = new Set(pick.map(h => h[1].toLowerCase()));
+  if ((a.hab || []).length) { const pick = habits(a).filter(h => a.hab.includes(h[0])), names = new Set(pick.map(h => h[1].toLowerCase()));
     OS.all('habits').forEach(h => { if (!names.has(String(h.name || '').toLowerCase()) && h.active !== false && !Object.keys(h.log || {}).length) OS.upd('habits', h.id, { active: false }, { silent: true }); });
     const ex = new Set(OS.all('habits').map(h => String(h.name || '').toLowerCase()));
     pick.forEach(([k, name, group, core, auto]) => { const tr = k === 'treino' && +a.dias ? { freq: 'X por semana', perWeek: +a.dias } : {};
@@ -17641,14 +18050,14 @@ const apply = async a => { const t = U.today(), S = subsOf(a), done = [];
   metasOf(a).forEach(m => { if (gt.has(m.toLowerCase())) return; const p = pillarOf(m); OS.add('goals', { title: m.charAt(0).toUpperCase() + m.slice(1), cat: p === 'for' ? 'Finanças' : p === 'cor' ? 'Academia' : p === 'int' ? 'Estudos' : 'Desenvolvimento pessoal', horizon: '1 ano', metric: 'manual', status: 'Ativa', start: t, due: U.addDays(t, 365), importance: 4, steps: [] }, { silent: true }); });
   // marcos do Dominus (primeiro os feitos aqui; a IA acrescenta mais à medida, sem esperar)
   let nm = 0; const M = marcosFor(a); if (OS.Dom && OS.Dom.legAddMine) Object.entries(M).forEach(([p, L]) => { nm += OS.Dom.legAddMine(p, L); });
-  if (!on(a, 'fe') && OS.Dom && OS.Dom.legOffWhere) OS.Dom.legOffWhere('esp', /Bíblia|biblia|oração|orar|igreja|Deus|jejum|devocional|fé\b|Cristo|batismo|culto|louvor/i);
+  if ((!on(a, 'fe') || (a.rel && OS.Rel && !OS.Rel.christian(a.rel))) && OS.Dom && OS.Dom.legOffWhere) OS.Dom.legOffWhere('esp', /Bíblia|biblia|oração|orar|igreja|Deus|jejum|devocional|fé\b|Cristo|batismo|culto|louvor/i);
   if (nm) done.push(`${nm} marco${nm > 1 ? 's' : ''} no Dominus`);
   OS.setOne('onb', { done: 'ok', at: new Date().toISOString(), ans: Object.assign({}, a, { subs: S.join('\n') }) });
   OS.request(); aiMarcos(a); return done; };
 
 /* ---------- IA: disciplinas sugeridas e marcos afinados ---------- */
 const aiOn = () => !!(OS.AI && OS.AI.key && OS.AI.key());
-const ctxOf = a => JSON.stringify({ nome: a.short, pais: a.country, cidade: a.city, estudos: a.est, instituicao: a.inst, curso: a.curso, ano: a.ano, trabalho: a.trab, cargo: a.cargo, objetivo_corpo: a.obj, dias_treino: a.dias, desportos: a.desp, dinheiro: a.dinh, metas: metasOf(a), fe: on(a, 'fe') });
+const ctxOf = a => JSON.stringify({ nome: a.short, pais: a.country, cidade: a.city, estudos: a.est, instituicao: a.inst, curso: a.curso, ano: a.ano, trabalho: a.trab, cargo: a.cargo, objetivo_corpo: a.obj, dias_treino: a.dias, desportos: a.desp, dinheiro: a.dinh, metas: metasOf(a), fe: on(a, 'fe'), religiao: a.rel && OS.Rel ? OS.Rel.name(a.rel) : '' });
 A.onbSug = async () => { if (!W || W.sug) return; if (!aiOn()) { W.sugErr = 'A IA ainda não está ligada nesta conta.'; return draw(); } W.sug = true; W.sugErr = ''; draw();
   try { const a = W.a, o = await OS.AI.json([{ text: `Lista as disciplinas (unidades curriculares) típicas do ${a.est === 'sec' ? (a.ano || '') + '.º ano do ensino secundário' : (a.ano ? a.ano + '.º ano' : '1.º ano') + ' do curso de ' + a.curso + (a.inst ? ' em ' + a.inst : '')}, no semestre atual (${semNow()}), em ${a.country === 'BR' ? 'Brasil' : a.country === 'PT' ? 'Portugal' : OS.Pais ? OS.Pais.name(a.country, 'pt') : a.country}. Usa os nomes oficiais mais prováveis, ${a.country === 'BR' ? 'em português do Brasil' : a.country === 'PT' ? 'em português de Portugal' : 'na língua em que são ensinadas nesse país'}. Se não tiveres a certeza, dá as mais comuns desse curso e ano. Entre 4 e 8.
 JSON: {"disciplinas":["…"]}` }], .2);
@@ -17658,7 +18067,7 @@ JSON: {"disciplinas":["…"]}` }], .2);
   W.sug = false; draw(); };
 const aiMarcos = async a => { if (!aiOn() || !OS.Dom || !OS.Dom.legAddMine) return;
   try { const o = await OS.AI.json([{ text: `És o mestre de jogo do Dominus, o RPG da vida real da app Prumo. Cria marcos (conquistas reais da vida, difíceis mas possíveis, concretos e verificáveis, com números quando fizer sentido) para esta pessoa, a partir do que ela contou. Português de Portugal, frases curtas (máx. 90 caracteres), sem emojis.
-Pilares: "int" (Intelecto: estudos, línguas, leitura, competências), "for" (Fortuna: dinheiro, trabalho, carreira, negócio), "cor" (Corpo: treino, saúde, desporto, sono), "inf" (Influência: família, amizades, relações, rede), "esp" (Espírito: ${on(a, 'fe') ? 'fé, oração, gratidão, paz interior' : 'paz interior, gratidão, propósito, sem religião'}).
+Pilares: "int" (Intelecto: estudos, línguas, leitura, competências), "for" (Fortuna: dinheiro, trabalho, carreira, negócio), "cor" (Corpo: treino, saúde, desporto, sono), "inf" (Influência: família, amizades, relações, rede), "esp" (Espírito: ${on(a, 'fe') ? (a.rel && OS.Rel ? 'a fé dela (' + OS.Rel.name(a.rel) + '), oração e prática, gratidão, paz interior' : 'fé, oração, gratidão, paz interior') : 'paz interior, gratidão, propósito, sem religião'}).
 Dá 3 marcos por pilar, do mais próximo ao mais ambicioso, ligados à vida dela (curso, trabalho, desportos, metas). Não repitas estes: ${JSON.stringify(marcosFor(a))}.
 A pessoa: ${ctxOf(a)}
 JSON: {"int":["…"],"for":["…"],"cor":["…"],"inf":["…"],"esp":["…"]}` }], .5);
@@ -17684,6 +18093,7 @@ const close = () => { const h = document.getElementById('onb'); if (h) { h.hidde
 // a língua muda logo, para o resto das perguntas já aparecer nela
 const langNow = c => { if (OS.Lang && OS.Lang.ok(c)) OS.Lang.set(c); };
 const onInput = e => { if (!W) return; const el = e.target, k = el.dataset.ok, m3 = el.dataset.om3; if (k) { W.a[k] = el.value; if (k === 'ia') { /* nome escrito à mão */ } if (k === 'country' && e.type === 'change') { W.a.moeda = CUR[el.value] || W.a.moeda; if (OS.Pais && !W.langSet) { W.a.lang = OS.Pais.langOf(el.value); langNow(W.a.lang); } draw(); }
+    if (k === 'rel' && e.type === 'change') { const h = new Set(W.a.hide); if (el.value === 'nenhuma') h.add('fe'); else h.delete('fe'); W.a.hide = [...h]; }
     if (k === 'lang' && e.type === 'change') { W.langSet = 1; langNow(el.value); draw(); } }
   if (m3 != null) W.a.metas[+m3] = el.value; };
 const onClick = async e => { if (!W) return; const b = e.target.closest('button'); if (!b || b.disabled) return; const a = W.a, hide = new Set(a.hide);
@@ -20888,7 +21298,7 @@ OS.Fold = (() => {
   const tabOf = sub => String(sub || '').split('.')[0] || 'geral';
   const CHEV = '<svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
   // Geral: os blocos por temas (chave = id do bloco ou o título)
-  const GROUPS = [['Tu', 'Os teus dados e metas: entram nos cálculos de todo o Prumo.', ['pfMe', 'paisSet', 'onbSet', 'pfUni', 'pfWork', 'pfGoals', 'contextos']],
+  const GROUPS = [['Tu', 'Os teus dados e metas: entram nos cálculos de todo o Prumo.', ['pfMe', 'paisSet', 'relSet', 'onbSet', 'pfUni', 'pfWork', 'pfGoals', 'contextos']],
     ['Segurança e conta', 'Código de bloqueio, Face ID e a tua conta.', ['seguranca', 'codigo neste aparelho', 'accMig']],
     ['Aparelhos e dados', 'Sincronizar aparelhos, cópias de segurança e mudar de endereço.', ['syncPn', 'dataPn', 'mudanca de endereco']],
     ['Aplicação', 'Aparência, desempenho e atualizações.', ['fdSet', 'animSet', 'desempenho', 'verPn']]];
