@@ -62,7 +62,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `js/ligar.js`: caderno de erros ligado a "O que estudar hoje", flashcards e Dominus; "O app inteiro" no Painel.
 - `js/onboard.js` (`OS.Areas.prune`): o que tem `data-area="…"` sai do ecrã quando essa área está desligada (Definições › O teu Prumo).
 - `js/mundo.js`: cidadania, passaporte, residência e visto por país; a lista abre por continente.
-- `js/spotify.js`: o tocador no canto (com conta: PKCE, até 5 contas autorizadas na app do Spotify; sem conta: o tocador do Spotify).
+- `js/spotify.js`: o tocador no canto (com conta: PKCE; sem conta: o tocador do Spotify). Só para o administrador e até 4 contas que ele escolhe
+  no Admin (`op: 'adminSpotify'`, lista em `cfg/spotify`); a resposta `eu` diz `sp` e traz a Client ID só a essas contas. Para as outras nem aparece.
   A Client ID (pública) vem de `SPOTIFY_CLIENT_ID` no Vercel; o CSP deixa `https://open.spotify.com` em `frame-src`.
 - `js/fundos.js` + `js/scene.js` + `css/forte.css`: todos os fundos animados (tempos por elemento em `--du`/`--dl`).
 - `js/vivo.js`: confetes, "+N de foco", chama viva, anel que enche.

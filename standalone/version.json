@@ -1,18 +1,9 @@
 {
- "n": 150,
- "hash": "25720b991d48",
+ "n": 151,
+ "hash": "1ce61a1acc61",
  "notes": [
-  "Pontos mais difíceis: no ranking só conta o que fazes (tarefas e hábitos, tempo de foco, treino, leitura ou devocional) e um dia de foco precisa de 70; o Dominus também sobe mais devagar.",
-  "Ranking com a foto de cada pessoa; quem está a zero não aparece.",
-  "Admin: apagar a conta de outra pessoa (com a tua senha).",
-  "Currículo em Carreira e contactos: a IA analisa, dá nota, reescreve frases e compara com uma vaga.",
-  "IA no Treino e na Dieta: diz se te levam aos teus objetivos e o que mudar.",
-  "Fé: tocar num versículo mostra a explicação; ficam só as religiões principais.",
-  "Floresta junta-se ao Bloco de foco; Mundo abre o país com um clique e tem cidadania, passaporte, residência e visto.",
-  "Funcionalidades que desligas saem do app inteiro; o Painel mostra o app inteiro num olhar; o caderno de erros liga-se a tudo.",
-  "Spotify no canto do ecrã (com conta ou sem conta); fundos todos animados e mais animações no app.",
-  "Spyke novo: o Claude pensa, o Gemini pesquisa no Google e um ouvido dedicado transcreve (quando ligados no servidor).",
-  "Património exato (sem arredondar), Corpo com o calendário automático, mais frases do dia, \"Modo Comando\" no lugar do nome antigo."
+  "Spotify só para quem o administrador escolher (ele e mais até 4 contas, no Admin); para as outras pessoas não aparece.",
+  "Admin: dar e tirar o acesso ao Spotify em cada conta."
  ],
  "date": "25/10/2026"
 }
