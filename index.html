@@ -2676,6 +2676,45 @@ html.spy-ear #jvFab{box-shadow:0 0 0 4px rgba(34,211,238,.35),0 10px 26px rgba(3
 .rl-moon i{position:absolute;inset:0;border-radius:50%;background:var(--pn,#0f1b2d);translate:var(--x,0) 0}
 .rl-ox{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-bottom:1px solid var(--line2)}.rl-ox:last-of-type{border-bottom:0}.rl-ox b{font-size:17px}.rl-sd{color:var(--accent);font-weight:600}
 @media (max-width:700px){.fe-chl{grid-template-columns:1fr 1fr}.rl-tap{width:164px;height:164px}}
+/* ---------- ranking e dias de foco (js/ranking.js) ---------- */
+:root{--flame:#FF9A3C}
+.fc-chip{display:inline-flex;align-items:center;gap:3px;height:30px;padding:0 9px 0 7px;border-radius:15px;border:1px solid var(--line2);color:var(--tx2);font-weight:700;font-size:13px;text-decoration:none;font-variant-numeric:tabular-nums;flex:none}
+.fc-chip .ic{width:16px;height:16px}.fc-chip.on{color:var(--flame);border-color:color-mix(in srgb,var(--flame) 45%,transparent);background:color-mix(in srgb,var(--flame) 12%,transparent)}
+.fc-fl{display:inline-flex;align-items:center;gap:2px;color:var(--tx2);font-variant-numeric:tabular-nums}.fc-fl .ic{width:1.1em;height:1.1em}.fc-fl.on{color:var(--flame)}.fc-fl.on .ic{fill:color-mix(in srgb,var(--flame) 35%,transparent)}
+.fc-bar{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;margin:0 0 14px;padding:12px 14px}
+.fc-bar .fc-fl{font-size:22px;font-weight:800}.fc-bar b{display:block;font-size:15px}.fc-bar small{color:var(--tx2);font-size:12.5px}.fc-bar.on{border-color:color-mix(in srgb,var(--flame) 40%,var(--line2))}.fc-bar>.ic{width:18px;height:18px;color:var(--tx2)}
+.rk-me-h{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:'fl tx rg';align-items:center;gap:16px}.rk-me-h>.fc-fl{grid-area:fl}.rk-me-h>.grow{grid-area:tx}.rk-me-h>.rk-ring{grid-area:rg}.rk-me-h h3{margin:0 0 2px;font-size:18px}.rk-me-h p{margin:0;font-size:13px}
+.rk-me .fc-fl{font-size:34px;font-weight:800;flex:none}.rk-me .fc-fl .ic{width:44px;height:44px}
+.rk-ring{--p:0;width:86px;height:86px;flex:none;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p) * 360deg),var(--line2) 0);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;text-align:center}
+.rk-ring::before{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--pn,#0f1b2d)}.rk-ring b,.rk-ring small{position:relative;display:block}.rk-ring b{font-size:24px;line-height:1;font-variant-numeric:tabular-nums}.rk-ring small{font-size:9.5px;color:var(--tx2);margin-top:2px;line-height:1.1;max-width:58px}
+.rk-parts{list-style:none;margin:14px 0 10px;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:6px}
+.rk-parts li{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line2);border-radius:10px;font-size:13.5px}.rk-parts li .ic{width:16px;height:16px;color:var(--tx2)}.rk-parts li span{flex:1}
+.rk-parts li.ok .ic{color:var(--pos)}.rk-parts li b{font-variant-numeric:tabular-nums}
+.fc-strip-d{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:5px;max-width:350px}.fc-d{display:block;aspect-ratio:1;border-radius:5px;background:var(--line2);margin:0;float:none}.fc-d.fc-on{background:var(--flame)}.fc-d.fc-no{background:transparent;border:1px dashed var(--line3)}.fc-d.fc-now{outline:2px solid var(--accent);outline-offset:1px}
+.rk-note{font-size:12px;margin:8px 0 0}
+.rk-board .pn-h{flex-wrap:wrap;gap:8px}.rk-pos-me{margin:0 0 10px;font-size:14px}
+.rk-list{display:flex;flex-direction:column}
+.rk-row{display:grid;grid-template-columns:44px 40px minmax(0,1fr) 120px 86px;align-items:center;gap:10px;padding:10px 8px;border-bottom:1px solid var(--line2)}
+.rk-row:last-child{border-bottom:0}.rk-row.me{background:var(--accentBg);border-radius:12px;border-bottom-color:transparent}
+.rk-pos{font-weight:700;color:var(--tx2);font-variant-numeric:tabular-nums;text-align:center}
+.rk-pos i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;font-style:normal;color:#1a1206;font-weight:800}
+.rk-row.top1 .rk-pos i{background:linear-gradient(135deg,#FFE08A,#E8B84A)}.rk-row.top2 .rk-pos i{background:linear-gradient(135deg,#EEF2F7,#B8C2CF)}.rk-row.top3 .rk-pos i{background:linear-gradient(135deg,#F2C29B,#C98A5A)}
+.rk-av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#0b1422;font-weight:800;font-size:13px}
+.rk-n{min-width:0}.rk-n b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rk-n em{font-style:normal;font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:0 5px;margin-left:4px;vertical-align:2px}
+.rk-n small{display:flex;align-items:center;gap:4px;color:var(--tx2);font-size:12px}.rk-n small .fc-fl{font-weight:700}
+.rk-pct{display:flex;align-items:center;gap:6px}.rk-tr{flex:1;height:6px;border-radius:3px;background:var(--line2);overflow:hidden}.rk-tr i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.rk-pct small{width:34px;text-align:right;color:var(--tx2);font-size:12px;font-variant-numeric:tabular-nums}
+.rk-pct-m{display:none}
+.rk-pts{text-align:right;font-variant-numeric:tabular-nums;font-size:16px}.rk-pts small{font-size:11px;color:var(--tx2);font-weight:500;margin-left:3px}
+.rk-how{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.fc-cel{position:fixed;left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100vw - 32px);top:calc(env(safe-area-inset-top,0px) + 70px);z-index:99990;display:flex;align-items:center;gap:12px;padding:12px 18px 12px 14px;border-radius:16px;background:var(--pn,#0f1b2d);border:1px solid color-mix(in srgb,var(--flame) 55%,transparent);box-shadow:0 12px 40px rgba(0,0,0,.45);pointer-events:none;opacity:0;translate:0 -16px;transition:opacity .35s,translate .45s cubic-bezier(.16,.84,.24,1)}
+.fc-cel.in{opacity:1;translate:0 0}.fc-cel>span:last-child{min-width:0}.fc-cel b{display:block;font-size:16px}.fc-cel small{color:var(--tx2);font-size:12.5px}
+.fc-cel-f{color:var(--flame);display:grid}.fc-cel-f .ic{width:34px;height:34px;fill:color-mix(in srgb,var(--flame) 40%,transparent);animation:fcFlick 1.2s ease-in-out infinite alternate}
+@keyframes fcFlick{from{scale:1;rotate:-3deg}to{scale:1.12;rotate:3deg}}
+@media (max-width:480px){.fc-chip{border:0;background:none!important;padding:0 3px;gap:1px;height:30px}.fc-chip .ic{width:18px;height:18px}}
+@media (max-width:640px){.rk-row{grid-template-columns:30px 34px minmax(0,1fr) auto;gap:8px;padding:9px 4px}.rk-pct{display:none}.rk-pct-m{display:inline}.rk-av{width:32px;height:32px;font-size:12px}
+  .rk-me-h{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:'fl . rg' 'tx tx tx';row-gap:10px}.rk-me .fc-fl .ic{width:36px;height:36px}.rk-me .fc-fl{font-size:28px}.rk-ring{width:74px;height:74px}}
+@media (prefers-reduced-motion:reduce){.fc-cel-f .ic{animation:none}}
 
 </style>
 <style>
@@ -3589,7 +3628,7 @@ html.vv-rm .vv-press:not(:disabled){scale:1}
 
 </style>
 <style>[hidden]{display:none!important}</style>
-<script>window.OCEANUM_VERSION={"v": "2.45", "date": "24/10/2026", "notes": ["A aba Fé agora é para todas as religiões: em Definições › Tu › Fé e religião (ou no questionário inicial) escolhes a tua — Católica, Evangélica, Ortodoxa, Espírita, Islâmica, Judaica, Hindu, Budista, Umbanda e Candomblé, ou espiritualidade sem religião — e a aba muda toda: o livro, o texto do dia, as orações, as práticas, os planos de leitura e a IA.", "O livro sagrado de cada fé, sem internet e na tua língua: a Bíblia católica com 73 livros, o Tanakh (também em hebraico), o Alcorão (também em árabe), a Bhagavad Gita (também em sânscrito), o Dhammapada, O Evangelho segundo o Espiritismo, o Tao Te Ching e as Meditações de Marco Aurélio.", "Práticas guiadas: o terço com os mistérios do dia, a Oração de Jesus com contas, o tasbih (33 × 3), a japa com mala de 108, meditação com sino, metta, o Evangelho no Lar, o Shemá e a saudação ao Orixá do dia.", "Painéis do dia: horários das cinco orações e direção de Meca, horários do Shabat e a parashá da semana, dias de lua cheia e nova (Uposatha) e o Orixá do dia.", "Quem escolhe \"Nenhuma\" deixa de ver a aba Fé no menu (e as frases do dia deixam de falar de Deus)."]};</script>
+<script>window.OCEANUM_VERSION={"v": "2.46", "date": "25/10/2026", "notes": ["Novo: Ranking (Visão Geral › Ranking). Todas as pessoas com conta no Prumo numa lista com a posição, a percentagem de disciplina, os pontos e os dias de foco. Só se vê a lista: não dá para abrir o perfil de ninguém nem mandar mensagens.", "Os pontos vêm da tua disciplina de cada dia (até 100): entrar no Prumo (20), fazer as tarefas e os hábitos do dia (até 65) e concluir tudo (mais 15). Vês o ranking da semana, do mês ou de sempre.", "Dias de foco: cada dia com 60 pontos ou mais conta, e os dias seguidos fazem a tua sequência (\"Dia 5 de foco\"). O fogo com o número fica no topo do app, no Hoje e no Painel, e há uma pequena celebração quando o dia passa a contar.", "Em Definições › Tu › Ranking podes aparecer como \"Pessoa anónima\"."]};</script>
 <script>(function(){try{var n=navigator,ua=n.userAgent||"",low=(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||/Android/i.test(ua)||matchMedia("(prefers-reduced-motion: reduce)").matches;var f=localStorage.getItem("os2lite");if(f==="1"||(f!=="0"&&low))document.documentElement.classList.add("lite")}catch(e){}})();</script>
 <script src="config.js"></script>
 <script>
@@ -5403,6 +5442,7 @@ OS.on('ready', () => setTimeout(() => sendUse(0), 4000));
 Acc.adm = () => !!(S && S.adm);
 Acc.token = () => (S && S.t) || '';
 Acc.pid = () => pid();
+Acc.call = (op, body) => S && cur() ? conta(op, body) : Promise.reject(Object.assign(new Error('Sem conta.'), { status: 401 })); // ranking e outras funções do servidor
 Acc.navAdm = () => { const N = OS.NAV; if (!N) return; const i = N.findIndex(g => g[0] === 'Admin');
   if (Acc.adm() && i < 0) { N.push(['Admin', [['admin', 'Administração', 'shield']]]); OS.request && OS.request(); } else if (!Acc.adm() && i >= 0) { N.splice(i, 1); OS.request && OS.request(); } };
 let ADM = null, admBusy = false, admErr = '';
@@ -9342,7 +9382,7 @@ const beads = (name, steps, done) => { PR = { kind: 'beads', name, steps, i: 0, 
 const draw = () => { if (!PR) return; let h = '';
   if (PR.kind === 'beads') { const s = PR.steps[PR.i], tot = PR.steps.length, n = s.n || 1, end = PR.i >= tot;
     h = end ? `<h2>Amém</h2><p>Que a paz esteja contigo.</p><button class="btn pri" data-act="rlStop">Fechar</button>`
-      : `<div class="rl-step">${PR.i + 1} / ${tot}</div><h2 class="${s.big ? 'rl-big' : ''}">${esc(s.t)}</h2>${s.h && n > 1 ? `<p class="rl-int">${esc(s.h)}</p>` : ''}<blockquote class="rl-x">${esc(s.x)}</blockquote>
+      : `<div class="rl-step">${esc(PR.name)} · ${PR.i + 1} / ${tot}</div><h2 class="${s.big ? 'rl-big' : ''}">${esc(s.t)}</h2>${s.h && n > 1 ? `<p class="rl-int">${esc(s.h)}</p>` : ''}<blockquote class="rl-x">${esc(s.x)}</blockquote>
         ${n > 1 ? `<div class="rl-beads">${Array.from({ length: n }, (_, j) => `<i class="${j < PR.k ? 'on' : ''}"></i>`).join('')}</div><div class="rl-n">${PR.k} / ${n}</div>` : ''}
         <button class="btn pri rl-go" data-act="rlNext">${n > 1 && PR.k < n - 1 ? 'Conta seguinte' : PR.i < tot - 1 ? 'Seguinte →' : 'Terminar'}</button>`;
     h = `<div class="rl-bar"><i style="width:${Math.round(Math.min(1, (PR.i + (PR.k / (s && s.n || 1))) / PR.steps.length) * 100)}%"></i></div>` + h; }
@@ -9454,6 +9494,116 @@ OS.on && OS.on('ready', () => { const o = OS.views.definicoes; if (!o || o._rl) 
   const panel = `<div class="pn" id="relSet"><div class="pn-h"><h3>${UI.ic('heart')}Fé e religião</h3><span class="mut" style="font-size:12px">${esc(R.chosen() ? R.name() : 'por escolher')}</span></div>
     <p class="mut" style="margin:0 0 10px">A aba Fé muda conforme a tua religião: o livro sagrado (na tua língua), as orações, a prática guiada, os planos de leitura e a IA. Podes mudar quando quiseres; o que já escreveste fica guardado.</p>${R.select()}</div>`;
   const i = h.indexOf('<div class="pn" id="onbSet"'); return i > 0 ? h.slice(0, i) + panel + h.slice(i) : h + panel; }; OS.views.definicoes._rl = 1; });
+})();
+
+</script>
+<script>
+/* PRUMO — Ranking e dias de foco.
+   Cada dia vale até 100 pontos de disciplina: entrar no app (20) + cumprir as tarefas e os hábitos do dia (65, pela parte feita) + tudo concluído (15).
+   Um dia sem nada marcado vale 40. Um dia de foco é um dia com 60 pontos ou mais; os dias de foco seguidos aparecem no topo ("Dia 5 de foco").
+   O ranking junta os perfis de todas as contas e só mostra a lista (nome, posição, %, pontos e dias de foco): não se abre o perfil de ninguém nem há mensagens. */
+(() => {
+'use strict';
+const U = OS.U, UI = OS.UI, V = OS.views, A = OS.act, esc = U.esc, Hab = OS.Hab;
+OS.ONE_DEF.foco = { dias: {}, anon: false, cel: '' };
+const FOCO = 60, cfg = () => OS.one('foco'), today = () => U.today();
+
+/* ---------- a pontuação do dia ---------- */
+const parts = (d = today()) => {
+  const T = OS.all('tasks'), doneT = T.filter(t => t.status === 'Feita' && t.doneAt === d).length;
+  const openT = T.filter(t => t.status !== 'Feita' && ((t.due && t.due <= d) || (t.sched && t.sched <= d))).length;
+  const H = OS.all('habits').filter(h => h.active && Hab.due(h, d) && h.freq !== 'X por semana'), doneH = H.filter(h => Hab.done(h, d)).length;
+  const tN = doneT + openT, hN = H.length, plan = tN + hN, fr = [tN ? doneT / tN : null, hN ? doneH / hN : null].filter(x => x != null);
+  const comp = fr.length ? fr.reduce((a, x) => a + x, 0) / fr.length : 0, all = plan > 0 && doneT + doneH >= plan;
+  return { pts: plan ? 20 + Math.round(65 * comp) + (all ? 15 : 0) : 40, tasks: [doneT, tN], habits: [doneH, hN], all, plan };
+};
+const ptsOf = d => { const x = (cfg().dias || {})[d]; return x ? x.p : null; };
+const isFocus = d => (ptsOf(d) || 0) >= FOCO;
+const streak = () => { let d = today(), n = 0; if (!isFocus(d)) d = U.addDays(d, -1); while (isFocus(d) && n < 5000) { n++; d = U.addDays(d, -1); } return n; };
+const best = () => { let b = 0, run = 0, prev = ''; Object.keys(cfg().dias || {}).sort().forEach(x => { if (isFocus(x)) { run = prev && U.addDays(prev, 1) === x ? run + 1 : 1; prev = x; b = Math.max(b, run); } }); return b; };
+const state = () => { const P = parts(), on = P.pts >= FOCO, s = streak(); return { P, on, s, best: Math.max(best(), s) }; };
+
+/* ---------- guardar o dia (sincroniza com os outros aparelhos) e mandar para o ranking ---------- */
+let SAVING = false;
+const save = () => { if (SAVING) return; const d = today(), P = parts(d), c = cfg(); c.dias = c.dias || {}; const was = c.dias[d];
+  if (was && was.p === P.pts) return; SAVING = true;
+  try { c.dias[d] = { p: P.pts }; const ks = Object.keys(c.dias).sort(); ks.slice(0, Math.max(0, ks.length - 400)).forEach(k => delete c.dias[k]); OS.touch('foco'); }
+  finally { SAVING = false; }
+  push(); if (P.pts >= FOCO && c.cel !== d && (!was || was.p < FOCO)) celebrate(); };
+const canRank = () => !!(OS.Acc && OS.Acc.on && OS.Acc.call && OS.Acc.pid && OS.Acc.pid() && OS.Acc.token && OS.Acc.token());
+let PT = 0, SENT = '', ME = null;
+const send = async () => { if (!canRank()) return; const c = cfg(), dias = {}; for (let i = 0; i < 8; i++) { const d = U.addDays(today(), -i), p = ptsOf(d); if (p != null) dias[d] = p; }
+  const body = { id: OS.Acc.pid(), dias, anon: !!c.anon }, sig = JSON.stringify(body); if (sig === SENT) return;
+  try { const j = await OS.Acc.call('rank', body); SENT = sig; if (j && j.eu) ME = j.eu; } catch (e) { } };
+const push = soon => { if (!canRank()) return; clearTimeout(PT); PT = setTimeout(send, soon ? 1200 : 12000); };
+
+/* ---------- celebrar o dia de foco (não tapa nada; some sozinho) ---------- */
+const celebrate = () => { const c = cfg(), d = today(); c.cel = d; OS.touch('foco'); const s = streak();
+  const el = document.createElement('div'); el.className = 'fc-cel'; el.setAttribute('role', 'status');
+  el.innerHTML = `<span class="fc-cel-f">${UI.ic('flame')}</span><span><b>Dia ${s} de foco!</b><small>${s > 1 ? `${s} dias seguidos. Amanhã é o dia ${s + 1}.` : 'Começou a tua sequência. Volta amanhã para o dia 2.'}</small></span>`;
+  document.body.appendChild(el); requestAnimationFrame(() => el.classList.add('in'));
+  try { const r = el.getBoundingClientRect(); OS.Vivo && OS.Vivo.burst && OS.Vivo.burst(r.left + 34, r.top + r.height / 2); } catch (e) { }
+  setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 600); }, 4800); };
+
+/* ---------- o ranking (lido do servidor) ---------- */
+let RL = null, RAT = 0, RB = false, RERR = '';
+const load = async force => { if (RB || !canRank() || (!force && RL && Date.now() - RAT < 60e3)) return; RB = true;
+  try { await send(); const j = await OS.Acc.call('ranking', { id: OS.Acc.pid() }); RL = j.lista || []; RAT = Date.now(); RERR = ''; }
+  catch (e) { RERR = e.message || 'Não consegui abrir o ranking agora.'; }
+  RB = false; OS.request(); };
+const PER = [['7', 'Semana'], ['30', 'Mês'], ['a', 'Sempre']];
+const per = () => PER.some(p => p[0] === OS.ui.rkP) ? OS.ui.rkP : '30';
+const ptsK = { 7: 'p7', 30: 'p30', a: 'pa' }, pctK = { 7: 'q7', 30: 'q30', a: 'qa' };
+const sorted = () => { const k = ptsK[per()], q = pctK[per()], L = (RL || []).slice().sort((a, b) => b[k] - a[k] || b[q] - a[q] || b.s - a.s);
+  let pos = 0, prev = null; return L.map((r, i) => { if (!prev || r[k] !== prev[k] || r[q] !== prev[q]) pos = i + 1; prev = r; return Object.assign({ pos, pts: r[k], pct: r[q] }, r); }); };
+const initials = r => r.av || (r.n ? r.n.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?');
+const nameOf = r => r.anon && !r.me ? 'Pessoa anónima' : r.n || 'Sem nome';
+const ord = n => n + '.º';
+
+/* ---------- ecrãs ---------- */
+const flame = (on, n) => `<span class="fc-fl ${on ? 'on' : ''}">${UI.ic('flame')}<b>${n}</b></span>`;
+const headline = S => S.on ? `Dia ${S.s} de foco` : S.s ? `Dia ${S.s} de foco · hoje ainda não conta` : 'Começa hoje o teu dia 1 de foco';
+const subline = S => S.on ? `Hoje já conta. Volta amanhã para o dia ${S.s + 1}.` : `Faltam ${FOCO - S.P.pts} pontos para hoje contar${S.s ? ' e a sequência continuar' : ''}.`;
+const strip = () => { const out = []; for (let i = 13; i >= 0; i--) { const d = U.addDays(today(), -i), p = d === today() ? parts(d).pts : ptsOf(d);
+  out.push(`<i class="fc-d ${p == null ? 'fc-no' : p >= FOCO ? 'fc-on' : 'fc-off'}${d === today() ? ' fc-now' : ''}" title="${U.fmtD(d)}: ${p == null ? 'não entraste' : p + ' pontos'}"></i>`); } return `<div class="fc-strip-d" aria-label="Os últimos 14 dias">${out.join('')}</div>`; };
+const meCard = S => { const P = S.P, row = (ok, t, v) => `<li class="${ok ? 'ok' : ''}">${UI.ic(ok ? 'check' : 'clock')}<span>${t}</span><b>${v}</b></li>`;
+  return `<div class="pn rk-me"><div class="rk-me-h">${flame(S.on, S.s)}<div class="grow"><h3>${esc(headline(S))}</h3><p class="mut">${esc(subline(S))} Recorde: ${S.best} ${S.best === 1 ? 'dia' : 'dias'}.</p></div>
+      <div class="rk-ring" style="--p:${P.pts / 100}"><b>${P.pts}</b><small>pontos hoje</small></div></div>
+    <ul class="rk-parts">${row(true, 'Entraste hoje', '+20')}${P.plan ? row(P.tasks[1] ? P.tasks[0] >= P.tasks[1] : true, 'Tarefas do dia', P.tasks[1] ? `${P.tasks[0]} de ${P.tasks[1]}` : 'nenhuma')
+      + row(P.habits[1] ? P.habits[0] >= P.habits[1] : true, 'Hábitos do dia', P.habits[1] ? `${P.habits[0]} de ${P.habits[1]}` : 'nenhum') + row(P.all, 'Tudo concluído', P.all ? '+15' : 'ainda não')
+      : row(false, 'Nada marcado para hoje', '+20')}</ul>
+    ${strip()}<p class="mut rk-note">Um dia de foco é um dia com ${FOCO} pontos ou mais. ${P.plan ? '' : 'Marca tarefas ou hábitos para hoje para poderes chegar aos 100.'}</p></div>`; };
+const list = () => { if (!canRank()) return `<div class="pn"><div class="pn-h"><h3>${UI.ic('award')}Ranking</h3></div><p class="mut">O ranking junta as contas do Prumo. Este Prumo está sem conta (modo local), por isso só tu vês os teus pontos e os teus dias de foco.</p></div>`;
+  load(); const L = sorted(), me = L.find(r => r.me), P = per();
+  const body = !RL ? `<div class="sai-busy"><div class="fd-spin"></div><span>A abrir o ranking…</span></div>` : !L.length ? UI.empty('Ainda não há ninguém no ranking.')
+    : `<div class="rk-list">${L.map(r => `<div class="rk-row${r.me ? ' me' : ''}${r.pos <= 3 ? ' top top' + r.pos : ''}"><span class="rk-pos">${r.pos <= 3 ? `<i>${r.pos}</i>` : ord(r.pos)}</span>
+        <span class="rk-av" style="--c:${/^#[0-9A-Fa-f]{6}$/.test(r.c) ? r.c : '#5CC8E6'}" aria-hidden="true">${esc(r.anon && !r.me ? '?' : initials(r))}</span>
+        <span class="rk-n"><b>${esc(nameOf(r))}${r.me ? ' <em>tu</em>' : ''}</b><small>${flame(r.s > 0, r.s)} ${r.s === 1 ? 'dia' : 'dias'} de foco<span class="rk-pct-m"> · ${r.pct}%</span></small></span>
+        <span class="rk-pct" title="Média de disciplina por dia"><span class="rk-tr"><i style="width:${Math.max(0, Math.min(100, r.pct))}%"></i></span><small>${r.pct}%</small></span><b class="rk-pts">${r.pts.toLocaleString(OS.loc ? OS.loc() : 'pt-PT')}<small>pts</small></b></div>`).join('')}</div>`;
+  return `<div class="pn rk-board"><div class="pn-h"><h3>${UI.ic('award')}Ranking geral</h3>${UI.seg('rkP', PER, P)}</div>
+    ${me ? `<p class="rk-pos-me">Estás em <b>${ord(me.pos)} lugar</b> de ${L.length} ${L.length === 1 ? 'pessoa' : 'pessoas'}${P === 'a' ? '' : P === '7' ? ' nos últimos 7 dias' : ' nos últimos 30 dias'}.</p>` : ''}
+    ${RERR ? `<p class="neg">${esc(RERR)} <button class="btn xs ghost" data-act="rkReload">Tentar outra vez</button></p>` : ''}${body}
+    <p class="mut rk-note">Só se vê esta lista: não dá para abrir o perfil de ninguém nem mandar mensagens.${cfg().anon ? ' Estás a aparecer como "Pessoa anónima" (muda em Definições › Tu › Ranking).' : ''}</p></div>`; };
+const how = () => UI.toggle('Como se ganham pontos', `<ul class="rk-how"><li><b>Entrar no Prumo</b> no dia: 20 pontos.</li><li><b>Fazer as tarefas e os hábitos do dia</b>: até 65 pontos, pela parte que fizeste (as tarefas para hoje ou atrasadas e as que concluíste hoje; os hábitos marcados para hoje).</li><li><b>Concluir tudo</b> o que tinhas para o dia: mais 15 pontos.</li><li>Um dia sem nada marcado vale 40 pontos.</li><li>Um <b>dia de foco</b> é um dia com ${FOCO} pontos ou mais. Os dias de foco seguidos fazem a tua sequência ("Dia 5 de foco").</li><li>No ranking, os <b>pontos</b> são a soma dos dias (semana, mês ou sempre) e a <b>percentagem</b> é a média de disciplina por dia nesse tempo.</li></ul>`, 'rkHow', 'info');
+V.ranking = () => { const S = state(); return UI.head('Ranking', 'A disciplina de todas as pessoas do Prumo: entrar todos os dias, fazer as tarefas e os hábitos do dia e concluir tudo.', '', 'Visão Geral') + meCard(S) + list() + how(); };
+A.rkReload = () => load(true);
+
+/* ---------- o fogo no topo, no Hoje e no Painel ---------- */
+OS.Foco = { parts, state, streak, best, FOCO, send, load: () => load(true), rows: () => RL,
+  chip: () => { const S = state(); return `<a class="fc-chip ${S.on ? 'on' : ''}" href="#ranking" title="${esc(headline(S))}" aria-label="${esc(headline(S))}">${UI.ic('flame')}<b>${S.s}</b></a>`; } };
+const bar = () => { const S = state(), me = (sorted().find(r => r.me) || null);
+  return `<a class="pn fc-bar ${S.on ? 'on' : ''}" href="#ranking">${flame(S.on, S.s)}<span class="grow"><b>${esc(headline(S))}</b><small>${S.P.pts} pontos hoje${S.on ? ' · já conta' : ` · faltam ${FOCO - S.P.pts}`}${me ? ` · ${ord(me.pos)} no ranking` : ''}</small></span>${UI.ic('right')}</a>`; };
+const after = (h, card) => { const i = h.indexOf('</header>'); return i > 0 ? h.slice(0, i + 9) + card + h.slice(i + 9) : card + h; };
+OS.on('ready', () => {
+  ['hoje', 'visao'].forEach(k => { const o = V[k]; if (!o || o._fc) return; V[k] = s => after(o(s), bar()); V[k]._fc = 1; });
+  const o = V.definicoes; if (o && !o._fc) { V.definicoes = sub => { const h = o(sub); if (String(sub || '') !== '') return h; return h + `<div class="pn" id="rkSet"><div class="pn-h"><h3>${UI.ic('award')}Ranking</h3></div>
+    <label class="row gap8" style="align-items:flex-start"><input type="checkbox" data-rk="nome" ${cfg().anon ? '' : 'checked'}><span>Mostrar o meu nome no ranking<small class="mut" style="display:block">Sem isto apareces como "Pessoa anónima", com os teus pontos e os teus dias de foco.</small></span></label></div>`; }; V.definicoes._fc = 1; }
+  setTimeout(() => { save(); push(true); }, 1500); });
+document.addEventListener('change', e => { const el = e.target; if (el && el.dataset && el.dataset.rk === 'nome') { cfg().anon = !el.checked; OS.touch('foco'); SENT = ''; push(true); RAT = 0; UI.toast(el.checked ? 'O teu nome aparece no ranking' : 'Apareces no ranking como "Pessoa anónima"', 'pos'); } });
+// a pontuação de hoje acompanha o que fazes (tarefas, hábitos); um dia novo começa sozinho
+let RT = 0; OS.on('render', () => { clearTimeout(RT); RT = setTimeout(save, 800); });
+OS.on('unlock', () => setTimeout(() => { save(); push(true); }, 1200));
+setInterval(() => { if (!document.hidden) save(); }, 60e3);
 })();
 
 </script>
@@ -21079,7 +21229,7 @@ if (Cloud.enabled) init().then(u => { Cloud.state = u ? 'ligado' : 'por entrar';
 'use strict';
 const U = OS.U, UI = OS.UI, C = OS.C, V = OS.views, A = OS.act, esc = U.esc;
 const NAV = [
-  ['Visão geral', [['visao', 'Painel', 'grid', () => { const n = OS.Intel.alerts().filter(a => a.lvl === 'urgent').length; return n ? [n, 'neg'] : null; }], ['hoje', 'Hoje', 'sun'], ['jornal', 'Jornal', 'news', () => { const n = OS.News && OS.News.unread(); return n ? [n, ''] : null; }], ['email', 'E-mail e LinkedIn', 'mail', () => { const c = OS.Mail && OS.Mail.counts(); return c && c.urg ? [c.urg, 'neg'] : null; }], ['calendario', 'Calendário', 'cal']]],
+  ['Visão geral', [['visao', 'Painel', 'grid', () => { const n = OS.Intel.alerts().filter(a => a.lvl === 'urgent').length; return n ? [n, 'neg'] : null; }], ['hoje', 'Hoje', 'sun'], ['ranking', 'Ranking', 'award'], ['jornal', 'Jornal', 'news', () => { const n = OS.News && OS.News.unread(); return n ? [n, ''] : null; }], ['email', 'E-mail e LinkedIn', 'mail', () => { const c = OS.Mail && OS.Mail.counts(); return c && c.urg ? [c.urg, 'neg'] : null; }], ['calendario', 'Calendário', 'cal']]],
   ['Execução', [['tarefas', 'Tarefas', 'checksq', () => { const n = OS.Tasks.open().filter(OS.Tasks.late).length; return n ? [n, 'neg'] : [OS.Tasks.open().length, '']; }], ['habitos', 'Hábitos e rotina', 'repeat'], ['foco', 'Bloco de foco', 'focus', () => { const b = OS.FocusBlock && OS.FocusBlock.state(); return b && b.phase !== 'end' ? ['●', 'pos'] : null; }], ['projetos', 'Projetos', 'folder'], ['metas', 'Metas', 'target']]],
   ['Eu', [['eu', 'Quem sou eu', 'user'], ['mundo', 'Mundo', 'globe', () => { const n = OS.Mundo && OS.Mundo.stats().n; return n ? [n, ''] : null; }], ['senhas', 'Senhas', 'key']]],
   ['Fé', [['fe', 'Fé & Devoção', 'cross']]],
@@ -21094,8 +21244,8 @@ NAV.forEach(([g, items]) => items.forEach(([k, l]) => TITLES[k] = [l, g]));
 TITLES.control = ['Painel', 'Visão geral']; TITLES.painel = ['Painel', 'Visão geral'];
 TITLES.mova = [OS.one ? 'Mova' : 'Mova', 'Empresa'];
 
-const CORE = ['visao', 'eu', 'mundo', 'fe', 'jornal', 'gasto', 'hoje', 'tarefas', 'habitos', 'financas', 'treino', 'dieta', 'universidade', 'metas'];
-const DESC = { senhas: 'Cofre cifrado com a tua senha mestra: senhas, e-mails, contas, bancos, Wi-Fi e notas seguras. Só tu o abres.', mundo: 'A tua volta ao mundo: o mapa pinta-se com os países onde já foste, com a percentagem do mundo que conheces e o passaporte.', relatorios: 'Relatórios mensais, trimestrais e anuais, prontos para a declaração do teu país (IRS em Portugal, IRPF no Brasil).', spyke: 'O teu assistente de voz: resumo do dia, perguntas e comandos.', email: 'E-mails e LinkedIn resumidos: urgente, responder, spam.', foco: 'Resolver pendências por prioridade, sem fugir, com saída por Face ID.', desporto: 'Os teus desportos, práticas, estatísticas e treinos para melhorar.', floresta: 'Foca-te e faz crescer a tua floresta.', cursos: 'Os cursos que estás a fazer, com progresso.', certificacoes: 'Todas as tuas certificações.', leituras: 'Estante virtual: livros, resenhas e desafios.', eu: 'A tua história, família, amigos e quem és.', jornal: 'As notícias do mundo e de cada país, em tempo real.', fe: 'Versículo do dia, Bíblia, devocional e oração.', visao: 'Tudo num só lugar: dinheiro, agenda, alertas, próxima ação, trabalho, corpo e estudos.', gasto: 'Registar uma compra em segundos.', hoje: 'O teu dia numa página.',  next: 'Para onde vais, quando e o que fazer a seguir: estrela-guia, roteiro e próximos passos numa só página.', calendario: 'Aulas, turnos, compromissos e Google Calendar.', tarefas: 'Tudo o que tens para fazer.', habitos: 'Inegociáveis, rotina e sequências.', projetos: 'Projetos com fases e progresso.', metas: 'Metas grandes e o caminho até elas.', financas: 'Contas, gastos, orçamento e dívidas.', investimentos: 'Carteira, movimentos e cotações.', compras: 'Pensar antes de comprar.', simuladores: 'Empréstimos, compras, metas e juros.', universidade: 'Disciplinas, avaliações, revisões.', aprendizagem: 'Competências a dominar, etapa a etapa.', conhecimento: 'Notas e conhecimento guardado.', corpo: 'Treino, dieta e corrida ligados.', treino: 'Rotinas, treino em curso, exercícios com imagens.', dieta: 'Refeições, calorias, proteína e água.', dieta: 'Refeições, calorias, proteína e água.', corrida: 'Corridas, plano e ritmo.', trabalho: 'Turnos e horas de trabalho.', carreira: 'Rede de contactos e experiências.', capital: 'O teu valor profissional a crescer.', oportunidades: 'Vagas, candidaturas e oportunidades.', mova: 'A tua empresa: vendas, clientes, custos.', northstar: 'A direção que guia tudo.', roadmap: 'O plano no tempo.', longterm: 'Visão a 1, 5 e 10 anos.', decisoes: 'Decidir bem, com critérios.', revisao: 'Revisões semanais e mensais.', evolucao: 'Tudo o que te aproxima dos objetivos: evolução por área e longo prazo.' };
+const CORE = ['visao', 'ranking', 'eu', 'mundo', 'fe', 'jornal', 'gasto', 'hoje', 'tarefas', 'habitos', 'financas', 'treino', 'dieta', 'universidade', 'metas'];
+const DESC = { senhas: 'Cofre cifrado com a tua senha mestra: senhas, e-mails, contas, bancos, Wi-Fi e notas seguras. Só tu o abres.', mundo: 'A tua volta ao mundo: o mapa pinta-se com os países onde já foste, com a percentagem do mundo que conheces e o passaporte.', relatorios: 'Relatórios mensais, trimestrais e anuais, prontos para a declaração do teu país (IRS em Portugal, IRPF no Brasil).', spyke: 'O teu assistente de voz: resumo do dia, perguntas e comandos.', email: 'E-mails e LinkedIn resumidos: urgente, responder, spam.', foco: 'Resolver pendências por prioridade, sem fugir, com saída por Face ID.', desporto: 'Os teus desportos, práticas, estatísticas e treinos para melhorar.', floresta: 'Foca-te e faz crescer a tua floresta.', cursos: 'Os cursos que estás a fazer, com progresso.', certificacoes: 'Todas as tuas certificações.', leituras: 'Estante virtual: livros, resenhas e desafios.', eu: 'A tua história, família, amigos e quem és.', jornal: 'As notícias do mundo e de cada país, em tempo real.', fe: 'Versículo do dia, Bíblia, devocional e oração.', visao: 'Tudo num só lugar: dinheiro, agenda, alertas, próxima ação, trabalho, corpo e estudos.', gasto: 'Registar uma compra em segundos.', hoje: 'O teu dia numa página.', ranking: 'A disciplina de todas as pessoas do Prumo e os teus dias de foco seguidos.',  next: 'Para onde vais, quando e o que fazer a seguir: estrela-guia, roteiro e próximos passos numa só página.', calendario: 'Aulas, turnos, compromissos e Google Calendar.', tarefas: 'Tudo o que tens para fazer.', habitos: 'Inegociáveis, rotina e sequências.', projetos: 'Projetos com fases e progresso.', metas: 'Metas grandes e o caminho até elas.', financas: 'Contas, gastos, orçamento e dívidas.', investimentos: 'Carteira, movimentos e cotações.', compras: 'Pensar antes de comprar.', simuladores: 'Empréstimos, compras, metas e juros.', universidade: 'Disciplinas, avaliações, revisões.', aprendizagem: 'Competências a dominar, etapa a etapa.', conhecimento: 'Notas e conhecimento guardado.', corpo: 'Treino, dieta e corrida ligados.', treino: 'Rotinas, treino em curso, exercícios com imagens.', dieta: 'Refeições, calorias, proteína e água.', dieta: 'Refeições, calorias, proteína e água.', corrida: 'Corridas, plano e ritmo.', trabalho: 'Turnos e horas de trabalho.', carreira: 'Rede de contactos e experiências.', capital: 'O teu valor profissional a crescer.', oportunidades: 'Vagas, candidaturas e oportunidades.', mova: 'A tua empresa: vendas, clientes, custos.', northstar: 'A direção que guia tudo.', roadmap: 'O plano no tempo.', longterm: 'Visão a 1, 5 e 10 anos.', decisoes: 'Decidir bem, com critérios.', revisao: 'Revisões semanais e mensais.', evolucao: 'Tudo o que te aproxima dos objetivos: evolução por área e longo prazo.' };
 const unlocked = () => new Set(CORE.concat(Object.keys((OS.ui.nav) || {})));
 const unlock = k => { if (!k || CORE.includes(k) || !DESC[k]) return; const n = Object.assign({}, OS.ui.nav || {}); if (!n[k]) { n[k] = 1; OS.ui.nav = n; try { OS.setUI('nav', n); } catch (e) { } } };
 const setH = (el, h) => { if (OS.aiN) h = OS.aiN(h); if (el && el._h !== h) { el.innerHTML = h; el._h = h; } };
@@ -21120,7 +21270,7 @@ function renderTop(cur) {
   <nav class="tn" aria-label="Secções">${navVis().map(([g, items], i) => `<div class="tn-g ${grp === g ? 'cur' : ''}" data-tni="${i}"><button class="tn-b" data-act="tnToggle" aria-haspopup="true">${g === 'Visão geral' ? 'Visão Geral' : g}<svg viewBox="0 0 24 24" class="ic tn-car"><path d="M6 9l6 6 6-6"/></svg></button>
     <div class="tn-dd">${tnLinks(items, cur)}</div></div>`).join('')}
     <div class="tn-g tn-more" hidden><button class="tn-b" data-act="tnToggle" aria-haspopup="true">Mais<svg viewBox="0 0 24 24" class="ic tn-car"><path d="M6 9l6 6 6-6"/></svg></button><div class="tn-dd">${navVis().map(([g, items], i) => `<div class="tn-mg" data-tni="${i}" hidden><small class="tn-mh">${g === 'Visão geral' ? 'Visão Geral' : g}</small>${tnLinks(items, cur)}</div>`).join('')}</div></div></nav>
-  <div class="tn-r"><i class="sync-dot ${OS.sync.status}" id="syncDot2" title="${esc(OS.sync.msg)}"></i>
+  <div class="tn-r"><i class="sync-dot ${OS.sync.status}" id="syncDot2" title="${esc(OS.sync.msg)}"></i>${OS.Foco ? OS.Foco.chip() : ''}
   <button class="icon-btn spy-tb" data-act="spyOpen" aria-label="Spyke" title="Spyke (assistente de voz)">${UI.ic('mic')}</button>
   <button class="icon-btn" data-act="cmdOpen" aria-label="Procurar (Ctrl K)" title="Procurar (Ctrl K)">${UI.ic('search')}</button>
   <button class="icon-btn tn-hide-s" data-act="focusStart" aria-label="Modo foco" title="Modo foco">${UI.ic('focus')}</button>
@@ -21298,7 +21448,7 @@ OS.Fold = (() => {
   const tabOf = sub => String(sub || '').split('.')[0] || 'geral';
   const CHEV = '<svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
   // Geral: os blocos por temas (chave = id do bloco ou o título)
-  const GROUPS = [['Tu', 'Os teus dados e metas: entram nos cálculos de todo o Prumo.', ['pfMe', 'paisSet', 'relSet', 'onbSet', 'pfUni', 'pfWork', 'pfGoals', 'contextos']],
+  const GROUPS = [['Tu', 'Os teus dados e metas: entram nos cálculos de todo o Prumo.', ['pfMe', 'paisSet', 'relSet', 'rkSet', 'onbSet', 'pfUni', 'pfWork', 'pfGoals', 'contextos']],
     ['Segurança e conta', 'Código de bloqueio, Face ID e a tua conta.', ['seguranca', 'codigo neste aparelho', 'accMig']],
     ['Aparelhos e dados', 'Sincronizar aparelhos, cópias de segurança e mudar de endereço.', ['syncPn', 'dataPn', 'mudanca de endereco']],
     ['Aplicação', 'Aparência, desempenho e atualizações.', ['fdSet', 'animSet', 'desempenho', 'verPn']]];
