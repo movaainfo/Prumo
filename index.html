@@ -3762,7 +3762,7 @@ html.vv svg :is([data-act],[data-edit],[data-go]){transition:none!important;scal
 
 </style>
 <style>[hidden]{display:none!important}</style>
-<script>window.OCEANUM_VERSION={"v": "2.50", "date": "25/10/2026", "notes": ["Pontos mais difíceis: no ranking só conta o que fazes (tarefas e hábitos, tempo de foco, treino, leitura ou devocional) e um dia de foco precisa de 70; o Dominus também sobe mais devagar.", "Ranking com a foto de cada pessoa; quem está a zero não aparece.", "Admin: apagar a conta de outra pessoa (com a tua senha).", "Currículo em Carreira e contactos: a IA analisa, dá nota, reescreve frases e compara com uma vaga.", "IA no Treino e na Dieta: diz se te levam aos teus objetivos e o que mudar.", "Fé: tocar num versículo mostra a explicação; ficam só as religiões principais.", "Floresta junta-se ao Bloco de foco; Mundo abre o país com um clique e tem cidadania, passaporte, residência e visto.", "Funcionalidades que desligas saem do app inteiro; o Painel mostra o app inteiro num olhar; o caderno de erros liga-se a tudo.", "Spotify no canto do ecrã (com conta ou sem conta); fundos todos animados e mais animações no app.", "Spyke novo: o Claude pensa, o Gemini pesquisa no Google e um ouvido dedicado transcreve (quando ligados no servidor).", "Património exato (sem arredondar), Corpo com o calendário automático, mais frases do dia, \"Modo Comando\" no lugar do nome antigo."]};</script>
+<script>window.OCEANUM_VERSION={"v": "2.51", "date": "25/10/2026", "notes": ["Spotify só para quem o administrador escolher (ele e mais até 4 contas, no Admin); para as outras pessoas não aparece.", "Admin: dar e tirar o acesso ao Spotify em cada conta."]};</script>
 <script>(function(){try{var n=navigator,ua=n.userAgent||"",low=(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||/Android/i.test(ua)||matchMedia("(prefers-reduced-motion: reduce)").matches;var f=localStorage.getItem("os2lite");if(f==="1"||(f!=="0"&&low))document.documentElement.classList.add("lite")}catch(e){}})();</script>
 <script src="config.js"></script>
 <script>
@@ -5263,7 +5263,9 @@ const api = async (path, opt = {}, tries = 3) => { let last = null;
   throw last; };
 const conta = (op, body = {}) => api('conta', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, S ? { authorization: 'Bearer ' + S.t } : {}), body: JSON.stringify(Object.assign({ op }, body)) });
 const saveS = () => { if (S) LS.set(K.s, S); else LS.del(K.s); };
-const takeConta = (j, email) => { S = Object.assign(S || {}, { t: j.token || (S && S.t), e: (j.conta && j.conta.email) || email || (S && S.e), n: (j.conta && j.conta.nome) || '', perfis: (j.conta && j.conta.perfis) || [], adm: j.conta ? !!j.conta.adm : !!(S && S.adm), termos: j.conta ? j.conta.termos || '' : S && S.termos, termosAt: j.conta ? j.conta.termosAt || '' : S && S.termosAt }); saveS(); if (OS.Acc && OS.Acc.navAdm) OS.Acc.navAdm(); };
+const takeConta = (j, email) => { S = Object.assign(S || {}, { t: j.token || (S && S.t), e: (j.conta && j.conta.email) || email || (S && S.e), n: (j.conta && j.conta.nome) || '', perfis: (j.conta && j.conta.perfis) || [], adm: j.conta ? !!j.conta.adm : !!(S && S.adm), termos: j.conta ? j.conta.termos || '' : S && S.termos, termosAt: j.conta ? j.conta.termosAt || '' : S && S.termosAt },
+    // Spotify: só o administrador e as contas que ele escolheu (vem na resposta "eu")
+    j.conta && 'sp' in j.conta ? { sp: !!j.conta.sp, spc: j.conta.spc || '' } : {}); saveS(); if (OS.Acc && OS.Acc.navAdm) OS.Acc.navAdm(); try { OS.Spot && OS.Spot.draw(); } catch (e) { } };
 
 const Acc = OS.Acc = { on: !personal };
 const A = OS.act = OS.act || {}; OS.forms = OS.forms || {};
@@ -5576,6 +5578,7 @@ OS.on('ready', () => setTimeout(() => sendUse(0), 4000));
 
 /* ---------- separador de administração (só na conta de quem está em NAUTILO_ADMIN no servidor) ---------- */
 Acc.adm = () => !!(S && S.adm);
+Acc.spOk = () => !!(S && cur() && (S.sp || S.adm)); Acc.spCid = () => (S && S.spc) || '';
 Acc.token = () => (S && S.t) || '';
 Acc.pid = () => pid();
 Acc.prof = () => { const p = cur(); return p ? { nome: p.nome || '', cor: p.cor || '', av: p.av || '', img: okImg(p.img) ? p.img : '' } : null; }; // o perfil aberto (para a foto no ranking)
@@ -5584,7 +5587,7 @@ Acc.navAdm = () => { const N = OS.NAV; if (!N) return; const i = N.findIndex(g =
   if (Acc.adm() && i < 0) { N.push(['Admin', [['admin', 'Administração', 'shield']]]); OS.request && OS.request(); } else if (!Acc.adm() && i >= 0) { N.splice(i, 1); OS.request && OS.request(); } };
 let ADM = null, admBusy = false, admErr = '';
 const admLoad = async () => { if (admBusy) return; admBusy = true; admErr = '';
-  fetch(new URL('api/ia?p=estado', document.baseURI).href).then(r => r.json()).then(j => { U.ls.set('os2iaSrv', { g: !!j.google, at: Date.now() }); }).catch(() => { }); fetch(new URL('api/google?p=estado', document.baseURI).href).then(r => r.json()).then(j => { if (j && j.ok) U.ls.set('os2gSrv', { pronto: !!j.pronto, chave: j.chave || '', erro: j.erro || '', at: Date.now() }); OS.request(); }).catch(() => { }); try { ADM = Object.assign(await conta('admin'), { at: Date.now() }); } catch (e) { admErr = e.net ? 'Sem ligação à internet.' : e.message; } admBusy = false; OS.request(); };
+  fetch(new URL('api/ia?p=estado', document.baseURI).href).then(r => r.json()).then(j => { U.ls.set('os2iaSrv', { g: !!j.google, cl: !!j.claude, stt: j.stt || '', mod: j.modelo || '', at: Date.now() }); }).catch(() => { }); fetch(new URL('api/google?p=estado', document.baseURI).href).then(r => r.json()).then(j => { if (j && j.ok) U.ls.set('os2gSrv', { pronto: !!j.pronto, chave: j.chave || '', erro: j.erro || '', at: Date.now() }); OS.request(); }).catch(() => { }); try { ADM = Object.assign(await conta('admin'), { at: Date.now() }); } catch (e) { admErr = e.net ? 'Sem ligação à internet.' : e.message; } admBusy = false; OS.request(); };
 const ago = t => { if (!t) return '—'; const s = Math.max(0, (Date.now() - t) / 1000); if (s < 90) return 'agora'; if (s < 3600) return 'há ' + Math.round(s / 60) + ' min'; if (s < 86400) return 'há ' + Math.round(s / 3600) + ' h'; const d = Math.round(s / 86400); return d === 1 ? 'ontem' : d < 30 ? 'há ' + d + ' dias' : new Date(t).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT'); };
 const hmin = m => { m = Math.round(m || 0); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0'); };
 const lastDays = n => { const out = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); out.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')); } return out; };
@@ -5600,6 +5603,13 @@ const pedidosPn = () => { const P = (ADM && ADM.pedidos) || [], novos = P.filter
     : '<p class="mut" style="margin:0">Ainda não há pedidos. Chegam aqui quando alguém usa “Fazer um pedido” em Definições › Privacidade e termos. Responde para o e-mail da pessoa e marca como respondido.</p>'}</div>`; };
 A.admPedido = async b => { try { await conta('pedidoFeito', { id: b.dataset.id, estado: b.dataset.e }); OS.UI.toast(b.dataset.e === 'respondido' ? 'Marcado como respondido' : 'Reaberto', 'pos'); ADM = null; admLoad(); } catch (e) { OS.UI.toast(e.message, 'neg'); } };
 // o que falta ao administrador configurar (some sozinho quando estiver feito)
+// Spotify: o Spotify só deixa 5 contas por app (em modo de desenvolvimento): tu e mais até 4 que escolheres; para os outros nem aparece
+const spPn = () => { const L = (ADM && ADM.spotify) || [], mx = (ADM && ADM.spMax) || 4, UI = OS.UI;
+  return `<div class="pn" id="admSp"><div class="pn-h"><h3>${UI.ic('play')}Spotify</h3><span class="mut" style="font-size:12px">tu + ${L.length} de ${mx}</span></div>
+    <p class="mut" style="margin:0 0 10px">Só tu e as contas que escolheres veem o Spotify (o tocador e as definições); para as outras pessoas não aparece. Para dar acesso, abre a conta na lista acima e toca em "Dar acesso ao Spotify". Junta também o e-mail Spotify dessa pessoa em developer.spotify.com › a tua app › User Management.${ADM && !ADM.spConf ? ' <b>Falta pôr a Client ID da app do Spotify no Vercel (SPOTIFY_CLIENT_ID).</b>' : ''}</p>
+    ${L.length ? `<div class="list">${L.map(e => `<div class="li"><div class="li-t"><b>${esc(e)}</b></div><button class="btn xs ghost" data-act="admSp" data-e="${esc(e)}" data-on="">Tirar</button></div>`).join('')}</div>` : '<p class="mut" style="margin:0">Ainda só tu.</p>'}</div>`; };
+A.admSp = async b => { b.disabled = true; try { const j = await conta('adminSpotify', { email: b.dataset.e, on: b.dataset.on === '1' }); if (ADM) { ADM.spotify = j.emails; (ADM.contas || []).forEach(c => { c.sp = c.admin || j.emails.includes(String(c.email).toLowerCase()); }); }
+  OS.UI.closeModal(); OS.UI.toast(b.dataset.on === '1' ? 'Spotify liberado para ' + b.dataset.e : 'Spotify tirado de ' + b.dataset.e, 'pos'); OS.request(); } catch (e) { b.disabled = false; OS.UI.toast(e.message || 'Não consegui mudar o acesso.', 'neg'); } };
 const pendPn = () => { const g = !!(OS.AI && OS.AI.srvGoogle && OS.AI.srvGoogle()), gs = U.ls.get('os2gSrv', null);
   const L = [[!g, 'Chave Google da IA para todos (GEMINI_API_KEY)', 'Para a IA das contas ler fotos (comida, exames, escala) e PDFs. 1) aistudio.google.com/apikey → Create API key. 2) Vercel → projeto nautilo → Settings → Environment Variables → nome <b>GEMINI_API_KEY</b>, valor a chave, Production. 3) Deployments → Redeploy. Este aviso some sozinho quando a chave estiver ativa.'],
     [!(gs && gs.pronto && gs.chave === 'ok'), 'Gmail e agenda para todos (Google)', !gs ? 'A verificar a ligação ao Google…' : gs.chave === 'errada' ? 'O Google não aceita a chave secreta que está no Vercel. Google Cloud → Google Auth Platform → Clientes → Prumo web → Adicionar chave secreta; depois Vercel → nautilo → Settings → Environment Variables → <b>GOOGLE_CLIENT_SECRET</b> → Edit, cola a nova → Save → Redeploy.' : gs.chave === 'redirecionamento' ? 'Falta o URI de redirecionamento no cliente do Google: Clientes → Prumo web → URIs de redirecionamento autorizados → <b>https://nautilo-app.vercel.app/api/google</b> → Salvar.' : !gs.pronto || gs.chave === 'falta' ? 'Falta a chave secreta do cliente OAuth no servidor: Google Cloud → Google Auth Platform → Clientes → Prumo web → Adicionar chave secreta. Depois Vercel → projeto nautilo → Settings → Environment Variables → nome <b>GOOGLE_CLIENT_SECRET</b>, Production → Save → Redeploy.' : 'O Google não respondeu à verificação (' + esc(gs.erro || '?') + '). Toca em Atualizar daqui a pouco.']];
@@ -5618,13 +5628,14 @@ OS.views.admin = () => { const UI = OS.UI, head = UI.head('Administração', 'Qu
     ${L.map((c, i) => { const d7 = D7.reduce((m, d) => m + ((c.dias || {})[d] || 0), 0), P = c.perfis || [];
       return `<button class="adm-r" role="row" data-act="admOne" data-i="${i}" data-q="${esc((c.nome + ' ' + c.email + ' ' + P.join(' ')).toLowerCase())}"><span role="cell" class="adm-who"><b>${esc(c.nome || P[0] || '—')}${c.admin ? ' <small class="mu-tag">admin</small>' : ''}</b><small>${esc(c.email)}</small><small class="mut">${P.length} ${P.length === 1 ? 'perfil' : 'perfis'}${P.length ? ': ' + esc(P.join(', ')) : ''}</small></span>
         <span role="cell"><em>Último acesso</em>${ago(c.ultUso || c.ultEntrada)}</span><span role="cell"><em>Última entrada</em>${ago(c.ultEntrada)}${c.entradas ? ` <small class="mut">(${c.entradas}×)</small>` : ''}</span><span role="cell" class="mono"><em>Hoje</em>${hmin((c.dias || {})[t] || 0)}</span><span role="cell"><em>7 dias</em>${bars(c.dias || {}, 7, 22)} <small class="mono">${hmin(d7)}</small></span><span role="cell"><em>Criada</em>${c.criado ? new Date(c.criado).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</span></button>`; }).join('') || '<p class="mut" style="padding:12px">Ainda não há contas.</p>'}</div></div>
-  ${pendPn()}${pedidosPn()}
+  ${spPn()}${pendPn()}${pedidosPn()}
   <p class="mut adm-note">Atualizado ${ago(ADM.at)}. O tempo de uso conta os minutos com o Prumo aberto e à vista (desbloqueado). Estes dados estão descritos na Política de Privacidade.</p></div>`; };
 A.admRefresh = () => { ADM = null; admErr = ''; admLoad(); OS.request(); };
 A.admOne = b => { const c = ADM && ADM.contas[+b.dataset.i]; if (!c) return; const D = lastDays(30), tot = D.reduce((m, d) => m + ((c.dias || {})[d] || 0), 0), on = D.filter(d => (c.dias || {})[d]).length;
   OS.UI.modal(`<div style="padding:20px"><div class="row between" style="align-items:center"><h3 style="margin:0">${esc(c.nome || c.email)}</h3><button class="icon-btn" data-mclose aria-label="Fechar">${OS.UI.ic('x')}</button></div><p class="mut" style="margin:4px 0 14px">${esc(c.email)}</p>
     <div class="dc-rows"><div><span>Perfis</span><b>${esc((c.perfis || []).join(', ') || '—')}</b></div><div><span>Conta criada</span><b>${c.criado ? new Date(c.criado).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Última entrada (login)</span><b>${c.ultEntrada ? new Date(c.ultEntrada).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Último acesso</span><b>${c.ultUso ? new Date(c.ultUso).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Entradas</span><b class="mono">${c.entradas || 0}</b></div><div><span>Termos aceites</span><b>${c.termos ? 'versão de ' + esc(c.termos) + (c.termosAt ? ' · ' + new Date(c.termosAt).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '') : 'ainda não'}</b></div><div><span>Uso nos últimos 30 dias</span><b class="mono">${hmin(tot)} · ${on} ${on === 1 ? 'dia' : 'dias'}</b></div></div>
     <h4 style="margin:16px 0 6px">Minutos por dia (30 dias)</h4>${bars(c.dias || {}, 30, 90)}<div class="adm-ax"><span>${D[0].slice(8)}/${D[0].slice(5, 7)}</span><span>hoje</span></div>
+    ${c.admin ? '<p class="mut" style="margin:14px 0 0">Spotify: tens sempre (administrador).</p>' : `<div class="row gap8" style="margin-top:14px;align-items:center;flex-wrap:wrap"><span class="grow">Spotify: <b>${c.sp ? 'tem acesso' : 'sem acesso'}</b></span>${c.sp ? `<button class="btn sm ghost" data-act="admSp" data-e="${esc(c.email)}" data-on="">Tirar acesso ao Spotify</button>` : `<button class="btn sm" data-act="admSp" data-e="${esc(c.email)}" data-on="1" ${((ADM && ADM.spotify) || []).length >= ((ADM && ADM.spMax) || 4) ? 'disabled title="Já há 4 contas com o Spotify"' : ''}>Dar acesso ao Spotify</button>`}</div>`}
     ${c.admin || c.email === Acc.email() ? '' : `<div class="adm-del"><h4 style="margin:18px 0 6px">Apagar esta conta</h4><p class="mut" style="margin:0 0 10px">Apaga a conta, todos os perfis e os dados dela (também do ranking). Não se pode desfazer.</p>
       <form data-form="admDel" data-i="${+b.dataset.i}" class="row gap8" style="flex-wrap:wrap"><input type="password" name="senha" autocomplete="current-password" placeholder="A tua senha (administrador)" required style="flex:1;min-width:180px"><button class="btn danger" type="submit">Apagar a conta</button></form></div>`}</div>`); };
 // o administrador apaga a conta de outra pessoa: pede a senha do administrador e confirma o e-mail
@@ -21923,8 +21934,9 @@ const ACC = 'https://accounts.spotify.com', API = 'https://api.spotify.com/v1';
 const SCOPES = 'user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative';
 const K = { tok: 'nau:sp:tok', cid: 'nau:sp:cid', ui: 'nau:sp:ui', emb: 'nau:sp:emb', pk: 'nau:sp:pk' };
 const redirect = () => location.origin + location.pathname;
-let SRV = '';   // Client ID do servidor
-const cid = () => String(LS.get(K.cid, '') || SRV || '').trim();
+// só para o administrador e as contas que ele escolheu (no Admin): para as outras pessoas o Spotify nem aparece
+const allowed = () => !!(OS.Acc && OS.Acc.spOk && OS.Acc.spOk());
+const cid = () => String((OS.Acc && OS.Acc.adm && OS.Acc.adm() && LS.get(K.cid, '')) || (OS.Acc && OS.Acc.spCid ? OS.Acc.spCid() : '') || '').trim();
 const ui = () => Object.assign({ on: true, min: false }, LS.get(K.ui, {}) || {}), setUi = o => { LS.set(K.ui, Object.assign(ui(), o)); draw(); };
 const tok = () => LS.get(K.tok, null);
 const linked = () => !!(tok() && tok().r);
@@ -21932,7 +21944,7 @@ const linked = () => !!(tok() && tok().r);
 /* ---------- entrar (PKCE) ---------- */
 const rnd = n => { const a = new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a, x => ('0' + (x & 63).toString(36)).slice(-1)).join('') + Array.from(a.slice(0, 8), x => x.toString(16)).join(''); };
 const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-A.spConnect = async () => { if (!cid()) { UI.toast('O Spotify ainda não está configurado neste Prumo (falta a Client ID em Definições › Spotify).', 'warn'); return; }
+A.spConnect = async () => { if (!allowed()) return; if (!cid()) { UI.toast('O Spotify ainda não está configurado neste Prumo (falta a Client ID em Definições › Spotify).', 'warn'); return; }
   const v = rnd(64), st = rnd(16), ch = b64u(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)));
   LS.set(K.pk, { v, st, h: location.hash || '#hoje', at: Date.now() });
   location.href = ACC + '/authorize?' + new URLSearchParams({ client_id: cid(), response_type: 'code', redirect_uri: redirect(), code_challenge_method: 'S256', code_challenge: ch, scope: SCOPES, state: st }); };
@@ -21944,7 +21956,7 @@ const keep = (j, old) => LS.set(K.tok, { a: j.access_token, r: j.refresh_token |
   LS.del ? LS.del(K.pk) : LS.set(K.pk, null);
   try { history.replaceState(null, '', location.pathname + (pk.h || '#hoje')); } catch (e) { }
   if (err) { setTimeout(() => UI.toast('Não ligaste o Spotify (' + err + ').', 'warn'), 1500); return; }
-  try { keep(await tokenReq({ grant_type: 'authorization_code', code, redirect_uri: redirect(), client_id: cid() || (await srvCid()), code_verifier: pk.v })); setUi({ on: true, min: false }); setTimeout(() => UI.toast('Spotify ligado', 'pos'), 1200); poll(true); }
+  try { keep(await tokenReq({ grant_type: 'authorization_code', code, redirect_uri: redirect(), client_id: cid(), code_verifier: pk.v })); setUi({ on: true, min: false }); setTimeout(() => UI.toast('Spotify ligado', 'pos'), 1200); poll(true); }
   catch (e) { setTimeout(() => UI.toast('Não consegui ligar o Spotify: ' + e.message, 'neg'), 1500); } })();
 let RT = null;
 const access = async () => { const t = tok(); if (!t) throw new Error('sem conta'); if (t.a && Date.now() < t.exp) return t.a;
@@ -21959,7 +21971,7 @@ const sp = async (path, o = {}) => { const go = async a => fetch(API + path, Obj
     throw Object.assign(new Error(r.status === 403 && /premium/i.test(m) ? 'Controlar a música precisa do Spotify Premium.' : r.status === 403 ? 'Esta conta Spotify ainda não está autorizada nesta app (o Spotify só deixa 5 contas; pede ao administrador).' : r.status === 404 || /NO_ACTIVE_DEVICE/.test(m) ? 'Abre o Spotify no telemóvel ou no computador e toca qualquer coisa: depois controlas daqui.' : r.status === 429 ? 'O Spotify pediu para esperar um pouco.' : m), { status: r.status }); }
   return j; };
 let ST = null, ERR = '', PT = 0;
-const poll = async now => { clearTimeout(PT); if (!linked() || !ui().on) return; if (document.hidden && !now) { PT = setTimeout(poll, 15e3); return; }
+const poll = async now => { clearTimeout(PT); if (!allowed() || !linked() || !ui().on) return; if (document.hidden && !now) { PT = setTimeout(poll, 15e3); return; }
   try { ST = await sp('/me/player?additional_types=episode'); ERR = ''; } catch (e) { if (e.status !== 429) ERR = e.message; }
   draw(); PT = setTimeout(poll, ST && ST.is_playing ? 4000 : 9000); };
 document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(true); });
@@ -21985,7 +21997,7 @@ let el = null, EMBU = '';
 const ic = n => ({ play: 'M8 5v14l11-7z', pause: 'M7 5h4v14H7zM13 5h4v14h-4z', next: 'M6 6l8.5 6L6 18zM16 6h2v12h-2z', prev: 'M18 6l-8.5 6L18 18zM6 6h2v12H6z', list: 'M4 6h16M4 12h16M4 18h10', min: 'M6 12h12', x: 'M6 6l12 12M18 6L6 18', up: 'M6 15l6-6 6 6' })[n];
 const svg = n => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ic(n)}"/></svg>`;
 const logo = '<svg class="spm-logo" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1ED760"/><path d="M6.5 9.3c3.8-1.1 8-.8 11.2 1M7.2 12.5c3.1-.9 6.5-.6 9.2.9M7.8 15.4c2.5-.6 5.1-.4 7.2.8" stroke="#000" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>';
-const draw = () => { const u = ui(), want = u.on && (linked() || LS.get(K.emb, '') || u.show);
+const draw = () => { const u = ui(), want = allowed() && u.on && (linked() || LS.get(K.emb, '') || u.show);
   if (!want) { if (el) { el.remove(); el = null; EMBU = ''; } return; }
   if (!el) { el = document.createElement('div'); el.id = 'spMini'; el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'Spotify'); document.body.appendChild(el); }
   el.classList.toggle('min', !!u.min); el.classList.toggle('emb', !linked());
@@ -22013,16 +22025,16 @@ const sheet = () => { if (!SH) { SH = document.createElement('div'); SH.classNam
     ${RES ? `<div class="spm-l">${(RES.tracks || []).map(x => row(x.uri, ((x.album || {}).images || []).slice(-1)[0]?.url, x.name, (x.artists || []).map(a => a.name).join(', '), 'spTrack')).join('')}${(RES.playlists || []).map(x => row(x.uri, ((x.images || [])[0] || {}).url, x.name, 'Playlist', 'spCtx')).join('')}</div>` : ''}
     <h4>As tuas playlists</h4><div class="spm-l">${PL ? PL.map(x => row(x.uri, ((x.images || [])[0] || {}).url, x.name, (x.tracks && x.tracks.total ? x.tracks.total + ' músicas' : 'Playlist'), 'spCtx')).join('') || '<p class="mut">Sem playlists.</p>' : '<div class="sai-busy"><div class="fd-spin"></div><span>A abrir…</span></div>'}</div>
     <h4>Tocar em</h4><div class="spm-l">${DV ? DV.map(d => `<button type="button" class="spm-r" data-act="spDev" data-d="${esc(d.id)}"><span class="spm-ph dev"></span><span><b>${esc(d.name)}</b><small>${esc(d.type)}${d.is_active ? ' · a tocar aqui' : ''}</small></span></button>`).join('') || '<p class="mut">Nenhum aparelho com o Spotify aberto.</p>' : ''}</div></div>`; };
-A.spSheet = async () => { if (!linked()) return; PL = null; DV = null; sheet();
+A.spSheet = async () => { if (!allowed() || !linked()) return; PL = null; DV = null; sheet();
   try { const [p, d] = await Promise.all([sp('/me/playlists?limit=30'), sp('/me/player/devices')]); PL = ((p && p.items) || []).filter(Boolean); DV = (d && d.devices) || []; } catch (e) { PL = []; DV = []; UI.toast(e.message, 'warn'); } if (SH) sheet(); };
 A.spClose = closeSheet;
 OS.forms.spSearch = async (f, v) => { SQ = v('q'); if (!SQ) return; try { const j = await sp('/search?' + new URLSearchParams({ q: SQ, type: 'track,playlist', limit: '8' })); RES = { tracks: ((j.tracks || {}).items || []).filter(Boolean), playlists: ((j.playlists || {}).items || []).filter(Boolean).slice(0, 5) }; } catch (e) { UI.toast(e.message, 'warn'); } if (SH) sheet(); };
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && SH) closeSheet(); });
 
 /* ---------- Definições › Spotify ---------- */
-const srvCid = async () => { if (SRV) return SRV; try { const r = await fetch(new URL('api/conta', document.baseURI).href, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op: 'publico' }) }); const j = await r.json(); SRV = String(j.spotify || '').trim(); } catch (e) { } return SRV; };
+// a Client ID (pública) vem com a conta, só para quem pode usar o Spotify
 OS.forms.spCid = (f, v) => { const x = v('cid'); if (x && !/^[a-f0-9]{32}$/i.test(x)) return UI.toast('A Client ID do Spotify tem 32 letras e números.', 'warn'); LS.set(K.cid, x); UI.toast(x ? 'Client ID guardada neste aparelho' : 'A usar a Client ID do servidor', 'pos'); OS.request(); };
-const panel = () => { const L = linked(), it = ST && ST.item;
+const panel = () => { if (!allowed()) return ''; const L = linked(), it = ST && ST.item;
   return `<div class="pn" id="spSet"><div class="pn-h"><h3>${UI.ic('play')}Spotify</h3><span class="mut">${L ? 'ligado' : LS.get(K.emb, '') ? 'tocador sem conta' : 'desligado'}</span></div>
     <p class="mut" style="margin:0 0 10px">Um tocador pequenino no canto, no ecrã de entrada e dentro do app: a música continua quando entras.</p>
     <h4 style="margin:6px 0">Com a tua conta Spotify</h4><p class="mut" style="margin:0 0 8px">Controlas o Spotify do telemóvel ou do computador: a música atual, tocar e pausar, passar, as tuas playlists, procurar e escolher o aparelho. Precisa de Premium para controlar. Por regra do Spotify, cada app pequena só pode ser usada por 5 contas autorizadas.</p>
@@ -22031,13 +22043,14 @@ const panel = () => { const L = linked(), it = ST && ST.item;
     <h4 style="margin:16px 0 6px">Sem conta (para todos)</h4><p class="mut" style="margin:0 0 8px">Cola o link de uma playlist, álbum ou música do Spotify. Toca as músicas inteiras se tiveres sessão iniciada no Spotify neste navegador; sem sessão, toca excertos de 30 segundos.</p>
     ${!L && LS.get(K.emb, '') ? '<button class="btn sm" data-act="spShow" style="margin:0 0 8px">Mostrar o tocador</button>' : ''}<form data-form="spEmb" class="row gap8"><input class="field grow" name="u" placeholder="https://open.spotify.com/playlist/…" value="${esc(LS.get(K.emb, '') ? LS.get(K.emb, '') : '')}"><button class="btn sm">Usar</button></form>
     ${OS.Acc && OS.Acc.adm && OS.Acc.adm() ? `<details class="tog" style="margin-top:12px"><summary><span>Configurar (administrador)</span></summary><div style="padding:8px 0">
-      <p class="mut" style="margin:0 0 8px">1) Em developer.spotify.com › Dashboard › Create app, com Web API. 2) Redirect URIs: <b>${esc(redirect())}</b>${location.host !== 'prumo-vida.vercel.app' ? '' : ' e https://nautilo-app.vercel.app/'}. 3) Em User Management, junta o e-mail Spotify de cada pessoa (até 5). 4) Copia a Client ID (é pública) para a Vercel, como SPOTIFY_CLIENT_ID, ou cola-a aqui só para este aparelho.</p>
-      <form data-form="spCid" class="row gap8"><input class="field grow mono" name="cid" value="${esc(LS.get(K.cid, '') || '')}" placeholder="${SRV ? 'Do servidor: ' + SRV.slice(0, 6) + '…' : 'Client ID'}"><button class="btn sm">Guardar</button></form></div></details>` : ''}</div>`; };
+      <p class="mut" style="margin:0 0 8px">1) Em developer.spotify.com › Dashboard › Create app, com Web API. 2) Redirect URIs: <b>${esc(redirect())}</b>${location.host !== 'prumo-vida.vercel.app' ? '' : ' e https://nautilo-app.vercel.app/'}. 3) Em User Management, junta o e-mail Spotify de cada pessoa (até 5). 4) Copia a Client ID (é pública) para a Vercel, como SPOTIFY_CLIENT_ID, ou cola-a aqui só para este aparelho. Quem pode usar escolhe-se no Admin (tu e mais até 4 contas).</p>
+      <form data-form="spCid" class="row gap8"><input class="field grow mono" name="cid" value="${esc(LS.get(K.cid, '') || '')}" placeholder="${OS.Acc.spCid() ? 'Do servidor: ' + OS.Acc.spCid().slice(0, 6) + '…' : 'Client ID'}"><button class="btn sm">Guardar</button></form></div></details>` : ''}</div>`; };
 OS.on('ready', () => { const o = OS.views.definicoes; if (!o || o._sp) return; OS.views.definicoes = sub => o(sub) + (String(sub || '') === '' ? panel() : ''); OS.views.definicoes._sp = 1; });
 
 /* ---------- arranque ---------- */
-srvCid().then(() => { draw(); if (linked()) poll(true); });
-OS.Spot = { linked, draw, poll, uriOf, panel };
+draw(); if (linked()) poll(true);
+OS.on('ready', () => { draw(); if (linked()) poll(true); });
+OS.Spot = { linked, draw: () => { draw(); if (allowed() && linked()) poll(true); else clearTimeout(PT); }, poll, uriOf, panel, allowed };
 })();
 
 </script>

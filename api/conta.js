@@ -59,6 +59,12 @@ const rowOut = (r, today, me) => { const d = Object.fromEntries(Object.entries(r
   return { n: r.anon && !me ? '' : r.n || '', c: r.c || '', av: r.anon && !me ? '' : r.av || '', im: r.anon && !me ? '' : r.im || '', anon: !!r.anon, me: !!me, s: streakOf(d, today), b: Math.max(r.b || 0, bestOf(d)), h: last ? d[last] : null,
     p7, p30, pa, q7: Math.round(p7 / Math.min(7, span)), q30: Math.round(p30 / Math.min(30, span)), qa: Math.round(pa / span), dias: ks.length }; };
 
+/* ---------- Spotify: só para o administrador e as contas que ele escolher ---------- */
+const SPK = 'cfg/spotify', SP_MAX = 4, SPC = { at: 0, v: [] };
+const spList = async () => { if (Date.now() - SPC.at < 20e3) return SPC.v; try { const g = await N.store().get(SPK); SPC.v = g ? (N.open(await N.accKey(), g.buf).emails || []) : []; } catch (e) { SPC.v = []; } SPC.at = Date.now(); return SPC.v; };
+const spOk = async email => isAdmin(email) || (await spList()).includes(N.normEmail(email));
+const spCid = () => { const v = String(process.env.SPOTIFY_CLIENT_ID || '').trim(); return /^[a-f0-9]{32}$/i.test(v) ? v : ''; };
+
 const OPS = {
   async registar(req, b) {
     if (N.limit(req, 'registar', 6, 3600e3)) throw N.err('limite', 'Muitas contas criadas a partir daqui. Tenta mais tarde.', 429);
@@ -82,7 +88,7 @@ const OPS = {
     const rec = await change(eid, r => { r.falhas = 0; r.bloq = 0; r.ult = Date.now(); r.logins = (r.logins || 0) + 1; }).catch(() => a.rec);
     return { token: await N.signToken(rec, eid), conta: pub(rec) }; },
 
-  async eu(req) { const s = await session(req); return { conta: pub(s.rec) }; },
+  async eu(req) { const s = await session(req), sp = await spOk(s.rec.email); return { conta: Object.assign(pub(s.rec), { sp, spc: sp ? spCid() : '' }) }; },
   // contas que já existiam (ou termos novos): aceitar uma vez
   async termos(req, b) { const s = await session(req), t = termsOf(b); const rec = await change(s.eid, r => { r.termos = t; }); return { conta: pub(rec) }; },
   // quem é o responsável e como contactar (para a Política de Privacidade); sem sessão
@@ -165,7 +171,8 @@ const OPS = {
     contas.sort((a, b) => Math.max(b.ultUso, b.ultEntrada) - Math.max(a.ultUso, a.ultEntrada));
     const P = await s.list('p/'), pedidos = []; await pool(P.slice(-300), async x => { const g = await s.get(x.pathname); if (g) pedidos.push(N.open(key, g.buf)); });
     pedidos.sort((a, b) => String(b.at).localeCompare(String(a.at)));
-    return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos }; },
+    const sl = await spList(); contas.forEach(c => { c.sp = c.admin || sl.includes(N.normEmail(c.email)); });
+    return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos, spotify: sl, spMax: SP_MAX, spConf: !!spCid() }; },
 
   // o administrador apaga a conta de outra pessoa (com a sua própria senha; não dá para apagar a própria conta por aqui nem outra conta de administrador)
   async adminApagar(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
@@ -174,6 +181,7 @@ const OPS = {
     if (isAdmin(email)) throw N.err('admin', 'Não dá para apagar outra conta de administrador.', 403);
     const eid = await N.emailId(email), a = await readAcc(eid); if (!a) throw N.err('conta', 'Essa conta já não existe.', 404);
     await dropData(a.rec.uid); await N.store().del([{ pathname: 'a/' + eid }, { pathname: 'u/' + a.rec.uid }]); RK.rows = null;
+    const sl = await spList(); if (sl.includes(email)) { await N.store().put(SPK, N.seal(await N.accKey(), { emails: sl.filter(x => x !== email), at: Date.now() })); SPC.at = 0; }
     return { apagada: true, email }; },
 
   // a app manda a pontuação dos últimos dias deste perfil (só dos últimos 8 dias: o passado não se muda)
@@ -197,13 +205,19 @@ const OPS = {
     const lista = (await rankRows()).filter(r => !r.t || r.path === mine).map(r => rowOut(r, today, r.path === mine)).filter(x => x.me || x.pa > 0);
     return { lista, foco: FOCO, hoje: today }; },
 
-  // dados públicos da configuração (a Client ID do Spotify é pública: serve para a app ligar a conta Spotify com PKCE, sem segredo)
-  async publico() { return { spotify: /^[a-f0-9]{32}$/i.test(String(process.env.SPOTIFY_CLIENT_ID || '').trim()) ? String(process.env.SPOTIFY_CLIENT_ID).trim() : '' }; },
+  // o administrador escolhe quem pode usar o Spotify (ele e mais até SP_MAX contas): o Spotify só deixa 5 contas por app
+  async adminSpotify(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+    let L = await spList(); const email = N.normEmail(b.email);
+    if (email && !isAdmin(email)) { if (b.on) { if (!L.includes(email)) { if (L.length >= SP_MAX) throw N.err('cheio', `Já há ${SP_MAX} contas com o Spotify. Tira uma antes de dar a outra.`, 400); if (!(await readAcc(await N.emailId(email)))) throw N.err('conta', 'Essa conta não existe.', 404); L = L.concat(email); } } else L = L.filter(x => x !== email);
+      await N.store().put(SPK, N.seal(await N.accKey(), { emails: L, at: Date.now() })); SPC.at = 0; }
+    return { emails: L, max: SP_MAX }; },
 
   async nome(req, b) { const s = await session(req); const rec = await change(s.eid, r => { r.nome = cleanName(b.nome, 40); }); return { conta: pub(rec) }; },
 
   async apagar(req, b) { const s = await session(req); await needPw(s.rec, b.senha);
-    await dropData(s.rec.uid); await N.store().del([{ pathname: 'a/' + s.eid }, { pathname: 'u/' + s.rec.uid }]); return { apagada: true }; }
+    await dropData(s.rec.uid); await N.store().del([{ pathname: 'a/' + s.eid }, { pathname: 'u/' + s.rec.uid }]);
+    const sl = await spList(), me = N.normEmail(s.rec.email); if (sl.includes(me)) { await N.store().put(SPK, N.seal(await N.accKey(), { emails: sl.filter(x => x !== me), at: Date.now() })); SPC.at = 0; }
+    return { apagada: true }; }
 };
 
 module.exports = N.handler(async (req, res) => {
