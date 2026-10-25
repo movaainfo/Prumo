@@ -73,13 +73,20 @@ module.exports = N.handler(async (req, res) => {
   if (BUSY.get(l) && Date.now() - BUSY.get(l) < 50e3) { const { d } = await load(l), feito = S.all.filter(s => d.m[s] != null).length; return N.send(res, 200, { ok: true, ocupado: true, total: S.all.length, feito, completo: feito >= S.all.length }); }
   BUSY.set(l, Date.now());
   try {
-    let { d } = await load(l); const miss = S.all.filter(s => d.m[s] == null), batch = []; let c = 0;
-    for (const s of miss) { if (batch.length >= BATCH_N || (c + s.length > BATCH_C && batch.length)) break; batch.push(s); c += s.length; }
+    // sz: depois de um lote que a IA não conseguiu devolver, os seguintes vão mais pequenos (até um texto de cada vez)
+    let { d } = await load(l); const sz = Math.max(1, Math.min(160, d.sz || 1)), miss = S.all.filter(s => d.m[s] == null), batch = []; let c = 0;
+    for (const s of miss) { if (batch.length >= Math.ceil(BATCH_N / sz) || (c + s.length > BATCH_C / sz && batch.length)) break; batch.push(s); c += s.length; }
     if (!batch.length) return N.send(res, 200, { ok: true, total: S.all.length, feito: S.all.length, completo: true });
-    const out = await ask(l, batch), got = {};
+    let out; try { out = await ask(l, batch); }
+    catch (e) { // lote difícil: o próximo vai mais pequeno; um texto sozinho que falha 3 vezes fica como está, para não travar a língua
+      for (let i = 0; i < 5; i++) { const cur = await load(l); cur.d.sz = Math.min(160, sz * 4);
+        if (batch.length === 1) { const s0 = batch[0]; cur.d.f[s0] = (cur.d.f[s0] || 0) + 1; if (cur.d.f[s0] >= 3) { cur.d.m[s0] = s0; cur.d.sz = 1; } }
+        try { await N.store().put(KEY(l), Buffer.from(JSON.stringify(cur.d)), cur.etag ? { ifMatch: cur.etag } : { overwrite: false }); break; } catch (e2) { if (e2.code !== 'conflict' && e2.code !== 'exists') break; await N.sleep(150 + Math.random() * 300); } }
+      throw e; }
+    const got = {};
     batch.forEach((s, i) => { const tr = out[i] != null ? out[i] : out[String(i)]; if (valid(s, tr)) got[s] = tr; });
     // grava junto com o que outros já gravaram entretanto (até 5 tentativas)
-    for (let i = 0; i < 5; i++) { const cur = await load(l); cur.d.m = Object.assign(cur.d.m, got);
+    for (let i = 0; i < 5; i++) { const cur = await load(l); cur.d.m = Object.assign(cur.d.m, got); if (sz > 1) { cur.d.sz = Math.max(1, Math.floor(sz / 2)); if (cur.d.sz === 1) delete cur.d.sz; }
       batch.forEach(s => { if (got[s] == null) { cur.d.f[s] = (cur.d.f[s] || 0) + 1; if (cur.d.f[s] >= 3) cur.d.m[s] = s; } });   // 3 falhas: fica como está, para não travar
       try { await N.store().put(KEY(l), Buffer.from(JSON.stringify(cur.d)), cur.etag ? { ifMatch: cur.etag } : { overwrite: false }); d = cur.d; break; }
       catch (e) { if (e.code !== 'conflict' && e.code !== 'exists') throw e; await N.sleep(150 + Math.random() * 300); } }
