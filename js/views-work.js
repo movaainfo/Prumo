@@ -23,8 +23,9 @@ V.trabalho = () => {
 
 /* ================= CARREIRA ================= */
 V.carreira = sub => {
-  const head = UI.head('Carreira e contactos', 'Candidaturas, entrevistas, rede de contactos, experiências e metas profissionais.', `${UI.addBtn('applications', 'Candidatura')}${UI.addBtn('contacts', 'Contacto', null, '')}`, 'Carreira') + UI.tabs('carreira', [['', 'Candidaturas'], ['rede', 'Rede de contactos'], ['experiencias', 'Experiências'], ['metas', 'Metas profissionais']], sub);
+  const head = UI.head('Carreira e contactos', 'Candidaturas, entrevistas, rede de contactos, experiências e metas profissionais.', `${UI.addBtn('applications', 'Candidatura')}${UI.addBtn('contacts', 'Contacto', null, '')}`, 'Carreira') + UI.tabs('carreira', [['', 'Candidaturas'], ['curriculo', 'Currículo'], ['rede', 'Rede de contactos'], ['experiencias', 'Experiências'], ['metas', 'Metas profissionais']], sub);
   const t = U.today();
+  if (sub === 'curriculo') return head + (OS.CV ? OS.CV.view() : '');
   if (sub === 'rede') {
     const Cn = OS.all('contacts'), act = Cn.filter(c => c.last && U.diff(t, c.last) <= 90), due = Cn.filter(c => c.next && c.next <= t);
     return head + `<div class="kpis">${UI.kpi('Contactos', Cn.length)}${UI.kpi('Ativos (90 dias)', act.length, Cn.length ? U.pct(act.length / Cn.length) : '')}${UI.kpi('Follow-ups pendentes', due.length, '', { tone: due.length ? 'warn' : '' })}${UI.kpi('Relações fortes', Cn.filter(c => U.num(c.strength) >= 4).length, 'força 4–5')}</div>

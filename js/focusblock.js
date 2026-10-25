@@ -49,8 +49,11 @@ const picked = () => list().filter(isSel).map(x => Object.assign({}, x, { mins: 
 /* ---------- página ---------- */
 // bloquear as apps do iPhone (Foco + Atalhos) configura-se em Definições → Atalhos do iPhone (OS.FocusBlock.settings)
 const TB = [['', 'Começar'], ['hist', 'Histórico']];
+// Bloco de foco e Floresta são uma página só (Execução › Bloco de foco): os separadores dos dois juntos
+const FT = [['foco', '', 'Bloco de foco'], ['floresta', '', 'Plantar uma árvore'], ['floresta', 'floresta', 'A minha floresta'], ['floresta', 'loja', 'Árvores'], ['floresta', 'moedas', 'Moedas e prémios'], ['floresta', 'stats', 'Estatísticas'], ['foco', 'hist', 'Histórico']];
+OS.focoTabs = cur => `<nav class="tabs" aria-label="Secções">${FT.map(([b, k, l]) => `<a href="#${b}${k ? '.' + k : ''}" class="${cur === b + '.' + k ? 'on' : ''}">${l}</a>`).join('')}</nav>`;
 V.foco = sub => { const k = TB.some(t => t[0] === (sub || '')) ? (sub || '') : '';
-  return UI.head('Bloco de foco', 'Resolve as tuas pendências, uma de cada vez. Sem fugir até acabar.', B ? `<button class="btn pri" data-act="fbShow">${UI.ic('focus')}Voltar ao bloco</button>` : '') + UI.tabs('foco', TB, k) + `<div class="fb-page">${P[k]()}</div>`; };
+  return UI.head('Bloco de foco', 'Resolve as tuas pendências uma de cada vez, ou planta uma árvore que cresce enquanto te concentras. Sem fugir até acabar.', B ? `<button class="btn pri" data-act="fbShow">${UI.ic('focus')}Voltar ao bloco</button>` : '') + OS.focoTabs('foco.' + k) + `<div class="fb-page">${P[k]()}</div>`; };
 const P = {};
 P[''] = () => { if (B) return `<div class="pn"><b>Tens um bloco em curso.</b><p class="mut">${B.items.filter(x => x.st === 'done').length} de ${B.items.length} pendências resolvidas.</p><button class="btn pri" data-act="fbShow">Voltar ao bloco</button></div>`;
   const th = themes(), L = list(), sel = picked(), tot = U.sum(sel, x => x.mins), c = cfg(), opt = (v, l) => `<option value="${esc(v)}"${DR.th === v ? ' selected' : ''}>${esc(l)}</option>`;

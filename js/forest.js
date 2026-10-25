@@ -447,9 +447,11 @@ function mount() { const h = document.getElementById('fo3d'); if (!h) { G.host =
   if (G.r.domElement.parentNode !== h) h.appendChild(G.r.domElement);
   if (G.ro) G.ro.disconnect(); G.ro = new ResizeObserver(size); G.ro.observe(h); size(); if (!G.raf) G.raf = requestAnimationFrame(frame); }
 const potFromKey = k => { const [, sp, st, dead, seed] = k.split('|'); buildPot(sp, +st, dead === '1', +seed); };
-OS.on('render', () => queueMicrotask(mount));
-const obsView = () => { const v = document.getElementById('view'); if (v && !v._foObs) { v._foObs = new MutationObserver(() => queueMicrotask(mount)); v._foObs.observe(v, { childList: true }); } };
-obsView(); OS.on('ready', obsView); addEventListener('hashchange', () => setTimeout(mount, 0));
+// a página aparece já; o 3D (que da primeira vez demora) liga-se logo a seguir, depois de a página estar no ecrã
+const soon = () => { if (G.r || FAIL || !document.getElementById('fo3d')) return queueMicrotask(mount); requestAnimationFrame(() => setTimeout(mount, 30)); };
+OS.on('render', soon);
+const obsView = () => { const v = document.getElementById('view'); if (v && !v._foObs) { v._foObs = new MutationObserver(soon); v._foObs.observe(v, { childList: true }); } };
+obsView(); OS.on('ready', obsView); addEventListener('hashchange', () => setTimeout(soon, 0));
 document.addEventListener('visibilitychange', () => { if (document.hidden) return; if (!G.r || FAIL) { setTimeout(mount, 300); return; } if (G.host && !G.raf) { G.dirty = true; G.raf = requestAnimationFrame(frame); } });
 let FLIST = null;
 
@@ -584,7 +586,7 @@ document.addEventListener('change', e => { if (e.target.id === 'foDur') OS.touch
 /* ================= vistas ================= */
 const TABS = [['', 'Plantar'], ['floresta', 'A minha floresta'], ['loja', 'Todas as árvores'], ['moedas', 'Moedas & prémios'], ['stats', 'Estatísticas']];
 V.floresta = sub => { const k = TABS.some(t => t[0] === (sub || '')) ? (sub || '') : '';
-  return UI.head('Floresta', 'Planta uma árvore e concentra-te: ela cresce enquanto estudas. Se saíres do Prumo ou desistires, morre. Cada sessão fica na tua floresta.', `<span class="fo-coins" title="Moedas">🪙 ${U.nf(+cfg().coins || 0)}</span>`, 'Estudos') + UI.tabs('floresta', TABS, k) + `<div class="fo">${VW[k]()}</div>`; };
+  return UI.head('Bloco de foco', 'Planta uma árvore e concentra-te: ela cresce enquanto estudas. Se saíres do Prumo ou desistires, morre. Cada sessão fica na tua floresta.', `<span class="fo-coins" title="Moedas">🪙 ${U.nf(+cfg().coins || 0)}</span>`, 'Execução') + (OS.focoTabs ? OS.focoTabs('floresta.' + k) : UI.tabs('floresta', TABS, k)) + `<div class="fo">${VW[k]()}</div>`; };
 const VW = {};
 const sky = k => { const P = SCN[k || cfg().scene] || SCN.verde; return `fo-sky fo-${SKY()}${P.bg ? ' fo-bg-' + P.bg : ''}`; };
 const tagSel = v => `<select class="field" id="foTag" aria-label="Etiqueta"><option value="">Sem etiqueta</option><optgroup label="Disciplinas">${OS.all('subjects').filter(s => s.status === 'Em curso').map(s => `<option value="s:${s.id}"${v === 's:' + s.id ? ' selected' : ''}>${esc(s.name)}</option>`).join('')}</optgroup><optgroup label="Competências">${OS.all('skills').map(s => `<option value="k:${s.id}"${v === 'k:' + s.id ? ' selected' : ''}>${esc(s.name)}</option>`).join('')}</optgroup><optgroup label="Outras">${['Leitura', 'Trabalho', 'Mova', 'Devocional', 'Projeto pessoal', 'Outro'].map(x => `<option${v === x ? ' selected' : ''}>${x}</option>`).join('')}</optgroup></select>`;

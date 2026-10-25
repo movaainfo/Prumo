@@ -24,8 +24,9 @@ AI.viaSrv = () => !AI.own() && AI.srv();
     // os pedidos à IA levam o nome que a pessoa deu à sua IA
     if (o && typeof o.body === 'string' && OS.aiN && /generativelanguage|pollinations|anthropic|api\/ia/.test(s)) o = Object.assign({}, o, { body: OS.aiN(o.body) });
     return of(u, o); }; }
-OS.on('ready', () => { if (!AI.srv()) return; const c = U.ls.get('os2iaSrv', null); if (c && Date.now() - c.at < 6 * 36e5) return;
-  fetch(new URL('api/ia?p=estado', document.baseURI).href).then(r => r.json()).then(j => { U.ls.set('os2iaSrv', { g: !!j.google, at: Date.now() }); }).catch(() => { }); });
+OS.on('ready', () => { if (!AI.srv()) return; const c = U.ls.get('os2iaSrv', null); if (c && 'cl' in c && Date.now() - c.at < 2 * 36e5) return;
+  fetch(new URL('api/ia?p=estado', document.baseURI).href).then(r => r.json()).then(j => { U.ls.set('os2iaSrv', { g: !!j.google, cl: !!j.claude, stt: j.stt || '', mod: j.modelo || '', at: Date.now() }); }).catch(() => { }); });
+AI.srvClaude = () => AI.srv() && !!(U.ls.get('os2iaSrv', {}) || {}).cl;
 /* A IA do PRUMO é o Spyke: uma só chave (Gemini, grátis) liga tudo o que usa IA — exames, fotos da comida, investimentos,
    universidade, e-mails, notícias, decisões, conversa com o Spyke. Liga-se num só sítio: Definições → Spyke. */
 AI.uses = ['conversar com o Spyke e a voz Gemini', 'decisões (Centro de decisões)', 'e-mails e LinkedIn', 'notícias resumidas e traduzidas', 'fotos da comida', 'exames de bioimpedância', 'investimentos e empresas', 'universidade (resumos, cartões, testes)', 'escala do trabalho por foto', 'Fé, biografia e treinador de desporto'];

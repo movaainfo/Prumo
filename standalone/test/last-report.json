@@ -1,277 +1,1951 @@
 [
  {
-  "p": "Línguas",
-  "name": "Dicionários das línguas principais vêm com o app (inglês com mais de 15 mil textos)",
-  "pass": true,
-  "info": "18811"
- },
- {
-  "p": "Línguas",
-  "name": "Estados Unidos: o app passa a inglês (títulos traduzidos)",
-  "pass": true,
-  "info": "{\"h1\":\"Finance\",\"want\":\"Finance\"}"
- },
- {
-  "p": "Línguas",
-  "name": "Estados Unidos: dólares, datas e números à americana, notas de 0 a 100",
-  "pass": true,
-  "info": "{\"lang\":\"en\",\"h1\":\"Finance\",\"cur\":\"USD\",\"eur\":\"$1,234.50\",\"date\":\"Saturday, October 24\",\"d\":\"10/24/2026\",\"g\":\"0–100\",\"html\":\"en\"}"
- },
- {
-  "p": "Línguas",
-  "name": "Traduz frases com números, plurais, ícones e contagens, sem mexer no que a pessoa escreveu",
-  "pass": true,
-  "info": "{\"plural\":\"Do 4 more workouts this week\",\"um\":\"Do 1 more workout this week\",\"icone\":\"Animations\",\"conta\":\"2 of 3\",\"par\":\"Completed (3)\",\"ponto\":\"Experience · 40%\",\"verso\":true,\"casa\":\"Casa de praia\",\"prova\":\"Prova de Matemática\",\"com\":\"comprimida\"}"
- },
- {
-  "p": "Línguas",
-  "name": "Saudação na língua da pessoa (\"Good …, Sam\")",
+  "p": "Geral",
+  "name": "os 82 formulários gravam",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Línguas",
-  "name": "Feriados de qualquer país (4 de julho nos EUA)",
+  "p": "Geral",
+  "name": "gasto rápido fica guardado depois de recarregar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Línguas",
-  "name": "Páginas principais em inglês quase sem português à vista",
+  "p": "Geral",
+  "name": "exportar e importar devolve tudo",
   "pass": true,
-  "info": "4 textos"
+  "info": "2 movimentos"
  },
  {
-  "p": "Línguas",
-  "name": "A IA responde na língua da pessoa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Línguas",
-  "name": "Definições › País, língua e moeda: escolher espanhol traduz tudo",
+  "p": "Geral",
+  "name": "atalho: verificação da ligação",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Línguas",
-  "name": "Brasil: português do Brasil e reais",
+  "p": "Geral",
+  "name": "atalho: o Google falha à 1.ª e a app tenta de novo · \"18, uber\" → 18 € · Uber",
   "pass": true,
-  "info": "pt-BR R$ 1.234,50"
+  "info": "1 encontrados"
  },
  {
-  "p": "Línguas",
-  "name": "Outra língua qualquer (japonês): a IA do servidor prepara o dicionário aos poucos",
+  "p": "Geral",
+  "name": "atalho de uma pergunta: \"99 pizza 2 pessoas\" → 99 € · Pizza 2 pessoas",
   "pass": true,
-  "info": "{\"t\":18811,\"f\":160}"
+  "info": "[99]"
  },
  {
-  "p": "Línguas",
+  "p": "Geral",
+  "name": "atalho: gasto enviado entra nas Finanças com categoria",
+  "pass": true,
+  "info": "[[8.5,\"Uber para a faculdade\",\"Transporte\"],[99,\"Pizza 2 pessoas\",\"Alimentação\"],[18,\"Uber\",\"Transporte\"]]"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: não duplica",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: herói criado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: treinos registados sobem o Corpo (e o herói) e mostram parabéns",
+  "pass": true,
+  "info": "herói 1 → 2 · Corpo 0 → 1 · SUBISTE DE NÍVEL\n2\nBRONZE\nRyan\nSEM CLASS"
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: baú com 2 recompensas à escolha",
+  "pass": true,
+  "info": "2 opções"
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: escolher recompensa guarda-a",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: marcos em 5 pilares (com o Espírito)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
   "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Línguas",
-  "name": "Perfil do Ryan: português de Portugal e euros (mesmo num aparelho em inglês)",
+  "p": "Geral",
+  "name": "abre sem internet",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Línguas",
-  "name": "Aparelho novo em en-US: o ecrã da conta abre em inglês",
-  "pass": true,
-  "info": "{\"code\":\"en\",\"tabs\":[\"Log in\",\"Create account\"]}"
- },
- {
-  "p": "Línguas",
-  "name": "Aparelho novo em pt-BR: o ecrã da conta abre em português do Brasil",
-  "pass": true,
-  "info": "{\"code\":\"pt-BR\",\"tabs\":[\"Entrar\",\"Criar conta\"]}"
- },
- {
-  "p": "Religiões",
-  "name": "sem escolha fica como sempre: Bíblia de 66 livros e \"Hoje com Deus\"",
+  "p": "Geral",
+  "name": "atualização: aparece \"A atualizar o Prumo…\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "Definições › Tu: escolher a religião",
+  "p": "Geral",
+  "name": "atualização: depois mostra \"Atualizado\" e a versão nova",
+  "pass": true,
+  "info": "Atualizado · versão 9.9 · 25/10/2026 · Pontos mais difíceis: no ranking só conta"
+ },
+ {
+  "p": "Geral",
+  "name": "modo de segurança (?seguro) limpa a cache e liga o modo leve",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "católica: Bíblia com 73 livros (Tobias, Judite, Sabedoria, Sirácida, Baruc, Macabeus)",
-  "pass": true,
-  "info": "73"
- },
- {
-  "p": "Religiões",
-  "name": "católica: terço guiado com os mistérios do dia",
+  "p": "Geral",
+  "name": "iPhone: engrenagem das Definições visível no topo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "islâmica: Alcorão com 114 suratas e versículo do dia do Alcorão",
+  "p": "Geral",
+  "name": "iPhone: tocar na engrenagem abre as Definições",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "islâmica: \"2:255\" abre a surata Al-Baqara no versículo do Trono",
+  "p": "Geral",
+  "name": "iPhone: \"Definições\" no topo do menu ☰, visível sem rolar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "islâmica: Alcorão em árabe, da direita para a esquerda",
+  "p": "Geral",
+  "name": "iPhone: tocar no menu abre as Definições",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "islâmica: tasbih conta 33 e passa para Alhamdulillah",
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "judaica: Tanakh (39 livros, Torá, Profetas e Escritos) e versículo só do Tanakh",
+  "p": "Geral",
+  "name": "iPhone: depois do código aparece \"Ativar o Face ID?\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "hindu: Bhagavad Gita (18 capítulos, 701 versos)",
+  "p": "Geral",
+  "name": "iPhone: \"Ativar Face ID\" regista o rosto",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "budista: Dhammapada e o dia de Uposatha (lua)",
+  "p": "Geral",
+  "name": "iPhone: ao bloquear aparece \"Desbloquear com Face ID\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "espírita: O Evangelho segundo o Espiritismo e o Evangelho no Lar",
+  "p": "Geral",
+  "name": "iPhone: em modo de teste o Face ID só abre pelo botão (o automático é testado à parte)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "Umbanda e Candomblé: Orixá do dia, sem livro nem planos",
+  "p": "Geral",
+  "name": "iPhone: entrar com o Face ID abre a app",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "nenhuma: a aba Fé sai do menu",
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "voltar a escolher (evangélica) devolve a aba e a Bíblia de 66 livros",
+  "p": "Geral",
+  "name": "Tablet horiz: sem convite nem botão de Face ID",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Religiões",
-  "name": "questionário: a religião escolhida (islâmica) muda a aba Fé, o hábito e os marcos do Dominus",
-  "pass": true,
-  "info": "{\"r\":\"islamica\",\"h\":[\"As cinco orações (salah)\"],\"e\":[\"Ler o Alcorão todo\",\"Fazer as cinco orações todos os dias durante 30 dias\",\"3 gratidões escritas por dia durante 7 dias\",\"1 hora sem telemóvel (silêncio) 7 dias seguidos\",\"30 dias de gratidão seguidos\",\"Ler um livro bíblico inteiro\",\"Ler os 4 Ev"
- },
- {
-  "p": "Religiões",
-  "name": "sem erros de JavaScript (religiões)",
+  "p": "Geral",
+  "name": "Tablet horiz: Definições dizem \"só no iPhone\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ranking",
-  "name": "servidor: guarda a disciplina de cada dia e conta os dias de foco seguidos",
-  "pass": true,
-  "info": "{\"n\":\"Bruno\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":false,\"me\":true,\"s\":4,\"b\":4,\"h\":95,\"p7\":335,\"p30\":335,\"pa\":335,\"q7\":84,\"q30\":84,\"qa\":84,\"dias\":4}"
- },
- {
-  "p": "Ranking",
-  "name": "servidor: o passado (mais de 8 dias) não se muda",
-  "pass": true,
-  "info": "{\"n\":\"Carla\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":false,\"me\":true,\"s\":1,\"b\":1,\"h\":50,\"p7\":150,\"p30\":150,\"pa\":150,\"q7\":75,\"q30\":75,\"qa\":75,\"dias\":2}"
- },
- {
-  "p": "Ranking",
-  "name": "servidor: ninguém escreve no perfil de outra conta",
+  "p": "Geral",
+  "name": "Computador: sem convite nem botão de Face ID",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ranking",
-  "name": "servidor: a lista tem todas as contas (sem as de teste) e nenhum identificador",
-  "pass": true,
-  "info": "{\"ok\":true,\"lista\":[{\"n\":\"Sam\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":false,\"me\":false,\"s\":0,\"b\":0,\"h\":40,\"p7\":40,\"p30\":40,\"pa\":40,\"q7\":40,\"q30\":40,\"qa\":40,\"dias\":1},{\"n\":\"Bruno\",\"c\":\"#F2C48D\",\"av\":\"\",\"anon\":fa"
- },
- {
-  "p": "Ranking",
-  "name": "servidor: sem sessão não se vê o ranking",
+  "p": "Geral",
+  "name": "Computador: Definições dizem \"só no iPhone\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ranking",
-  "name": "o fogo dos dias de foco no topo",
+  "p": "Geral",
+  "name": "sync: o tablet envia os seus dados para o Google",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ranking",
-  "name": "pontos do dia: só entrar = 20",
-  "pass": true,
-  "info": "{\"pts\":20,\"tasks\":[0,2],\"habits\":[0,2],\"all\":false,\"plan\":4}"
- },
- {
-  "p": "Ranking",
-  "name": "pontos do dia: metade feita = 53 (ainda não é dia de foco)",
+  "p": "Geral",
+  "name": "limpeza: \"18, uber\" passa a \"Uber\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ranking",
-  "name": "tudo feito = 100 pontos, \"Dia 1 de foco!\" sem tapar o ecrã",
+  "p": "Geral",
+  "name": "sync: o iPhone liga-se com o código e recebe os dados do tablet",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ranking",
-  "name": "dias de foco seguidos: \"Dia 3 de foco\" no topo e no Hoje",
+  "p": "Geral",
+  "name": "código de ligação aceite em qualquer formato (link, código, codificado, com espaços)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ranking",
-  "name": "página Ranking: todas as contas com posição, % e pontos (sem a de teste)",
-  "pass": true,
-  "info": "[\"1 B Bruno 4 dias de foco · 84% 335pts\",\"2 A Ana tu 3 dias de foco · 81% 244pts\",\"3 C Carla 1 dia de foco · 75% 150pts\",\"4.º S Sam 0 dias de foco · 40% 40pts\"]"
- },
- {
-  "p": "Ranking",
-  "name": "só se vê a lista: nada clicável (sem perfis nem mensagens)",
+  "p": "Geral",
+  "name": "sync: a configuração do atalho também passa para o iPhone",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ranking",
-  "name": "Definições › Tu › Ranking: sem mostrar o nome, os outros veem \"Pessoa anónima\"",
+  "p": "Geral",
+  "name": "sync: o computador liga-se com o código e recebe os dados",
   "pass": true,
-  "info": "[[\"Sam\",false,40],[\"Bruno\",false,335],[\"Carla\",false,150],[\"\",true,244]]"
+  "info": ""
  },
  {
-  "p": "Ranking",
-  "name": "sem erros de JavaScript (ranking)",
+  "p": "Geral",
+  "name": "sync: o que registas no computador aparece no tablet e no iPhone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (computador)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o que registas no iPhone aparece no tablet",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: apagar num aparelho apaga no outro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: gasto do atalho entra uma só vez e aparece nos dois aparelhos",
+  "pass": true,
+  "info": "tablet 1 · iPhone 1"
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (2 aparelhos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Android: sem botão de biometria e registo antigo apagado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Android: nenhum pedido biométrico ao abrir",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "\"Entrar direto\": abre sem pedir código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cadeado volta a pedir o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "biblioteca: mais de 500 exercícios com imagens e 60 alongamentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "base de alimentos: mais de 700 alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exercícios antigos ligados às imagens",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: abre a lista para escolher exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: 2 exercícios no treino em curso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: série feita fica verde e o descanso começa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: volume calculado ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino em curso sobrevive a fechar a app (botão flutuante)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino em curso retomado com as séries",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tipo de série: aquecimento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "terminar: treino guardado com as séries feitas",
+  "pass": true,
+  "info": "{\"n\":1,\"sets\":[{\"t\":\"N\",\"kg\":60,\"reps\":10},{\"t\":\"N\",\"kg\":62.5,\"reps\":8}],\"title\":\"Treino\",\"dur\":1}"
+ },
+ {
+  "p": "Geral",
+  "name": "terminar: resumo com volume e dicas de dieta e alongamento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina criada a partir do treino",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina: abre com as cargas da última vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "recorde detetado no treino seguinte",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "nova rotina guardada com exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha do exercício com animação 3D e como fazer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "histórico em cartões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino já não tem mapa nem peso (passaram para o Corpo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: separadores visão, desafios, mapa e peso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "altura guardada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "formulário de bioimpedância com análise segmentar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bioimpedância: faixas de referência e IMC",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bioimpedância: aviso de diferença entre braços",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "metabolismo medido usado nas metas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: procurar encontra o alimento certo primeiro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: 200 g de frango = macros certas",
+  "pass": true,
+  "info": "{\"date\":\"2026-10-25\",\"meal\":\"Ceia\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"bxwqc3dx01g\",\"_c\":1792966425460,\"_u\":1792966425460,\"_s\":0}"
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: porção típica (unidade)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: refeições com fotos dos alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeição fixa criada com 2 alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeição fixa adicionada com um toque",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: sem IA mostra só o botão para Definições → Spyke (sem passos nem chave aqui)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: a IA identifica os alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: corrigir gramas reescala as calorias e regista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: produtos reais com marca e foto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: refeição guarda a foto do produto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "país: botão na página inicial",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: ao tocar no alimento escolhe-se a marca",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: regista o alimento com a marca escolhida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "país: muda para Brasil",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: mudam conforme o país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas certas: nos ovos só aparecem ovos (nada de massa ou salsichas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas certas: na batata frita não aparece batata palha nem chips",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fast food conforme o país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeições já guardadas com marca de outro país ficam iguais",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fast food de outro país não aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alimentos sem emojis: todos com foto real",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alimentos agrupados: cada alimento uma vez, com as variantes lá dentro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cada alimento tem a sua foto (sem repetir)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cada alimento tem descrição",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao tocar no arroz aparecem as opções (cozido / cru) e as marcas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "regista com a opção e a marca escolhidas",
+  "pass": true,
+  "info": "{\"date\":\"2026-10-25\",\"meal\":\"Ceia\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"6avyr2dxgm5\",\"_c\":1792966446941,\"_u\":1792966446941,\"_s\":0}"
+ },
+ {
+  "p": "Geral",
+  "name": "biblioteca de alimentos com fotos e descrições",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: passo das fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: resultado completo (gordura, magra, metabolismo, visceral)",
+  "pass": true,
+  "info": "{\"bf\":17.1,\"lean\":67.1,\"bmr\":1820,\"vis\":8,\"look\":true,\"ai\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: análise com onde melhorar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: estimativa sem fotos também funciona",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "vídeos escolhidos para os exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: vídeo da execução toca dentro da app",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: vários vídeos bons para escolher",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: alterna entre vídeo e animação 3D",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: animação 3D (ou recurso) aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: modo fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fechar a ficha para o vídeo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: abre na animação 3D com botão do vídeo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "animação certa: extensão de pernas na cadeira extensora (não agachamento)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: em Portugal usa € e 28% de imposto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: inflação de Portugal vem do Eurostat e entra no simulador",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: crédito ao consumo do BCE como taxa do empréstimo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: empréstimo em Portugal mostra TAN e TAEG com Imposto do Selo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: no Brasil usa R$, juros ao mês e CET com IOF",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: custo efetivo de um crédito sem juros é 0%",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: no Brasil a taxa do crédito pessoal vem do BCB, ao mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: comparar taxas com produtos do Brasil (poupança isenta, CDI)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: CDI e LCI/LCA (90% do CDI) atualizados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: cada país guarda os seus valores",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: painel do assistente com sugestões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: sem chave mostra o cartão único do Spyke (IA)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: responde com veredicto, riscos e passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: a IA recebe a simulação, as regras do país e as finanças",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: \"Testar\" aplica o cenário (e ignora campos inventados)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: sem ligação usa os valores de referência e avisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: cotação ao vivo do script (Yahoo) na carteira",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: variação do dia calculada ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: renda fixa rende sozinha (3% ao ano)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: rentabilidade com histórico (TWR, TIR, volatilidade, Sharpe)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: risco (nota 1–7, VaR, CVaR, stress, correlação)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: pesquisar ativo no mercado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: página do ativo com gráfico, estatísticas e notícias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: importar CSV da corretora",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: venda a descoberto (ganha quando o preço cai, perde quando sobe)",
+  "pass": true,
+  "info": "{\"qty\":-10,\"avg\":10,\"cost\":-100,\"value\":-120,\"pl\":-20,\"ret\":-0.2,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":-20,\"exposure\":120,\"short\":true,\"lev\":null,\"price\":12,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-09-25\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: opções com multiplicador e CFD alavancado (margem + resultado)",
+  "pass": true,
+  "info": "[{\"qty\":2,\"avg\":3,\"cost\":600,\"value\":800,\"pl\":200,\"ret\":0.3333333333333333,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":200,\"exposure\":800,\"short\":false,\"lev\":null,\"price\":4,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-10-15\"},{\"qty\":10,\"avg\":100,\"cost\":100,\"value\":200,\"pl\":100,\"ret\":1,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":100,\"exposure\":1100,\"short\":false,\"lev\":11,\"price\":110,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-10-15\"}]"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: caixa em dólares convertida ao câmbio",
+  "pass": true,
+  "info": "100"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: desdobramento, bonificação, transferências, amortização e JCP líquido",
+  "pass": true,
+  "info": "{\"qty\":200,\"avg\":4.76,\"cost\":952,\"value\":1000,\"pl\":48,\"ret\":0.05042016806722689,\"realized\":0,\"divs\":85,\"gross\":100,\"taxW\":15,\"fees\":0,\"total\":133,\"exposure\":1000,\"short\":false,\"lev\":null,\"price\":5,\"stale\":false,\"hasPrice\":true,\"first\":\"2025-09-20\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: formulário com os novos movimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alertas: dispara quando o preço passa o alvo (e só esse)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alertas: painel no Mercado com estado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "comparar: gráfico e tabela de rentabilidade, volatilidade e correlação",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "impostos BR: day trade detetado (20%) e prejuízo acumulado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: impostos (mais-valias PT a 28%)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA investimentos: questionário de perfil (adequação)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA investimentos: resposta com mestres, divergência e verificação em 2 passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA investimentos: condicionada pelo regulamento, mestres, perfil, risco e factos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: perfil, o que faz (traduzido), donos, gestão e analistas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: demonstrações financeiras e múltiplos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: preço justo de Graham (12,00) e preço-teto de Bazin (11,67)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: relatório da IA com pesquisa web, fontes e a carteira",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tarefas: barra de projetos filtra pelo projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tarefas: captura rápida dentro do projeto e com #projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tarefas: vista por projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: retrato com idade, origem e aniversário próximo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: linha do tempo por anos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: entrevista com mais de 200 perguntas, uma de cada vez (as respostas antigas mantêm-se)",
+  "pass": true,
+  "info": "{\"n\":537,\"q\":\"Quem eram os teus avós do lado da mãe? O que sabes da vida deles?\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "eu: depois de responder, a IA faz perguntas de seguimento sobre essa história",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: \"Saltar\" passa à pergunta seguinte",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: o livro é escrito capítulo a capítulo, só com as partes que têm material",
+  "pass": true,
+  "info": "{\"book\":1,\"ch\":[\"Raízes\",\"Os primeiros anos\",\"Uma nova vida em Portugal\"],\"todo\":0,\"stats\":\"3 capítulos408 palavras≈ 1 página\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "eu: cada capítulo recebe só o seu material e a regra de não inventar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: atualizar reescreve só o capítulo que mudou e respeita o que escrevi",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "leituras: pesquisar livro e marcar já li / tenho na estante",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "leituras: resenha e desafio literário que conta o livro lido",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cursos e certificações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: página abre com temporizador e 34 espécies",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: árvore cresce até ao fim, dá moedas e regista estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: sair do Prumo mata a árvore",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: a minha floresta e catálogo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: calculadora diz quanto precisas no exame",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: plano até ao exame vai para as tarefas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: flashcards da IA e repetição espaçada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: simulado da IA corrigido (20/20)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: visão com contagem decrescente e mapa de estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: banco de questões, desempenho e recomendações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: adicionar padel e registar jogo com estatísticas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: treinos específicos e auxílios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: corrida preenche-se sozinha com a aba Corrida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "visão geral: frase forte e verdade do dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "hábitos: só se marca o dia de hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "trabalho: horário e folgas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: pendências por prioridade",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: no fim do tempo pergunta se terminaste",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: \"ainda não\" acrescenta tempo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: sair sem código certo não deixa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: código certo sai e grava o histórico",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: \"anota…\" cria tarefa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: abre páginas por voz",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: resumo do dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: separa urgente e promoções (sem IA)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: urgente aparece no Control Room",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "google script completo é JavaScript válido",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "script em 7 partes: 1 e 2 = núcleo, 3 a 7 = ficheiros das novidades; cada parte é JavaScript válido e juntas dão o código completo",
+  "pass": true,
+  "info": "{\"n\":7,\"ok\":[true,true,true,true,true,true,true],\"len\":[13275,12303,10110,10652,3903,2798,3325],\"same\":true,\"key1\":true,\"core\":25503,\"addon\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "script em 7 partes: cada parte tem menos de 15 mil caracteres (não é cortada ao colar no telemóvel)",
+  "pass": true,
+  "info": "13275 + 12303 + 10110 + 10652 + 3903 + 2798 + 3325"
+ },
+ {
+  "p": "Geral",
+  "name": "script: a Parte 4 (Outlook) liga-se às outras e responde",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "script: só com as partes 1 e 2 responde versão 10; com a Parte 3 num ficheiro novo responde versão 12 (sem apagar nada)",
+  "pass": true,
+  "info": "{\"ok\":true,\"v\":10} → {\"ok\":true,\"v\":12} | {\"ok\":true,\"v\":12} | {\"ok\":false,\"msg\":\"Chave errada\"} | function | function | function | function"
+ },
+ {
+  "p": "Geral",
+  "name": "script: novidades futuras entram num ficheiro novo (function op_nome) sem mexer na Parte 3",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "nome Náutilo no Google: a Parte 3 renomeia o ficheiro de dados, as cópias, a folha, a pasta e os calendários (uma só vez, pelo código interno)",
+  "pass": true,
+  "info": "Náutilo · dados.json|Náutilo · Ficheiros|Náutilo · Gastos do atalho|Náutilo|Náutilo · Trabalho|Náutilo · cópia 2026-10-16|Náutilo · cópia 2026-10-17"
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: memória guarda o que lhe dizes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: rotina de voz corre os passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: balanço da noite",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "modo Comando abre com os painéis",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "modo Comando: o X fecha e o botão fica no canto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: eventos dos e-mails no calendário",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: apagar projeto deixa as tarefas sem projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: data da avaliação move o plano de estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: turno e folga no mesmo dia não coexistem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: oportunidade submetida cria candidatura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: aba no menu, versículo do dia com o texto da Bíblia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: versículo do dia com explicação e aplicação para hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: Bíblia completa (66 livros, 31 102 versículos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: palavra para hoje sem IA, escolhida pelo estado de alma",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: palavra da IA usa o dia real (avaliações, alertas) e o texto vem da Bíblia instalada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: ir para uma passagem escrita por extenso (Romanos 8:28)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: destacar versículo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: leitor diminui a letra (A−) até 12px, barra sempre visível",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: modo grifar (versículo inteiro e só palavras selecionadas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: nota escrita dentro do texto e guardada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: pesquisa de palavras em toda a Bíblia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: devocional guarda sozinho e mostra a passagem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: reflexão da IA sobre a leitura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: pedidos de oração e respondidas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: plano de leitura com o dia de hoje e progresso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: sinais de crise mostram contactos de ajuda",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: versículo do dia na página Hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: notícias do mundo com fontes e hora",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: \"O essencial agora\" feito pela IA só com as manchetes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: temas (economia)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: tema próprio por pesquisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: \"+ País\" cria um separador com as notícias desse país, traduzidas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: notícias novas aparecem marcadas ao atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: o atalho abre a corrida já preenchida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: corrida guardada com ritmo 5:58 /km",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: não regista a mesma corrida duas vezes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: a Corrida só mostra as corridas (o guia do relógio saiu)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: instruções em Definições → Atalhos do iPhone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alongamentos com fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina guiada de alongamentos registada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "meta de calorias sobe nos dias de treino",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: calendário de disciplina na visão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: o calendário de disciplina é automático (sem marcar dias à mão, o passado não se muda)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: registar um treino marca o dia sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desafio: começa e marca o dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desafio automático conta os dias em que foste",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "meta do corpo com progresso e ritmo semanal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "visão do corpo: treino, dieta, corrida e recomendações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (corpo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "manifesto sem orientação forçada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "todos os ficheiros da cache offline existem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "abre e entra com o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "Definições: sem o painel antigo do Firebase",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "Definições: \"Sincronizar aparelhos\" com \"Recuperar os meus dados\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "Definições: versão visível e botão \"Procurar atualização\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "Face ID disponível (só no iPhone)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "Definições não saem para o lado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "recuperar: abre o formulário (endereço do script + chave) e cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "Spyke: começa a ouvir sozinho e responde sem tocar (ao ouvir o nome)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "Spyke: o painel cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "Floresta: árvore em 3D",
+  "pass": true,
+  "info": "{\"ok\":true,\"fail\":false,\"why\":\"\"}"
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "Decision Center: abre com o Spyke (IA) e a tabela",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "atualização: aparelho atrasado atualiza-se sozinho (mesmo com o service worker preso)",
+  "pass": true,
+  "info": "versão 9.9"
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "atualização: os dados continuam lá depois de atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · iPhone",
+  "name": "sem erros de JavaScript neste aparelho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "abre e entra com o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "Definições: sem o painel antigo do Firebase",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "Definições: \"Sincronizar aparelhos\" com \"Recuperar os meus dados\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "Definições: versão visível e botão \"Procurar atualização\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "sem Face ID (só existe no iPhone)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "Definições não saem para o lado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "recuperar: abre o formulário (endereço do script + chave) e cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "Spyke: começa a ouvir sozinho e responde sem tocar (ao ouvir o nome)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "Spyke: o painel cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "Floresta: árvore em 3D",
+  "pass": true,
+  "info": "{\"ok\":true,\"fail\":false,\"why\":\"\"}"
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "Decision Center: abre com o Spyke (IA) e a tabela",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "atualização: aparelho atrasado atualiza-se sozinho (mesmo com o service worker preso)",
+  "pass": true,
+  "info": "versão 9.9"
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "atualização: os dados continuam lá depois de atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Android tel",
+  "name": "sem erros de JavaScript neste aparelho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "abre e entra com o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "Definições: sem o painel antigo do Firebase",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "Definições: \"Sincronizar aparelhos\" com \"Recuperar os meus dados\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "Definições: versão visível e botão \"Procurar atualização\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "sem Face ID (só existe no iPhone)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "Definições não saem para o lado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "recuperar: abre o formulário (endereço do script + chave) e cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "Spyke: começa a ouvir sozinho e responde sem tocar (ao ouvir o nome)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "Spyke: o painel cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "Floresta: árvore em 3D",
+  "pass": true,
+  "info": "{\"ok\":true,\"fail\":false,\"why\":\"\"}"
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "Decision Center: abre com o Spyke (IA) e a tabela",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "atualização: aparelho atrasado atualiza-se sozinho (mesmo com o service worker preso)",
+  "pass": true,
+  "info": "versão 9.9"
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "atualização: os dados continuam lá depois de atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet horiz",
+  "name": "sem erros de JavaScript neste aparelho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "abre e entra com o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "Definições: sem o painel antigo do Firebase",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "Definições: \"Sincronizar aparelhos\" com \"Recuperar os meus dados\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "Definições: versão visível e botão \"Procurar atualização\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "sem Face ID (só existe no iPhone)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "Definições não saem para o lado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "recuperar: abre o formulário (endereço do script + chave) e cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "Spyke: começa a ouvir sozinho e responde sem tocar (ao ouvir o nome)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "Spyke: o painel cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "Floresta: árvore em 3D",
+  "pass": true,
+  "info": "{\"ok\":true,\"fail\":false,\"why\":\"\"}"
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "Decision Center: abre com o Spyke (IA) e a tabela",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "atualização: aparelho atrasado atualiza-se sozinho (mesmo com o service worker preso)",
+  "pass": true,
+  "info": "versão 9.9"
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "atualização: os dados continuam lá depois de atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Tablet vert",
+  "name": "sem erros de JavaScript neste aparelho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "abre e entra com o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "Definições: sem o painel antigo do Firebase",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "Definições: \"Sincronizar aparelhos\" com \"Recuperar os meus dados\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "Definições: versão visível e botão \"Procurar atualização\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "sem Face ID (só existe no iPhone)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "Definições não saem para o lado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "recuperar: abre o formulário (endereço do script + chave) e cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "Spyke: começa a ouvir sozinho e responde sem tocar (ao ouvir o nome)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "Spyke: o painel cabe no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "Floresta: árvore em 3D",
+  "pass": true,
+  "info": "{\"ok\":true,\"fail\":false,\"why\":\"\"}"
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "Decision Center: abre com o Spyke (IA) e a tabela",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "atualização: aparelho atrasado atualiza-se sozinho (mesmo com o service worker preso)",
+  "pass": true,
+  "info": "versão 9.9"
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "atualização: os dados continuam lá depois de atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aparelhos · Computador",
+  "name": "sem erros de JavaScript neste aparelho",
   "pass": true,
   "info": ""
  }

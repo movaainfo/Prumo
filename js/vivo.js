@@ -67,7 +67,8 @@ let hit = null;
 const keyOf = b => { for (const a of ['data-act', 'data-edit', 'data-go', 'data-oc', 'data-om', 'data-oa']) if (b.hasAttribute(a)) { let s = `[${a}="${CSS.escape(b.getAttribute(a))}"]`;
     for (const x of ['data-id', 'data-v', 'data-k', 'data-d', 'data-i', 'data-h', 'data-m', 'data-r']) if (b.hasAttribute(x)) s += `[${x}="${CSS.escape(b.getAttribute(x))}"]`; return s; } return null; };
 const isOn = el => !!el && (/\b(on|done|ok|checked|is-done|pos)\b/.test(el.className || '') || el.getAttribute('aria-pressed') === 'true' || el.getAttribute('aria-checked') === 'true' || /✓|✔/.test(el.textContent || ''));
-document.addEventListener('pointerdown', e => { if (mode() === 'off') return; const b = e.target.closest && e.target.closest('button,.btn,.chip,[data-act],[data-edit],[data-go],a.click,.li.click'); if (!b) return;
+// (nos desenhos em SVG, como o mapa do Mundo, não: encolher o país tirava-o de baixo do rato e o clique perdia-se)
+document.addEventListener('pointerdown', e => { if (mode() === 'off') return; const b = e.target.closest && e.target.closest('button,.btn,.chip,[data-act],[data-edit],[data-go],a.click,.li.click'); if (!b || b instanceof SVGElement) return;
   b.classList.add('vv-press'); setTimeout(() => b.classList.remove('vv-press'), 240);
   if (full() && !rm() && b.matches('.btn,.chip,button.pri') && !b.disabled) { const r = b.getBoundingClientRect(), d = Math.max(r.width, r.height) * 2.2, s = document.createElement('span');
     s.className = 'vv-rip'; s.style.cssText = `--d:${d}px;--l:${e.clientX - r.left - d / 2}px;--t:${e.clientY - r.top - d / 2}px`; b.classList.add('vv-ripc'); b.appendChild(s);
@@ -81,10 +82,29 @@ const burst = (x, y) => { const w = document.createElement('div'); w.className =
   let h = '<b></b>'; for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2 + Math.random() * .4, r = 44 + Math.random() * 34; h += `<i style="--c:${COLS[i % COLS.length]};--x:${(Math.cos(a) * r).toFixed(1)}px;--y:${(Math.sin(a) * r).toFixed(1)}px;animation-delay:${(Math.random() * .06).toFixed(2)}s"></i>`; }
   w.innerHTML = h; document.body.appendChild(w); setTimeout(() => w.remove(), 900);
   try { navigator.vibrate && navigator.vibrate(12); } catch (e) { } };
-const popAfter = root => { if (!hit || Date.now() - hit.at > 1200 || mode() === 'off') return; const h = hit; hit = null; const el = root.querySelector(h.k) || document.querySelector(h.k); if (!el) return;
+const popAfter = root => { if (!hit || Date.now() - hit.at > 1200 || mode() === 'off') return; const h = hit; hit = null; const el = root.querySelector(h.k) || document.querySelector(h.k); if (!el || el instanceof SVGElement) return;
   el.classList.add('vv-pop'); setTimeout(() => el.classList.remove('vv-pop'), 600);
   if (full() && !rm() && !h.was && isOn(el)) { const r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2); el.classList.add('vv-glow'); setTimeout(() => el.classList.remove('vv-glow'), 850); } };
 OS.Vivo.burst = burst;
+
+/* ---------- momentos grandes: confetes a cair do topo; pontos a subir de onde tocaste ---------- */
+const confetti = (n = 80) => { if (!full() || rm()) return; const w = document.createElement('div'); w.className = 'vv-conf'; w.setAttribute('aria-hidden', 'true'); let h = '';
+  for (let i = 0; i < n; i++) { const s = 6 + Math.random() * 7; h += `<i style="left:${(Math.random() * 100).toFixed(1)}%;--c:${COLS[i % COLS.length]};--r:${Math.round(Math.random() * 900 - 450)}deg;--dx:${Math.round((Math.random() - .5) * 160)}px;width:${s.toFixed(1)}px;height:${(s * (Math.random() < .5 ? .42 : 1)).toFixed(1)}px;border-radius:${Math.random() < .3 ? '50%' : '2px'};animation-duration:${(2 + Math.random() * 1.8).toFixed(2)}s;animation-delay:${(Math.random() * .7).toFixed(2)}s"></i>`; }
+  w.innerHTML = h; document.body.appendChild(w); setTimeout(() => w.remove(), 4800);
+  try { navigator.vibrate && navigator.vibrate([18, 40, 18]); } catch (e) { } };
+const float = (x, y, txt, big) => { if (mode() === 'off' || !txt) return; const el = document.createElement('div'); el.className = 'vv-float' + (big ? ' big' : ''); el.setAttribute('aria-hidden', 'true');
+  el.textContent = txt; el.style.left = Math.max(40, Math.min(innerWidth - 40, x)) + 'px'; el.style.top = Math.max(60, y) + 'px'; document.body.appendChild(el); setTimeout(() => el.remove(), 1600); };
+V.confetti = confetti; V.float = float;
+// depois de um toque: o dia ganhou pontos de foco? concluíste tudo? subiste de nível no Dominus?
+const fpts = () => { try { return OS.Foco ? OS.Foco.parts() : null; } catch (e) { return null; } };
+const dlv = () => { try { return OS.Dom && OS.Dom.level ? OS.Dom.level() : 0; } catch (e) { return 0; } };
+let G = null, GT = 0;
+document.addEventListener('click', e => { if (mode() === 'off') return; const b = e.target.closest && e.target.closest('[data-act],[data-edit],input[type=checkbox],button'); if (!b) return;
+  if (!G) G = { f: fpts(), lv: dlv() }; G.x = e.clientX; G.y = e.clientY; clearTimeout(GT); GT = setTimeout(gain, 650); }, true);
+const gain = () => { const g = G; G = null; if (!g) return; const q = fpts();
+  if (q && g.f && q.pts > g.f.pts) float(g.x, g.y - 10, `+${q.pts - g.f.pts} de foco`);
+  if (q && g.f && q.all && !g.f.all) { confetti(); setTimeout(() => float(innerWidth / 2, innerHeight * .4, 'Dia todo feito!', 1), 250); }
+  const lv = dlv(); if (g.lv && lv > g.lv) { confetti(110); setTimeout(() => float(innerWidth / 2, innerHeight * .45, `Nível ${lv} no Dominus!`, 1), 350); } };
 
 /* ---------- vigiar o ecrã ---------- */
 const start = () => { const v = view(); if (!v) return setTimeout(start, 300);

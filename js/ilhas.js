@@ -92,7 +92,7 @@ A.muPickI = b => { const i = IBY[b.dataset.i]; if (!i) return; const r = imine()
     ${r ? `<div class="mu-mi">${r.date ? `<span>${UI.ic('cal')}${U.fmtD(r.date)}</span>` : ''}${+r.trips > 1 ? `<span>${r.trips} vezes</span>` : ''}</div><div class="row gap8"><button class="btn sm" data-act="muEditI" data-id="${r.id}">${UI.ic('edit')}<span>Data e memórias</span></button><button class="btn sm ghost" data-act="muClearI" data-i="${i.id}">Tirar</button></div>` : '<p class="mut">Marca se já foste, se viveste lá ou se queres ir.</p>'}</div>`, 'mu-modal'); };
 A.muSetI = b => { const id = b.dataset.i, v = b.dataset.v, L = recOf(id), i = IBY[id], was = M.been(imine()[id]); if (!i) return;
   if (L.length) { OS.upd('islands', L[0].id, { status: v }); L.slice(1).forEach(r => OS.del('islands', r.id)); } else OS.add('islands', { code: id, status: v });
-  UI.closeModal(); UI.toast(v === 'Quero ir' ? `${i.n} está nos teus próximos destinos` : was ? `${i.n}: ${v.toLowerCase()}` : `${flagOf(i)} ${i.n} no teu mapa! +500 XP de Mente no Dominus`, 'pos'); };
+  UI.closeModal(); UI.toast(v === 'Quero ir' ? `${i.n} está nos teus próximos destinos` : was ? `${i.n}: ${v.toLowerCase()}` : `${flagOf(i)} ${i.n} no teu mapa! +300 XP de Mente no Dominus`, 'pos'); };
 A.muClearI = b => { recOf(b.dataset.i).forEach(r => OS.del('islands', r.id)); UI.closeModal(); };
 A.muEditI = b => { UI.closeModal(); UI.openForm('islands', b.dataset.id); };
 A.muTogI = b => { const id = b.dataset.i, v = b.dataset.v, r = imine()[id]; if (r && (r.status === v || (v === 'Visitei' && r.status === 'Morei'))) { recOf(id).forEach(x => OS.del('islands', x.id)); return; } A.muSetI(b); };

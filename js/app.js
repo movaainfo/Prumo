@@ -4,11 +4,11 @@
 const U = OS.U, UI = OS.UI, C = OS.C, V = OS.views, A = OS.act, esc = U.esc;
 const NAV = [
   ['Visão geral', [['visao', 'Painel', 'grid', () => { const n = OS.Intel.alerts().filter(a => a.lvl === 'urgent').length; return n ? [n, 'neg'] : null; }], ['hoje', 'Hoje', 'sun'], ['ranking', 'Ranking', 'award'], ['jornal', 'Jornal', 'news', () => { const n = OS.News && OS.News.unread(); return n ? [n, ''] : null; }], ['email', 'E-mail e LinkedIn', 'mail', () => { const c = OS.Mail && OS.Mail.counts(); return c && c.urg ? [c.urg, 'neg'] : null; }], ['calendario', 'Calendário', 'cal']]],
-  ['Execução', [['tarefas', 'Tarefas', 'checksq', () => { const n = OS.Tasks.open().filter(OS.Tasks.late).length; return n ? [n, 'neg'] : [OS.Tasks.open().length, '']; }], ['habitos', 'Hábitos e rotina', 'repeat'], ['foco', 'Bloco de foco', 'focus', () => { const b = OS.FocusBlock && OS.FocusBlock.state(); return b && b.phase !== 'end' ? ['●', 'pos'] : null; }], ['projetos', 'Projetos', 'folder'], ['metas', 'Metas', 'target']]],
+  ['Execução', [['tarefas', 'Tarefas', 'checksq', () => { const n = OS.Tasks.open().filter(OS.Tasks.late).length; return n ? [n, 'neg'] : [OS.Tasks.open().length, '']; }], ['habitos', 'Hábitos e rotina', 'repeat'], ['foco', 'Bloco de foco', 'focus', () => { const b = OS.FocusBlock && OS.FocusBlock.state(), r = OS.Forest && OS.Forest.run(); return (b && b.phase !== 'end') || r ? ['●', 'pos'] : null; }], ['projetos', 'Projetos', 'folder'], ['metas', 'Metas', 'target']]],
   ['Eu', [['eu', 'Quem sou eu', 'user'], ['mundo', 'Mundo', 'globe', () => { const n = OS.Mundo && OS.Mundo.stats().n; return n ? [n, ''] : null; }], ['senhas', 'Senhas', 'key']]],
   ['Fé', [['fe', 'Fé & Devoção', 'cross']]],
   ['Dinheiro', [['gasto', 'Gasto rápido', 'bolt'], ['financas', 'Finanças', 'wallet'], ['investimentos', 'Investimentos', 'trend'], ['relatorios', 'Relatórios', 'note', () => { const n = OS.Reports && OS.Reports.unseen(); return n ? [n, ''] : null; }], ['compras', 'Compras', 'cart', () => { const n = OS.all('wishlist').filter(w => w.status === 'Em espera').length; return n ? [n, ''] : null; }], ['simuladores', 'Simuladores', 'calc']]],
-  ['Estudos', [['universidade', 'Universidade', 'school'], ['floresta', 'Floresta (foco)', 'tree', () => { const r = OS.Forest && OS.Forest.run(); return r ? ['●', 'pos'] : null; }], ['cursos', 'Cursos', 'play'], ['certificacoes', 'Certificações', 'shield'], ['leituras', 'Leituras', 'book', () => { const n = OS.all('books').filter(b => b.status === 'A ler').length; return n ? [n, ''] : null; }], ['aprendizagem', 'Trilhas e competências', 'brain'], ['conhecimento', 'Base de conhecimento', 'note']]],
+  ['Estudos', [['universidade', 'Universidade', 'school'], ['cursos', 'Cursos', 'play'], ['certificacoes', 'Certificações', 'shield'], ['leituras', 'Leituras', 'book', () => { const n = OS.all('books').filter(b => b.status === 'A ler').length; return n ? [n, ''] : null; }], ['aprendizagem', 'Trilhas e competências', 'brain'], ['conhecimento', 'Base de conhecimento', 'note']]],
   ['Corpo', [['corpo', 'Visão do corpo', 'heart'], ['treino', 'Treino', 'dumbbell'], ['dieta', 'Dieta', 'apple'], ['corrida', 'Corrida', 'run'], ['desporto', 'Desporto', 'target']]],
   ['Carreira', [['trabalho', 'Trabalho', 'briefcase'], ['carreira', 'Carreira e contactos', 'users'], ['capital', 'Capital Profissional', 'star'], ['oportunidades', 'Oportunidades', 'door']]],
   ['Direção', [['next', 'Plano de vida', 'compass'], ['decisoes', 'Centro de decisões', 'scale'], ['revisao', 'Revisões', 'rewind']]]];
@@ -105,14 +105,15 @@ function render() {
   document.body.classList.toggle('dom-mode', cur === 'dominus');
   const a = document.activeElement; let fsel = null, caret = null;
   if (a && a !== document.body && U.$('#view').contains(a)) { for (const at of FOCUS_ATTRS) { const v = a.getAttribute(at); if (v) { fsel = `[${at}="${CSS.escape(v)}"]`; break; } } try { caret = a.selectionStart; } catch (e) { } }
-  try { renderSide(cur); renderTop(cur); fitNav(); renderTab(cur); } catch (e) { console.error(e); }
+  // a Floresta vive dentro do Bloco de foco (o menu marca o Bloco de foco)
+  try { const nk = cur === 'floresta' ? 'foco' : cur; renderSide(nk); renderTop(nk); fitNav(); renderTab(nk); } catch (e) { console.error(e); }
   C.reset(); let html;
   try { html = cur === 'definicoes' && OS.settingsView ? OS.Fold.html(OS.settingsView(r.sub), r.sub) : V[cur](r.sub); } catch (e) { console.error(e); html = `<div class="pn"><b>Não foi possível mostrar esta página.</b><p class="mut">${esc(e.message)}</p></div>`; }
   if (OS.aiN) html = OS.aiN(String(html || ''));
   if (!html || !String(html).trim()) html = `<div class="pn"><b>Esta página ainda está vazia.</b><p class="mut"><a href="#hoje">Voltar ao Hoje</a></p></div>`;
   // se nada mudou na página, não a substitui (evita piscar, perder o toque e redesenhar gráficos à toa)
   const sig = r.raw + '|' + String(html).replace(/ id="ch\d+"/g, ''), view = U.$('#view');
-  if (sig !== view._sig || !view.firstChild) { view.innerHTML = html; view._sig = sig;
+  if (sig !== view._sig || !view.firstChild) { view.innerHTML = html; view._sig = sig; try { OS.Areas && OS.Areas.prune && OS.Areas.prune(view); } catch (e) { }
     try { C.drawAll(); } catch (e) { console.error(e); }
     try { progressive(cur, r.raw); } catch (e) { console.error(e); } }
   if (fsel) { const el = U.$('#view').querySelector(fsel); if (el) { el.focus({ preventScroll: true }); try { if (caret != null && el.setSelectionRange) el.setSelectionRange(caret, caret); } catch (e) { } } }
@@ -225,7 +226,7 @@ OS.Fold = (() => {
   const GROUPS = [['Tu', 'Os teus dados e metas: entram nos cálculos de todo o Prumo.', ['pfMe', 'paisSet', 'relSet', 'rkSet', 'onbSet', 'pfUni', 'pfWork', 'pfGoals', 'contextos']],
     ['Segurança e conta', 'Código de bloqueio, Face ID e a tua conta.', ['seguranca', 'codigo neste aparelho', 'accMig']],
     ['Aparelhos e dados', 'Sincronizar aparelhos, cópias de segurança e mudar de endereço.', ['syncPn', 'dataPn', 'mudanca de endereco']],
-    ['Aplicação', 'Aparência, desempenho e atualizações.', ['fdSet', 'animSet', 'desempenho', 'verPn']]];
+    ['Aplicação', 'Aparência, música, desempenho e atualizações.', ['fdSet', 'animSet', 'spSet', 'desempenho', 'verPn']]];
   const html = (h, sub) => { const tab = tabOf(sub), t = document.createElement('template'); t.innerHTML = h; const S = st(), all = U.ls.get('os2foldAll', false), F = t.content;
     // blocos com o título solto (sem .pn-h): o título passa a ser o cabeçalho que abre e fecha
     [...F.querySelectorAll('.pn')].forEach(pn => { const f = pn.firstElementChild; if (f && f.tagName === 'H3' && !(pn.parentElement && pn.parentElement.closest('.pn'))) { const h = document.createElement('div'); h.className = 'pn-h'; pn.insertBefore(h, f); h.appendChild(f); } });

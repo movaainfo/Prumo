@@ -32,7 +32,7 @@ const AK = AT.map(a => a.k), AO = Object.fromEntries(AT.map(a => [a.k, a]));
 D.AT = AT;
 
 // curvas: cada atributo e o herói (nível total)
-const cumA = l => Math.round(1000 * Math.pow(l, 1.9)), cumH = l => Math.round(900 * Math.pow(l, 2.1)), LVMAX = 300;
+const cumA = l => Math.round(1200 * Math.pow(l, 2.05)), cumH = l => Math.round(1100 * Math.pow(l, 2.25)), LVMAX = 300;
 const lvl = (xp, cum) => { let l = 0; while (cum(l + 1) <= xp && l < LVMAX) l++; const a = cum(l), b = cum(l + 1); return { l, into: xp - a, need: b - a, p: (xp - a) / Math.max(1, b - a) }; };
 D.lvA = xp => lvl(xp, cumA); D.lvH = xp => lvl(xp, cumH);
 const tierOf = l => l >= 20 ? 4 : l >= 12 ? 3 : l >= 7 ? 2 : l >= 3 ? 1 : 0;
@@ -84,8 +84,8 @@ const bdayNear = (r, d) => { const p = OS.get('people', r.person); if (!p || !p.
 
 let CK = 0, CACHE = null; const bump = () => { CK++; CACHE = null; };
 OS.on('change', bump); OS.on('remote', bump); OS.on('one:dominus', () => { if (!QUIET) bump(); }); OS.on('one:diet', bump);
-// a pontuação: tudo vale 10 vezes mais do que no Dominus 3 (números maiores, a mesma justiça entre áreas)
-const XS = 10;
+// a pontuação: números grandes, a mesma justiça entre áreas. v2.48: mais difícil (cada registo vale 6 em vez de 10 e as curvas sobem mais depressa)
+const XS = 6;
 const evs = () => { const T = today(), E = [], add = (d, a, x, t) => { d = String(d || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > T || !(x > 0)) return; E.push({ d, a, x: Math.round(x * XS), t }); };
   const sf = (f, c) => { try { f(); } catch (e) { if (OS.debug) console.warn('Dominus ' + c, e); } };
   // Corpo
@@ -102,6 +102,7 @@ const evs = () => { const T = today(), E = [], add = (d, a, x, t) => { d = Strin
   sf(() => OS.all('sessions').forEach(s => add(s.date, 'intelecto', Math.min(60, U.num(s.minutes) / 2), `Estudo ${U.num(s.minutes)} min` + ((OS.get('subjects', s.subject) || {}).name ? ' · ' + OS.get('subjects', s.subject).name : ''))), 'estudo');
   sf(() => OS.all('reviews').forEach(r => ['r1At', 'r2At', 'r3At'].forEach(k => add(r[k], 'intelecto', 10, 'Revisão: ' + (r.topic || '')))), 'revisões');
   sf(() => OS.all('assessments').forEach(a => { if (a.grade === '' || a.grade == null) return; const g = U.num(a.grade); add(a.date, 'intelecto', 25 + (OS.Grade ? (OS.Grade.ok(g) ? Math.round(OS.Grade.frac(g) * 40) : 0) : (g >= 10 ? g * 2 : 0)), `${a.type || 'Avaliação'}: ${a.title} (${g})`); }), 'avaliações');
+  sf(() => OS.all('errors').forEach(e => { if (e.redone) add(e.redoneAt || e.date, 'intelecto', 12, 'Erro refeito sem errar: ' + e.title); }), 'erros');
   sf(() => OS.all('quizzes').forEach(q => add(q.date, 'intelecto', 15 + Math.min(20, U.num(q.score)), 'Simulado' + (q.title ? ': ' + q.title : ''))), 'simulados');
   sf(() => OS.all('books').forEach(b => { if (b.status === 'Lido') { add(b.end || b.start, 'intelecto', 60 + Math.min(60, U.num(b.pages) / 5), 'Livro lido: ' + b.title); add(b.end || b.start, 'mente', 15, 'Livro lido: ' + b.title); } }), 'livros');
   sf(() => OS.all('learn').forEach(l => { if (/Conclu/.test(l.status || '')) add(l.end || l.start, 'intelecto', 60, (l.kind || 'Curso') + ' concluído: ' + l.title); }), 'cursos');
@@ -235,7 +236,7 @@ const MQ = [
   ['mk', 'carreira', 'Caçador de oportunidades: 10 candidaturas', m => [m.apps || 0, 10], () => used('applications')],
   ['mt', 'disciplina', 'Executor: 150 tarefas concluídas', m => [m.tasks || 0, 150], () => true],
   ['mp', 'disciplina', 'Inquebrável: 20 dias perfeitos', m => [m.perfect || 0, 20], core]];
-const QX = { d: 900, w: 3500, m: 15000 }, QG = { d: 10, all: 25, w: 40, m: 150 }, LEGXP = 25000;
+const QX = { d: 550, w: 2200, m: 9000 }, QG = { d: 10, all: 25, w: 40, m: 150 }, LEGXP = 25000;
 // as missões de cada dia/semana ficam guardadas (o que se completa depois é verificado pelos teus registos)
 const weakest = () => { let lvx = {}; try { const s = CACHE && CACHE.v; lvx = s ? Object.fromEntries(AK.map(k => [k, s.ax[k]])) : {}; } catch (e) { } return AK.slice().sort((a, b) => (lvx[a] || 0) - (lvx[b] || 0)); };
 const pick = (pool, n, seed, wk) => { const r = U.rng(seed), out = [], W = wk || weakest(), byA = k => pool.filter(q => q[1] === k && q[4]() && !out.includes(q));

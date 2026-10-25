@@ -42,8 +42,9 @@ const needPw = async (rec, pw) => { if (!(await N.checkPw(pw, rec.pw))) throw N.
 const dropData = async (uid, pid) => { const s = N.store(), sub = pid ? pid + '/' : ''; const L = (await s.list('d/' + uid + '/' + sub)).concat(await s.list('i/' + uid + '/' + sub), pid ? await s.list('m/' + uid + '/' + pid) : await s.list('m/' + uid + '/'), await s.list('g/' + uid + '/' + (pid || '')), await s.list('r/' + uid + '/' + (pid || ''))); if (L.length) await s.del(L); RK.rows = null; };
 
 /* ---------- ranking: a disciplina de cada perfil (0–100 por dia) e os dias de foco seguidos ---------- */
-// r/<conta>/<perfil>: { d: { dia: pontos }, n: nome, c: cor, av, anon, at, t (conta de teste) }. Só se vê a lista: sem perfis, sem mensagens.
-const FOCO = 60, RK = { at: 0, rows: null }, TESTE = /@nautilo\.test$/i;
+// r/<conta>/<perfil>: { d: { dia: pontos }, n: nome, c: cor, av, im (foto pequena), anon, at, t (conta de teste) }. Só se vê a lista: sem perfis, sem mensagens.
+// v2.48: regras mais difíceis (dia de foco com 70) e o ranking recomeça em DESDE (os dias antes disso já não contam)
+const FOCO = 70, DESDE = () => process.env.NAUTILO_RANK_DESDE || '2026-10-25', IMG = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/, RK = { at: 0, rows: null }, TESTE = /@nautilo\.test$/i;
 const isoDay = ms => new Date(ms).toISOString().slice(0, 10), addD = (d, n) => isoDay(Date.parse(d + 'T12:00:00Z') + n * 864e5);
 const rankRows = async () => { if (RK.rows && Date.now() - RK.at < 30e3) return RK.rows;
   const s = N.store(), key = await N.accKey(), L = await s.list('r/'), rows = []; let i = 0;
@@ -52,10 +53,10 @@ const rankRows = async () => { if (RK.rows && Date.now() - RK.at < 30e3) return 
 // dias de foco seguidos: termina no dia mais recente (amanhã, hoje ou ontem em UTC, por causa dos fusos) que conta
 const streakOf = (d, today) => { let e = [addD(today, 1), today, addD(today, -1)].find(x => (d[x] || 0) >= FOCO); if (!e) return 0; let n = 0; while ((d[e] || 0) >= FOCO && n < 5000) { n++; e = addD(e, -1); } return n; };
 const bestOf = d => { let b = 0, run = 0, prev = ''; Object.keys(d).sort().forEach(x => { if (d[x] >= FOCO) { run = prev && addD(prev, 1) === x ? run + 1 : 1; prev = x; b = Math.max(b, run); } }); return b; };
-const rowOut = (r, today, me) => { const d = r.d || {}, ks = Object.keys(d).sort(), sum = from => ks.filter(x => x > from && x <= addD(today, 1)).reduce((a, x) => a + d[x], 0);
+const rowOut = (r, today, me) => { const d = Object.fromEntries(Object.entries(r.d || {}).filter(([k]) => k >= DESDE())), ks = Object.keys(d).sort(), sum = from => ks.filter(x => x > from && x <= addD(today, 1)).reduce((a, x) => a + d[x], 0);
   const p7 = sum(addD(today, -7)), p30 = sum(addD(today, -30)), pa = ks.reduce((a, x) => a + d[x], 0), span = ks.length ? Math.max(1, Math.round((Date.parse(today) - Date.parse(ks[0])) / 864e5) + 1) : 1;
   const last = [addD(today, 1), today, addD(today, -1)].find(x => d[x] != null);
-  return { n: r.anon && !me ? '' : r.n || '', c: r.c || '', av: r.anon && !me ? '' : r.av || '', anon: !!r.anon, me: !!me, s: streakOf(d, today), b: Math.max(r.b || 0, bestOf(d)), h: last ? d[last] : null,
+  return { n: r.anon && !me ? '' : r.n || '', c: r.c || '', av: r.anon && !me ? '' : r.av || '', im: r.anon && !me ? '' : r.im || '', anon: !!r.anon, me: !!me, s: streakOf(d, today), b: Math.max(r.b || 0, bestOf(d)), h: last ? d[last] : null,
     p7, p30, pa, q7: Math.round(p7 / Math.min(7, span)), q30: Math.round(p30 / Math.min(30, span)), qa: Math.round(pa / span), dias: ks.length }; };
 
 const OPS = {
@@ -166,12 +167,23 @@ const OPS = {
     pedidos.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos }; },
 
+  // o administrador apaga a conta de outra pessoa (com a sua própria senha; não dá para apagar a própria conta por aqui nem outra conta de administrador)
+  async adminApagar(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+    const email = N.normEmail(b.email); if (!email) throw N.err('email', 'Falta o e-mail da conta.', 400);
+    if (email === N.normEmail(s0.rec.email)) throw N.err('propria', 'A tua própria conta apaga-se em Definições › Conta.', 400);
+    if (isAdmin(email)) throw N.err('admin', 'Não dá para apagar outra conta de administrador.', 403);
+    const eid = await N.emailId(email), a = await readAcc(eid); if (!a) throw N.err('conta', 'Essa conta já não existe.', 404);
+    await dropData(a.rec.uid); await N.store().del([{ pathname: 'a/' + eid }, { pathname: 'u/' + a.rec.uid }]); RK.rows = null;
+    return { apagada: true, email }; },
+
   // a app manda a pontuação dos últimos dias deste perfil (só dos últimos 8 dias: o passado não se muda)
   async rank(req, b) { const s = await session(req), p = (s.rec.perfis || []).find(x => x.id === b.id); if (!p) throw N.err('perfil', 'Esse perfil já não existe.', 404);
     if (N.limit(req, 'rank|' + s.rec.uid, 240, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
     const st = N.store(), key = await N.accKey(), path = 'r/' + s.rec.uid + '/' + p.id, today = isoDay(Date.now()), lo = addD(today, -8), hi = addD(today, 1);
     for (let i = 0; i < 4; i++) { const g = await st.get(path); let r = { d: {} }; try { if (g) r = N.open(key, g.buf); } catch (e) { }
-      r.d = r.d || {}; Object.entries(b.dias || {}).forEach(([d, v]) => { const n = Math.round(Number(v)); if (/^\d{4}-\d{2}-\d{2}$/.test(d) && d >= lo && d <= hi && n >= 0 && n <= 100) r.d[d] = n; });
+      r.d = r.d || {}; Object.keys(r.d).forEach(k => { if (k < DESDE()) delete r.d[k]; });
+      Object.entries(b.dias || {}).forEach(([d, v]) => { const n = Math.round(Number(v)); if (/^\d{4}-\d{2}-\d{2}$/.test(d) && d >= lo && d >= DESDE() && d <= hi && n >= 0 && n <= 100) r.d[d] = n; });
+      r.im = typeof b.im === 'string' && b.im.length <= 12000 && IMG.test(b.im) ? b.im : '';
       const ks = Object.keys(r.d).sort(); ks.slice(0, Math.max(0, ks.length - 400)).forEach(k => delete r.d[k]);
       Object.assign(r, { n: p.nome || '', c: p.cor || '', av: p.av || '', anon: !!b.anon, at: Date.now(), t: TESTE.test(s.rec.email) ? 1 : 0, b: bestOf(r.d) });
       try { await st.put(path, N.seal(key, r), g ? { ifMatch: g.etag } : { overwrite: false });
@@ -181,8 +193,12 @@ const OPS = {
 
   // o ranking de todos os perfis de todas as contas (as contas de teste não aparecem); só leitura
   async ranking(req, b) { const s = await session(req), mine = 'r/' + s.rec.uid + '/' + String(b.id || ''), today = isoDay(Date.now());
-    const lista = (await rankRows()).filter(r => !r.t || r.path === mine).map(r => rowOut(r, today, r.path === mine));
+    // quem está a zero não aparece (tu vens sempre, para saberes onde estás)
+    const lista = (await rankRows()).filter(r => !r.t || r.path === mine).map(r => rowOut(r, today, r.path === mine)).filter(x => x.me || x.pa > 0);
     return { lista, foco: FOCO, hoje: today }; },
+
+  // dados públicos da configuração (a Client ID do Spotify é pública: serve para a app ligar a conta Spotify com PKCE, sem segredo)
+  async publico() { return { spotify: /^[a-f0-9]{32}$/i.test(String(process.env.SPOTIFY_CLIENT_ID || '').trim()) ? String(process.env.SPOTIFY_CLIENT_ID).trim() : '' }; },
 
   async nome(req, b) { const s = await session(req); const rec = await change(s.eid, r => { r.nome = cleanName(b.nome, 40); }); return { conta: pub(rec) }; },
 

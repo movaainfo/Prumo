@@ -1,4 +1,4 @@
-/* PRUMO — Modo Jarvis: painel em ecrã inteiro com o essencial do dia, ao vivo.
+/* PRUMO — Modo Comando: painel em ecrã inteiro com o essencial do dia, ao vivo.
    O X fecha o painel mas o botão redondo (núcleo) fica no canto para voltar quando quiseres. */
 (() => {
 'use strict';
@@ -36,7 +36,7 @@ function render() { if (!el) return; const o = D(), t = U.today(), urg = o.alert
   const un = o.exam ? `<div class="jv-big">${Math.max(0, U.diff(o.exam.date, t))}<small>dias para ${esc(o.exam.type || 'avaliação')}</small></div><small>${esc((OS.get('subjects', o.exam.subject) || {}).name || o.exam.title)}</small>${o.rev ? `<small class="jv-al">${o.rev} revisões para hoje</small>` : ''}` : `<small class="mut">Sem avaliações marcadas.</small>${o.rev ? `<small class="jv-al">${o.rev} revisões para hoje</small>` : ''}`;
   const ml = o.mail && o.mail.at ? `<div class="jv-kv"><span>Urgentes</span><b class="${o.mail.urg ? 'neg' : ''}">${o.mail.urg}</b></div><div class="jv-kv"><span>Para responder</span><b>${o.mail.resp}</b></div><div class="jv-kv"><span>Não lidos</span><b>${o.mail.unread}</b></div>` : '<small class="mut">E-mail não ligado.</small>';
   el.innerHTML = `<div class="jv-in">
-    <header class="jv-h"><div class="jv-brand"><b>SPYKE</b><small>MODO JARVIS</small></div><div class="jv-clock"><b data-jvt>${U.hm()}</b><small>${esc(new Date().toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long', day: 'numeric', month: 'long' }))}</small></div><button class="jv-x" data-act="jvClose" aria-label="Fechar o modo Jarvis">${UI.ic('x')}</button></header>
+    <header class="jv-h"><div class="jv-brand"><b>SPYKE</b><small>MODO COMANDO</small></div><div class="jv-clock"><b data-jvt>${U.hm()}</b><small>${esc(new Date().toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long', day: 'numeric', month: 'long' }))}</small></div><button class="jv-x" data-act="jvClose" aria-label="Fechar o modo Jarvis">${UI.ic('x')}</button></header>
     <div class="jv-grid">
       <section class="jv-core"><canvas class="jv-cv" width="520" height="520" aria-hidden="true"></canvas><div class="jv-hi">${esc(greet())}, ${esc(name())}</div>
         <div class="jv-meta"><span><i style="background:#38bdf8"></i>Dia ${Math.round(o.dayP * 100)}%</span><span><i style="background:#22c55e"></i>Hábitos ${o.hab[0]}/${o.hab[1]}</span><span><i style="background:#f59e0b"></i>Estudo ${o.study} min</span></div>
@@ -68,8 +68,8 @@ function loop(o) { cancelAnimationFrame(raf); const c = el && el.querySelector('
   raf = requestAnimationFrame(frame); }
 
 /* ---------- abrir / fechar ---------- */
-const mkFab = () => { if (fab) return; fab = document.createElement('button'); fab.type = 'button'; fab.id = 'jvFab'; fab.setAttribute('aria-label', 'Abrir o modo Jarvis'); fab.title = 'Modo Jarvis'; fab.innerHTML = '<i></i>'; fab.onclick = () => J.open(true); document.body.appendChild(fab); };
-J.open = sound => { mkFab(); if (!el) { el = document.createElement('div'); el.id = 'jv'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Modo Jarvis'); document.body.appendChild(el); }
+const mkFab = () => { if (fab) return; fab = document.createElement('button'); fab.type = 'button'; fab.id = 'jvFab'; fab.setAttribute('aria-label', 'Abrir o modo Comando'); fab.title = 'Modo Comando'; fab.innerHTML = '<i></i>'; fab.onclick = () => J.open(true); document.body.appendChild(fab); };
+J.open = sound => { mkFab(); if (!el) { el = document.createElement('div'); el.id = 'jv'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Modo Comando'); document.body.appendChild(el); }
   el.hidden = false; document.documentElement.classList.add('jv-open'); el.classList.remove('on'); render(); requestAnimationFrame(() => requestAnimationFrame(() => el && el.classList.add('on'))); if (fab) fab.hidden = true;
   if (sound && OS.Spyke && OS.Spyke.wakeSound) OS.Spyke.wakeSound(); if (OS.Weather && !(OS.Weather.cached() || {}).now) OS.Weather.get().then(() => el && !el.hidden && render()); };
 J.close = () => { if (!el) return; el.hidden = true; el.classList.remove('on'); cancelAnimationFrame(raf); raf = 0; document.documentElement.classList.remove('jv-open'); if (fab) fab.hidden = false; };

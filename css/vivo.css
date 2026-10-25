@@ -83,3 +83,25 @@ html.vv #side a,html.vv .tn-links a{transition:background-color .3s,color .3s,tr
 html.vv-rm #view.pg-in *,html.vv-rm .toast,html.vv-rm .vv-modal{animation-name:vvFade!important}
 html.vv-rm .vv-rv{translate:none!important;scale:none!important}
 html.vv-rm .vv-press:not(:disabled){scale:1}
+
+/* ---------- v2.48: confetes, pontos a subir, chama viva, anel que enche ---------- */
+@keyframes vvConf{0%{opacity:1;translate:0 0;rotate:0deg}85%{opacity:1}100%{opacity:0;translate:var(--dx) 108vh;rotate:var(--r)}}
+@keyframes vvFloat{0%{opacity:0;translate:-50% 8px;scale:.6}18%{opacity:1;translate:-50% -6px;scale:1.12}30%{scale:1}100%{opacity:0;translate:-50% -64px;scale:1}}
+@keyframes vvFlame{0%{scale:1 1;rotate:-3deg}35%{scale:1.05 .95;rotate:2deg}70%{scale:.97 1.05;rotate:-1deg}100%{scale:1.03 .98;rotate:3deg}}
+@keyframes vvRingP{from{--rp:0}}
+@keyframes vvShine{from{background-position:-160% 0}to{background-position:260% 0}}
+.vv-conf{position:fixed;inset:0;z-index:99997;pointer-events:none;overflow:hidden}
+.vv-conf i{position:absolute;top:-24px;background:var(--c);animation:vvConf 2.6s cubic-bezier(.22,.6,.36,1) both}
+.vv-float{position:fixed;z-index:99998;pointer-events:none;translate:-50% 0;white-space:nowrap;font:800 15px/1 var(--sans,system-ui);color:var(--flame,#F2B544);text-shadow:0 2px 10px rgba(0,0,0,.55);animation:vvFloat 1.5s var(--vv-e) both}
+.vv-float.big{font-size:26px;color:#F5E2C8;padding:12px 20px;border-radius:999px;background:color-mix(in srgb,#0B111B 80%,transparent);border:1px solid color-mix(in srgb,var(--flame,#F2B544) 45%,transparent);text-shadow:none}
+html:not(.vv-full) .vv-conf{display:none}
+html.vv-full :is(.rk-me,.fc-bar,.fc-chip) .fc-fl.on .ic,html.vv-full .fc-chip.on .ic,html.vv-full .fc-cel-f .ic{transform-origin:50% 90%;animation:vvFlame 1.7s ease-in-out infinite alternate}
+html.vv-full #view.pg-in .rk-ring{animation:vvRingP 1.3s .2s var(--vv-e) backwards}
+html.vv-full #view.pg-in .rk-row.top{background-image:linear-gradient(105deg,transparent 35%,color-mix(in srgb,#F5E2C8 14%,transparent) 50%,transparent 65%);background-size:220% 100%;background-repeat:no-repeat;animation:vvShine 1.6s .5s ease-out both}
+html.vv-full #view.pg-in .rk-list>.rk-row{animation:vvSide .5s var(--vv-e) both}
+html.vv-full #view.pg-in .rk-list>.rk-row:nth-child(2){animation-delay:.05s}html.vv-full #view.pg-in .rk-list>.rk-row:nth-child(3){animation-delay:.1s}html.vv-full #view.pg-in .rk-list>.rk-row:nth-child(n+4){animation-delay:.15s}
+html.vv-full #view.pg-in .pn-h h3 .ic{animation:vvPopIn .55s .15s var(--vv-e) backwards}
+html.vv-full #view.pg-in .fc-strip-d .fc-d{animation:vvPopIn .4s var(--vv-e) backwards}
+html.vv-full #view.pg-in .fc-strip-d .fc-d:nth-child(2n){animation-delay:.04s}html.vv-full #view.pg-in .fc-strip-d .fc-d:nth-child(3n){animation-delay:.08s}html.vv-full #view.pg-in .fc-strip-d .fc-d.fc-now{animation-delay:.3s}
+html.vv-rm .vv-float{animation-name:vvFade}
+html.vv svg :is([data-act],[data-edit],[data-go]){transition:none!important;scale:none!important;translate:none!important}

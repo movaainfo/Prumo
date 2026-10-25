@@ -17,11 +17,17 @@ const ST = ['Visitei', 'Morei', 'Quero ir'], RANK = { Morei: 3, Visitei: 2, 'Que
 OS.S.countries = { label: 'País', title: r => (BY[r.code] || {}).n || r.code || 'País', fields: [
   { k: 'code', l: 'País', t: 'sel', o: ALL.map(c => [c.c3, c.n]), req: 1 }, { k: 'status', l: 'Estado', t: 'sel', o: ST },
   { k: 'date', l: 'Primeira vez que fui (ou quando quero ir)', t: 'date' }, { k: 'trips', l: 'Quantas vezes já fui', t: 'num' },
+  { k: 'docs', l: 'Os teus documentos deste país (morar ou visitar não quer dizer ter passaporte)', t: 'multi', o: [['cid', 'Cidadania'], ['pass', 'Passaporte'], ['res', 'Autorização de residência'], ['visto', 'Visto']] },
+  { k: 'vistoTipo', l: 'Tipo de visto ou de residência (ex.: estudante, trabalho, turismo)', t: 'text' }, { k: 'vistoAte', l: 'Válido até', t: 'date' },
   { k: 'cities', l: 'Cidades', t: 'text' }, { k: 'with', l: 'Com quem', t: 'text' }, { k: 'notes', l: 'Memórias e notas', t: 'area', rows: 3 }],
   defaults: () => ({ status: 'Visitei' }) };
 // o teu estado em cada país (se houver dois registos do mesmo país, conta o mais forte: morei > visitei > quero ir)
-const mine = () => { const m = {}; OS.all('countries').forEach(r => { if (!BY[r.code]) return; const o = m[r.code]; if (!o || (RANK[r.status] || 0) > (RANK[o.status] || 0)) m[r.code] = r; }); return m; };
+const mine = () => { const m = {}; OS.all('countries').forEach(r => { if (!BY[r.code] || !RANK[r.status]) return; const o = m[r.code]; if (!o || (RANK[r.status] || 0) > (RANK[o.status] || 0)) m[r.code] = r; }); return m; };
 const been = r => !!r && (r.status === 'Visitei' || r.status === 'Morei');
+// documentos: cidadania, passaporte, residência e visto são coisas diferentes (e um país pode ter documentos sem estar no mapa)
+const DOC = { cid: 'Cidadania', pass: 'Passaporte', res: 'Residência', visto: 'Visto' }, DOCI = { cid: 'flag', pass: 'book', res: 'home', visto: 'tag' };
+const docsOf = c => { const s = new Set(); recOf(c).forEach(r => (Array.isArray(r.docs) ? r.docs : []).forEach(d => DOC[d] && s.add(d))); return [...s]; };
+const docRec = c => recOf(c).find(r => Array.isArray(r.docs) && r.docs.length) || recOf(c)[0];
 // marcos da volta ao mundo
 const MIL = [[1, 'Primeiro carimbo'], [5, 'Viajante'], [10, 'Explorador'], [25, 'Cidadão do mundo'], [50, 'Globetrotter'], [100, 'Lenda das viagens'], [195, 'Volta ao mundo completa']];
 const stats = () => { const m = mine(), v = ALL.filter(c => been(m[c.c3])), w = ALL.filter(c => m[c.c3] && m[c.c3].status === 'Quero ir'), area = v.reduce((a, c) => a + c.area, 0);
@@ -37,20 +43,29 @@ const recOf = c => OS.all('countries').filter(r => r.code === c);
 A.muPick = b => { const c = BY[b.dataset.c]; if (!c) return; const r = mine()[c.c3], s = r ? r.status : '';
   UI.modal(`<div class="mu-md"><div class="mu-mh"><span class="mu-fl">${flag(c.c2)}</span><div><h3>${esc(c.n)}</h3><small class="mut">${esc(CONT[c.ct])} · ${U.nf(c.area)} km²</small></div><button class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div>
     <div class="mu-mst">${ST.map(v => `<button class="btn ${s === v ? 'pri' : 'ghost'}" data-act="muSet" data-c="${c.c3}" data-v="${v}">${v === 'Visitei' ? UI.ic('check') : v === 'Morei' ? UI.ic('home') : UI.ic('heart')}<span>${v}</span></button>`).join('')}</div>
+    <div class="mu-docs"><small class="mut">Documentos deste país</small><div>${Object.keys(DOC).map(d => { const on = docsOf(c.c3).includes(d); return `<button class="chip ${on ? 'on' : ''}" data-act="muDoc" data-c="${c.c3}" data-d="${d}" aria-pressed="${on}">${UI.ic(DOCI[d])}${DOC[d]}</button>`; }).join('')}</div>
+      ${(() => { const x = docRec(c.c3); return x && (x.vistoTipo || x.vistoAte) ? `<small class="mut">${esc(x.vistoTipo || '')}${x.vistoAte ? ` · válido até ${U.fmtD(x.vistoAte)}${x.vistoAte < U.today() ? ' (expirado)' : ''}` : ''}</small>` : ''; })()}</div>
     ${r ? `<div class="mu-mi">${r.date ? `<span>${UI.ic('cal')}${U.fmtD(r.date)}</span>` : ''}${r.cities ? `<span>${UI.ic('pin')}${esc(r.cities)}</span>` : ''}${+r.trips > 1 ? `<span>${r.trips} vezes</span>` : ''}</div>
       <div class="row gap8"><button class="btn sm" data-act="muEdit" data-id="${r.id}">${UI.ic('edit')}<span>Data, cidades e memórias</span></button><button class="btn sm ghost" data-act="muClear" data-c="${c.c3}">Tirar</button></div>` : '<p class="mut">Marca se já foste, se viveste lá ou se queres ir.</p>'}</div>`, 'mu-modal'); };
 A.muSet = b => { const c = b.dataset.c, v = b.dataset.v, L = recOf(c), name = (BY[c] || {}).n || c, was = been(mine()[c]);
   if (L.length) { OS.upd('countries', L[0].id, { status: v }); L.slice(1).forEach(r => OS.del('countries', r.id)); } else OS.add('countries', { code: c, status: v });
-  UI.closeModal(); UI.toast(v === 'Quero ir' ? `${name} está nos teus próximos destinos` : was ? `${name}: ${v.toLowerCase()}` : `${flag((BY[c] || {}).c2)} ${name} no teu mapa! +1500 XP de Mente no Dominus`, 'pos'); };
-A.muClear = b => { recOf(b.dataset.c).forEach(r => OS.del('countries', r.id)); UI.closeModal(); };
+  UI.closeModal(); UI.toast(v === 'Quero ir' ? `${name} está nos teus próximos destinos` : was ? `${name}: ${v.toLowerCase()}` : `${flag((BY[c] || {}).c2)} ${name} no teu mapa! +900 XP de Mente no Dominus`, 'pos'); };
+// cidadania, passaporte, residência, visto: liga e desliga (sem mexer no mapa); a validade do visto vai no formulário
+A.muDoc = b => { const c = b.dataset.c, d = b.dataset.d, L = recOf(c); if (!BY[c] || !DOC[d]) return;
+  if (!L.length) OS.add('countries', { code: c, status: '', docs: [d] }); else { const r = docRec(c), cur = Array.isArray(r.docs) ? r.docs : [], on = cur.includes(d); OS.upd('countries', r.id, { docs: on ? cur.filter(x => x !== d) : cur.concat(d) }); }
+  A.muPick({ dataset: { c } }); };
+A.muClear = b => { recOf(b.dataset.c).forEach(r => { if (Array.isArray(r.docs) && r.docs.length) OS.upd('countries', r.id, { status: '' }); else OS.del('countries', r.id); }); UI.closeModal(); };
 A.muEdit = b => { UI.closeModal(); UI.openForm('countries', b.dataset.id); };
-A.muTog = b => { const c = b.dataset.c, v = b.dataset.v, r = mine()[c]; if (r && (r.status === v || (v === 'Visitei' && r.status === 'Morei'))) { recOf(c).forEach(x => OS.del('countries', x.id)); return; } A.muSet(b); };
+A.muTog = b => { const c = b.dataset.c, v = b.dataset.v, r = mine()[c]; if (r && (r.status === v || (v === 'Visitei' && r.status === 'Morei'))) { recOf(c).forEach(x => { if (Array.isArray(x.docs) && x.docs.length) OS.upd('countries', x.id, { status: '' }); else OS.del('countries', x.id); }); return; } A.muSet(b); };
 A.muZoom = b => OS.setUI('muZ', b.dataset.v);
+A.muGrp = b => { const g = Object.assign({}, OS.ui.muG || {}), i = b.dataset.i; g[i] = !g[i]; OS.setUI('muG', g); };
 A.muF = b => OS.setUI('muF', b.dataset.v);
 
 // ---------- mapa ----------
 const FILL = { Visitei: 'v', Morei: 'm', 'Quero ir': 'w' };
-const mapSvg = (m, z) => { const box = z !== '' && WORLD.B[z] ? WORLD.B[z] : WORLD.Z, k = box[2] / WORLD.W, eq = Math.round(WORLD.H * .565);
+let MC = { k: '', h: '' };
+const mapSvg = (m, z) => { const k = z + '|' + Object.keys(m).map(c => c + m[c].status).join(','); if (MC.k === k) return MC.h; MC = { k, h: mapSvg0(m, z) }; return MC.h; };
+const mapSvg0 = (m, z) => { const box = z !== '' && WORLD.B[z] ? WORLD.B[z] : WORLD.Z, k = box[2] / WORLD.W, eq = Math.round(WORLD.H * .565);
   return `<svg class="mu-svg" viewBox="${box.join(' ')}" role="img" aria-label="Mapa do mundo com os países que já conheces pintados">
     <defs><radialGradient id="muSea" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#0E3A66"/><stop offset="1" stop-color="#05172C"/></radialGradient></defs>
     <rect x="-20" y="-20" width="${WORLD.W + 40}" height="${WORLD.H + 40}" fill="url(#muSea)"/>
@@ -80,12 +95,17 @@ V.mundo = () => { const S = stats(), z = OS.ui.muZ != null ? String(OS.ui.muZ) :
   <section class="mu-conts">${S.byC.map(c => `<button class="mu-ct ${z === String(c.i) ? 'on' : ''}" data-act="muZoom" data-v="${c.i}" style="--c:${CCOL[c.i]}"><b>${esc(c.n)}</b><span class="mono">${c.v}/${c.tot}</span>${UI.bar(c.v / c.tot)}<small>${pf(c.v / c.tot * 100)}%</small></button>`).join('')}</section>
   <section class="pn"><div class="pn-h"><h3>${UI.ic('award')}Volta ao mundo</h3><span class="mut">marcos</span></div><div class="mu-mil">${MIL.map(([n, t]) => `<div class="${S.n >= n ? 'on' : ''}"><b class="mono">${n}</b><span>${esc(t)}</span></div>`).join('')}
     <div class="${S.conts >= 6 ? 'on' : ''}"><b class="mono">6/6</b><span>Todos os continentes</span></div><div class="${S.hem.every(h => h[1]) ? 'on' : ''}"><b class="mono">4/4</b><span>Os 4 hemisférios</span></div></div></section>
-  <section class="pn"><div class="pn-h"><h3>${UI.ic('book')}Passaporte</h3><span class="mut">${S.n} ${S.n === 1 ? 'carimbo' : 'carimbos'}</span></div>
-    ${pass.length ? `<div class="mu-pass">${pass.map(({ c, r }) => `<button class="mu-st" data-act="muPick" data-c="${c.c3}" style="--c:${CCOL[c.ct]};--t:${tilt(c.c3)}deg"><span class="mu-fl">${flag(c.c2)}</span><b>${esc(c.n)}</b><small class="mono">${r.date ? r.date.slice(0, 4) : r.status === 'Morei' ? 'morei' : 'visitei'}</small></button>`).join('')}</div>` : '<p class="mut">O teu passaporte está vazio. Marca no mapa ou na lista os países onde já foste (Brasil e Portugal, para começar?).</p>'}</section>
+  ${(() => { const D = ALL.map(c => ({ c, d: docsOf(c.c3), r: docRec(c.c3) })).filter(x => x.d.length); return `<section class="pn"><div class="pn-h"><h3>${UI.ic('flag')}Cidadania, passaportes e vistos</h3><span class="mut">${D.length}</span></div>
+    ${D.length ? `<div class="mu-docl">${D.map(({ c, d, r }) => `<button class="mu-doc" data-act="muPick" data-c="${c.c3}"><span class="mu-fl">${flag(c.c2)}</span><b>${esc(c.n)}</b><span class="mu-dt">${d.map(k => `<small class="mu-tag d-${k}">${DOC[k]}</small>`).join('')}</span>${r && r.vistoAte ? `<small class="mut">${r.vistoAte < U.today() ? 'expirou' : 'até'} ${U.fmtD(r.vistoAte)}</small>` : ''}</button>`).join('')}</div>`
+      : '<p class="mut">Ter vivido ou passado por um país não quer dizer ter o passaporte dele. Toca num país e marca o que tens: cidadania, passaporte, autorização de residência ou visto (com a validade).</p>'}</section>`; })()}
+  <section class="pn"><div class="pn-h"><h3>${UI.ic('book')}Carimbos</h3><span class="mut">${S.n} ${S.n === 1 ? 'carimbo' : 'carimbos'}</span></div>
+    ${pass.length ? `<div class="mu-pass">${pass.map(({ c, r }) => `<button class="mu-st" data-act="muPick" data-c="${c.c3}" style="--c:${CCOL[c.ct]};--t:${tilt(c.c3)}deg"><span class="mu-fl">${flag(c.c2)}</span><b>${esc(c.n)}</b><small class="mono">${r.date ? r.date.slice(0, 4) : r.status === 'Morei' ? 'morei' : 'visitei'}</small></button>`).join('')}</div>` : '<p class="mut">Ainda sem carimbos. Marca no mapa ou na lista os países onde já foste ou viveste.</p>'}</section>
   ${want.length ? `<section class="pn"><div class="pn-h"><h3>${UI.ic('heart')}Próximos destinos</h3><span class="mut">${want.length}</span></div><div class="mu-want">${want.map(({ c, r }) => `<button data-act="muPick" data-c="${c.c3}"><span class="mu-fl">${flag(c.c2)}</span><b>${esc(c.n)}</b>${r.date ? `<small>${U.fmtD(r.date)}</small>` : ''}</button>`).join('')}</div></section>` : ''}
   <section class="pn"><div class="pn-h"><h3>${UI.ic('globe')}Todos os países</h3><span class="mut">${list.length}</span></div>
     <div class="row gap8 mu-fs">${[['todos', 'Todos'], ['falta', 'Por conhecer'], ['conheci', 'Conheço'], ['quero', 'Quero ir']].map(([k, l]) => UI.chip(l, 'muF', f === k, `data-v="${k}"`)).join('')}</div>
     <input class="field mu-q" type="search" placeholder="Procurar país…" value="${esc((OS.ui.mu || {}).q || '')}" data-uif="mu.q" aria-label="Procurar país">
-    ${CONT.map((n, i) => { const L = list.filter(c => c.ct === i); return L.length ? `<div class="mu-g"><h4 style="--c:${CCOL[i]}">${esc(n)} <small class="mono">${L.filter(c => been(m[c.c3])).length}/${L.length}</small></h4>${L.map(row).join('')}</div>` : ''; }).join('') || '<p class="mut">Nada encontrado.</p>'}</section>
+    ${CONT.map((n, i) => { const L = list.filter(c => c.ct === i); if (!L.length) return ''; const op = !!q || f !== 'todos' || !!(OS.ui.muG || {})[i];
+      // (para não pesar, a lista de cada continente só se desenha quando a abres, procuras ou filtras)
+      return `<div class="mu-g"><button class="mu-gh" data-act="muGrp" data-i="${i}" aria-expanded="${op}" style="--c:${CCOL[i]}"><b>${esc(n)}</b> <small class="mono">${L.filter(c => been(m[c.c3])).length}/${L.length}</small>${UI.ic(op ? 'up' : 'down')}</button>${op ? L.map(row).join('') : ''}</div>`; }).join('') || '<p class="mut">Nada encontrado.</p>'}</section>
   <p class="mut mu-src">Mapa: Natural Earth (domínio público). Países: os 193 membros da ONU, o Vaticano e a Palestina (dados de mledoze/countries, ODbL).</p></div>`; };
 })();

@@ -15,7 +15,7 @@ let OFFLINE = false, GSFAIL = 0, SLOWIDX = 0, FAILP = '';
 // os mesmos cabeçalhos de segurança do Vercel (CSP incluída), para os testes apanharem o que ela bloquearia; o Apps Script simulado está em http://127.0.0.1
 const SECH = (() => { try { const v = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')), all = v.headers.find(h => h.source === '/(.*)'), o = {}; all.headers.forEach(h => { o[h.key] = h.key === 'Content-Security-Policy' ? h.value.replace("connect-src 'self'", `connect-src 'self' http://127.0.0.1:${PORT}`) : h.value; }); delete o['Strict-Transport-Security']; return o; } catch (e) { return {}; } })();
 // servidor das contas para os testes: pasta temporária em vez do Vercel Blob (apagada no fim)
-const ACCDIR = fs.mkdtempSync(path.join(require('os').tmpdir(), 'nautilo-contas-')); process.env.NAUTILO_STORE_DIR = ACCDIR; process.env.NAUTILO_ADMIN = 'ana@exemplo.pt'; process.env.NAUTILO_IA_LIVRE = 'http://localhost:' + PORT + '/iamock'; process.env.NAUTILO_STRINGS = path.join(ROOT, 'i18n/strings.json'); delete process.env.GEMINI_API_KEY; process.env.NAUTILO_CACHE_MS = '0'; process.env.NAUTILO_RSS_BASE = 'http://localhost:' + PORT + '/rssmock'; delete process.env.BLOB_READ_WRITE_TOKEN;
+const ACCDIR = fs.mkdtempSync(path.join(require('os').tmpdir(), 'nautilo-contas-')); process.env.NAUTILO_STORE_DIR = ACCDIR; process.env.NAUTILO_RANK_DESDE = '2000-01-01'; process.env.NAUTILO_ADMIN = 'ana@exemplo.pt'; process.env.NAUTILO_IA_LIVRE = 'http://localhost:' + PORT + '/iamock'; process.env.NAUTILO_STRINGS = path.join(ROOT, 'i18n/strings.json'); delete process.env.GEMINI_API_KEY; process.env.NAUTILO_CACHE_MS = '0'; process.env.NAUTILO_RSS_BASE = 'http://localhost:' + PORT + '/rssmock'; delete process.env.BLOB_READ_WRITE_TOKEN;
 Object.assign(process.env, { GOOGLE_CLIENT_SECRET: 'teste-segredo', GOOGLE_REDIRECT: BASE + 'api/google', GOOGLE_AUTH_URL: 'http://localhost:' + PORT + '/gmock/auth', GOOGLE_TOKEN_URL: 'http://localhost:' + PORT + '/gmock/token', GOOGLE_REVOKE_URL: 'http://localhost:' + PORT + '/gmock/revoke', GOOGLE_API: 'http://localhost:' + PORT + '/gmock/api/' }); delete process.env.GOOGLE_CLIENT_ID;
 process.on('exit', () => { try { fs.rmSync(ACCDIR, { recursive: true, force: true }); } catch (e) { } });
 const ACCFN = {}; const ACCAPI = n => { if (!(n in ACCFN)) { try { ACCFN[n] = require(path.join(ROOT, 'api', n + '.js')); } catch (e) { ACCFN[n] = null; } } return ACCFN[n]; };
@@ -780,9 +780,9 @@ async function sharedTests(b) {
     ok('spyke: rotina de voz corre os passos', await E(p, () => location.hash === '#floresta'));
     ok('spyke: balanço da noite', await E(p, () => /balanço de hoje/.test(OS.Spyke.evening())));
     await E(p, () => { OS.Spyke.close(); OS.Jarvis.open(); }); await sleep(700);
-    ok('modo Jarvis abre com os painéis', await E(p, () => !document.getElementById('jv').hidden && document.querySelectorAll('#jv .jv-c').length >= 7));
+    ok('modo Comando abre com os painéis', await E(p, () => !document.getElementById('jv').hidden && document.querySelectorAll('#jv .jv-c').length >= 7));
     await p.click('#jv [data-act=jvClose]'); await sleep(200);
-    ok('modo Jarvis: o X fecha e o botão fica no canto', await E(p, () => document.getElementById('jv').hidden && !document.getElementById('jvFab').hidden));
+    ok('modo Comando: o X fecha e o botão fica no canto', await E(p, () => document.getElementById('jv').hidden && !document.getElementById('jvFab').hidden));
     ok('e-mail: eventos dos e-mails no calendário', await E(p, () => { const d = OS.U.addDays(OS.U.today(), 3); OS.add('mailevents', { mid: 'x1', title: 'Reunião do e-mail', date: d, start: '15:00' }); return OS.Cal.items(d, d).some(x => x.src === 'mail'); }));
     // LIGAÇÕES ENTRE ÁREAS
     ok('ligações: apagar projeto deixa as tarefas sem projeto', await E(p, () => { const pr = OS.add('projects', { name: 'PL', status: 'Em andamento' }); const t = OS.add('tasks', { title: 'TL', status: 'Próxima', project: pr.id }); OS.del('projects', pr.id); return OS.get('tasks', t.id).project === ''; }));
@@ -874,8 +874,9 @@ async function sharedTests(b) {
     ok('meta de calorias sobe nos dias de treino', await E(p, () => OS.BodyX.burn(OS.U.today()) > 0 && OS.BodyX.target(OS.U.today()).adj > 0));
     await E(p, () => location.hash = 'corpo'); await sleep(600);
     ok('corpo: calendário de disciplina na visão', await E(p, () => document.querySelectorAll('#view .dc-cal .dc-d').length > 100 && !!document.querySelector('#view .dc-score')));
-    { const had = await E(p, () => !!OS.BodyGoals.days()[OS.U.today()]); if (!had) { await p.click('#view [data-act=bgWent]'); await sleep(300); }
-      ok('corpo: "Fui hoje" marca o dia', await E(p, () => !!OS.BodyGoals.days()[OS.U.today()] && document.querySelectorAll('#view .dc-d.today.w, #view .dc-d.today.r, #view .dc-d.today.c, #view .dc-d.today.wr').length === 1)); }
+    ok('corpo: o calendário de disciplina é automático (sem marcar dias à mão, o passado não se muda)', await E(p, () => !document.querySelector('#view [data-act=bgDay], #view [data-act=bgWent]') && ![...document.querySelectorAll('#view .dc-cal .dc-d')].some(x => x.tagName === 'BUTTON')));
+    await E(p, () => { if (!OS.all('workouts').some(w => w.date === OS.U.today())) OS.add('workouts', { date: OS.U.today(), name: 'Treino de teste', items: [] }); location.hash = 'corpo'; }); await sleep(400);
+    ok('corpo: registar um treino marca o dia sozinho', await E(p, () => !!OS.BodyGoals.days()[OS.U.today()] && document.querySelectorAll('#view .dc-d.today.w, #view .dc-d.today.wr').length === 1));
     await E(p, () => location.hash = 'corpo.desafios'); await sleep(400); await E(p, () => OS.act.bgChalNew()); await sleep(200); await p.click('#modal input[value=acucar]'); await p.click('#modal form button.btn.pri'); await sleep(300);
     await E(p, () => document.querySelector('#view [data-act=bgChalTick]').click()); await sleep(300);
     ok('desafio: começa e marca o dia', await E(p, () => { const c = OS.all('bchal')[0]; return c && c.name === 'Sem açúcar 21 dias' && OS.BodyGoals.chal(c).prog === 1; }));
@@ -1849,7 +1850,7 @@ async function checkupTests(b, prof = PROFILES[4]) { cur = 'Check-up ' + prof.id
   // 3 · todos os formulários (novo e editar) abrem sem erros
   const forms = await E(p, async () => { const bad = [], n = { ok: 0 }; for (const c of Object.keys(OS.S)) { const S = OS.S[c]; if (!S || !S.fields) continue; for (const id of [null, (OS.all(c)[0] || {}).id]) { if (id === undefined) continue; try { OS.UI.openForm(c, id || null, {}); const d = document.querySelector('#osform'); if (!d) bad.push(c + (id ? ' (editar)' : ' (novo)') + ': não abriu'); else { if (/\bundefined\b|\bNaN\b|\[object Object\]/.test(d.innerText)) bad.push(c + ': mostra undefined/NaN'); const W = document.documentElement.clientWidth, fr = d.getBoundingClientRect(); if (fr.width > W + 1 || d.scrollWidth > d.clientWidth + 2) { bad.push(c + ': o formulário não cabe no ecrã'); if (!window.__fdbg) { window.__fdbg = 1; console.log('FORMDBG ' + JSON.stringify({ c, fr: [fr.left, fr.right, fr.width], sw: d.scrollWidth, cw: d.clientWidth, W, wide: [...d.querySelectorAll('*')].filter(x => x.getBoundingClientRect().right > fr.right + 1).slice(0, 4).map(x => x.tagName + '.' + x.className + ' ' + Math.round(x.getBoundingClientRect().right)) })); } } n.ok++; } OS.UI.closeDrawer && OS.UI.closeDrawer(); } catch (e) { bad.push(c + ': ' + e.message); } await new Promise(r => setTimeout(r, 15)); } } return { bad, n: n.ok }; });
   ok('Check-up: todos os formulários (criar e editar) abrem sem erros (' + forms.n + ')', !forms.bad.length && forms.n > 60, forms.bad.slice(0, 6).join(' | '));
-  // 4 · painéis por cima da página (cabeçalho, menu, Spyke, Jarvis, procurar, registar, ecrã de bloqueio): cabem no ecrã deste aparelho
+  // 4 · painéis por cima da página (cabeçalho, menu, Spyke, modo Comando, procurar, registar, ecrã de bloqueio): cabem no ecrã deste aparelho
   const fitP = sel => E(p, sel => { const root = sel === 'lock' ? (document.getElementById('lkForm') || {}).parentElement : document.querySelector(sel); if (!root) return ['não abriu'];
     const W = document.documentElement.clientWidth, out = [], rr = root.getBoundingClientRect(); if (rr.width > W + 1) out.push(sel + ' mais largo que o ecrã (' + Math.round(rr.width) + ' de ' + W + ')');
     for (const el of root.querySelectorAll('*')) { if (out.length > 2) break; const r = el.getBoundingClientRect(); if (!r.width || !r.height || (r.right <= W + 2 && r.left >= -2)) continue; let a = el.parentElement, clip = false; while (a && a !== document.body) { if (getComputedStyle(a).overflowX !== 'visible') { clip = true; break; } a = a.parentElement; }
@@ -1859,7 +1860,7 @@ async function checkupTests(b, prof = PROFILES[4]) { cur = 'Check-up ' + prof.id
   for (const [nm, open, sel, close] of [['cabeçalho', null, '#top', null], ['menu', () => OS.act.navOpen(), '#side', () => document.body.classList.remove('nav-open')], ['Spyke', () => OS.Spyke.open(), '#spy', () => OS.Spyke.close()], ['Jarvis', () => OS.Jarvis && OS.Jarvis.open(false), '#jv', () => OS.Jarvis && OS.Jarvis.close()], ['procurar', () => OS.act.cmdOpen(), '#modal', () => OS.UI.closeModal()], ['registar', () => OS.act.quickAdd(), '#modal', () => OS.UI.closeModal()], ['bloqueio', () => OS.act.lockNow(), 'lock', null]]) {
     if (open) await E(p, open); await sleep(800); const L = await fitP(sel); if (L.length) ovl.push(nm + ': ' + L.join(', ')); if (close) await E(p, close); await sleep(200); }
   await unlock(p); await sleep(400);
-  ok('Check-up: cabeçalho, menu, Spyke, Jarvis, procurar, registar e ecrã de bloqueio cabem no ecrã', !ovl.length, ovl.join(' | '));
+  ok('Check-up: cabeçalho, menu, Spyke, modo Comando, procurar, registar e ecrã de bloqueio cabem no ecrã', !ovl.length, ovl.join(' | '));
   const er = errs.filter(e => !/Failed to load|net::|sandboxed|about:srcdoc|Content Security Policy|NotSupportedError|play\(\)|WebGL|AudioContext/.test(e)); ok('Check-up: sem erros de JavaScript em toda a app', !er.length, er.slice(0, 4).join(' | ')); await ctx.close(); }
 
 /* ---------- a Direção sabe tudo o que acontece na app; Finanças: apagar movimentos, saldo inicial e moedas ---------- */
@@ -2020,7 +2021,9 @@ async function muTests(b) { cur = 'Mundo'; console.log('\n=== Mundo: mapa, país
   await p.goto(BASE); await unlock(p); await E(p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); OS.setOne('spyke', { eng: 'device' }); });
   await E(p, () => location.hash = 'mundo'); await sleep(700);
   const m0 = await E(p, () => ({ menu: !!document.querySelector('#side a[href="#mundo"], .tn-dd a[href="#mundo"]'), paths: document.querySelectorAll('.mu-cs path').length, dots: document.querySelectorAll('.mu-dots circle').length, rows: document.querySelectorAll('.mu-row').length - document.querySelectorAll('#ilhas .mu-row').length, all: OS.Mundo.ALL.length }));
-  ok('Aba Mundo no menu, com o mapa e os 195 países (os pequenos como pontos)', m0.menu && m0.all === 195 && m0.paths + m0.dots === 195 && m0.rows === 195, JSON.stringify(m0));
+  ok('Aba Mundo no menu, com o mapa e os 195 países (os pequenos como pontos); a lista abre por continente', m0.menu && m0.all === 195 && m0.paths + m0.dots === 195 && m0.rows === 0 && (await E(p, () => document.querySelectorAll('.mu-gh').length)) === 6, JSON.stringify(m0));
+  await E(p, () => OS.setUI('muG', { 0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 })); await sleep(400);
+  ok('Abrir os continentes mostra os 195 países', (await E(p, () => document.querySelectorAll('.mu-row').length - document.querySelectorAll('#ilhas .mu-row').length)) === 195);
   const x0 = await E(p, () => OS.Dom.state().ax.mente);
   await E(p, () => document.querySelector('.mu-cs path[data-c=BRA]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await sleep(300);
   ok('Tocar num país do mapa abre a janela desse país', await E(p, () => /Brasil/.test((document.querySelector('.mu-mh h3') || {}).textContent || '')));
@@ -2029,7 +2032,7 @@ async function muTests(b) { cur = 'Mundo'; console.log('\n=== Mundo: mapa, país
   await E(p, () => { const b = document.querySelector('[data-act=muTog][data-c=JPN][data-v="Quero ir"]'); b && b.click(); }); await sleep(400);
   const m1 = await E(p, () => { const s = OS.Mundo.stats(); return { n: s.n, w: s.w.length, pct: document.querySelector('.mu-hn b').textContent, painted: document.querySelectorAll('.mu-cs path.m, .mu-cs path.v').length, stamps: document.querySelectorAll('.mu-st').length }; });
   ok('O mapa pinta-se e a percentagem do mundo sobe (2 de 195 = 1%)', m1.n === 2 && m1.pct === '1,0%' && m1.painted === 2 && m1.stamps === 2 && m1.w === 1, JSON.stringify(m1));
-  ok('Cada país conhecido dá XP de Mente no Dominus (1500 por país)', (await E(p, () => OS.Dom.state().ax.mente)) - x0 === 3000);
+  ok('Cada país conhecido dá XP de Mente no Dominus (900 por país)', (await E(p, () => OS.Dom.state().ax.mente)) - x0 === 1800);
   await E(p, () => OS.setUI('muZ', '4')); await sleep(300); ok('Ver só um continente (Europa) aproxima o mapa', await E(p, () => +document.querySelector('.mu-svg').getAttribute('viewBox').split(' ')[2] < 400));
   await E(p, () => { const i = document.querySelector('[data-uif="mu.q"]'); i.value = 'japa'; i.dispatchEvent(new Event('input', { bubbles: true })); }); await sleep(700);
   ok('Procurar um país na lista', await E(p, () => [...document.querySelectorAll('.mu-row b')].filter(b => !b.closest('#ilhas')).map(b => b.textContent).join() === 'Japão'));
@@ -2042,7 +2045,7 @@ async function muTests(b) { cur = 'Mundo'; console.log('\n=== Mundo: mapa, país
   await E(p, () => document.querySelector('[data-act=muTogI][data-i=bali][data-v="Quero ir"]').click()); await sleep(400);
   const i1 = await E(p, () => ({ n: OS.Mundo.istats().n, hero: document.querySelector('.mu-ht p').innerText, v: !!document.querySelector('.mu-isl path.v[data-i=madeira]'), w: !!document.querySelector('.mu-isl path.w[data-i=bali]'), head: document.querySelector('#ilhas .pn-h').innerText, countries: OS.Mundo.stats().n }));
   ok('Marcar a Madeira como visitada: conta 1 ilha, pinta o losango no mapa e não mexe nos países', i1.n === 1 && /1 ilha/.test(i1.hero) && i1.v && i1.w && /1 de \d+ conhecidas/.test(i1.head) && i1.countries === 2, JSON.stringify(i1));
-  ok('Cada ilha conhecida dá XP de Mente no Dominus (500 por ilha)', (await E(p, () => OS.Dom.state().ax.mente)) - xi === 500);
+  ok('Cada ilha conhecida dá XP de Mente no Dominus (300 por ilha)', (await E(p, () => OS.Dom.state().ax.mente)) - xi === 300);
   await E(p, () => document.querySelector('.mu-isl path[data-i=saomiguel]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await sleep(300);
   ok('Tocar num losango do mapa abre a janela dessa ilha', await E(p, () => /São Miguel/.test((document.querySelector('.mu-mh h3') || {}).textContent || '') && !!document.querySelector('[data-act=muSetI][data-i=saomiguel]')));
   await E(p, () => OS.UI.closeModal()); await sleep(200);
@@ -2538,7 +2541,7 @@ async function religiaoTests(b) { cur = 'Religiões'; console.log('\n=== Religi�
   const rel = r => E(p, r => OS.Rel.set(r, true), r);
   await go('fe'); await lib(66);
   ok('sem escolha fica como sempre: Bíblia de 66 livros e "Hoje com Deus"', await E(p, () => !OS.Rel.chosen() && OS.Faith.bible().b.length === 66 && /Hoje com Deus/.test(document.querySelector('#view .tabs').textContent)));
-  ok('Definições › Tu: escolher a religião', await E(p, () => { location.hash = 'definicoes'; return true; }) && (await sleep(500), await E(p, () => { const r = document.getElementById('relSet'); return !!r && !!r.querySelector('select[data-rel=set]') && r.querySelectorAll('option').length >= 11; })));
+  ok('Definições › Tu: escolher a religião', await E(p, () => { location.hash = 'definicoes'; return true; }) && (await sleep(500), await E(p, () => { const r = document.getElementById('relSet'); return !!r && !!r.querySelector('select[data-rel=set]') && r.querySelectorAll('option').length >= 7; })));
   await rel('catolica'); await go('fe'); const nc = await lib(73);
   ok('católica: Bíblia com 73 livros (Tobias, Judite, Sabedoria, Sirácida, Baruc, Macabeus)', nc === 73 && await E(p, () => ['TOB', 'JDT', 'WIS', 'SIR', 'BAR', '1MA', '2MA'].every(x => OS.Faith.bible().idx[x] != null)), String(nc));
   await go('fe.oracoes'); await E(p, () => document.querySelector('#view [data-act=fePractice][data-k=terco]').click()); await sleep(250);
@@ -2559,10 +2562,7 @@ async function religiaoTests(b) { cur = 'Religiões'; console.log('\n=== Religi�
   ok('hindu: Bhagavad Gita (18 capítulos, 701 versos)', await E(p, () => { const B = OS.Faith.bible(); return B.b[0][0] === 'BG' && B.b[0][3].reduce((a, c) => a + c.length, 0) === 701; }));
   await rel('budista'); await go('fe'); await lib(1);
   ok('budista: Dhammapada e o dia de Uposatha (lua)', await E(p, () => OS.Faith.bible().b[0][0] === 'DHP' && !!document.querySelector('#view .rl-moon')));
-  await rel('espirita'); await go('fe'); await lib(2);
-  ok('espírita: O Evangelho segundo o Espiritismo e o Evangelho no Lar', await E(p, () => OS.Faith.bible().b[1][0] === 'ESE' && OS.Rel.practices().some(x => x[0] === 'lar')));
-  await rel('afro'); await go('fe'); await sleep(300);
-  ok('Umbanda e Candomblé: Orixá do dia, sem livro nem planos', await E(p, () => !!document.querySelector('#view .rl-orixa') && !document.querySelector('#view .tabs a[href="#fe.biblia"]')));
+  ok('só as religiões principais (católica, evangélica, islâmica, judaica, hindu, budista e nenhuma)', await E(p, () => OS.Rel.ORD.join() === 'catolica,evangelica,islamica,judaica,hindu,budista,nenhuma'));
   await E(p, () => OS.Rel.set('nenhuma')); await sleep(500);
   ok('nenhuma: a aba Fé sai do menu', await E(p, () => !document.querySelector('#side a[href="#fe"]')));
   await E(p, () => OS.Rel.set('evangelica')); await sleep(500); await go('fe'); await lib(66);
@@ -2575,8 +2575,8 @@ async function rankTests(b) { cur = 'Ranking'; console.log('\n=== Ranking geral 
   const mk = async (nome, dom = 'teste.pt') => { const email = nome.toLowerCase() + crypto.randomBytes(4).toString('hex') + '@' + dom, r = await call({ op: 'registar', email, senha: 'segredo123', termos: TERMOS_V, saude: true, idade: true }); const q = await call({ op: 'perfil', acao: 'criar', perfil: { nome, lk: HASH } }, r.token); return { email, tok: r.token, pid: q.perfil.id, perfis: q.conta.perfis }; };
   const day = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10), dias = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [day(+k), v]));
   const bruno = await mk('Bruno'), carla = await mk('Carla'), tst = await mk('Teste', 'nautilo.test'), ana = await mk('Ana');
-  const rb = await call({ op: 'rank', id: bruno.pid, dias: dias({ 0: 95, '-1': 90, '-2': 80, '-3': 70 }) }, bruno.tok);
-  ok('servidor: guarda a disciplina de cada dia e conta os dias de foco seguidos', rb.ok && rb.eu.s === 4 && rb.eu.p7 === 335, JSON.stringify(rb.eu));
+  const rb = await call({ op: 'rank', id: bruno.pid, dias: dias({ 0: 95, '-1': 90, '-2': 80, '-3': 72, '-4': 65 }) }, bruno.tok);
+  ok('servidor: guarda a disciplina de cada dia e conta os dias de foco seguidos (70 ou mais)', rb.ok && rb.eu.s === 4 && rb.eu.p7 === 402, JSON.stringify(rb.eu));
   const rc = await call({ op: 'rank', id: carla.pid, dias: dias({ 0: 50, '-1': 100, '-20': 100 }) }, carla.tok);
   ok('servidor: o passado (mais de 8 dias) não se muda', rc.ok && rc.eu.dias === 2 && rc.eu.p30 === 150, JSON.stringify(rc.eu));
   const bad = await call({ op: 'rank', id: bruno.pid, dias: {} }, carla.tok); ok('servidor: ninguém escreve no perfil de outra conta', !bad.ok);
@@ -2589,22 +2589,78 @@ async function rankTests(b) { cur = 'Ranking'; console.log('\n=== Ranking geral 
   ok('o fogo dos dias de foco no topo', await E(p, () => !!document.querySelector('#top .fc-chip')));
   await E(p, () => { const t = OS.U.today(); OS.all('tasks').forEach(x => OS.del('tasks', x.id, { silent: true })); OS.all('habits').forEach(h => OS.upd('habits', h.id, { active: false }, { silent: true }));
     OS.add('tasks', { title: 'Tarefa A', status: 'Próxima', due: t }); OS.add('tasks', { title: 'Tarefa B', status: 'Próxima', sched: t }); OS.add('habits', { name: 'Hábito A', group: 'Manhã', active: true, freq: 'Diário', log: {} }); OS.add('habits', { name: 'Hábito B', group: 'Noite', active: true, freq: 'Diário', log: {} }); }); await sleep(300);
-  ok('pontos do dia: só entrar = 20', await E(p, () => OS.Foco.parts().pts === 20), JSON.stringify(await E(p, () => OS.Foco.parts())));
+  ok('pontos do dia: entrar não dá pontos (0)', await E(p, () => OS.Foco.parts().pts === 0), JSON.stringify(await E(p, () => OS.Foco.parts())));
   await E(p, () => { OS.Tasks.complete(OS.all('tasks').find(x => x.title === 'Tarefa A').id); OS.Hab.toggle(OS.all('habits').find(x => x.name === 'Hábito A').id, OS.U.today()); }); await sleep(300);
-  ok('pontos do dia: metade feita = 53 (ainda não é dia de foco)', await E(p, () => OS.Foco.parts().pts === 53 && !OS.Foco.state().on));
-  await E(p, () => { OS.Tasks.complete(OS.all('tasks').find(x => x.title === 'Tarefa B').id); OS.Hab.toggle(OS.all('habits').find(x => x.name === 'Hábito B').id, OS.U.today()); }); await sleep(1500);
-  ok('tudo feito = 100 pontos, "Dia 1 de foco!" sem tapar o ecrã', await E(p, () => { const c = document.querySelector('.fc-cel'); return OS.Foco.parts().pts === 100 && OS.Foco.streak() === 1 && !!c && /Dia 1 de foco/.test(c.textContent) && getComputedStyle(c).pointerEvents === 'none'; }));
-  await E(p, () => { const c = OS.one('foco'), U = OS.U; c.dias[U.addDays(U.today(), -1)] = { p: 80 }; c.dias[U.addDays(U.today(), -2)] = { p: 64 }; OS.touch('foco'); location.hash = 'hoje'; }); await sleep(600);
+  ok('pontos do dia: metade de 4 coisas = 20 (com menos de 5 marcadas vale menos)', await E(p, () => OS.Foco.parts().pts === 20 && !OS.Foco.state().on), JSON.stringify(await E(p, () => OS.Foco.parts())));
+  await E(p, () => { OS.Tasks.complete(OS.all('tasks').find(x => x.title === 'Tarefa B').id); OS.Hab.toggle(OS.all('habits').find(x => x.name === 'Hábito B').id, OS.U.today()); }); await sleep(400);
+  ok('tudo feito = 50 (40 + 10), ainda não é dia de foco', await E(p, () => OS.Foco.parts().pts === 50 && !OS.Foco.state().on), JSON.stringify(await E(p, () => OS.Foco.parts())));
+  await E(p, () => { const t = OS.U.today(); OS.add('workouts', { date: t, title: 'Treino de teste', items: [] }); OS.add('sessions', { date: t, minutes: 65, type: 'Estudo profundo' }); OS.add('devos', { date: t, ref: 'Salmos 23' }); }); await sleep(1500);
+  ok('+ treino (10), 65 min de foco (12) e devocional (10) = 82: "Dia 1 de foco!" sem tapar o ecrã', await E(p, () => { const c = document.querySelector('.fc-cel'); return OS.Foco.parts().pts === 82 && OS.Foco.streak() === 1 && !!c && /Dia 1 de foco/.test(c.textContent) && getComputedStyle(c).pointerEvents === 'none'; }));
+  await E(p, () => { const c = OS.one('foco'), U = OS.U; c.dias[U.addDays(U.today(), -1)] = { p: 80 }; c.dias[U.addDays(U.today(), -2)] = { p: 74 }; c.dias[U.addDays(U.today(), -3)] = { p: 64 }; OS.touch('foco'); location.hash = 'hoje'; }); await sleep(600);
   ok('dias de foco seguidos: "Dia 3 de foco" no topo e no Hoje', await E(p, () => OS.Foco.streak() === 3 && document.querySelector('#top .fc-chip').textContent.trim() === '3' && /Dia 3 de foco/.test(document.querySelector('#view .fc-bar').textContent)));
   await E(p, () => { location.hash = 'ranking'; }); await sleep(500); await E(p, () => OS.Foco.load()); await sleep(800);
   const rows = await E(p, () => [...document.querySelectorAll('#view .rk-row')].map(r => r.innerText.replace(/\s+/g, ' ')));
-  ok('página Ranking: todas as contas com posição, % e pontos (sem a de teste)', rows.length >= 3 && /Bruno/.test(rows[0]) && /335/.test(rows[0]) && rows.some(r => /Ana/.test(r) && /tu/.test(r) && /244/.test(r)) && !rows.some(r => /Teste/.test(r)), JSON.stringify(rows));
+  ok('página Ranking: todas as contas com posição, % e pontos (sem a de teste)', rows.length >= 3 && /Bruno/.test(rows[0]) && /402/.test(rows[0]) && rows.some(r => /Ana/.test(r) && /tu/.test(r) && /300/.test(r)) && !rows.some(r => /Teste/.test(r)), JSON.stringify(rows));
   ok('só se vê a lista: nada clicável (sem perfis nem mensagens)', await E(p, () => ![...document.querySelectorAll('#view .rk-list *')].some(x => x.matches('a,button,[data-act],[data-edit],[data-go],input,textarea'))));
   await E(p, () => { location.hash = 'definicoes'; }); await sleep(500);
   await E(p, () => { const c = document.querySelector('#rkSet [data-rk=nome]'); c.checked = false; c.dispatchEvent(new Event('change', { bubbles: true })); }); await sleep(2500);
   const L2 = await call({ op: 'ranking', id: carla.pid }, carla.tok);
-  ok('Definições › Tu › Ranking: sem mostrar o nome, os outros veem "Pessoa anónima"', L2.lista.some(r => r.anon && r.n === '' && r.p7 === 244), JSON.stringify(L2.lista.map(r => [r.n, r.anon, r.p7])));
+  ok('Definições › Tu › Ranking: sem mostrar o nome, os outros veem "Pessoa anónima"', L2.lista.some(r => r.anon && r.n === '' && r.p7 === 300), JSON.stringify(L2.lista.map(r => [r.n, r.anon, r.p7])));
   const er = errs.filter(e => !/Failed to load|net::/.test(e)); ok('sem erros de JavaScript (ranking)', !er.length, er.slice(0, 3).join(' | ')); await ctx.close(); }
+async function v248Tests(b) { cur = 'v2.48'; console.log('\n=== v2.48: currículo, IA no treino e na dieta, Mundo, foco, Fé, Painel, áreas, admin, Spotify, Spyke ===');
+  const { ctx, p, errs } = await newPage(b, PROFILES[0]); await p.route(/generativelanguage|pollinations/, rt => rt.abort()); p.on('dialog', d => d.accept());
+  await p.route(/open\.spotify\.com/, rt => rt.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><title>Spotify</title><p>tocador</p>' }));
+  await p.goto(BASE); await sleep(900);
+  const spl = await E(p, () => { const s = document.querySelector('#splash .sc-anim'); return { ok: !!s && !!s.querySelector('.sc-beam') && s.querySelectorAll('.sc-gl').length > 0 && s.querySelectorAll('.sc-grass').length > 0 && s.querySelectorAll('.sc-sw').length > 0, sc: !!document.querySelector('#splash svg.scene'), cls: (document.querySelector('#splash svg.scene') || {}).className && document.querySelector('#splash svg.scene').className.baseVal, an: localStorage.getItem('nau:bganim'), gl: s ? s.querySelectorAll('.sc-gl').length : -1, h: new Date().getHours() }; });
+  ok('ecrã de entrada: o farol gira, gaivotas a voar (de dia), mato e ondulação', spl.ok || (spl.sc && /sc-anim/.test(spl.cls) && spl.gl === 0 && (spl.h >= 20 || spl.h < 7)), JSON.stringify(spl));
+  ok('todos os fundos modelo têm movimento (aves, mato, árvores, relâmpagos, areia, anéis, luz)', await E(p, () => { const F = OS.Fundo, out = {}; ['ondas', 'serra', 'cidade', 'chuva', 'dunas', 'pinhal', 'estrelas', 'aneis', 'liso'].forEach(k => { localStorage.setItem('nau:bg', JSON.stringify(k)); const d = document.createElement('div'); d.innerHTML = F.html(390, 700, { anim: 1 }); out[k] = d.querySelectorAll('.fd-fly,.fd-sway,.fd-skew,.fd-flash,.fd-rip,.fd-sand,.fd-ring,.fd-ripple,.fd-orb,.fd-shoot,.fd-wave,.fd-mist,.fd-tw').length; }); localStorage.removeItem('nau:bg'); return Object.values(out).every(n => n > 0) ? true : JSON.stringify(out); }));
+  await unlock(p); await E(p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); OS.UI.closeModal && OS.UI.closeModal(); });
+  await E(p, () => { OS.AI.key = () => 'x'; OS.AI.json = async parts => { const t = parts.map(x => x.text || '').join(' ');
+      if (/recrutamento/.test(t)) return { nota: 64, resumo: 'Bom começo.', fortes: ['Formação clara'], melhorar: [{ o: 'Sem números', como: 'Põe resultados' }], reescrever: [{ antes: 'Ajudei clientes', depois: 'Atendi 40 clientes por dia' }], faltam_palavras: ['Excel'], falta_no_cv: ['Certificação X'], formato: 'Uma página.', vaga: { encaixe: 55, porque: 'Falta inglês.', mudar: ['Pôr o inglês'] } };
+      if (/treinador/.test(t)) return { nota: 58, veredicto: 'Pouco volume de pernas.', bom: ['Consistência'], problemas: [{ o: 'Pernas', mudar: '10 séries por semana' }], plano: [{ dia: 'Dia 1', foco: 'Pernas', exercicios: ['Agachamento 4×8'] }], recuperacao: 'Dorme 8 h.' };
+      if (/nutricionista/.test(t)) return { nota: 71, veredicto: 'Proteína baixa.', bom: ['Calorias certas'], problemas: [{ o: 'Proteína', mudar: '+40 g' }], plano: [{ refeicao: 'Almoço', ideia: 'Frango com arroz', kcal: 650, proteina_g: 45 }], trocas: ['Bolachas por iogurte grego'] };
+      if (/tocou/.test(t)) return { simples: 'Deus cuida de ti como um pastor.', contexto: 'David.', viver: 'Confia hoje.' };
+      return {}; }; OS.AI.text = async () => 'Resposta simulada.'; });
+  const go = async h => { await E(p, h => { location.hash = h; }, h); await sleep(600); };
+  await go('visao'); ok('Painel: "O app inteiro" com cada área num olhar', await E(p, () => document.querySelectorAll('#view .v360-t').length >= 4));
+  await go('carreira.curriculo'); await E(p, () => { OS.add('cvs', { name: 'CV', text: 'Atendimento ao cliente. Ajudei clientes.', date: OS.U.today(), alvo: 'Analista' }); OS.act.cvRun(); }); await sleep(900);
+  ok('Carreira › Currículo: a IA analisa (nota, o que melhorar, frases reescritas)', await E(p, () => /64/.test(document.querySelector('#view .cv-ring').textContent) && /40 clientes/.test(document.querySelector('#view .cv-rw').textContent)));
+  await go('treino.ia'); await E(p, () => OS.act.caRun({ dataset: { k: 'treino' } })); await sleep(900);
+  ok('Treino › Análise da IA: nota, o que mudar e semana sugerida', await E(p, () => /58/.test(document.querySelector('#view .cv-ring').textContent) && !!document.querySelector('#view .ca-plan')));
+  await go('dieta.ia'); await E(p, () => OS.act.caRun({ dataset: { k: 'dieta' } })); await sleep(900);
+  ok('Dieta › Análise da IA: nota, trocas e dia sugerido', await E(p, () => /71/.test(document.querySelector('#view .cv-ring').textContent) && /iogurte/.test(document.querySelector('#view').textContent)));
+  await go('mundo'); await E(p, () => document.querySelector('.mu-cs path[data-c=FRA]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await sleep(300);
+  await E(p, () => document.querySelector('#modal [data-act=muDoc][data-d=cid]').click()); await sleep(300);
+  ok('Mundo: cidadania marcada à parte (morar ou visitar não é ter passaporte)', await E(p, () => { const r = OS.all('countries').find(x => x.code === 'FRA'); return r && r.docs.includes('cid') && !OS.Mundo.been(OS.Mundo.mine().FRA); }));
+  await E(p, () => OS.UI.closeModal()); await sleep(300); ok('Mundo: secção "Cidadania, passaportes e vistos" e os "Carimbos"', await E(p, () => /Cidadania, passaportes e vistos/.test(document.querySelector('#view').textContent) && /Carimbos/.test(document.querySelector('#view').textContent)));
+  ok('Mundo: tocar num país não o encolhe (o clique não se perde)', await E(p, () => { OS.Vivo.set('full'); const el = document.querySelector('.mu-cs path[data-c=DEU]'); el.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); const r = el.classList.contains('vv-press'); OS.Vivo.set('off'); return !r; }));
+  await go('foco'); ok('Bloco de foco com a Floresta dentro (e a Floresta fora do menu)', await E(p, () => /Plantar uma árvore/.test(document.querySelector('#view .tabs').textContent) && !document.querySelector('#side a[href="#floresta"]')));
+  await go('floresta'); ok('#floresta abre como Bloco de foco', await E(p, () => /Bloco de foco/.test(document.querySelector('#view h1').textContent)));
+  await go('fe.biblia'); for (let i = 0; i < 40 && !(await E(p, () => !!document.querySelector('#view .fe-vs'))); i++) await sleep(250);
+  await E(p, () => OS.setUI('bSel', [1])); await sleep(1200); ok('Fé: tocar num versículo mostra a explicação', await E(p, () => /pastor/.test((document.querySelector('#view .fe-exp') || {}).textContent || '')));
+  await E(p, () => { OS.Areas.set(['fe', 'financas', 'investimentos']); location.hash = 'visao'; }); await sleep(700);
+  ok('Funcionalidades desligadas saem do app (Fé do menu, finanças do Painel)', await E(p, () => !document.querySelector('#side a[href="#fe"]') && !document.querySelector('#view [data-area~="financas"]')));
+  await E(p, () => { OS.Areas.set([]); OS.request(); }); await sleep(600); ok('e voltam ao ligar', await E(p, () => !!document.querySelector('#view [data-area~="financas"]')));
+  await E(p, () => { const t = OS.U.today(); OS.add('errors', { title: 'Erro de sinal', subject: '', date: OS.U.addDays(t, -3), right: 'menos vezes menos dá mais', rule: 'conferir o sinal' }); }); await sleep(300);
+  ok('Caderno de erros: o erro vira flashcard e aparece em "O que estudar hoje"', await E(p, () => OS.all('cards').some(c => c.deck === 'Caderno de erros' && /sinal/.test(c.front)) && OS.St.today().some(x => x.kind === 'Erro' && /sinal/.test(x.title))));
+  ok('Dominus mais difícil (curvas novas)', await E(p, () => OS.Dom.lvA(1200).l === 1 && OS.Dom.lvA(1199).l === 0));
+  await go('definicoes'); ok('Definições: Spotify (com conta e sem conta) e ligar/desligar funcionalidades', await E(p, () => !!document.querySelector('#spSet') && /Sem conta/.test(document.querySelector('#spSet').textContent)));
+  await E(p, () => { document.querySelector('#spSet [name=u]').value = 'https://open.spotify.com/playlist/37i9dQZF1DX8NTLI2TtZa6?si=x'; document.querySelector('#spSet form[data-form=spEmb] button').click(); }); await sleep(600);
+  const spr = await E(p, async () => { const a = document.querySelector('#spMini iframe'); location.hash = 'hoje'; await new Promise(r => setTimeout(r, 500)); const b2 = document.querySelector('#spMini iframe'); return { ok: !!a && a === b2 && /embed\/playlist\/37i9dQZF1DX8NTLI2TtZa6/.test(a.src), a: !!a, same: a === b2, src: a && a.src, emb: localStorage.getItem('nau:sp:emb'), mini: !!document.getElementById('spMini'), ui: localStorage.getItem('nau:sp:ui') }; });
+  ok('Spotify sem conta: o tocador aparece no canto e fica ao mudar de página', spr.ok, JSON.stringify(spr));
+  await E(p, () => { OS.one('spyke').nome = 'Atlas'; OS.touch('spyke'); OS.act.spyOpen(); }); await sleep(500);
+  ok('o nome escolhido para a IA aparece no assistente', await E(p, () => { const t = document.querySelector('.spy-card').innerText; return /ATLAS/.test(t) && !/Spyke/.test(t); }));
+  await E(p, () => OS.Spyke.close());
+  // escala por foto: importar outra foto da mesma semana substitui a anterior (vale a última) e dá para desfazer
+  const ws = await E(p, () => { const U = OS.U, t = U.today(), d = n => U.addDays(t, n); OS.ui.wsFrom = t; OS.ui.wsTo = d(13);
+    OS.WorkSched._res([{ date: d(1), start: '09:00', end: '17:00', breakMin: 30 }, { date: d(2), start: '10:00', end: '18:00', breakMin: 30 }]); OS.WorkSched._apply(true);
+    const a = OS.all('shifts').filter(s => s.date >= t).map(s => s.date + ' ' + s.start).sort();
+    OS.WorkSched._res([{ date: d(1), start: '14:00', end: '22:00', breakMin: 30 }, { date: d(1), start: '15:00', end: '23:00', breakMin: 0 }, { date: d(3), off: true, kind: 'Folga' }]); OS.WorkSched._apply(true);
+    const b = OS.all('shifts').filter(s => s.date >= t).map(s => s.date + ' ' + s.start).sort(), off = OS.all('dayoffs').some(o => o.date === d(3));
+    OS.act.wsUndo(); const c = OS.all('shifts').filter(s => s.date >= t).map(s => s.date + ' ' + s.start).sort();
+    return { a, b, off, c, d1: d(1), d2: d(2), sameWeek: U.monday(d(1)) === U.monday(d(2)) }; });
+  ok('Escala por foto: a última importação prevalece (mesmo dia e mesma semana) e dá para desfazer', ws.b.includes(ws.d1 + ' 15:00') && !ws.b.includes(ws.d1 + ' 14:00') && !ws.b.includes(ws.d1 + ' 09:00') && (ws.sameWeek ? !ws.b.includes(ws.d2 + ' 10:00') : true) && ws.off && ws.c.join() === ws.a.join(), JSON.stringify(ws));
+  const er = errs.filter(e => !/Failed to load|net::|open\.spotify|frame-ancestors|Refused to/.test(e)); ok('sem erros de JavaScript (v2.48)', !er.length, er.slice(0, 3).join(' | ')); await ctx.close(); }
 async function sonoTests(b) { cur = 'Sono'; console.log('\n=== Sono: app Saúde no Painel ===');
   const { ctx, p, errs } = await newPage(b, PROFILES[0]); await p.goto(BASE); await unlock(p); await E(p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); OS.all('sleep').splice(0); location.hash = 'visao'; }); await sleep(600);
   ok('Painel: cartão do Sono vazio convida a ligar o app Saúde ou registar à mão', await E(p, () => { const c = [...document.querySelectorAll('.dash .dc')].find(d => /^Sono/.test(d.querySelector('h3').textContent)); return !!c && /Ligar ao app Saúde/.test(c.innerText) && !!c.querySelector('[data-act=slAdd]'); }));
@@ -2918,7 +2974,7 @@ async function earTests() { cur = 'Ouvido'; console.log('\n=== Spyke: ouvido sil
   await new Promise(r => srv.listen(PORT, r));
   const b = await chromium.launch(); const t0 = Date.now();
   const ONLY = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean), run = k => !ONLY.length || ONLY.includes(k);
-  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('mundo')) await muTests(b); if (run('contas')) await accTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
+  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('mundo')) await muTests(b); if (run('contas')) await accTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
   catch (e) { R.push({ p: cur, name: 'execução da bateria', pass: false, info: e.message.split('\n')[0] }); console.log('ERRO NA BATERIA:', e.message); try { for (const c of b.contexts()) for (const pg of c.pages()) { const d = await pg.evaluate(() => ({ u: location.hash, now: Date.now(), pend: window.__pend ? [...window.__pend.values()] : null, acc: ((document.getElementById('acc') || {}).innerText || '').slice(0, 80).replace(/\n/g, ' '), msg: (document.querySelector('#acc .ac-msg') || {}).textContent || '' })).catch(() => null); if (d && d.pend) console.log('    [pagina]', JSON.stringify(d)); } } catch (e2) { } }
   await b.close(); srv.close();
   const f = R.filter(x => !x.pass);

@@ -13,7 +13,9 @@ const pub = () => !!(OS.Acc && OS.Acc.on && OS.Acc.pub);
 const MUST = ['visao', 'definicoes'];
 const hiddenSet = () => new Set(((OS.one('areas') || {}).hide || []).filter(k => !MUST.includes(k)));
 const groups = () => (OS.NAV || []).filter(([g]) => g !== 'Admin');
-OS.Areas = { on: k => !hiddenSet().has(k), hidden: hiddenSet, set: hide => { OS.setOne('areas', { hide: [...new Set(hide)].filter(k => !MUST.includes(k)) }); if (OS.fitNav) setTimeout(OS.fitNav, 60); } };
+// prune: o que pertence a uma área desligada sai do ecrã (data-area="k1 k2": sai quando TODAS essas áreas estão desligadas)
+const prune = root => { const h = hiddenSet(); if (!h.size || !root) return; root.querySelectorAll('[data-area]').forEach(el => { const ks = el.dataset.area.split(/\s+/).filter(Boolean); if (ks.length && ks.every(k => h.has(k))) el.remove(); }); };
+OS.Areas = { prune, on: k => !hiddenSet().has(k), hidden: hiddenSet, set: hide => { OS.setOne('areas', { hide: [...new Set(hide)].filter(k => !MUST.includes(k)) }); if (OS.fitNav) setTimeout(OS.fitNav, 60); } };
 const areaChips = (hide, attr) => groups().map(([g, items]) => { const on = items.filter(([k]) => !hide.has(k)).length;
   return `<div class="onb-g"><div class="onb-gh"><b>${esc(g === 'Visão geral' ? 'Visão Geral' : g)}</b><button type="button" class="btn xs ghost" ${attr}g="${esc(g)}">${on === items.length ? 'Tirar tudo' : 'Quero tudo'}</button></div>
     <div class="onb-chips">${items.map(([k, l, ic]) => { const lock = MUST.includes(k), sel = lock || !hide.has(k); return `<button type="button" class="chip onb-c ${sel ? 'on' : ''}" ${lock ? 'disabled' : ''} ${attr}="${k}" aria-pressed="${sel}">${UI.ic(ic)}${esc(k === 'mova' ? (OS.one('mova').name || 'O meu negócio') : l)}</button>`; }).join('')}</div></div>`; }).join('');
@@ -27,7 +29,7 @@ const CURS = cc => { const all = OS.Pais ? [...new Set(Object.values(OS.Pais.dat
 const curName = c => { try { return new Intl.DisplayNames([OS.Lang ? OS.Lang.base() : 'pt'], { type: 'currency' }).of(c); } catch (e) { return c; } };
 // vozes para escolher logo no início (as 30 estão em Definições › Spyke)
 const VOZ = [['Charon', '♂ Grave'], ['Puck', '♂ Animada'], ['Iapetus', '♂ Clara'], ['Kore', '♀ Firme'], ['Aoede', '♀ Leve'], ['Sulafat', '♀ Calorosa']];
-const NAMES = ['Spyke', 'Jarvis', 'Atlas', 'Nova', 'Luna', 'Aurora', 'Max', 'Íris'], FEM = /^(Nova|Luna|Aurora|Íris|Iris|Sofia|Ana|Maria|Alice|Eva|Lia|Mia|Clara)$/i;
+const NAMES = ['Spyke', 'Orion', 'Atlas', 'Nova', 'Luna', 'Aurora', 'Max', 'Íris'], FEM = /^(Nova|Luna|Aurora|Íris|Iris|Sofia|Ana|Maria|Alice|Eva|Lia|Mia|Clara)$/i;
 const SPORTS = [['corrida', 'Corrida'], ['futebol', 'Futebol'], ['futsal', 'Futsal'], ['basquetebol', 'Basquetebol'], ['voleibol', 'Voleibol'], ['natacao', 'Natação'], ['ciclismo', 'Ciclismo'], ['tenis', 'Ténis'], ['padel', 'Padel'], ['jiujitsu', 'Jiu-Jitsu'], ['boxe', 'Boxe'], ['muaythai', 'Muay Thai'], ['surf', 'Surf'], ['escalada', 'Escalada'], ['crossfit', 'CrossFit'], ['calistenia', 'Calistenia']];
 const HABITS = [['acordar', 'Acordar à hora, sem snooze', 'Manhã', 1], ['treino', 'Treino ou corrida', 'Dia', 1, 'workout'], ['estudo', '2 blocos de foco (100 min)', 'Dia', 1, 'study100'], ['ler', '20 páginas de leitura', 'Noite', 0],
   ['agua', 'Beber 2 litros de água', 'Dia', 0], ['gastos', 'Registar gastos do dia', 'Noite', 0, 'cash'], ['tele', 'Telemóvel fora do quarto', 'Noite', 0], ['meditar', 'Meditar 10 minutos', 'Manhã', 0],
@@ -264,6 +266,6 @@ OS.on('ready', () => { setTimeout(tryOpen, 900); });
 OS.on('unlock', () => setTimeout(tryOpen, 600));
 setInterval(() => { if (!W && due()) tryOpen(); }, 2500);
 OS.on('ready', () => { const o = OS.views.definicoes; if (!o || o._onb) return; OS.views.definicoes = sub => o(sub) + (String(sub || '') === '' && pub() ? `<div class="pn" id="onbSet"><div class="pn-h"><h3>${UI.ic('star')}O teu Prumo</h3></div>
-  <p class="mut" style="margin:0 0 10px">${OS.one('onb').done === 'ok' ? 'Já personalizaste o Prumo. Podes responder outra vez às perguntas (o que já existe fica, e junta-se o que for novo) ou mudar as abas do menu.' : 'Responde a umas perguntas rápidas e o Prumo fica feito para ti: abas, disciplinas, treino, dieta, hábitos, metas e marcos do jogo.'}</p>
-  <div class="row gap8" style="flex-wrap:wrap"><button class="btn sm pri" data-act="onbOpen">${OS.one('onb').done === 'ok' ? 'Responder outra vez' : 'Personalizar agora'}</button><button class="btn sm" data-act="onbAreas">Abas do menu${hiddenSet().size ? ' · ' + hiddenSet().size + ' escondida' + (hiddenSet().size > 1 ? 's' : '') : ''}</button></div></div>` : ''); OS.views.definicoes._onb = 1; });
+  <p class="mut" style="margin:0 0 10px">${OS.one('onb').done === 'ok' ? 'Já personalizaste o Prumo. Podes responder outra vez às perguntas (o que já existe fica, e junta-se o que for novo) ou ligar e desligar funcionalidades (o que desligas sai do app inteiro: menu, Painel, Hoje, frases e IA; volta quando a ligares).' : 'Responde a umas perguntas rápidas e o Prumo fica feito para ti: abas, disciplinas, treino, dieta, hábitos, metas e marcos do jogo.'}</p>
+  <div class="row gap8" style="flex-wrap:wrap"><button class="btn sm pri" data-act="onbOpen">${OS.one('onb').done === 'ok' ? 'Responder outra vez' : 'Personalizar agora'}</button><button class="btn sm" data-act="onbAreas">Ligar e desligar funcionalidades${hiddenSet().size ? ' · ' + hiddenSet().size + ' escondida' + (hiddenSet().size > 1 ? 's' : '') : ''}</button></div></div>` : ''); OS.views.definicoes._onb = 1; });
 })();

@@ -12,7 +12,7 @@ S.bgoals = { label: 'Meta do corpo', title: r => r.name || 'Meta', fields: [F('t
 
 /* ---------- presença: os dias em que foste ---------- */
 const BG = OS.BodyGoals = {};
-BG.days = () => { const m = {}; const put = (d, k) => { (m[d] = m[d] || {})[k] = 1; }; OS.all('workouts').forEach(w => put(w.date, 'w')); OS.all('runs').forEach(r => put(r.date, 'r')); OS.all('checkins').forEach(c => put(c.date, 'c')); return m; };
+BG.days = () => { const m = {}; const put = (d, k) => { (m[d] = m[d] || {})[k] = 1; }; OS.all('workouts').forEach(w => put(w.date, 'w')); OS.all('runs').forEach(r => put(r.date, 'r')); OS.all('sportlog').forEach(x => put(x.date, 's')); OS.all('checkins').forEach(c => put(c.date, 'c')); return m; };
 BG.stats = () => { const m = BG.days(), t = U.today(), tgt = n(OS.one('profile').trainTarget) || 4; let cur = 0, d = m[t] ? t : U.addDays(t, -1); while (m[d]) { cur++; d = U.addDays(d, -1); }
   let best = 0, run = 0; Object.keys(m).sort().forEach((k, i, a) => { run = i && U.diff(k, a[i - 1]) === 1 ? run + 1 : 1; best = Math.max(best, run); });
   let wk = 0, w = U.monday(t); const cnt = a => U.range(a, U.addDays(a, 6)).filter(x => m[x]).length; if (cnt(w) < tgt) w = U.addDays(w, -7); while (cnt(w) >= tgt) { wk++; w = U.addDays(w, -7); }
@@ -21,18 +21,15 @@ BG.stats = () => { const m = BG.days(), t = U.today(), tgt = n(OS.one('profile')
   return { m, cur, best, wk, d30, exp, pct, month, tgt, lvl, today: !!m[t] }; };
 BG.calendar = (weeks = 26) => { const st = BG.stats(), t = U.today(), start = U.addDays(U.monday(t), -7 * (weeks - 1)), cols = [];
   for (let w = 0; w < weeks; w++) { const a = U.addDays(start, w * 7); cols.push(U.range(a, U.addDays(a, 6))); }
-  const cls = d => { const x = st.m[d]; return d > t ? 'fut' : !x ? '' : x.w && x.r ? 'wr' : x.w ? 'w' : x.r ? 'r' : 'c'; };
-  return `<div class="dc-cal" role="img" aria-label="Calendário de presença das últimas ${weeks} semanas"><div class="dc-wd">${['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map(l => `<i>${l}</i>`).join('')}</div><div class="dc-sc"><div class="dc-grid">${cols.map((c, i) => `<div class="dc-col">${U.parse(c[0]).getDate() <= 7 || i === 0 ? `<em>${U.MES[U.parse(c[0]).getMonth()]}</em>` : '<em></em>'}${c.map(d => `<button class="dc-d ${cls(d)}${d === t ? ' today' : ''}" data-act="bgDay" data-d="${d}" title="${U.fmtD(d)}" ${d > t ? 'disabled' : ''}></button>`).join('')}</div>`).join('')}</div></div></div>
-    <div class="dc-leg"><span><i class="dc-d w"></i>treino</span><span><i class="dc-d r"></i>corrida</span><span><i class="dc-d wr"></i>treino + corrida</span><span><i class="dc-d c"></i>fui (marcado)</span><span><i class="dc-d"></i>não fui</span></div>`; };
+  const cls = d => { const x = st.m[d]; return d > t ? 'fut' : !x ? '' : x.w && x.r ? 'wr' : x.w ? 'w' : x.r ? 'r' : x.s ? 'sp' : 'c'; };
+  return `<div class="dc-cal" role="img" aria-label="Calendário de presença das últimas ${weeks} semanas"><div class="dc-wd">${['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map(l => `<i>${l}</i>`).join('')}</div><div class="dc-sc"><div class="dc-grid">${cols.map((c, i) => `<div class="dc-col">${U.parse(c[0]).getDate() <= 7 || i === 0 ? `<em>${U.MES[U.parse(c[0]).getMonth()]}</em>` : '<em></em>'}${c.map(d => `<i class="dc-d ${cls(d)}${d === t ? ' today' : ''}" title="${U.fmtD(d)}"></i>`).join('')}</div>`).join('')}</div></div></div>
+    <div class="dc-leg"><span><i class="dc-d w"></i>treino</span><span><i class="dc-d r"></i>corrida</span><span><i class="dc-d wr"></i>treino + corrida</span><span><i class="dc-d sp"></i>desporto</span><span><i class="dc-d"></i>não fui</span></div>`; };
 BG.panel = (compact) => { const s = BG.stats();
   return `<div class="pn dc"><div class="pn-h"><h3>Disciplina</h3><span class="bdg ${s.lvl[1]}">${s.lvl[0]}</span></div>
     <div class="dc-top"><div class="dc-score"><b class="mono">${s.pct}%</b><small>consistência<br>30 dias</small></div><div class="dc-kp">${[['Dias seguidos', s.cur], ['Melhor sequência', s.best], ['Semanas a cumprir', s.wk], ['Este mês', s.month]].map(([l, v]) => `<div><b class="mono">${v}</b><small>${l}</small></div>`).join('')}</div>
-    ${s.today ? `<span class="dc-ok">${UI.ic('check')}Hoje: feito</span>` : `<button class="btn pri sm" data-act="bgWent">${UI.ic('check')}Fui hoje</button>`}</div>
+    ${s.today ? `<span class="dc-ok">${UI.ic('check')}Hoje: feito</span>` : `<a class="btn pri sm" href="#treino">${UI.ic('plus')}Registar o treino de hoje</a>`}</div>
     ${BG.calendar(compact ? 17 : 26)}
-    <small class="mut">Meta: ${s.tgt} dias por semana (${s.exp} em 30 dias; fizeste ${s.d30}). Conta como "fui" um treino, uma corrida ou tocares num dia para o marcar.</small></div>`; };
-A.bgWent = () => { if (!BG.days()[U.today()]) OS.add('checkins', { date: U.today() }); UI.toast('Boa! Dia marcado.', 'pos'); };
-A.bgDay = b => { const d = b.dataset.d, m = BG.days()[d]; if (m && (m.w || m.r)) { UI.toast(`${U.fmtD(d)}: ${m.w ? 'treino' : ''}${m.w && m.r ? ' e ' : ''}${m.r ? 'corrida' : ''} registados`, ''); return; }
-  const c = OS.all('checkins').find(x => x.date === d); if (c) OS.del('checkins', c.id); else OS.add('checkins', { date: d }); };
+    <small class="mut">Meta: ${s.tgt} dias por semana (${s.exp} em 30 dias; fizeste ${s.d30}). Os dias contam sozinhos quando registas um treino, uma corrida ou uma prática de desporto. Os dias que já passaram não se mudam aqui.</small></div>`; };
 
 /* ---------- desafios ---------- */
 const tg = d => OS.BodyX ? OS.BodyX.target(d) : { kcal: 0, p: 0 };

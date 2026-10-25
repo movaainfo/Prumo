@@ -12,7 +12,8 @@ const RISK = /<\s*(script|iframe|object|embed|base|meta|link|frame)\b|\son[a-z]+
 const BAD_TAG = new Set(['script', 'object', 'embed', 'base', 'meta', 'link', 'frame', 'frameset', 'applet']);
 const URL_ATTR = /^(href|src|action|formaction|xlink:href|data|poster|background|lowsrc|ping)$/;
 const badUrl = v => /^(javascript|vbscript|data:text\/html|data:application)/i.test(String(v).replace(/[\u0000- \u007f- ]+/g, ''));
-const YT = /^https:\/\/(www\.)?(youtube-nocookie\.com|youtube\.com)\/embed\//;
+// iframes permitidos: vídeos do YouTube e o tocador do Spotify (só os endereços de embed)
+const YT = /^https:\/\/((www\.)?(youtube-nocookie\.com|youtube\.com)\/embed\/|open\.spotify\.com\/embed\/(playlist|album|track|artist|show|episode)\/[A-Za-z0-9]{10,40}(\?|$))/;
 const scrub = root => { for (const el of root.querySelectorAll('*')) { const tag = el.localName;
     if (BAD_TAG.has(tag)) { el.remove(); continue; }
     if (tag === 'iframe') { if (el.classList.contains('ml-fr')) { el.setAttribute('sandbox', 'allow-popups allow-popups-to-escape-sandbox'); el.removeAttribute('src'); } else if (!YT.test(el.getAttribute('src') || '')) { el.remove(); continue; } else el.removeAttribute('srcdoc'); }

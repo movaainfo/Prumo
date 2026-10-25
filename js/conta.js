@@ -346,6 +346,7 @@ OS.on('ready', () => setTimeout(() => sendUse(0), 4000));
 Acc.adm = () => !!(S && S.adm);
 Acc.token = () => (S && S.t) || '';
 Acc.pid = () => pid();
+Acc.prof = () => { const p = cur(); return p ? { nome: p.nome || '', cor: p.cor || '', av: p.av || '', img: okImg(p.img) ? p.img : '' } : null; }; // o perfil aberto (para a foto no ranking)
 Acc.call = (op, body) => S && cur() ? conta(op, body) : Promise.reject(Object.assign(new Error('Sem conta.'), { status: 401 })); // ranking e outras funções do servidor
 Acc.navAdm = () => { const N = OS.NAV; if (!N) return; const i = N.findIndex(g => g[0] === 'Admin');
   if (Acc.adm() && i < 0) { N.push(['Admin', [['admin', 'Administração', 'shield']]]); OS.request && OS.request(); } else if (!Acc.adm() && i >= 0) { N.splice(i, 1); OS.request && OS.request(); } };
@@ -391,7 +392,15 @@ A.admRefresh = () => { ADM = null; admErr = ''; admLoad(); OS.request(); };
 A.admOne = b => { const c = ADM && ADM.contas[+b.dataset.i]; if (!c) return; const D = lastDays(30), tot = D.reduce((m, d) => m + ((c.dias || {})[d] || 0), 0), on = D.filter(d => (c.dias || {})[d]).length;
   OS.UI.modal(`<div style="padding:20px"><div class="row between" style="align-items:center"><h3 style="margin:0">${esc(c.nome || c.email)}</h3><button class="icon-btn" data-mclose aria-label="Fechar">${OS.UI.ic('x')}</button></div><p class="mut" style="margin:4px 0 14px">${esc(c.email)}</p>
     <div class="dc-rows"><div><span>Perfis</span><b>${esc((c.perfis || []).join(', ') || '—')}</b></div><div><span>Conta criada</span><b>${c.criado ? new Date(c.criado).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Última entrada (login)</span><b>${c.ultEntrada ? new Date(c.ultEntrada).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Último acesso</span><b>${c.ultUso ? new Date(c.ultUso).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Entradas</span><b class="mono">${c.entradas || 0}</b></div><div><span>Termos aceites</span><b>${c.termos ? 'versão de ' + esc(c.termos) + (c.termosAt ? ' · ' + new Date(c.termosAt).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '') : 'ainda não'}</b></div><div><span>Uso nos últimos 30 dias</span><b class="mono">${hmin(tot)} · ${on} ${on === 1 ? 'dia' : 'dias'}</b></div></div>
-    <h4 style="margin:16px 0 6px">Minutos por dia (30 dias)</h4>${bars(c.dias || {}, 30, 90)}<div class="adm-ax"><span>${D[0].slice(8)}/${D[0].slice(5, 7)}</span><span>hoje</span></div></div>`); };
+    <h4 style="margin:16px 0 6px">Minutos por dia (30 dias)</h4>${bars(c.dias || {}, 30, 90)}<div class="adm-ax"><span>${D[0].slice(8)}/${D[0].slice(5, 7)}</span><span>hoje</span></div>
+    ${c.admin || c.email === Acc.email() ? '' : `<div class="adm-del"><h4 style="margin:18px 0 6px">Apagar esta conta</h4><p class="mut" style="margin:0 0 10px">Apaga a conta, todos os perfis e os dados dela (também do ranking). Não se pode desfazer.</p>
+      <form data-form="admDel" data-i="${+b.dataset.i}" class="row gap8" style="flex-wrap:wrap"><input type="password" name="senha" autocomplete="current-password" placeholder="A tua senha (administrador)" required style="flex:1;min-width:180px"><button class="btn danger" type="submit">Apagar a conta</button></form></div>`}</div>`); };
+// o administrador apaga a conta de outra pessoa: pede a senha do administrador e confirma o e-mail
+OS.forms.admDel = async (f, v) => { const c = ADM && ADM.contas[+f.dataset.i]; if (!c) return;
+  if (!confirm(`Apagar a conta ${c.email} e todos os dados dela? Não se pode desfazer.`)) return;
+  const bt = f.querySelector('button'); bt.disabled = true; bt.textContent = 'A apagar…';
+  try { await conta('adminApagar', { email: c.email, senha: v('senha') }); ADM.contas = ADM.contas.filter(x => x !== c); ADM.total = ADM.contas.length; OS.UI.closeModal(); OS.UI.toast('Conta apagada: ' + c.email, 'pos'); OS.request(); }
+  catch (e) { bt.disabled = false; bt.textContent = 'Apagar a conta'; OS.UI.toast(e.message || 'Não consegui apagar a conta.', 'neg'); } };
 A.admCsv = () => { if (!ADM) return; const D = lastDays(30), q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const rows = [['Nome', 'E-mail', 'Perfis', 'Criada', 'Última entrada', 'Último acesso', 'Entradas'].concat(D)].concat(ADM.contas.map(c => [c.nome, c.email, (c.perfis || []).join(' / '), c.criado ? new Date(c.criado).toISOString() : '', c.ultEntrada ? new Date(c.ultEntrada).toISOString() : '', c.ultUso ? new Date(c.ultUso).toISOString() : '', c.entradas || 0].concat(D.map(d => (c.dias || {})[d] || 0))));
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + rows.map(r => r.map(q).join(';')).join('\n')], { type: 'text/csv;charset=utf-8' })); a.download = 'prumo-contas-' + today() + '.csv'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); };

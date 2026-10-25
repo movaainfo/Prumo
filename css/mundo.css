@@ -81,3 +81,15 @@
 .mu-mi{display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:12px;color:var(--tx2);font-size:13.5px}.mu-mi span{display:inline-flex;align-items:center;gap:5px}.mu-mi .ic{width:15px;height:15px}
 @media (max-width:600px){.mu-hero{gap:14px}.mu-hp{width:96px;height:96px}.mu-hp .mu-ring{width:96px;height:96px}.mu-hn b{font-size:22px}}
 .mu-q{width:100%;margin-bottom:4px}
+
+/* lista por continente: abre e fecha (só se desenha aberta) */
+.mu-gh{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;border-left:3px solid var(--c);padding:10px 10px;margin:8px 0 2px;color:var(--tx);font:inherit;font-size:15px;cursor:pointer;text-align:left;border-radius:0 10px 10px 0}
+.mu-gh:hover{background:rgba(120,200,255,.06)}.mu-gh small{color:var(--tx2)}.mu-gh .ic{margin-left:auto;width:16px;height:16px;color:var(--tx2)}
+.mu-cs path{transition:none}
+
+/* documentos: cidadania, passaporte, residência, visto */
+.mu-docs{display:flex;flex-direction:column;gap:6px;margin:12px 0}.mu-docs>div{display:flex;flex-wrap:wrap;gap:6px}.mu-docs .chip .ic{width:14px;height:14px;margin-right:4px;vertical-align:-2px}
+.mu-docl{display:flex;flex-direction:column;gap:6px}
+.mu-doc{display:flex;align-items:center;gap:10px;flex-wrap:wrap;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
+.mu-doc>b{flex:1;min-width:120px}.mu-dt{display:flex;gap:4px;flex-wrap:wrap}
+.mu-tag.d-cid{background:rgba(63,207,142,.16);color:#7EE2B2}.mu-tag.d-pass{background:rgba(56,189,248,.16);color:#7DD3FC}.mu-tag.d-res{background:rgba(154,140,245,.18);color:#C3B9FF}.mu-tag.d-visto{background:rgba(242,181,68,.16);color:#F5CD7E}

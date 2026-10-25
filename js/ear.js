@@ -68,9 +68,15 @@ const gemini = async (b64, lang) => { const key = OS.AI && OS.AI.gkey(); if (!ke
     if (!r.ok) { const msg = (j.error && j.error.message) || 'erro ' + r.status; last = msg; if (r.status === 429 && OS.AI.markLimit) OS.AI.markLimit(m, msg); if (OS.AI.isDead && OS.AI.isDead(r.status, msg)) OS.AI.markDead(m); continue; }
     const c = (j.candidates || [])[0] || {}; return clean(((c.content || {}).parts || []).map(p => p.text || '').join('')); }
   throw new Error('não consegui transcrever (' + String(last).slice(0, 80) + ')'); };
-E.engine = () => cfg().azKey && cfg().azKey.trim() ? 'Microsoft' : OS.AI && OS.AI.gkey() ? 'Google' : '';
+// v2.48: o ouvido dedicado do servidor (Whisper, Deepgram, OpenAI ou Microsoft, conforme a chave posta no Vercel) vem primeiro
+const SRVN = { groq: 'Whisper', deepgram: 'Deepgram', openai: 'OpenAI', azure: 'Microsoft' };
+const srvStt = () => { const c = U.ls.get('os2iaSrv', {}) || {}; return OS.AI && OS.AI.srv && OS.AI.srv() && c.stt ? c.stt : ''; };
+const viaSrv = async (b64, lang) => { const r = await fetch(new URL('api/ia?p=stt', document.baseURI).href, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + OS.Acc.token() }, body: JSON.stringify({ b64, lang }) });
+  const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error((j.error && j.error.message) || 'servidor ' + r.status); return clean(j.text); };
+E.engine = () => srvStt() ? SRVN[srvStt()] || 'servidor' : cfg().azKey && cfg().azKey.trim() ? 'Microsoft' : OS.AI && OS.AI.gkey() ? 'Google' : '';
 E.can = () => E.supported() && !!E.engine();
 E.stt = async b64 => { const lang = OS.Lang && OS.Lang.on() && !/^pt/.test(OS.Lang.code()) ? OS.Lang.speech() : cfg().accent === 'PT' ? 'pt-PT' : 'pt-BR';
+  if (srvStt()) { try { return await viaSrv(b64, lang); } catch (e) { if (!(cfg().azKey && cfg().azKey.trim()) && !(OS.AI && OS.AI.gkey())) throw e; } }
   if (cfg().azKey && cfg().azKey.trim()) { try { return await azure(b64, lang); } catch (e) { if (!(OS.AI && OS.AI.gkey())) throw e; } }
   return gemini(b64, lang); };
 })();

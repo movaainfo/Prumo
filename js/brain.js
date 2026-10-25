@@ -134,12 +134,18 @@ const askGemini = async (q, hist) => { const tools = T.concat([WEB]), contents =
 let SDK = null;
 const sdk = () => SDK || (SDK = import(new URL('vendor/anthropic-sdk.min.js', document.baseURI).href));
 B.MODELS = [['claude-opus-5-5', 'Claude Opus 5.5 · o mais inteligente (~10 cêntimos por conversa)'], ['claude-sonnet-5-5', 'Claude Sonnet 5.5 · rápido e muito bom (~5 cêntimos)'], ['claude-haiku-5-5', 'Claude Haiku 5.5 · o mais barato (~0,3 cêntimos)']];
-const askClaude = async (q, hist) => { const { Anthropic, betaTool } = await sdk(), c = cfg();
-  const client = new Anthropic({ apiKey: c.anKey.trim(), dangerouslyAllowBrowser: true, maxRetries: 1, timeout: 60000 });
+// v2.48: sem chave própria, o Claude vem do servidor do Prumo (a chave fica lá; os pedidos do SDK passam por api/ia?p=claude)
+const own = () => !!(cfg().anKey && cfg().anKey.trim());
+const viaSrv = (url, init = {}) => { const h = new Headers(init.headers || {}); h.delete('x-api-key'); h.set('authorization', 'Bearer ' + OS.Acc.token());
+  return fetch(String(url).includes('/v1/messages') ? new URL('api/ia?p=claude', document.baseURI).href : url, Object.assign({}, init, { headers: h })); };
+const askClaude = async (q, hist) => { const { Anthropic, betaTool } = await sdk(), c = cfg(), mine = own();
+  const client = new Anthropic(Object.assign({ apiKey: mine ? c.anKey.trim() : 'prumo-servidor', dangerouslyAllowBrowser: true, maxRetries: 1, timeout: 60000 }, mine ? {} : { fetch: viaSrv }));
   const tools = T.map(t => betaTool({ name: t.name, description: t.description, inputSchema: { type: 'object', properties: t.props, required: t.req, additionalProperties: false }, run: async a => String(await t.run(a)) }));
-  const model = c.anModel || B.MODELS[0][0], fb = model === 'claude-opus-5-5' || model === 'claude-sonnet-5-5';
+  const srvM = (U.ls.get('os2iaSrv', {}) || {}).mod, model = mine ? c.anModel || B.MODELS[0][0] : srvM || 'claude-sonnet-5-5', fb = model === 'claude-opus-5-5' || model === 'claude-sonnet-5-5';
+  // com a chave própria, a pesquisa web da Anthropic; no servidor do Prumo, o Claude pensa e o Gemini pesquisa no Google (ferramenta pesquisar_internet)
+  const web = mine ? [{ type: 'web_search_20260209', name: 'web_search', max_uses: 3 }] : OS.AI && OS.AI.key() ? [betaTool({ name: WEB.name, description: WEB.description, inputSchema: { type: 'object', properties: WEB.props, required: WEB.req, additionalProperties: false }, run: async a => String(await WEB.run(a)) })] : [];
   const runner = client.beta.messages.toolRunner(Object.assign({ model, max_tokens: 8000, max_iterations: 6, system: system(), output_config: { effort: 'low' },
-    tools: tools.concat([{ type: 'web_search_20260209', name: 'web_search', max_uses: 3 }]),
+    tools: tools.concat(web),
     messages: hist.concat([{ role: 'user', content: `Resumo atual dos dados dele (para contexto; consulta para detalhes):\n${brief()}\n\nPedido: ${q}` }]) },
     // se um pedido for recusado por engano, a Anthropic responde com outro modelo no mesmo pedido
     fb ? { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' } : {}));
@@ -150,7 +156,8 @@ const claudeErr = async e => { try { const { Anthropic } = await sdk(); if (e in
 
 /* ---------- conversa ---------- */
 const H = []; // últimas trocas (para continuar a conversa)
-B.which = () => cfg().brain === 'claude' && cfg().anKey ? 'claude' : OS.AI && OS.AI.key() ? 'gemini' : OS.AI && OS.AI.freeOn && OS.AI.freeOn() ? 'free' : '';
+// o cérebro: Claude (chave própria, ou o do servidor do Prumo se o dono o ligou e a pessoa não escolheu o Gemini) → Gemini → reserva grátis
+B.which = () => (cfg().brain === 'claude' && cfg().anKey) || (!(cfg().brain === 'gemini' && cfg().brainSet) && OS.AI && OS.AI.srvClaude && OS.AI.srvClaude()) ? 'claude' : OS.AI && OS.AI.key() ? 'gemini' : OS.AI && OS.AI.freeOn && OS.AI.freeOn() ? 'free' : '';
 /* ---------- reserva grátis (sem chave, sem limite diário): o mesmo Spyke com ferramentas, se o Google não responder ---------- */
 const wiki = async q => { try { const u = 'https://pt.wikipedia.org/w/api.php?action=query&generator=search&gsrlimit=3&prop=extracts&exintro=1&explaintext=1&exchars=700&format=json&origin=*&gsrsearch=' + encodeURIComponent(q);
     const j = await (await fetch(u)).json(), ps = Object.values((j.query || {}).pages || {}); return ps.length ? ps.map(p => p.title + ': ' + p.extract).join('\n') + '\nFonte: Wikipédia' : 'Não encontrei nada sobre isso.'; } catch (e) { return 'Pesquisa indisponível agora.'; } };
@@ -176,6 +183,6 @@ B.ask = async q => { did.length = 0; const w = B.which(); if (!w) return { text:
   if (text) { H.push({ r: 'u', t: q }, { r: 'a', t: text }); if (H.length > 20) H.splice(0, H.length - 20); }
   return { text, err, did: did.slice(), brain: w }; };
 B.reset = () => { H.length = 0; };
-B.test = async () => { const w = B.which(); if (w !== 'claude') return { ok: !!w }; try { const { Anthropic } = await sdk(), client = new Anthropic({ apiKey: cfg().anKey.trim(), dangerouslyAllowBrowser: true, maxRetries: 0 }); await client.models.retrieve(cfg().anModel || B.MODELS[0][0]); return { ok: true }; } catch (e) { return { ok: false, msg: await claudeErr(e) }; } };
+B.test = async () => { const w = B.which(); if (w !== 'claude') return { ok: !!w }; if (!own()) { try { const r = await B.ask('Responde só: ok'); return r.text ? { ok: true } : { ok: false, msg: r.err }; } catch (e) { return { ok: false, msg: e.message }; } } try { const { Anthropic } = await sdk(), client = new Anthropic({ apiKey: cfg().anKey.trim(), dangerouslyAllowBrowser: true, maxRetries: 0 }); await client.models.retrieve(cfg().anModel || B.MODELS[0][0]); return { ok: true }; } catch (e) { return { ok: false, msg: await claudeErr(e) }; } };
 B._tools = T; B._consult = consult;
 })();
