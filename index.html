@@ -5541,8 +5541,10 @@ const flushPut = async () => { timer = 0; const batch = queue, ws = waiters; que
     await send(); saveKnown(); savePend(); SY.last = Date.now(); SY.err = ''; SY.state = 'sincronizada'; ws.forEach(w => w.ok()); }
   catch (e) { SY.err = e.message; SY.state = 'sem ligação (guardado neste aparelho)'; savePend(); ws.forEach(w => w.ko({ code: 'unavailable' })); setTimeout(repush, 15000); }
   try { OS.request(); } catch (e) { } };
-const put = (id, data) => new Promise((ok, ko) => { queue[id] = data; pend.add(id); savePend(); waiters.push({ ok, ko }); clearTimeout(timer); timer = setTimeout(flushPut, 900); });
+const put = (id, data) => new Promise((ok, ko) => { queue[id] = data; pend.add(id); savePend(); waiters.push({ ok, ko }); clearTimeout(timer); timer = setTimeout(flushPut, window.__accPut || 4000); });
 const payload = id => { const [c, s] = id.split('~'); return c === 'one' ? { data: OS.one(s) } : { items: OS.all(c).filter(r => String(r._s || 0) === s) }; };
+// ao sair da app (ou mudar de app) grava logo o que estava à espera
+document.addEventListener('visibilitychange', () => { if (document.hidden && timer) { clearTimeout(timer); flushPut(); } });
 const repush = () => { if (!navigator.onLine) return; [...pend].filter(id => !queue[id]).forEach(id => put(id, Object.assign({ t: Date.now() }, payload(id))).catch(() => { })); };
 // espera também pelo que já ia a caminho (até ~3 s), para "sincronizado" ser verdade
 Acc.flush = async () => { clearTimeout(timer); for (let i = 0; i < 20 && (Object.keys(queue).length || pend.size); i++) { if (Object.keys(queue).length) await flushPut(); else await new Promise(r => setTimeout(r, 150)); } return !pend.size; };
@@ -5571,7 +5573,7 @@ const start = (cb, errCb) => { if (started) return; started = true;
     catch (e) { SY.err = e.message; SY.state = 'sem ligação (guardado neste aparelho)'; }
     finally { polling = false; } };
   Acc.poll = poll;
-  setInterval(poll, window.__accPoll || 20000);
+  setInterval(poll, window.__accPoll || 90000); // a cada 90 s com a app à vista; ao voltar à app verifica logo (v2.53: menos pedidos, cotas da base de dados)
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { poll(); if (pend.size) repush(); } });
   addEventListener('online', () => { poll(); if (pend.size) repush(); }); };
 const DB = { collection: () => ({ onSnapshot: (cb, err) => { start(cb, err); return () => { }; } }), doc: path => ({ set: data => put(path.split('/').slice(1).join('/'), data) }) };
@@ -10857,7 +10859,7 @@ NW.unread = () => { const it = itemsFor('W', 'TOP', ''); return it.filter(x => x
 // ao abrir a app já vai buscando os destaques: quando abrires o Jornal estão prontos
 const topAt = () => Math.min(...specs('W', 'TOP', '').map(s => (NW.cache[s.id] || {}).at || 0));
 OS.on('ready', () => setTimeout(() => { if (document.hidden || !scr() || navigator.webdriver) return; if (Date.now() - topAt() > 5 * 6e4) NW.fetch(specs('W', 'TOP', '')).then(() => OS.request()).catch(() => { }); }, 2500));
-OS.on('ready', () => { setInterval(() => { if (document.hidden || !scr()) return; const on = /^#jornal/.test(location.hash); if (on) load(false); else if (Date.now() - topAt() > 10 * 6e4) NW.fetch(specs('W', 'TOP', '')).then(() => OS.request()).catch(() => { }); }, 90e3);
+OS.on('ready', () => { setInterval(() => { if (document.hidden || !scr()) return; const on = /^#jornal/.test(location.hash); if (on) load(false); else if (Date.now() - topAt() > 30 * 6e4) NW.fetch(specs('W', 'TOP', '')).then(() => OS.request()).catch(() => { }); }, 90e3);
   // ao voltar ao app com o Jornal aberto, vai logo buscar o que saiu entretanto
   document.addEventListener('visibilitychange', () => { if (!document.hidden && /^#jornal/.test(location.hash) && scr()) load(false); });
   addEventListener('hashchange', () => { if (/^#jornal/.test(location.hash)) { seenTop = Date.now(); U.ls.set('oc_newsseen', seenTop); } }); });
