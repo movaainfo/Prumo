@@ -1,8 +1,8 @@
 // PRUMO · Jornal para todas as contas (função do Vercel): Google Notícias por edição, tema ou pesquisa,
-// no mesmo formato que o script Google pessoal devolve ({ nw: { id: [notícias] } }). Guardado 4 min; só responde à própria app.
+// no mesmo formato que o script Google pessoal devolve ({ nw: { id: [notícias] } }). Guardado 75 s; só responde à própria app.
 'use strict';
 const N = require('./_nuvem');
-const CACHE = new Map(), TTL = 240e3;
+const CACHE = new Map(), TTL = 75e3; // notícias quase em tempo real: no máximo 75 s de atraso
 const BASE = () => process.env.NAUTILO_RSS_BASE || 'https://news.google.com';
 const ED = /^hl=[A-Za-z-]{2,8}&gl=[A-Z]{2}&ceid=[A-Z]{2}:[A-Za-z0-9-]{2,8}$/;
 const urlOf = f => { const ed = ED.test(f.ed || '') ? f.ed : 'hl=pt-PT&gl=PT&ceid=PT:pt-150';

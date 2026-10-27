@@ -89,8 +89,9 @@ S.habits = { label: 'Hábito', title: r => r.name, fields: [
 
 S.routine = { label: 'Bloco de rotina', title: r => r.title, fields: [
   F('title', 'Bloco', 'text', { req: 1, wide: 1 }), F('days', 'Dias', 'multi', { o: L.WEEK }), F('start', 'Início', 'time', { req: 1 }), F('end', 'Fim', 'time', { req: 1 }),
-  F('area', 'Área', 'sel', { o: L.AREAS }), F('notes', 'Notas', 'area')
-], defaults: () => ({ days: ['1', '2', '3', '4', '5'] }) };
+  F('area', 'Área', 'sel', { o: L.AREAS }), F('warn', 'Aviso', 'sel', { o: [['0', 'Na hora'], ['5', '5 min antes'], ['10', '10 min antes'], ['15', '15 min antes'], ['30', '30 min antes'], ['off', 'Sem aviso']] }),
+  F('habit', 'Conta como o hábito', 'sel', { o: () => [['', 'Nenhum'], ...OS.all('habits').filter(h => h.active).map(h => [h.id, h.name])], h: 'Marcar o bloco como feito marca este hábito no dia' }), F('notes', 'Notas', 'area')
+], defaults: () => ({ days: ['1', '2', '3', '4', '5'], warn: '0' }) };
 
 S.projects = { label: 'Projeto', title: r => r.name, fields: [
   F('name', 'Projeto', 'text', { req: 1, wide: 1 }), F('type', 'Tipo', 'sel', { o: L.PTYPE, req: 1 }), F('status', 'Estado', 'sel', { o: L.PSTAT, req: 1 }),

@@ -190,7 +190,7 @@ UI.ask = (title, text, ok, fn, tone = 'danger') => {
   const m = U.$('#modal'); m.innerHTML = `<div class="drw-bg" data-mclose></div><div class="modal" role="alertdialog" aria-modal="true"><h3>${title}</h3><p>${text}</p><div class="row gap8 end"><button class="btn ghost" data-mclose>Cancelar</button><button class="btn ${tone}" data-mok>${ok}</button></div></div>`; m.hidden = false;
   U.$('[data-mok]', m).onclick = () => { m.hidden = true; m.innerHTML = ''; fn(); };
   U.$$('[data-mclose]', m).forEach(b => b.onclick = () => { m.hidden = true; m.innerHTML = ''; });
-  setTimeout(() => U.$('[data-mok]', m).focus(), 30);
+  setTimeout(() => { const b = U.$('[data-mok]', m); if (b) b.focus(); }, 30);
 };
 UI.modal = (html, cls = '') => { const m = U.$('#modal'); m.innerHTML = `<div class="drw-bg" data-mclose></div><div class="modal ${cls}" role="dialog" aria-modal="true">${html}</div>`; m.hidden = false; U.$$('[data-mclose]', m).forEach(b => b.onclick = UI.closeModal); };
 UI.closeModal = () => { const m = U.$('#modal'); m.hidden = true; m.innerHTML = ''; };

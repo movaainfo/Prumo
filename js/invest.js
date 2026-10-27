@@ -22,13 +22,24 @@ const liveBadge = () => { const st = IX.st, has = IX.hasScript(), t = IX.lastTic
   if (has && st.script === 'old') return `<a class="inv-live off" href="#definicoes.ligacoes"><i></i>Atualiza o script para teres cotações ao vivo</a>`;
   if (!has) return `<a class="inv-live off" href="#definicoes.ligacoes"><i></i>Liga as cotações em tempo real</a>`;
   return `<span class="inv-live ${st.script === 'erro' ? 'warn' : ''}"><i></i>${st.script === 'erro' ? 'Sem ligação ao mercado agora' : 'Ao vivo'}${srcs.length ? ' · ' + srcs.join(', ') : ''}${t ? ' · ' + t : ''}</span>`; };
+// v2.53: em vez de 15 separadores numa linha, 4 blocos (o que tens, como está a correr, o mercado, a IA) e só as opções do bloco aberto
+const NAVG = [['carteira', 'A minha carteira', 'wallet', 'O que tens, imóveis, renda passiva e movimentos', ['', 'carteira', 'imoveis', 'renda', 'movimentos']],
+  ['desempenho', 'Desempenho', 'trend', 'Rentabilidade, proventos, risco, alocação e impostos', ['rentabilidade', 'proventos', 'risco', 'alocacao', 'impostos']],
+  ['mercado', 'Mercado e análise', 'globe', 'Mercado, preços, empresas e comparar', ['mercado', 'cotacoes', 'empresas', 'comparar']],
+  ['ia', 'Assistente IA', 'brain', 'Pergunta e recebe conselhos sobre a carteira', ['ia']]];
+const invNav = cur => { const keys = TABS.map(t => t[0]), lab = Object.fromEntries(TABS), G = NAVG.map(g => g.slice(0, 4).concat([g[4].filter(k => keys.includes(k))]));
+  const rest = keys.filter(k => !G.some(g => g[4].includes(k))); if (rest.length) G[0][4].push(...rest);
+  const gi = Math.max(0, G.findIndex(g => g[4].includes(cur))), last = OS.ui.invLast || {};
+  OS.ui.invLast = Object.assign({}, last, { [G[gi][0]]: cur }); // volta à última opção que abriste em cada bloco
+  return `<nav class="inv-nav" aria-label="Investimentos">${G.map((g, i) => { const to = last[g[0]] != null && g[4].includes(last[g[0]]) ? last[g[0]] : g[4][0]; return `<a class="inv-g${i === gi ? ' on' : ''}" href="#investimentos${to ? '.' + to : ''}"${i === gi ? ' aria-current="true"' : ''}><span class="inv-gi">${UI.ic(g[2])}</span><span class="inv-gt"><b>${g[1]}</b><small>${g[3]}</small></span></a>`; }).join('')}</nav>
+  ${G[gi][4].length > 1 ? `<nav class="tabs inv-sub" aria-label="${esc(G[gi][1])}">${G[gi][4].map(k => `<a href="#investimentos${k ? '.' + k : ''}" class="${k === cur ? 'on' : ''}">${esc(lab[k] || k)}</a>`).join('')}</nav>` : ''}`; };
 const viewSel = () => `<div class="seg inv-cur" role="group">${['EUR', 'BRL', 'USD'].map(c => `<button class="${IX.view() === c ? 'on' : ''}" data-act="invView" data-v="${c}">${c}</button>`).join('')}</div>`;
 A.invView = b => { cfg().view = b.dataset.v; OS.touch('invcfg'); };
 
 V.investimentos = sub => {
   const s = sub || '';
   const head = UI.head('Investimentos', 'A tua carteira completa, ao vivo: ações, ETFs, FII, fundos, renda fixa, Tesouro, CDB, Certificados, PPR, cripto, ouro e mais.', `${viewSel()}${UI.addBtn('invtx', 'Movimento')}${UI.addBtn('assets', 'Ativo', null, '')}`, 'Dinheiro')
-    + `<div class="inv-top">${liveBadge()}</div>` + UI.tabs('investimentos', TABS, s === 'ativo' ? '' : s);
+    + `<div class="inv-top">${liveBadge()}</div>` + invNav(s === 'ativo' ? '' : s);
   const miss = Inv.fxMissing();
   const fxNote = miss.length ? `<div class="note"><b>Câmbio em falta:</b> ${miss.join(', ')}. Sem internet, define-o em Definições → Ligações (câmbio manual).</div>` : '';
   IX.extra = new Set();

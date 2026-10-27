@@ -6,9 +6,11 @@ body{background-attachment:scroll!important}
 .glow,.hx2.can.aff polygon,.bm2-m.sel,.ceremony .ring{animation-iteration-count:3!important}
 .wave-load i,.sp-load i{animation-iteration-count:20!important}
 
-/* aparelhos fracos ou Android: tudo plano */
+/* aparelhos fracos ou Android: sem o que pesa (sombras, filtros, desfoques); o movimento fica (só opacidade e deslocações).
+   Sem movimento só no modo Leve escolhido à mão ou quando o sistema pede menos movimento (html.lite-x). */
 html.lite body{background:#070D16!important}
-html.lite *,html.lite *::before,html.lite *::after{box-shadow:none!important;text-shadow:none!important;filter:none!important;transition:none!important;animation-duration:.001s!important;animation-iteration-count:1!important}
+html.lite *,html.lite *::before,html.lite *::after{box-shadow:none!important;text-shadow:none!important;filter:none!important}
+html.lite-x *,html.lite-x *::before,html.lite-x *::after{transition:none!important;animation-duration:.001s!important;animation-iteration-count:1!important}
 html.lite .dc.hero::after,html.lite .dom::before{display:none!important}
 html.lite .pn,html.lite .dc,html.lite .kpi,html.lite .tn-dd{background:#0E1724!important}
 html.lite .dc.hero.h-abyss{background:#10233A!important}html.lite .dc.hero.h-tide{background:#0F2433!important}html.lite .dc.hero.h-reef{background:#0F2529!important}html.lite .dc.hero.h-deep{background:#141F3D!important}

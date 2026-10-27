@@ -76,7 +76,7 @@ document.addEventListener('click', e => { if (!e.target.closest('.tn-g')) docume
 /* ---------- revelação progressiva: poucas secções de cada vez ----------
    Os botões "Mostrar mais"/"Ver mais" mostram logo o que estava escondido: o render não redesenha uma página igual,
    por isso não basta guardar a escolha. */
-const SKIP = ['dominus', 'definicoes', 'explorar', 'mundo', 'senhas', 'oportunidades', 'admin'];
+const SKIP = ['dominus', 'definicoes', 'explorar', 'mundo', 'senhas', 'oportunidades', 'admin', 'jornal'];
 function progressive(cur, raw) {
   if (SKIP.includes(cur)) return; const view = U.$('#view'); let root = view; while (root.children.length === 1 && root.firstElementChild.children.length > 1) root = root.firstElementChild;
   const kids = [...root.children].filter(el => !el.matches('script,style')), key = 'more_page_' + raw, open = OS.ui[key];
@@ -113,11 +113,15 @@ function render() {
   if (!html || !String(html).trim()) html = `<div class="pn"><b>Esta página ainda está vazia.</b><p class="mut"><a href="#hoje">Voltar ao Hoje</a></p></div>`;
   // se nada mudou na página, não a substitui (evita piscar, perder o toque e redesenhar gráficos à toa)
   const sig = r.raw + '|' + String(html).replace(/ id="ch\d+"/g, ''), view = U.$('#view');
-  if (sig !== view._sig || !view.firstChild) { view.innerHTML = html; view._sig = sig; try { OS.Areas && OS.Areas.prune && OS.Areas.prune(view); } catch (e) { }
-    try { C.drawAll(); } catch (e) { console.error(e); }
-    try { progressive(cur, r.raw); } catch (e) { console.error(e); } }
-  if (fsel) { const el = U.$('#view').querySelector(fsel); if (el) { el.focus({ preventScroll: true }); try { if (caret != null && el.setSelectionRange) el.setSelectionRange(caret, caret); } catch (e) { } } }
-  if (r.raw !== lastRoute) { window.scrollTo(0, 0); lastRoute = r.raw; }
+  const newRoute = r.raw !== lastRoute; lastRoute = r.raw;
+  const swap = () => { if (sig !== view._sig || !view.firstChild) { view.innerHTML = html; view._sig = sig; try { OS.Areas && OS.Areas.prune && OS.Areas.prune(view); } catch (e) { }
+      try { C.drawAll(); } catch (e) { console.error(e); }
+      try { progressive(cur, r.raw); } catch (e) { console.error(e); } }
+    if (fsel) { const el = U.$('#view').querySelector(fsel); if (el) { el.focus({ preventScroll: true }); try { if (caret != null && el.setSelectionRange) el.setSelectionRange(caret, caret); } catch (e) { } } }
+    if (newRoute) window.scrollTo(0, 0); };
+  // mudar de página: a página antiga dissolve-se na nova (transição do próprio browser, quando existe e as animações estão completas)
+  const R0 = document.documentElement;
+  if (newRoute && view.firstChild && document.startViewTransition && R0.classList.contains('vv-full') && !R0.classList.contains('lite-x') && !document.hidden && !navigator.webdriver) { try { document.startViewTransition(swap); } catch (e) { swap(); } } else swap();
   document.title = OS.focusState && OS.focusState() ? document.title : 'Prumo';
 }
 OS.on('render', render);
@@ -192,7 +196,7 @@ document.addEventListener('submit', e => {
 /* ---------- modo leve (Definições) ---------- */
 (() => { const orig = V.definicoes; if (!orig) return;
   V.definicoes = sub => { const f = U.ls.get('os2lite', null), on = document.documentElement.classList.contains('lite');
-    return orig(sub) + `<div class="pn"><div class="pn-h"><h3>Desempenho</h3><span class="mut" style="font-size:12px">${on ? 'modo leve ligado' : 'efeitos completos'}</span></div><p class="mut" style="margin:0 0 10px">O modo leve tira sombras, desfoques e animações. Liga-o se a app estiver lenta ou travar (fica ligado sozinho em Android e aparelhos com pouca memória).</p><div class="seg" role="group">${[['auto', 'Automático'], ['1', 'Leve'], ['0', 'Completo']].map(([v, l]) => `<button class="${(f == null ? 'auto' : String(f)) === v ? 'on' : ''}" data-act="liteSet" data-v="${v}">${l}</button>`).join('')}</div></div>`; };
+    return orig(sub) + `<div class="pn"><div class="pn-h"><h3>Desempenho</h3><span class="mut" style="font-size:12px">${on ? 'modo leve ligado' : 'efeitos completos'}</span></div><p class="mut" style="margin:0 0 10px">O modo Leve tira sombras, desfoques e animações: liga-o se a app estiver lenta ou travar. No Automático, em Android e aparelhos com pouca memória, só saem as sombras e os desfoques; as animações ficam.</p><div class="seg" role="group">${[['auto', 'Automático'], ['1', 'Leve'], ['0', 'Completo']].map(([v, l]) => `<button class="${(f == null ? 'auto' : String(f)) === v ? 'on' : ''}" data-act="liteSet" data-v="${v}">${l}</button>`).join('')}</div></div>`; };
   const origV = V.definicoes; V.definicoes = sub => { const vv = window.OceanumVersion || {};
     return origV(sub) + `<div class="pn" id="verPn"><div class="pn-h"><h3>Versão do Prumo</h3><span class="mut" style="font-size:12px">v${esc(vv.v || '')}${vv.date ? ' · ' + esc(vv.date) : ''}</span></div><p class="mut" style="margin:0 0 10px">As atualizações chegam sozinhas quando abres a app. Se um aparelho ficar para trás, toca aqui: ele compara com a versão publicada e atualiza já (os teus dados ficam).</p><button class="btn sm" data-act="updCheck">${UI.ic('sync')}Procurar atualização</button></div>`; };
   const orig2 = V.definicoes; V.definicoes = sub => { const t = OS.Lock.trusted();

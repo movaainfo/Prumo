@@ -143,3 +143,10 @@ html.ac-open,html.ac-open body{overflow:hidden}
 .adm-risk summary .bdg{flex:none;min-width:64px;text-align:center}
 .adm-risk p{margin:8px 0 2px;font-size:13.5px;line-height:1.55;color:var(--tx2)}
 @media (max-width:620px){.lg-t td[data-l]::before{content:attr(data-l) ": ";color:#7A8BA0;font-weight:600}}
+/* admin em tempo real */
+.adm-exp{margin:0 0 10px;font-size:12.5px;color:var(--tx2);line-height:1.5;max-width:90ch}
+.adm-on{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pos);margin-right:6px;vertical-align:middle;box-shadow:0 0 0 0 rgba(63,207,142,.6);animation:admPulse 1.8s ease-out infinite}
+@keyframes admPulse{0%{box-shadow:0 0 0 0 rgba(63,207,142,.55)}70%{box-shadow:0 0 0 7px rgba(63,207,142,0)}100%{box-shadow:0 0 0 0 rgba(63,207,142,0)}}
+.adm-r.is-on{background:linear-gradient(90deg,rgba(63,207,142,.07),transparent 40%)}
+.adm-kon b{color:var(--pos)}
+@media (prefers-reduced-motion:reduce){.adm-on{animation:none}}

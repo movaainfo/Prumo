@@ -66,6 +66,26 @@ B.findAll = findAll; B.readArea = readArea;
 
 /* ---------- ferramentas (as mesmas para os dois cérebros) ---------- */
 const did = [];   // o que o Spyke fez nesta resposta (aparece no ecrã)
+// v2.53: a IA cria, muda e apaga qualquer registo destas áreas quando a pessoa pede (apagar pede sempre confirmação no ecrã)
+const EDIT = ['tasks', 'events', 'goals', 'projects', 'routine', 'habits', 'notes', 'books', 'contacts', 'people', 'milestones', 'opps', 'applications', 'workouts', 'runs', 'sessions', 'body', 'shifts', 'skills', 'learn', 'certs', 'experiences', 'transactions', 'devos', 'prayers', 'decisions', 'wishlist', 'social', 'assessments', 'subjects', 'lifeev'];
+const okColl = c => EDIT.includes(c) && OS.S[c] && Array.isArray(OS.S[c].fields);
+const optV = o => Array.isArray(o) ? o[0] : o;
+const schemaTxt = () => EDIT.filter(okColl).map(c => c + ' (' + OS.S[c].label + '): ' + OS.S[c].fields.filter(f => f.k && !['steps', 'file', 'photo', 'img'].includes(f.t)).map(f => { const o = typeof f.o === 'function' ? null : f.o; return f.k + (f.t === 'sel' && Array.isArray(o) ? '[' + o.slice(0, 10).map(optV).join('|') + ']' : f.t === 'date' ? '(AAAA-MM-DD)' : f.t === 'time' ? '(HH:MM)' : ['num', 'pct', 'rating', 'money'].includes(f.t) ? '(número)' : f.t === 'bool' ? '(true/false)' : f.t === 'multi' || f.t === 'tags' ? '(lista)' : f.t === 'rel' ? '(id de ' + f.c + ')' : ''); }).join(', ')).join('\n');
+const titleOf = (c, r) => { try { return String(OS.S[c].title(r) || r.title || r.name || ''); } catch (e) { return String(r.title || r.name || ''); } };
+// só aceita campos que a área tem, no formato certo
+const clean = (c, raw) => { const out = {}, F = OS.S[c].fields; let j = raw; if (typeof j === 'string') { try { j = JSON.parse(j); } catch (e) { j = {}; } } if (!j || typeof j !== 'object') j = {};
+  Object.entries(j).forEach(([k, v]) => { const f = F.find(x => x.k === k); if (!f || v == null) return; const t = f.t;
+    if (['num', 'pct', 'rating', 'money'].includes(t)) { const n = U.num(v); if (isFinite(n)) out[k] = n; }
+    else if (t === 'date') { if (/^\d{4}-\d\d-\d\d$/.test(String(v))) out[k] = String(v); }
+    else if (t === 'time') { const m = String(v).match(/^(\d{1,2}):(\d\d)$/); if (m && +m[1] < 24 && +m[2] < 60) out[k] = U.pad(+m[1]) + ':' + m[2]; }
+    else if (t === 'bool') out[k] = v === true || v === 'true' || v === 1;
+    else if (t === 'multi' || t === 'tags') { const a = (Array.isArray(v) ? v : String(v).split(',')).map(x => String(x).trim()).filter(Boolean).slice(0, 20); const o = typeof f.o === 'function' ? null : f.o; out[k] = o && t === 'multi' ? a.map(x => { const hit = o.find(y => String(optV(y)) === x || String(Array.isArray(y) ? y[1] : y).toLowerCase() === x.toLowerCase()); return hit ? String(optV(hit)) : null; }).filter(Boolean) : a; }
+    else if (t === 'sel') { const o = typeof f.o === 'function' ? f.o({}) : f.o || []; const hit = o.find(y => String(optV(y)) === String(v) || String(Array.isArray(y) ? y[1] : y).toLowerCase() === String(v).toLowerCase()); if (hit) out[k] = optV(hit); else if (!o.length) out[k] = String(v).slice(0, 200); }
+    else if (t === 'rel') { if (OS.get(f.c, String(v))) out[k] = String(v); else { const q = String(v).toLowerCase(), r = OS.all(f.c).find(x => titleOf(f.c, x).toLowerCase().includes(q)); if (r) out[k] = r.id; } }
+    else if (typeof v !== 'object') out[k] = String(v).slice(0, t === 'area' ? 4000 : 300); });
+  return out; };
+const findRec = (c, q) => { const n = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); q = n(q); if (!q) return null; const L = OS.all(c);
+  return L.find(r => r.id === q) || L.find(r => n(titleOf(c, r)) === q) || L.find(r => n(titleOf(c, r)).includes(q)) || L.find(r => q.includes(n(titleOf(c, r))) && titleOf(c, r).length > 3) || null; };
 const T = [
   { name: 'consultar', description: 'Lê os dados atuais do PRUMO numa área (agenda, tarefas, finanças, hábitos, universidade, investimentos, e-mails, notícias, clima, metas, treino, pessoas, decisões, memória, trabalho, projetos, desporto, dieta, foco/Floresta, fé, leitura, evolução). Usa sempre antes de responder sobre dados dele.', props: { area: { type: 'string', enum: AREAS, description: 'A área a consultar' } }, req: ['area'],
     run: async a => cut(await consult(a.area)) },
@@ -89,16 +109,29 @@ const T = [
     run: a => cut(findAll(String(a.texto || '')), 6000) },
   { name: 'ler_area', description: 'Lê os registos mais recentes de qualquer área da app pelo nome da coleção (ex.: notes, books, people, decisions, transactions, assets, invtx, subjects, assessments, sessions, workouts, runs, sportlog, meals, body, shifts, dayoffs, projects, goals, milestones, habits, devos, prayers, trees, opps, applications, contacts, skills, lifeev, reviews_w, reviews_m).', props: { area: { type: 'string', description: 'nome da coleção' }, quantos: { type: 'integer', description: 'quantos registos (até 60)' } }, req: ['area'],
     run: a => cut(readArea(String(a.area || ''), +a.quantos || 30), 7000) },
+  { name: 'criar_registo', description: 'Cria um registo em qualquer área da app quando ele pede (meta, projeto, bloco da rotina, nota, livro, contacto, treino, sessão de estudo, marco, oportunidade, candidatura, competência, certificação, compromisso…). Campos possíveis por área:\n' + schemaTxt(), props: { colecao: { type: 'string', enum: EDIT, description: 'a área (nome da coleção)' }, campos_json: { type: 'string', description: 'os campos em JSON, com as chaves da lista, ex.: {"title":"Estudar","start":"09:00","end":"11:00","days":["1","3"]}' } }, req: ['colecao', 'campos_json'],
+    run: a => { const c = String(a.colecao || ''); if (!okColl(c)) return 'Essa área não existe.'; const def = OS.S[c].defaults ? OS.S[c].defaults() : {}, rec = Object.assign({}, def, clean(c, a.campos_json));
+      const miss = OS.S[c].fields.filter(f => f.req && (rec[f.k] == null || rec[f.k] === '' || (Array.isArray(rec[f.k]) && !rec[f.k].length))).map(f => f.l); if (miss.length) return 'Falta: ' + miss.join(', ') + '. Pergunta-lhe e tenta outra vez.';
+      const r = OS.add(c, rec); did.push(OS.S[c].label + ': ' + titleOf(c, r)); return 'Criado (' + OS.S[c].label + '): ' + titleOf(c, r) + ' · id ' + r.id; } },
+  { name: 'editar_registo', description: 'Muda campos de um registo que já existe (procura pelo título ou id) quando ele pede para alterar, adiar, renomear, mudar a hora, marcar estado, etc. Usa os mesmos campos de criar_registo.', props: { colecao: { type: 'string', enum: EDIT }, procurar: { type: 'string', description: 'título (ou parte) ou id do registo' }, campos_json: { type: 'string', description: 'só os campos a mudar, em JSON' } }, req: ['colecao', 'procurar', 'campos_json'],
+    run: a => { const c = String(a.colecao || ''); if (!okColl(c)) return 'Essa área não existe.'; const r = findRec(c, a.procurar); if (!r) return 'Não encontrei esse registo em ' + OS.S[c].label + '.'; const ch = clean(c, a.campos_json); if (!Object.keys(ch).length) return 'Nada para mudar (campos inválidos).';
+      OS.upd(c, r.id, ch); if (c === 'tasks' && ch.status === 'Feita' && OS.Tasks.complete) OS.Tasks.complete(r.id); did.push('Alterado: ' + titleOf(c, OS.get(c, r.id))); return 'Alterado: ' + titleOf(c, OS.get(c, r.id)) + ' (' + Object.keys(ch).join(', ') + ')'; } },
+  { name: 'apagar_registo', description: 'Apaga um registo (procura pelo título ou id). Pede sempre confirmação a ele no ecrã antes de apagar.', props: { colecao: { type: 'string', enum: EDIT }, procurar: { type: 'string' } }, req: ['colecao', 'procurar'],
+    run: a => { const c = String(a.colecao || ''); if (!okColl(c)) return 'Essa área não existe.'; const r = findRec(c, a.procurar); if (!r) return 'Não encontrei esse registo.'; const t = titleOf(c, r);
+      if (OS.UI && OS.UI.ask) { OS.UI.ask('Apagar "' + t + '"?', OS.S[c].label + ' · pedido ao assistente. Não se pode desfazer.', 'Apagar', () => { OS.del(c, r.id); OS.UI.toast('Apagado: ' + t, 'pos'); }); did.push('À espera de confirmação: apagar ' + t); return 'Pedi a confirmação dele no ecrã para apagar "' + t + '". Diz-lhe para confirmar.'; }
+      return 'Não consigo pedir confirmação agora; não apaguei.'; } },
   { name: 'abrir_pagina', description: 'Abre uma página da app quando ele pede para ver/abrir algo.', props: { pagina: { type: 'string', description: 'nome da página, ex.: finanças, floresta, universidade, e-mail, jornal, investimentos' } }, req: ['pagina'],
     run: a => { const r = OS.Spyke && OS.Spyke.findRoute ? OS.Spyke.findRoute(a.pagina) : null; if (!r) return 'Não encontrei essa página.'; location.hash = r[0]; return 'Abri ' + r[1] + '.'; } }];
 
+// para testes e para o chat: correr uma ferramenta pelo nome
+OS.BrainTool = (name, args) => { const t = T.find(x => x.name === name); return t ? t.run(args || {}) : 'Ferramenta desconhecida.'; };
 /* ---------- instruções ---------- */
 const system = () => `És o Spyke, o assistente pessoal ${OS.Acc && OS.Acc.pub ? OS.whoCtx('', 'de') : 'do ' + who()} (estilo J.A.R.V.I.S.): pensas por ti, és direto, calmo, confiante e leal, com um toque de humor seco.${OS.Acc && OS.Acc.pub ? '' : ' Ele é brasileiro, vive em Aveiro (Portugal), estuda na universidade, trabalha e investe.'}
 Regras:
 - Responde SEMPRE em português do Brasil, para ser dito em voz alta: no máximo 3 ou 4 frases curtas, sem listas, sem markdown, sem emojis. Nunca digas o teu próprio nome.
 - Recebes um resumo atual com quase tudo da vida dele: se o resumo chega, responde logo (é mais rápido). Para detalhes que não estão lá, usa "consultar" (por área), "procurar_na_app" (procura em toda a app) ou "ler_area". Não inventes números nem factos.
 - Para perguntas sobre o mundo (notícias, factos, preços, como fazer algo), pesquisa na internet antes de responder.
-- Age quando ele pedir (criar tarefa, compromisso, gasto, marcar hábito, memorizar, abrir página) e confirma numa frase o que fizeste. Não faças ações que ele não pediu.
+- Age quando ele pedir e confirma numa frase o que fizeste: criar tarefa, compromisso, gasto, marcar hábito, memorizar, abrir página e também criar, mudar ou apagar QUALQUER registo da app (metas, projetos, blocos da rotina por horas, notas, livros, contactos, treinos, sessões de estudo, marcos, oportunidades…) com criar_registo, editar_registo e apagar_registo. Se faltar um dado obrigatório, pergunta. Apagar pede sempre confirmação no ecrã. Não faças ações que ele não pediu.
 - Se não tiveres a informação, diz isso com honestidade e sugere o que ele pode fazer.
 - Hoje é ${new Date().toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}, ${new Date().toLocaleTimeString(OS.loc ? OS.loc() : 'pt-PT', { hour: '2-digit', minute: '2-digit' })} (hora de Portugal). As datas vão no formato AAAA-MM-DD.`;
 const brief = () => { try { return OS.Spyke && OS.Spyke.ctx ? OS.Spyke.ctx().slice(0, 12000) : ''; } catch (e) { return ''; } };

@@ -71,3 +71,14 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Spyke (`js/brain.js`, `js/ear.js`, `api/ia.js`): com `ANTHROPIC_API_KEY` no Vercel o Spyke pensa com o Claude (o SDK oficial passa pelo servidor;
   `NAUTILO_CLAUDE_MODEL`, `NAUTILO_CLAUDE_DIA`), o Gemini faz a pesquisa no Google; com `GROQ_API_KEY` (ou `DEEPGRAM_API_KEY`, `OPENAI_API_KEY`,
   `AZURE_SPEECH_KEY` + `AZURE_SPEECH_REGION`) o que se diz é transcrito por um ouvido dedicado. Sem estas chaves fica tudo como antes (Gemini).
+
+## Novidades da 2.53 (onde estão)
+- **Rotina por horas** (`js/rotina.js`): Hábitos e rotina › Rotina desenha o dia numa linha de horas (`OS.Rotina.segs(diaDaSemana)`), com espaços livres, sobreposições lado a lado, blocos que passam da meia-noite, adicionar rápido (`OS.forms.rtAdd`), copiar/limpar dia, modelos, "feito hoje" (`r.log`), ligação a um hábito (`r.habit`) e aviso na hora (`r.warn`, toast + notificação com a app aberta). Hoje mostra "Agora: … até …". Os blocos já iam para o Calendário (`Cal.items`) e para o Google Calendar (`calpush.js`, 3 semanas à frente).
+- **Metas** (`js/metas.js`): substitui `Goal.info` (estados: No ritmo só com avanço medido; Por começar; Em andamento; Atrás do ritmo; Atrasada) e `V.metas`. `Goal.act(meta, desde)` junta o que se fez por cada meta (tarefas, blocos da rotina, estudo, treinos, horas de trabalho, poupança, hábitos). Saldo/patrimônio/carteira/média/contactos/certificações contam a partir de `g.base0` (guardado ao criar a meta).
+- **Dominus** (`js/dominus3.js`): XP grande só pelo avanço nas metas (registo diário em `OS.one('dominus').gp`, `D.snapGoals`), etapas, marcos, tarefas/projetos ligados e metas cumpridas; o resto vale 40% (8% numa área sem meta). Missões valem menos.
+- **Capital profissional** (`js/capital.js`): substitui `Car.capital`; as dimensões de que as metas profissionais falam contam a dobrar e há a dimensão "Metas profissionais".
+- **Jornal** (`js/news.js`): Mundo › Destaques usa as manchetes principais de cada edição; mais recentes primeiro; "Última hora"; com conta usa `api/noticias` (cache 75 s). Cada tema do resumo abre a fundo (`NW.deep`) com a avaliação da IA.
+- **IA faz coisas** (`js/brain.js`): ferramentas `criar_registo`, `editar_registo`, `apagar_registo` (confirmação no ecrã) para as coleções em `EDIT`. `OS.BrainTool(nome, args)` corre uma ferramenta (testes).
+- **Admin em tempo real**: `uso` grava `u.ab` (entrada no app), `u.on` (presença), `u.tot` e `u.pf` (minutos por perfil); `adminVivo` (a cada 20 s). Ranking mostra `tm` (minutos no app do perfil; não conta para os pontos).
+- **Investimentos**: navegação em 4 blocos (`NAVG` em `js/invest.js`).
+- **Movimento**: o modo leve automático (`html.lite`) já não desliga animações; só `html.lite-x` (Leve escolhido ou "reduzir movimento") desliga. Troca de páginas com View Transitions (`js/app.js`).

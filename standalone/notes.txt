@@ -1,2 +1,8 @@
-Painel e Hoje com o fundo animado (o mesmo do ecrã de entrada): aves, árvores ao vento, água e estrelas a mexer enquanto o fundo está à vista.
-O fundo pára sozinho fora do ecrã e com a app em segundo plano; desliga-se em Fundo → Fundo animado, no modo Leve ou com "reduzir movimento" do sistema.
+Rotina por horas em Hábitos e rotina: o dia numa linha de horas (das tantas às tantas), adicionar rápido, copiar dias, modelos, avisos na hora e tudo no Calendário e no Google Calendar.
+Metas honestas: "No ritmo" só com avanço real; "Por começar" quando ainda não houve avanço; cada meta mostra o que fizeste por ela na semana e no mês e a tua visão da Estrela-guia.
+Dominus mais difícil: o XP a sério vem do avanço nas metas, etapas, marcos e projetos ligados a elas.
+Capital profissional ligado aos teus objetivos: competências até ao nível alvo, certificações, rede, projetos, eventos, mercado e metas de carreira.
+Jornal em tempo real (destaques de cada país, mais recentes primeiro, "Última hora") e cada tema do resumo abre a fundo com a avaliação da IA.
+A IA faz o que pedes dentro do app: cria, muda e apaga registos (apagar pede sempre confirmação).
+Admin em tempo real (online agora, última entrada e último acesso) e tempo de uso no ranking.
+Investimentos arrumados em 4 blocos, com todas as funções. Mais animações e transições suaves, também em Android.

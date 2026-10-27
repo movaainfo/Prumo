@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="css/conta.css">
 <link rel="stylesheet" href="css/perf.css">
 <link rel="stylesheet" href="css/vivo.css">
-<script>(function(){try{var n=navigator,ua=n.userAgent||"",low=(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||/Android/i.test(ua)||matchMedia("(prefers-reduced-motion: reduce)").matches;var f=localStorage.getItem("os2lite");if(f==="1"||(f!=="0"&&low))document.documentElement.classList.add("lite")}catch(e){}})();</script>
+<script>(function(){try{var n=navigator,ua=n.userAgent||"",low=(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||/Android/i.test(ua)||matchMedia("(prefers-reduced-motion: reduce)").matches;var f=localStorage.getItem("os2lite"),rm=matchMedia("(prefers-reduced-motion: reduce)").matches,R=document.documentElement;if(f==="1"||(f!=="0"&&low))R.classList.add("lite");if(f==="1"||(f!=="0"&&rm))R.classList.add("lite-x")}catch(e){}})();</script>
 <div id="app">
   <aside id="side" aria-label="Navegação"></aside>
   <main>
@@ -37,6 +37,9 @@
 <script src="js/legal.js"></script>
 <script src="js/intel.js"></script>
 <script src="js/views-core.js"></script>
+<script src="js/rotina.js"></script>
+<script src="js/metas.js"></script>
+<script src="js/capital.js"></script>
 <script src="js/views-money.js"></script>
 <script src="js/liverates.js"></script>
 <script src="js/simai.js"></script>

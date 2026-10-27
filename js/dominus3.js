@@ -2,7 +2,7 @@
    O herói és tu, com a tua foto real (recortada do fundo no próprio telemóvel) numa carta de jogo que muda sozinha com o que fazes:
    brilho à volta do corpo com o Corpo, aura com a Mente, símbolos com o Intelecto, ouro com a Fortuna, companheiros com as Relações,
    halo com o Espírito, insígnias com a Carreira e estandartes com a Disciplina.
-   Os 8 atributos sobem sozinhos com TUDO o que registas no Prumo (nunca escolhes onde pôr pontos): o XP é calculado a partir
+   Os 8 atributos sobem sozinhos com o que registas no Prumo (v2.53: o XP grande vem só do avanço nas metas) (nunca escolhes onde pôr pontos): o XP é calculado a partir
    dos teus registos, por isso está sempre certo e atualizado, em todos os aparelhos.
    Missões diárias e semanais (escolhidas pelos teus pontos fracos), um chefe por semana, conquistas, baús com recompensas reais
    a cada nível, moedas de ouro para o visual (molduras, cenários, efeitos) e os teus 100 marcos do Codex. */
@@ -85,8 +85,27 @@ const bdayNear = (r, d) => { const p = OS.get('people', r.person); if (!p || !p.
 let CK = 0, CACHE = null; const bump = () => { CK++; CACHE = null; };
 OS.on('change', bump); OS.on('remote', bump); OS.on('one:dominus', () => { if (!QUIET) bump(); }); OS.on('one:diet', bump);
 // a pontuação: números grandes, a mesma justiça entre áreas. v2.48: mais difícil (cada registo vale 6 em vez de 10 e as curvas sobem mais depressa)
-const XS = 6;
-const evs = () => { const T = today(), E = [], add = (d, a, x, t) => { d = String(d || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > T || !(x > 0)) return; E.push({ d, a, x: Math.round(x * XS), t }); };
+// v2.53: a vida não é fácil. O XP grande vem só do que te aproxima dos objetivos: avanço medido nas metas, etapas, marcos,
+// projetos e tarefas ligados a uma meta, metas cumpridas. Os registos do dia a dia valem pouco (40%) e quase nada (8%)
+// numa área onde ainda não tens nenhuma meta.
+const XS = 6, ROUT = .4, ROUT_OFF = .08;
+const GA = { corpo: ['Academia', 'Corrida'], intelecto: ['Estudos', 'Desenvolvimento pessoal'], carreira: ['Trabalho', 'Empresa'], fortuna: ['Finanças'], mente: ['Desenvolvimento pessoal', 'Estudos'], espirito: ['Desenvolvimento pessoal', 'Outros'], relacoes: ['Desenvolvimento pessoal', 'Outros', 'Empresa', 'Trabalho'], disciplina: null };
+const goalA = g => { const c = N(g.cat || ''); return /financ|dinheiro/.test(c) ? 'fortuna' : /estud|desenvolv/.test(c) ? 'intelecto' : /corr|corpo|saude|treino|desport|academia/.test(c) ? 'corpo' : /carreira|trabalho|profiss|empresa/.test(c) ? 'carreira' : /fe|espirit/.test(c) ? 'espirito' : /relac|famil|amig/.test(c) ? 'relacoes' : 'disciplina'; };
+const impF = g => .6 + .2 * U.clamp(U.num(g.importance) || 3, 1, 5), horF = g => ({ '3 meses': 1, '1 ano': 1.3, '3 anos': 1.6, '5 anos': 1.8, 'Longo prazo': 2 })[g.horizon] || 1.2;
+const goalOf = t => { const g = OS.get('goals', t.goal) || OS.get('goals', (OS.get('projects', t.project) || {}).goal); return g && g.status !== 'Abandonada' ? g : null; };
+// o avanço de cada meta fica registado uma vez por dia (só subidas novas dão XP: descer e voltar a subir não conta duas vezes)
+D.snapGoals = () => { try { const s = S(), gp = Object.assign({}, s.gp || {}), t = today(); let ch = false;
+  OS.all('goals').filter(g => g.status === 'Ativa' || g.status === 'Concluída').forEach(g => { const i = OS.Goal.info(g), v = Math.round(((i.pr != null ? i.pr : i.p) || 0) * 1000) / 10, sd = (g.steps || []).filter(x => x.done).length;
+    // b/bs: o ponto de partida (o avanço e as etapas quando o Dominus começou a seguir a meta); nunca muda, para o avanço do primeiro dia também contar
+    const o = gp[g.id], r = o ? { b: o.b != null ? o.b : ((o.h || [])[0] || [])[1] || 0, bs: o.bs != null ? o.bs : ((o.h || [])[0] || [])[2] || 0, h: (o.h || []).slice() } : { b: v, bs: sd, h: [] }, last = r.h[r.h.length - 1];
+    if (!o || !last || last[1] !== v || last[2] !== sd) { if (last && last[0] === t) r.h[r.h.length - 1] = [t, v, sd]; else r.h.push([t, v, sd]); r.h = r.h.slice(-500); gp[g.id] = r; ch = true; } });
+  if (ch) { s.gp = gp; QUIET++; try { save(); } finally { QUIET--; } bump(); } } catch (e) { if (OS.debug) console.warn('Dominus metas', e); } };
+let SG = 0; OS.on('change', c => { if (['goals', 'tasks', 'projects', 'transactions', 'sessions', 'workouts', 'runs', 'invtx', 'certs', 'learn', 'contacts'].includes(c)) { clearTimeout(SG); SG = setTimeout(D.snapGoals, 2500); } });
+OS.on('ready', () => setTimeout(D.snapGoals, 3000));
+const evs = () => { const T = today(), E = [], push = (d, a, x, t, k) => { d = String(d || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > T || !(x > 0)) return; E.push({ d, a, x: Math.round(x * XS), t, g: k ? 1 : 0 }); };
+  // desde quando cada área tem uma meta (ativa ou cumprida): antes disso, os registos dessa área quase não contam
+  const GL = OS.all('goals').filter(g => g.status !== 'Abandonada'), SINCE = Object.fromEntries(AK.map(k => { const c = GA[k], L = GL.filter(g => !c || c.includes(g.cat)).map(g => g.start || (g._c ? U.iso(new Date(g._c)) : '0000')).sort(); return [k, L[0] || null]; }));
+  const add = (d, a, x, t) => push(d, a, x * (SINCE[a] && String(d || '') >= SINCE[a] ? ROUT : ROUT_OFF), t), addG = (d, a, x, t) => push(d, a, x, t, 1);
   const sf = (f, c) => { try { f(); } catch (e) { if (OS.debug) console.warn('Dominus ' + c, e); } };
   // Corpo
   sf(() => OS.all('workouts').forEach(w => add(w.date, 'corpo', 30 + Math.min(20, (OS.Fit && OS.Fit.volume ? OS.Fit.volume(w) : 0) / 1500), 'Treino' + (w.title ? ': ' + w.title : ''))), 'treinos');
@@ -132,15 +151,23 @@ const evs = () => { const T = today(), E = [], add = (d, a, x, t) => { d = Strin
   sf(() => OS.all('applications').forEach(a => { if (a.status !== 'Por enviar') add(a.date, 'carreira', 25, 'Candidatura: ' + (a.company || '') + (a.role ? ' · ' + a.role : '')); }), 'candidaturas');
   sf(() => OS.all('mvsales').forEach(s => { if (s.status !== 'Cancelado') add(s.date, 'carreira', 15 + Math.min(50, (OS.Mv && OS.Mv.rev ? OS.Mv.rev(s) : 0) / 10), 'Venda da Mova'); }), 'vendas');
   // Disciplina (e carreira nas tarefas de trabalho)
-  sf(() => OS.all('tasks').forEach(t => { if (t.status !== 'Feita' || !t.doneAt) return; const pj = OS.get('projects', t.project), pro = (pj && ['Profissional', 'Empresarial'].includes(pj.type)) || ['Carreira', 'Trabalho', 'Mova'].includes(t.area);
-    add(t.doneAt, pro ? 'carreira' : 'disciplina', 8 + (+t.prio === 1 ? 7 : +t.prio === 2 ? 4 : 0), 'Tarefa: ' + t.title); }), 'tarefas');
-  sf(() => OS.all('projects').forEach(p => { if (p.status !== 'Concluído') return; const pro = ['Profissional', 'Empresarial'].includes(p.type); add(p.doneAt || (p._u ? U.iso(new Date(p._u)) : ''), pro ? 'carreira' : 'disciplina', 120, 'Projeto concluído: ' + p.name); }), 'projetos');
-  sf(() => OS.all('goals').forEach(g => { if (g.status !== 'Concluída') return; const c = N(g.cat), a = /financ|dinheiro/.test(c) ? 'fortuna' : /estud|desenvolv/.test(c) ? 'intelecto' : /corr|corpo|saude|treino|desport/.test(c) ? 'corpo' : /carreira|trabalho|profiss/.test(c) ? 'carreira' : /fe|espirit/.test(c) ? 'espirito' : /relac|famil|amig/.test(c) ? 'relacoes' : 'disciplina'; add(g.doneAt || (g._u ? U.iso(new Date(g._u)) : ''), a, 150, 'Meta cumprida: ' + g.title); }), 'metas');
+  sf(() => OS.all('tasks').forEach(t => { if (t.status !== 'Feita' || !t.doneAt) return; const pj = OS.get('projects', t.project), pro = (pj && ['Profissional', 'Empresarial'].includes(pj.type)) || ['Carreira', 'Trabalho', 'Mova'].includes(t.area), g = goalOf(t), bonus = +t.prio === 1 ? 7 : +t.prio === 2 ? 4 : 0;
+    if (g) addG(t.doneAt, goalA(g), (25 + bonus * 2) * impF(g), 'Tarefa da meta "' + g.title + '": ' + t.title); else add(t.doneAt, pro ? 'carreira' : 'disciplina', 8 + bonus, 'Tarefa: ' + t.title); }), 'tarefas');
+  sf(() => OS.all('projects').forEach(p => { if (p.status !== 'Concluído') return; const pro = ['Profissional', 'Empresarial'].includes(p.type), g = OS.get('goals', p.goal), d = p.doneAt || (p._u ? U.iso(new Date(p._u)) : '');
+    if (g && g.status !== 'Abandonada') addG(d, goalA(g), 450 * impF(g), `Projeto da meta "${g.title}" concluído: ${p.name}`); else add(d, pro ? 'carreira' : 'disciplina', 120, 'Projeto concluído: ' + p.name); }), 'projetos');
+  // avanço medido nas metas e etapas feitas (desde que o Dominus começou a registar o avanço de cada meta)
+  sf(() => Object.entries(S().gp || {}).forEach(([id, r]) => { const g = OS.get('goals', id); if (!g || g.status === 'Abandonada') return; const a = goalA(g), H = r.h || [], stepsXP = !['steps', 'linked'].includes(g.metric) && !(g.metric === 'manual' && (g.cur === '' || g.cur == null));
+    let mx = r.b != null ? r.b : H.length ? H[0][1] : 0, ms = r.bs != null ? r.bs : H.length ? H[0][2] || 0 : 0;
+    H.forEach(([d, v, sd]) => { if (v > mx) { addG(d, a, (v - mx) * 25 * impF(g) * horF(g), `Meta "${g.title}": +${U.nf(v - mx, 1)}% (vais em ${U.nf(v, 1)}%)`); mx = v; }
+      if (stepsXP && (sd || 0) > ms) { addG(d, a, (sd - ms) * 150 * impF(g), `Meta "${g.title}": ${sd - ms === 1 ? 'etapa feita' : (sd - ms) + ' etapas feitas'}`); ms = sd; } }); }), 'avanço das metas');
+  // marcos (os acontecimentos que marcam o caminho)
+  sf(() => OS.all('milestones').forEach(m => { if (!m.done || !m.date) return; const g = OS.get('goals', m.goal); if (g && g.status !== 'Abandonada') addG(m.date, goalA(g), 600 * impF(g), `Marco da meta "${g.title}": ${m.title}`); else addG(m.date, 'disciplina', 200, 'Marco: ' + m.title); }), 'marcos');
+  sf(() => OS.all('goals').forEach(g => { if (g.status !== 'Concluída') return; const c = N(g.cat), a = /financ|dinheiro/.test(c) ? 'fortuna' : /estud|desenvolv/.test(c) ? 'intelecto' : /corr|corpo|saude|treino|desport/.test(c) ? 'corpo' : /carreira|trabalho|profiss/.test(c) ? 'carreira' : /fe|espirit/.test(c) ? 'espirito' : /relac|famil|amig/.test(c) ? 'relacoes' : 'disciplina'; addG(g.doneAt || (g._u ? U.iso(new Date(g._u)) : ''), a, 1500 * impF(g) * horF(g), 'Meta cumprida: ' + g.title); }), 'metas');
   sf(() => OS.all('habits').forEach(h => { const a = habA(h.name); Object.keys(h.log || {}).forEach(d => { if (h.log[d]) add(d, a, 8, 'Hábito: ' + h.name); }); }), 'hábitos');
   sf(() => { if (!OS.Hab || !OS.all('habits').some(h => h.core)) return; U.range(U.addDays(T, -400), T).forEach(d => { if (d < T && OS.Hab.dayScore(d) === 1) add(d, 'disciplina', 15, 'Dia perfeito (todos os inegociáveis)'); }); }, 'dias perfeitos');
   sf(() => { if (!OS.Att) return; OS.Att.all().forEach(o => { if (o.st === 'Presente') add(o.date, 'disciplina', 6, 'Aula: ' + ((OS.get('subjects', o.subject) || {}).name || '')); }); }, 'aulas');
   // Codex: os teus marcos
-  sf(() => Object.entries(S().legacy || {}).forEach(([p, L]) => (L || []).forEach(m => m && m.t && add(m.d, LEGA[p] || 'disciplina', LEGXP / XS, 'Marco: ' + m.t))), 'codex');
+  sf(() => Object.entries(S().legacy || {}).forEach(([p, L]) => (L || []).forEach(m => m && m.t && addG(m.d, LEGA[p] || 'disciplina', LEGXP / XS, 'Marco: ' + m.t))), 'codex');
   return E; };
 
 /* ================= ESTADO CALCULADO ================= */
@@ -236,7 +263,7 @@ const MQ = [
   ['mk', 'carreira', 'Caçador de oportunidades: 10 candidaturas', m => [m.apps || 0, 10], () => used('applications')],
   ['mt', 'disciplina', 'Executor: 150 tarefas concluídas', m => [m.tasks || 0, 150], () => true],
   ['mp', 'disciplina', 'Inquebrável: 20 dias perfeitos', m => [m.perfect || 0, 20], core]];
-const QX = { d: 550, w: 2200, m: 9000 }, QG = { d: 10, all: 25, w: 40, m: 150 }, LEGXP = 25000;
+const QX = { d: 220, w: 1000, m: 4000 }, QG = { d: 10, all: 25, w: 40, m: 150 }, LEGXP = 25000;
 // as missões de cada dia/semana ficam guardadas (o que se completa depois é verificado pelos teus registos)
 const weakest = () => { let lvx = {}; try { const s = CACHE && CACHE.v; lvx = s ? Object.fromEntries(AK.map(k => [k, s.ax[k]])) : {}; } catch (e) { } return AK.slice().sort((a, b) => (lvx[a] || 0) - (lvx[b] || 0)); };
 const pick = (pool, n, seed, wk) => { const r = U.rng(seed), out = [], W = wk || weakest(), byA = k => pool.filter(q => q[1] === k && q[4]() && !out.includes(q));
@@ -1081,7 +1108,7 @@ const flush = () => { if (showing || !QQ.length || document.querySelector('.d3-c
   el.className = 'ceremony d3-cel'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.style.setProperty('--kc', c.col || '#38BDF8');
   el.innerHTML = `<canvas></canvas><div class="in"><div class="cz d3-cel-k">${esc(c.k)}</div>${c.av ? `<div class="d3-cel-av">${D.card()}</div>` : `<div class="d3-cel-ic">${UI.ic(c.ic || 'star')}</div>`}<h1>${esc(c.t)}</h1>${c.s ? `<p>${esc(c.s)}</p>` : ''}${(c.rw || []).length ? `<div class="d3-cel-rw">${c.rw.map(r => `<span>${esc(r)}</span>`).join('')}</div>` : ''}<button class="dbtn gold" data-close>${QQ.length ? 'Continuar' : 'Boa!'}</button></div>`;
   document.body.appendChild(el);
-  try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !document.documentElement.classList.contains('lite')) confetti(el.querySelector('canvas'), c.col); } catch (e) { } try { navigator.vibrate && navigator.vibrate([40, 60, 80]); } catch (e) { }
+  try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !document.documentElement.classList.contains('lite-x')) confetti(el.querySelector('canvas'), c.col); } catch (e) { } try { navigator.vibrate && navigator.vibrate([40, 60, 80]); } catch (e) { }
   const close = () => { el.remove(); document.removeEventListener('keydown', key); showing = false; setTimeout(flush, 160); }, key = e => { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); close(); } };
   document.addEventListener('keydown', key);
   el.addEventListener('click', e => { if (e.target.closest('[data-close]') || e.target === el) { e.preventDefault(); e.stopPropagation(); close(); } }, true);
@@ -1127,6 +1154,7 @@ T.heroi = st => { const s = S(), H = st.H, md = MOODT[st.mood] || MOODT.forma, M
       <div class="d3-chips"><span title="Dias seguidos com algum registo">${ic('flame')}<b class="mono">${st.streak}</b> ${st.streak === 1 ? 'dia' : 'dias'} seguidos</span><span>${ic('coin')}<b class="mono">${U.nf(st.gold)}</b> ouro</span><span class="d3-mood ${st.mood}" title="${esc(md[1])}">${esc(md[0])}</span></div>
       <p class="dm d3-moodp">${esc(md[1])}</p></div></section>
   <section class="d3-today"><div class="d3-h"><span class="cz">Hoje</span><span class="dm mono">${tx ? '+' + xpTxt(tx) + ' XP' : ''}${wx ? ' · +' + xpTxt(wx) + ' esta semana' : ''}</span></div>
+    <p class="dm d3-rule">O XP a sério vem do que te aproxima dos objetivos: cada 1% que uma meta avança, etapas e marcos cumpridos, tarefas e projetos ligados a uma meta, metas cumpridas. O resto do dia a dia vale pouco, e quase nada numa área onde ainda não tens uma meta. <a href="#metas">Ver as metas</a></p>
     ${tx ? `<div class="d3-gain">${AK.filter(k => st.todayX[k] > 0).map(k => `<span style="--c:${AO[k].c}">${ic(AO[k].ic)}+${xpTxt(st.todayX[k])} ${esc(AO[k].n)}</span>`).join('')}</div>` : '<p class="dm">Ainda nada hoje. Regista qualquer coisa no Prumo (um treino, estudo, um gasto, um devocional…) e o teu herói ganha XP na hora.</p>'}
     <div class="d3-mini">${M.dl.map(m => `<a href="#dominus.missoes" class="${m.ok ? 'ok' : ''}" style="--c:${AO[m.a].c}"><i>${m.ok ? '✓' : ''}</i><span>${esc(m.t)}</span><small class="mono">${U.nf(m.c)}/${U.nf(m.n)}</small></a>`).join('')}</div></section>
   <section><div class="d3-h"><span class="cz">Atributos</span><span class="dm">sobem sozinhos com o que fazes</span></div><div class="d3-attrs">${AT.map(a => { const l = st.lv[a.k], nx = nextLook(a.k, l.l);
@@ -1215,7 +1243,7 @@ T.diario = st => { const days = U.lastN(14), per = days.map(d => { const o = Obj
 
 // criação do personagem
 const born = () => { const s = S(), st = D.state();
-  return `<div class="dom d3"><section class="d3-new"><div class="cz d3-k">PRUMO · O JOGO</div><h1>DOMINUS</h1><p class="d3-lead">O herói és tu. Já o fiz à tua imagem (pele, cabelo cacheado, óculos, cavanhaque): muda o que quiseres. Ele cresce sozinho com tudo o que fazes na vida real e registas no Prumo.</p>
+  return `<div class="dom d3"><section class="d3-new"><div class="cz d3-k">PRUMO · O JOGO</div><h1>DOMINUS</h1><p class="d3-lead">O herói és tu. Já o fiz à tua imagem (pele, cabelo cacheado, óculos, cavanhaque): muda o que quiseres. Ele cresce quando te aproximas dos teus objetivos: avanço nas metas, etapas, marcos e projetos ligados a elas. O resto do dia a dia vale pouco.</p>
     <div class="d3-newg"><div class="d3-cardw">${D.card()}</div>
       <div><div class="d3-step"><span class="cz">1 · O teu visual</span></div>${lookEd()}
         <div class="d3-step"><span class="cz">2 · O teu nome</span></div><form class="d3-name" data-form="d3Born"><div><input class="field" id="d3n" name="n" value="${esc(s.name || OS.one('profile').short || '')}" maxlength="24" placeholder="O teu nome" aria-label="Nome do herói"><button class="dbtn gold">${ic('crown')}Criar o meu herói</button></div></form>

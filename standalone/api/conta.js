@@ -53,11 +53,14 @@ const rankRows = async () => { if (RK.rows && Date.now() - RK.at < 30e3) return 
 // dias de foco seguidos: termina no dia mais recente (amanhã, hoje ou ontem em UTC, por causa dos fusos) que conta
 const streakOf = (d, today) => { let e = [addD(today, 1), today, addD(today, -1)].find(x => (d[x] || 0) >= FOCO); if (!e) return 0; let n = 0; while ((d[e] || 0) >= FOCO && n < 5000) { n++; e = addD(e, -1); } return n; };
 const bestOf = d => { let b = 0, run = 0, prev = ''; Object.keys(d).sort().forEach(x => { if (d[x] >= FOCO) { run = prev && addD(prev, 1) === x ? run + 1 : 1; prev = x; b = Math.max(b, run); } }); return b; };
+// está com a app aberta agora: sinal há menos de 7 min (a app manda um a cada 5 min de uso) e não disse que saiu
+const online = u => !!(u && u.on && Date.now() - (u.ult || 0) < 7 * 60e3);
+const totOf = u => u ? (u.tot != null ? u.tot : Object.values(u.dias || {}).reduce((a, x) => a + (Number(x) || 0), 0)) : 0;
 const rowOut = (r, today, me) => { const d = Object.fromEntries(Object.entries(r.d || {}).filter(([k]) => k >= DESDE())), ks = Object.keys(d).sort(), sum = from => ks.filter(x => x > from && x <= addD(today, 1)).reduce((a, x) => a + d[x], 0);
   const p7 = sum(addD(today, -7)), p30 = sum(addD(today, -30)), pa = ks.reduce((a, x) => a + d[x], 0), span = ks.length ? Math.max(1, Math.round((Date.parse(today) - Date.parse(ks[0])) / 864e5) + 1) : 1;
   const last = [addD(today, 1), today, addD(today, -1)].find(x => d[x] != null);
   return { n: r.anon && !me ? '' : r.n || '', c: r.c || '', av: r.anon && !me ? '' : r.av || '', im: r.anon && !me ? '' : r.im || '', anon: !!r.anon, me: !!me, s: streakOf(d, today), b: Math.max(r.b || 0, bestOf(d)), h: last ? d[last] : null,
-    p7, p30, pa, q7: Math.round(p7 / Math.min(7, span)), q30: Math.round(p30 / Math.min(30, span)), qa: Math.round(pa / span), dias: ks.length }; };
+    p7, p30, pa, q7: Math.round(p7 / Math.min(7, span)), q30: Math.round(p30 / Math.min(30, span)), qa: Math.round(pa / span), dias: ks.length, tm: Math.max(0, Math.round(Number(r.tm) || 0)) }; };
 
 /* ---------- Spotify: só para o administrador e as contas que ele escolher ---------- */
 const SPK = 'cfg/spotify', SP_MAX = 4, SPC = { at: 0, v: [] };
@@ -155,10 +158,24 @@ const OPS = {
   async uso(req, b) { const t = await N.readToken(req); if (!t) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
     const min = Math.max(0, Math.min(30, Math.round(Number(b.min) || 0))), day = /^\d{4}-\d{2}-\d{2}$/.test(b.dia || '') ? b.dia : new Date().toISOString().slice(0, 10), s = N.store(), p = 'u/' + t.u, key = await N.accKey();
     for (let i = 0; i < 4; i++) { const g = await s.get(p); let u = { dias: {}, ult: 0, a: t.a }; try { if (g) u = N.open(key, g.buf); } catch (e) { }
-      u.dias = u.dias || {}; u.dias[day] = (u.dias[day] || 0) + min; u.ult = Date.now(); u.a = t.a;
+      u.dias = u.dias || {}; if (u.tot == null) u.tot = Object.values(u.dias).reduce((a, x) => a + (Number(x) || 0), 0);
+      u.dias[day] = (u.dias[day] || 0) + min; u.tot += min; u.ult = Date.now(); u.a = t.a;
+      // presença: "abrir" marca a entrada no app; "fim" quando a app sai do ecrã; o resto é sinal de que está a ser usada
+      if (b.ev === 'abrir') u.ab = u.ult; u.on = b.ev === 'fim' ? 0 : 1;
+      // tempo de uso de cada perfil (para o ranking); o primeiro perfil herda o histórico que já havia
+      const pf = typeof b.pf === 'string' && /^[a-z0-9_-]{1,40}$/i.test(b.pf) ? b.pf : ''; u.pf = u.pf && typeof u.pf === 'object' ? u.pf : {};
+      if (pf && (pf in u.pf || Object.keys(u.pf).length < 12)) { if (u.pf[pf] == null) u.pf[pf] = Object.keys(u.pf).length ? 0 : u.tot - min; u.pf[pf] += min; }
       const ks = Object.keys(u.dias).sort(); ks.slice(0, Math.max(0, ks.length - 90)).forEach(k => delete u.dias[k]);
       try { await s.put(p, N.seal(key, u), g ? { ifMatch: g.etag } : { overwrite: false }); return { ok2: true }; } catch (e) { if (e.code !== 'conflict' && e.code !== 'exists') throw e; await N.sleep(60 + Math.random() * 150); } }
     return { ok2: false }; },
+
+  // o separador de administração aberto pergunta isto a cada 20 s: só a presença e o uso (sem reler as contas)
+  async adminVivo(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+    if (N.limit(req, 'admv|' + s0.rec.uid, 400, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
+    const s = N.store(), key = await N.accKey(), Us = await s.list('u/'), vivo = {};
+    let i = 0; await Promise.all(Array.from({ length: Math.min(16, Us.length) }, async () => { while (i < Us.length) { const x = Us[i++]; try { const g = await s.get(x.pathname); if (!g) continue; const u = N.open(key, g.buf);
+      vivo[x.pathname.slice(2)] = { ultUso: u.ult || 0, ab: u.ab || 0, online: online(u), tot: totOf(u), dias: u.dias || {} }; } catch (e) { } } }));
+    return { vivo, at: Date.now() }; },
 
   // separador de administração (só para quem está em NAUTILO_ADMIN): quem tem conta, quem entrou, quanto usa. Nunca mostra senhas nem dados.
   async admin(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
@@ -167,7 +184,10 @@ const OPS = {
     const pool = async (L, f) => { let i = 0; await Promise.all(Array.from({ length: Math.min(16, L.length) }, async () => { while (i < L.length) { const x = L[i++]; try { await f(x); } catch (e) { } } })); };
     const uso = {}; await pool(Us, async x => { const g = await s.get(x.pathname); if (g) uso[x.pathname.slice(2)] = N.open(key, g.buf); });
     const contas = []; await pool(A, async x => { const g = await s.get(x.pathname); if (!g) return; const r = N.open(key, g.buf), u = uso[r.uid] || { dias: {} };
-      contas.push({ email: r.email, nome: r.nome || '', criado: r.criado, perfis: (r.perfis || []).map(p => p.nome), ultEntrada: r.ult || 0, entradas: r.logins || 0, ultUso: u.ult || 0, dias: u.dias || {}, admin: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '' }); });
+      contas.push({ uid: r.uid, email: r.email, nome: r.nome || '', criado: r.criado, perfis: (r.perfis || []).map(p => p.nome), ultEntrada: Math.max(u.ab || 0, r.ult || 0), login: r.ult || 0, entradas: r.logins || 0, ultUso: u.ult || 0, online: online(u), tot: totOf(u), dias: u.dias || {}, admin: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '' }); });
+    // contas de teste (@nautilo.test, domínio reservado aos testes) com mais de 3 horas: apagam-se sozinhas
+    const velhas = contas.filter(c => TESTE.test(c.email) && c.criado && Date.now() - new Date(c.criado).getTime() > 3 * 36e5);
+    for (const c of velhas) { try { const eid = await N.emailId(c.email); await dropData(c.uid); await s.del([{ pathname: 'a/' + eid }, { pathname: 'u/' + c.uid }]); contas.splice(contas.indexOf(c), 1); RK.rows = null; } catch (e) { } }
     contas.sort((a, b) => Math.max(b.ultUso, b.ultEntrada) - Math.max(a.ultUso, a.ultEntrada));
     const P = await s.list('p/'), pedidos = []; await pool(P.slice(-300), async x => { const g = await s.get(x.pathname); if (g) pedidos.push(N.open(key, g.buf)); });
     pedidos.sort((a, b) => String(b.at).localeCompare(String(a.at)));
@@ -194,6 +214,8 @@ const OPS = {
       r.im = typeof b.im === 'string' && b.im.length <= 12000 && IMG.test(b.im) ? b.im : '';
       const ks = Object.keys(r.d).sort(); ks.slice(0, Math.max(0, ks.length - 400)).forEach(k => delete r.d[k]);
       Object.assign(r, { n: p.nome || '', c: p.cor || '', av: p.av || '', anon: !!b.anon, at: Date.now(), t: TESTE.test(s.rec.email) ? 1 : 0, b: bestOf(r.d) });
+      // tempo total de uso deste perfil (só para mostrar; não entra nos pontos)
+      try { const ug = await st.get('u/' + s.rec.uid); if (ug) { const u = N.open(key, ug.buf), pf = u.pf || {}; r.tm = pf[p.id] != null ? pf[p.id] : (s.rec.perfis || []).length <= 1 ? totOf(u) : 0; } } catch (e) { }
       try { await st.put(path, N.seal(key, r), g ? { ifMatch: g.etag } : { overwrite: false });
         if (RK.rows) { const k = RK.rows.findIndex(x => x.path === path); const nr = Object.assign({}, r, { path }); if (k >= 0) RK.rows[k] = nr; else RK.rows.push(nr); }
         return { eu: rowOut(r, today, true) }; } catch (e) { if (e.code !== 'conflict' && e.code !== 'exists') throw e; await N.sleep(60 + Math.random() * 150); } }

@@ -417,3 +417,4 @@ html.lite .d3c .c-runes>div{animation:none!important}
 @media (max-width:640px){.d3-mon{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center}.d3-mona .mo-px{max-width:140px}.d3-bsts{grid-template-columns:repeat(2,minmax(0,1fr))}.d3-bst .mo-px{width:84px;height:84px}}
 .d3-bossart .mo-px{width:100%;max-width:220px;height:auto}
 @media (max-width:700px){.d3-bossw{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center}.d3-bossw .d3-gos{justify-content:center}.d3-bossart .mo-px{max-width:180px}.d3-bossi{width:100%}}
+.d3-rule{margin:4px 0 10px;font-size:12.5px;line-height:1.5}.d3-rule a{color:#7DD3FC;text-decoration:underline;text-underline-offset:2px}

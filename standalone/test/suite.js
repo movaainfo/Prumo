@@ -224,10 +224,11 @@ async function sharedTests(b) {
     for (let i = 0; i < 8 && await p.$('.d3-cel'); i++) { await E(p, () => { const c = document.querySelector('.d3-cel [data-close]'); c && c.click(); }); await sleep(300); }
     ok('jogo: herói criado', await E(p, () => !!OS.one('dominus').born && !!document.querySelector('.d3-hero .d3c')));
     const lv0 = await E(p, () => OS.Dom.level()), c0 = await E(p, () => OS.Dom.state().lv.corpo.l);
-    await E(p, () => { for (let i = 0; i < 14; i++) OS.add('workouts', { date: OS.U.addDays(OS.U.today(), -i), title: 'Treino ' + i, items: [] }); });
+    await E(p, () => { OS.add('goals', { title: 'Treinar 20 vezes', cat: 'Academia', horizon: '3 meses', metric: 'workouts', target: 20, status: 'Ativa', start: OS.U.addDays(OS.U.today(), -20), due: OS.U.addDays(OS.U.today(), 70), importance: 4, steps: [] }); OS.Dom.snapGoals();
+      for (let i = 0; i < 14; i++) OS.add('workouts', { date: OS.U.addDays(OS.U.today(), -i), title: 'Treino ' + i, items: [] }); OS.Dom.snapGoals(); });
     await sleep(300); await E(p, () => location.hash = 'dominus.missoes'); await sleep(200); await E(p, () => location.hash = 'dominus'); await sleep(1000);
     const lv1 = await E(p, () => OS.Dom.level()), c1 = await E(p, () => OS.Dom.state().lv.corpo.l), cel = await E(p, () => (document.querySelector('.d3-cel') || {}).innerText || '');
-    ok('jogo: treinos registados sobem o Corpo (e o herói) e mostram parabéns', (lv1 > lv0 || c1 > c0) && /subiu|nível|Conquista/i.test(cel), `herói ${lv0} → ${lv1} · Corpo ${c0} → ${c1} · ` + cel.slice(0, 40));
+    ok('jogo: treinos que fazem avançar uma meta de corpo sobem o Corpo (e o herói) e mostram parabéns', (lv1 > lv0 || c1 > c0) && /subiu|nível|Conquista/i.test(cel), `herói ${lv0} → ${lv1} · Corpo ${c0} → ${c1} · ` + cel.slice(0, 40));
     for (let i = 0; i < 12 && await p.$('.d3-cel'); i++) { await E(p, () => { const c = document.querySelector('.d3-cel [data-close]'); c && c.click(); }); await sleep(300); }
     await E(p, () => location.hash = 'dominus.baus'); await sleep(400); const opts = await E(p, () => document.querySelectorAll('[data-act=d3Open]').length);
     ok('jogo: baú com 2 recompensas à escolha', opts === 2, opts + ' opções');
@@ -842,8 +843,8 @@ async function sharedTests(b) {
       rt.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(ans) }] } }] }) }); });
     const oldK3 = await E(p, () => OS.one('diet').aiKey || ''), oldIb = await E(p, () => { const c = OS.one('inbox'), o = { url: c.url, key: c.key }; c.url = 'https://script.google.com/macros/s/TESTE/exec'; c.key = 'k'; OS.touch('inbox'); OS.setOne('diet', { aiKey: 'AIzaTESTE_TESTE_TESTE_TESTE' }); return o; });
     await E(p, () => location.hash = 'jornal'); await sleep(1500);
-    ok('jornal: notícias do mundo com fontes e hora', await E(p, () => { const t = document.querySelector('#view').textContent; return !!document.querySelector('a[href="#jornal"]') && document.querySelectorAll('#view .nw-c').length >= 20 && /PT:WORLD notícia 1/.test(t) && /BR:WORLD notícia 1/.test(t) && /há 1 h|agora/.test(t) && /\+1 fonte/.test(t); }));
-    ok('jornal: "O essencial agora" feito pela IA só com as manchetes', await E(p, () => /Um dia cheio no mundo/.test(document.querySelector('#view .nw-brief').textContent)) && nwP.some(x => /editor de um jornal/.test(x) && /PT:WORLD notícia 1/.test(x)));
+    ok('jornal: notícias do mundo com fontes e hora', await E(p, () => { const t = document.querySelector('#view').textContent; return !!document.querySelector('a[href="#jornal"]') && document.querySelectorAll('#view .nw-c').length >= 20 && /PT:TOP notícia 1/.test(t) && /BR:TOP notícia 1/.test(t) && /há 1 h|agora/.test(t) && /\+1 fonte/.test(t); }));
+    ok('jornal: "O essencial agora" feito pela IA só com as manchetes', await E(p, () => /Um dia cheio no mundo/.test(document.querySelector('#view .nw-brief').textContent)) && nwP.some(x => /editor de um jornal/.test(x) && /PT:TOP notícia 1/.test(x)));
     await E(p, () => { OS.act.nwTopic({ dataset: { v: 'BUSINESS' } }); }); await sleep(900);
     ok('jornal: temas (economia)', await E(p, () => /PT:BUSINESS notícia 1/.test(document.querySelector('#view').textContent)));
     await E(p, () => OS.forms.nwTheme(null, k => k === 'q' ? 'Aveiro' : '')); await sleep(900);
@@ -910,10 +911,10 @@ async function areaTests(b) {
     OS.add('transactions', { type: 'Transferência', amount: 100, date: t, account: a.id, toAccount: c.id, desc: 'Poupar' });
     OS.add('transactions', { type: 'Despesa', amount: 999, date: U.addDays(t, 5), account: a.id, desc: 'Futuro T', cat: 'Lazer' });
     const m1 = F.month(ym);
-    return { a: F.accBal(OS.get('accounts', a.id)), c: F.accBal(OS.get('accounts', c.id)), inc: m1.inc - m0.inc, exp: m1.exp - m0.exp, up: F.upcoming(10).some(x => x.title === 'Futuro T' && x.amount === -999) }; });
+    return { a: F.accBal(OS.get('accounts', a.id)), c: F.accBal(OS.get('accounts', c.id)), inc: m1.inc - m0.inc, exp: m1.exp - m0.exp, fut: U.ym(U.addDays(t, 5)) === ym, up: F.upcoming(10).some(x => x.title === 'Futuro T' && x.amount === -999) }; });
   ok('finanças: saldo da conta = abertura + receitas − despesas − transferências (1279,50 €)', fin.a === 1279.5, JSON.stringify(fin));
   ok('finanças: transferência entra na conta de destino (100 €)', fin.c === 100);
-  ok('finanças: mês soma receitas e despesas (despesa futura ainda não conta no saldo)', fin.inc === 500 && Math.abs(fin.exp - (120.5 + 999)) < .001 && fin.a === 1279.5);
+  ok('finanças: mês soma receitas e despesas (despesa futura ainda não conta no saldo)', fin.inc === 500 && Math.abs(fin.exp - (120.5 + (fin.fut ? 999 : 0))) < .001 && fin.a === 1279.5, JSON.stringify(fin));
   ok('finanças: despesa agendada aparece nos próximos pagamentos', fin.up);
   const inst = await E(p, () => { const U = OS.U, a = OS.all('accounts').find(x => x.name === 'Conta T'), r = OS.add('transactions', { type: 'Despesa', amount: 300, inst: 3, date: U.today(), account: a.id, desc: 'Telemóvel T', cat: 'Pessoal' }); OS.Fin.afterTx(OS.get('transactions', r.id), true);
     const L = OS.U.sortBy(OS.all('transactions').filter(t => /Telemóvel T/.test(t.desc)), t => t.date); return L.map(t => [t.amount, t.instI, t.instN, t.date.slice(0, 7)]); });
@@ -2062,7 +2063,7 @@ async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis 
   const errs = [], ctxs = [];
   const fresh = async (prof, init) => { const ctx = await b.newContext(prof.o); ctxs.push(ctx); const p = await ctx.newPage();
     p.on('pageerror', e => errs.push('JS: ' + e.message)); p.on('console', m => { if (m.type() === 'error' && !/fonts\.g|net::ERR|Failed to load resource|ERR_INTERNET|ERR_CONNECTION|status of 40[134]/.test(m.text())) errs.push('consola: ' + m.text().slice(0, 160)); }); p.on('dialog', d => d.accept());
-    await p.addInitScript(() => { window.__accPoll = 1200; window.__noAsk = 1; window.__noOnb = 1; { const of = window.fetch.bind(window); window.__pend = new Map(); let n = 0; window.fetch = (u, o) => { const id = ++n, s = String(u && u.url || u); if (/api\//.test(s)) window.__pend.set(id, s.replace(/^.*api\//, '') + ' ' + String((o && o.body) || '').slice(0, 30) + ' @' + Date.now()); const r = of(u, o); r.finally(() => window.__pend.delete(id)).catch(() => { }); return r; }; } try { if (!localStorage.getItem('__fa')) { localStorage.setItem('os2foldAll', 'true'); localStorage.setItem('__fa', '1'); } } catch (e) { } }); if (init) await p.addInitScript(init); await p.goto(BASE); return p; };
+    await p.addInitScript(() => { window.__accPoll = 1200; window.__accPut = 900; window.__noAsk = 1; window.__noOnb = 1; { const of = window.fetch.bind(window); window.__pend = new Map(); let n = 0; window.fetch = (u, o) => { const id = ++n, s = String(u && u.url || u); if (/api\//.test(s)) window.__pend.set(id, s.replace(/^.*api\//, '') + ' ' + String((o && o.body) || '').slice(0, 30) + ' @' + Date.now()); const r = of(u, o); r.finally(() => window.__pend.delete(id)).catch(() => { }); return r; }; } try { if (!localStorage.getItem('__fa')) { localStorage.setItem('os2foldAll', 'true'); localStorage.setItem('__fa', '1'); } } catch (e) { } }); if (init) await p.addInitScript(init); await p.goto(BASE); return p; };
   const gateUp = p => p.waitForSelector('#acc .ac-in form, #acc .ac-who, #acc .ac-code', { timeout: 15000 });
   const lockUp = p => p.waitForSelector('#lkCode', { state: 'visible', timeout: 15000 });
   const app = p => p.waitForFunction(() => !document.getElementById('acc') && document.querySelector('#view') && document.querySelector('#view').innerText.trim().length > 30, null, { timeout: 15000 });

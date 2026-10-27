@@ -35,6 +35,8 @@ V.hoje = () => {
   const nowM = new Date().getHours() * 60 + new Date().getMinutes();
   const timed = todayItems.filter(x => x.start).sort((a, b) => U.t2m(a.start) - U.t2m(b.start));
   const nextIt = timed.find(x => U.t2m(x.end || x.start) >= nowM);
+  // o que está a acontecer agora (bloco da rotina, aula, turno…) e o que vem depois
+  const nowIt = timed.find(x => { const s = U.t2m(x.start), e = U.t2m(x.end || ''); return e != null && e > s && s <= nowM && nowM < e; }), afterIt = nowIt && timed.find(x => U.t2m(x.start) > nowM);
   const naAll = I.next(), rank = id => { const i = naAll.findIndex(n => n.edit === 'tasks:' + id); return i < 0 ? 999 : i; };
   const tasks = U.sortBy(OS.Tasks.open().filter(x => x.status !== 'Aguardando' && ((x.sched && x.sched <= t) || (x.due && x.due <= U.addDays(t, 1)) || x.status === 'Em curso')), x => rank(x.id));
   const doneToday = OS.all('tasks').filter(x => x.doneAt === t);
@@ -44,13 +46,13 @@ V.hoje = () => {
   const rPlan = OS.all('runplan').filter(r => r.active && String(r.wday) === String(new Date().getDay()));
   const study = St.today().slice(0, 3), minsToday = U.sum(OS.all('sessions').filter(s => s.date === t), s => s.minutes);
   const shifts = OS.all('shifts').filter(s => s.date === t);
-  const tl = timed.map(x => { const s = U.t2m(x.start), e = U.t2m(x.end || x.start) || s + 30; const cls = e < nowM ? 'past' : s <= nowM && nowM <= e ? 'now' : ''; return `<div class="tl-it ${cls}" ${x.edit ? `data-edit="${x.edit}" style="cursor:pointer"` : ''}><span class="h">${x.start}</span><span class="ax"><i style="${cls !== 'now' ? `border-color:${(x.color || OS.srcColor(x.src))}` : ''}"></i></span><div class="c"><b>${esc(x.title)}</b><small>${esc([x.end ? x.start + '–' + x.end : '', Cal.src[x.src][0], x.sub].filter(Boolean).join(' · '))}</small></div></div>`; }).join('');
+  const tl = timed.map(x => { const s = U.t2m(x.start), e = U.t2m(x.end || x.start) || s + 30; const cls = e < nowM ? 'past' : s <= nowM && nowM <= e ? 'now' : ''; return `<div class="tl-it ${cls}" ${x.edit ? `data-edit="${x.edit}" style="cursor:pointer"` : ''}><span class="h">${x.start}</span><span class="ax"><i style="${cls !== 'now' ? `border-color:${(x.color || OS.srcColor(x.src))}` : ''}"></i></span><div class="c"><b>${esc(x.title)}</b><small>${esc([x.end ? x.start + '–' + x.end : '', Cal.src[x.src][0], x.sub].filter(Boolean).join(' · '))}</small></div>${x.src === 'routine' && x.edit ? (() => { const rid = x.edit.split(':')[1], r = OS.get('routine', rid), dn = !!(r && (r.log || {})[t]); return `<button class="rt-ck${dn ? ' on' : ''}" data-act="rtDone" data-id="${rid}" aria-pressed="${dn}" aria-label="${esc(x.title)} feito hoje" title="${dn ? 'Feito hoje' : 'Marcar como feito'}">${UI.ic('check')}</button>`; })() : ''}</div>`; }).join('');
   const allDay = todayItems.filter(x => !x.start && !x.planned);
   const hjW = Math.max(320, Math.min(1280, innerWidth < 860 ? innerWidth : innerWidth - 60)), hjSc = OS.Fundo ? `<div class="hj-sc">${OS.Fundo.live(hjW, innerWidth < 860 ? 380 : 300, 'hjs')}</div>` : '';
   return `<div class="today">
   <div class="${hjSc ? 'hj-top' : ''}">${hjSc}<div class="eyebrow">${U.longDate(t)} · ${esc(p.city || '')}</div>
     <div class="row between gap16" style="align-items:flex-end;margin-top:6px"><div><h1 style="margin:0;font-size:24px;font-weight:600;letter-spacing:-.02em">${greet()}, ${esc(p.short || OS.who())}.</h1>
-    <p class="tx2" style="margin:4px 0 0">${nextIt ? `A seguir: <b style="color:var(--tx)">${esc(nextIt.title)}</b> às ${nextIt.start}` : 'Sem mais compromissos com hora hoje.'}</p></div><div class="today-clock" data-clock>${U.hm()}</div></div>
+    <p class="tx2" style="margin:4px 0 0">${nowIt ? `Agora: <b style="color:var(--tx)">${esc(nowIt.title)}</b> até ${nowIt.end}${afterIt ? ` · a seguir ${esc(afterIt.title)} às ${afterIt.start}` : ''}` : nextIt ? `A seguir: <b style="color:var(--tx)">${esc(nextIt.title)}</b> às ${nextIt.start}` : 'Sem mais compromissos com hora hoje.'}</p></div><div class="today-clock" data-clock>${U.hm()}</div></div>
     <p class="today-q" style="margin-top:14px">${esc(dayQuote())}</p></div>
   ${urgent.length ? `<div class="pn" style="border-color:rgba(242,109,109,.3)"><div class="pn-h"><h3>${UI.ic('radar')}Urgente</h3><a class="more" href="#visao">Painel ${UI.ic('right')}</a></div><div class="att">${urgent.slice(0, 4).map(attRow).join('')}</div></div>` : ''}
   <section><div class="sech"><div><h2>Prioridades</h2><p>${doneToday.length} concluída(s) hoje · ordenadas por prazo, importância e impacto</p></div><a class="btn ghost sm" href="#next">${UI.ic('zap')}Next Action</a></div>
@@ -92,7 +94,7 @@ OS.PainelParts = () => {
   const cap = OS.Car.capital(), capPrev = OS.Car.capital(U.addDays(t, -30));
   const mv = OS.Mv.month(ym), mvPrev = OS.Mv.month(U.addMonths(ym, -1));
   const goals = OS.all('goals').filter(g => g.status === 'Ativa').map(g => Object.assign({ g }, Goal.info(g)));
-  const onPace = goals.filter(x => !x.late && !x.behind).length;
+  const onPace = goals.filter(x => x.onPace).length, gIdle = goals.filter(x => x.idle).length;
   const na = I.next().slice(0, 3);
   const SH = OS.all('shifts'), wH = U.sum(SH.filter(s => s.date >= wk && s.date <= U.addDays(wk, 6)), s => OS.Car.workedHours(s)), wNext = U.sortBy(SH.filter(s => s.date > t || (s.date === t && (s.end || '99') > U.hm())), s => s.date + s.start)[0];
   const months = Fin.months(6);
@@ -102,7 +104,7 @@ OS.PainelParts = () => {
     ['treino', 'Corpo', 'Treino', wkW + '/' + (p.trainTarget || 4) + ' treinos', U.nf(kmW, 1) + ' km corridos esta semana'],
     ['capital', 'Carreira', 'Carreira', U.nf(cap.score) + ' pts', 'capital profissional ' + (cap.score >= capPrev.score ? '+' : '') + (cap.score - capPrev.score) + ' em 30d'],
     ['trabalho', 'Trabalho', 'Trabalho', U.nf(wH, 1) + ' h', 'trabalhadas esta semana' + (wNext ? ' · próximo turno ' + (wNext.date === t ? 'hoje' : U.fmtDS(wNext.date)) + ' ' + (wNext.start || '') : '')],
-    ['metas', 'Metas', 'Metas', onPace + '/' + goals.length, 'metas no ritmo']
+    ['metas', 'Metas', 'Metas', onPace + '/' + goals.length, 'no ritmo' + (gIdle ? ` · ${gIdle} por começar` : '')]
   ];
   const lifeTone = k => k === 'Finanças' ? areaTone('Finanças') : k === 'Universidade' ? areaTone('Universidade') : k === 'Treino' ? (areaTone('Treino') === 'pos' && areaTone('Corrida') === 'pos' ? 'pos' : 'warn') : k === 'Carreira' ? (areaTone('Oportunidades') === 'neg' || areaTone('Carreira') === 'neg' ? 'neg' : areaTone('Oportunidades') === 'warn' ? 'warn' : 'pos') : k === 'Mova' ? areaTone('Mova') : areaTone('Metas');
   const upc = Fin.upcoming(30).filter(x => x.amount < 0).slice(0, 5);

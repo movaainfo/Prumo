@@ -105,3 +105,34 @@ html.vv-full #view.pg-in .fc-strip-d .fc-d{animation:vvPopIn .4s var(--vv-e) bac
 html.vv-full #view.pg-in .fc-strip-d .fc-d:nth-child(2n){animation-delay:.04s}html.vv-full #view.pg-in .fc-strip-d .fc-d:nth-child(3n){animation-delay:.08s}html.vv-full #view.pg-in .fc-strip-d .fc-d.fc-now{animation-delay:.3s}
 html.vv-rm .vv-float{animation-name:vvFade}
 html.vv svg :is([data-act],[data-edit],[data-go]){transition:none!important;scale:none!important;translate:none!important}
+
+/* ---------- v2.53: mais fluido ---------- */
+/* mudar de página: a antiga sai num instante e a nova entra (o menu fica parado) */
+@keyframes vvVtOut{to{opacity:0;translate:0 -8px}}
+@keyframes vvVtIn{from{opacity:0}}
+::view-transition-old(root){animation:vvVtOut .2s ease-in both}
+::view-transition-new(root){animation:vvVtIn .34s var(--vv-e) both}
+#side{view-transition-name:side}#topnav,.topnav,#top{view-transition-name:topbar}
+/* cartões que se tocam levantam-se ao passar o rato */
+@media (hover:hover){
+  html.vv-full :is(.kpi,.dc,.v360-t,.nw-c,.life a,.rt-si,.mt-vh,.rk-row,.gcard,.tp-c,.ac-card,.fe-plan,.adm-r){transition:translate .28s var(--vv-e),box-shadow .28s,border-color .28s,background-color .28s!important}
+  html.vv-full :is(.kpi,.dc,.v360-t,.nw-c,.life a,.rt-si,.mt-vh,.tp-c):hover{translate:0 -3px;box-shadow:0 14px 34px -20px rgba(0,0,0,.85),0 0 0 1px var(--line3)}
+  html.vv-full :is(.rk-row,.gcard,.adm-r):hover{translate:4px 0}
+  html.vv-full .rt-b:hover{translate:0 -1px;box-shadow:0 8px 20px -12px var(--bc)}
+}
+/* campos: o foco acende devagar */
+html.vv :is(.field,input,select,textarea){transition:border-color .25s,box-shadow .3s,background-color .25s}
+html.vv :is(.field,input:not([type=checkbox]):not([type=radio]),select,textarea):focus{box-shadow:0 0 0 3px var(--accentBg)}
+/* mais coisas entram em cascata ao abrir uma página */
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard){animation:vvUp .55s var(--vv-e) both!important}
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard):nth-child(2n){animation-delay:.05s!important}
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard):nth-child(3n){animation-delay:.1s!important}
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard):nth-child(4n){animation-delay:.15s!important}
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard):nth-child(n+9){animation-delay:.2s!important}
+/* a linha da hora e o "online agora" entram com um brilho */
+html.vv-full #view.pg-in .rt-now{animation:vvLine .7s .3s var(--vv-e) both!important;transform-origin:left center}
+/* separadores: a aba ativa desliza */
+html.vv .tabs a{transition:color .25s,background-color .25s,border-color .25s!important}
+html.vv .chip{transition:background-color .25s,border-color .25s,color .25s,scale .16s!important}
+html.vv-rm ::view-transition-old(root),html.vv-rm ::view-transition-new(root){animation:none}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none!important}}
