@@ -848,6 +848,108 @@ select option{background:#0D141D}
 @keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
 .brand-mark.oc{background:#0B0B0B;box-shadow:inset 0 0 0 1px rgba(237,230,218,.14)}
 
+/* ============ ROTINA POR HORAS ============ */
+.rt-days{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.rt-days::-webkit-scrollbar{display:none}
+.rt-days .chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;font-size:13px}
+.rt-days .chip small{font-size:10.5px;color:var(--accent)}
+.rt-days .chip i{font:11px var(--mono);font-style:normal;color:var(--mut)}
+.rt-days .chip.is-t:not(.on){border-color:var(--line3);color:var(--tx)}
+.rt-add{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.rt-add-r{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rt-add label{display:inline-flex;align-items:center;gap:6px;color:var(--tx2);font-size:13px}
+.rt-add input[type=time]{width:auto;min-width:96px;font-family:var(--mono)}
+.rt-add select{width:auto;max-width:170px}
+.rt-add .grow{min-width:180px}
+.rt-dd{display:flex;gap:4px;flex-wrap:wrap}
+.rt-dc{position:relative;cursor:pointer}
+.rt-dc input{position:absolute;opacity:0;pointer-events:none}
+.rt-dc span{display:inline-block;padding:5px 9px;border-radius:7px;border:1px solid var(--line2);font-size:12.5px;color:var(--mut);min-width:40px;text-align:center}
+.rt-dc input:checked+span{background:var(--accentBg);border-color:rgba(92,200,230,.45);color:var(--accent)}
+.rt-dc input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.rt-pre{display:inline-flex;gap:2px}
+.rt-add-r>.btn.pri{margin-left:auto}
+.rt-g{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+.rt-side{display:flex;flex-direction:column;gap:12px}
+.rt-side .pn{margin:0}
+.rt-wrap{padding:10px 12px 10px 0;overflow:hidden}
+.rt-day{position:relative;margin-left:52px}
+.rt-hr{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--line)}
+.rt-hr span{position:absolute;left:-50px;top:-8px;width:42px;text-align:right;font:11px var(--mono);color:var(--mut)}
+.rt-lane{position:absolute;inset:0}
+.rt-b{position:absolute;display:flex;gap:6px;align-items:flex-start;justify-content:space-between;padding:6px 8px 6px 10px;border-radius:8px;background:color-mix(in srgb,var(--bc) 14%,var(--pn2));border:1px solid color-mix(in srgb,var(--bc) 34%,transparent);border-left:3px solid var(--bc);cursor:pointer;overflow:hidden;transition:border-color .15s,background .15s}
+.rt-b:hover{background:color-mix(in srgb,var(--bc) 22%,var(--pn2))}
+.rt-bt{display:flex;flex-direction:column;min-width:0;gap:1px}
+.rt-bt b{font-size:13px;font-weight:600;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt-bt span{font-size:11.5px;color:var(--tx2)}
+.rt-bt small{font-size:11.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt-b.sm{padding:2px 8px 2px 10px;align-items:center}
+.rt-b.sm .rt-bt{flex-direction:row;gap:8px;align-items:baseline}
+.rt-b.past{opacity:.55}
+.rt-b.now{box-shadow:0 0 0 1px var(--bc),0 6px 22px -10px var(--bc);opacity:1}
+.rt-b.done .rt-bt b{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--tx) 45%,transparent)}
+.rt-b.clash{border-color:var(--warn);border-left-color:var(--bc)}
+.rt-ck{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line3);background:transparent;display:grid;place-items:center;color:transparent;cursor:pointer;padding:0}
+.rt-ck .ic{width:14px;height:14px}
+.rt-ck:hover{border-color:var(--pos);color:var(--pos)}
+.rt-ck.on{background:var(--pos);border-color:var(--pos);color:var(--ink)}
+.rt-b.sm .rt-ck{width:18px;height:18px}.rt-b.sm .rt-ck .ic{width:11px;height:11px}
+.rt-free{position:absolute;left:2px;right:2px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 10px;border-radius:8px;border:1px dashed var(--line2);background:transparent;color:var(--mut);font-size:12px;cursor:pointer;overflow:hidden}
+.rt-free:hover{border-color:var(--accent);color:var(--accent)}
+.rt-free span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt-now{position:absolute;left:-6px;right:0;height:0;border-top:2px solid var(--neg);z-index:3;pointer-events:none}
+.rt-now::before{content:"";position:absolute;left:-4px;top:-6px;width:10px;height:10px;border-radius:50%;background:var(--neg)}
+.rt-now span{position:absolute;right:0;top:-18px;font:11px var(--mono);color:var(--neg);background:var(--bg);padding:0 4px;border-radius:4px}
+.rt-nowc b{display:block;font-size:16px;margin-top:2px;padding-left:9px;border-left:3px solid var(--bc,var(--line3))}
+.rt-nowc small{display:block;color:var(--tx2);font-size:12.5px;margin-top:2px}
+.rt-pb{height:4px;border-radius:9px;background:var(--line);margin-top:8px;overflow:hidden}.rt-pb i{display:block;height:100%;border-radius:9px}
+.rt-side .bar-row{grid-template-columns:minmax(70px,110px) 1fr 52px;gap:8px}
+.rt-side .bar{height:6px;border-radius:9px;background:var(--line);overflow:hidden}.rt-side .bar i{display:block;height:100%;border-radius:9px}
+.rt-empty h3{margin:0 0 4px}
+.rt-week{overflow-x:auto}
+.rt-wh{display:grid;grid-template-columns:44px repeat(7,minmax(96px,1fr));min-width:740px;border-bottom:1px solid var(--line)}
+.rt-wh::before{content:""}
+.rt-wh button{background:transparent;border:0;padding:9px 4px;font-size:12.5px;color:var(--tx2);cursor:pointer}
+.rt-wh button.is-t{color:var(--accent);font-weight:600}
+.rt-wg{display:grid;grid-template-columns:44px repeat(7,minmax(96px,1fr));min-width:740px;padding:10px 0}
+.rt-axis span{position:absolute;right:6px;transform:translateY(-7px);font:10.5px var(--mono);color:var(--mut)}
+.rt-wc{position:relative;border-left:1px solid var(--line)}
+.rt-wc.is-t{background:color-mix(in srgb,var(--accent) 4%,transparent)}
+.rt-b.wk{padding:3px 5px 3px 7px}.rt-b.wk .rt-bt b{font-size:11.5px}.rt-b.wk .rt-bt span{font-size:10.5px}
+.rt-cta{display:flex;align-items:center;gap:12px;color:var(--tx)}
+.rt-cta>span{flex:1;display:flex;flex-direction:column}.rt-cta small{color:var(--tx2)}
+.rt-strip .pn-h h3{display:flex;align-items:center;gap:8px}
+.rt-sl{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.rt-si{flex:none;min-width:150px;max-width:220px;display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center;padding:8px 10px;border-radius:9px;border:1px solid var(--line);border-left:3px solid var(--bc);background:var(--pn2);cursor:pointer}
+.rt-si span{grid-column:1;font-size:11.5px;color:var(--tx2)}
+.rt-si b{grid-column:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt-si .rt-ck{grid-column:2;grid-row:1/3}
+.rt-si.past{opacity:.55}.rt-si.now{border-color:var(--bc);box-shadow:0 0 0 1px var(--bc)}
+.rt-si.done b{text-decoration:line-through}
+.tl-it .rt-ck{align-self:center;margin-left:8px}
+.tl-it{grid-template-columns:48px 14px 1fr auto}
+@media (max-width:980px){.rt-g{grid-template-columns:1fr}.rt-side{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}}
+@media (max-width:620px){.rt-add-r>.btn.pri{margin-left:0;width:100%;justify-content:center}.rt-add .grow{flex-basis:100%}.rt-add select{max-width:none;flex:1}.rt-pre{width:100%}.rt-side{display:flex}}
+
+/* ============ METAS: ritmo honesto e o que fizeste ============ */
+.mt-vis{margin-bottom:14px}
+.mt-vg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.mt-vh{padding:12px;border-radius:10px;background:var(--pn2);border:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.mt-vh p{margin:0;font-size:13px;color:var(--tx2);line-height:1.45}
+.mt-vgs{display:flex;flex-wrap:wrap;gap:6px}
+.mt-vis-cta{display:flex;align-items:center;gap:12px;margin-bottom:14px;color:var(--tx)}
+.mt-vis-cta>span{flex:1;display:flex;flex-direction:column}.mt-vis-cta small{color:var(--tx2)}
+.mt-card{align-items:start}
+.mt-why{margin:8px 0 0;font-size:12.5px;color:var(--tx2);max-width:68ch}
+.mt-act{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px;font-size:12.5px;color:var(--tx2)}
+.mt-act .mt-al{color:var(--mut);min-width:84px}
+.mt-act b{color:var(--tx);font-weight:600}
+.mt-sug{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.mt-sug .btn .ic{width:13px;height:13px}
+.mt-card .gp small{font-size:11.5px}
+.cap-row{padding:2px 0}.cap-why{display:block;margin:-2px 0 6px 172px;font-size:11.5px}
+@media (max-width:620px){.cap-why{margin-left:0}}
+
 </style>
 <style>
 /* PRUMO — camada minimalista: menos linhas, mais espaço, uma coisa de cada vez. */
@@ -1487,6 +1589,7 @@ html.lite .d3c .c-runes>div{animation:none!important}
 @media (max-width:640px){.d3-mon{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center}.d3-mona .mo-px{max-width:140px}.d3-bsts{grid-template-columns:repeat(2,minmax(0,1fr))}.d3-bst .mo-px{width:84px;height:84px}}
 .d3-bossart .mo-px{width:100%;max-width:220px;height:auto}
 @media (max-width:700px){.d3-bossw{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center}.d3-bossw .d3-gos{justify-content:center}.d3-bossart .mo-px{max-width:180px}.d3-bossi{width:100%}}
+.d3-rule{margin:4px 0 10px;font-size:12.5px;line-height:1.5}.d3-rule a{color:#7DD3FC;text-decoration:underline;text-underline-offset:2px}
 
 </style>
 <style>
@@ -2780,6 +2883,40 @@ html.vv-full #view.pg-in .cv-ring{animation:vvRingP 1.3s .2s var(--vv-e,ease-out
 .spm-r:hover{background:rgba(233,227,216,.06)}.spm-r img,.spm-ph{width:40px;height:40px;border-radius:6px;object-fit:cover;flex:none;background:#121A26}.spm-r b,.spm-r small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}.spm-r small{color:#9AA4B2;font-size:12px}
 
 .ws-done{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--pos) 12%,transparent);font-size:13.5px}.ws-done .ic{width:16px;height:16px;color:var(--pos)}.ws-done span{flex:1;min-width:180px}
+.rk-tm{display:inline-flex;align-items:center;gap:3px;margin-left:8px;color:var(--tx2);white-space:nowrap}.rk-tm .ic{width:12px;height:12px}
+@media (max-width:560px){.rk-tm{margin-left:0;display:flex;margin-top:2px}}
+/* Jornal: última hora e ordem */
+.nw-live{margin-bottom:12px}
+.nw-live h3{display:flex;align-items:center;gap:8px}
+.nw-dot{width:9px;height:9px;border-radius:50%;background:var(--neg);box-shadow:0 0 0 0 rgba(242,109,109,.55);animation:nwPulse 1.6s ease-out infinite}
+@keyframes nwPulse{0%{box-shadow:0 0 0 0 rgba(242,109,109,.55)}70%{box-shadow:0 0 0 8px rgba(242,109,109,0)}100%{box-shadow:0 0 0 0 rgba(242,109,109,0)}}
+.nw-lr{display:grid;grid-template-columns:76px 1fr;gap:2px 12px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.nw-lr:first-of-type{border-top:0}
+.nw-lr .mono{grid-row:1/3;font-size:12px;color:var(--neg);padding-top:2px}
+.nw-lr b{font-weight:560;font-size:14px;line-height:1.35}
+.nw-lr small{font-size:12px}
+.nw-lr:hover b{color:var(--accent)}
+.nw-sort{margin:4px 0 10px;align-items:center}
+@media (prefers-reduced-motion:reduce){.nw-dot{animation:none}}
+.nw-deep{display:flex;align-items:center;gap:6px;width:100%;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:pointer;font:inherit}
+.nw-deep b{border-bottom:1px dashed color-mix(in srgb,var(--accent) 55%,transparent)}
+.nw-deep .ic{width:14px;height:14px;color:var(--accent);transition:translate .2s}
+.nw-deep:hover b{color:var(--accent)}.nw-deep:hover .ic{translate:3px 0}
+.nw-av{margin-top:16px;padding:14px 16px;border-radius:12px;background:color-mix(in srgb,var(--vio) 9%,var(--pn2));border:1px solid color-mix(in srgb,var(--vio) 30%,transparent)}
+.nw-av h4{display:flex;align-items:center;gap:8px;margin:0 0 6px;color:var(--vio)}
+.nw-av p{margin:0 0 8px;line-height:1.55}
+/* Investimentos: navegação por blocos (v2.53) */
+.inv-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 10px}
+.inv-g{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--pn);color:var(--tx2);min-width:0}
+.inv-g:hover{border-color:var(--line3);color:var(--tx)}
+.inv-g.on{border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:color-mix(in srgb,var(--accent) 10%,var(--pn));color:var(--tx)}
+.inv-gi{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--pn2);color:var(--accent)}
+.inv-g.on .inv-gi{background:var(--accent);color:var(--ink)}
+.inv-gt{display:flex;flex-direction:column;min-width:0}.inv-gt b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.inv-gt small{font-size:12px;color:var(--mut);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.inv-sub{margin:0 0 14px}
+@media (max-width:980px){.inv-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.inv-nav{gap:8px}.inv-g{padding:10px;gap:8px;flex-direction:column;align-items:flex-start}.inv-gt small{display:none}.inv-gi{width:30px;height:30px}.inv-gt b{font-size:13px;white-space:normal}}
+.inv-nav{row-gap:8px;align-content:start}.inv-nav>.inv-g{margin:0!important}
 
 </style>
 <style>
@@ -3639,6 +3776,13 @@ html.ac-open,html.ac-open body{overflow:hidden}
 .adm-risk summary .bdg{flex:none;min-width:64px;text-align:center}
 .adm-risk p{margin:8px 0 2px;font-size:13.5px;line-height:1.55;color:var(--tx2)}
 @media (max-width:620px){.lg-t td[data-l]::before{content:attr(data-l) ": ";color:#7A8BA0;font-weight:600}}
+/* admin em tempo real */
+.adm-exp{margin:0 0 10px;font-size:12.5px;color:var(--tx2);line-height:1.5;max-width:90ch}
+.adm-on{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pos);margin-right:6px;vertical-align:middle;box-shadow:0 0 0 0 rgba(63,207,142,.6);animation:admPulse 1.8s ease-out infinite}
+@keyframes admPulse{0%{box-shadow:0 0 0 0 rgba(63,207,142,.55)}70%{box-shadow:0 0 0 7px rgba(63,207,142,0)}100%{box-shadow:0 0 0 0 rgba(63,207,142,0)}}
+.adm-r.is-on{background:linear-gradient(90deg,rgba(63,207,142,.07),transparent 40%)}
+.adm-kon b{color:var(--pos)}
+@media (prefers-reduced-motion:reduce){.adm-on{animation:none}}
 
 </style>
 <style>
@@ -3650,9 +3794,11 @@ body{background-attachment:scroll!important}
 .glow,.hx2.can.aff polygon,.bm2-m.sel,.ceremony .ring{animation-iteration-count:3!important}
 .wave-load i,.sp-load i{animation-iteration-count:20!important}
 
-/* aparelhos fracos ou Android: tudo plano */
+/* aparelhos fracos ou Android: sem o que pesa (sombras, filtros, desfoques); o movimento fica (só opacidade e deslocações).
+   Sem movimento só no modo Leve escolhido à mão ou quando o sistema pede menos movimento (html.lite-x). */
 html.lite body{background:#070D16!important}
-html.lite *,html.lite *::before,html.lite *::after{box-shadow:none!important;text-shadow:none!important;filter:none!important;transition:none!important;animation-duration:.001s!important;animation-iteration-count:1!important}
+html.lite *,html.lite *::before,html.lite *::after{box-shadow:none!important;text-shadow:none!important;filter:none!important}
+html.lite-x *,html.lite-x *::before,html.lite-x *::after{transition:none!important;animation-duration:.001s!important;animation-iteration-count:1!important}
 html.lite .dc.hero::after,html.lite .dom::before{display:none!important}
 html.lite .pn,html.lite .dc,html.lite .kpi,html.lite .tn-dd{background:#0E1724!important}
 html.lite .dc.hero.h-abyss{background:#10233A!important}html.lite .dc.hero.h-tide{background:#0F2433!important}html.lite .dc.hero.h-reef{background:#0F2529!important}html.lite .dc.hero.h-deep{background:#141F3D!important}
@@ -3770,10 +3916,41 @@ html.vv-full #view.pg-in .fc-strip-d .fc-d:nth-child(2n){animation-delay:.04s}ht
 html.vv-rm .vv-float{animation-name:vvFade}
 html.vv svg :is([data-act],[data-edit],[data-go]){transition:none!important;scale:none!important;translate:none!important}
 
+/* ---------- v2.53: mais fluido ---------- */
+/* mudar de página: a antiga sai num instante e a nova entra (o menu fica parado) */
+@keyframes vvVtOut{to{opacity:0;translate:0 -8px}}
+@keyframes vvVtIn{from{opacity:0}}
+::view-transition-old(root){animation:vvVtOut .2s ease-in both}
+::view-transition-new(root){animation:vvVtIn .34s var(--vv-e) both}
+#side{view-transition-name:side}#topnav,.topnav,#top{view-transition-name:topbar}
+/* cartões que se tocam levantam-se ao passar o rato */
+@media (hover:hover){
+  html.vv-full :is(.kpi,.dc,.v360-t,.nw-c,.life a,.rt-si,.mt-vh,.rk-row,.gcard,.tp-c,.ac-card,.fe-plan,.adm-r){transition:translate .28s var(--vv-e),box-shadow .28s,border-color .28s,background-color .28s!important}
+  html.vv-full :is(.kpi,.dc,.v360-t,.nw-c,.life a,.rt-si,.mt-vh,.tp-c):hover{translate:0 -3px;box-shadow:0 14px 34px -20px rgba(0,0,0,.85),0 0 0 1px var(--line3)}
+  html.vv-full :is(.rk-row,.gcard,.adm-r):hover{translate:4px 0}
+  html.vv-full .rt-b:hover{translate:0 -1px;box-shadow:0 8px 20px -12px var(--bc)}
+}
+/* campos: o foco acende devagar */
+html.vv :is(.field,input,select,textarea){transition:border-color .25s,box-shadow .3s,background-color .25s}
+html.vv :is(.field,input:not([type=checkbox]):not([type=radio]),select,textarea):focus{box-shadow:0 0 0 3px var(--accentBg)}
+/* mais coisas entram em cascata ao abrir uma página */
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard){animation:vvUp .55s var(--vv-e) both!important}
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard):nth-child(2n){animation-delay:.05s!important}
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard):nth-child(3n){animation-delay:.1s!important}
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard):nth-child(4n){animation-delay:.15s!important}
+html.vv-full #view.pg-in :is(.rt-day .rt-b,.rt-si,.mt-card,.nw-c,.nw-lr,.rk-row,.tl-it,.v360-t,.adm-r,.hab,.gcard):nth-child(n+9){animation-delay:.2s!important}
+/* a linha da hora e o "online agora" entram com um brilho */
+html.vv-full #view.pg-in .rt-now{animation:vvLine .7s .3s var(--vv-e) both!important;transform-origin:left center}
+/* separadores: a aba ativa desliza */
+html.vv .tabs a{transition:color .25s,background-color .25s,border-color .25s!important}
+html.vv .chip{transition:background-color .25s,border-color .25s,color .25s,scale .16s!important}
+html.vv-rm ::view-transition-old(root),html.vv-rm ::view-transition-new(root){animation:none}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none!important}}
+
 </style>
 <style>[hidden]{display:none!important}</style>
-<script>window.OCEANUM_VERSION={"v": "2.52", "date": "25/10/2026", "notes": ["Painel e Hoje com o fundo animado (o mesmo do ecrã de entrada): aves, árvores ao vento, água e estrelas a mexer enquanto o fundo está à vista.", "O fundo pára sozinho fora do ecrã e com a app em segundo plano; desliga-se em Fundo → Fundo animado, no modo Leve ou com \"reduzir movimento\" do sistema."]};</script>
-<script>(function(){try{var n=navigator,ua=n.userAgent||"",low=(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||/Android/i.test(ua)||matchMedia("(prefers-reduced-motion: reduce)").matches;var f=localStorage.getItem("os2lite");if(f==="1"||(f!=="0"&&low))document.documentElement.classList.add("lite")}catch(e){}})();</script>
+<script>window.OCEANUM_VERSION={"v": "2.53", "date": "27/10/2026", "notes": ["Rotina por horas em Hábitos e rotina: o dia numa linha de horas (das tantas às tantas), adicionar rápido, copiar dias, modelos, avisos na hora e tudo no Calendário e no Google Calendar.", "Metas honestas: \"No ritmo\" só com avanço real; \"Por começar\" quando ainda não houve avanço; cada meta mostra o que fizeste por ela na semana e no mês e a tua visão da Estrela-guia.", "Dominus mais difícil: o XP a sério vem do avanço nas metas, etapas, marcos e projetos ligados a elas.", "Capital profissional ligado aos teus objetivos: competências até ao nível alvo, certificações, rede, projetos, eventos, mercado e metas de carreira.", "Jornal em tempo real (destaques de cada país, mais recentes primeiro, \"Última hora\") e cada tema do resumo abre a fundo com a avaliação da IA.", "A IA faz o que pedes dentro do app: cria, muda e apaga registos (apagar pede sempre confirmação).", "Admin em tempo real (online agora, última entrada e último acesso) e tempo de uso no ranking.", "Investimentos arrumados em 4 blocos, com todas as funções. Mais animações e transições suaves, também em Android."]};</script>
+<script>(function(){try{var n=navigator,ua=n.userAgent||"",low=(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||/Android/i.test(ua)||matchMedia("(prefers-reduced-motion: reduce)").matches;var f=localStorage.getItem("os2lite"),rm=matchMedia("(prefers-reduced-motion: reduce)").matches,R=document.documentElement;if(f==="1"||(f!=="0"&&low))R.classList.add("lite");if(f==="1"||(f!=="0"&&rm))R.classList.add("lite-x")}catch(e){}})();</script>
 <script src="config.js"></script>
 <script>
 /* Prumo — atualizações visíveis: ecrã curto "A atualizar…" quando chega uma versão nova,
@@ -4374,7 +4551,7 @@ UI.ask = (title, text, ok, fn, tone = 'danger') => {
   const m = U.$('#modal'); m.innerHTML = `<div class="drw-bg" data-mclose></div><div class="modal" role="alertdialog" aria-modal="true"><h3>${title}</h3><p>${text}</p><div class="row gap8 end"><button class="btn ghost" data-mclose>Cancelar</button><button class="btn ${tone}" data-mok>${ok}</button></div></div>`; m.hidden = false;
   U.$('[data-mok]', m).onclick = () => { m.hidden = true; m.innerHTML = ''; fn(); };
   U.$$('[data-mclose]', m).forEach(b => b.onclick = () => { m.hidden = true; m.innerHTML = ''; });
-  setTimeout(() => U.$('[data-mok]', m).focus(), 30);
+  setTimeout(() => { const b = U.$('[data-mok]', m); if (b) b.focus(); }, 30);
 };
 UI.modal = (html, cls = '') => { const m = U.$('#modal'); m.innerHTML = `<div class="drw-bg" data-mclose></div><div class="modal ${cls}" role="dialog" aria-modal="true">${html}</div>`; m.hidden = false; U.$$('[data-mclose]', m).forEach(b => b.onclick = UI.closeModal); };
 UI.closeModal = () => { const m = U.$('#modal'); m.hidden = true; m.innerHTML = ''; };
@@ -4574,8 +4751,9 @@ S.habits = { label: 'Hábito', title: r => r.name, fields: [
 
 S.routine = { label: 'Bloco de rotina', title: r => r.title, fields: [
   F('title', 'Bloco', 'text', { req: 1, wide: 1 }), F('days', 'Dias', 'multi', { o: L.WEEK }), F('start', 'Início', 'time', { req: 1 }), F('end', 'Fim', 'time', { req: 1 }),
-  F('area', 'Área', 'sel', { o: L.AREAS }), F('notes', 'Notas', 'area')
-], defaults: () => ({ days: ['1', '2', '3', '4', '5'] }) };
+  F('area', 'Área', 'sel', { o: L.AREAS }), F('warn', 'Aviso', 'sel', { o: [['0', 'Na hora'], ['5', '5 min antes'], ['10', '10 min antes'], ['15', '15 min antes'], ['30', '30 min antes'], ['off', 'Sem aviso']] }),
+  F('habit', 'Conta como o hábito', 'sel', { o: () => [['', 'Nenhum'], ...OS.all('habits').filter(h => h.active).map(h => [h.id, h.name])], h: 'Marcar o bloco como feito marca este hábito no dia' }), F('notes', 'Notas', 'area')
+], defaults: () => ({ days: ['1', '2', '3', '4', '5'], warn: '0' }) };
 
 S.projects = { label: 'Projeto', title: r => r.name, fields: [
   F('name', 'Projeto', 'text', { req: 1, wide: 1 }), F('type', 'Tipo', 'sel', { o: L.PTYPE, req: 1 }), F('status', 'Estado', 'sel', { o: L.PSTAT, req: 1 }),
@@ -5578,13 +5756,18 @@ document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded'
 
 /* ---------- tempo de uso (para o separador de administração): minutos com a app aberta e à vista, por dia ---------- */
 const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
-let useMin = 0, useDay = today();
-const sendUse = keep => { if (!S || (!useMin && keep !== 0)) return; const min = useMin, dia = useDay; useMin = 0; useDay = today();
-  try { fetch(new URL('api/conta', document.baseURI).href, { method: 'POST', keepalive: !!keep, headers: { 'content-type': 'application/json', authorization: 'Bearer ' + S.t }, body: JSON.stringify({ op: 'uso', min, dia }) }).catch(() => { useMin += min; }); } catch (e) { } };
+let useMin = 0, useDay = today(), lastSend = 0, hidAt = 0, finSent = false;
+// ev: 'abrir' (entrou no app), 'fim' (o app saiu do ecrã) ou nada (está a ser usado); o administrador vê isto em tempo real
+const sendUse = (keep, ev) => { if (!S || (!useMin && keep !== 0 && !ev)) return; const min = useMin, dia = useDay; useMin = 0; useDay = today(); lastSend = Date.now();
+  try { fetch(new URL('api/conta', document.baseURI).href, { method: 'POST', keepalive: !!keep, headers: { 'content-type': 'application/json', authorization: 'Bearer ' + S.t }, body: JSON.stringify({ op: 'uso', min, dia, ev: ev || '', pf: pid() || '' }) }).catch(() => { useMin += min; }); } catch (e) { } };
 const locked = () => { const l = document.getElementById('lkCode'); return !!(l && l.offsetParent) || !!document.getElementById('acc'); };
 setInterval(() => { if (!S || !cur() || document.hidden || locked()) return; if (useDay !== today()) sendUse(); useMin++; if (useMin >= 5) sendUse(); }, window.__useTick || 60e3);
-addEventListener('pagehide', () => sendUse(1)); document.addEventListener('visibilitychange', () => { if (document.hidden) sendUse(1); });
-OS.on('ready', () => setTimeout(() => sendUse(0), 4000));
+const bye = () => { if (finSent || !S || !cur()) return; finSent = true; sendUse(1, 'fim'); };
+addEventListener('pagehide', bye);
+document.addEventListener('visibilitychange', () => { if (document.hidden) { hidAt = Date.now(); bye(); return; } if (!S || !cur() || locked()) return; finSent = false;
+  // voltou ao app: depois de 10 min fora conta como nova entrada; antes disso é só sinal de que está outra vez a usar
+  if (hidAt && Date.now() - hidAt >= 10 * 60e3) sendUse(0, 'abrir'); else if (Date.now() - lastSend > 45e3) sendUse(0); });
+OS.on('ready', () => setTimeout(() => { finSent = false; sendUse(0, 'abrir'); }, 4000));
 
 /* ---------- separador de administração (só na conta de quem está em NAUTILO_ADMIN no servidor) ---------- */
 Acc.adm = () => !!(S && S.adm);
@@ -5598,7 +5781,7 @@ Acc.navAdm = () => { const N = OS.NAV; if (!N) return; const i = N.findIndex(g =
 let ADM = null, admBusy = false, admErr = '';
 const admLoad = async () => { if (admBusy) return; admBusy = true; admErr = '';
   fetch(new URL('api/ia?p=estado', document.baseURI).href).then(r => r.json()).then(j => { U.ls.set('os2iaSrv', { g: !!j.google, cl: !!j.claude, stt: j.stt || '', mod: j.modelo || '', at: Date.now() }); }).catch(() => { }); fetch(new URL('api/google?p=estado', document.baseURI).href).then(r => r.json()).then(j => { if (j && j.ok) U.ls.set('os2gSrv', { pronto: !!j.pronto, chave: j.chave || '', erro: j.erro || '', at: Date.now() }); OS.request(); }).catch(() => { }); try { ADM = Object.assign(await conta('admin'), { at: Date.now() }); } catch (e) { admErr = e.net ? 'Sem ligação à internet.' : e.message; } admBusy = false; OS.request(); };
-const ago = t => { if (!t) return '—'; const s = Math.max(0, (Date.now() - t) / 1000); if (s < 90) return 'agora'; if (s < 3600) return 'há ' + Math.round(s / 60) + ' min'; if (s < 86400) return 'há ' + Math.round(s / 3600) + ' h'; const d = Math.round(s / 86400); return d === 1 ? 'ontem' : d < 30 ? 'há ' + d + ' dias' : new Date(t).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT'); };
+const ago = t => { if (!t) return '—'; const s = Math.max(0, (Date.now() - t) / 1000); if (s < 10) return 'agora'; if (s < 60) return 'há ' + Math.round(s) + ' s'; if (s < 90) return 'há 1 min'; if (s < 3600) return 'há ' + Math.round(s / 60) + ' min'; if (s < 86400) return 'há ' + Math.round(s / 3600) + ' h'; const d = Math.round(s / 86400); return d === 1 ? 'ontem' : d < 30 ? 'há ' + d + ' dias' : new Date(t).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT'); };
 const hmin = m => { m = Math.round(m || 0); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0'); };
 const lastDays = n => { const out = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); out.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')); } return out; };
 const bars = (dias, n, h) => { const D = lastDays(n), mx = Math.max(30, ...D.map(d => dias[d] || 0)); return `<span class="adm-bars" style="--h:${h}px" role="img" aria-label="Minutos por dia, últimos ${n} dias">${D.map(d => `<i style="height:${Math.round((dias[d] || 0) / mx * 100)}%" title="${d}: ${hmin(dias[d] || 0)}"></i>`).join('')}</span>`; };
@@ -5632,18 +5815,32 @@ OS.views.admin = () => { const UI = OS.UI, head = UI.head('Administração', 'Qu
   const L = ADM.contas || [], t = today(), D7 = lastDays(7), act = days => L.filter(c => Math.max(c.ultUso || 0, c.ultEntrada || 0) > Date.now() - days * 864e5).length;
   const minToday = L.reduce((n, c) => n + ((c.dias || {})[t] || 0), 0), min7 = L.reduce((n, c) => n + D7.reduce((m, d) => m + ((c.dias || {})[d] || 0), 0), 0);
   return head + `<div class="adm">
-  <div class="adm-kpi"><div><b class="mono">${ADM.total}</b><span>contas</span></div><div><b class="mono">${ADM.perfis}</b><span>perfis</span></div><div><b class="mono">${act(1)}</b><span>ativas hoje</span></div><div><b class="mono">${act(7)}</b><span>ativas em 7 dias</span></div><div><b class="mono">${act(30)}</b><span>ativas em 30 dias</span></div><div><b class="mono">${hmin(minToday)}</b><span>de uso hoje (todos)</span></div><div><b class="mono">${act(7) ? hmin(min7 / 7 / act(7)) : '—'}</b><span>por dia, por conta ativa</span></div></div>
+  <div class="adm-kpi"><div><b class="mono">${ADM.total}</b><span>contas</span></div><div><b class="mono">${ADM.perfis}</b><span>perfis</span></div><div class="adm-kon"><b class="mono" id="admOnline">${L.filter(c => c.online).length}</b><span>online agora</span></div><div><b class="mono">${act(1)}</b><span>ativas hoje</span></div><div><b class="mono">${act(7)}</b><span>ativas em 7 dias</span></div><div><b class="mono">${act(30)}</b><span>ativas em 30 dias</span></div><div><b class="mono">${hmin(minToday)}</b><span>de uso hoje (todos)</span></div><div><b class="mono">${act(7) ? hmin(min7 / 7 / act(7)) : '—'}</b><span>por dia, por conta ativa</span></div></div>
   <div class="pn"><div class="pn-h"><h3>${UI.ic('users')}Contas</h3><div class="row gap8 adm-tools"><input type="search" id="admQ" class="field" placeholder="Procurar por nome ou e-mail" aria-label="Procurar contas"><button class="btn sm ghost" data-act="admCsv">Exportar CSV</button></div></div>
+    <p class="adm-exp"><b>Última entrada</b>: quando a pessoa abriu o Prumo pela última vez (ou voltou a ele depois de 10 minutos fora, ou fez login). <b>Último acesso</b>: o último momento em que esteve a usar o Prumo; enquanto usa vai-se atualizando e aparece <b class="pos">online agora</b>. Esta lista atualiza-se sozinha a cada 20 segundos.</p>
     <div class="adm-t" role="table" aria-label="Contas"><div class="adm-r adm-hd" role="row"><span role="columnheader">Pessoa</span><span role="columnheader">Último acesso</span><span role="columnheader">Última entrada</span><span role="columnheader">Hoje</span><span role="columnheader">7 dias</span><span role="columnheader">Criada</span></div>
     ${L.map((c, i) => { const d7 = D7.reduce((m, d) => m + ((c.dias || {})[d] || 0), 0), P = c.perfis || [];
-      return `<button class="adm-r" role="row" data-act="admOne" data-i="${i}" data-q="${esc((c.nome + ' ' + c.email + ' ' + P.join(' ')).toLowerCase())}"><span role="cell" class="adm-who"><b>${esc(c.nome || P[0] || '—')}${c.admin ? ' <small class="mu-tag">admin</small>' : ''}</b><small>${esc(c.email)}</small><small class="mut">${P.length} ${P.length === 1 ? 'perfil' : 'perfis'}${P.length ? ': ' + esc(P.join(', ')) : ''}</small></span>
-        <span role="cell"><em>Último acesso</em>${ago(c.ultUso || c.ultEntrada)}</span><span role="cell"><em>Última entrada</em>${ago(c.ultEntrada)}${c.entradas ? ` <small class="mut">(${c.entradas}×)</small>` : ''}</span><span role="cell" class="mono"><em>Hoje</em>${hmin((c.dias || {})[t] || 0)}</span><span role="cell"><em>7 dias</em>${bars(c.dias || {}, 7, 22)} <small class="mono">${hmin(d7)}</small></span><span role="cell"><em>Criada</em>${c.criado ? new Date(c.criado).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</span></button>`; }).join('') || '<p class="mut" style="padding:12px">Ainda não há contas.</p>'}</div></div>
+      return `<button class="adm-r${c.online ? ' is-on' : ''}" role="row" data-act="admOne" data-i="${i}" data-uid="${esc(c.uid || '')}" data-q="${esc((c.nome + ' ' + c.email + ' ' + P.join(' ')).toLowerCase())}"><span role="cell" class="adm-who"><b>${esc(c.nome || P[0] || '—')}${c.admin ? ' <small class="mu-tag">admin</small>' : ''}</b><small>${esc(c.email)}</small><small class="mut">${P.length} ${P.length === 1 ? 'perfil' : 'perfis'}${P.length ? ': ' + esc(P.join(', ')) : ''}</small></span>
+        <span role="cell"><em>Último acesso</em><span class="adm-ua" data-t="${c.ultUso || c.ultEntrada || ''}" data-on="${c.online ? '1' : ''}">${liveCell(c.ultUso || c.ultEntrada, c.online)}</span></span><span role="cell"><em>Última entrada</em><span class="adm-ue" data-t="${c.ultEntrada || ''}">${ago(c.ultEntrada)}</span>${c.entradas ? ` <small class="mut" title="logins com e-mail e senha">(${c.entradas} ${c.entradas === 1 ? 'login' : 'logins'})</small>` : ''}</span><span role="cell" class="mono"><em>Hoje</em><span class="adm-hj">${hmin((c.dias || {})[t] || 0)}</span></span><span role="cell"><em>7 dias</em>${bars(c.dias || {}, 7, 22)} <small class="mono">${hmin(d7)}</small></span><span role="cell"><em>Criada</em>${c.criado ? new Date(c.criado).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</span></button>`; }).join('') || '<p class="mut" style="padding:12px">Ainda não há contas.</p>'}</div></div>
   ${spPn()}${pendPn()}${pedidosPn()}
-  <p class="mut adm-note">Atualizado ${ago(ADM.at)}. O tempo de uso conta os minutos com o Prumo aberto e à vista (desbloqueado). Estes dados estão descritos na Política de Privacidade.</p></div>`; };
+  <p class="mut adm-note">Atualizado <span id="admAt">${ago(ADM.vivoAt || ADM.at)}</span> (sozinho, a cada 20 s). O tempo de uso conta os minutos com o Prumo aberto e à vista (desbloqueado). Estes dados estão descritos na Política de Privacidade.</p></div>`; };
 A.admRefresh = () => { ADM = null; admErr = ''; admLoad(); OS.request(); };
+// tempo real: com o separador aberto e à vista, pergunta ao servidor a cada 20 s quem está online e atualiza as células sem redesenhar a página
+const liveCell = (t, on) => on ? '<i class="adm-on" aria-hidden="true"></i><b class="pos">online agora</b>' : ago(t);
+let vivoBusy = false;
+const admVivo = async () => { if (vivoBusy || !ADM || !Acc.adm() || document.hidden || !/^#admin/.test(location.hash)) return; vivoBusy = true;
+  try { const j = await conta('adminVivo'), V = j.vivo || {}; (ADM.contas || []).forEach(c => { const v = V[c.uid]; if (!v) return; c.ultUso = v.ultUso; c.online = v.online; c.tot = v.tot; c.dias = v.dias; c.ultEntrada = Math.max(v.ab || 0, c.login || 0); }); ADM.vivoAt = Date.now(); paintLive(); } catch (e) { } vivoBusy = false; };
+const paintLive = () => { if (!ADM) return; const t = today();
+  document.querySelectorAll('#view .adm-r[data-uid]').forEach(r => { const c = (ADM.contas || []).find(x => x.uid === r.dataset.uid); if (!c) return;
+    const a = r.querySelector('.adm-ua'), e = r.querySelector('.adm-ue'), h = r.querySelector('.adm-hj'); if (a) { a.dataset.t = c.ultUso || c.ultEntrada || ''; a.dataset.on = c.online ? '1' : ''; } if (e) e.dataset.t = c.ultEntrada || ''; if (h) h.textContent = hmin((c.dias || {})[t] || 0); r.classList.toggle('is-on', !!c.online); });
+  const k = document.getElementById('admOnline'); if (k) k.textContent = (ADM.contas || []).filter(c => c.online).length;
+  const u = document.getElementById('admAt'); if (u) u.textContent = ago(ADM.vivoAt || ADM.at); tickLive(); };
+const tickLive = () => { document.querySelectorAll('#view .adm-ua[data-t], #view .adm-ue[data-t]').forEach(el => { const on = el.dataset.on === '1', v = liveCell(+el.dataset.t || 0, on); if (el._v !== v) { el._v = v; el.innerHTML = v; } }); };
+setInterval(admVivo, 20e3); setInterval(() => { if (/^#admin/.test(location.hash) && !document.hidden) tickLive(); }, 5e3);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && /^#admin/.test(location.hash)) admVivo(); });
 A.admOne = b => { const c = ADM && ADM.contas[+b.dataset.i]; if (!c) return; const D = lastDays(30), tot = D.reduce((m, d) => m + ((c.dias || {})[d] || 0), 0), on = D.filter(d => (c.dias || {})[d]).length;
   OS.UI.modal(`<div style="padding:20px"><div class="row between" style="align-items:center"><h3 style="margin:0">${esc(c.nome || c.email)}</h3><button class="icon-btn" data-mclose aria-label="Fechar">${OS.UI.ic('x')}</button></div><p class="mut" style="margin:4px 0 14px">${esc(c.email)}</p>
-    <div class="dc-rows"><div><span>Perfis</span><b>${esc((c.perfis || []).join(', ') || '—')}</b></div><div><span>Conta criada</span><b>${c.criado ? new Date(c.criado).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Última entrada (login)</span><b>${c.ultEntrada ? new Date(c.ultEntrada).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Último acesso</span><b>${c.ultUso ? new Date(c.ultUso).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Entradas</span><b class="mono">${c.entradas || 0}</b></div><div><span>Termos aceites</span><b>${c.termos ? 'versão de ' + esc(c.termos) + (c.termosAt ? ' · ' + new Date(c.termosAt).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '') : 'ainda não'}</b></div><div><span>Uso nos últimos 30 dias</span><b class="mono">${hmin(tot)} · ${on} ${on === 1 ? 'dia' : 'dias'}</b></div></div>
+    <div class="dc-rows"><div><span>Perfis</span><b>${esc((c.perfis || []).join(', ') || '—')}</b></div><div><span>Conta criada</span><b>${c.criado ? new Date(c.criado).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Última entrada no app</span><b>${c.ultEntrada ? new Date(c.ultEntrada).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Último acesso</span><b>${c.online ? '<span class="pos">online agora</span>' : c.ultUso ? new Date(c.ultUso).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Último login (e-mail e senha)</span><b>${c.login ? new Date(c.login).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Logins</span><b class="mono">${c.entradas || 0}</b></div><div><span>Tempo total no app</span><b class="mono">${hmin(c.tot || 0)}</b></div><div><span>Termos aceites</span><b>${c.termos ? 'versão de ' + esc(c.termos) + (c.termosAt ? ' · ' + new Date(c.termosAt).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '') : 'ainda não'}</b></div><div><span>Uso nos últimos 30 dias</span><b class="mono">${hmin(tot)} · ${on} ${on === 1 ? 'dia' : 'dias'}</b></div></div>
     <h4 style="margin:16px 0 6px">Minutos por dia (30 dias)</h4>${bars(c.dias || {}, 30, 90)}<div class="adm-ax"><span>${D[0].slice(8)}/${D[0].slice(5, 7)}</span><span>hoje</span></div>
     ${c.admin ? '<p class="mut" style="margin:14px 0 0">Spotify: tens sempre (administrador).</p>' : `<div class="row gap8" style="margin-top:14px;align-items:center;flex-wrap:wrap"><span class="grow">Spotify: <b>${c.sp ? 'tem acesso' : 'sem acesso'}</b></span>${c.sp ? `<button class="btn sm ghost" data-act="admSp" data-e="${esc(c.email)}" data-on="">Tirar acesso ao Spotify</button>` : `<button class="btn sm" data-act="admSp" data-e="${esc(c.email)}" data-on="1" ${((ADM && ADM.spotify) || []).length >= ((ADM && ADM.spMax) || 4) ? 'disabled title="Já há 4 contas com o Spotify"' : ''}>Dar acesso ao Spotify</button>`}</div>`}
     ${c.admin || c.email === Acc.email() ? '' : `<div class="adm-del"><h4 style="margin:18px 0 6px">Apagar esta conta</h4><p class="mut" style="margin:0 0 10px">Apaga a conta, todos os perfis e os dados dela (também do ranking). Não se pode desfazer.</p>
@@ -5655,7 +5852,7 @@ OS.forms.admDel = async (f, v) => { const c = ADM && ADM.contas[+f.dataset.i]; i
   try { await conta('adminApagar', { email: c.email, senha: v('senha') }); ADM.contas = ADM.contas.filter(x => x !== c); ADM.total = ADM.contas.length; OS.UI.closeModal(); OS.UI.toast('Conta apagada: ' + c.email, 'pos'); OS.request(); }
   catch (e) { bt.disabled = false; bt.textContent = 'Apagar a conta'; OS.UI.toast(e.message || 'Não consegui apagar a conta.', 'neg'); } };
 A.admCsv = () => { if (!ADM) return; const D = lastDays(30), q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-  const rows = [['Nome', 'E-mail', 'Perfis', 'Criada', 'Última entrada', 'Último acesso', 'Entradas'].concat(D)].concat(ADM.contas.map(c => [c.nome, c.email, (c.perfis || []).join(' / '), c.criado ? new Date(c.criado).toISOString() : '', c.ultEntrada ? new Date(c.ultEntrada).toISOString() : '', c.ultUso ? new Date(c.ultUso).toISOString() : '', c.entradas || 0].concat(D.map(d => (c.dias || {})[d] || 0))));
+  const rows = [['Nome', 'E-mail', 'Perfis', 'Criada', 'Última entrada', 'Último acesso', 'Último login', 'Logins', 'Minutos no total'].concat(D)].concat(ADM.contas.map(c => [c.nome, c.email, (c.perfis || []).join(' / '), c.criado ? new Date(c.criado).toISOString() : '', c.ultEntrada ? new Date(c.ultEntrada).toISOString() : '', c.ultUso ? new Date(c.ultUso).toISOString() : '', c.login ? new Date(c.login).toISOString() : '', c.entradas || 0, c.tot || 0].concat(D.map(d => (c.dias || {})[d] || 0))));
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + rows.map(r => r.map(q).join(';')).join('\n')], { type: 'text/csv;charset=utf-8' })); a.download = 'prumo-contas-' + today() + '.csv'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); };
 document.addEventListener('input', e => { if (e.target.id !== 'admQ') return; const q = e.target.value.trim().toLowerCase(); document.querySelectorAll('.adm-r[data-q]').forEach(r => { r.hidden = !!q && !r.dataset.q.includes(q); }); });
 OS.on('ready', () => Acc.navAdm());
@@ -6246,7 +6443,7 @@ I.alerts = () => {
   if (wd >= 4 || wd === 0) St.current().forEach(s => { const x = St.stats(s); if (x.targetWk && x.hWk < x.targetWk * .5) A('attention', 'Universidade', `${s.name}: ${x.hWk} h de ${x.targetWk} h esta semana`, 'Abaixo de metade do alvo semanal', '#universidade'); });
   St.current().forEach(s => { const x = St.stats(s); if (x.avg && !(OS.Grade ? OS.Grade.ok(x.avg) : x.avg >= 10)) A('urgent', 'Universidade', `Risco de reprovar a ${s.name}`, `Média atual ${x.avg} com ${x.w}% avaliado`, '#universidade.disciplinas'); });
   // Metas e projetos
-  OS.all('goals').filter(g => g.status === 'Ativa').forEach(g => { const i = Goal.info(g); if (i.late) A('urgent', 'Metas', g.title, `Prazo passou a ${U.fmtDS(g.due)} · ${Math.round(i.p * 100)}% feito`, '#metas'); else if (i.behind) A('attention', 'Metas', g.title, `${Math.round(i.p * 100)}% feito, esperado ${Math.round(i.exp * 100)}% por esta altura`, '#metas'); });
+  OS.all('goals').filter(g => g.status === 'Ativa').forEach(g => { const i = Goal.info(g); if (i.late) A('urgent', 'Metas', g.title, `Prazo passou a ${U.fmtDS(g.due)} · ${Math.round(i.p * 100)}% feito`, '#metas'); else if (i.behind || (i.idle && i.exp != null && i.exp >= .15)) A('attention', 'Metas', i.idle ? `${g.title}: por começar` : g.title, i.why, '#metas'); });
   OS.all('projects').forEach(p => { const i = Proj.info(p); if (i.late) A('urgent', 'Projetos', p.name, `Prazo passou a ${U.fmtDS(p.due)} · ${Math.round(i.prog * 100)}%`, '#projetos'); else if (i.stalled) A('attention', 'Projetos', `${p.name} está parado`, `Sem atividade há ${i.idle} dias`, '#projetos'); });
   // Corpo
   const lastW = [...OS.all('workouts'), ...OS.all('runs'), ...OS.all('sportlog')].map(x => x.date).sort().pop();
@@ -6278,7 +6475,7 @@ I.controlled = (alerts) => {
   if (OS.all('accounts').length) C('Finanças', `Sem contas em atraso · saldo disponível ${U.eur(Fin.liquid())}`);
   C('Tarefas', `${OS.Tasks.open().length} tarefas abertas, nenhuma atrasada`);
   if (St.current().length) C('Universidade', `Nenhuma avaliação nos próximos 14 dias sem preparação · ${St.revDue().length} revisões para hoje`);
-  const ga = OS.all('goals').filter(g => g.status === 'Ativa'); if (ga.length) C('Metas', `${ga.length} metas ativas no ritmo`);
+  const ga = OS.all('goals').filter(g => g.status === 'Ativa').map(Goal.info), gOn = ga.filter(i => i.onPace).length, gIdle = ga.filter(i => i.idle).length; if (ga.length) C('Metas', `${gOn} de ${ga.length} metas no ritmo${gIdle ? ` · ${gIdle} por começar` : ''}`);
   const pa = OS.all('projects').filter(p => p.status === 'Em andamento'); if (pa.length) C('Projetos', `${pa.length} projetos em andamento, nenhum parado`);
   if (OS.all('workouts').length || OS.all('runs').length) C('Treino', 'Treino em dia');
   if (OS.all('opps').length || OS.all('applications').length) C('Oportunidades', 'Nenhum prazo nos próximos 21 dias');
@@ -6484,6 +6681,8 @@ V.hoje = () => {
   const nowM = new Date().getHours() * 60 + new Date().getMinutes();
   const timed = todayItems.filter(x => x.start).sort((a, b) => U.t2m(a.start) - U.t2m(b.start));
   const nextIt = timed.find(x => U.t2m(x.end || x.start) >= nowM);
+  // o que está a acontecer agora (bloco da rotina, aula, turno…) e o que vem depois
+  const nowIt = timed.find(x => { const s = U.t2m(x.start), e = U.t2m(x.end || ''); return e != null && e > s && s <= nowM && nowM < e; }), afterIt = nowIt && timed.find(x => U.t2m(x.start) > nowM);
   const naAll = I.next(), rank = id => { const i = naAll.findIndex(n => n.edit === 'tasks:' + id); return i < 0 ? 999 : i; };
   const tasks = U.sortBy(OS.Tasks.open().filter(x => x.status !== 'Aguardando' && ((x.sched && x.sched <= t) || (x.due && x.due <= U.addDays(t, 1)) || x.status === 'Em curso')), x => rank(x.id));
   const doneToday = OS.all('tasks').filter(x => x.doneAt === t);
@@ -6493,13 +6692,13 @@ V.hoje = () => {
   const rPlan = OS.all('runplan').filter(r => r.active && String(r.wday) === String(new Date().getDay()));
   const study = St.today().slice(0, 3), minsToday = U.sum(OS.all('sessions').filter(s => s.date === t), s => s.minutes);
   const shifts = OS.all('shifts').filter(s => s.date === t);
-  const tl = timed.map(x => { const s = U.t2m(x.start), e = U.t2m(x.end || x.start) || s + 30; const cls = e < nowM ? 'past' : s <= nowM && nowM <= e ? 'now' : ''; return `<div class="tl-it ${cls}" ${x.edit ? `data-edit="${x.edit}" style="cursor:pointer"` : ''}><span class="h">${x.start}</span><span class="ax"><i style="${cls !== 'now' ? `border-color:${(x.color || OS.srcColor(x.src))}` : ''}"></i></span><div class="c"><b>${esc(x.title)}</b><small>${esc([x.end ? x.start + '–' + x.end : '', Cal.src[x.src][0], x.sub].filter(Boolean).join(' · '))}</small></div></div>`; }).join('');
+  const tl = timed.map(x => { const s = U.t2m(x.start), e = U.t2m(x.end || x.start) || s + 30; const cls = e < nowM ? 'past' : s <= nowM && nowM <= e ? 'now' : ''; return `<div class="tl-it ${cls}" ${x.edit ? `data-edit="${x.edit}" style="cursor:pointer"` : ''}><span class="h">${x.start}</span><span class="ax"><i style="${cls !== 'now' ? `border-color:${(x.color || OS.srcColor(x.src))}` : ''}"></i></span><div class="c"><b>${esc(x.title)}</b><small>${esc([x.end ? x.start + '–' + x.end : '', Cal.src[x.src][0], x.sub].filter(Boolean).join(' · '))}</small></div>${x.src === 'routine' && x.edit ? (() => { const rid = x.edit.split(':')[1], r = OS.get('routine', rid), dn = !!(r && (r.log || {})[t]); return `<button class="rt-ck${dn ? ' on' : ''}" data-act="rtDone" data-id="${rid}" aria-pressed="${dn}" aria-label="${esc(x.title)} feito hoje" title="${dn ? 'Feito hoje' : 'Marcar como feito'}">${UI.ic('check')}</button>`; })() : ''}</div>`; }).join('');
   const allDay = todayItems.filter(x => !x.start && !x.planned);
   const hjW = Math.max(320, Math.min(1280, innerWidth < 860 ? innerWidth : innerWidth - 60)), hjSc = OS.Fundo ? `<div class="hj-sc">${OS.Fundo.live(hjW, innerWidth < 860 ? 380 : 300, 'hjs')}</div>` : '';
   return `<div class="today">
   <div class="${hjSc ? 'hj-top' : ''}">${hjSc}<div class="eyebrow">${U.longDate(t)} · ${esc(p.city || '')}</div>
     <div class="row between gap16" style="align-items:flex-end;margin-top:6px"><div><h1 style="margin:0;font-size:24px;font-weight:600;letter-spacing:-.02em">${greet()}, ${esc(p.short || OS.who())}.</h1>
-    <p class="tx2" style="margin:4px 0 0">${nextIt ? `A seguir: <b style="color:var(--tx)">${esc(nextIt.title)}</b> às ${nextIt.start}` : 'Sem mais compromissos com hora hoje.'}</p></div><div class="today-clock" data-clock>${U.hm()}</div></div>
+    <p class="tx2" style="margin:4px 0 0">${nowIt ? `Agora: <b style="color:var(--tx)">${esc(nowIt.title)}</b> até ${nowIt.end}${afterIt ? ` · a seguir ${esc(afterIt.title)} às ${afterIt.start}` : ''}` : nextIt ? `A seguir: <b style="color:var(--tx)">${esc(nextIt.title)}</b> às ${nextIt.start}` : 'Sem mais compromissos com hora hoje.'}</p></div><div class="today-clock" data-clock>${U.hm()}</div></div>
     <p class="today-q" style="margin-top:14px">${esc(dayQuote())}</p></div>
   ${urgent.length ? `<div class="pn" style="border-color:rgba(242,109,109,.3)"><div class="pn-h"><h3>${UI.ic('radar')}Urgente</h3><a class="more" href="#visao">Painel ${UI.ic('right')}</a></div><div class="att">${urgent.slice(0, 4).map(attRow).join('')}</div></div>` : ''}
   <section><div class="sech"><div><h2>Prioridades</h2><p>${doneToday.length} concluída(s) hoje · ordenadas por prazo, importância e impacto</p></div><a class="btn ghost sm" href="#next">${UI.ic('zap')}Next Action</a></div>
@@ -6541,7 +6740,7 @@ OS.PainelParts = () => {
   const cap = OS.Car.capital(), capPrev = OS.Car.capital(U.addDays(t, -30));
   const mv = OS.Mv.month(ym), mvPrev = OS.Mv.month(U.addMonths(ym, -1));
   const goals = OS.all('goals').filter(g => g.status === 'Ativa').map(g => Object.assign({ g }, Goal.info(g)));
-  const onPace = goals.filter(x => !x.late && !x.behind).length;
+  const onPace = goals.filter(x => x.onPace).length, gIdle = goals.filter(x => x.idle).length;
   const na = I.next().slice(0, 3);
   const SH = OS.all('shifts'), wH = U.sum(SH.filter(s => s.date >= wk && s.date <= U.addDays(wk, 6)), s => OS.Car.workedHours(s)), wNext = U.sortBy(SH.filter(s => s.date > t || (s.date === t && (s.end || '99') > U.hm())), s => s.date + s.start)[0];
   const months = Fin.months(6);
@@ -6551,7 +6750,7 @@ OS.PainelParts = () => {
     ['treino', 'Corpo', 'Treino', wkW + '/' + (p.trainTarget || 4) + ' treinos', U.nf(kmW, 1) + ' km corridos esta semana'],
     ['capital', 'Carreira', 'Carreira', U.nf(cap.score) + ' pts', 'capital profissional ' + (cap.score >= capPrev.score ? '+' : '') + (cap.score - capPrev.score) + ' em 30d'],
     ['trabalho', 'Trabalho', 'Trabalho', U.nf(wH, 1) + ' h', 'trabalhadas esta semana' + (wNext ? ' · próximo turno ' + (wNext.date === t ? 'hoje' : U.fmtDS(wNext.date)) + ' ' + (wNext.start || '') : '')],
-    ['metas', 'Metas', 'Metas', onPace + '/' + goals.length, 'metas no ritmo']
+    ['metas', 'Metas', 'Metas', onPace + '/' + goals.length, 'no ritmo' + (gIdle ? ` · ${gIdle} por começar` : '')]
   ];
   const lifeTone = k => k === 'Finanças' ? areaTone('Finanças') : k === 'Universidade' ? areaTone('Universidade') : k === 'Treino' ? (areaTone('Treino') === 'pos' && areaTone('Corrida') === 'pos' ? 'pos' : 'warn') : k === 'Carreira' ? (areaTone('Oportunidades') === 'neg' || areaTone('Carreira') === 'neg' ? 'neg' : areaTone('Oportunidades') === 'warn' ? 'warn' : 'pos') : k === 'Mova' ? areaTone('Mova') : areaTone('Metas');
   const upc = Fin.upcoming(30).filter(x => x.amount < 0).slice(0, 5);
@@ -6879,6 +7078,337 @@ function tickFocus() {
 setInterval(() => { if (FS) tickFocus(); else if (document.title !== 'Prumo' && !/Prumo/i.test(document.title)) document.title = 'Prumo'; document.querySelectorAll('[data-clock]').forEach(e => e.textContent = U.hm()); }, 1000);
 document.addEventListener('click', e => { if (e.target.closest('#dock') && !e.target.closest('[data-act]')) A.focusMax(); });
 OS.on('ready', renderFocus);
+})();
+
+</script>
+<script>
+/* PRUMO — Rotina por horas (v2.53): o dia desenhado de hora a hora, "das 7h às 8h faço isto".
+   - Hábitos e rotina › Rotina: escolhe o dia (ou a semana inteira) e vês os blocos na linha das horas, com a hora atual,
+     os espaços livres (toca para preencher), sobreposições assinaladas e quantas horas vão para cada área.
+   - Adicionar rápido: das __ às __, o quê e em que dias. Copiar um dia para outros, limpar um dia e modelos para começar.
+   - Blocos que passam da meia-noite (ex.: dormir 23:00–07:00) continuam no dia seguinte.
+   - Cada bloco pode contar como um hábito: marcar o bloco como feito marca o hábito de hoje.
+   - Avisos na hora (ou uns minutos antes) com a app aberta; com a app fechada, os blocos vão para o Google Calendar.
+   - Hoje mostra "Agora: … até …" e deixa marcar os blocos da rotina como feitos. */
+(() => {
+'use strict';
+const U = OS.U, UI = OS.UI, A = OS.act, V = OS.views, esc = U.esc, L = OS.L, LS = U.ls;
+const today = () => U.today(), wd = d => String(U.parse(d).getDay()), nowM = () => { const n = new Date(); return n.getHours() * 60 + n.getMinutes(); };
+const SH = { '1': 'Seg', '2': 'Ter', '3': 'Qua', '4': 'Qui', '5': 'Sex', '6': 'Sáb', '0': 'Dom' }, ORDER = ['1', '2', '3', '4', '5', '6', '0'];
+const prevD = k => ORDER[(ORDER.indexOf(k) + 6) % 7];
+const ACOL = { Universidade: 'var(--c2)', Aprendizagem: 'var(--c10)', Finanças: 'var(--c8)', Investimentos: 'var(--c8)', Treino: 'var(--c5)', Corrida: 'var(--c6)', Trabalho: 'var(--c4)', Carreira: 'var(--c4)', Mova: 'var(--c4)', Projetos: 'var(--c3)', Casa: 'var(--c9)', Pessoal: 'var(--c1)', Fé: 'var(--c7)', Saúde: 'var(--c5)' };
+const col = r => ACOL[r.area] || ['var(--c1)', 'var(--c3)', 'var(--c9)', 'var(--c10)'][U.hash(r.title || '') % 4];
+const dur = m => { const h = Math.floor(m / 60), r = Math.round(m % 60); return h ? (r ? `${h} h ${r} min` : `${h} h`) : `${r} min`; };
+const hrs = m => U.nf(m / 60, m % 60 ? 1 : 0) + ' h';
+const all = () => OS.all('routine').filter(r => r.start && r.end && U.t2m(r.start) != null);
+const mins = r => { const s = U.t2m(r.start), e = U.t2m(r.end); return { s, e: e > s ? e : e + 1440 }; };
+const crosses = r => U.t2m(r.end) <= U.t2m(r.start);
+
+// os pedaços de um dia da semana: blocos que começam nesse dia + o resto dos que vêm do dia anterior depois da meia-noite
+const segs = k => { const out = [];
+  all().forEach(r => { const d = r.days || [], { s, e } = mins(r);
+    if (d.includes(k)) out.push({ r, s, e: Math.min(e, 1440), cont: false, cut: e > 1440 });
+    if (crosses(r) && d.includes(prevD(k)) && U.t2m(r.end) > 0) out.push({ r, s: 0, e: U.t2m(r.end), cont: true }); });
+  out.sort((a, b) => a.s - b.s || b.e - a.e);
+  // faixas lado a lado quando se sobrepõem
+  let grp = [], end = -1; const flush = () => { const n = Math.max(1, ...grp.map(x => x.lane + 1)); grp.forEach(x => { x.n = n; }); grp = []; };
+  out.forEach(x => { if (x.s >= end) { flush(); end = -1; } const used = grp.filter(y => y.e > x.s).map(y => y.lane); let l = 0; while (used.includes(l)) l++; x.lane = l; grp.push(x); end = Math.max(end, x.e); }); flush();
+  out.forEach(x => { x.clash = out.some(y => y !== x && y.s < x.e && x.s < y.e); });
+  return out; };
+const doneOn = (r, d) => !!((r.log || {})[d]);
+const RT = OS.Rotina = { segs, all, doneOn,
+  // agora e a seguir (só rotina), para o Hoje e o Spyke
+  now: () => { const n = nowM(); return segs(wd(today())).find(x => x.s <= n && n < x.e) || null; },
+  next: () => { const n = nowM(); return segs(wd(today())).find(x => x.s > n) || null; } };
+
+/* ---------- ações ---------- */
+A.rtDone = b => { const r = OS.get('routine', b.dataset.id), t = today(); if (!r) return;
+  const log = Object.assign({}, r.log || {}); const on = !log[t]; if (on) log[t] = 1; else delete log[t]; OS.upd('routine', r.id, { log });
+  const h = r.habit && OS.get('habits', r.habit); if (on && h && OS.Hab.due(h, t) && !OS.Hab.done(h, t)) OS.Hab.toggle(h.id, t);
+  UI.toast(on ? `${r.title}: feito${h ? ' · hábito "' + h.name + '" marcado' : ''}` : `${r.title}: por fazer`, on ? 'pos' : ''); };
+A.rtPreset = b => { const f = b.closest('form'); if (!f) return; const set = { uteis: ['1', '2', '3', '4', '5'], todos: ORDER, fds: ['6', '0'] }[b.dataset.v] || [];
+  f.querySelectorAll('input[name=d]').forEach(i => { i.checked = set.includes(i.value); }); };
+OS.forms = OS.forms || {};
+OS.forms.rtAdd = (f, v) => { const s = v('s'), e = v('e'), title = v('t'), days = [...f.querySelectorAll('input[name=d]:checked')].map(i => i.value);
+  if (!title) return UI.toast('Escreve o que fazes nesse bloco', 'warn'); if (!s || !e) return UI.toast('Indica a hora de início e de fim', 'warn');
+  if (s === e) return UI.toast('O fim tem de ser diferente do início', 'warn'); if (!days.length) return UI.toast('Escolhe pelo menos um dia', 'warn');
+  OS.add('routine', { title, start: s, end: e, days, area: v('a') || '', warn: '0' });
+  UI.toast(`${title}: das ${s} às ${e}${crosses({ start: s, end: e }) ? ' (do dia seguinte)' : ''}`, 'pos'); };
+OS.forms.rtCopy = (f, v) => { const k = f.dataset.k, to = v('to'), tgt = to === 'uteis' ? ['1', '2', '3', '4', '5'] : to === 'todos' ? ORDER : to === 'fds' ? ['6', '0'] : [to];
+  const T = tgt.filter(x => x !== k), B = all().filter(r => (r.days || []).includes(k)); if (!B.length || !T.length) return UI.toast('Nada para copiar', 'warn');
+  B.forEach(r => OS.upd('routine', r.id, { days: [...new Set([...(r.days || []), ...T])] }));
+  UI.toast(`${B.length} ${B.length === 1 ? 'bloco passa' : 'blocos passam'} a repetir também em ${T.map(x => SH[x]).join(', ')}`, 'pos'); };
+A.rtClear = b => { const k = b.dataset.k, B = all().filter(r => (r.days || []).includes(k)); if (!B.length) return;
+  UI.ask(`Limpar ${L.WEEK.find(w => w[0] === k)[1].toLowerCase()}?`, `Os ${B.length} blocos deixam de acontecer neste dia. Nos outros dias ficam como estão.`, 'Limpar', () => {
+    B.forEach(r => { const d = (r.days || []).filter(x => x !== k); if (d.length) OS.upd('routine', r.id, { days: d }); else OS.del('routine', r.id); }); UI.toast('Dia limpo', 'pos'); }); };
+// modelos para começar (cada um é só um ponto de partida: tudo se edita)
+const TPL = {
+  estudo: ['Dia de estudo', [['07:00', '07:30', 'Acordar e preparar', 'Pessoal'], ['07:30', '08:00', 'Pequeno-almoço', 'Saúde'], ['08:00', '10:00', 'Estudo profundo', 'Universidade'], ['10:00', '10:15', 'Pausa', 'Pessoal'], ['10:15', '12:30', 'Aulas ou estudo', 'Universidade'], ['12:30', '13:30', 'Almoço', 'Saúde'], ['14:00', '17:00', 'Aulas', 'Universidade'], ['17:30', '18:30', 'Treino', 'Treino'], ['19:30', '20:30', 'Jantar', 'Saúde'], ['20:30', '21:30', 'Revisão do dia', 'Universidade'], ['21:30', '22:30', 'Tempo livre', 'Pessoal'], ['23:00', '07:00', 'Dormir', 'Saúde']]],
+  trabalho: ['Dia de trabalho', [['06:30', '07:00', 'Acordar e preparar', 'Pessoal'], ['07:00', '07:30', 'Pequeno-almoço', 'Saúde'], ['08:00', '09:00', 'Caminho e leitura', 'Pessoal'], ['09:00', '13:00', 'Trabalho', 'Trabalho'], ['13:00', '14:00', 'Almoço', 'Saúde'], ['14:00', '18:00', 'Trabalho', 'Trabalho'], ['18:30', '19:30', 'Ginásio', 'Treino'], ['20:00', '21:00', 'Jantar', 'Saúde'], ['21:00', '22:00', 'Estudar ou projeto', 'Projetos'], ['23:00', '06:30', 'Dormir', 'Saúde']]],
+  fds: ['Fim de semana', [['08:30', '09:30', 'Acordar com calma e pequeno-almoço', 'Pessoal'], ['10:00', '12:00', 'Projeto pessoal', 'Projetos'], ['12:30', '14:00', 'Almoço', 'Saúde'], ['15:00', '18:00', 'Família, amigos e lazer', 'Pessoal'], ['18:00', '19:00', 'Desporto', 'Treino'], ['20:00', '21:00', 'Jantar', 'Saúde'], ['21:00', '22:00', 'Revisão da semana', 'Pessoal'], ['23:30', '08:30', 'Dormir', 'Saúde']]] };
+A.rtTpl = b => { const T = TPL[b.dataset.v], k = b.dataset.k; if (!T) return;
+  T[1].forEach(([s, e, title, area]) => OS.add('routine', { title, start: s, end: e, days: [k], area, warn: '0' }, { silent: true }));
+  OS.request(); UI.toast(`Modelo "${T[0]}" posto em ${L.WEEK.find(w => w[0] === k)[1]}. Toca num bloco para o mudar.`, 'pos'); };
+A.rtNotif = async () => { try { if (!('Notification' in window)) return UI.toast('Este aparelho não deixa a app mandar avisos', 'warn'); const p = await Notification.requestPermission(); UI.toast(p === 'granted' ? 'Avisos ligados neste aparelho' : 'Avisos não autorizados', p === 'granted' ? 'pos' : 'warn'); OS.request(); } catch (e) { } };
+
+/* ---------- a página ---------- */
+const PX = 46; // altura de uma hora
+const dayCol = (k, o = {}) => { const S = segs(k), isT = k === wd(today()) && !o.week, n = nowM();
+  const h0 = Math.min(6, ...S.map(x => Math.floor(x.s / 60))), h1 = Math.max(23, ...S.map(x => Math.ceil(x.e / 60))), top = m => (m - h0 * 60) / 60 * PX;
+  let lines = '';
+  for (let h = h0; h <= h1; h++) lines += `<div class="rt-hr" style="top:${(h - h0) * PX}px"><span>${U.pad(h % 24)}:00</span></div>`;
+  // espaços livres entre blocos (≥ 30 min), para preencher com um toque
+  let free = '', cur = Math.max(h0 * 60, 6 * 60); const lim = Math.min(h1 * 60, 23 * 60);
+  if (!o.week && S.length) { [...S].sort((a, b) => a.s - b.s).forEach(x => { if (x.s - cur >= 30 && cur < lim) { const e = Math.min(x.s, lim); if (e - cur >= 30) free += `<button class="rt-free" style="top:${top(cur) + 2}px;height:${top(e) - top(cur) - 4}px" data-new="routine" data-defs='${esc(JSON.stringify({ start: U.m2t(cur), end: U.m2t(e), days: [k], warn: '0' }))}'><span>Livre ${U.m2t(cur)}–${U.m2t(e)} · ${dur(e - cur)}</span>${UI.ic('plus')}</button>`; } cur = Math.max(cur, x.e); });
+    if (lim - cur >= 30) free += `<button class="rt-free" style="top:${top(cur) + 2}px;height:${top(lim) - top(cur) - 4}px" data-new="routine" data-defs='${esc(JSON.stringify({ start: U.m2t(cur), end: U.m2t(lim), days: [k], warn: '0' }))}'><span>Livre ${U.m2t(cur)}–${U.m2t(lim)} · ${dur(lim - cur)}</span>${UI.ic('plus')}</button>`; }
+  const blocks = S.map(x => { const r = x.r, h = Math.max(top(x.e) - top(x.s), 18), live = isT && x.s <= n && n < x.e, past = isT && x.e <= n, dn = isT && doneOn(r, today()), small = h < 40;
+    const lbl = `${x.cont ? '00:00' : r.start}–${x.cut ? r.end + ' (amanhã)' : r.end}`;
+    return `<div class="rt-b${live ? ' now' : ''}${past ? ' past' : ''}${dn ? ' done' : ''}${small ? ' sm' : ''}${x.clash ? ' clash' : ''}" style="--bc:${col(r)};top:${top(x.s)}px;height:${h}px;left:calc(${x.lane / x.n * 100}% + 2px);width:calc(${100 / x.n}% - 4px)" data-edit="routine:${r.id}" title="${esc(r.title)} · ${lbl}">
+      <div class="rt-bt"><b>${esc(r.title)}</b>${o.week ? '' : `<span class="mono">${lbl}${x.cont ? ' · continua de ontem' : ''}</span>`}${!small && !o.week ? `<small>${[dur(x.e - x.s), r.area, r.habit && (OS.get('habits', r.habit) || {}).name ? 'conta como hábito' : '', x.clash ? 'sobreposto' : ''].filter(Boolean).map(esc).join(' · ')}</small>` : ''}</div>
+      ${isT && !x.cont ? `<button class="rt-ck${dn ? ' on' : ''}" data-act="rtDone" data-id="${r.id}" aria-pressed="${dn}" aria-label="${esc(r.title)} feito hoje" title="${dn ? 'Feito hoje' : 'Marcar como feito hoje'}">${UI.ic('check')}</button>` : ''}</div>`; }).join('');
+  const nowL = isT && n >= h0 * 60 && n <= h1 * 60 ? `<div class="rt-now" style="top:${top(n)}px"><span>${U.hm()}</span></div>` : '';
+  return `<div class="rt-day" data-h0="${h0}" style="height:${(h1 - h0) * PX + 8}px">${lines}<div class="rt-lane">${free}${blocks}${nowL}</div></div>`; };
+
+const byArea = S => { const m = {}; S.forEach(x => { const a = x.r.area || 'Outro'; m[a] = (m[a] || 0) + (x.e - x.s); }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+const adherence = () => { let due = 0, dn = 0; U.lastN(7).forEach(d => { if (d === today()) return; const k = wd(d); all().forEach(r => { const born = r._c ? U.iso(new Date(r._c)) : ''; if (!(r.days || []).includes(k) || (born && d < born)) return; due++; if (doneOn(r, d)) dn++; }); }); return due ? dn / due : null; };
+
+const page = () => { const tk = wd(today()), sel = OS.ui.rtDay || tk, week = sel === 'semana', R = all();
+  const chips = `<div class="rt-days" role="tablist" aria-label="Dia da semana">${ORDER.map(k => `<button role="tab" class="chip${sel === k ? ' on' : ''}${k === tk ? ' is-t' : ''}" data-ui="rtDay" data-v="${k}" aria-selected="${sel === k}">${SH[k]}${k === tk ? ' <small>hoje</small>' : ''}<i>${segs(k).filter(x => !x.cont).length || ''}</i></button>`).join('')}<button role="tab" class="chip${week ? ' on' : ''}" data-ui="rtDay" data-v="semana" aria-selected="${week}">Semana</button></div>`;
+  // a sugestão de horas do "adicionar rápido" é o primeiro espaço livre (a partir de agora, se for hoje)
+  const k = week ? tk : sel, S = segs(k), gap = (() => { let c = Math.max(7 * 60, k === tk ? Math.ceil(nowM() / 15) * 15 : 0); for (const x of [...S].sort((a, b) => a.s - b.s)) { if (x.s - c >= 30) break; c = Math.max(c, x.e); } return Math.min(c, 1380); })(), s0 = U.m2t(gap), e0 = U.m2t(Math.min(gap + 60, 1439));
+  const add = `<form class="pn rt-add" data-form="rtAdd"><div class="rt-add-r"><label>Das <input class="field" type="time" name="s" value="${s0}" required aria-label="Início"></label><label>às <input class="field" type="time" name="e" value="${e0}" required aria-label="Fim"></label>
+    <input class="field grow" name="t" placeholder="O que fazes? ex.: Estudar, Ginásio, Almoço" aria-label="O que fazes nesse bloco" maxlength="80" required>
+    <select class="field" name="a" aria-label="Área"><option value="">Área</option>${L.AREAS.map(a => `<option>${esc(a)}</option>`).join('')}</select></div>
+    <div class="rt-add-r"><div class="rt-dd" role="group" aria-label="Dias">${ORDER.map(d => `<label class="rt-dc"><input type="checkbox" name="d" value="${d}"${d === k ? ' checked' : ''}><span>${SH[d]}</span></label>`).join('')}</div>
+    <span class="rt-pre"><button type="button" class="btn xs ghost" data-act="rtPreset" data-v="uteis">Dias úteis</button><button type="button" class="btn xs ghost" data-act="rtPreset" data-v="todos">Todos</button><button type="button" class="btn xs ghost" data-act="rtPreset" data-v="fds">Fim de semana</button></span>
+    <button class="btn pri">${UI.ic('plus')}Adicionar</button></div></form>`;
+  const head = UI.head('Hábitos e rotina', 'O teu dia por horas: das tantas às tantas, o que fazes. Aparece em Hoje, no Calendário e no Google Calendar, e avisa-te na hora.', UI.addBtn('routine', 'Novo bloco', { days: [k], warn: '0' }), 'Execução') + UI.tabs('habitos', [['', 'Hábitos'], ['rotina', 'Rotina'], ['plano', 'Planeamento']], 'rotina');
+  if (!R.length) return head + chips + add + `<div class="pn rt-empty"><h3>Começa com um modelo</h3><p class="mut">Põe um dia típico em ${esc(L.WEEK.find(w => w[0] === k)[1])} e depois ajusta as horas ou copia para os outros dias.</p><div class="row gap8">${Object.entries(TPL).map(([id, [n, b]]) => `<button class="btn" data-act="rtTpl" data-v="${id}" data-k="${k}">${esc(n)} <small class="mut">${b.length} blocos</small></button>`).join('')}</div></div>`;
+  // resumo: agora, a seguir, horas por área, cumprimento
+  const nw = RT.now(), nx = RT.next(), n = nowM(), ad = adherence(), dS = S, plan = U.sum(dS, x => x.e - x.s);
+  const wkM = {}; ORDER.forEach(d => segs(d).forEach(x => { const a = x.r.area || 'Outro'; wkM[a] = (wkM[a] || 0) + (x.e - x.s); }));
+  const tdS = segs(tk).filter(x => !x.cont), tdDone = tdS.filter(x => doneOn(x.r, today())).length;
+  const perm = 'Notification' in window ? Notification.permission : 'na';
+  const side = `<div class="rt-side">
+    <div class="pn rt-nowc"><div class="eyebrow">Agora</div>${nw ? `<b style="--bc:${col(nw.r)}">${esc(nw.r.title)}</b><small>até ${nw.cut || nw.e >= 1440 ? '00:00' : U.m2t(nw.e)} · faltam ${dur(nw.e - n)}</small><div class="rt-pb"><i style="width:${Math.round((n - nw.s) / (nw.e - nw.s) * 100)}%;background:${col(nw.r)}"></i></div>` : '<b class="mut">Tempo livre</b>'}
+      ${nx ? `<div class="divider"></div><div class="eyebrow">A seguir</div><b>${esc(nx.r.title)}</b><small>às ${U.m2t(nx.s)} · daqui a ${dur(nx.s - n)}</small>` : ''}
+      <div class="divider"></div><small class="mut">Hoje: ${tdDone} de ${tdS.length} blocos feitos${ad != null ? ` · últimos 7 dias: ${U.pct(ad)}` : ''}</small></div>
+    <div class="pn"><div class="pn-h"><h3>${week ? 'Semana' : esc(L.WEEK.find(w => w[0] === k)[1])} em horas</h3><span class="mono mut" style="font-size:12px">${hrs(week ? U.sum(Object.values(wkM), x => x) : plan)}</span></div>
+      ${(week ? Object.entries(wkM).sort((a, b) => b[1] - a[1]) : byArea(dS)).map(([a, m]) => `<div class="bar-row"><span class="l">${esc(a)}</span><div class="bar"><i style="width:${Math.round(m / Math.max(1, ...(week ? Object.values(wkM) : byArea(dS).map(x => x[1]))) * 100)}%;background:${ACOL[a] || 'var(--c9)'}"></i></div><span class="v mono">${hrs(m)}</span></div>`).join('') || '<p class="mut">Sem blocos.</p>'}</div>
+    ${week ? '' : `<form class="pn rt-copy" data-form="rtCopy" data-k="${k}"><div class="pn-h"><h3>Copiar este dia</h3></div><div class="row gap8"><select class="field grow" name="to" aria-label="Copiar para"><option value="uteis">Para os dias úteis</option><option value="todos">Para todos os dias</option><option value="fds">Para o fim de semana</option>${ORDER.filter(d => d !== k).map(d => `<option value="${d}">Para ${esc(L.WEEK.find(w => w[0] === d)[1].toLowerCase())}</option>`).join('')}</select><button class="btn">Copiar</button></div>
+      <div class="row between gap8" style="margin-top:10px"><small class="mut">Os blocos passam a repetir nesses dias.</small>${S.some(x => !x.cont) ? `<button type="button" class="btn xs ghost" data-act="rtClear" data-k="${k}">Limpar o dia</button>` : ''}</div>
+      ${!S.some(x => !x.cont) ? `<div class="divider"></div><div class="row gap8">${Object.entries(TPL).map(([id, [nm]]) => `<button type="button" class="btn xs" data-act="rtTpl" data-v="${id}" data-k="${k}">${esc(nm)}</button>`).join('')}</div>` : ''}</form>`}
+    ${(() => { const c = OS.one('calx') || {}; return `<div class="pn"><div class="pn-h"><h3>${UI.ic('cal')}No calendário</h3>${c.on ? UI.badge(c.err ? 'com erro' : 'a enviar', c.err ? 'warn' : 'pos') : ''}</div><p class="mut" style="margin:0 0 8px;font-size:12.5px">Cada bloco fica guardado no Calendário do Prumo, todas as semanas. ${c.on ? 'E vai sozinho para o teu Google Calendar e o Calendário do iPhone (calendário "Náutilo · Treino e rotina"), sempre 3 semanas à frente: se mudares aqui, muda lá.' : 'Para o teres também no Google Calendar e no iPhone, liga a agenda fora da app.'}</p><div class="row gap8"><a class="btn sm" href="#calendario.semana">${UI.ic('cal')}Ver no Calendário</a>${c.on ? `<button class="btn sm ghost" data-act="cpNow">${UI.ic('sync')}Enviar agora</button>` : `<a class="btn sm ghost" href="#definicoes.ligacoes">Ligar o Google Calendar</a>`}</div></div>`; })()}
+    <div class="pn"><div class="pn-h"><h3>Avisos</h3></div><p class="mut" style="margin:0 0 8px;font-size:12.5px">Com a app aberta, avisa no início de cada bloco (ou uns minutos antes: muda no bloco). Com a app fechada, liga o Google Calendar em Definições para os blocos aparecerem no telemóvel.</p>${perm === 'granted' ? UI.badge('avisos ligados neste aparelho', 'pos') : perm === 'na' ? '' : `<button class="btn sm" data-act="rtNotif">${UI.ic('clock')}Ligar avisos neste aparelho</button>`}</div></div>`;
+  const grid = week ? `<div class="pn flush rt-week"><div class="rt-wh">${ORDER.map(d => `<button class="${d === tk ? 'is-t' : ''}" data-ui="rtDay" data-v="${d}">${SH[d]}</button>`).join('')}</div><div class="rt-wg"><div class="rt-axis">${(() => { const h0 = Math.min(6, ...ORDER.flatMap(d => segs(d).map(x => Math.floor(x.s / 60)))), h1 = Math.max(23, ...ORDER.flatMap(d => segs(d).map(x => Math.ceil(x.e / 60)))); let s = ''; for (let h = h0; h <= h1; h++) s += `<span style="top:${(h - h0) * PX}px">${U.pad(h % 24)}h</span>`; return `<div style="position:relative;height:${(h1 - h0) * PX + 8}px">${s}</div>`; })()}</div>${ORDER.map(d => weekCol(d)).join('')}</div></div>`
+    : `<div class="pn flush rt-wrap">${dayCol(k)}</div>`;
+  return head + chips + add + `<div class="rt-g">${grid}${side}</div>`; };
+// semana: todas as colunas com a mesma régua de horas
+const weekCol = k => { const H0 = Math.min(6, ...ORDER.flatMap(d => segs(d).map(x => Math.floor(x.s / 60)))), H1 = Math.max(23, ...ORDER.flatMap(d => segs(d).map(x => Math.ceil(x.e / 60)))), S = segs(k), top = m => (m - H0 * 60) / 60 * PX, isT = k === wd(today()), n = nowM();
+  let lines = ''; for (let h = H0; h <= H1; h++) lines += `<div class="rt-hr" style="top:${(h - H0) * PX}px"></div>`;
+  return `<div class="rt-wc${isT ? ' is-t' : ''}" data-h0="${H0}" style="height:${(H1 - H0) * PX + 8}px">${lines}${S.map(x => { const h = Math.max(top(x.e) - top(x.s), 14); return `<div class="rt-b wk${h < 30 ? ' sm' : ''}${x.clash ? ' clash' : ''}${isT && doneOn(x.r, today()) ? ' done' : ''}" style="--bc:${col(x.r)};top:${top(x.s)}px;height:${h}px;left:calc(${x.lane / x.n * 100}% + 1px);width:calc(${100 / x.n}% - 2px)" data-edit="routine:${x.r.id}" title="${esc(x.r.title)} · ${x.cont ? '00:00' : x.r.start}–${x.r.end}"><div class="rt-bt"><b>${esc(x.r.title)}</b>${h >= 30 ? `<span class="mono">${x.cont ? '00:00' : x.r.start}–${x.r.end}</span>` : ''}</div></div>`; }).join('')}${isT ? `<div class="rt-now" style="top:${top(n)}px"></div>` : ''}</div>`; };
+
+/* ---------- Hábitos: a rotina por horas aparece também no separador dos hábitos ---------- */
+const strip = () => { const S = segs(wd(today())), n = nowM(); if (!S.length) return `<a class="pn rt-cta" href="#habitos.rotina">${UI.ic('cal')}<span><b>Organiza o teu dia por horas</b><small>Das 7h às 8h treino, das 9h às 12h estudo… Vê o dia inteiro numa linha e recebe um aviso a cada bloco.</small></span>${UI.ic('right')}</a>`;
+  return `<div class="pn rt-strip"><div class="pn-h"><h3>${UI.ic('cal')}Hoje, por horas</h3><a class="more" href="#habitos.rotina">Rotina ${UI.ic('right')}</a></div><div class="rt-sl">${S.map(x => { const live = x.s <= n && n < x.e, past = x.e <= n, dn = doneOn(x.r, today()); return `<div class="rt-si${live ? ' now' : ''}${past ? ' past' : ''}${dn ? ' done' : ''}" style="--bc:${col(x.r)}" data-edit="routine:${x.r.id}"><span class="mono">${x.cont ? '00:00' : x.r.start}–${x.r.end}</span><b>${esc(x.r.title)}</b>${x.cont ? '' : `<button class="rt-ck${dn ? ' on' : ''}" data-act="rtDone" data-id="${x.r.id}" aria-pressed="${dn}" aria-label="${esc(x.r.title)} feito hoje">${UI.ic('check')}</button>`}</div>`; }).join('')}</div></div>`; };
+OS.on('ready', () => { const o = V.habitos; if (!o || o._rt) return;
+  V.habitos = sub => { if (sub === 'rotina') return page(); const h = o(sub); if (sub) return h; const i = h.indexOf('</nav>'); return i < 0 ? h : h.slice(0, i + 6) + strip() + h.slice(i + 6); }; V.habitos._rt = 1; });
+
+/* ---------- avisos no início de cada bloco (com a app aberta) ---------- */
+const FK = 'nau:rtfire';
+const tick = () => { try { if (!OS.Lock || !OS.Lock.unlocked() || document.hidden) return; const t = today(), n = nowM(), fired = LS.get(FK, {}) || {}; let ch = false;
+    Object.keys(fired).forEach(x => { if (!x.endsWith(t)) { delete fired[x]; ch = true; } });
+    segs(wd(t)).filter(x => !x.cont).forEach(x => { const r = x.r, w = r.warn === 'off' ? null : U.num(r.warn) || 0; if (w == null) return; const at = x.s - w, key = r.id + '|' + t;
+      if (fired[key] || n < at || n > at + 3 || doneOn(r, t)) return; fired[key] = 1; ch = true;
+      const msg = w ? `Daqui a ${w} min: ${r.title} (${r.start}–${r.end})` : `Agora: ${r.title} até ${r.end}`; UI.toast(msg, 'pos');
+      try { if ('Notification' in window && Notification.permission === 'granted') { const body = r.notes ? String(r.notes).slice(0, 120) : 'Rotina do Prumo'; if (navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then(g => g.showNotification(msg, { body, icon: 'icon-192.png', tag: 'rt-' + key })).catch(() => { }); else new Notification(msg, { body }); } } catch (e) { } });
+    if (ch) LS.set(FK, fired);
+    // a linha da hora anda sozinha; a página só se redesenha quando muda o bloco atual (para não apagar o que estás a escrever)
+    document.querySelectorAll('#view [data-h0] > .rt-lane > .rt-now, #view .rt-wc[data-h0] > .rt-now').forEach(el => { const c = el.closest('[data-h0]'); el.style.top = (n - +c.dataset.h0 * 60) / 60 * PX + 'px'; const sp = el.querySelector('span'); if (sp) sp.textContent = U.hm(); });
+    const a = RT.now(), b = RT.next(), key = (a ? a.r.id + a.s : '') + '|' + (b ? b.r.id + b.s : ''); if (LAST != null && key !== LAST && /^#(habitos(\.rotina)?|hoje)?$/.test(location.hash) && !document.querySelector('#view :focus')) OS.request(); LAST = key; } catch (e) { } };
+let LAST = null;
+setInterval(tick, 30e3); OS.on('ready', () => setTimeout(tick, 1500));
+})();
+
+</script>
+<script>
+/* PRUMO — Metas com ritmo honesto (v2.53).
+   - "No ritmo" só quando há avanço medido desde o início da meta e esse avanço acompanha o tempo que já passou.
+     Sem avanço nenhum é "Por começar" (com quanto já devias ir); a mexer mas sem número a subir é "Em andamento".
+   - O avanço vem do indicador da meta e, nas metas manuais sem valor escrito, dos projetos, tarefas e etapas ligados.
+   - Saldo, patrimônio, carteira, média, contactos e certificações contam a partir do valor que tinham quando a meta começou.
+   - Cada meta mostra o que fizeste por ela na semana e no mês: tarefas, blocos da rotina, estudo, treinos, corridas, horas de
+     trabalho, poupança e hábitos da mesma área ou com as mesmas palavras.
+   - Em cima, a tua visão (Estrela-guia) por horizonte, com as metas que a servem; e projetos que parecem de uma meta, para ligar. */
+(() => {
+'use strict';
+const U = OS.U, UI = OS.UI, A = OS.act, V = OS.views, L = OS.L, esc = U.esc, Goal = OS.Goal, safe = (f, d) => { try { return f(); } catch (e) { return d; } };
+const today = () => U.today();
+const SNAP = ['account', 'networth', 'invested', 'contacts', 'certs', 'avgGrade'];
+const AREAS = { 'Finanças': ['Finanças', 'Investimentos'], 'Estudos': ['Universidade', 'Aprendizagem'], 'Academia': ['Treino', 'Saúde'], 'Corrida': ['Corrida', 'Treino'], 'Trabalho': ['Trabalho', 'Carreira'], 'Empresa': ['Mova', 'Projetos', 'Trabalho', 'Carreira'], 'Desenvolvimento pessoal': ['Pessoal', 'Fé', 'Saúde', 'Aprendizagem'], 'Outros': [] };
+const STOP = new Set('para pelo pela pelos pelas com sem que uma umas uns por mais menos meu minha meus minhas teu tua teus tuas seu sua seus suas dos das nos nas aos como cada todo toda todos todas este esta isto esse essa isso aquele aquela ser ter fazer ficar entre sobre ate anos mes meses dia dias semana semanas vez vezes quero quer querer sempre muito muita pouco hoje amanha agora ainda fazer feito pode poder conseguir chegar'.split(' '));
+const WM = new Map(); // as palavras de cada texto, calculadas uma vez
+const words = s => { s = String(s || ''); let w = WM.get(s); if (w) return w; w = [...new Set(s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/[^a-z0-9]+/).filter(x => x.length >= 4 && !STOP.has(x)))]; if (WM.size > 6000) WM.clear(); WM.set(s, w); return w; };
+const gWords = g => words([g.title, g.why, ...(g.steps || []).map(s => s.t || s.title || s.text || '')].join(' '));
+const hit = (W, s) => { if (!W.length) return false; const w = words(s); const n = w.filter(x => W.includes(x)); return n.length >= 2 || n.some(x => x.length >= 5); };
+const born = g => g.start || (g._c ? U.iso(new Date(g._c)) : '') || U.addDays(today(), -30);
+
+/* ---------- o que fizeste por uma meta desde uma data ---------- */
+Goal.act = (g, from) => { const t = today(), ar = AREAS[g.cat] || [], W = gWords(g), out = [], P = OS.all('projects').filter(x => x.goal === g.id), inP = new Set(P.map(x => x.id));
+  let n = 0; const add = (v, l) => { if (v > 0) { out.push([v, l]); n += 1; } };
+  const T = OS.all('tasks').filter(x => x.status === 'Feita' && x.doneAt && x.doneAt >= from && x.doneAt <= t && (x.goal === g.id || inP.has(x.project) || (x.area && ar.includes(x.area)) || hit(W, x.title)));
+  add(T.length, T.length === 1 ? 'tarefa feita' : 'tarefas feitas');
+  const R = OS.all('routine').filter(r => (r.area && ar.includes(r.area)) || hit(W, r.title)); let rb = 0, rm = 0;
+  R.forEach(r => Object.keys(r.log || {}).forEach(d => { if (d >= from && d <= t) { rb++; const s = U.t2m(r.start), e = U.t2m(r.end); rm += e > s ? e - s : e + 1440 - s; } }));
+  if (rb) add(rb, `${rb === 1 ? 'bloco' : 'blocos'} da rotina (${U.nf(rm / 60, 1)} h)`);
+  if (g.cat === 'Estudos') { const m = U.sum(OS.all('sessions').filter(s => s.date >= from && s.date <= t), s => U.num(s.minutes)); if (m) add(U.r1(m / 60), 'h de estudo'); }
+  if (g.cat === 'Academia') add(OS.all('workouts').filter(w => w.date >= from && w.date <= t).length, 'treinos');
+  if (g.cat === 'Corrida' || g.cat === 'Academia') { const km = safe(() => OS.Run.kmIn(from, t), 0); if (km) add(U.r1(km), 'km corridos'); }
+  if (g.cat === 'Trabalho') { const h = U.sum(OS.all('shifts').filter(s => s.date >= from && s.date <= t), s => safe(() => OS.Car.workedHours(s), 0)); if (h) add(U.r1(h), 'h de trabalho'); }
+  if (g.cat === 'Empresa') add(OS.all('mvsales').filter(s => s.date >= from && s.date <= t && s.status !== 'Cancelado').length, 'vendas');
+  if (g.cat === 'Finanças') { const tx = safe(() => OS.Fin.tx(from, t), []), net = U.sum(tx.filter(x => x.type === 'Receita'), x => x.amount) - U.sum(tx.filter(x => x.type === 'Despesa'), x => x.amount); if (net > 0) { out.push([U.eur(net, { dec: 0 }), 'poupados']); n++; } }
+  const H = OS.all('habits').filter(h => h.active && ((h.area && ar.includes(h.area)) || hit(W, h.name))); let hd = 0; H.forEach(h => Object.keys(h.log || {}).forEach(d => { if (d >= from && d <= t) hd++; }));
+  add(hd, hd === 1 ? 'dia de hábito cumprido' : 'dias de hábitos cumpridos');
+  return { items: out, n, any: n > 0 }; };
+
+// a mesma pergunta repete-se muito (Painel, alertas, página): guarda a resposta até os dados mudarem
+let VER = 0; OS.on('change', () => { VER++; }); const AC = new Map();
+const actC = (g, from) => { const k = g.id + '|' + from + '|' + VER + '|' + (g._u || ''), c = AC.get(k); if (c && Date.now() - c.at < 60e3) return c.v; const v = Goal.act(g, from); if (AC.size > 400) AC.clear(); AC.set(k, { v, at: Date.now() }); return v; };
+/* ---------- progresso, ritmo e estado ---------- */
+const linkedP = (g, P, T) => { const inP = new Set(P.map(x => x.id)), TT = T.filter(t => !inP.has(t.project)), v = TT.map(t => t.status === 'Feita' ? 1 : 0).concat(P.map(x => x.status === 'Concluído' ? 1 : safe(() => OS.Proj.info(x).prog, 0)));
+  const st = g.steps || []; if (st.length) v.push(st.filter(s => s.done).length / st.length); return v.length ? U.avg(v) : null; };
+Goal.info = g => {
+  const T = OS.all('tasks').filter(t => t.goal === g.id), P = OS.all('projects').filter(x => x.goal === g.id && x.status !== 'Cancelado');
+  let cur = Goal.value(g), tgt = g.metric === 'steps' || g.metric === 'linked' ? 100 : U.num(g.target), p, via = '';
+  if (Goal.lower(g)) { const base = U.num(g.base) || (cur != null ? cur * 1.2 : 0); p = cur == null ? 0 : base === tgt ? (cur <= tgt ? 1 : 0) : U.clamp((base - cur) / (base - tgt), 0, 1); }
+  else { const base = g.metric === 'manual' ? U.num(g.base) : 0; p = tgt - base ? U.clamp((U.num(cur) - base) / (tgt - base), 0, 1) : 0; }
+  // meta manual sem valor escrito: o avanço vem dos projetos, tarefas e etapas ligados
+  if (g.metric === 'manual' && (g.cur === '' || g.cur == null)) { const lp = linkedP(g, P, T); if (lp != null) { p = lp; via = 'ligados'; cur = null; } }
+  if (g.status === 'Concluída') p = 1;
+  // ritmo: o que avançou desde o início (saldo, patrimônio… contam a partir do valor que tinham nesse dia)
+  const b0 = SNAP.includes(g.metric) && g.base0 !== undefined && g.base0 !== '' && g.base0 != null ? U.num(g.base0) : null;
+  const pr = b0 != null && !Goal.lower(g) && tgt - b0 > 0 ? U.clamp((U.num(cur) - b0) / (tgt - b0), 0, 1) : p;
+  let exp = null, dPass = 0, dTot = 0; const st0 = born(g); if (g.due && g.due > st0) { dTot = U.diff(g.due, st0); dPass = U.clamp(U.diff(today(), st0), 0, dTot); exp = U.clamp(dPass / dTot, 0, 1); }
+  const act = g.status === 'Ativa' ? actC(g, st0) : { any: false, items: [], n: 0 }, moved = pr > 0 || (b0 == null && p > 0);
+  const late = g.status === 'Ativa' && g.due && g.due < today() && p < 1;
+  const idle = g.status === 'Ativa' && p < 1 && !late && !moved && !act.any;
+  const behind = g.status === 'Ativa' && p < 1 && !late && !idle && exp != null && pr + .1 < exp;
+  const onPace = g.status === 'Ativa' && p < 1 && !late && moved && exp != null && !behind;
+  const pc = v => Math.round(v * 100) + '%';
+  const st = g.status !== 'Ativa' ? [g.status, g.status === 'Concluída' ? 'pos' : ''] : p >= 1 ? ['Alvo atingido', 'pos'] : late ? ['Atrasada', 'neg'] : idle ? ['Por começar', exp != null && exp >= .1 ? 'warn' : ''] : behind ? ['Atrás do ritmo', 'warn'] : onPace ? ['No ritmo', 'pos'] : ['Em andamento', ''];
+  const why = g.status !== 'Ativa' || p >= 1 ? '' : late ? `O prazo passou a ${U.fmtDS(g.due)} com ${pc(p)} feito.`
+    : idle ? `Ainda sem nenhum avanço desde ${U.fmtDS(st0)}${exp != null && exp >= .05 ? `: por esta altura devias ir em ${pc(exp)} (passaram ${dPass} de ${dTot} dias)` : ''}.`
+    : exp != null ? `${b0 != null ? 'Avançaste' : 'Vais em'} ${pc(pr)}${b0 != null ? ' desde o início' : ''}; por esta altura devias ir em ${pc(exp)} (passaram ${dPass} de ${dTot} dias).${!moved ? ' Estás a mexer-te, mas o número ainda não subiu.' : ''}`
+    : `Sem prazo: o ritmo mede-se quando lhe deres uma data.${!moved ? ' Já há trabalho feito, mas o número ainda não subiu.' : ''}`;
+  return { cur, tgt, p, pr, exp, late, behind, idle, onPace, moving: act.any, act, st, why, via, tasks: T, projects: P, b0 };
+};
+// ponto de partida das metas que medem um valor que já existia (saldo, patrimônio…)
+const snap = g => { if (!g || !SNAP.includes(g.metric) || (g.base0 !== undefined && g.base0 !== null && g.base0 !== '')) return; const v = safe(() => Goal.value(g), null); if (v != null) OS.upd('goals', g.id, { base0: U.num(v) }, { silent: true }); };
+OS.on('add:goals', snap); OS.on('upd:goals', g => { if (g && SNAP.includes(g.metric) && (g.base0 === undefined || g.base0 === null)) setTimeout(() => snap(OS.get('goals', g.id)), 0); });
+OS.on('ready', () => setTimeout(() => OS.all('goals').filter(g => g.status === 'Ativa').forEach(snap), 1200));
+
+/* ---------- projetos que parecem de uma meta ---------- */
+const suggest = g => { const W = gWords(g); if (!W.length) return []; return OS.all('projects').filter(x => !x.goal && !['Concluído', 'Cancelado'].includes(x.status) && hit(W, [x.name, x.objective, x.expected].join(' '))).slice(0, 3); };
+A.goalLink = b => { const p = OS.get('projects', b.dataset.p), g = OS.get('goals', b.dataset.g); if (!p || !g) return; OS.upd('projects', p.id, { goal: g.id }); UI.toast(`"${p.name}" ligado à meta "${g.title}"`, 'pos'); };
+
+/* ---------- a página ---------- */
+const H = [['h3m', '3 meses'], ['h1y', '1 ano'], ['h3y', '3 anos'], ['h5y', '5 anos'], ['hlong', 'Longo prazo']];
+const vision = () => { const ns = OS.one('northstar') || {}, G = OS.all('goals').filter(g => g.status === 'Ativa'), rows = H.filter(([k]) => String(ns[k] || '').trim());
+  if (!rows.length) return `<a class="pn mt-vis-cta" href="#next.estrela">${UI.ic('compass')}<span><b>Escreve o que queres construir</b><small>Na Estrela-guia, diz onde queres estar daqui a 1, 3 e 5 anos. As metas aparecem aqui ao lado da tua visão.</small></span>${UI.ic('right')}</a>`;
+  return `<div class="pn mt-vis"><div class="pn-h"><h3>${UI.ic('compass')}O que estás a construir</h3><a class="more" href="#next.estrela">Estrela-guia ${UI.ic('right')}</a></div><div class="mt-vg">${rows.map(([k, h]) => { const gs = G.filter(g => g.horizon === h);
+    return `<div class="mt-vh"><div class="eyebrow">${h}</div><p>${esc(String(ns[k]).trim().slice(0, 220))}${String(ns[k]).trim().length > 220 ? '…' : ''}</p>${gs.length ? `<div class="mt-vgs">${gs.map(g => { const i = Goal.info(g); return `<span class="bdg ${i.st[1] || 'out'}" data-edit="goals:${g.id}" style="cursor:pointer">${esc(g.title)} · ${i.st[0].toLowerCase()}</span>`; }).join('')}</div>` : `<div class="row gap8"><small class="warn">Ainda sem metas para este horizonte.</small>${UI.addBtn('goals', 'Criar meta', { horizon: h }, 'xs')}</div>`}</div>`; }).join('')}</div></div>`; };
+const actLine = (g, from, l) => { const a = actC(g, from); return `<div class="mt-act"><span class="mt-al">${l}</span>${a.items.length ? a.items.map(([v, t]) => `<span><b>${typeof v === 'number' ? U.nf(v, v % 1 ? 1 : 0) : esc(v)}</b> ${esc(t)}</span>`).join('') : '<span class="mut">nada ligado a esta meta</span>'}</div>`; };
+V.metas = () => {
+  const f = OS.ui.gf || '', G = OS.all('goals').filter(g => f ? g.cat === f : g.status !== 'Abandonada');
+  const by = U.groupBy(G, g => g.cat || 'Outros'), CATS = L.GCAT.concat(Object.keys(by).filter(c => !L.GCAT.includes(c)));
+  const act = OS.all('goals').filter(g => g.status === 'Ativa').map(Goal.info), t = today(), w7 = U.addDays(t, -6), m30 = U.addDays(t, -29);
+  return UI.head('Metas', 'Uma meta só está no ritmo quando já avançou e o avanço acompanha o tempo que passou. Por baixo de cada uma vês o que fizeste por ela esta semana e este mês.', UI.addBtn('goals', 'Nova meta'), 'Execução') +
+  vision() +
+  `<div class="kpis">${UI.kpi('Ativas', act.length)}${UI.kpi('No ritmo', act.filter(i => i.onPace).length, '', { tone: 'pos' })}${UI.kpi('Em andamento', act.filter(i => !i.onPace && !i.idle && !i.behind && !i.late && i.p < 1).length, 'a mexer, sem ritmo medido')}${UI.kpi('Por começar', act.filter(i => i.idle).length, '', { tone: act.some(i => i.idle) ? 'warn' : '' })}${UI.kpi('Atrás do ritmo', act.filter(i => i.behind).length, '', { tone: act.some(i => i.behind) ? 'warn' : '' })}${UI.kpi('Atrasadas', act.filter(i => i.late).length, '', { tone: act.some(i => i.late) ? 'neg' : '' })}</div>
+  <div class="row gap8">${UI.chip('Todas', 'gfCat', !f, 'data-v=""')}${L.GCAT.concat([...new Set(OS.all('goals').map(g => g.cat).filter(c => c && !L.GCAT.includes(c)))]).map(c => UI.chip(c, 'gfCat', f === c, `data-v="${c}"`)).join('')}</div>
+  ${Object.keys(by).length ? CATS.filter(c => by[c]).map(c => `<section><div class="sech"><h2>${c}</h2></div><div class="pn" style="padding-block:4px">${by[c].map(g => { const i = Goal.info(g), eta = safe(() => OS.Intel.goalETA(g), null), sg = g.status === 'Ativa' && !i.projects.length ? suggest(g) : [];
+    return `<div class="gcard mt-card"><div><div class="click" data-edit="goals:${g.id}" style="cursor:pointer"><b>${esc(g.title)}</b><div class="gmeta">${UI.badge(i.st[0], i.st[1])}${UI.badge(g.horizon, 'out')}${g.due ? `<span>prazo ${U.fmtD(g.due)}</span>` : '<span>sem prazo</span>'}${(g.steps || []).length ? `<span>${g.steps.filter(s => s.done).length}/${g.steps.length} etapas</span>` : ''}${i.projects.length ? `<span>${i.projects.length === 1 ? 'projeto: ' + esc(i.projects[0].name) : i.projects.length + ' projetos'}</span>` : ''}${i.tasks.length ? `<span>${i.tasks.filter(t2 => t2.status !== 'Feita').length} tarefas abertas</span>` : ''}${eta && eta.months != null && i.p < 1 ? `<span class="est">estimativa</span><span>alvo em ~${eta.months} ${eta.months === 1 ? 'mês' : 'meses'} ao ritmo atual</span>` : ''}</div></div>
+      ${i.why ? `<p class="mt-why">${esc(i.why)}</p>` : ''}
+      ${g.status === 'Ativa' && i.p < 1 ? actLine(g, w7, 'Esta semana') + actLine(g, m30, 'Este mês') : ''}
+      ${sg.length ? `<div class="mt-sug"><small class="mut">Parece desta meta:</small>${sg.map(p => `<button class="btn xs" data-act="goalLink" data-g="${g.id}" data-p="${p.id}">${UI.ic('link')}${esc(p.name)}</button>`).join('')}</div>` : ''}</div>
+    <div class="gp"><span class="num">${i.via ? `${Math.round(i.p * 100)}% <span class="mut">pelos projetos e etapas</span>` : `${Goal.fmt(g, i.cur)} <span class="mut">/ ${Goal.fmt(g, i.tgt)}</span>`}</span>${UI.bar(i.p, i.p >= 1 ? 'pos' : i.late ? 'neg' : i.behind ? 'warn' : i.idle ? '' : 'pos', i.exp)}${i.exp != null && i.p < 1 && g.status === 'Ativa' ? `<small class="mut">hoje devias ir em ${Math.round(i.exp * 100)}%</small>` : ''}</div></div>`; }).join('')}</div></section>`).join('') : UI.empty('Sem metas. Cria a primeira e liga-a a um indicador real.', UI.addBtn('goals', 'Criar meta', null, ''))}`;
+};
+})();
+
+</script>
+<script>
+/* PRUMO — Capital Profissional ligado aos teus objetivos (v2.53).
+   O número (0 a 1000) sobe à medida que te aproximas do profissional que queres ser, não por registar coisas:
+   - Competências: quanto já subiste de cada competência até ao nível alvo que lhe deste.
+   - Certificações: as que tens contra as que planeaste (ou a meta de certificações, se tiveres uma).
+   - Experiência: meses de emprego, voluntariado, liderança e projetos, mais as horas reais dos teus turnos.
+   - Rede: contactos e contactos ativos (últimos 90 dias), contra a tua meta de rede (ou 90).
+   - Projetos: projetos profissionais concluídos e o avanço dos que estão em curso.
+   - Eventos: eventos, palestras, workshops, conferências e competições a que foste.
+   - Aprendizagem: cursos e conteúdos concluídos ou a meio, e horas de estudo ligadas a competências.
+   - Mercado: o currículo (nota da análise da IA), candidaturas, entrevistas e oportunidades submetidas.
+   - Metas profissionais: o avanço medido das tuas metas de carreira e empresa (conta a dobrar).
+   As dimensões de que as tuas metas profissionais falam também contam a dobrar. */
+(() => {
+'use strict';
+const U = OS.U, Car = OS.Car, safe = (f, d) => { try { return f(); } catch (e) { return d; } };
+const N = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const PRO = /carreira|emprego|estagio|vaga|certific|linkedin|portfolio|curriculo|empresa|negocio|cliente|profission|promoc|salario|freelanc|startup|mova/;
+const proGoal = g => ['Trabalho', 'Empresa'].includes(g.cat) || ['certs', 'contacts', 'movaRevenue'].includes(g.metric) || PRO.test(N(g.title + ' ' + (g.why || '')));
+// de que dimensões falam as tuas metas profissionais (contam a dobrar)
+const KW = [['Competências', /competenc|skill|program|ingles|lingua|dominar|aprender a|excel|python|sql|lideranc|comunicac/], ['Certificações', /certific|diploma|exame/], ['Experiência', /experienc|emprego|estagio|trabalh/],
+  ['Rede', /rede|network|contact|linkedin|mentor/], ['Projetos', /projet|portfolio|empresa|negocio|startup|produto|lancar/], ['Eventos', /evento|confer|palestra|workshop|meetup|hackathon|congress/],
+  ['Aprendizagem', /curso|aprend|estud|mestrado|pos-grad|formac|livro/], ['Mercado', /vaga|emprego|candidat|entrevista|salario|cliente|vender|promoc|curriculo/]];
+const EVT = /confer|palestra|workshop|meetup|semin|congress|feira|hackathon|webinar|summit|forum|bootcamp/;
+// avanço de uma meta num dia passado (pelo registo diário que o Dominus guarda); hoje, o avanço ao vivo
+const progAt = (g, asOf) => { if (asOf >= U.today()) return safe(() => { const i = OS.Goal.info(g); return g.status === 'Concluída' ? 1 : (i.pr != null ? i.pr : i.p) || 0; }, 0);
+  if (g.status === 'Concluída' && (g.doneAt || '') && g.doneAt <= asOf) return 1; const h = ((OS.one('dominus').gp || {})[g.id] || {}).h || []; let v = 0; h.forEach(([d, p]) => { if (d <= asOf) v = p / 100; }); return v; };
+
+Car.capital = (asOf = U.today()) => {
+  const before = r => { const d = r.date || r.start || r.last || (r._c ? U.iso(new Date(r._c)) : ''); return !d || d <= asOf; };
+  const G = OS.all('goals').filter(g => g.status !== 'Abandonada' && proGoal(g) && (g.start || (g._c ? U.iso(new Date(g._c)) : '')) <= asOf), gtxt = N(G.map(g => g.title + ' ' + (g.why || '')).join(' '));
+  const tgtOf = m => { const g = G.find(x => x.metric === m && U.num(x.target) > 0); return g ? U.num(g.target) : 0; };
+  const why = {};
+  // Competências: do nível 1 até ao nível alvo de cada uma
+  const skills = OS.all('skills').filter(before), skP = skills.map(s => { const lv = U.clamp(U.num(s.level) || 1, 1, 5), tg = U.clamp(U.num(s.targetLevel) || 4, 2, 5); return U.clamp((lv - 1) / (tg - 1), 0, 1); });
+  const vSk = skills.length ? U.avg(skP) * Math.min(1, skills.length / 3) : 0;
+  why['Competências'] = skills.length ? `${skills.length} ${skills.length === 1 ? 'competência' : 'competências'}: em média a ${U.pct(U.avg(skP))} do nível alvo${skills.length < 3 ? ' (conta por inteiro a partir de 3)' : ''}` : 'Ainda sem competências com nível alvo (Aprendizagem).';
+  // Certificações: as que tens contra as que planeaste
+  const certs = OS.all('learn').filter(l => l.kind === 'Certificação' && l.status === 'Concluído' && (!l.end || l.end <= asOf)).concat(OS.all('certs').filter(c => c.status === 'Obtida' && (!c.date || c.date <= asOf)));
+  const plannedC = OS.all('learn').filter(l => l.kind === 'Certificação' && !['Concluído', 'Abandonado'].includes(l.status)).length + OS.all('certs').filter(c => c.status && !['Obtida', 'Desisti', 'Abandonada'].includes(c.status)).length;
+  const tC = Math.max(tgtOf('certs'), certs.length + plannedC, 3), vC = Math.min(1, certs.length / tC);
+  why['Certificações'] = `${certs.length} de ${tC}${tgtOf('certs') ? ' (a tua meta)' : plannedC ? ' (as que planeaste)' : ' (alvo base)'}`;
+  // Experiência: meses de experiência e as horas reais de trabalho
+  const exps = OS.all('experiences').filter(e => !e.start || e.start <= asOf);
+  const months = U.sum(exps.filter(e => ['Emprego', 'Voluntariado', 'Liderança', 'Projeto'].includes(e.kind)), e => { const a = e.start || asOf, b = e.end && e.end < asOf ? e.end : asOf; return Math.max(0, U.diff(b, a) / 30.4); });
+  const shiftH = U.sum(OS.all('shifts').filter(s => s.date && s.date <= asOf), s => safe(() => Car.workedHours(s), 0)), shM = shiftH / 140;
+  const vE = Math.min(1, (months + (months ? 0 : shM)) / 36);
+  why['Experiência'] = `${U.nf(months || shM, 1)} meses${!months && shM ? ' (pelas horas dos teus turnos)' : ''} de 36`;
+  // Rede
+  const contacts = OS.all('contacts').filter(before), active = contacts.filter(c => c.last && U.diff(asOf, c.last) <= 90 && c.last <= asOf), tR = Math.max(30, tgtOf('contacts') || 90);
+  const vR = Math.min(1, (contacts.length + active.length * 2) / tR); why['Rede'] = `${contacts.length} contactos, ${active.length} ativos (90 dias)${tgtOf('contacts') ? ' · meta ' + tgtOf('contacts') : ''}`;
+  // Projetos profissionais: concluídos e avanço dos que estão em curso
+  const PT = ['Profissional', 'Empresarial', 'Aprendizagem'], pDone = OS.all('projects').filter(p => p.status === 'Concluído' && PT.includes(p.type) && (!p.doneAt || p.doneAt <= asOf)),
+    pRun = OS.all('projects').filter(p => p.status === 'Em andamento' && PT.includes(p.type) && before(p)), pPart = asOf >= U.today() ? U.sum(pRun, p => safe(() => OS.Proj.info(p).prog, 0)) : 0;
+  const vP = Math.min(1, (pDone.length + pPart) / 6); why['Projetos'] = `${pDone.length} concluídos${pRun.length ? ` e ${pRun.length} em curso` : ''} (alvo 6)`;
+  // Eventos
+  const ev = exps.filter(e => ['Evento', 'Palestra', 'Competição'].includes(e.kind)).length + OS.all('events').filter(e => e.date && e.date <= asOf && EVT.test(N(e.title))).length + OS.all('opps').filter(o => ['Evento', 'Palestra', 'Networking', 'Competição'].includes(o.kind) && o.status === 'Aceite' && (!o.deadline || o.deadline <= asOf)).length;
+  const vV = Math.min(1, ev / 8); why['Eventos'] = `${ev} de 8 (eventos, palestras, workshops)`;
+  // Aprendizagem
+  const L = OS.all('learn').filter(l => l.kind !== 'Certificação' && l.kind !== 'Livro'), lDone = L.filter(l => l.status === 'Concluído' && (!l.end || l.end <= asOf)).length,
+    lPart = U.sum(L.filter(l => l.status === 'Em curso' && before(l)), l => U.num(l.total) ? U.clamp(U.num(l.done) / U.num(l.total), 0, 1) : .25), learnH = U.sum(OS.all('sessions').filter(s => s.skill && s.date <= asOf), s => U.num(s.minutes)) / 60;
+  const vA = Math.min(1, learnH / 120 + (lDone + lPart) / 12); why['Aprendizagem'] = `${lDone} concluídos, ${U.nf(lPart, 1)} a meio, ${U.nf(learnH, 1)} h de estudo de competências`;
+  // Mercado
+  const apps = OS.all('applications').filter(a => a.date && a.date <= asOf && a.status !== 'Por enviar'), interviews = apps.filter(a => ['Entrevista', 'Proposta', 'Aceite'].includes(a.status)),
+    sub = OS.all('opps').filter(o => ['Submetida', 'Em avaliação', 'Aceite'].includes(o.status) && (!o.deadline || o.deadline <= asOf || asOf >= U.today())).length, cvN = asOf >= U.today() ? safe(() => (OS.CV.cur().an || {}).nota, 0) || 0 : 0;
+  const vM = Math.min(1, (cvN / 100) * .35 + Math.min(1, apps.length / 10) * .25 + Math.min(1, interviews.length / 3) * .25 + Math.min(1, sub / 5) * .15);
+  why['Mercado'] = `currículo ${cvN ? cvN + '/100' : 'sem análise'} · ${apps.length} candidaturas · ${interviews.length} entrevistas · ${sub} oportunidades submetidas`;
+  const dims = { 'Competências': vSk, 'Certificações': vC, 'Experiência': vE, 'Rede': vR, 'Projetos': vP, 'Eventos': vV, 'Aprendizagem': vA, 'Mercado': vM };
+  const w = Object.fromEntries(Object.keys(dims).map(k => [k, 1])); KW.forEach(([k, re]) => { if (G.length && re.test(gtxt)) w[k] = 2; });
+  if (G.length) { const gp = U.avg(G.map(g => progAt(g, asOf))); dims['Metas profissionais'] = gp; w['Metas profissionais'] = 2; why['Metas profissionais'] = `${G.length} ${G.length === 1 ? 'meta' : 'metas'} de carreira e empresa, em média a ${U.pct(gp)}`; }
+  const W = U.sum(Object.keys(dims), k => w[k]), score = Math.round(U.sum(Object.keys(dims), k => dims[k] * w[k]) / W * 1000);
+  return { dims, w, why, score, goals: G.map(g => g.id), skills: skills.length, certs: certs.length, months: U.r1(months || shM), contacts: contacts.length, active: active.length, apps: apps.length, interviews: interviews.length, projects: pDone.length, events: ev, learnH: U.r1(learnH) };
+};
 })();
 
 </script>
@@ -7841,13 +8371,24 @@ const liveBadge = () => { const st = IX.st, has = IX.hasScript(), t = IX.lastTic
   if (has && st.script === 'old') return `<a class="inv-live off" href="#definicoes.ligacoes"><i></i>Atualiza o script para teres cotações ao vivo</a>`;
   if (!has) return `<a class="inv-live off" href="#definicoes.ligacoes"><i></i>Liga as cotações em tempo real</a>`;
   return `<span class="inv-live ${st.script === 'erro' ? 'warn' : ''}"><i></i>${st.script === 'erro' ? 'Sem ligação ao mercado agora' : 'Ao vivo'}${srcs.length ? ' · ' + srcs.join(', ') : ''}${t ? ' · ' + t : ''}</span>`; };
+// v2.53: em vez de 15 separadores numa linha, 4 blocos (o que tens, como está a correr, o mercado, a IA) e só as opções do bloco aberto
+const NAVG = [['carteira', 'A minha carteira', 'wallet', 'O que tens, imóveis, renda passiva e movimentos', ['', 'carteira', 'imoveis', 'renda', 'movimentos']],
+  ['desempenho', 'Desempenho', 'trend', 'Rentabilidade, proventos, risco, alocação e impostos', ['rentabilidade', 'proventos', 'risco', 'alocacao', 'impostos']],
+  ['mercado', 'Mercado e análise', 'globe', 'Mercado, preços, empresas e comparar', ['mercado', 'cotacoes', 'empresas', 'comparar']],
+  ['ia', 'Assistente IA', 'brain', 'Pergunta e recebe conselhos sobre a carteira', ['ia']]];
+const invNav = cur => { const keys = TABS.map(t => t[0]), lab = Object.fromEntries(TABS), G = NAVG.map(g => g.slice(0, 4).concat([g[4].filter(k => keys.includes(k))]));
+  const rest = keys.filter(k => !G.some(g => g[4].includes(k))); if (rest.length) G[0][4].push(...rest);
+  const gi = Math.max(0, G.findIndex(g => g[4].includes(cur))), last = OS.ui.invLast || {};
+  OS.ui.invLast = Object.assign({}, last, { [G[gi][0]]: cur }); // volta à última opção que abriste em cada bloco
+  return `<nav class="inv-nav" aria-label="Investimentos">${G.map((g, i) => { const to = last[g[0]] != null && g[4].includes(last[g[0]]) ? last[g[0]] : g[4][0]; return `<a class="inv-g${i === gi ? ' on' : ''}" href="#investimentos${to ? '.' + to : ''}"${i === gi ? ' aria-current="true"' : ''}><span class="inv-gi">${UI.ic(g[2])}</span><span class="inv-gt"><b>${g[1]}</b><small>${g[3]}</small></span></a>`; }).join('')}</nav>
+  ${G[gi][4].length > 1 ? `<nav class="tabs inv-sub" aria-label="${esc(G[gi][1])}">${G[gi][4].map(k => `<a href="#investimentos${k ? '.' + k : ''}" class="${k === cur ? 'on' : ''}">${esc(lab[k] || k)}</a>`).join('')}</nav>` : ''}`; };
 const viewSel = () => `<div class="seg inv-cur" role="group">${['EUR', 'BRL', 'USD'].map(c => `<button class="${IX.view() === c ? 'on' : ''}" data-act="invView" data-v="${c}">${c}</button>`).join('')}</div>`;
 A.invView = b => { cfg().view = b.dataset.v; OS.touch('invcfg'); };
 
 V.investimentos = sub => {
   const s = sub || '';
   const head = UI.head('Investimentos', 'A tua carteira completa, ao vivo: ações, ETFs, FII, fundos, renda fixa, Tesouro, CDB, Certificados, PPR, cripto, ouro e mais.', `${viewSel()}${UI.addBtn('invtx', 'Movimento')}${UI.addBtn('assets', 'Ativo', null, '')}`, 'Dinheiro')
-    + `<div class="inv-top">${liveBadge()}</div>` + UI.tabs('investimentos', TABS, s === 'ativo' ? '' : s);
+    + `<div class="inv-top">${liveBadge()}</div>` + invNav(s === 'ativo' ? '' : s);
   const miss = Inv.fxMissing();
   const fxNote = miss.length ? `<div class="note"><b>Câmbio em falta:</b> ${miss.join(', ')}. Sem internet, define-o em Definições → Ligações (câmbio manual).</div>` : '';
   IX.extra = new Set();
@@ -9716,12 +10257,14 @@ const meCard = S => { const P = S.P, row = (ok, t, v) => `<li class="${ok ? 'ok'
       + row(P.all, 'Tudo concluído (3 ou mais)', P.all ? '+10' : '0/10') + row(P.pF >= 20, `Tempo de foco (${P.fm} min)`, `${P.pF}/20`)
       + row(P.mv, 'Treino, corrida ou desporto', P.mv ? '+10' : '0/10') + row(P.rd, 'Leitura ou devocional', P.rd ? '+10' : '0/10')}</ul>
     ${strip()}<p class="mut rk-note">Um dia de foco é um dia com ${FOCO} pontos ou mais.${P.plan < 5 ? ' Os 50 pontos das tarefas e hábitos só vêm por inteiro com 5 ou mais coisas marcadas para o dia.' : ''}</p></div>`; };
+// tempo total de uso do app (só para mostrar ao lado da pessoa; não entra nos pontos)
+const tmS = m => { m = Math.round(+m || 0); const h = Math.floor(m / 60); return h >= 100 ? U.nf(h) + ' h' : h ? `${h} h ${String(m % 60).padStart(2, '0')}` : m + ' min'; };
 const list = () => { if (!canRank()) return `<div class="pn"><div class="pn-h"><h3>${UI.ic('award')}Ranking</h3></div><p class="mut">O ranking junta as contas do Prumo. Este Prumo está sem conta (modo local), por isso só tu vês os teus pontos e os teus dias de foco.</p></div>`;
   load(); const L = sorted(), me = L.find(r => r.me), P = per();
   const body = !RL ? `<div class="rk-list rk-skel" aria-busy="true">${'<div class="rk-row"><span class="rk-pos"></span><span class="rk-av"></span><span class="rk-n"><b></b><small></small></span></div>'.repeat(5)}</div><p class="mut" style="margin:6px 0 0">A abrir o ranking…</p>` : !L.length ? UI.empty('Ainda ninguém fez pontos neste período. Quem fizer o primeiro ponto aparece aqui.')
     : `<div class="rk-list">${L.map(r => `<div class="rk-row${r.me ? ' me' : ''}${r.pos <= 3 ? ' top top' + r.pos : ''}"><span class="rk-pos">${r.pos <= 3 ? `<i>${r.pos}</i>` : ord(r.pos)}</span>
         <span class="rk-av${okIm(r.im) ? ' im' : ''}" style="--c:${/^#[0-9A-Fa-f]{6}$/.test(r.c) ? r.c : '#5CC8E6'}" aria-hidden="true">${okIm(r.im) ? `<img src="${r.im}" alt="" loading="lazy">` : esc(r.anon && !r.me ? '?' : initials(r))}</span>
-        <span class="rk-n"><b>${esc(nameOf(r))}${r.me ? ' <em>tu</em>' : ''}</b><small>${flame(r.s > 0, r.s)} ${r.s === 1 ? 'dia' : 'dias'} de foco<span class="rk-pct-m"> · ${r.pct}%</span></small></span>
+        <span class="rk-n"><b>${esc(nameOf(r))}${r.me ? ' <em>tu</em>' : ''}</b><small>${flame(r.s > 0, r.s)} ${r.s === 1 ? 'dia' : 'dias'} de foco<span class="rk-pct-m"> · ${r.pct}%</span>${r.tm ? `<span class="rk-tm" title="Tempo total a usar o Prumo (não conta para os pontos)">${UI.ic('clock')}${tmS(r.tm)} no app</span>` : ''}</small></span>
         <span class="rk-pct" title="Média de disciplina por dia"><span class="rk-tr"><i style="width:${Math.max(0, Math.min(100, r.pct))}%"></i></span><small>${r.pct}%</small></span><b class="rk-pts">${r.pts.toLocaleString(OS.loc ? OS.loc() : 'pt-PT')}<small>pts</small></b></div>`).join('')}</div>`;
   return `<div class="pn rk-board"><div class="pn-h"><h3>${UI.ic('award')}Ranking geral</h3>${UI.seg('rkP', PER, P)}</div>
     ${me ? `<p class="rk-pos-me">Estás em <b>${ord(me.pos)} lugar</b> de ${L.length} ${L.length === 1 ? 'pessoa' : 'pessoas'}${P === 'a' ? '' : P === '7' ? ' nos últimos 7 dias' : ' nos últimos 30 dias'}.</p>` : RL ? '<p class="rk-pos-me">Ainda não apareces: só entra na lista quem já fez pontos neste período.</p>' : ''}
@@ -10131,19 +10674,20 @@ const ED = { PT: ['Portugal', '🇵🇹', 'hl=pt-PT&gl=PT&ceid=PT:pt-150', 'pt']
   ZA: ['África do Sul', '🇿🇦', 'hl=en-ZA&gl=ZA&ceid=ZA:en', 'en'], NG: ['Nigéria', '🇳🇬', 'hl=en-NG&gl=NG&ceid=NG:en', 'en'], PL: ['Polónia', '🇵🇱', 'hl=pl&gl=PL&ceid=PL:pl', 'pl'], SE: ['Suécia', '🇸🇪', 'hl=sv&gl=SE&ceid=SE:sv', 'sv'], NO: ['Noruega', '🇳🇴', 'hl=no&gl=NO&ceid=NO:no', 'no'], GR: ['Grécia', '🇬🇷', 'hl=el&gl=GR&ceid=GR:el', 'el'] };
 const TOPICS = [['TOP', 'Destaques'], ['WORLD', 'Mundo'], ['NATION', 'País'], ['BUSINESS', 'Economia'], ['TECHNOLOGY', 'Tecnologia'], ['SCIENCE', 'Ciência'], ['HEALTH', 'Saúde'], ['SPORTS', 'Desporto'], ['ENTERTAINMENT', 'Cultura']];
 const NW = OS.News = { cache: {} };
-const scr = () => { const c = OS.one('inbox'); return c && c.url && c.key ? c : OS.Acc && OS.Acc.on ? { url: new URL('api/noticias', document.baseURI).href, key: '-' } : null; };
+const scr = () => { const c = OS.one('inbox'); return OS.Acc && OS.Acc.on ? { url: new URL('api/noticias', document.baseURI).href, key: '-' } : c && c.url && c.key ? c : null; };
+const FRESH = 2 * 6e4; // uma notícia com mais de 2 minutos já se pede outra vez
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 /* que feeds formam cada vista */
 // o separador Mundo na língua de quem lê: em português, Portugal e Brasil; noutra língua, a edição do país da pessoa (ou a dos EUA)
 const WE = () => { const l = OS.Lang ? OS.Lang.base() : 'pt'; if (l === 'pt') return ['PT', 'BR']; const cc = OS.Pais ? OS.Pais.code() : 'US'; return ED[cc] && ED[cc][3] === l ? [cc] : (Object.keys(ED).find(k => ED[k][3] === l) ? [Object.keys(ED).find(k => ED[k][3] === l)] : ['US']); };
 NW.has = cc => !!ED[cc];
 const specs = (tab, topic, theme) => { if (theme) return tab === 'W' ? WE().map(k => ({ id: 'q:' + k + ':' + theme, q: theme, ed: ED[k][2] })) : [{ id: 'q:' + tab + ':' + theme, q: theme, ed: ED[tab][2] }];
-  if (tab === 'W') { const t = topic === 'TOP' || topic === 'NATION' ? 'WORLD' : topic; return WE().map(k => ({ id: k + ':' + t, t, ed: ED[k][2] })); }
+  if (tab === 'W') { if (topic === 'TOP') return WE().map(k => ({ id: k + ':TOP', t: 'TOP', ed: ED[k][2] })).concat([{ id: WE()[0] + ':WORLD', t: 'WORLD', ed: ED[WE()[0]][2] }]); const t = topic === 'NATION' ? 'WORLD' : topic; return WE().map(k => ({ id: k + ':' + t, t, ed: ED[k][2] })); }
   return [{ id: tab + ':' + topic, t: topic, ed: ED[tab][2] }]; };
 const merge = lists => { const seen = new Set(), out = []; const L = lists.filter(Boolean); const max = Math.max(0, ...L.map(l => l.length));
   for (let i = 0; i < max; i++) L.forEach(l => { const x = l[i]; if (!x) return; const k = norm(x.t).slice(0, 60); if (seen.has(k)) return; seen.add(k); out.push(x); }); return out; };
 /* busca no script (em lotes) */
-NW.fetch = async (sp, force) => { const need = sp.filter(s => force || !NW.cache[s.id] || Date.now() - NW.cache[s.id].at > 4 * 6e4); if (!need.length) return; const c = scr(); if (!c) throw new Error('sem script');
+NW.fetch = async (sp, force) => { const need = sp.filter(s => force || !NW.cache[s.id] || Date.now() - NW.cache[s.id].at > FRESH); if (!need.length) return; const c = scr(); if (!c) throw new Error('sem script');
   const u = c.url + (c.url.includes('?') ? '&' : '?') + 'k=' + encodeURIComponent(c.key) + '&op=nw&f=' + encodeURIComponent(JSON.stringify(need)) + '&_=' + Date.now();
   // sem resposta em 25 s (script a acordar ou sem rede) desiste e mostra o motivo, em vez de ficar a rodar para sempre
   const ac = window.AbortController ? new AbortController() : null, to = ac && setTimeout(() => ac.abort(), window.__nwTO || 25000); let r, txt;
@@ -10155,7 +10699,8 @@ NW.fetch = async (sp, force) => { const need = sp.filter(s => force || !NW.cache
   NW.okAt = Date.now(); Object.entries(j.nw).forEach(([id, items]) => { const prev = NW.cache[id]; NW.cache[id] = { at: Date.now(), items: items || [] }; if (prev && prev.items.length) { const old = new Set(prev.items.map(x => norm(x.t))); NW.cache[id].fresh = (items || []).filter(x => !old.has(norm(x.t))).map(x => norm(x.t)); } });
   try { U.ls.set('oc_news1', Object.fromEntries(Object.entries(NW.cache).slice(-24))); } catch (e) { } };
 Object.assign(NW.cache, U.ls.get('oc_news1', {}) || {});
-const itemsFor = (tab, topic, theme) => { const all = merge(specs(tab, topic, theme).map(s => NW.cache[s.id] && NW.cache[s.id].items)), cut = Date.now() - 48 * 36e5; return [...all.filter(x => !x.d || x.d >= cut), ...all.filter(x => x.d && x.d < cut)]; };
+const itemsFor = (tab, topic, theme) => { const all = merge(specs(tab, topic, theme).map(s => NW.cache[s.id] && NW.cache[s.id].items)), cut = Date.now() - 48 * 36e5, rec = (OS.ui.nwSort || 'rec') === 'rec';
+  const a = all.filter(x => !x.d || x.d >= cut), b = all.filter(x => x.d && x.d < cut); if (rec) a.sort((x, y) => (y.d || 0) - (x.d || 0)); return [...a, ...b]; };
 // manchetes para o Spyke ler (Portugal + mundo), sem o nome do jornal no fim
 NW.headlines = async (n = 5) => { const sp = specs('PT', 'TOP', '').concat(specs('W', 'TOP', '')); try { if (scr()) await NW.fetch(sp); } catch (e) { } const L = merge([itemsFor('PT', 'TOP', ''), itemsFor('W', 'TOP', '')]); return L.slice(0, n).map(x => String(x.t || '').replace(/\s+[-–|]\s+[^-–|]{2,45}$/, '').trim()).filter(Boolean); };
 const freshSet = (tab, topic, theme) => new Set(specs(tab, topic, theme).flatMap(s => (NW.cache[s.id] && NW.cache[s.id].fresh) || []));
@@ -10194,13 +10739,15 @@ const load = async (force) => { if (busy) return; const tab = OS.ui.nwTab || 'W'
   catch (e) { errAt = Date.now(); err = NW.old ? 'O teu script Google é uma versão antiga e ainda não sabe buscar notícias. Atualiza-o (5 minutos, passo a passo em Definições → Script Google).' : !scr() ? '' : 'Não consegui buscar as notícias: ' + e.message + '.'; }
   busy = false; clearInterval(tick); OS.request(); };
 V.jornal = () => { const tab = OS.ui.nwTab || 'W', topic = OS.ui.nwTopic || 'TOP', theme = OS.ui.nwTheme || '', C2 = cfg(), lang = tab === 'W' ? 'pt' : ED[tab][3];
-  const sp = specs(tab, topic, theme), stale = sp.some(s => !NW.cache[s.id] || Date.now() - NW.cache[s.id].at > 4 * 6e4); if (stale && !busy && scr() && (Date.now() - errAt > 90000 || (NW.okAt || 0) > errAt)) setTimeout(() => load(false), 30);
+  const sp = specs(tab, topic, theme), stale = sp.some(s => !NW.cache[s.id] || Date.now() - NW.cache[s.id].at > FRESH); if (stale && !busy && scr() && (Date.now() - errAt > 90000 || (NW.okAt || 0) > errAt)) setTimeout(() => load(false), 30);
   const items = itemsFor(tab, topic, theme), fr = freshSet(tab, topic, theme), place = tab === 'W' ? 'Mundo' : ED[tab][0], b = !theme && topic === 'TOP' ? BR[tab] : null, last = Math.max(0, ...sp.map(s => (NW.cache[s.id] || {}).at || 0));
   const tabs = `<div class="nw-tabs"><button class="${tab === 'W' ? 'on' : ''}" data-act="nwTab" data-v="W">🌍 Mundo</button>${(C2.tabs || []).filter(k => ED[k]).map(k => `<button class="${tab === k ? 'on' : ''}" data-act="nwTab" data-v="${k}">${ED[k][1]} ${esc(ED[k][0])}<i data-act="nwDelTab" data-v="${k}" title="Remover" aria-label="Remover ${esc(ED[k][0])}">×</i></button>`).join('')}<button class="nw-add" data-act="nwAddTab">+ País</button></div>`;
   const tops = `<div class="nw-topics">${TOPICS.filter(t => !(tab === 'W' && t[0] === 'NATION')).map(([k, l]) => `<button class="chip ${!theme && topic === k ? 'on' : ''}" data-act="nwTopic" data-v="${k}">${l}</button>`).join('')}${(C2.themes || []).map(t => `<button class="chip ${theme === t ? 'on' : ''}" data-act="nwTheme" data-v="${esc(t)}">#${esc(t)}<i data-act="nwDelTheme" data-v="${esc(t)}" aria-label="Remover tema">×</i></button>`).join('')}<form class="row gap6" data-form="nwTheme"><input class="field" name="q" placeholder="+ tema (ex.: Aveiro, IA, Ucrânia)" style="width:220px" aria-label="Novo tema"></form></div>`;
   if (!scr()) return UI.head('Jornal', 'As notícias mais importantes do mundo, em tempo real.', '', 'Visão geral') + tabs + `<div class="pn">${UI.empty('As notícias chegam pelo teu script Google, que ainda não está ligado neste aparelho.', `<a class="btn sm pri" href="#definicoes.script">${UI.ic('settings')}Configurar em Definições</a>`)}</div>`;
   return UI.head('Jornal', 'As notícias mais importantes do mundo e de cada país, em tempo real. Atualiza sozinho ao longo do dia.', `<button class="btn sm ghost" data-act="nwRefresh">${UI.ic('sync')}${busy ? 'A atualizar…' : 'Atualizar'}</button>`, 'Visão geral') + tabs + tops
     + `<div class="nw-meta"><span class="inv-live"><i></i>${last ? 'Atualizado ' + ago(last) : 'A carregar…'} · Google Notícias${tab !== 'W' && lang !== 'pt' ? ` · <label><input type="checkbox" data-act="nwTr" ${C2.tr ? 'checked' : ''}> traduzir para português</label>${TRB ? ' (a traduzir…)' : ''}` : ''}</span></div>${err ? `<div class="note nw-err">${esc(err)} ${NW.old ? '<a class="btn xs pri" href="#definicoes.script">Atualizar em Definições</a>' : '<button class="btn xs" data-act="nwRefresh">Tentar outra vez</button>'}</div>` : ''}
+    ${(() => { const H = items.filter(x => x.d && Date.now() - x.d < 3 * 36e5).sort((x, y) => y.d - x.d).slice(0, 6); return H.length ? `<div class="pn nw-live"><div class="pn-h"><h3><i class="nw-dot" aria-hidden="true"></i>Última hora</h3><span class="mut" style="font-size:12px">últimas 3 horas · atualiza sozinho</span></div>${H.map(x => `<div class="nw-lr click" data-act="nwRead" data-l="${reg(x)}" data-lang="${lang}" role="button" tabindex="0"><span class="mono">${ago(x.d)}</span><b>${esc(ttl(x, lang))}</b><small class="mut">${esc(x.s || '')}</small></div>`).join('')}</div>` : ''; })()}
+    <div class="row gap8 nw-sort"><span class="mut" style="font-size:12.5px">Ordenar:</span>${UI.chip('Mais recentes', 'nwSort', (OS.ui.nwSort || 'rec') === 'rec', 'data-v="rec"')}${UI.chip('Mais importantes', 'nwSort', OS.ui.nwSort === 'imp', 'data-v="imp"')}</div>
     ${!theme && topic === 'TOP' ? brief(b, tab, place) : ''}
     ${items.length ? `<div class="nw-list">${items.slice(0, 60).map((x, i) => card(x, i, lang, fr.has(norm(x.t)))).join('')}</div>` : busy ? `<div class="pn"><div class="sai-busy"><div class="fd-spin"></div><span>A buscar as notícias do momento… <small class="mut" id="nwSec">${Math.round((Date.now() - busyAt) / 1000)} s</small></span></div></div>` : err ? '' : UI.empty('Sem notícias para mostrar.', '<button class="btn sm" data-act="nwRefresh">Atualizar</button>')}
     <p class="mut" style="font-size:11.5px">Fonte: Google Notícias (agregador de jornais). Toca numa notícia para a ler aqui dentro.</p>`; };
@@ -10251,14 +10798,48 @@ NW.read = async (x, lang = 'pt', ai = false) => { if (!x || !x.l) return; const 
     if (!(r && r.via)) r = { at: Date.now(), via: 'resumo', p: r && r.desc ? [r.desc] : [], u: r && r.u, msg: 'Não consegui abrir o texto desta notícia agora (sem internet ou os jornais bloquearam). Toca outra vez daqui a pouco.' };
     else { RDN[k] = r; saveRd(); } } catch (e) { r = { via: 'resumo', p: [], msg: 'Não consegui abrir a notícia: ' + (e.message || 'erro') }; }
   rdBusy = ''; drawRd(x, lang, r); };
+A.nwSort = b => OS.setUI('nwSort', b.dataset.v);
 A.nwRead = b => { const x = LK.get(b.dataset.l); if (x) NW.read(x, b.dataset.lang || 'pt', !!b.dataset.ai); };
 A.nwSay = b => { const r = RDN[b.dataset.l], x = LK.get(b.dataset.l); if (!r || !OS.Spyke) return; OS.Spyke.say(((x ? x.t + '. ' : '') + r.p.filter(y => !y.startsWith('## ')).join(' ')).slice(0, 1800)); };
 const brief = (b, tab, place) => { const has = OS.AI && OS.AI.key();
   if (!has) return `<div class="pn nw-brief"><div class="eyebrow">O essencial agora</div><p class="mut" style="margin:0 0 8px">Com o Spyke (IA) ligado, aqui aparece um resumo das notícias mais importantes do momento, feito só com as manchetes reais abaixo.</p>${OS.AI && OS.AI.setup ? OS.AI.setup('') : ''}</div>`;
   if (!b || (!b.titulo && !(b.pontos || []).length)) return BRB ? `<div class="pn nw-brief"><div class="sai-busy"><div class="fd-spin"></div><span>A ler as manchetes de ${esc(place)} e a preparar o resumo…</span></div></div>` : '';
   return `<div class="pn nw-brief"><div class="row between gap8"><div class="eyebrow">O essencial agora · ${esc(place)} · ${ago(b.at)}</div><button class="btn xs ghost" data-act="nwBrief">${BRB ? 'A atualizar…' : 'Atualizar resumo'}</button></div><h2>${esc(b.titulo)}</h2>
-    <ol>${b.pontos.map(p => `<li><b>${esc(p.titulo)}</b><p>${esc(p.resumo)}</p>${p.porque ? `<small class="mut">Porque importa: ${esc(p.porque)}</small>` : ''}${p.idx.length ? `<div class="nw-bs">${p.idx.map(x => `<button type="button" data-act="nwRead" data-l="${reg(x)}">${esc(x.s)}</button>`).join('')}</div>` : ''}</li>`).join('')}</ol>
-    ${b.para_ti ? `<div class="fe-step"><b>Para ti:</b> ${esc(b.para_ti)}</div>` : ''}<small class="mut">Resumo feito pela IA apenas com as manchetes publicadas; toca numa fonte para ler a notícia completa.</small></div>`; };
+    <ol>${b.pontos.map((p, i) => `<li><button type="button" class="nw-deep" data-act="nwDeep" data-tab="${esc(tab)}" data-i="${i}" title="Ler o resumo aprofundado e a avaliação da IA"><b>${esc(p.titulo)}</b>${UI.ic('right')}</button><p>${esc(p.resumo)}</p>${p.porque ? `<small class="mut">Porque importa: ${esc(p.porque)}</small>` : ''}${p.idx.length ? `<div class="nw-bs">${p.idx.map(x => `<button type="button" data-act="nwRead" data-l="${reg(x)}">${esc(x.s)}</button>`).join('')}</div>` : ''}</li>`).join('')}</ol>
+    ${b.para_ti ? `<div class="fe-step"><b>Para ti:</b> ${esc(b.para_ti)}</div>` : ''}<small class="mut">Resumo feito pela IA apenas com as manchetes publicadas. Toca num tema para o resumo aprofundado com a avaliação da IA, ou numa fonte para ler a notícia.</small></div>`; };
+
+/* ---------- um tema do resumo, a fundo: resumo aprofundado + a avaliação da IA no fim ---------- */
+const DEEP = U.ls.get('oc_newsdeep1', {}) || {}; let deepBusy = '';
+const deepKey = (tab, p) => tab + '|' + norm(p.titulo).slice(0, 80);
+const deepHTML = (p, d) => `<div class="nw-rd nw-dp"><div class="pn-h"><div class="eyebrow">O essencial agora · a fundo</div><button class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div><h2>${esc(p.titulo)}</h2>
+  ${!d || d.busy ? `<div class="sai-busy"><div class="fd-spin"></div><span>${esc((d && d.step) || 'A pesquisar este tema…')}</span></div>`
+    : d.err ? `<p class="mut">${esc(d.err)}</p>` : `<div class="nw-tag">${d.via === 'pesquisa' ? 'Resumo aprofundado feito pela IA com pesquisa na internet agora' : 'Resumo aprofundado feito pela IA com as manchetes publicadas'}</div>
+    <div class="nw-body">${d.p.map(x => `<p>${esc(x)}</p>`).join('')}</div>
+    ${d.av && d.av.length ? `<div class="nw-av"><h4>${UI.ic('brain')}A avaliação da IA</h4>${d.av.map(x => `<p>${esc(x)}</p>`).join('')}<small class="mut">É a leitura da IA sobre a notícia, não um facto. Confirma nas fontes.</small></div>` : ''}
+    ${(d.fontes || []).length ? `<div class="nw-fon"><b>Fontes:</b> ${d.fontes.map(f => esc(f.t || f.s || '')).filter(Boolean).join(' · ')}</div>` : ''}
+    <div class="row gap8 nw-rda">${OS.Spyke && OS.Spyke.say ? `<button class="btn sm pri" data-act="nwDeepSay">${UI.ic('mic')}Lê-me isto</button>` : ''}<button class="btn sm ghost" data-act="nwDeepAgain">Pesquisar outra vez</button></div>`}
+  ${(p.idx || []).length ? `<div class="nw-oth"><b>As manchetes deste tema</b>${p.idx.map(x => `<button type="button" data-act="nwRead" data-l="${reg(x)}" data-lang="pt"><b>${esc(x.s)}</b> ${esc(x.t)}</button>`).join('')}</div>` : ''}</div>`;
+const drawDeep = (p, d) => { const m = document.querySelector('#modal .nw-dp'); if (m) m.outerHTML = deepHTML(p, d); else UI.modal(deepHTML(p, d), 'tall'); document.querySelectorAll('#modal [data-mclose]').forEach(b => b.onclick = UI.closeModal); };
+const splitAv = t => { const parts = String(t || '').replace(/\*\*/g, '').split(/(?:^|\n)[ \t]*#*[ \t]*(?:A MINHA |MINHA )?AVALIA[ÇC][ÃA]O(?: DA IA)?[ \t]*:[ \t]*/i), par = x => (x || '').split(/\n\s*\n|\n(?=\S)/).map(y => y.replace(/^[-•*]\s*/, '').trim()).filter(y => y.length > 2);
+  return { p: par(parts[0]).slice(0, 14), av: par(parts.slice(1).join('\n')).slice(0, 6) }; };
+let DEEPCUR = null;
+NW.deep = async (tab, i, again) => { const b = BR[tab], p = b && b.pontos && b.pontos[i]; if (!p) return; const k = deepKey(tab, p); DEEPCUR = { p, k };
+  if (!again && DEEP[k] && DEEP[k].p && DEEP[k].p.length) return drawDeep(p, DEEP[k]);
+  if (!(OS.AI && OS.AI.key())) return drawDeep(p, { err: 'Liga a IA em Definições › Spyke para ver o resumo aprofundado.' });
+  drawDeep(p, { busy: true, step: 'A pesquisar este tema na internet…' }); if (deepBusy === k) return; deepBusy = k;
+  const heads = (p.idx || []).map(x => `- ${x.s}: ${x.t}`).join('\n'), now = new Date().toLocaleString(OS.loc ? OS.loc() : 'pt-PT');
+  const ask = `Tema das notícias de agora (${now}): "${p.titulo}". Resumo curto que já existe: ${p.resumo}\nManchetes reais deste tema:\n${heads}\n\n` +
+    `1) Escreve em português de Portugal um RESUMO APROFUNDADO deste tema, em 6 a 9 parágrafos curtos: o que aconteceu (com números, datas e nomes), o contexto e os antecedentes, as reações dos lados envolvidos, o que ainda não se sabe e o que vem a seguir. Usa só factos confirmados pelas fontes; se algo for incerto, diz isso.\n` +
+    `2) Depois escreve uma linha só com "AVALIAÇÃO:" e, a seguir, a TUA AVALIAÇÃO em 3 a 5 parágrafos curtos: o que achas desta notícia e da forma como está a ser contada (o que é sólido, o que é exagero ou incerto, o que falta), as consequências prováveis e o que isto pode significar para ${OS.whoCtx ? OS.whoCtx('o Ryan (brasileiro, vive em Aveiro, estudante, investe)') : 'quem lê'}. Sê honesto e equilibrado: em política, mostra os dois lados e não tomes partido.\nSem títulos nem markdown; separa os parágrafos com uma linha em branco.`;
+  let d = null;
+  try { if (OS.Brain && OS.Brain.search) { try { const r = await OS.Brain.search(ask); const x = splitAv(r.text); if (x.p.length >= 3) d = { at: Date.now(), via: 'pesquisa', p: x.p, av: x.av, fontes: (r.src || []).slice(0, 8) }; } catch (e) { } }
+    if (!d && OS.AI.text) { drawDeep(p, { busy: true, step: 'A escrever o resumo aprofundado com as manchetes…' }); const x = splitAv(await OS.AI.text(ask)); if (x.p.length) d = { at: Date.now(), via: 'manchetes', p: x.p, av: x.av, fontes: (p.idx || []).map(y => ({ t: y.s })) }; }
+    if (!d) d = { err: 'Não consegui preparar o resumo aprofundado agora. Tenta outra vez daqui a pouco.' }; else { DEEP[k] = d; const ks = Object.keys(DEEP); if (ks.length > 30) ks.sort((a, c) => DEEP[a].at - DEEP[c].at).slice(0, ks.length - 30).forEach(z => delete DEEP[z]); try { U.ls.set('oc_newsdeep1', DEEP); } catch (e) { } } }
+  catch (e) { d = { err: 'Não consegui preparar o resumo aprofundado: ' + (e.message || 'erro') }; }
+  deepBusy = ''; if (DEEPCUR && DEEPCUR.k === k) drawDeep(p, d); };
+A.nwDeep = b => NW.deep(b.dataset.tab, +b.dataset.i);
+A.nwDeepAgain = () => { if (!DEEPCUR) return; const { p, k } = DEEPCUR; delete DEEP[k]; const tab = k.split('|')[0], i = ((BR[tab] || {}).pontos || []).indexOf(p); if (i >= 0) NW.deep(tab, i, true); };
+A.nwDeepSay = () => { if (!DEEPCUR || !OS.Spyke) return; const d = DEEP[DEEPCUR.k]; if (!d) return; OS.Spyke.say((DEEPCUR.p.titulo + '. ' + d.p.join(' ') + (d.av && d.av.length ? ' A minha avaliação: ' + d.av.join(' ') : '')).slice(0, 2400)); };
 A.nwTab = b => { if (b.target && b.target.closest && b.target.closest('[data-act=nwDelTab]')) return; OS.setUI('nwTab', b.dataset.v); OS.setUI('nwTheme', ''); OS.setUI('nwTopic', 'TOP'); };
 A.nwTopic = b => { OS.setUI('nwTopic', b.dataset.v); OS.setUI('nwTheme', ''); };
 A.nwTheme = b => OS.setUI('nwTheme', b.dataset.v);
@@ -10274,8 +10855,11 @@ OS.forms = OS.forms || {}; OS.forms.nwTheme = (f, v) => { const q = String(v('q'
 let seenTop = U.ls.get('oc_newsseen', 0) || 0;
 NW.unread = () => { const it = itemsFor('W', 'TOP', ''); return it.filter(x => x.d > seenTop && x.d > Date.now() - 6 * 36e5).length; };
 // ao abrir a app já vai buscando os destaques: quando abrires o Jornal estão prontos
-OS.on('ready', () => setTimeout(() => { if (document.hidden || !scr() || navigator.webdriver) return; if (Date.now() - ((NW.cache['PT:WORLD'] || {}).at || 0) > 10 * 6e4) NW.fetch(specs('W', 'TOP', '')).then(() => OS.request()).catch(() => { }); }, 2500));
-OS.on('ready', () => { setInterval(() => { if (document.hidden || !scr()) return; const on = /^#jornal/.test(location.hash); if (on) load(false); else if (Date.now() - ((NW.cache['PT:WORLD'] || {}).at || 0) > 20 * 6e4) NW.fetch(specs('W', 'TOP', '')).then(() => OS.request()).catch(() => { }); }, 5 * 6e4);
+const topAt = () => Math.min(...specs('W', 'TOP', '').map(s => (NW.cache[s.id] || {}).at || 0));
+OS.on('ready', () => setTimeout(() => { if (document.hidden || !scr() || navigator.webdriver) return; if (Date.now() - topAt() > 5 * 6e4) NW.fetch(specs('W', 'TOP', '')).then(() => OS.request()).catch(() => { }); }, 2500));
+OS.on('ready', () => { setInterval(() => { if (document.hidden || !scr()) return; const on = /^#jornal/.test(location.hash); if (on) load(false); else if (Date.now() - topAt() > 10 * 6e4) NW.fetch(specs('W', 'TOP', '')).then(() => OS.request()).catch(() => { }); }, 90e3);
+  // ao voltar ao app com o Jornal aberto, vai logo buscar o que saiu entretanto
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && /^#jornal/.test(location.hash) && scr()) load(false); });
   addEventListener('hashchange', () => { if (/^#jornal/.test(location.hash)) { seenTop = Date.now(); U.ls.set('oc_newsseen', seenTop); } }); });
 })();
 
@@ -14919,6 +15503,26 @@ B.findAll = findAll; B.readArea = readArea;
 
 /* ---------- ferramentas (as mesmas para os dois cérebros) ---------- */
 const did = [];   // o que o Spyke fez nesta resposta (aparece no ecrã)
+// v2.53: a IA cria, muda e apaga qualquer registo destas áreas quando a pessoa pede (apagar pede sempre confirmação no ecrã)
+const EDIT = ['tasks', 'events', 'goals', 'projects', 'routine', 'habits', 'notes', 'books', 'contacts', 'people', 'milestones', 'opps', 'applications', 'workouts', 'runs', 'sessions', 'body', 'shifts', 'skills', 'learn', 'certs', 'experiences', 'transactions', 'devos', 'prayers', 'decisions', 'wishlist', 'social', 'assessments', 'subjects', 'lifeev'];
+const okColl = c => EDIT.includes(c) && OS.S[c] && Array.isArray(OS.S[c].fields);
+const optV = o => Array.isArray(o) ? o[0] : o;
+const schemaTxt = () => EDIT.filter(okColl).map(c => c + ' (' + OS.S[c].label + '): ' + OS.S[c].fields.filter(f => f.k && !['steps', 'file', 'photo', 'img'].includes(f.t)).map(f => { const o = typeof f.o === 'function' ? null : f.o; return f.k + (f.t === 'sel' && Array.isArray(o) ? '[' + o.slice(0, 10).map(optV).join('|') + ']' : f.t === 'date' ? '(AAAA-MM-DD)' : f.t === 'time' ? '(HH:MM)' : ['num', 'pct', 'rating', 'money'].includes(f.t) ? '(número)' : f.t === 'bool' ? '(true/false)' : f.t === 'multi' || f.t === 'tags' ? '(lista)' : f.t === 'rel' ? '(id de ' + f.c + ')' : ''); }).join(', ')).join('\n');
+const titleOf = (c, r) => { try { return String(OS.S[c].title(r) || r.title || r.name || ''); } catch (e) { return String(r.title || r.name || ''); } };
+// só aceita campos que a área tem, no formato certo
+const clean = (c, raw) => { const out = {}, F = OS.S[c].fields; let j = raw; if (typeof j === 'string') { try { j = JSON.parse(j); } catch (e) { j = {}; } } if (!j || typeof j !== 'object') j = {};
+  Object.entries(j).forEach(([k, v]) => { const f = F.find(x => x.k === k); if (!f || v == null) return; const t = f.t;
+    if (['num', 'pct', 'rating', 'money'].includes(t)) { const n = U.num(v); if (isFinite(n)) out[k] = n; }
+    else if (t === 'date') { if (/^\d{4}-\d\d-\d\d$/.test(String(v))) out[k] = String(v); }
+    else if (t === 'time') { const m = String(v).match(/^(\d{1,2}):(\d\d)$/); if (m && +m[1] < 24 && +m[2] < 60) out[k] = U.pad(+m[1]) + ':' + m[2]; }
+    else if (t === 'bool') out[k] = v === true || v === 'true' || v === 1;
+    else if (t === 'multi' || t === 'tags') { const a = (Array.isArray(v) ? v : String(v).split(',')).map(x => String(x).trim()).filter(Boolean).slice(0, 20); const o = typeof f.o === 'function' ? null : f.o; out[k] = o && t === 'multi' ? a.map(x => { const hit = o.find(y => String(optV(y)) === x || String(Array.isArray(y) ? y[1] : y).toLowerCase() === x.toLowerCase()); return hit ? String(optV(hit)) : null; }).filter(Boolean) : a; }
+    else if (t === 'sel') { const o = typeof f.o === 'function' ? f.o({}) : f.o || []; const hit = o.find(y => String(optV(y)) === String(v) || String(Array.isArray(y) ? y[1] : y).toLowerCase() === String(v).toLowerCase()); if (hit) out[k] = optV(hit); else if (!o.length) out[k] = String(v).slice(0, 200); }
+    else if (t === 'rel') { if (OS.get(f.c, String(v))) out[k] = String(v); else { const q = String(v).toLowerCase(), r = OS.all(f.c).find(x => titleOf(f.c, x).toLowerCase().includes(q)); if (r) out[k] = r.id; } }
+    else if (typeof v !== 'object') out[k] = String(v).slice(0, t === 'area' ? 4000 : 300); });
+  return out; };
+const findRec = (c, q) => { const n = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); q = n(q); if (!q) return null; const L = OS.all(c);
+  return L.find(r => r.id === q) || L.find(r => n(titleOf(c, r)) === q) || L.find(r => n(titleOf(c, r)).includes(q)) || L.find(r => q.includes(n(titleOf(c, r))) && titleOf(c, r).length > 3) || null; };
 const T = [
   { name: 'consultar', description: 'Lê os dados atuais do PRUMO numa área (agenda, tarefas, finanças, hábitos, universidade, investimentos, e-mails, notícias, clima, metas, treino, pessoas, decisões, memória, trabalho, projetos, desporto, dieta, foco/Floresta, fé, leitura, evolução). Usa sempre antes de responder sobre dados dele.', props: { area: { type: 'string', enum: AREAS, description: 'A área a consultar' } }, req: ['area'],
     run: async a => cut(await consult(a.area)) },
@@ -14942,16 +15546,29 @@ const T = [
     run: a => cut(findAll(String(a.texto || '')), 6000) },
   { name: 'ler_area', description: 'Lê os registos mais recentes de qualquer área da app pelo nome da coleção (ex.: notes, books, people, decisions, transactions, assets, invtx, subjects, assessments, sessions, workouts, runs, sportlog, meals, body, shifts, dayoffs, projects, goals, milestones, habits, devos, prayers, trees, opps, applications, contacts, skills, lifeev, reviews_w, reviews_m).', props: { area: { type: 'string', description: 'nome da coleção' }, quantos: { type: 'integer', description: 'quantos registos (até 60)' } }, req: ['area'],
     run: a => cut(readArea(String(a.area || ''), +a.quantos || 30), 7000) },
+  { name: 'criar_registo', description: 'Cria um registo em qualquer área da app quando ele pede (meta, projeto, bloco da rotina, nota, livro, contacto, treino, sessão de estudo, marco, oportunidade, candidatura, competência, certificação, compromisso…). Campos possíveis por área:\n' + schemaTxt(), props: { colecao: { type: 'string', enum: EDIT, description: 'a área (nome da coleção)' }, campos_json: { type: 'string', description: 'os campos em JSON, com as chaves da lista, ex.: {"title":"Estudar","start":"09:00","end":"11:00","days":["1","3"]}' } }, req: ['colecao', 'campos_json'],
+    run: a => { const c = String(a.colecao || ''); if (!okColl(c)) return 'Essa área não existe.'; const def = OS.S[c].defaults ? OS.S[c].defaults() : {}, rec = Object.assign({}, def, clean(c, a.campos_json));
+      const miss = OS.S[c].fields.filter(f => f.req && (rec[f.k] == null || rec[f.k] === '' || (Array.isArray(rec[f.k]) && !rec[f.k].length))).map(f => f.l); if (miss.length) return 'Falta: ' + miss.join(', ') + '. Pergunta-lhe e tenta outra vez.';
+      const r = OS.add(c, rec); did.push(OS.S[c].label + ': ' + titleOf(c, r)); return 'Criado (' + OS.S[c].label + '): ' + titleOf(c, r) + ' · id ' + r.id; } },
+  { name: 'editar_registo', description: 'Muda campos de um registo que já existe (procura pelo título ou id) quando ele pede para alterar, adiar, renomear, mudar a hora, marcar estado, etc. Usa os mesmos campos de criar_registo.', props: { colecao: { type: 'string', enum: EDIT }, procurar: { type: 'string', description: 'título (ou parte) ou id do registo' }, campos_json: { type: 'string', description: 'só os campos a mudar, em JSON' } }, req: ['colecao', 'procurar', 'campos_json'],
+    run: a => { const c = String(a.colecao || ''); if (!okColl(c)) return 'Essa área não existe.'; const r = findRec(c, a.procurar); if (!r) return 'Não encontrei esse registo em ' + OS.S[c].label + '.'; const ch = clean(c, a.campos_json); if (!Object.keys(ch).length) return 'Nada para mudar (campos inválidos).';
+      OS.upd(c, r.id, ch); if (c === 'tasks' && ch.status === 'Feita' && OS.Tasks.complete) OS.Tasks.complete(r.id); did.push('Alterado: ' + titleOf(c, OS.get(c, r.id))); return 'Alterado: ' + titleOf(c, OS.get(c, r.id)) + ' (' + Object.keys(ch).join(', ') + ')'; } },
+  { name: 'apagar_registo', description: 'Apaga um registo (procura pelo título ou id). Pede sempre confirmação a ele no ecrã antes de apagar.', props: { colecao: { type: 'string', enum: EDIT }, procurar: { type: 'string' } }, req: ['colecao', 'procurar'],
+    run: a => { const c = String(a.colecao || ''); if (!okColl(c)) return 'Essa área não existe.'; const r = findRec(c, a.procurar); if (!r) return 'Não encontrei esse registo.'; const t = titleOf(c, r);
+      if (OS.UI && OS.UI.ask) { OS.UI.ask('Apagar "' + t + '"?', OS.S[c].label + ' · pedido ao assistente. Não se pode desfazer.', 'Apagar', () => { OS.del(c, r.id); OS.UI.toast('Apagado: ' + t, 'pos'); }); did.push('À espera de confirmação: apagar ' + t); return 'Pedi a confirmação dele no ecrã para apagar "' + t + '". Diz-lhe para confirmar.'; }
+      return 'Não consigo pedir confirmação agora; não apaguei.'; } },
   { name: 'abrir_pagina', description: 'Abre uma página da app quando ele pede para ver/abrir algo.', props: { pagina: { type: 'string', description: 'nome da página, ex.: finanças, floresta, universidade, e-mail, jornal, investimentos' } }, req: ['pagina'],
     run: a => { const r = OS.Spyke && OS.Spyke.findRoute ? OS.Spyke.findRoute(a.pagina) : null; if (!r) return 'Não encontrei essa página.'; location.hash = r[0]; return 'Abri ' + r[1] + '.'; } }];
 
+// para testes e para o chat: correr uma ferramenta pelo nome
+OS.BrainTool = (name, args) => { const t = T.find(x => x.name === name); return t ? t.run(args || {}) : 'Ferramenta desconhecida.'; };
 /* ---------- instruções ---------- */
 const system = () => `És o Spyke, o assistente pessoal ${OS.Acc && OS.Acc.pub ? OS.whoCtx('', 'de') : 'do ' + who()} (estilo J.A.R.V.I.S.): pensas por ti, és direto, calmo, confiante e leal, com um toque de humor seco.${OS.Acc && OS.Acc.pub ? '' : ' Ele é brasileiro, vive em Aveiro (Portugal), estuda na universidade, trabalha e investe.'}
 Regras:
 - Responde SEMPRE em português do Brasil, para ser dito em voz alta: no máximo 3 ou 4 frases curtas, sem listas, sem markdown, sem emojis. Nunca digas o teu próprio nome.
 - Recebes um resumo atual com quase tudo da vida dele: se o resumo chega, responde logo (é mais rápido). Para detalhes que não estão lá, usa "consultar" (por área), "procurar_na_app" (procura em toda a app) ou "ler_area". Não inventes números nem factos.
 - Para perguntas sobre o mundo (notícias, factos, preços, como fazer algo), pesquisa na internet antes de responder.
-- Age quando ele pedir (criar tarefa, compromisso, gasto, marcar hábito, memorizar, abrir página) e confirma numa frase o que fizeste. Não faças ações que ele não pediu.
+- Age quando ele pedir e confirma numa frase o que fizeste: criar tarefa, compromisso, gasto, marcar hábito, memorizar, abrir página e também criar, mudar ou apagar QUALQUER registo da app (metas, projetos, blocos da rotina por horas, notas, livros, contactos, treinos, sessões de estudo, marcos, oportunidades…) com criar_registo, editar_registo e apagar_registo. Se faltar um dado obrigatório, pergunta. Apagar pede sempre confirmação no ecrã. Não faças ações que ele não pediu.
 - Se não tiveres a informação, diz isso com honestidade e sugere o que ele pode fazer.
 - Hoje é ${new Date().toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}, ${new Date().toLocaleTimeString(OS.loc ? OS.loc() : 'pt-PT', { hour: '2-digit', minute: '2-digit' })} (hora de Portugal). As datas vão no formato AAAA-MM-DD.`;
 const brief = () => { try { return OS.Spyke && OS.Spyke.ctx ? OS.Spyke.ctx().slice(0, 12000) : ''; } catch (e) { return ''; } };
@@ -15424,14 +16041,14 @@ V.capital = () => {
   const series = months.map(m => { const end = m === U.ym(t) ? t : m + '-' + U.dim(m); return Car.capital(end).score; });
   const prev = Car.capital(U.addDays(t, -90));
   const dims = Object.entries(c.dims), weakest = U.sortBy(dims, d => d[1]).slice(0, 3);
-  const tips = { 'Competências': 'Sobe um nível numa competência: completa a etapa seguinte da trilha em Aprendizagem.', 'Certificações': 'Escolhe uma certificação e cria-a como item "Certificação" com prazo.', 'Experiência': 'Regista a experiência atual (emprego, voluntariado) com data de início.', 'Rede': 'Contacta 2 pessoas esta semana e marca follow-ups.', 'Projetos & eventos': 'Vai a um evento ou palestra este mês e regista-o em Experiências.', 'Aprendizagem': 'Sessões ligadas a competências contam aqui: usa o Modo Foco com a competência.', 'Mercado': 'Envia uma candidatura ou submete uma oportunidade do Opportunity Center.' };
-  return UI.head('Capital Profissional', 'Tudo o que aumenta a tua capacidade profissional ao longo do tempo, num só indicador de 0 a 1000. Cada dimensão satura num alvo realista para a tua fase (estudante do 1.º ano).', '', 'Carreira') +
+  const tips = { 'Competências': 'Sobe um nível numa competência: completa a etapa seguinte da trilha em Aprendizagem.', 'Certificações': 'Escolhe uma certificação e cria-a como item "Certificação" com prazo.', 'Experiência': 'Regista a experiência atual (emprego, voluntariado) com data de início.', 'Rede': 'Contacta 2 pessoas esta semana e marca follow-ups.', 'Projetos': 'Fecha um projeto profissional ou avança o que tens em curso (as tarefas dele contam).', 'Eventos': 'Vai a um evento, palestra ou workshop este mês e regista-o em Experiências ou no Calendário.', 'Aprendizagem': 'Avança um curso ou estuda uma competência com o Modo Foco: as horas contam aqui.', 'Mercado': 'Pede a análise do currículo à IA, envia uma candidatura ou submete uma oportunidade.', 'Metas profissionais': 'Avança uma meta de carreira ou empresa: é o que mais pesa no capital.', 'Projetos & eventos': 'Vai a um evento ou palestra este mês e regista-o em Experiências.' };
+  return UI.head('Capital Profissional', 'O profissional que estás a construir, de 0 a 1000. Sobe à medida que te aproximas dos teus objetivos: competências até ao nível alvo, certificações planeadas, experiência, rede, projetos, eventos, aprendizagem e mercado. O que as tuas metas profissionais pedem conta a dobrar.', '', 'Carreira') +
   `<div class="g g-side"><div class="pn"><div class="eyebrow">Capital atual</div><div class="big-num" style="font-size:52px;margin:6px 0">${U.nf(c.score)}</div><div class="row gap8">${UI.trend(c.score, prev.score)}<span class="mut" style="font-size:12.5px">em 90 dias (${U.nf(prev.score)} → ${U.nf(c.score)})</span></div>
     <div class="divider"></div><dl class="kv"><dt>Competências</dt><dd>${c.skills}</dd><dt>Certificações</dt><dd>${c.certs}</dd><dt>Meses de experiência</dt><dd>${U.nf(c.months, 1)}</dd><dt>Contactos (ativos)</dt><dd>${c.contacts} (${c.active})</dd><dt>Candidaturas / entrevistas</dt><dd>${c.apps} / ${c.interviews}</dd><dt>Projetos concluídos</dt><dd>${c.projects}</dd><dt>Eventos e palestras</dt><dd>${c.events}</dd><dt>Horas de aprendizagem</dt><dd>${U.nf(c.learnH, 1)}</dd></dl></div>
-  <div class="pn"><div class="pn-h"><h3>Perfil por dimensão</h3><span class="mut" style="font-size:12px">agora vs há 90 dias</span></div>${C.mount({ type: 'radar', axes: dims.map(d => d[0]), series: [{ name: 'Agora', data: dims.map(d => d[1]) }, { name: 'Há 90 dias', data: Object.values(prev.dims), color: 'var(--mut)' }] }, 320)}</div></div>
+  <div class="pn"><div class="pn-h"><h3>Perfil por dimensão</h3><span class="mut" style="font-size:12px">agora vs há 90 dias</span></div>${C.mount({ type: 'radar', axes: dims.map(d => d[0]), series: [{ name: 'Agora', data: dims.map(d => d[1]) }, { name: 'Há 90 dias', data: dims.map(d => prev.dims[d[0]] || 0), color: 'var(--mut)' }] }, 320)}</div></div>
   <div class="g g-main"><div class="pn"><div class="pn-h"><h3>Evolução · 12 meses</h3></div>${C.mount({ type: 'line', labels: months.map(U.fmtYM), series: [{ name: 'Capital', data: series }], fmt: v => U.nf(v) }, 220)}</div>
   <div class="pn"><div class="pn-h"><h3>Para subir mais depressa</h3></div>${weakest.map(([k, v]) => `<div class="ins">${UI.ic('arrowUp', 'acc')}<div><b style="font-weight:540">${k} · ${U.pct(v)}</b><div class="tx2" style="font-size:13px">${tips[k]}</div></div></div>`).join('')}</div></div>
-  <div class="pn">${dims.map(([k, v]) => `<div class="bar-row" style="grid-template-columns:160px 1fr 60px"><span class="l">${k}</span>${UI.bar(v, v >= .66 ? 'pos' : '')}<span class="v">${U.pct(v)}</span></div>`).join('')}</div>`;
+  <div class="pn"><div class="pn-h"><h3>Como se calcula</h3><span class="mut" style="font-size:12px">${c.goals && c.goals.length ? 'com as tuas ' + c.goals.length + ' metas profissionais' : 'cria uma meta de carreira para o capital seguir o teu objetivo'}</span></div>${dims.map(([k, v]) => `<div class="cap-row"><div class="bar-row" style="grid-template-columns:160px 1fr 60px"><span class="l">${k}${(c.w || {})[k] > 1 ? ' <small class="acc" title="As tuas metas profissionais falam disto">×2</small>' : ''}</span>${UI.bar(v, v >= .66 ? 'pos' : '')}<span class="v">${U.pct(v)}</span></div>${(c.why || {})[k] ? `<small class="mut cap-why">${U.esc(c.why[k])}</small>` : ''}</div>`).join('')}</div>`;
 };
 
 /* ================= OPORTUNIDADES ================= */
@@ -19220,7 +19837,7 @@ OS.Monstros = { ALL, BOSSES: BOSSES.map(b => b[0]), MINIONS: MINIONS.map(m => m[
    O herói és tu, com a tua foto real (recortada do fundo no próprio telemóvel) numa carta de jogo que muda sozinha com o que fazes:
    brilho à volta do corpo com o Corpo, aura com a Mente, símbolos com o Intelecto, ouro com a Fortuna, companheiros com as Relações,
    halo com o Espírito, insígnias com a Carreira e estandartes com a Disciplina.
-   Os 8 atributos sobem sozinhos com TUDO o que registas no Prumo (nunca escolhes onde pôr pontos): o XP é calculado a partir
+   Os 8 atributos sobem sozinhos com o que registas no Prumo (v2.53: o XP grande vem só do avanço nas metas) (nunca escolhes onde pôr pontos): o XP é calculado a partir
    dos teus registos, por isso está sempre certo e atualizado, em todos os aparelhos.
    Missões diárias e semanais (escolhidas pelos teus pontos fracos), um chefe por semana, conquistas, baús com recompensas reais
    a cada nível, moedas de ouro para o visual (molduras, cenários, efeitos) e os teus 100 marcos do Codex. */
@@ -19303,8 +19920,27 @@ const bdayNear = (r, d) => { const p = OS.get('people', r.person); if (!p || !p.
 let CK = 0, CACHE = null; const bump = () => { CK++; CACHE = null; };
 OS.on('change', bump); OS.on('remote', bump); OS.on('one:dominus', () => { if (!QUIET) bump(); }); OS.on('one:diet', bump);
 // a pontuação: números grandes, a mesma justiça entre áreas. v2.48: mais difícil (cada registo vale 6 em vez de 10 e as curvas sobem mais depressa)
-const XS = 6;
-const evs = () => { const T = today(), E = [], add = (d, a, x, t) => { d = String(d || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > T || !(x > 0)) return; E.push({ d, a, x: Math.round(x * XS), t }); };
+// v2.53: a vida não é fácil. O XP grande vem só do que te aproxima dos objetivos: avanço medido nas metas, etapas, marcos,
+// projetos e tarefas ligados a uma meta, metas cumpridas. Os registos do dia a dia valem pouco (40%) e quase nada (8%)
+// numa área onde ainda não tens nenhuma meta.
+const XS = 6, ROUT = .4, ROUT_OFF = .08;
+const GA = { corpo: ['Academia', 'Corrida'], intelecto: ['Estudos', 'Desenvolvimento pessoal'], carreira: ['Trabalho', 'Empresa'], fortuna: ['Finanças'], mente: ['Desenvolvimento pessoal', 'Estudos'], espirito: ['Desenvolvimento pessoal', 'Outros'], relacoes: ['Desenvolvimento pessoal', 'Outros', 'Empresa', 'Trabalho'], disciplina: null };
+const goalA = g => { const c = N(g.cat || ''); return /financ|dinheiro/.test(c) ? 'fortuna' : /estud|desenvolv/.test(c) ? 'intelecto' : /corr|corpo|saude|treino|desport|academia/.test(c) ? 'corpo' : /carreira|trabalho|profiss|empresa/.test(c) ? 'carreira' : /fe|espirit/.test(c) ? 'espirito' : /relac|famil|amig/.test(c) ? 'relacoes' : 'disciplina'; };
+const impF = g => .6 + .2 * U.clamp(U.num(g.importance) || 3, 1, 5), horF = g => ({ '3 meses': 1, '1 ano': 1.3, '3 anos': 1.6, '5 anos': 1.8, 'Longo prazo': 2 })[g.horizon] || 1.2;
+const goalOf = t => { const g = OS.get('goals', t.goal) || OS.get('goals', (OS.get('projects', t.project) || {}).goal); return g && g.status !== 'Abandonada' ? g : null; };
+// o avanço de cada meta fica registado uma vez por dia (só subidas novas dão XP: descer e voltar a subir não conta duas vezes)
+D.snapGoals = () => { try { const s = S(), gp = Object.assign({}, s.gp || {}), t = today(); let ch = false;
+  OS.all('goals').filter(g => g.status === 'Ativa' || g.status === 'Concluída').forEach(g => { const i = OS.Goal.info(g), v = Math.round(((i.pr != null ? i.pr : i.p) || 0) * 1000) / 10, sd = (g.steps || []).filter(x => x.done).length;
+    // b/bs: o ponto de partida (o avanço e as etapas quando o Dominus começou a seguir a meta); nunca muda, para o avanço do primeiro dia também contar
+    const o = gp[g.id], r = o ? { b: o.b != null ? o.b : ((o.h || [])[0] || [])[1] || 0, bs: o.bs != null ? o.bs : ((o.h || [])[0] || [])[2] || 0, h: (o.h || []).slice() } : { b: v, bs: sd, h: [] }, last = r.h[r.h.length - 1];
+    if (!o || !last || last[1] !== v || last[2] !== sd) { if (last && last[0] === t) r.h[r.h.length - 1] = [t, v, sd]; else r.h.push([t, v, sd]); r.h = r.h.slice(-500); gp[g.id] = r; ch = true; } });
+  if (ch) { s.gp = gp; QUIET++; try { save(); } finally { QUIET--; } bump(); } } catch (e) { if (OS.debug) console.warn('Dominus metas', e); } };
+let SG = 0; OS.on('change', c => { if (['goals', 'tasks', 'projects', 'transactions', 'sessions', 'workouts', 'runs', 'invtx', 'certs', 'learn', 'contacts'].includes(c)) { clearTimeout(SG); SG = setTimeout(D.snapGoals, 2500); } });
+OS.on('ready', () => setTimeout(D.snapGoals, 3000));
+const evs = () => { const T = today(), E = [], push = (d, a, x, t, k) => { d = String(d || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > T || !(x > 0)) return; E.push({ d, a, x: Math.round(x * XS), t, g: k ? 1 : 0 }); };
+  // desde quando cada área tem uma meta (ativa ou cumprida): antes disso, os registos dessa área quase não contam
+  const GL = OS.all('goals').filter(g => g.status !== 'Abandonada'), SINCE = Object.fromEntries(AK.map(k => { const c = GA[k], L = GL.filter(g => !c || c.includes(g.cat)).map(g => g.start || (g._c ? U.iso(new Date(g._c)) : '0000')).sort(); return [k, L[0] || null]; }));
+  const add = (d, a, x, t) => push(d, a, x * (SINCE[a] && String(d || '') >= SINCE[a] ? ROUT : ROUT_OFF), t), addG = (d, a, x, t) => push(d, a, x, t, 1);
   const sf = (f, c) => { try { f(); } catch (e) { if (OS.debug) console.warn('Dominus ' + c, e); } };
   // Corpo
   sf(() => OS.all('workouts').forEach(w => add(w.date, 'corpo', 30 + Math.min(20, (OS.Fit && OS.Fit.volume ? OS.Fit.volume(w) : 0) / 1500), 'Treino' + (w.title ? ': ' + w.title : ''))), 'treinos');
@@ -19350,15 +19986,23 @@ const evs = () => { const T = today(), E = [], add = (d, a, x, t) => { d = Strin
   sf(() => OS.all('applications').forEach(a => { if (a.status !== 'Por enviar') add(a.date, 'carreira', 25, 'Candidatura: ' + (a.company || '') + (a.role ? ' · ' + a.role : '')); }), 'candidaturas');
   sf(() => OS.all('mvsales').forEach(s => { if (s.status !== 'Cancelado') add(s.date, 'carreira', 15 + Math.min(50, (OS.Mv && OS.Mv.rev ? OS.Mv.rev(s) : 0) / 10), 'Venda da Mova'); }), 'vendas');
   // Disciplina (e carreira nas tarefas de trabalho)
-  sf(() => OS.all('tasks').forEach(t => { if (t.status !== 'Feita' || !t.doneAt) return; const pj = OS.get('projects', t.project), pro = (pj && ['Profissional', 'Empresarial'].includes(pj.type)) || ['Carreira', 'Trabalho', 'Mova'].includes(t.area);
-    add(t.doneAt, pro ? 'carreira' : 'disciplina', 8 + (+t.prio === 1 ? 7 : +t.prio === 2 ? 4 : 0), 'Tarefa: ' + t.title); }), 'tarefas');
-  sf(() => OS.all('projects').forEach(p => { if (p.status !== 'Concluído') return; const pro = ['Profissional', 'Empresarial'].includes(p.type); add(p.doneAt || (p._u ? U.iso(new Date(p._u)) : ''), pro ? 'carreira' : 'disciplina', 120, 'Projeto concluído: ' + p.name); }), 'projetos');
-  sf(() => OS.all('goals').forEach(g => { if (g.status !== 'Concluída') return; const c = N(g.cat), a = /financ|dinheiro/.test(c) ? 'fortuna' : /estud|desenvolv/.test(c) ? 'intelecto' : /corr|corpo|saude|treino|desport/.test(c) ? 'corpo' : /carreira|trabalho|profiss/.test(c) ? 'carreira' : /fe|espirit/.test(c) ? 'espirito' : /relac|famil|amig/.test(c) ? 'relacoes' : 'disciplina'; add(g.doneAt || (g._u ? U.iso(new Date(g._u)) : ''), a, 150, 'Meta cumprida: ' + g.title); }), 'metas');
+  sf(() => OS.all('tasks').forEach(t => { if (t.status !== 'Feita' || !t.doneAt) return; const pj = OS.get('projects', t.project), pro = (pj && ['Profissional', 'Empresarial'].includes(pj.type)) || ['Carreira', 'Trabalho', 'Mova'].includes(t.area), g = goalOf(t), bonus = +t.prio === 1 ? 7 : +t.prio === 2 ? 4 : 0;
+    if (g) addG(t.doneAt, goalA(g), (25 + bonus * 2) * impF(g), 'Tarefa da meta "' + g.title + '": ' + t.title); else add(t.doneAt, pro ? 'carreira' : 'disciplina', 8 + bonus, 'Tarefa: ' + t.title); }), 'tarefas');
+  sf(() => OS.all('projects').forEach(p => { if (p.status !== 'Concluído') return; const pro = ['Profissional', 'Empresarial'].includes(p.type), g = OS.get('goals', p.goal), d = p.doneAt || (p._u ? U.iso(new Date(p._u)) : '');
+    if (g && g.status !== 'Abandonada') addG(d, goalA(g), 450 * impF(g), `Projeto da meta "${g.title}" concluído: ${p.name}`); else add(d, pro ? 'carreira' : 'disciplina', 120, 'Projeto concluído: ' + p.name); }), 'projetos');
+  // avanço medido nas metas e etapas feitas (desde que o Dominus começou a registar o avanço de cada meta)
+  sf(() => Object.entries(S().gp || {}).forEach(([id, r]) => { const g = OS.get('goals', id); if (!g || g.status === 'Abandonada') return; const a = goalA(g), H = r.h || [], stepsXP = !['steps', 'linked'].includes(g.metric) && !(g.metric === 'manual' && (g.cur === '' || g.cur == null));
+    let mx = r.b != null ? r.b : H.length ? H[0][1] : 0, ms = r.bs != null ? r.bs : H.length ? H[0][2] || 0 : 0;
+    H.forEach(([d, v, sd]) => { if (v > mx) { addG(d, a, (v - mx) * 25 * impF(g) * horF(g), `Meta "${g.title}": +${U.nf(v - mx, 1)}% (vais em ${U.nf(v, 1)}%)`); mx = v; }
+      if (stepsXP && (sd || 0) > ms) { addG(d, a, (sd - ms) * 150 * impF(g), `Meta "${g.title}": ${sd - ms === 1 ? 'etapa feita' : (sd - ms) + ' etapas feitas'}`); ms = sd; } }); }), 'avanço das metas');
+  // marcos (os acontecimentos que marcam o caminho)
+  sf(() => OS.all('milestones').forEach(m => { if (!m.done || !m.date) return; const g = OS.get('goals', m.goal); if (g && g.status !== 'Abandonada') addG(m.date, goalA(g), 600 * impF(g), `Marco da meta "${g.title}": ${m.title}`); else addG(m.date, 'disciplina', 200, 'Marco: ' + m.title); }), 'marcos');
+  sf(() => OS.all('goals').forEach(g => { if (g.status !== 'Concluída') return; const c = N(g.cat), a = /financ|dinheiro/.test(c) ? 'fortuna' : /estud|desenvolv/.test(c) ? 'intelecto' : /corr|corpo|saude|treino|desport/.test(c) ? 'corpo' : /carreira|trabalho|profiss/.test(c) ? 'carreira' : /fe|espirit/.test(c) ? 'espirito' : /relac|famil|amig/.test(c) ? 'relacoes' : 'disciplina'; addG(g.doneAt || (g._u ? U.iso(new Date(g._u)) : ''), a, 1500 * impF(g) * horF(g), 'Meta cumprida: ' + g.title); }), 'metas');
   sf(() => OS.all('habits').forEach(h => { const a = habA(h.name); Object.keys(h.log || {}).forEach(d => { if (h.log[d]) add(d, a, 8, 'Hábito: ' + h.name); }); }), 'hábitos');
   sf(() => { if (!OS.Hab || !OS.all('habits').some(h => h.core)) return; U.range(U.addDays(T, -400), T).forEach(d => { if (d < T && OS.Hab.dayScore(d) === 1) add(d, 'disciplina', 15, 'Dia perfeito (todos os inegociáveis)'); }); }, 'dias perfeitos');
   sf(() => { if (!OS.Att) return; OS.Att.all().forEach(o => { if (o.st === 'Presente') add(o.date, 'disciplina', 6, 'Aula: ' + ((OS.get('subjects', o.subject) || {}).name || '')); }); }, 'aulas');
   // Codex: os teus marcos
-  sf(() => Object.entries(S().legacy || {}).forEach(([p, L]) => (L || []).forEach(m => m && m.t && add(m.d, LEGA[p] || 'disciplina', LEGXP / XS, 'Marco: ' + m.t))), 'codex');
+  sf(() => Object.entries(S().legacy || {}).forEach(([p, L]) => (L || []).forEach(m => m && m.t && addG(m.d, LEGA[p] || 'disciplina', LEGXP / XS, 'Marco: ' + m.t))), 'codex');
   return E; };
 
 /* ================= ESTADO CALCULADO ================= */
@@ -19454,7 +20098,7 @@ const MQ = [
   ['mk', 'carreira', 'Caçador de oportunidades: 10 candidaturas', m => [m.apps || 0, 10], () => used('applications')],
   ['mt', 'disciplina', 'Executor: 150 tarefas concluídas', m => [m.tasks || 0, 150], () => true],
   ['mp', 'disciplina', 'Inquebrável: 20 dias perfeitos', m => [m.perfect || 0, 20], core]];
-const QX = { d: 550, w: 2200, m: 9000 }, QG = { d: 10, all: 25, w: 40, m: 150 }, LEGXP = 25000;
+const QX = { d: 220, w: 1000, m: 4000 }, QG = { d: 10, all: 25, w: 40, m: 150 }, LEGXP = 25000;
 // as missões de cada dia/semana ficam guardadas (o que se completa depois é verificado pelos teus registos)
 const weakest = () => { let lvx = {}; try { const s = CACHE && CACHE.v; lvx = s ? Object.fromEntries(AK.map(k => [k, s.ax[k]])) : {}; } catch (e) { } return AK.slice().sort((a, b) => (lvx[a] || 0) - (lvx[b] || 0)); };
 const pick = (pool, n, seed, wk) => { const r = U.rng(seed), out = [], W = wk || weakest(), byA = k => pool.filter(q => q[1] === k && q[4]() && !out.includes(q));
@@ -20299,7 +20943,7 @@ const flush = () => { if (showing || !QQ.length || document.querySelector('.d3-c
   el.className = 'ceremony d3-cel'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.style.setProperty('--kc', c.col || '#38BDF8');
   el.innerHTML = `<canvas></canvas><div class="in"><div class="cz d3-cel-k">${esc(c.k)}</div>${c.av ? `<div class="d3-cel-av">${D.card()}</div>` : `<div class="d3-cel-ic">${UI.ic(c.ic || 'star')}</div>`}<h1>${esc(c.t)}</h1>${c.s ? `<p>${esc(c.s)}</p>` : ''}${(c.rw || []).length ? `<div class="d3-cel-rw">${c.rw.map(r => `<span>${esc(r)}</span>`).join('')}</div>` : ''}<button class="dbtn gold" data-close>${QQ.length ? 'Continuar' : 'Boa!'}</button></div>`;
   document.body.appendChild(el);
-  try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !document.documentElement.classList.contains('lite')) confetti(el.querySelector('canvas'), c.col); } catch (e) { } try { navigator.vibrate && navigator.vibrate([40, 60, 80]); } catch (e) { }
+  try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !document.documentElement.classList.contains('lite-x')) confetti(el.querySelector('canvas'), c.col); } catch (e) { } try { navigator.vibrate && navigator.vibrate([40, 60, 80]); } catch (e) { }
   const close = () => { el.remove(); document.removeEventListener('keydown', key); showing = false; setTimeout(flush, 160); }, key = e => { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); close(); } };
   document.addEventListener('keydown', key);
   el.addEventListener('click', e => { if (e.target.closest('[data-close]') || e.target === el) { e.preventDefault(); e.stopPropagation(); close(); } }, true);
@@ -20345,6 +20989,7 @@ T.heroi = st => { const s = S(), H = st.H, md = MOODT[st.mood] || MOODT.forma, M
       <div class="d3-chips"><span title="Dias seguidos com algum registo">${ic('flame')}<b class="mono">${st.streak}</b> ${st.streak === 1 ? 'dia' : 'dias'} seguidos</span><span>${ic('coin')}<b class="mono">${U.nf(st.gold)}</b> ouro</span><span class="d3-mood ${st.mood}" title="${esc(md[1])}">${esc(md[0])}</span></div>
       <p class="dm d3-moodp">${esc(md[1])}</p></div></section>
   <section class="d3-today"><div class="d3-h"><span class="cz">Hoje</span><span class="dm mono">${tx ? '+' + xpTxt(tx) + ' XP' : ''}${wx ? ' · +' + xpTxt(wx) + ' esta semana' : ''}</span></div>
+    <p class="dm d3-rule">O XP a sério vem do que te aproxima dos objetivos: cada 1% que uma meta avança, etapas e marcos cumpridos, tarefas e projetos ligados a uma meta, metas cumpridas. O resto do dia a dia vale pouco, e quase nada numa área onde ainda não tens uma meta. <a href="#metas">Ver as metas</a></p>
     ${tx ? `<div class="d3-gain">${AK.filter(k => st.todayX[k] > 0).map(k => `<span style="--c:${AO[k].c}">${ic(AO[k].ic)}+${xpTxt(st.todayX[k])} ${esc(AO[k].n)}</span>`).join('')}</div>` : '<p class="dm">Ainda nada hoje. Regista qualquer coisa no Prumo (um treino, estudo, um gasto, um devocional…) e o teu herói ganha XP na hora.</p>'}
     <div class="d3-mini">${M.dl.map(m => `<a href="#dominus.missoes" class="${m.ok ? 'ok' : ''}" style="--c:${AO[m.a].c}"><i>${m.ok ? '✓' : ''}</i><span>${esc(m.t)}</span><small class="mono">${U.nf(m.c)}/${U.nf(m.n)}</small></a>`).join('')}</div></section>
   <section><div class="d3-h"><span class="cz">Atributos</span><span class="dm">sobem sozinhos com o que fazes</span></div><div class="d3-attrs">${AT.map(a => { const l = st.lv[a.k], nx = nextLook(a.k, l.l);
@@ -20433,7 +21078,7 @@ T.diario = st => { const days = U.lastN(14), per = days.map(d => { const o = Obj
 
 // criação do personagem
 const born = () => { const s = S(), st = D.state();
-  return `<div class="dom d3"><section class="d3-new"><div class="cz d3-k">PRUMO · O JOGO</div><h1>DOMINUS</h1><p class="d3-lead">O herói és tu. Já o fiz à tua imagem (pele, cabelo cacheado, óculos, cavanhaque): muda o que quiseres. Ele cresce sozinho com tudo o que fazes na vida real e registas no Prumo.</p>
+  return `<div class="dom d3"><section class="d3-new"><div class="cz d3-k">PRUMO · O JOGO</div><h1>DOMINUS</h1><p class="d3-lead">O herói és tu. Já o fiz à tua imagem (pele, cabelo cacheado, óculos, cavanhaque): muda o que quiseres. Ele cresce quando te aproximas dos teus objetivos: avanço nas metas, etapas, marcos e projetos ligados a elas. O resto do dia a dia vale pouco.</p>
     <div class="d3-newg"><div class="d3-cardw">${D.card()}</div>
       <div><div class="d3-step"><span class="cz">1 · O teu visual</span></div>${lookEd()}
         <div class="d3-step"><span class="cz">2 · O teu nome</span></div><form class="d3-name" data-form="d3Born"><div><input class="field" id="d3n" name="n" value="${esc(s.name || OS.one('profile').short || '')}" maxlength="24" placeholder="O teu nome" aria-label="Nome do herói"><button class="dbtn gold">${ic('crown')}Criar o meu herói</button></div></form>
@@ -22200,7 +22845,7 @@ document.addEventListener('click', e => { if (!e.target.closest('.tn-g')) docume
 /* ---------- revelação progressiva: poucas secções de cada vez ----------
    Os botões "Mostrar mais"/"Ver mais" mostram logo o que estava escondido: o render não redesenha uma página igual,
    por isso não basta guardar a escolha. */
-const SKIP = ['dominus', 'definicoes', 'explorar', 'mundo', 'senhas', 'oportunidades', 'admin'];
+const SKIP = ['dominus', 'definicoes', 'explorar', 'mundo', 'senhas', 'oportunidades', 'admin', 'jornal'];
 function progressive(cur, raw) {
   if (SKIP.includes(cur)) return; const view = U.$('#view'); let root = view; while (root.children.length === 1 && root.firstElementChild.children.length > 1) root = root.firstElementChild;
   const kids = [...root.children].filter(el => !el.matches('script,style')), key = 'more_page_' + raw, open = OS.ui[key];
@@ -22237,11 +22882,15 @@ function render() {
   if (!html || !String(html).trim()) html = `<div class="pn"><b>Esta página ainda está vazia.</b><p class="mut"><a href="#hoje">Voltar ao Hoje</a></p></div>`;
   // se nada mudou na página, não a substitui (evita piscar, perder o toque e redesenhar gráficos à toa)
   const sig = r.raw + '|' + String(html).replace(/ id="ch\d+"/g, ''), view = U.$('#view');
-  if (sig !== view._sig || !view.firstChild) { view.innerHTML = html; view._sig = sig; try { OS.Areas && OS.Areas.prune && OS.Areas.prune(view); } catch (e) { }
-    try { C.drawAll(); } catch (e) { console.error(e); }
-    try { progressive(cur, r.raw); } catch (e) { console.error(e); } }
-  if (fsel) { const el = U.$('#view').querySelector(fsel); if (el) { el.focus({ preventScroll: true }); try { if (caret != null && el.setSelectionRange) el.setSelectionRange(caret, caret); } catch (e) { } } }
-  if (r.raw !== lastRoute) { window.scrollTo(0, 0); lastRoute = r.raw; }
+  const newRoute = r.raw !== lastRoute; lastRoute = r.raw;
+  const swap = () => { if (sig !== view._sig || !view.firstChild) { view.innerHTML = html; view._sig = sig; try { OS.Areas && OS.Areas.prune && OS.Areas.prune(view); } catch (e) { }
+      try { C.drawAll(); } catch (e) { console.error(e); }
+      try { progressive(cur, r.raw); } catch (e) { console.error(e); } }
+    if (fsel) { const el = U.$('#view').querySelector(fsel); if (el) { el.focus({ preventScroll: true }); try { if (caret != null && el.setSelectionRange) el.setSelectionRange(caret, caret); } catch (e) { } } }
+    if (newRoute) window.scrollTo(0, 0); };
+  // mudar de página: a página antiga dissolve-se na nova (transição do próprio browser, quando existe e as animações estão completas)
+  const R0 = document.documentElement;
+  if (newRoute && view.firstChild && document.startViewTransition && R0.classList.contains('vv-full') && !R0.classList.contains('lite-x') && !document.hidden && !navigator.webdriver) { try { document.startViewTransition(swap); } catch (e) { swap(); } } else swap();
   document.title = OS.focusState && OS.focusState() ? document.title : 'Prumo';
 }
 OS.on('render', render);
@@ -22316,7 +22965,7 @@ document.addEventListener('submit', e => {
 /* ---------- modo leve (Definições) ---------- */
 (() => { const orig = V.definicoes; if (!orig) return;
   V.definicoes = sub => { const f = U.ls.get('os2lite', null), on = document.documentElement.classList.contains('lite');
-    return orig(sub) + `<div class="pn"><div class="pn-h"><h3>Desempenho</h3><span class="mut" style="font-size:12px">${on ? 'modo leve ligado' : 'efeitos completos'}</span></div><p class="mut" style="margin:0 0 10px">O modo leve tira sombras, desfoques e animações. Liga-o se a app estiver lenta ou travar (fica ligado sozinho em Android e aparelhos com pouca memória).</p><div class="seg" role="group">${[['auto', 'Automático'], ['1', 'Leve'], ['0', 'Completo']].map(([v, l]) => `<button class="${(f == null ? 'auto' : String(f)) === v ? 'on' : ''}" data-act="liteSet" data-v="${v}">${l}</button>`).join('')}</div></div>`; };
+    return orig(sub) + `<div class="pn"><div class="pn-h"><h3>Desempenho</h3><span class="mut" style="font-size:12px">${on ? 'modo leve ligado' : 'efeitos completos'}</span></div><p class="mut" style="margin:0 0 10px">O modo Leve tira sombras, desfoques e animações: liga-o se a app estiver lenta ou travar. No Automático, em Android e aparelhos com pouca memória, só saem as sombras e os desfoques; as animações ficam.</p><div class="seg" role="group">${[['auto', 'Automático'], ['1', 'Leve'], ['0', 'Completo']].map(([v, l]) => `<button class="${(f == null ? 'auto' : String(f)) === v ? 'on' : ''}" data-act="liteSet" data-v="${v}">${l}</button>`).join('')}</div></div>`; };
   const origV = V.definicoes; V.definicoes = sub => { const vv = window.OceanumVersion || {};
     return origV(sub) + `<div class="pn" id="verPn"><div class="pn-h"><h3>Versão do Prumo</h3><span class="mut" style="font-size:12px">v${esc(vv.v || '')}${vv.date ? ' · ' + esc(vv.date) : ''}</span></div><p class="mut" style="margin:0 0 10px">As atualizações chegam sozinhas quando abres a app. Se um aparelho ficar para trás, toca aqui: ele compara com a versão publicada e atualiza já (os teus dados ficam).</p><button class="btn sm" data-act="updCheck">${UI.ic('sync')}Procurar atualização</button></div>`; };
   const orig2 = V.definicoes; V.definicoes = sub => { const t = OS.Lock.trusted();
