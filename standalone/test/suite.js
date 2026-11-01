@@ -2747,7 +2747,7 @@ async function domTests(b) { cur = 'Dominus'; console.log('\n=== Dominus: o her�
   ok('Missões difíceis a sério (estudo de 2 h, 90 min de foco, 8 tarefas…) e o monstro do dia em pixel art', await E(p, () => { const t = [...document.querySelectorAll('.d3-m b')].map(b => b.textContent).join(' | '); return !/Escreve uma nota|Regista 3 refeições|Treina hoje$/.test(t) && !!document.querySelector('.d3-mon img.mo-px') && /Monstro do dia/i.test(document.querySelector('.d3-mon').textContent); }));
   await E(p, () => location.hash = 'dominus.chefe'); await sleep(400); await closeCel();
   const bf = await E(p, () => { const f = OS.Dom.bossFight(); return [f.hp, f.dmg, f.name, !!document.querySelector('.d3-boss')]; });
-  ok('Chefe da semana em pixel art, com vida e dano feito pelo que registaste', bf[0] >= 3000 && bf[1] > 0 && bf[2] && bf[3] && await E(p, () => { const i = document.querySelector('img.d3-boss.mo-px'); return !!i && i.complete && i.naturalWidth === 320; }), JSON.stringify(bf));
+  ok('Chefe da semana em pixel art, com vida e dano feito pelo que registaste', bf[0] >= 3000 && bf[1] > 0 && bf[2] && bf[3] && await E(p, () => { const i = document.querySelector('img.d3-boss.mo-px'); return !!i && i.complete && i.naturalWidth === 192; }), JSON.stringify(bf));
   ok('Colosso do mês (só o avanço real dá dano inteiro)', await E(p, () => { const c = OS.Dom.colossus(); return c.hp >= 20000 && !!c.name && document.querySelectorAll('.d3-col img.mo-px').length === 1; }));
   ok('Conquistas mais difíceis: 5 graus (bronze a diamante), "Forjado no Ferro" só aos 25 treinos', await E(p, () => { const a = OS.Dom.achievements().find(x => x.id === 'treinos'); return a.th.length === 5 && a.th[0] === 25 && a.t === 0; }));
   await E(p, () => { for (let i = 12; i < 26; i++) OS.add('workouts', { date: OS.U.addDays(OS.U.today(), -i), title: 'Treino ' + i, items: [] }, { silent: true }); OS.emit('change'); }); await sleep(300);
@@ -3042,7 +3042,7 @@ async function vidaTests(b) { cur = 'Projeto de Vida'; console.log('\n=== v2.53:
     s.boss[w0] = { a: 'carreira', hp: 100, t: 0, v: 2, gid: '', full: 1, tier: 1 }; OS.add('tasks', { title: 'Feita para o chefe', status: 'Feita', doneAt: OS.U.addDays(w0, 1), goal: OS.all('goals')[0].id }); OS.touch('dominus');
     OS.Dom.kills = () => Object.assign({}, k0(), Object.fromEntries(L.map(m => [m, 1])));
     try { const D = OS.Dom.dungeons(), c1 = D.find(d => d.id === 'carreira:1'), c2 = D.find(d => d.id === 'carreira:2'), o1 = D.find(d => d.id === 'corpo:2'); return { b1: c1.badge, c1: c1.cleared, o2: c2.open, n2: c2.n, at2: c2.at, boss2: c2.boss, corpo2: o1.open, n: D.length }; } finally { OS.Dom.kills = k0; delete s.boss[w0]; OS.touch('dominus'); } });
-  ok('Insígnia da primeira masmorra abre o segundo círculo, com monstros e chefe novos', !!c2.b1 && c2.c1 && c2.o2 && c2.n2 === 'Escritório Sem Janelas' && c2.at2 === 0 && c2.boss2 === 'burocrata' && !c2.corpo2 && c2.n === 16, JSON.stringify(c2));
+  ok('Insígnia da primeira masmorra abre o segundo círculo, com monstros e chefe novos', !!c2.b1 && c2.c1 && c2.o2 && c2.n2 === 'Escritório Sem Janelas' && c2.at2 === 0 && c2.boss2 === 'burocrata' && !c2.corpo2 && c2.n === 24, JSON.stringify(c2));
   ok('Conquistas novas: metas cumpridas, etapas e objetivos de vida', await E(p, () => ['metas', 'etapas', 'vida'].every(id => OS.Dom.achievements().some(a => a.id === id)) && OS.Dom.achievements().find(a => a.id === 'vida').v >= 3));
   // Codex → objetivo (sem XP a dobrar)
   const cx = await E(p, () => { const s = OS.one('dominus'), ax = OS.Dom.state().ax.intelecto; s.legacy.int = (s.legacy.int || []).concat({ t: 'Inglês C1', d: OS.U.today(), proof: 'Certificado C1 Advanced' }); OS.touch('dominus'); const r = OS.Vida.doneOf(OS.Vida.list().by['v1.96']); return { how: r && r.how, xp: OS.Vida.xpOf(OS.Vida.list().by['v1.96']), dx: OS.Dom.state().ax.intelecto - ax }; });
@@ -3061,6 +3061,15 @@ async function vidaTests(b) { cur = 'Projeto de Vida'; console.log('\n=== v2.53:
   await E(p, () => { const f = document.querySelector('form[data-form=toLab]'); f.total.value = '22.5'; f.unit.value = 'nmol'; f.requestSubmit(); }); await sleep(500);
   const t1 = await E(p, () => { const s = OS.one('testo'); return { sims: s.sims.length, est: s.sims[0] && s.sims[0].est, lab: (OS.Testo.lastLab() || {}).total, auto: OS.Dom.autoLeg('Testosterona total > 600 ng/dL') }; });
   ok('Simular guarda o resultado; a análise em nmol/L passa a ng/dL e prova o marco "Testosterona > 600" do Codex', t1.sims === 1 && t1.est < t0.est && t1.lab === 649 && t1.auto && t1.auto.ok, JSON.stringify(t1));
+  // masmorras desenhadas por dentro, monstros únicos e sem fim, e o botão "Quando eu partir"
+  const ms = await E(p, () => { const M = OS.Monstros, ids = Object.keys(M.ALL), P = new Set(), F = new Set(); let dup = 0, dupF = 0; ids.forEach(i => { const g = M.gene(i), k = g[0] + '|' + g[1]; if (!/^x/.test(i)) { if (P.has(k)) dup++; P.add(k); } if (F.has(g.join('|'))) dupF++; F.add(g.join('|')); });
+    const seq = ['corpo', 'mente'].map(a => M.ofA(a, 1).concat([M.bossOf(a, 1)], M.ofA(a, 2), [M.bossOf(a, 2)], M.ofA(a, 3), [M.bossOf(a, 3)]).map(i => M.power(i)));
+    const up = seq.every(L => L.every((v, i) => !i || v > L[i - 1])), sc = [OS.Masm.scene('corpo', 1, 0), OS.Masm.scene('corpo', 1, 5), OS.Masm.scene('mente', 1, 0), OS.Masm.scene('corpo', 7, 2)];
+    return { n: ids.length, dup, dupF, up, c3: M.ofA('corpo', 3).length, col40: !!M.ALL[M.colAt(40)], sc: sc.every(u => /^data:image\/png/.test(u)) && new Set(sc).size === 4 }; });
+  ok('Monstros únicos (nenhum par corpo+cabeça repetido), cada um mais forte do que o anterior, e masmorras e colossos sem fim', ms.dup === 0 && ms.dupF === 0 && ms.up && ms.c3 === 5 && ms.col40, JSON.stringify(ms));
+  ok('Cada masmorra desenhada por dentro, com tema próprio, sala diferente em cada andar e a do chefe', ms.sc, JSON.stringify(ms));
+  await E(p, () => location.hash = 'eu'); await sleep(600); await closeCel();
+  ok('Botão "Quando eu partir" na página Eu (ainda sem função)', await E(p, () => !!document.querySelector('[data-act=meLegado]')));
   ok('Sem erros de JavaScript', !errs.length, errs.slice(0, 3).join(' | '));
   await ctx.close();
   // conta pública: a lista do Ryan não aparece

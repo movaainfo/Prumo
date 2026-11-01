@@ -342,6 +342,11 @@ T[''] = () => { const m = me(), p = P(), a = age(m.birth), cp = completeness(), 
   ${ev.length ? `<div class="pn"><div class="pn-h"><h3>${UI.ic('clock')}Momentos que me marcaram</h3><a class="acc" href="#eu.historia" style="font-size:12px">linha do tempo →</a></div><div class="me-strip">${U.sortBy(ev.filter(e => +e.imp >= 4), e => e.date || '', -1).concat(U.sortBy(ev.filter(e => !(+e.imp >= 4)), e => e.date || '', -1)).slice(0, 6).map(e => `<div class="me-mom" data-edit="lifeev:${e.id}"><span>${CIC[e.cat] || '•'}</span><b>${esc(e.title)}</b><small>${fmtY(e.date)}${e.place ? ' · ' + esc(e.place) : ''}</small></div>`).join('')}</div></div>` : ''}
   ${(m.values || m.mission || m.dreams) ? `<div class="g g3">${[['Os meus valores', m.values], ['A minha missão', m.mission], ['Os meus sonhos', m.dreams]].filter(x => x[1]).map(([t, v]) => `<div class="pn"><div class="pn-h"><h3>${t}</h3></div><p class="me-q">${esc(v)}</p></div>`).join('')}</div>` : ''}`; };
 
+// v2.53: "Quando eu partir" — o lugar do legado (o que acontece às contas, às mensagens e ao Dominus). Ainda sem função: o Ryan configura depois.
+{ const T0 = T['']; T[''] = () => T0() + `<div class="pn me-leg"><div class="pn-h"><h3>${UI.ic('sun')}Quando eu partir</h3><span class="bdg">em breve</span></div>
+  <p class="mut">O meu legado: o que fica para quem amo, as mensagens que quero deixar e o que acontece ao Prumo e ao Dominus. Vou configurar isto mais tarde.</p>
+  <button class="btn ghost" data-act="meLegado">${UI.ic('sun')}<span>Quando eu partir</span></button></div>`; }
+A.meLegado = () => UI.toast('"Quando eu partir" ainda não está configurado. Fica aqui guardado para quando o quiseres preparar.', 'info');
 T.bio = () => { const m = me(), b = m.bio, ai = aiOK(), ed = OS.ui.meEd, pov = m.pov || '3', vers = OS.one('mever').v;
   const ch = b ? b.ch : [], words = U.sum(ch, c => wc(c.txt)), todo = ch.filter(c => c.todo).length, nAns = qList().filter(isAns).length, matW = U.sum(PARTS.map(p => matOf(p)), matWords);
   const tools = `<div class="pn me-btools"><div class="row gap8" style="flex-wrap:wrap;align-items:center">
