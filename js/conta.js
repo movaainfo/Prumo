@@ -24,7 +24,7 @@ const api = async (path, opt = {}, tries = 3) => { let last = null;
   for (let i = 0; i < tries; i++) {
     try { const r = await fetch('api/' + path, Object.assign({ cache: 'no-store', credentials: 'omit' }, opt)); let j = null; try { j = await r.json(); } catch (e) { }
       if (j && j.ok) return j;
-      const e = new Error((j && j.msg) || (r.status === 404 ? 'O servidor das contas não respondeu.' : 'Erro ' + r.status)); e.status = r.status; e.code = j && j.code;
+      const e = new Error((j && j.msg) || (r.status === 404 ? 'O servidor das contas não respondeu.' : r.status === 402 ? 'O servidor do Prumo está parado pela Vercel (limite do plano). Os teus dados continuam guardados neste aparelho e voltam a sincronizar quando o servidor voltar.' : 'Erro ' + r.status)); e.status = r.status; e.code = j && j.code;
       if (r.status < 500 && r.status !== 429) throw e; last = e; }
     catch (e) { if (e.status && e.status < 500 && e.status !== 429) throw e; last = e.status ? e : Object.assign(new Error('Sem ligação à internet.'), { net: true }); }
     await new Promise(res => setTimeout(res, 600 * (i + 1))); }

@@ -2748,7 +2748,7 @@ async function domTests(b) { cur = 'Dominus'; console.log('\n=== Dominus: o her�
   await E(p, () => location.hash = 'dominus.chefe'); await sleep(400); await closeCel();
   const bf = await E(p, () => { const f = OS.Dom.bossFight(); return [f.hp, f.dmg, f.name, !!document.querySelector('.d3-boss')]; });
   ok('Chefe da semana em pixel art, com vida e dano feito pelo que registaste', bf[0] >= 3000 && bf[1] > 0 && bf[2] && bf[3] && await E(p, () => { const i = document.querySelector('img.d3-boss.mo-px'); return !!i && i.complete && i.naturalWidth === 320; }), JSON.stringify(bf));
-  ok('Colosso do mês (todo o XP do mês conta)', await E(p, () => { const c = OS.Dom.colossus(); return c.hp >= 60000 && !!c.name && document.querySelectorAll('.d3-col img.mo-px').length === 1; }));
+  ok('Colosso do mês (só o avanço real dá dano inteiro)', await E(p, () => { const c = OS.Dom.colossus(); return c.hp >= 20000 && !!c.name && document.querySelectorAll('.d3-col img.mo-px').length === 1; }));
   ok('Conquistas mais difíceis: 5 graus (bronze a diamante), "Forjado no Ferro" só aos 25 treinos', await E(p, () => { const a = OS.Dom.achievements().find(x => x.id === 'treinos'); return a.th.length === 5 && a.th[0] === 25 && a.t === 0; }));
   await E(p, () => { for (let i = 12; i < 26; i++) OS.add('workouts', { date: OS.U.addDays(OS.U.today(), -i), title: 'Treino ' + i, items: [] }, { silent: true }); OS.emit('change'); }); await sleep(300);
   ok('…e aos 26 treinos chega o bronze', await E(p, () => OS.Dom.achievements().find(a => a.id === 'treinos').t >= 1));
@@ -2973,11 +2973,79 @@ async function earTests() { cur = 'Ouvido'; console.log('\n=== Spyke: ouvido sil
   ok('Cérebro: leva o resumo completo da tua vida (não cortado), pode pesquisar na internet e procurar em toda a app', /pesquisar_internet/.test(bq) && /procurar_na_app/.test(bq) && /Património e investimentos/.test(bq) && /A ler/.test(bq), bq.length + ' carateres');
   const er = errs.filter(e => !/Failed to load|net::|sandboxed|about:srcdoc|Content Security Policy|NotSupportedError|play\(\)/.test(e)); ok('sem erros de JavaScript (ouvido)', !er.length, er.slice(0, 3).join(' | ')); await ctx.close(); await b2.close(); }
 
+async function vidaTests(b) { cur = 'Projeto de Vida'; console.log('\n=== v2.53: Dominus ligado às metas e o Projeto de Vida (1000 objetivos) ===');
+  const { ctx, p, errs } = await newPage(b, PROFILES[0]); await ctx.route(/script\.google\.com|generativelanguage/, rt => rt.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true,"items":[],"docs":{}}' }));
+  await p.goto(BASE); await unlock(p); await E(p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); OS.setOne('spyke', { eng: 'device' }); });
+  const closeCel = async () => { for (let i = 0; i < 14 && await p.$('.d3-cel'); i++) { await E(p, () => { const c = document.querySelector('.d3-cel [data-close]'); c && c.click(); }); await sleep(220); } };
+  await E(p, () => location.hash = 'dominus'); await sleep(500);
+  if (await p.$('form[data-form="d3Born"] button')) { await p.click('form[data-form="d3Born"] button'); await sleep(700); } await closeCel();
+  const L = await E(p, () => { const L = OS.Vida.list(); return { n: L.length, base: L.filter(o => !o.novo && !o.own).length, novos: L.filter(o => o.novo).length, cx: Object.keys(OS.VIDAX).length, t5: L.filter(o => o.tier === 5).length }; });
+  ok('Projeto de Vida: os 1000 objetivos em 10 eixos, mais os novos da biografia', L.base === 1000 && L.novos === 8, JSON.stringify(L));
+  ok('Cruzado com o Codex: 81 objetivos ligados a marcos que já existiam (os 500 marcos continuam lá)', L.cx === 81 && await E(p, () => OS.Dom.PK.every(k => OS.Dom.legList(k).length === 100)));
+  await E(p, () => OS.Vida.sync()); await sleep(300);
+  const v = await E(p, () => { const s = OS.one('vida'); return { since: s.since, d1: s.done['v1.1'], d2: s.done['v1.2'], sug: OS.Vida.sugs().map(([o]) => o.id) }; });
+  ok('Verificado pelos registos: com a universidade no perfil, "Concluir o ensino médio" e "Ingressar numa universidade" contam sozinhos (já feitos: metade do XP)', !!v.since && v.d1 && v.d1.how === 'auto' && v.d1.pre === 1 && v.d2 && v.d2.pre === 1, JSON.stringify([v.d1, v.d2]));
+  ok('Por confirmar: Lisboa/Porto (vives em Portugal), Aveiro, cursos e primeiro emprego da biografia, mudar para Portugal', ['v5.16', 'v5.17', 'v5.19', 'v1.101', 'v2.101', 'v5.101', 'v1.12'].every(id => v.sug.includes(id)) && !v.sug.includes('v5.4'), v.sug.join(','));
+  const x0 = await E(p, () => OS.Dom.state().ax.intelecto);
+  ok('O XP dos já feitos entra no herói (metade) e não fere o chefe da semana', x0 >= (6000 + 6000) * .5 && await E(p, () => OS.Dom.state().all.filter(e => e.pre).length >= 2 && OS.Dom.bossFight().dmg === Math.round(OS.Dom.state().all.filter(e => !e.m && !e.pre && e.d >= OS.Dom.bossFight().w).reduce((a, e) => a + e.x * (e.g ? 1 : .1), 0))));
+  // sem metas: as missões são para criar metas a sério
+  await E(p, () => location.hash = 'dominus.missoes'); await sleep(500); await closeCel();
+  const m0 = await E(p, () => ({ d: OS.Dom.dailyIds(), w: OS.Dom.weeklyIds(), m: OS.Dom.monthlyIds(), n: document.querySelectorAll('.d3-ms .d3-m').length }));
+  ok('Sem metas ativas, as missões são para criar metas (e transformar objetivos de vida em metas)', m0.n === 9 && m0.d[0] === 'v:act' && m0.d.concat(m0.w, m0.m).every(id => /^v:/.test(id)), JSON.stringify(m0));
+  // a página
+  await E(p, () => location.hash = 'dominus.vida'); await sleep(600); await closeCel();
+  ok('Separador Vida: 10 eixos, lista, por confirmar e o próximo de cada eixo', await E(p, () => document.querySelectorAll('.vd-dims button').length === 10 && document.querySelectorAll('.vd-list .vd-o').length === 40 && !!document.querySelector('.vd-sug') && document.querySelectorAll('[data-act=vdMeta]').length >= 10));
+  // confirmar um por confirmar (com prova e data antiga: metade)
+  await E(p, () => { const b = document.querySelector('.vd-sug [data-act=vdSet]'); b && b.click(); }); await sleep(400);
+  await E(p, () => document.querySelector('.vd-sug [data-act=vdOk][data-id="v5.16"]').click()); await sleep(400);
+  await closeCel(); await p.fill('form[data-form=vdProof] input[name=d]', '2025-08-10'); await p.click('form[data-form=vdProof] button.gold'); await sleep(400);
+  ok('Confirmar "Conhecer Lisboa" com a data: conta como já feito (metade), sem prova obrigatória num marco simples', await E(p, () => { const r = OS.one('vida').done['v5.16']; return !!r && r.pre === 1 && r.d === '2025-08-10' && OS.Vida.xpOf(OS.Vida.list().by['v5.16']) === 1250; }));
+  await E(p, () => document.querySelector('.vd-sug [data-act=vdNo]').click()); await sleep(300);
+  ok('"Ainda não" tira-o dos por confirmar', await E(p, () => Object.keys(OS.one('vida').no).length === 1));
+  // tornar meta
+  await E(p, () => { OS.setUI('vdC', 1); }); await sleep(300);
+  await E(p, () => document.querySelector('.vd-list [data-act=vdMeta][data-id="v2.21"]').click()); await sleep(500);
+  ok('Tornar meta: abre a meta já preenchida (título, categoria, horizonte, ligada ao objetivo)', await E(p, () => { const f = document.getElementById('osform'); return !!f && f.querySelector('[name=title]').value.startsWith('Obter a certificação CPA-10') && f.querySelector('[name=cat]').value === 'Trabalho'; }));
+  await E(p, () => { const f = document.getElementById('osform'); const d = f.querySelector('[name=due]'); if (d) { d.value = OS.U.addDays(OS.U.today(), 60); d.dispatchEvent(new Event('input', { bubbles: true })); d.dispatchEvent(new Event('change', { bubbles: true })); } });
+  await closeCel(); await p.click('#osform button[type=submit]'); await sleep(600);
+  const g = await E(p, () => { const g = OS.all('goals').find(x => x.vid === 'v2.21'); return g ? { id: g.id, due: g.due, imp: g.importance } : null; });
+  ok('…e a meta fica ligada ao objetivo (aparece "Em meta" e no Painel de metas)', !!g && g.imp === 5 && await E(p, () => OS.Vida.activeGoals().length === 1), JSON.stringify(g));
+  // com metas: missões das metas (amanhã, para não reescrever as de hoje)
+  const mm = await E(p, () => { const U = OS.U, T = U.today(), g = OS.all('goals').find(x => x.vid === 'v2.21');
+    OS.upd('goals', g.id, { steps: [{ t: 'Estudar o módulo 1', done: false }, { t: 'Simulados', done: false }, { t: 'Marcar o exame', done: false }] });
+    OS.add('tasks', { title: 'Resumo do capítulo 1 da CPA-10', status: 'A fazer', goal: g.id, prio: 1 }); OS.add('tasks', { title: 'Simulado 1', status: 'A fazer', goal: g.id, prio: 2 }); OS.add('tasks', { title: 'Revisão', status: 'A fazer', goal: g.id, prio: 3 });
+    OS.Dom.snapGoals(); const D2 = U.addDays(T, 1), W2 = U.addDays(U.monday(T), 7); const d = OS.Dom.dailyIds(D2), w = OS.Dom.weeklyIds(W2); return { d, w, g: g.id }; });
+  ok('Com metas, todas as missões são passos de uma meta (tarefa da meta, avanço %, etapas, ações)', mm.d.length === 3 && mm.d.concat(mm.w).every(id => id.startsWith('g:' + mm.g + ':') || id === 'v:act') && mm.d.some(id => /:t:/.test(id)) && mm.w.some(id => /:p:\d+/.test(id)), JSON.stringify(mm));
+  // concluir a tarefa da meta → missão do dia cumprida, dano no chefe
+  await E(p, () => { const s = OS.one('dominus'), T = OS.U.today(), g = OS.all('goals').find(x => x.vid === 'v2.21'), t = OS.all('tasks').find(x => x.goal === g.id && x.prio === 1); s.q[T] = ['g:' + g.id + ':t:' + t.id, 'g:' + g.id + ':a:2', 'g:' + g.id + ':tn:2']; delete s.boss[OS.U.monday(T)]; OS.touch('dominus'); OS.upd('tasks', t.id, { status: 'Feita', doneAt: T }); OS.emit('change', 'tasks'); });
+  await sleep(500); await E(p, () => location.hash = 'dominus.missoes'); await sleep(600); await closeCel();
+  const r = await E(p, () => { const M = OS.Dom.missions(), f = OS.Dom.bossFight(); return { ok: M.dl.filter(m => m.ok).map(m => m.id), t: M.dl.map(m => m.t), gid: f.gid, goal: f.goal, hp: f.hp, dmg: f.dmg, guard: !!document.querySelector('.d3-ms .d3-m') }; });
+  ok('Fazer a tarefa da meta cumpre a missão do dia (a missão diz o nome da tarefa e da meta)', r.ok.some(id => /:t:/.test(id)) && /Resumo do capítulo 1/.test(r.t[0]) && /CPA-10/.test(r.t[0]), JSON.stringify(r));
+  await E(p, () => location.hash = 'dominus.chefe'); await sleep(600); await closeCel();
+  ok('O chefe da semana guarda a tua meta e o XP dela dá dano inteiro', r.gid && /CPA-10/.test(r.goal) && r.hp >= 3000 && r.dmg > 0 && await E(p, () => /Guarda a tua meta/.test(document.querySelector('.d3-bossw').textContent)), JSON.stringify(r));
+  ok('Conquistas novas: metas cumpridas, etapas e objetivos de vida', await E(p, () => ['metas', 'etapas', 'vida'].every(id => OS.Dom.achievements().some(a => a.id === id)) && OS.Dom.achievements().find(a => a.id === 'vida').v >= 3));
+  // Codex → objetivo (sem XP a dobrar)
+  const cx = await E(p, () => { const s = OS.one('dominus'), ax = OS.Dom.state().ax.intelecto; s.legacy.int = (s.legacy.int || []).concat({ t: 'Inglês C1', d: OS.U.today(), proof: 'Certificado C1 Advanced' }); OS.touch('dominus'); const r = OS.Vida.doneOf(OS.Vida.list().by['v1.96']); return { how: r && r.how, xp: OS.Vida.xpOf(OS.Vida.list().by['v1.96']), dx: OS.Dom.state().ax.intelecto - ax }; });
+  ok('Marco do Codex feito (Inglês C1) conta o objetivo "fluente em inglês", com o XP só uma vez', cx.how === 'codex' && cx.xp === 0 && cx.dx === 25000, JSON.stringify(cx));
+  await E(p, () => location.hash = 'dominus.marcos'); await sleep(500); await closeCel();
+  ok('No Codex, os marcos ligados mostram o objetivo de vida', await E(p, () => [...document.querySelectorAll('.d3-legp.vd-cx')].some(e => /Projeto de Vida/.test(e.textContent))));
+  // acrescentar e colar uma lista
+  await E(p, () => location.hash = 'dominus.vida'); await sleep(500); await closeCel();
+  await closeCel(); await p.fill('form[data-form=vdAdd] input[name=t]', 'Correr a Meia Maratona de Lisboa'); await p.selectOption('form[data-form=vdAdd] select[name=c]', '7'); await p.click('form[data-form=vdAdd] button'); await sleep(300);
+  ok('Acrescentar um objetivo teu', await E(p, () => OS.Vida.list().some(o => o.own && o.t === 'Correr a Meia Maratona de Lisboa' && o.c === 7 && o.a === 'corpo')));
+  ok('Sem erros de JavaScript', !errs.length, errs.slice(0, 3).join(' | '));
+  await ctx.close();
+  // conta pública: a lista do Ryan não aparece
+  const P = await newPage(b, PROFILES[0]); await P.p.goto(BASE); await unlock(P.p);
+  ok('Contas públicas não veem os objetivos do Ryan (só a estrutura vazia para escrever ou colar a sua)', await E(P.p, () => { OS.Acc = OS.Acc || {}; const o = OS.Acc.pub; OS.Acc.pub = true; OS.emit('one:vida'); const n = OS.Vida.list().length; OS.Acc.pub = o; OS.emit('one:vida'); return n === 0 && OS.Vida.list().length >= 1000; }));
+  await P.ctx.close();
+}
+
 (async () => {
   await new Promise(r => srv.listen(PORT, r));
   const b = await chromium.launch(); const t0 = Date.now();
   const ONLY = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean), run = k => !ONLY.length || ONLY.includes(k);
-  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('mundo')) await muTests(b); if (run('contas')) await accTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
+  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('vida')) await vidaTests(b); if (run('mundo')) await muTests(b); if (run('contas')) await accTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
   catch (e) { R.push({ p: cur, name: 'execução da bateria', pass: false, info: e.message.split('\n')[0] }); console.log('ERRO NA BATERIA:', e.message); try { for (const c of b.contexts()) for (const pg of c.pages()) { const d = await pg.evaluate(() => ({ u: location.hash, now: Date.now(), pend: window.__pend ? [...window.__pend.values()] : null, acc: ((document.getElementById('acc') || {}).innerText || '').slice(0, 80).replace(/\n/g, ' '), msg: (document.querySelector('#acc .ac-msg') || {}).textContent || '' })).catch(() => null); if (d && d.pend) console.log('    [pagina]', JSON.stringify(d)); } } catch (e2) { } }
   await b.close(); srv.close();
   const f = R.filter(x => !x.pass);

@@ -20,22 +20,23 @@ const hit = (W, s) => { if (!W.length) return false; const w = words(s); const n
 const born = g => g.start || (g._c ? U.iso(new Date(g._c)) : '') || U.addDays(today(), -30);
 
 /* ---------- o que fizeste por uma meta desde uma data ---------- */
-Goal.act = (g, from) => { const t = today(), ar = AREAS[g.cat] || [], W = gWords(g), out = [], P = OS.all('projects').filter(x => x.goal === g.id), inP = new Set(P.map(x => x.id));
-  let n = 0; const add = (v, l) => { if (v > 0) { out.push([v, l]); n += 1; } };
-  const T = OS.all('tasks').filter(x => x.status === 'Feita' && x.doneAt && x.doneAt >= from && x.doneAt <= t && (x.goal === g.id || inP.has(x.project) || (x.area && ar.includes(x.area)) || hit(W, x.title)));
+Goal.act = (g, from, to) => { const t = to && to < today() ? to : today(), ar = AREAS[g.cat] || [], W = gWords(g), out = [], P = OS.all('projects').filter(x => x.goal === g.id), inP = new Set(P.map(x => x.id));
+  // n = quantos tipos de coisa fizeste; u = quantas coisas (cada tarefa, sessão, treino, bloco, turno, venda, dia de hábito conta 1)
+  let n = 0, u = 0; const add = (v, l, k) => { if (v > 0) { out.push([v, l]); n += 1; u += k == null ? v : k; } }, inR = d => !!d && d >= from && d <= t;
+  const T = OS.all('tasks').filter(x => x.status === 'Feita' && x.doneAt && inR(x.doneAt) && (x.goal === g.id || inP.has(x.project) || (x.area && ar.includes(x.area)) || hit(W, x.title)));
   add(T.length, T.length === 1 ? 'tarefa feita' : 'tarefas feitas');
   const R = OS.all('routine').filter(r => (r.area && ar.includes(r.area)) || hit(W, r.title)); let rb = 0, rm = 0;
-  R.forEach(r => Object.keys(r.log || {}).forEach(d => { if (d >= from && d <= t) { rb++; const s = U.t2m(r.start), e = U.t2m(r.end); rm += e > s ? e - s : e + 1440 - s; } }));
+  R.forEach(r => Object.keys(r.log || {}).forEach(d => { if (inR(d)) { rb++; const s = U.t2m(r.start), e = U.t2m(r.end); rm += e > s ? e - s : e + 1440 - s; } }));
   if (rb) add(rb, `${rb === 1 ? 'bloco' : 'blocos'} da rotina (${U.nf(rm / 60, 1)} h)`);
-  if (g.cat === 'Estudos') { const m = U.sum(OS.all('sessions').filter(s => s.date >= from && s.date <= t), s => U.num(s.minutes)); if (m) add(U.r1(m / 60), 'h de estudo'); }
-  if (g.cat === 'Academia') add(OS.all('workouts').filter(w => w.date >= from && w.date <= t).length, 'treinos');
-  if (g.cat === 'Corrida' || g.cat === 'Academia') { const km = safe(() => OS.Run.kmIn(from, t), 0); if (km) add(U.r1(km), 'km corridos'); }
-  if (g.cat === 'Trabalho') { const h = U.sum(OS.all('shifts').filter(s => s.date >= from && s.date <= t), s => safe(() => OS.Car.workedHours(s), 0)); if (h) add(U.r1(h), 'h de trabalho'); }
-  if (g.cat === 'Empresa') add(OS.all('mvsales').filter(s => s.date >= from && s.date <= t && s.status !== 'Cancelado').length, 'vendas');
-  if (g.cat === 'Finanças') { const tx = safe(() => OS.Fin.tx(from, t), []), net = U.sum(tx.filter(x => x.type === 'Receita'), x => x.amount) - U.sum(tx.filter(x => x.type === 'Despesa'), x => x.amount); if (net > 0) { out.push([U.eur(net, { dec: 0 }), 'poupados']); n++; } }
-  const H = OS.all('habits').filter(h => h.active && ((h.area && ar.includes(h.area)) || hit(W, h.name))); let hd = 0; H.forEach(h => Object.keys(h.log || {}).forEach(d => { if (d >= from && d <= t) hd++; }));
+  if (g.cat === 'Estudos') { const S0 = OS.all('sessions').filter(s => inR(s.date)), m = U.sum(S0, s => U.num(s.minutes)); if (m) add(U.r1(m / 60), 'h de estudo', S0.length); }
+  if (g.cat === 'Academia') add(OS.all('workouts').filter(w => inR(w.date)).length, 'treinos');
+  if (g.cat === 'Corrida' || g.cat === 'Academia') { const km = safe(() => OS.Run.kmIn(from, t), 0); if (km) add(U.r1(km), 'km corridos', OS.all('runs').filter(r => inR(r.date)).length); }
+  if (g.cat === 'Trabalho') { const S0 = OS.all('shifts').filter(s => inR(s.date)), h = U.sum(S0, s => safe(() => OS.Car.workedHours(s), 0)); if (h) add(U.r1(h), 'h de trabalho', S0.length); }
+  if (g.cat === 'Empresa') add(OS.all('mvsales').filter(s => inR(s.date) && s.status !== 'Cancelado').length, 'vendas');
+  if (g.cat === 'Finanças') { const tx = safe(() => OS.Fin.tx(from, t), []), net = U.sum(tx.filter(x => x.type === 'Receita'), x => x.amount) - U.sum(tx.filter(x => x.type === 'Despesa'), x => x.amount); if (net > 0) { out.push([U.eur(net, { dec: 0 }), 'poupados']); n++; u++; } }
+  const H = OS.all('habits').filter(h => h.active && ((h.area && ar.includes(h.area)) || hit(W, h.name))); let hd = 0; H.forEach(h => Object.keys(h.log || {}).forEach(d => { if (inR(d) && h.log[d]) hd++; }));
   add(hd, hd === 1 ? 'dia de hábito cumprido' : 'dias de hábitos cumpridos');
-  return { items: out, n, any: n > 0 }; };
+  return { items: out, n, u, any: n > 0 }; };
 
 // a mesma pergunta repete-se muito (Painel, alertas, página): guarda a resposta até os dados mudarem
 let VER = 0; OS.on('change', () => { VER++; }); const AC = new Map();

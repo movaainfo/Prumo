@@ -83,7 +83,7 @@ const pname = r => ((OS.get('people', r.person) || {}).name) || r.who || 'algué
 const bdayNear = (r, d) => { const p = OS.get('people', r.person); if (!p || !p.birthday) return false; const md = p.birthday.slice(5), x = d.slice(0, 4) + '-' + md; return Math.abs(U.diff(d, x)) <= 1; };
 
 let CK = 0, CACHE = null; const bump = () => { CK++; CACHE = null; };
-OS.on('change', bump); OS.on('remote', bump); OS.on('one:dominus', () => { if (!QUIET) bump(); }); OS.on('one:diet', bump);
+OS.on('change', bump); OS.on('remote', bump); OS.on('one:dominus', () => { if (!QUIET) bump(); }); OS.on('one:diet', bump); OS.on('one:vida', bump);
 // a pontuação: números grandes, a mesma justiça entre áreas. v2.48: mais difícil (cada registo vale 6 em vez de 10 e as curvas sobem mais depressa)
 // v2.53: a vida não é fácil. O XP grande vem só do que te aproxima dos objetivos: avanço medido nas metas, etapas, marcos,
 // projetos e tarefas ligados a uma meta, metas cumpridas. Os registos do dia a dia valem pouco (40%) e quase nada (8%)
@@ -102,10 +102,10 @@ D.snapGoals = () => { try { const s = S(), gp = Object.assign({}, s.gp || {}), t
   if (ch) { s.gp = gp; QUIET++; try { save(); } finally { QUIET--; } bump(); } } catch (e) { if (OS.debug) console.warn('Dominus metas', e); } };
 let SG = 0; OS.on('change', c => { if (['goals', 'tasks', 'projects', 'transactions', 'sessions', 'workouts', 'runs', 'invtx', 'certs', 'learn', 'contacts'].includes(c)) { clearTimeout(SG); SG = setTimeout(D.snapGoals, 2500); } });
 OS.on('ready', () => setTimeout(D.snapGoals, 3000));
-const evs = () => { const T = today(), E = [], push = (d, a, x, t, k) => { d = String(d || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > T || !(x > 0)) return; E.push({ d, a, x: Math.round(x * XS), t, g: k ? 1 : 0 }); };
+const evs = () => { const T = today(), E = [], push = (d, a, x, t, k) => { d = String(d || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > T || !(x > 0)) return; E.push({ d, a, x: Math.round(x * XS), t, g: k || 0 }); };
   // desde quando cada área tem uma meta (ativa ou cumprida): antes disso, os registos dessa área quase não contam
   const GL = OS.all('goals').filter(g => g.status !== 'Abandonada'), SINCE = Object.fromEntries(AK.map(k => { const c = GA[k], L = GL.filter(g => !c || c.includes(g.cat)).map(g => g.start || (g._c ? U.iso(new Date(g._c)) : '0000')).sort(); return [k, L[0] || null]; }));
-  const add = (d, a, x, t) => push(d, a, x * (SINCE[a] && String(d || '') >= SINCE[a] ? ROUT : ROUT_OFF), t), addG = (d, a, x, t) => push(d, a, x, t, 1);
+  const add = (d, a, x, t) => push(d, a, x * (SINCE[a] && String(d || '') >= SINCE[a] ? ROUT : ROUT_OFF), t), addG = (d, a, x, t, k = 1) => push(d, a, x, t, k);
   const sf = (f, c) => { try { f(); } catch (e) { if (OS.debug) console.warn('Dominus ' + c, e); } };
   // Corpo
   sf(() => OS.all('workouts').forEach(w => add(w.date, 'corpo', 30 + Math.min(20, (OS.Fit && OS.Fit.volume ? OS.Fit.volume(w) : 0) / 1500), 'Treino' + (w.title ? ': ' + w.title : ''))), 'treinos');
@@ -152,27 +152,31 @@ const evs = () => { const T = today(), E = [], push = (d, a, x, t, k) => { d = S
   sf(() => OS.all('mvsales').forEach(s => { if (s.status !== 'Cancelado') add(s.date, 'carreira', 15 + Math.min(50, (OS.Mv && OS.Mv.rev ? OS.Mv.rev(s) : 0) / 10), 'Venda da Mova'); }), 'vendas');
   // Disciplina (e carreira nas tarefas de trabalho)
   sf(() => OS.all('tasks').forEach(t => { if (t.status !== 'Feita' || !t.doneAt) return; const pj = OS.get('projects', t.project), pro = (pj && ['Profissional', 'Empresarial'].includes(pj.type)) || ['Carreira', 'Trabalho', 'Mova'].includes(t.area), g = goalOf(t), bonus = +t.prio === 1 ? 7 : +t.prio === 2 ? 4 : 0;
-    if (g) addG(t.doneAt, goalA(g), (25 + bonus * 2) * impF(g), 'Tarefa da meta "' + g.title + '": ' + t.title); else add(t.doneAt, pro ? 'carreira' : 'disciplina', 8 + bonus, 'Tarefa: ' + t.title); }), 'tarefas');
+    if (g) addG(t.doneAt, goalA(g), (25 + bonus * 2) * impF(g), 'Tarefa da meta "' + g.title + '": ' + t.title, g.id); else add(t.doneAt, pro ? 'carreira' : 'disciplina', 8 + bonus, 'Tarefa: ' + t.title); }), 'tarefas');
   sf(() => OS.all('projects').forEach(p => { if (p.status !== 'Concluído') return; const pro = ['Profissional', 'Empresarial'].includes(p.type), g = OS.get('goals', p.goal), d = p.doneAt || (p._u ? U.iso(new Date(p._u)) : '');
-    if (g && g.status !== 'Abandonada') addG(d, goalA(g), 450 * impF(g), `Projeto da meta "${g.title}" concluído: ${p.name}`); else add(d, pro ? 'carreira' : 'disciplina', 120, 'Projeto concluído: ' + p.name); }), 'projetos');
+    if (g && g.status !== 'Abandonada') addG(d, goalA(g), 450 * impF(g), `Projeto da meta "${g.title}" concluído: ${p.name}`, g.id); else add(d, pro ? 'carreira' : 'disciplina', 120, 'Projeto concluído: ' + p.name); }), 'projetos');
   // avanço medido nas metas e etapas feitas (desde que o Dominus começou a registar o avanço de cada meta)
   sf(() => Object.entries(S().gp || {}).forEach(([id, r]) => { const g = OS.get('goals', id); if (!g || g.status === 'Abandonada') return; const a = goalA(g), H = r.h || [], stepsXP = !['steps', 'linked'].includes(g.metric) && !(g.metric === 'manual' && (g.cur === '' || g.cur == null));
     let mx = r.b != null ? r.b : H.length ? H[0][1] : 0, ms = r.bs != null ? r.bs : H.length ? H[0][2] || 0 : 0;
-    H.forEach(([d, v, sd]) => { if (v > mx) { addG(d, a, (v - mx) * 25 * impF(g) * horF(g), `Meta "${g.title}": +${U.nf(v - mx, 1)}% (vais em ${U.nf(v, 1)}%)`); mx = v; }
-      if (stepsXP && (sd || 0) > ms) { addG(d, a, (sd - ms) * 150 * impF(g), `Meta "${g.title}": ${sd - ms === 1 ? 'etapa feita' : (sd - ms) + ' etapas feitas'}`); ms = sd; } }); }), 'avanço das metas');
+    // meta medida pelas próprias tarefas e etapas: o avanço vale 35% (as tarefas já dão XP; criar poucas tarefas não pode encher a barra de XP)
+    const pf = stepsXP ? 1 : .35;
+    H.forEach(([d, v, sd]) => { if (v > mx) { addG(d, a, (v - mx) * 25 * pf * impF(g) * horF(g), `Meta "${g.title}": +${U.nf(v - mx, 1)}% (vais em ${U.nf(v, 1)}%)`, id); mx = v; }
+      if (stepsXP && (sd || 0) > ms) { addG(d, a, (sd - ms) * 150 * impF(g), `Meta "${g.title}": ${sd - ms === 1 ? 'etapa feita' : (sd - ms) + ' etapas feitas'}`, id); ms = sd; } }); }), 'avanço das metas');
   // marcos (os acontecimentos que marcam o caminho)
-  sf(() => OS.all('milestones').forEach(m => { if (!m.done || !m.date) return; const g = OS.get('goals', m.goal); if (g && g.status !== 'Abandonada') addG(m.date, goalA(g), 600 * impF(g), `Marco da meta "${g.title}": ${m.title}`); else addG(m.date, 'disciplina', 200, 'Marco: ' + m.title); }), 'marcos');
-  sf(() => OS.all('goals').forEach(g => { if (g.status !== 'Concluída') return; const c = N(g.cat), a = /financ|dinheiro/.test(c) ? 'fortuna' : /estud|desenvolv/.test(c) ? 'intelecto' : /corr|corpo|saude|treino|desport/.test(c) ? 'corpo' : /carreira|trabalho|profiss/.test(c) ? 'carreira' : /fe|espirit/.test(c) ? 'espirito' : /relac|famil|amig/.test(c) ? 'relacoes' : 'disciplina'; addG(g.doneAt || (g._u ? U.iso(new Date(g._u)) : ''), a, 1500 * impF(g) * horF(g), 'Meta cumprida: ' + g.title); }), 'metas');
+  sf(() => OS.all('milestones').forEach(m => { if (!m.done || !m.date) return; const g = OS.get('goals', m.goal); if (g && g.status !== 'Abandonada') addG(m.date, goalA(g), 600 * impF(g), `Marco da meta "${g.title}": ${m.title}`, g.id); else addG(m.date, 'disciplina', 200, 'Marco: ' + m.title); }), 'marcos');
+  sf(() => OS.all('goals').forEach(g => { if (g.status !== 'Concluída') return; const c = N(g.cat), a = /financ|dinheiro/.test(c) ? 'fortuna' : /estud|desenvolv/.test(c) ? 'intelecto' : /corr|corpo|saude|treino|desport/.test(c) ? 'corpo' : /carreira|trabalho|profiss/.test(c) ? 'carreira' : /fe|espirit/.test(c) ? 'espirito' : /relac|famil|amig/.test(c) ? 'relacoes' : 'disciplina'; addG(g.doneAt || (g._u ? U.iso(new Date(g._u)) : ''), a, 1500 * impF(g) * horF(g), 'Meta cumprida: ' + g.title, g.id); }), 'metas');
   sf(() => OS.all('habits').forEach(h => { const a = habA(h.name); Object.keys(h.log || {}).forEach(d => { if (h.log[d]) add(d, a, 8, 'Hábito: ' + h.name); }); }), 'hábitos');
   sf(() => { if (!OS.Hab || !OS.all('habits').some(h => h.core)) return; U.range(U.addDays(T, -400), T).forEach(d => { if (d < T && OS.Hab.dayScore(d) === 1) add(d, 'disciplina', 15, 'Dia perfeito (todos os inegociáveis)'); }); }, 'dias perfeitos');
   sf(() => { if (!OS.Att) return; OS.Att.all().forEach(o => { if (o.st === 'Presente') add(o.date, 'disciplina', 6, 'Aula: ' + ((OS.get('subjects', o.subject) || {}).name || '')); }); }, 'aulas');
   // Codex: os teus marcos
-  sf(() => Object.entries(S().legacy || {}).forEach(([p, L]) => (L || []).forEach(m => m && m.t && addG(m.d, LEGA[p] || 'disciplina', LEGXP / XS, 'Marco: ' + m.t))), 'codex');
+  sf(() => Object.entries(S().legacy || {}).forEach(([p, L]) => (L || []).forEach(m => m && m.t && addG(m.d, LEGA[p] || 'disciplina', LEGXP / XS, 'Marco: ' + m.t, 'c'))), 'codex');
+  // Projeto de Vida: cada objetivo conquistado vale pela dificuldade (o que já tinhas feito antes conta metade e não fere chefes)
+  sf(() => { if (OS.Vida) OS.Vida.events().forEach(e => { if (/^\d{4}-\d\d-\d\d$/.test(e.d) && e.d <= T && e.x > 0 && AO[e.a]) E.push(e); }); }, 'projeto de vida');
   return E; };
 
 /* ================= ESTADO CALCULADO ================= */
 const wkOf = d => U.monday(d);
-D.state = () => { if (CACHE && CACHE.key === CK + '|' + today()) return CACHE.v; try { if (S().born) { D.dailyIds(); D.weeklyIds(); D.monthlyIds(); } } catch (e) { }
+D.state = () => { if (CACHE && CACHE.key === CK + '|' + today()) return CACHE.v; try { if (S().born) { migMis(); D.dailyIds(); D.weeklyIds(); D.monthlyIds(); } } catch (e) { }
   const key = CK + '|' + today(); if (CACHE && CACHE.key === key) return CACHE.v;
   const T = today(), base = evs(), byDay = {}, ax = Object.fromEntries(AK.map(k => [k, 0]));
   base.forEach(e => { (byDay[e.d] = byDay[e.d] || []).push(e); });
@@ -264,49 +268,108 @@ const MQ = [
   ['mt', 'disciplina', 'Executor: 150 tarefas concluídas', m => [m.tasks || 0, 150], () => true],
   ['mp', 'disciplina', 'Inquebrável: 20 dias perfeitos', m => [m.perfect || 0, 20], core]];
 const QX = { d: 220, w: 1000, m: 4000 }, QG = { d: 10, all: 25, w: 40, m: 150 }, LEGXP = 25000;
-// as missões de cada dia/semana ficam guardadas (o que se completa depois é verificado pelos teus registos)
-const weakest = () => { let lvx = {}; try { const s = CACHE && CACHE.v; lvx = s ? Object.fromEntries(AK.map(k => [k, s.ax[k]])) : {}; } catch (e) { } return AK.slice().sort((a, b) => (lvx[a] || 0) - (lvx[b] || 0)); };
-const pick = (pool, n, seed, wk) => { const r = U.rng(seed), out = [], W = wk || weakest(), byA = k => pool.filter(q => q[1] === k && q[4]() && !out.includes(q));
-  for (const k of W) { if (out.length >= n - 1) break; const L = byA(k); if (L.length) out.push(L[Math.floor(r() * L.length)]); }
-  const rest = pool.filter(q => q[4]() && !out.includes(q) && !out.some(o => o[1] === q[1])); while (out.length < n && rest.length) out.push(rest.splice(Math.floor(r() * rest.length), 1)[0]);
-  return out.map(q => q[0]); };
-D.dailyIds = (d = today()) => { const s = S(); if (!s.q[d]) { s.q[d] = pick(DQ, 3, 'dq' + d); Object.keys(s.q).sort().slice(0, -45).forEach(k => delete s.q[k]); save(); } return s.q[d]; };
-D.monthlyIds = (ym = today().slice(0, 7)) => { const s = S(); s.mq = s.mq || {}; if (!s.mq[ym]) { s.mq[ym] = pick(MQ, 3, 'mq' + ym); Object.keys(s.mq).sort().slice(0, -24).forEach(k => delete s.mq[k]); save(); } return s.mq[ym]; };
-D.weeklyIds = (w = wkOf(today())) => { const s = S(); if (!s.wq[w]) { s.wq[w] = pick(WQ, 3, 'wq' + w); Object.keys(s.wq).sort().slice(0, -26).forEach(k => delete s.wq[k]); save(); } return s.wq[w]; };
-const misHist = agg => { const s = S(), ev = [], done = []; let gold = 0;
-  Object.entries(s.q || {}).forEach(([d, ids]) => { let n = 0; (ids || []).forEach(id => { const q = DQ.find(x => x[0] === id); if (!q) return; const [c, t] = q[3](agg[d] || {}); if (c >= t) { n++; ev.push({ d, a: q[1], x: QX.d, t: 'Missão: ' + q[2], m: 1 }); gold += QG.d; done.push({ d, id }); } }); if (n >= 3) gold += QG.all; });
-  Object.entries(s.wq || {}).forEach(([w, ids]) => { const end = U.addDays(w, 6) > today() ? today() : U.addDays(w, 6), a = sumAgg(agg, w, end); (ids || []).forEach(id => { const q = WQ.find(x => x[0] === id); if (!q) return; const [c, t] = q[3](a); if (c >= t) { ev.push({ d: end, a: q[1], x: QX.w, t: 'Missão da semana: ' + q[2], m: 1 }); gold += QG.w; done.push({ d: end, id, w: 1 }); } }); });
-  Object.entries(s.mq || {}).forEach(([ym, ids]) => { const a0 = ym + '-01', e0 = ym + '-' + U.pad(U.dim(ym)), end = e0 > today() ? today() : e0, a = sumAgg(agg, a0, end); (ids || []).forEach(id => { const q = MQ.find(x => x[0] === id); if (!q) return; const [c, t] = q[3](a); if (c >= t) { ev.push({ d: end, a: q[1], x: QX.m, t: 'Campanha do mês: ' + q[2], m: 1 }); gold += QG.m; done.push({ d: end, id, mo: 1 }); } }); });
+// v2.54: as missões nascem das tuas metas: as mais atrasadas e importantes primeiro (e, na conta do Ryan, as que vêm do Projeto de Vida).
+// Sem metas ativas, as missões são para as criar a sério (prazo, etapas, tarefas). Os modelos de cima só aparecem ligados a uma meta da mesma área.
+const MV = 2;
+const short = (s, n = 48) => { s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
+const sf0 = (f, d) => { try { return f(); } catch (e) { return d; } };
+const actGoals = () => OS.all('goals').filter(g => g.status === 'Ativa');
+const gTasks = g => OS.all('tasks').filter(t => t.goal === g.id || (t.project && (OS.get('projects', t.project) || {}).goal === g.id));
+const gInfo = g => sf0(() => OS.Goal.info(g), {});
+const rankGoals = seed => { const r = U.rng(seed); return actGoals().map(g => { const i = gInfo(g); return { g, i, w: (i.late ? 4 : i.behind ? 3 : i.idle ? 2.5 : 1.5) * U.clamp(U.num(g.importance) || 3, 1, 5) * (g.vid ? 1.25 : 1) * (.7 + r() * .6) }; }).sort((a, b) => b.w - a.w); };
+const UC = new Map(), unitsIn = (g, a, b) => { const k = g.id + '|' + a + '|' + b + '|' + CK + '|' + (g._u || ''); if (UC.has(k)) return UC.get(k); if (UC.size > 2000) UC.clear(); const v = sf0(() => OS.Goal.act(g, a, b).u || 0, 0); UC.set(k, v); return v; };
+// quanto a meta tem de andar no período para chegar ao prazo, mais 25% (mínimo 2% na semana, 5% no mês)
+const needPct = (g, i, days) => { const p = U.clamp(i.p || 0, 0, 1); if (p >= 1) return 0; const left = g.due ? Math.max(days, U.diff(g.due, today())) : 365; return Math.round(Math.min((1 - p) * 100, Math.max(days >= 28 ? 5 : 2, (1 - p) * 100 * days / left * 1.25))); };
+const TPL = { d: DQ, w: WQ, m: MQ };
+const cands = (sc, g, i, r) => { const id = 'g:' + g.id + ':', out = [], T = gTasks(g), open = T.filter(t => t.status !== 'Feita').sort((x, y) => (+x.prio || 9) - (+y.prio || 9) || String(x.due || '9').localeCompare(String(y.due || '9'))), st = g.steps || [], todo = st.filter(s => !s.done).length, T0 = today();
+  if (sc === 'd') { if (open.length) out.push(id + 't:' + open[0].id); out.push(st.length < 3 ? id + 'sh:st' : !g.due ? id + 'sh:due' : open.length < 2 ? id + 'sh:tk' : id + 'tn:2'); out.push(id + 'a:2'); }
+  else if (sc === 'w') { if ((i.p || 0) < 1) out.push(id + 'p:' + needPct(g, i, 7)); if (todo) out.push(id + 's:1'); if (open.length >= 3) out.push(id + 'tn:' + Math.min(5, open.length)); out.push(id + 'a:' + Math.max(6, Math.round(unitsIn(g, U.addDays(T0, -28), U.addDays(T0, -1)) / 4 * 1.3))); }
+  else { if ((i.p || 0) < 1) out.push(id + 'p:' + needPct(g, i, 30)); if ((i.p || 0) >= .7) out.push(id + 'done'); if (todo >= 2) out.push(id + 's:' + Math.min(3, todo)); out.push(id + 'a:' + Math.max(20, Math.round(unitsIn(g, U.addDays(T0, -90), U.addDays(T0, -1)) / 3 * 1.3))); }
+  const L = TPL[sc].filter(q => q[1] === goalA(g) && q[4]()); if (L.length) out.splice(Math.min(2, out.length), 0, id + 'k:' + L[Math.floor(r() * L.length)][0]);
+  return out; };
+const vida = () => !!(OS.Vida && OS.Vida.has());
+const SETUP = { d: () => [vida() ? 'v:act' : 'v:new', 'v:steps', 'v:tasks'], w: () => ['v:new3', 'v:steps', 'v:link'], m: () => ['v:new3', vida() ? 'v:act' : 'v:link', 'v:tasks'] };
+const genIds = (sc, key) => { const R = rankGoals(sc + 'g' + key); if (!R.length) return SETUP[sc]();
+  const r = U.rng(sc + 'q2' + key), C = R.slice(0, 4).map(x => cands(sc, x.g, x.i, r)), out = [];
+  for (let k = 0; out.length < 3 && k < 6; k++) for (const L of C) { if (out.length >= 3) break; const id = L[k]; if (id && !out.includes(id)) out.push(id); }
+  if (sc === 'm' && vida() && OS.Vida.activeGoals().length < 3) out[Math.min(out.length, 2)] = 'v:act';
+  while (out.length < 3) { const x = SETUP[sc]().find(id => !out.includes(id)); if (!x) break; out.push(x); }
+  return out.slice(0, 3); };
+const iso = ts => ts ? U.iso(new Date(ts)) : '';
+const pAt = (r, d) => { let v = r.b != null ? r.b : 0, s = r.bs || 0; (r.h || []).forEach(([dd, vv, ss]) => { if (dd <= d) { v = vv; s = ss || 0; } }); return [v, s]; };
+// uma missão: quanto já fizeste (c) de quanto (n), no período [from, to]
+const mev = (id, sc, from, to, agg) => { id = String(id || '');
+  if (id.startsWith('g:')) { const [, gid, ty, x] = id.split(':'), g = OS.get('goals', gid); if (!g) return { c: 0, n: 1, t: 'Missão de uma meta que já não existe', a: 'disciplina', gid: '' };
+    const a = goalA(g), nm = '«' + short(g.title) + '»', inP = d => !!d && d >= from && d <= to;
+    switch (ty) {
+      case 't': { const t = OS.get('tasks', x); return { c: t && t.status === 'Feita' && inP(t.doneAt) ? 1 : 0, n: 1, t: `Faz "${short(t ? t.title : 'tarefa apagada', 60)}" · meta ${nm}`, a, gid }; }
+      case 'tn': return { c: gTasks(g).filter(t => t.status === 'Feita' && inP(t.doneAt)).length, n: +x, t: `${x} tarefas da meta ${nm}`, a, gid };
+      case 'a': return { c: unitsIn(g, from, to), n: +x, t: `${x} ações pela meta ${nm} (tarefas, estudo, treinos, blocos da rotina…)`, a, gid };
+      case 'p': { const r = (S().gp || {})[gid], c = r ? Math.max(0, pAt(r, to)[0] - pAt(r, U.addDays(from, -1))[0]) : 0; return { c: U.r1(c), n: +x, t: `Avança ${x}% na meta ${nm}`, a, gid }; }
+      case 's': { const r = (S().gp || {})[gid], c = r ? Math.max(0, pAt(r, to)[1] - pAt(r, U.addDays(from, -1))[1]) : 0; return { c, n: +x, t: `${+x === 1 ? 'Uma etapa' : x + ' etapas'} da meta ${nm}`, a, gid }; }
+      case 'done': return { c: g.status === 'Concluída' && inP(g.doneAt || iso(g._u)) ? 1 : 0, n: 1, t: `Cumpre a meta ${nm}`, a, gid };
+      case 'k': { const q = TPL[sc].find(z => z[0] === x); if (!q) return null; const [c, n] = q[3](agg); return { c, n, t: `${q[2]} · pela meta ${nm}`, a: q[1], gid }; }
+      case 'sh': return x === 'st' ? { c: Math.min(3, (g.steps || []).length), n: 3, t: `Divide a meta ${nm} em 3 etapas ou mais`, a, gid, live: 1 } : x === 'due' ? { c: g.due ? 1 : 0, n: 1, t: `Dá um prazo à meta ${nm}`, a, gid, live: 1 }
+        : { c: gTasks(g).filter(t => inP(iso(t._c))).length, n: 3, t: `Cria 3 tarefas concretas para a meta ${nm}`, a, gid };
+      default: return null; } }
+  if (id.startsWith('v:')) { const G = OS.all('goals'), inP = r => { const d = iso(r._c); return d >= from && d <= to; };
+    switch (id.slice(2)) {
+      case 'new': return { c: G.some(g => inP(g) && g.due) ? 1 : 0, n: 1, t: 'Cria uma meta a sério: com prazo e porquê', a: 'disciplina', href: 'metas' };
+      case 'new3': return { c: Math.min(3, G.filter(g => g.status === 'Ativa' && g.due).length), n: 3, t: 'Tem 3 metas ativas, todas com prazo', a: 'disciplina', href: 'metas', live: 1 };
+      case 'steps': return { c: G.some(g => g.status === 'Ativa' && (g.steps || []).length >= 3) ? 1 : 0, n: 1, t: 'Divide uma meta em 3 etapas ou mais', a: 'disciplina', href: 'metas', live: 1 };
+      case 'tasks': return { c: Math.min(3, OS.all('tasks').filter(t => inP(t) && (t.goal || (OS.get('projects', t.project) || {}).goal)).length), n: 3, t: 'Liga 3 tarefas novas a uma meta', a: 'disciplina', href: 'tarefas' };
+      case 'link': return { c: OS.all('projects').some(p => p.goal && (inP(p) || (iso(p._u) >= from && iso(p._u) <= to))) ? 1 : 0, n: 1, t: 'Liga um projeto a uma meta', a: 'disciplina', href: 'projetos' };
+      case 'act': return { c: G.some(g => g.vid && inP(g)) ? 1 : 0, n: 1, t: 'Torna um objetivo do Projeto de Vida numa meta (com prazo e 3 etapas)', a: 'disciplina', href: 'dominus.vida' };
+      default: return null; } }
+  // as antigas (até à v2.53): continuam a contar no histórico
+  const q = TPL[sc].find(z => z[0] === id); if (!q) return null; const [c, n] = q[3](agg); return { c, n, t: q[2], a: q[1] }; };
+const misA = id => { id = String(id || ''); if (id.startsWith('g:')) { const p = id.split(':'), g = OS.get('goals', p[1]); if (p[2] === 'k') { const q = DQ.find(z => z[0] === p[3]); if (q) return q[1]; } return g ? goalA(g) : 'disciplina'; }
+  if (id.startsWith('v:')) return 'disciplina'; const q = DQ.concat(WQ, MQ).find(x => x[0] === id); return q ? q[1] : 'disciplina'; };
+// ao mudar para as missões das metas, as de hoje, desta semana e deste mês (e o chefe e o colosso) são escolhidos de novo
+const migMis = () => { const s = S(); if (s.mv === MV) return; const T = today(); delete s.q[T]; delete s.wq[wkOf(T)]; if (s.mq) delete s.mq[T.slice(0, 7)]; if (s.boss) delete s.boss[wkOf(T)]; if (s.col) delete s.col[T.slice(0, 7)]; s.mv = MV; qsave(); };
+D.dailyIds = (d = today()) => { const s = S(); if (!s.q[d]) { s.q[d] = genIds('d', d); Object.keys(s.q).sort().slice(0, -45).forEach(k => delete s.q[k]); save(); } return s.q[d]; };
+D.monthlyIds = (ym = today().slice(0, 7)) => { const s = S(); s.mq = s.mq || {}; if (!s.mq[ym]) { s.mq[ym] = genIds('m', ym); Object.keys(s.mq).sort().slice(0, -24).forEach(k => delete s.mq[k]); save(); } return s.mq[ym]; };
+D.weeklyIds = (w = wkOf(today())) => { const s = S(); if (!s.wq[w]) { s.wq[w] = genIds('w', w); Object.keys(s.wq).sort().slice(0, -26).forEach(k => delete s.wq[k]); save(); } return s.wq[w]; };
+// "live": o que só se vê no estado de agora (etapas, prazo, 3 metas): fica registado no dia em que o cumpres
+const misHist = agg => { const s = S(), ev = [], done = [], T = today(), PRE = { d: 'Missão: ', w: 'Missão da semana: ', m: 'Campanha do mês: ' }; let gold = 0, rec = 0; s.qd = s.qd && typeof s.qd === 'object' ? s.qd : {};
+  const run = (sc, key, ids, from, to, a) => { let n = 0; (ids || []).forEach(id => { const r = sf0(() => mev(id, sc, from, to, a), null); if (!r) return; let ok = r.c >= r.n;
+      if (r.live) { const lk = sc + key + '|' + id; if (ok && to >= T && !s.qd[lk]) { s.qd[lk] = T; rec++; } ok = !!s.qd[lk]; }
+      if (ok) { n++; ev.push({ d: to, a: r.a, x: QX[sc], t: PRE[sc] + r.t, m: 1, g: r.gid || 0 }); gold += QG[sc]; done.push(Object.assign({ d: to, id }, sc === 'w' ? { w: 1 } : sc === 'm' ? { mo: 1 } : {})); } }); return n; };
+  Object.entries(s.q || {}).forEach(([d, ids]) => { if (run('d', d, ids, d, d, agg[d] || {}) >= 3) gold += QG.all; });
+  Object.entries(s.wq || {}).forEach(([w, ids]) => { const end = U.addDays(w, 6) > T ? T : U.addDays(w, 6); run('w', w, ids, w, end, sumAgg(agg, w, end)); });
+  Object.entries(s.mq || {}).forEach(([ym, ids]) => { const a0 = ym + '-01', e0 = ym + '-' + U.pad(U.dim(ym)), end = e0 > T ? T : e0; run('m', ym, ids, a0, end, sumAgg(agg, a0, end)); });
+  if (rec) { const K = Object.keys(s.qd); if (K.length > 300) K.sort((a, b) => String(s.qd[a]).localeCompare(String(s.qd[b]))).slice(0, K.length - 300).forEach(k => delete s.qd[k]); qsave(); }
   return { ev, gold, n: done.length, done }; };
-D.missions = () => { const st = D.state(), T = today(), w = wkOf(T), a = st.agg[T] || {}, wa = sumAgg(st.agg, w, T);
-  const dl = D.dailyIds().map(id => { const q = DQ.find(x => x[0] === id); if (!q) return null; const [c, t] = q[3](a); return { id, a: q[1], t: q[2], c: Math.min(c, t), n: t, ok: c >= t, x: QX.d, g: QG.d }; }).filter(Boolean);
-  const wl = D.weeklyIds().map(id => { const q = WQ.find(x => x[0] === id); if (!q) return null; const [c, t] = q[3](wa); return { id, a: q[1], t: q[2], c: Math.min(c, t), n: t, ok: c >= t, x: QX.w, g: QG.w }; }).filter(Boolean);
-  const ym = T.slice(0, 7), ma = sumAgg(st.agg, ym + '-01', T), ml = D.monthlyIds().map(id => { const q = MQ.find(x => x[0] === id); if (!q) return null; const [c, t] = q[3](ma); return { id, a: q[1], t: q[2], c: Math.min(c, t), n: t, ok: c >= t, x: QX.m, g: QG.m }; }).filter(Boolean);
-  return { dl, wl, ml, left: U.diff(U.addDays(w, 7), T), mleft: U.dim(ym) - +T.slice(8, 10) + 1 }; };
+D.missions = () => { const st = D.state(), T = today(), w = wkOf(T), ym = T.slice(0, 7), s = S(), qd = s.qd || {};
+  const rows = (sc, key, ids, from, to, a) => ids.map(id => { const r = sf0(() => mev(id, sc, from, to, a), null); if (!r) return null; const ok = r.c >= r.n || (r.live && !!qd[sc + key + '|' + id]);
+    return { id, a: r.a, t: r.t, c: Math.min(r.c, r.n), n: r.n, ok, x: QX[sc], g: QG[sc], gid: r.gid || '', href: r.href || '' }; }).filter(Boolean);
+  return { dl: rows('d', T, D.dailyIds(), T, T, st.agg[T] || {}), wl: rows('w', w, D.weeklyIds(), w, T, sumAgg(st.agg, w, T)), ml: rows('m', ym, D.monthlyIds(), ym + '-01', T, sumAgg(st.agg, ym + '-01', T)), left: U.diff(U.addDays(w, 7), T), mleft: U.dim(ym) - +T.slice(8, 10) + 1, goals: actGoals().length }; };
 // o monstro do dia: as 3 missões de hoje são os 3 golpes que o matam
-D.monsterOf = (d = today()) => { const ids = (S().q || {})[d] || D.dailyIds(d), q = DQ.find(x => x[0] === ids[0]), a = q ? q[1] : 'disciplina', L = OS.Monstros ? OS.Monstros.ofA(a) : []; return L.length ? L[U.hash('mo' + d) % L.length] : ''; };
+D.monsterOf = (d = today()) => { const ids = (S().q || {})[d] || D.dailyIds(d), a = misA(ids[0]), L = OS.Monstros ? OS.Monstros.ofA(a) : []; return L.length ? L[U.hash('mo' + d) % L.length] : ''; };
 D.kills = () => { const s = S(), st = D.state(), k = {}; st.mis.done.filter(x => !x.w && !x.mo).forEach(x => { k[x.d] = (k[x.d] || 0) + 1; }); const out = {}; Object.entries(k).forEach(([d, n]) => { if (n >= ((s.q || {})[d] || []).length && n >= 3) { const m = D.monsterOf(d); if (m) out[m] = (out[m] || 0) + 1; } }); return out; };
 
 /* ================= CHEFE DA SEMANA ================= */
 const BOSS = { corpo: ['Golem da Preguiça', 'Pesa toneladas e alimenta-se de sofá.'], mente: ['Hidra da Distração', 'Cada notificação faz-lhe nascer uma cabeça nova.'], intelecto: ['Sombra da Ignorância', 'Cresce em cada página que não abres.'],
   fortuna: ['Dragão do Desperdício', 'Dorme em cima do teu dinheiro mal gasto.'], relacoes: ['Espectro do Isolamento', 'Afasta-te de quem gostas, um dia de cada vez.'], espirito: ['O Vazio', 'Enche-se quando deixas de alimentar a alma.'],
   carreira: ['Titã da Estagnação', 'Quer que fiques sempre no mesmo sítio.'], disciplina: ['Lorde da Procrastinação', '"Amanhã." Sempre amanhã.'] };
-D.bossOf = (w = wkOf(today())) => { const s = S(); if (s.boss[w]) return s.boss[w]; const st = D.state(), prevW = U.addDays(w, -7);
-  const xpIn = (k, a, b) => st.all.filter(e => e.a === k && e.d >= a && e.d <= b).reduce((x, e) => x + e.x, 0);
-  const usedK = AK.filter(k => st.all.some(e => e.a === k && e.d >= U.addDays(w, -42))), pool = usedK.length >= 3 ? usedK : AK;
-  const k = pool.slice().sort((a, b) => xpIn(a, prevW, U.addDays(w, -1)) - xpIn(b, prevW, U.addDays(w, -1)))[0];
-  const t = Math.min(3, Object.keys(s.boss).filter(x => x < w && s.boss[x].a === k && s.boss[x].won).length), avg = xpIn(k, U.addDays(w, -28), U.addDays(w, -1)) / 4, hp = Math.max(3000, Math.round((avg * 1.5 + 2500) * (1 + t * .2) / 100) * 100);
-  s.boss[w] = { a: k, hp, t }; Object.keys(s.boss).sort().slice(0, -30).forEach(x => delete s.boss[x]); qsave(); return s.boss[w]; };
-D.bossFight = (w = wkOf(today())) => { const b = D.bossOf(w), st = D.state(), end = U.addDays(w, 6), L = st.all.filter(e => e.d >= w && e.d <= end && !e.m);
-  let dmg = 0; const hits = {}; L.forEach(e => { const v = e.a === b.a ? e.x : e.x * .25; dmg += v; hits[e.a] = (hits[e.a] || 0) + v; });
+// v2.54: o chefe guarda uma das tuas metas (a mais atrasada e importante). O XP dessa meta dá dano inteiro; o das outras metas,
+// marcos e objetivos de vida dá metade; o resto do dia a dia só 10%. Missões e o que já tinhas feito antes não contam.
+const hitW = (b, e) => e.m || e.pre ? 0 : b.v !== 2 ? (e.a === b.a ? 1 : .25) : b.gid ? (e.g === b.gid ? 1 : e.g ? .5 : .1) : (e.g ? 1 : .1);
+D.bossOf = (w = wkOf(today())) => { const s = S(); if (s.boss[w]) return s.boss[w]; const st = D.state(), R = rankGoals('boss' + w), g = R.length ? R[0].g : null, k = g ? goalA(g) : 'disciplina';
+  const avg = st.all.filter(e => e.d >= U.addDays(w, -28) && e.d <= U.addDays(w, -1)).reduce((x, e) => x + e.x * hitW({ v: 2 }, e), 0) / 4;
+  const t = Math.min(3, Object.keys(s.boss).filter(x => x < w && s.boss[x].a === k && s.boss[x].won).length), hp = Math.max(3000, Math.round((avg * 1.3 + 2000) * (1 + t * .2) / 100) * 100);
+  s.boss[w] = { a: k, hp, t, v: 2, gid: g ? g.id : '' }; Object.keys(s.boss).sort().slice(0, -30).forEach(x => delete s.boss[x]); qsave(); return s.boss[w]; };
+D.bossFight = (w = wkOf(today())) => { const b = D.bossOf(w), st = D.state(), end = U.addDays(w, 6), L = st.all.filter(e => e.d >= w && e.d <= end);
+  let dmg = 0; const hits = {}; L.forEach(e => { const v = e.x * hitW(b, e); if (!v) return; dmg += v; hits[e.a] = (hits[e.a] || 0) + v; });
   dmg = Math.round(dmg); const dead = dmg >= b.hp; if (dead && !b.won) { b.won = 1; }
-  const mo = OS.Monstros, mid = mo ? mo.bossOf(b.a) : '', t = b.t | 0; return { w, a: b.a, hp: b.hp, dmg, left: Math.max(0, b.hp - dmg), dead, over: end < today(), hits, t, mid, name: mid ? mo.name(mid, t) : BOSS[b.a][0], lore: mid ? mo.ALL[mid].lore : BOSS[b.a][1] }; };
-// o colosso do mês: só cai com o XP de um mês inteiro (todas as áreas contam)
-D.colossus = (ym = today().slice(0, 7)) => { const s = S(); s.col = s.col || {}; const st = D.state(), a0 = ym + '-01', e0 = ym + '-' + U.pad(U.dim(ym)), mo = OS.Monstros;
-  if (!s.col[ym]) { const prev = [1, 2, 3].map(k => { const d = new Date(+ym.slice(0, 4), +ym.slice(5, 7) - 1 - k, 1), y = U.iso(d).slice(0, 7); return st.all.filter(e => !e.m && e.d.slice(0, 7) === y).reduce((x, e) => x + e.x, 0); }), avg = prev.reduce((x, v) => x + v, 0) / 3;
-    s.col[ym] = { hp: Math.max(60000, Math.round(avg * 1.15 / 1000) * 1000), i: (+ym.slice(0, 4) * 12 + +ym.slice(5, 7)) % 12 }; Object.keys(s.col).sort().slice(0, -24).forEach(k => delete s.col[k]); qsave(); }
-  const c = s.col[ym], dmg = Math.round(st.all.filter(e => !e.m && e.d >= a0 && e.d <= e0).reduce((x, e) => x + e.x, 0)), mid = mo ? mo.COLOSSI[c.i % mo.COLOSSI.length] : '';
-  return { ym, hp: c.hp, dmg, left: Math.max(0, c.hp - dmg), dead: dmg >= c.hp, over: e0 < today(), mid, name: mid ? mo.ALL[mid].n : 'Colosso', lore: mid ? mo.ALL[mid].lore : '' }; };
+  const mo = OS.Monstros, mid = mo ? mo.bossOf(b.a) : '', t = b.t | 0, g = b.gid ? OS.get('goals', b.gid) : null;
+  return { w, a: b.a, hp: b.hp, dmg, left: Math.max(0, b.hp - dmg), dead, over: end < today(), hits, t, mid, v: b.v | 0, gid: b.gid || '', goal: g ? g.title : '', name: mid ? mo.name(mid, t) : BOSS[b.a][0], lore: mid ? mo.ALL[mid].lore : BOSS[b.a][1] }; };
+// o colosso do mês: só o que te aproxima dos objetivos dá dano inteiro (o resto 10%); a vida vem dessa média dos últimos 3 meses, +15%
+D.colossus = (ym = today().slice(0, 7)) => { const s = S(); s.col = s.col || {}; const st = D.state(), a0 = ym + '-01', e0 = ym + '-' + U.pad(U.dim(ym)), mo = OS.Monstros, W = (c, e) => e.m || e.pre ? 0 : c.v !== 2 ? 1 : e.g ? 1 : .1;
+  if (!s.col[ym]) { const prev = [1, 2, 3].map(k => { const d = new Date(+ym.slice(0, 4), +ym.slice(5, 7) - 1 - k, 1), y = U.iso(d).slice(0, 7); return st.all.filter(e => e.d.slice(0, 7) === y).reduce((x, e) => x + e.x * W({ v: 2 }, e), 0); }), avg = prev.reduce((x, v) => x + v, 0) / 3;
+    s.col[ym] = { hp: Math.max(20000, Math.round(avg * 1.15 / 1000) * 1000), i: (+ym.slice(0, 4) * 12 + +ym.slice(5, 7)) % 12, v: 2 }; Object.keys(s.col).sort().slice(0, -24).forEach(k => delete s.col[k]); qsave(); }
+  const c = s.col[ym], dmg = Math.round(st.all.filter(e => e.d >= a0 && e.d <= e0).reduce((x, e) => x + e.x * W(c, e), 0)), mid = mo ? mo.COLOSSI[c.i % mo.COLOSSI.length] : '';
+  return { ym, hp: c.hp, dmg, left: Math.max(0, c.hp - dmg), dead: dmg >= c.hp, over: e0 < today(), v: c.v | 0, mid, name: mid ? mo.ALL[mid].n : 'Colosso', lore: mid ? mo.ALL[mid].lore : '' }; };
 const colossiWon = () => Object.keys(S().col || {}).filter(ym => { try { return D.colossus(ym).dead; } catch (e) { return false; } });
 const bossesWon = () => Object.keys(S().boss || {}).filter(w => { try { return D.bossFight(w).dead; } catch (e) { return false; } });
 
@@ -320,8 +383,10 @@ const counts = st => { const c = {}; const n = (coll, f) => OS.all(coll).filter(
   c.balanced = Math.min(...AK.map(k => st.lv[k].l)); c.adv = OS.all('adventures').filter(a => a.status === 'Feita').length; c.paises = OS.Mundo ? OS.Mundo.stats().n : 0; c.perfect = st.base.filter(e => /^Dia perfeito/.test(e.t)).length;
   c.longRun = Math.max(0, ...OS.all('runs').map(r => U.num(r.km))); c.focusH = Math.round((U.sum(OS.all('focusblocks'), f => U.num(f.minutes)) + U.sum(OS.all('trees').filter(t => t.alive !== false), t => U.num(t.mins))) / 60);
   c.apps = OS.all('applications').filter(a => a.status !== 'Por enviar').length; c.answered = OS.all('prayers').filter(p => p.status === 'Respondida').length; c.colossi = colossiWon().length;
-  c.kills = Object.values(D.kills()).reduce((a, v) => a + v, 0); c.campaigns = st.mis.done.filter(x => x.mo).length; c.classes = Object.keys(S().clsSeen || {}).length; return c; };
-const ACH = [['treinos', 'Forjado no Ferro', 'treinos', 'workouts', [25, 100, 250, 500, 1000], 'dumbbell'], ['km', 'Pernas de Aço', 'km corridos', 'km', [50, 250, 750, 1500, 3000], 'run'], ['longa', 'Ultra', 'km na corrida mais longa', 'longRun', [10, 21.1, 42.2, 50, 100], 'run'],
+  c.kills = Object.values(D.kills()).reduce((a, v) => a + v, 0); c.campaigns = st.mis.done.filter(x => x.mo).length; c.classes = Object.keys(S().clsSeen || {}).length;
+  c.goalsDone = n('goals', g => g.status === 'Concluída'); c.stepsDone = U.sum(OS.all('goals').filter(g => g.status !== 'Abandonada'), g => (g.steps || []).filter(x => x.done).length); c.vida = OS.Vida && OS.Vida.has() ? OS.Vida.count().done : 0; return c; };
+const ACH = [['metas', 'Conquistador', 'metas cumpridas', 'goalsDone', [1, 5, 15, 40, 100], 'target'], ['etapas', 'Passo a Passo', 'etapas feitas nas metas', 'stepsDone', [10, 50, 150, 400, 1000], 'flag'], ['vida', 'Projeto de Vida', 'objetivos de vida conquistados', 'vida', [5, 25, 100, 300, 600], 'compass'],
+  ['treinos', 'Forjado no Ferro', 'treinos', 'workouts', [25, 100, 250, 500, 1000], 'dumbbell'], ['km', 'Pernas de Aço', 'km corridos', 'km', [50, 250, 750, 1500, 3000], 'run'], ['longa', 'Ultra', 'km na corrida mais longa', 'longRun', [10, 21.1, 42.2, 50, 100], 'run'],
   ['estudo', 'Mente Afiada', 'horas de estudo', 'studyH', [25, 150, 500, 1000, 2500], 'book'], ['livros', 'Devorador de Livros', 'livros lidos', 'books', [3, 12, 30, 60, 120], 'book'], ['foco', 'Monge do Foco', 'horas de foco', 'focusH', [25, 150, 500, 1000, 2500], 'brain'],
   ['arvores', 'Guardião da Floresta', 'árvores plantadas', 'trees', [25, 150, 500, 1000, 2500], 'tree'], ['devos', 'Raízes Profundas', 'devocionais', 'devos', [30, 100, 365, 730, 1500], 'sun'], ['oracoes', 'Fé Respondida', 'orações respondidas', 'answered', [1, 5, 15, 40, 100], 'sun'],
   ['social', 'Coração Presente', 'momentos e contactos', 'social', [10, 60, 200, 500, 1000], 'users'], ['tarefas', 'Executor', 'tarefas concluídas', 'tasks', [100, 500, 1500, 4000, 10000], 'check'], ['horas', 'Mãos à Obra', 'horas trabalhadas', 'workH', [100, 500, 1500, 4000, 10000], 'briefcase'],
@@ -1134,7 +1199,7 @@ OS.on('unlock', () => setTimeout(() => { if (!FLY) flyNow(true); }, 3000));
 /* ================= VISTAS ================= */
 const ic = (n, c = '') => UI.ic(n, c);
 const bar = (p, c) => `<div class="d3-bar"><i style="width:${(Math.max(0, Math.min(1, p || 0)) * 100).toFixed(1)}%${c ? ';background:' + c : ''}"></i></div>`;
-const TABS = [['', 'Herói', 'user'], ['missoes', 'Missões', 'target'], ['chefe', 'Chefe', 'sword'], ['bestiario', 'Bestiário', 'skull'], ['conquistas', 'Conquistas', 'star'], ['baus', 'Baús', 'gift'], ['visual', 'Visual', 'eye'], ['marcos', 'Marcos', 'flag'], ['diario', 'Diário', 'note']];
+const TABS = [['', 'Herói', 'user'], ['missoes', 'Missões', 'target'], ['vida', 'Vida', 'compass'], ['chefe', 'Chefe', 'sword'], ['bestiario', 'Bestiário', 'skull'], ['conquistas', 'Conquistas', 'star'], ['baus', 'Baús', 'gift'], ['visual', 'Visual', 'eye'], ['marcos', 'Marcos', 'flag'], ['diario', 'Diário', 'note']];
 const MOODT = { chamas: ['Em chamas', 'Fizeste algo hoje. O teu herói sorri.'], forma: ['Em forma', 'Registaste algo há pouco tempo.'], cansado: ['Cansado', 'Há uns dias que não registas nada. O teu herói sente.'], abatido: ['Abatido', 'Volta hoje: um registo chega para ele se levantar.'] };
 const goLink = ([to, l]) => to === '@social' ? `<button type="button" class="d3-go" data-act="d3Social">${ic('plus')}${esc(l)}</button>` : `<a class="d3-go" href="#${to}">${esc(l)}</a>`;
 const xpTxt = n => U.nf(Math.round(n));
@@ -1154,16 +1219,22 @@ T.heroi = st => { const s = S(), H = st.H, md = MOODT[st.mood] || MOODT.forma, M
       <div class="d3-chips"><span title="Dias seguidos com algum registo">${ic('flame')}<b class="mono">${st.streak}</b> ${st.streak === 1 ? 'dia' : 'dias'} seguidos</span><span>${ic('coin')}<b class="mono">${U.nf(st.gold)}</b> ouro</span><span class="d3-mood ${st.mood}" title="${esc(md[1])}">${esc(md[0])}</span></div>
       <p class="dm d3-moodp">${esc(md[1])}</p></div></section>
   <section class="d3-today"><div class="d3-h"><span class="cz">Hoje</span><span class="dm mono">${tx ? '+' + xpTxt(tx) + ' XP' : ''}${wx ? ' · +' + xpTxt(wx) + ' esta semana' : ''}</span></div>
-    <p class="dm d3-rule">O XP a sério vem do que te aproxima dos objetivos: cada 1% que uma meta avança, etapas e marcos cumpridos, tarefas e projetos ligados a uma meta, metas cumpridas. O resto do dia a dia vale pouco, e quase nada numa área onde ainda não tens uma meta. <a href="#metas">Ver as metas</a></p>
+    <p class="dm d3-rule">O XP a sério vem do que te aproxima dos objetivos: cada 1% que uma meta avança, etapas e marcos cumpridos, tarefas e projetos ligados a uma meta, metas e objetivos de vida conquistados. As missões, o chefe da semana e o colosso do mês saem das tuas metas. O resto do dia a dia vale pouco, e quase nada numa área onde ainda não tens uma meta. <a href="#metas">Ver as metas</a></p>
+    ${M.goals ? '' : `<p class="d3-nogoal">${ic('target')}<span><b>Sem metas ativas, não há missões a sério.</b> As de hoje são para criares a primeira meta (prazo, 3 etapas, tarefas ligadas).${OS.Vida && OS.Vida.has() ? ' Começa por um objetivo do teu <a href="#dominus.vida">Projeto de Vida</a>.' : ''}</span></p>`}
     ${tx ? `<div class="d3-gain">${AK.filter(k => st.todayX[k] > 0).map(k => `<span style="--c:${AO[k].c}">${ic(AO[k].ic)}+${xpTxt(st.todayX[k])} ${esc(AO[k].n)}</span>`).join('')}</div>` : '<p class="dm">Ainda nada hoje. Regista qualquer coisa no Prumo (um treino, estudo, um gasto, um devocional…) e o teu herói ganha XP na hora.</p>'}
     <div class="d3-mini">${M.dl.map(m => `<a href="#dominus.missoes" class="${m.ok ? 'ok' : ''}" style="--c:${AO[m.a].c}"><i>${m.ok ? '✓' : ''}</i><span>${esc(m.t)}</span><small class="mono">${U.nf(m.c)}/${U.nf(m.n)}</small></a>`).join('')}</div></section>
+  ${vdCard()}
   <section><div class="d3-h"><span class="cz">Atributos</span><span class="dm">sobem sozinhos com o que fazes</span></div><div class="d3-attrs">${AT.map(a => { const l = st.lv[a.k], nx = nextLook(a.k, l.l);
     return `<details class="d3-at" data-tog="d3at_${a.k}" ${OS.ui['tog_d3at_' + a.k] ? 'open' : ''} style="--c:${a.c}"><summary><span class="d3-ati">${ic(a.ic)}</span><span class="d3-atn"><b>${esc(a.n)}</b><small class="dm">${esc(LOOKS[a.k][tierOf(l.l)])}</small></span><b class="mono d3-atl">${l.l}</b>${bar(l.p, a.c)}<small class="dm mono d3-atx">${xpTxt(l.into)}/${xpTxt(l.need)} XP${st.wkX[a.k] ? ` · +${xpTxt(st.wkX[a.k])} esta semana` : ''}</small></summary>
       <div class="d3-atd"><p>${esc(a.d)}</p>${nx ? `<p class="dm">No nível ${nx.lv}: <b>${esc(nx.n)}</b> no teu personagem.</p>` : '<p class="gold">Visual máximo deste atributo.</p>'}<div class="d3-gos">${a.go.map(goLink).join('')}</div></div></details>`; }).join('')}</div></section>
   <section class="d3-two"><div class="d3-card"><div class="d3-h"><span class="cz">Equilíbrio</span><span class="dm">${esc(st.clsFull)}${st.cls !== 'Sem classe' ? ' · ' + esc(st.clsN) : ''}</span></div>${radar(st)}${CLS[st.cls] ? `<p class="dm d3-note">${esc(CLS[st.cls].d)}. ${st.clsR < 5 ? `Grau ${ROM[st.clsR]} no herói nível ${CRANK[st.clsR][0]}.` : 'Grau máximo.'}</p>` : ''}</div>
     <div class="d3-card"><div class="d3-h"><span class="cz">Últimos ganhos</span><a class="dm" href="#dominus.diario">diário →</a></div>${feed.length ? `<div class="d3-feed">${feed.map(e => `<div><i style="background:${AO[e.a].c}"></i><span>${esc(e.t)}</span><small class="mono">${U.fmtDS(e.d)} · +${xpTxt(e.x)}</small></div>`).join('')}</div>` : '<p class="dm">Quando registares algo aparece aqui.</p>'}</div></section>`; };
 
-const mRow = m => `<div class="d3-m ${m.ok ? 'ok' : ''}" style="--c:${AO[m.a].c}"><i>${m.ok ? '✓' : ic(AO[m.a].ic)}</i><div><b>${esc(m.t)}</b>${bar(m.c / m.n, AO[m.a].c)}<small class="dm"><span class="mono">${U.nf(m.c)}/${U.nf(m.n)}</span> · ${esc(AO[m.a].n)} · +${U.nf(m.x)} XP · +${m.g} ouro</small></div>${m.ok ? '<span class="d3-ok cz">Feita</span>' : `<span class="d3-gos">${goLink(AO[m.a].go[0])}</span>`}</div>`;
+const vdCard = () => { if (!OS.Vida || !OS.Vida.has()) return ''; const c = OS.Vida.count(), nx = OS.Vida.next().slice(0, 3), sg = OS.Vida.sugs().length;
+  return `<section class="d3-card vd-hero"><div class="d3-h"><span class="cz">Projeto de Vida</span><a class="dm" href="#dominus.vida">abrir →</a></div><p><b class="mono">${U.nf(c.done)}</b> de <span class="mono">${U.nf(c.tot)}</span> objetivos conquistados · <b class="mono">${c.meta}</b> em meta${sg ? ` · <a href="#dominus.vida">${sg} por confirmar</a>` : ''}</p>${bar(c.tot ? c.done / c.tot : 0, 'linear-gradient(90deg,#B08D57,#E8C26A)')}
+    ${nx.length ? `<div class="vd-nx">${nx.map(o => `<button class="d3-go" data-act="vdMeta" data-id="${esc(o.id)}">${esc(o.t)}</button>`).join('')}</div><small class="dm">O próximo de cada eixo: toca para o tornares meta.</small>` : ''}</section>`; };
+const mGo = m => m.gid ? `<a class="d3-go" href="#metas">Ver a meta</a>` : m.href ? `<a class="d3-go" href="#${esc(m.href)}">Abrir</a>` : goLink(AO[m.a].go[0]);
+const mRow = m => `<div class="d3-m ${m.ok ? 'ok' : ''}" style="--c:${AO[m.a].c}"><i>${m.ok ? '✓' : ic(AO[m.a].ic)}</i><div><b>${esc(m.t)}</b>${bar(m.c / m.n, AO[m.a].c)}<small class="dm"><span class="mono">${U.nf(m.c)}/${U.nf(m.n)}</span> · ${esc(AO[m.a].n)} · +${U.nf(m.x)} XP · +${m.g} ouro</small></div>${m.ok ? '<span class="d3-ok cz">Feita</span>' : `<span class="d3-gos">${mGo(m)}</span>`}</div>`;
 T.missoes = st => { const M = D.missions(), all = M.dl.length && M.dl.every(m => m.ok), done = st.mis.done, days = U.lastN(8).slice().reverse().slice(1), mo = OS.Monstros, mid = D.monsterOf(), hits = M.dl.filter(m => m.ok).length, mm = mo && mid ? mo.ALL[mid] : null;
   return `${mm ? `<section class="d3-mon ${all ? 'dead' : ''}" style="--c:${AO[mm.a].c}"><div class="d3-mona">${mo.img(mid, { hurt: hits / 3, dead: all })}</div><div><div class="cz d3-k">Monstro do dia · ${esc(AO[mm.a].n)}</div><h2>${esc(mm.n)}</h2><p class="dm"><i>${esc(mm.lore)}</i></p>
     <div class="d3-hp"><span class="cz">Vida</span>${bar(1 - hits / 3, '#B5483B')}<small class="mono">${3 - hits} / 3</small></div><p>${all ? '<b class="gold">Morto.</b> Fica no teu bestiário.' : `Cada missão de hoje é um golpe. Faltam <b class="mono">${3 - hits}</b>. À meia-noite foge.`}</p></div></section>` : ''}
@@ -1171,18 +1242,18 @@ T.missoes = st => { const M = D.missions(), all = M.dl.length && M.dl.every(m =>
   <section><div class="d3-h"><span class="cz">Missões da semana</span><span class="dm">${M.left > 1 ? M.left + ' dias para acabar' : 'último dia'}</span></div><div class="d3-ms">${M.wl.map(mRow).join('')}</div></section>
   <section><div class="d3-h"><span class="cz">Campanhas do mês</span><span class="dm">${M.mleft > 1 ? M.mleft + ' dias para acabar' : 'último dia'} · +${U.nf(QX.m)} XP cada</span></div><div class="d3-ms d3-camp">${M.ml.map(mRow).join('')}</div></section>
   <section class="d3-card"><div class="d3-h"><span class="cz">Últimos dias</span><span class="dm mono">${st.mis.n} missões cumpridas</span></div><div class="d3-hist">${days.map(d => { const n = done.filter(x => x.d === d && !x.w).length, tot = (S().q[d] || []).length; return `<div><span class="mono dm">${U.fmtDS(d)}</span><span>${tot ? '●'.repeat(n) + '○'.repeat(Math.max(0, tot - n)) : '<small class="dm">sem missões</small>'}</span></div>`; }).join('')}</div>
-    <p class="dm d3-note">As missões são escolhidas pelos teus atributos mais fracos e completam-se sozinhas com o que registas no Prumo. São difíceis de propósito: um dia com as 3 feitas é um dia a sério.</p></section>`; };
+    <p class="dm d3-note">${M.goals ? `As missões saem das tuas ${M.goals} ${M.goals === 1 ? 'meta ativa' : 'metas ativas'}: primeiro as atrasadas e as mais importantes${OS.Vida && OS.Vida.has() ? ' (e as que vêm do Projeto de Vida)' : ''}. Completam-se sozinhas com o que registas: tarefas da meta, avanço medido, etapas, ações da mesma área. São difíceis de propósito.` : 'Sem metas ativas, as missões são para as criar a sério. Quando tiveres metas, cada missão passa a ser um passo de uma delas.'}</p></section>`; };
 
 const bossArt = f => OS.Monstros && f.mid ? OS.Monstros.img(f.mid, { t: f.t, hurt: f.dead ? 0 : f.dmg / f.hp, dead: f.dead && f.over }, 'd3-boss' + (f.dead ? ' dead' : '')) : '';
 T.chefe = st => { const f = D.bossFight(), a = AO[f.a], left = U.diff(U.addDays(f.w, 7), today()), past = Object.keys(S().boss || {}).filter(w => w < f.w).sort().reverse().slice(0, 10), cf = D.colossus(), cl = U.dim(cf.ym) - +today().slice(8, 10) + 1;
   const tot = Object.values(f.hits).reduce((x, v) => x + v, 0) || 1;
-  return `<section class="d3-bossw" style="--c:${a.c}"><div class="d3-bossart">${bossArt(f)}</div><div class="d3-bossi"><div class="cz d3-k">Chefe da semana · ${esc(a.n)}${f.t ? ` · ameaça ${f.t + 1}` : ''}</div><h2>${esc(f.name)}</h2><p class="dm"><i>${esc(f.lore)}</i></p>
+  return `<section class="d3-bossw" style="--c:${a.c}"><div class="d3-bossart">${bossArt(f)}</div><div class="d3-bossi"><div class="cz d3-k">Chefe da semana · ${esc(a.n)}${f.t ? ` · ameaça ${f.t + 1}` : ''}</div><h2>${esc(f.name)}</h2>${f.goal ? `<p class="d3-guard">${ic('target')}Guarda a tua meta <b>${esc(f.goal)}</b></p>` : ''}<p class="dm"><i>${esc(f.lore)}</i></p>
       <div class="d3-hp"><span class="cz">Vida</span>${bar(f.left / f.hp, '#B5483B')}<small class="mono">${U.nf(f.left)} / ${U.nf(f.hp)}</small></div>
       <p>${f.dead ? `<b class="gold">Derrotado!</b> +100 de ouro.` : `Faltam <b class="mono">${U.nf(f.left)}</b> de dano · ${left > 1 ? left + ' dias' : 'último dia'}.`}</p>
-      <p class="dm">Fraco contra <b style="color:${a.c}">${esc(a.n)}</b>: o XP desse atributo dá dano inteiro; os outros dão 25%. As missões não contam: só o que fazes. Cada vez que o vences, volta mais forte.</p><div class="d3-gos">${a.go.map(goLink).join('')}</div></div></section>
+      <p class="dm">${f.v !== 2 ? `Fraco contra <b style="color:${a.c}">${esc(a.n)}</b>: o XP desse atributo dá dano inteiro; os outros dão 25%.` : f.gid ? 'O que fizeres por esta meta dá dano inteiro (tarefas, avanço, etapas, marcos). As outras metas, os marcos do Codex e os objetivos de vida dão metade; o resto do dia a dia só 10%.' : 'Sem metas ativas, só 10% do que fazes lhe chega. Cria uma meta: o XP dela dá dano inteiro.'} As missões e o que já tinhas feito antes não contam. Cada vez que o vences, volta mais forte.</p><div class="d3-gos">${a.go.map(goLink).join('')}</div></div></section>
   <section class="d3-bossw d3-col"><div class="d3-bossart">${OS.Monstros && cf.mid ? OS.Monstros.img(cf.mid, { t: 3, hurt: cf.dead ? 0 : cf.dmg / cf.hp }, 'd3-boss') : ''}</div><div class="d3-bossi"><div class="cz d3-k">Colosso do mês · ${esc(U.fmtYML(cf.ym))}</div><h2>${esc(cf.name)}</h2><p class="dm"><i>${esc(cf.lore)}</i></p>
       <div class="d3-hp"><span class="cz">Vida</span>${bar(cf.left / cf.hp, '#7A2FB0')}<small class="mono">${U.nf(cf.left)} / ${U.nf(cf.hp)}</small></div>
-      <p>${cf.dead ? '<b class="gold">Derrubado!</b> +500 de ouro.' : `Faltam <b class="mono">${U.nf(cf.left)}</b> de dano · ${cl > 1 ? cl + ' dias' : 'último dia'}.`}</p><p class="dm">Todo o XP do mês conta (menos as missões). A vida dele vem da tua média dos últimos 3 meses, mais 15%: para o derrubar tens de fazer mais do que costumas.</p></div></section>
+      <p>${cf.dead ? '<b class="gold">Derrubado!</b> +500 de ouro.' : `Faltam <b class="mono">${U.nf(cf.left)}</b> de dano · ${cl > 1 ? cl + ' dias' : 'último dia'}.`}</p><p class="dm">${cf.v === 2 ? 'Só o que te aproxima dos objetivos dá dano inteiro: metas, etapas, marcos, objetivos de vida. O resto do mês conta 10% (as missões não contam).' : 'Todo o XP do mês conta (menos as missões).'} A vida dele vem da tua média dos últimos 3 meses, mais 15%: para o derrubar tens de fazer mais do que costumas.</p></div></section>
   <section class="d3-card"><div class="d3-h"><span class="cz">Golpes desta semana</span><span class="dm mono">${U.nf(f.dmg)} de dano</span></div>${Object.keys(f.hits).length ? AK.filter(k => f.hits[k]).sort((x, y) => f.hits[y] - f.hits[x]).map(k => `<div class="d3-hit"><span style="color:${AO[k].c}">${esc(AO[k].n)}</span>${bar(f.hits[k] / tot, AO[k].c)}<b class="mono">${U.nf(Math.round(f.hits[k]))}</b></div>`).join('') : '<p class="dm">Ainda nenhum golpe. Cada registo desta semana é um golpe.</p>'}</section>
   ${past.length ? `<section class="d3-card"><div class="d3-h"><span class="cz">Chefes anteriores</span><span class="dm mono">${bossesWon().length} derrotados</span></div>${past.map(w => { const p = D.bossFight(w); return `<div class="d3-past">${OS.Monstros && p.mid ? OS.Monstros.img(p.mid, { t: p.t, dead: !p.dead, aura: false }, 'sm') : ''}<span class="mono dm">${U.fmtDS(w)}</span><span style="color:${AO[p.a].c}">${esc(p.name)}</span><b class="${p.dead ? 'gold' : 'dm'}">${p.dead ? 'derrotado' : 'fugiu'}</b></div>`; }).join('')}</section>` : ''}`; };
 
@@ -1195,6 +1266,7 @@ T.bestiario = st => { const mo = OS.Monstros; if (!mo) return '<p class="dm">Bes
   <section class="d3-card"><div class="d3-h"><span class="cz">Colossos do mês</span><span class="dm mono">${Object.keys(cw).length}/${mo.COLOSSI.length}</span></div><div class="d3-bsts">${mo.COLOSSI.map(id => cell(id, cw[id] || 0, seenC.has(id))).join('')}</div></section>
   <section class="d3-card"><div class="d3-h"><span class="cz">Chefes da semana</span><span class="dm mono">${Object.keys(bw).length}/${mo.BOSSES.length}</span></div><div class="d3-bsts">${mo.BOSSES.map(id => cell(id, bw[id] || 0, seenB.has(id))).join('')}</div></section>
   ${AT.map(a => { const L = mo.ofA(a.k); return `<section class="d3-card"><div class="d3-h"><span class="cz" style="color:${a.c}">${esc(a.n)}</span><span class="dm mono">${L.filter(id => K[id]).length}/${L.length}</span></div><div class="d3-bsts">${L.map(id => cell(id, K[id] || 0, seenM.has(id))).join('')}</div></section>`; }).join('')}`; };
+T.vida = () => OS.Vida ? OS.Vida.view() : '<p class="dm">Indisponível.</p>';
 T.conquistas = () => { const L = D.achievements(), n = L.reduce((a, x) => a + x.t, 0);
   return `<section><div class="d3-h"><span class="cz">Conquistas</span><span class="dm mono">${n}/${L.length * 5} medalhas</span></div><div class="d3-achs">${L.map(a => `<div class="d3-ach t${a.t}"><span class="d3-achi">${ic(a.ic)}</span><div><b>${esc(a.n)}</b><small class="dm">${a.next ? `<span class="mono">${U.nf(a.v)}/${U.nf(a.next)}</span> ${esc(a.u)}` : `<span class="mono">${U.nf(a.v)}</span> ${esc(a.u)} · completa`}</small>${bar(a.next ? a.v / a.next : 1)}<span class="d3-med">${[0, 1, 2, 3, 4].map(i => `<i class="${i < a.t ? 'on m' + i : ''}" title="${TIERN[i]}: ${U.nf(a.th[i])}"></i>`).join('')}</span></div></div>`).join('')}</div>
   <p class="dm d3-note">Bronze, prata, ouro, platina e diamante. O diamante é para poucos: anos de trabalho. Cada medalha dá ouro para o guarda-roupa (${TIERG.join(' / ')}).</p></section>`; };
@@ -1218,9 +1290,10 @@ T.visual = st => { const s = S(), eq = eqOf(st), has = id => (s.owned || []).inc
     return `<button class="d3-item ${on ? 'on' : ''} ${own || can ? '' : 'poor'}" data-act="d3Buy" data-id="${i.id}"><span class="d3-thumb">${D.card(slot === 'head' ? { mini: 1, look: { head: i.v } } : { mini: 1, eq: { [slot]: i.v } })}</span><b>${esc(i.n)}</b><small class="${own ? 'gold' : 'dm'}">${own ? (on ? 'a usar · tirar' : 'teu · usar') : `${ic('coin')}${U.nf(i.p)}`}</small></button>`; }).join('')}</div></section>`).join('')}
   <section class="d3-card"><label class="d3-tog"><input type="checkbox" data-act="d3Fly" ${s.fly !== false ? 'checked' : ''}> Mostrar o +XP no canto quando registo algo noutras páginas</label></section>`; };
 
+const vxOf = p => { const o = {}; if (!OS.VIDAX || !OS.Vida || !OS.Vida.has()) return o; Object.entries(OS.VIDAX).forEach(([vid, [q, j]]) => { if (q !== p) return; const t = (LEG[p] || [])[j], v = (OS.Vida.list().by || {})[vid]; if (t && v) o[t] = v.t; }); return o; };
 T.marcos = () => { const s = S(), p = D.PK.includes(OS.ui.d3Leg) ? OS.ui.d3Leg : 'int', L = legList(p), done = L.filter(t => isDone(p, t)), nxt = L.filter(t => !isDone(p, t)).slice(0, 5), off = (legx().off[p] || []).length, dd = t => (legDone(p).find(m => m.t === t) || {}).d;
   const pf = t => (legDone(p).find(m => m.t === t) || {}).proof;
-  const row = (t, i) => { const au = isDone(p, t) ? null : autoLeg(t); return `<div class="d3-leg ${isDone(p, t) ? 'ok' : ''} ${au ? 'auto' : ''}"><button class="d3-legc" data-act="d3Leg" data-p="${p}" data-t="${esc(t)}" aria-label="${isDone(p, t) ? 'Desmarcar' : au ? 'Verificar' : 'Provar'}: ${esc(t)}">${isDone(p, t) ? '✓' : au && au.ok ? '!' : ''}</button><span class="mono dm">${i + 1}</span><span class="d3-legt">${esc(t)}${isDone(p, t) && dd(t) ? `<small class="gold"> · ${U.fmtD(dd(t))}</small>` : ''}${isDone(p, t) && pf(t) ? `<small class="dm d3-legp">${esc(pf(t))}</small>` : ''}${au ? `<small class="dm d3-legp">${au.ok ? 'Já conseguiste: toca para confirmar' : `Prova automática: <span class="mono">${U.nf(au.c)}/${U.nf(au.n)}</span> ${esc(au.u)}`}</small>${bar(au.c / au.n)}` : ''}</span><button class="d3-legx" data-act="d3LegOff" data-p="${p}" data-t="${esc(t)}" aria-label="Tirar da lista" title="Tirar da lista">${ic('x')}</button></div>`; };
+  const vx = vxOf(p), row = (t, i) => { const au = isDone(p, t) ? null : autoLeg(t), vo = vx[t]; return `<div class="d3-leg ${isDone(p, t) ? 'ok' : ''} ${au ? 'auto' : ''}"><button class="d3-legc" data-act="d3Leg" data-p="${p}" data-t="${esc(t)}" aria-label="${isDone(p, t) ? 'Desmarcar' : au ? 'Verificar' : 'Provar'}: ${esc(t)}">${isDone(p, t) ? '✓' : au && au.ok ? '!' : ''}</button><span class="mono dm">${i + 1}</span><span class="d3-legt">${esc(t)}${isDone(p, t) && dd(t) ? `<small class="gold"> · ${U.fmtD(dd(t))}</small>` : ''}${isDone(p, t) && pf(t) ? `<small class="dm d3-legp">${esc(pf(t))}</small>` : ''}${vo ? `<small class="dm d3-legp vd-cx">${ic('compass')}No Projeto de Vida: ${esc(vo)}</small>` : ''}${au ? `<small class="dm d3-legp">${au.ok ? 'Já conseguiste: toca para confirmar' : `Prova automática: <span class="mono">${U.nf(au.c)}/${U.nf(au.n)}</span> ${esc(au.u)}`}</small>${bar(au.c / au.n)}` : ''}</span><button class="d3-legx" data-act="d3LegOff" data-p="${p}" data-t="${esc(t)}" aria-label="Tirar da lista" title="Tirar da lista">${ic('x')}</button></div>`; };
   return `<nav class="d3-ptabs">${D.PK.map(k => `<button class="${k === p ? 'on' : ''}" data-act="d3LegTab" data-p="${k}" style="--c:${AO[LEGA[k]].c}">${esc(LEGN[k])} <small class="mono">${legDone(k).length}/${legList(k).length}</small></button>`).join('')}</nav>
   <section class="d3-card"><div class="d3-h"><span class="cz">Próximos marcos · ${esc(LEGN[p])}</span><span class="dm">+${U.nf(LEGXP)} XP em ${esc(AO[LEGA[p]].n)} cada · só com prova</span></div>${nxt.length ? nxt.map(t => row(t, L.indexOf(t))).join('') : '<p class="gold">Todos feitos. Lenda.</p>'}</section>
   <section class="d3-card"><div class="d3-h"><span class="cz">Acrescentar um marco</span></div><form class="d3-legadd" data-form="d3LegAdd" data-p="${p}"><input class="field" name="t" placeholder="Ex.: Fazer o Caminho de Santiago" aria-label="Novo marco" required maxlength="160"><select class="field" name="where" aria-label="Onde"><option value="next">A seguir (próximo)</option><option value="end">No fim da lista</option></select><button class="dbtn sm gold">Acrescentar</button></form>
@@ -1250,7 +1323,7 @@ const born = () => { const s = S(), st = D.state();
         ${st.total ? `<p class="d3-start">Pelo que já registaste, começas no <b>nível ${st.H.l}</b> (${esc(st.title)}) com <b class="mono">${xpTxt(st.total)}</b> XP.</p>` : '<p class="d3-start dm">Começas no nível 0. O primeiro registo já te dá XP.</p>'}</div></div>
     <div class="d3-rules"><div>${ic('zap')}<b class="cz">8 atributos</b><span>Corpo, Mente, Intelecto, Fortuna, Relações, Espírito, Carreira e Disciplina. Sobem sozinhos: nunca escolhes onde pôr pontos.</span></div>
       <div>${ic('user')}<b class="cz">A carta muda</b><span>Brilho com o Corpo, aura com a Mente, halo com o Espírito, ouro com a Fortuna, companheiros com as Relações, estandartes com a Disciplina. Bronze, prata, ouro… com o nível.</span></div>
-      <div>${ic('target')}<b class="cz">Missões e monstros</b><span>3 missões difíceis por dia (o monstro do dia), 3 por semana, 3 campanhas por mês, um chefe semanal do teu ponto mais fraco e um colosso por mês.</span></div>
+      <div>${ic('target')}<b class="cz">Missões das tuas metas</b><span>3 missões por dia (o monstro do dia), 3 por semana e 3 campanhas por mês, todas tiradas das tuas metas. O chefe da semana guarda uma meta tua; o colosso do mês só cai com avanço real.</span></div>
       <div>${ic('gift')}<b class="cz">Baús reais</b><span>Cada nível abre um baú com duas recompensas à escolha, da tua lista.</span></div></div></section></div>`; };
 
 const mig4 = () => { const s = S(); if (s.v4) return; s.v4 = 1; Object.values(s.boss || {}).forEach(b => { if (b && b.hp && b.hp < 3000) b.hp *= 10; }); try { const st = D.state(); s.opened = Math.min(s.opened || 0, st.H.l); seeClass(st); s.seen = snap(st); } catch (e) { } qsave(); };
@@ -1265,6 +1338,6 @@ OS.forms.d3Born = (f, v) => { const s = S(); s.name = v('n').slice(0, 24); s.bor
   D.celebrate({ k: 'O herói nasceu', t: s.name || pname0(), s: st.total ? `Começas no nível ${st.H.l} (${st.title}) com tudo o que já fizeste.` : 'Faz as missões de hoje: o XP entra sozinho.', av: 1 }); };
 OS.forms.d3Name = (f, v) => { const s = S(); s.name = v('n').slice(0, 24); save(); UI.toast('Nome guardado', 'pos'); };
 A.d3Fly = b => { const s = S(); s.fly = !!b.checked; save(); };
-D.summary = () => { try { const s = S(); if (!s.born) return ''; const st = D.state(); return `nível ${st.H.l} (${st.title}), classe ${st.clsFull}; ` + AT.map(a => `${a.n} ${st.lv[a.k].l}`).join(', ') + `; ${st.streak} dias seguidos; ${D.chests()} baús por abrir`; } catch (e) { return ''; } };
+D.summary = () => { try { const s = S(); if (!s.born) return ''; const st = D.state(); const vs = OS.Vida && OS.Vida.summary ? OS.Vida.summary() : ''; return `nível ${st.H.l} (${st.title}), classe ${st.clsFull}; ` + AT.map(a => `${a.n} ${st.lv[a.k].l}`).join(', ') + `; ${st.streak} dias seguidos; ${D.chests()} baús por abrir` + (vs ? '; ' + vs : ''); } catch (e) { return ''; } };
 
 })();
