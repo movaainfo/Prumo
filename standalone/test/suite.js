@@ -2120,12 +2120,12 @@ async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis 
   // editar o perfil: foto ou personagem do Dominus
   await E(B, () => { const b = document.querySelector('[data-act=accEdit]'); b && b.click(); }); await B.waitForSelector('form[data-form=accProf]');
   await B.click('form[data-form=accProf] [data-acx=dom]'); await B.waitForSelector('.ac-domg [data-acx=pick]');
-  const gl = await E(B, () => ({ n: document.querySelectorAll('.ac-domg [data-acx=pick]').length, ok: [...document.querySelectorAll('.ac-domg img')].every(i => i.complete && i.naturalWidth === 128) }));
+  const gl = await E(B, () => ({ n: document.querySelectorAll('.ac-domg [data-acx=pick]').length, ok: [...document.querySelectorAll('.ac-domg img')].every(i => i.complete && i.naturalWidth === 128), unl: /derrotares no Dominus/.test(document.querySelector('.ac-domg').textContent) }));
   await B.click('.ac-domg [data-acx=pick]:nth-child(3)'); await sleep(200);
   try { await B.screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'conta-avatar-editar.png') }); } catch (e) { }
   await B.click('form[data-form=accProf] button.pri'); await sleep(1200);
   const av1 = await E(B, () => ({ img: (OS.Acc.profile().img || '').slice(0, 22), bub: !!document.querySelector('.ac-bub .ac-av.im img'), modal: !document.getElementById('modal').hidden }));
-  ok('Editar perfil: escolher um personagem do Dominus (heróis e monstros em pixel art) passa a ser a bolinha do perfil', gl.n >= 16 && gl.ok && av1.img === 'data:image/png;base64,' && av1.bub && !av1.modal, JSON.stringify(Object.assign(gl, av1)));
+  ok('Editar perfil: escolher um personagem do Dominus (heróis e, à medida que os derrotas, monstros e chefes) passa a ser a bolinha do perfil', gl.n >= 12 && gl.unl && gl.ok && av1.img === 'data:image/png;base64,' && av1.bub && !av1.modal, JSON.stringify(Object.assign(gl, av1)));
   // foto: um PNG 400×300 vira um quadrado 160×160 em JPEG
   await E(B, () => document.querySelector('[data-act=accEdit]') ? document.querySelector('[data-act=accEdit]').click() : OS.act.accEdit()); await B.waitForSelector('form[data-form=accProf]');
   const png = await E(B, () => { const c = document.createElement('canvas'); c.width = 400; c.height = 300; const x = c.getContext('2d'); x.fillStyle = '#C0392B'; x.fillRect(0, 0, 400, 300); x.fillStyle = '#F1C40F'; x.fillRect(150, 100, 100, 100); return c.toDataURL('image/png').split(',')[1]; });
@@ -2459,7 +2459,7 @@ async function fundoTests(b) { cur = 'Fundo'; console.log('\n=== Ecrã de entrad
   await p.tap('#lkSw'); await p.waitForSelector('#acc [data-ac=gerir]'); await p.tap('#acc [data-ac=gerir]'); await p.tap('#acc .ac-p[data-ac=editar]'); await p.waitForSelector('#acc [data-acx=dom]');
   const hit = await E(p, () => { const d = document.querySelector('#acc [data-acx=dom]'); d.scrollIntoView({ block: 'center' }); const r = d.getBoundingClientRect(), e = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return e === d || d.contains(e); });
   let chooser = false; p.on('filechooser', () => { chooser = true; }); await p.tap('#acc [data-acx=dom]'); await sleep(500);
-  ok('Editar perfil: "Personagem do Dominus" abre os personagens (e não a galeria de fotos)', hit && !chooser && await E(p, () => { const g = document.querySelector('#acc .ac-domg'); return !g.hidden && g.querySelectorAll('[data-acx=pick]').length > 8; }));
+  ok('Editar perfil: "Personagem do Dominus" abre os personagens (e não a galeria de fotos)', hit && !chooser && await E(p, () => { const g = document.querySelector('#acc .ac-domg'); return !g.hidden && g.querySelectorAll('[data-acx=pick]').length >= 8 && [...g.querySelectorAll('button')].every((b, i, A) => !i || b.getBoundingClientRect().top >= A[i - 1].getBoundingClientRect().top - 1) && [...g.querySelectorAll('button')].every(b => Math.round(b.getBoundingClientRect().height) === 64); }));
   ok('Editar perfil: com a lista aberta dá para subir até ao topo do formulário', await E(p, () => { const a = document.getElementById('acc'); a.scrollTop = 0; const t = document.querySelector('#acc form h2').getBoundingClientRect().top; return a.scrollHeight > a.clientHeight && t >= 0; }));
   ok('sem erros de JavaScript', !k.errs.length, k.errs.slice(0, 3).join(' | ')); await k.ctx.close(); }
 async function vivoTests(b) { cur = 'Movimento'; console.log('\n=== App mais vivo: animações e a voz da IA ===');

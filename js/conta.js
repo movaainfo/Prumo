@@ -197,8 +197,15 @@ let GAL = null;
 const gallery = () => { if (GAL) return GAL; GAL = []; const D = OS.Dom, M = OS.Monstros;
   try { const d = OS.one && OS.one('dominus'); if (D && d && d.born && d.look && LS.get(K.data, '') === (gEdit || pid())) GAL.push({ n: 'O teu herói', src: heroBust(d.look) }); } catch (e) { }
   if (D && D.pixel) HEROES.forEach((l, i) => { try { GAL.push({ n: 'Herói ' + (i + 1), src: heroBust(Object.assign({ eyes: 'castanho', brows: 'finas', legs: 'jeans', feet: 'tenis' }, l)) }); } catch (e) { } });
-  if (M && M.pixels) M.BOSSES.slice(0, 8).concat(M.MINIONS.slice(0, 4)).forEach(id => { try { GAL.push({ n: M.name ? M.name(id) : id, src: bust(M.pixels(id), 64, 64, 0, 0, 64, ['#2A1F3A', '#0E0A16']) }); } catch (e) { } });
+  // v2.53: os monstros, chefes e colossos entram aqui à medida que os derrotas no Dominus (só no teu perfil)
+  GAL.won = 0; GAL.tot = M && M.ALL ? Object.keys(M.ALL).filter(id => !/^x/.test(id)).length : 0;
+  try { const d = OS.one && OS.one('dominus'); if (D && M && M.pixels && d && d.born && LS.get(K.data, '') === (gEdit || pid())) { const won = new Set(Object.keys(D.kills ? D.kills() : {}));
+      Object.keys(d.boss || {}).forEach(w => { try { const f = D.bossFight(w); if (f.dead && f.mid) won.add(f.mid); } catch (e) { } }); Object.keys(d.col || {}).forEach(ym => { try { const c = D.colossus(ym); if (c.dead && c.mid) won.add(c.mid); } catch (e) { } });
+      [...won].filter(id => M.ALL[id]).sort((a, b) => (M.power ? (M.power(a) || 0) - (M.power(b) || 0) : 0)).forEach(id => { try { GAL.push({ n: M.name(id), src: monBust(id) }); GAL.won++; } catch (e) { } }); } } catch (e) { }
   return GAL; };
+// o monstro recortado à volta do corpo (fica grande no círculo do avatar)
+const monBust = id => { const px = OS.Monstros.pixels(id, {}), w = Math.round(Math.sqrt(px.length)); let x0 = w, y0 = w, x1 = 0, y1 = 0; px.forEach((v, i) => { if (!v) return; const x = i % w, y = (i / w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; });
+  const sz = Math.max(x1 - x0, y1 - y0) + 8; return bust(px, w, w, Math.round((x0 + x1) / 2 - sz / 2), Math.round((y0 + y1) / 2 - sz / 2), sz, ['#2A1F3A', '#0E0A16']); };
 // foto: corta ao centro, 160×160, JPEG leve (cabe no perfil e aparece em todos os aparelhos)
 const photo = file => new Promise((res, rej) => { const u = URL.createObjectURL(file), im = new Image();
   im.onload = () => { const c = document.createElement('canvas'), Z = 160, w = im.naturalWidth, h = im.naturalHeight, q0 = Math.min(w, h); c.width = c.height = Z; const x = c.getContext('2d'); x.imageSmoothingQuality = 'high';
@@ -215,7 +222,7 @@ document.addEventListener('change', async e => { const t = e.target, f = t.close
   if (t.name === 'cor') avPrev(f); });
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-acx]'); if (!b || b.dataset.acx === 'foto') return; const f = b.closest('form'); if (!f) return; const a = b.dataset.acx;
   if (a === 'dom') { e.preventDefault(); const g = f.querySelector('.ac-domg'), open = g.hidden; g.hidden = !open; b.setAttribute('aria-expanded', String(open));
-    if (open && !g.firstChild) g.innerHTML = gallery().map((x, i) => `<button type="button" data-acx="pick" data-i="${i}" title="${esc(x.n)}" aria-label="${esc(x.n)}"><img src="${x.src}" alt=""></button>`).join('') || '<p class="ac-sub">O Dominus ainda não carregou. Tenta daqui a um segundo.</p>'; return; }
+    if (open) { GAL = null; const L = gallery(); g.innerHTML = L.map((x, i) => `<button type="button" data-acx="pick" data-i="${i}" title="${esc(x.n)}" aria-label="${esc(x.n)}"><img src="${x.src}" alt=""></button>`).join('') + (L.tot ? `<p class="ac-sub ac-domn">${L.won ? `${L.won} ${L.won === 1 ? 'monstro desbloqueado' : 'monstros desbloqueados'}.` : 'Ainda nenhum monstro.'} Cada monstro, chefe ou colosso que derrotares no Dominus fica aqui para usares como avatar.</p>` : '') || '<p class="ac-sub">O Dominus ainda não carregou. Tenta daqui a um segundo.</p>'; } return; }
   if (a === 'pick') { e.preventDefault(); const x = gallery()[+b.dataset.i]; if (x) setImg(f, x.src); f.querySelectorAll('.ac-domg button').forEach(y => y.classList.toggle('on', y === b)); return; }
   if (a === 'tirar') { e.preventDefault(); setImg(f, ''); } });
 const view = () => {
