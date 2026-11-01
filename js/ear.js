@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 const U = OS.U;
-const E = OS.Ear = { on: false, speaking: false, level: 0, floor: .004, playing: false, hang: 1150, n: 0 };
+const E = OS.Ear = { on: false, speaking: false, level: 0, floor: .004, playing: false, playAt: 0, echo: 0, hang: 1150, n: 0 };
 const AC = window.AudioContext || window.webkitAudioContext;
 let MS = null, CTX = null, SRC = null, PROC = null, PRE = [], preMs = 0, SEG = null, voiceAt = 0, above = 0, rate = 48000, cb = {};
 const PREMS = 500, MINVOICE = 300, MAXMS = 30000;
@@ -31,10 +31,12 @@ const rmsPk = x => { let s = 0, pk = 0; for (let i = 0; i < x.length; i++) { con
 function frame(ev) { if (!E.on) return; const x = new Float32Array(ev.inputBuffer.getChannelData(0)), ms = x.length / rate * 1000, now = performance.now(), [r, pk] = rmsPk(x); E.level = r;
   if (cb.onPeak) { try { cb.onPeak(pk, now); } catch (e) { } }
   // limiares: acima do ruído de fundo (que se vai ajustando); enquanto o Spyke fala, mais alto e mais tempo (para não se interromper com a própria voz)
-  const startT = Math.max(E.floor * (E.playing ? 5 : 3.2), E.playing ? .03 : .011), keepT = startT * .5;
+  // v2.53: a voz do Spyke a sair do altifalante entrava no microfone, ele julgava que eras tu, pausava ("chiado") e voltava.
+  // Agora, enquanto fala: limiar muito mais alto, acima do eco que já aprendeu (E.echo), 650 ms seguidos e nada nos primeiros 1,5 s de cada pedaço.
+  const echoT = E.playing ? Math.max(E.floor * 7, .045, E.echo * 1.5) : 0, startT = E.playing ? echoT : Math.max(E.floor * 3.2, .011), keepT = startT * .5, warm = E.playing && now - (E.playAt || 0) < 1500;
   if (!SEG) { PRE.push(x); preMs += ms; while (preMs > PREMS && PRE.length > 1) { preMs -= PRE.shift().length / rate * 1000; }
-    if (r > startT) above += ms; else { above = Math.max(0, above - ms * 1.5); E.floor = Math.min(.05, Math.max(.0015, E.floor * .97 + r * .03)); }
-    if (above >= (E.playing ? 320 : 140)) { SEG = { ch: PRE.slice(), t0: now, voiced: above }; PRE = []; preMs = 0; voiceAt = now; E.speaking = true; if (cb.onStart) { try { cb.onStart(); } catch (e) { } } }
+    if (r > startT && !warm) above += ms; else { above = Math.max(0, above - ms * 1.5); if (!E.playing) E.floor = Math.min(.05, Math.max(.0015, E.floor * .97 + r * .03)); else if (r < startT) E.echo = Math.max(E.echo * .995, r); }
+    if (above >= (E.playing ? 650 : 140)) { SEG = { ch: PRE.slice(), t0: now, voiced: above }; PRE = []; preMs = 0; voiceAt = now; E.speaking = true; if (cb.onStart) { try { cb.onStart(); } catch (e) { } } }
     return; }
   SEG.ch.push(x); if (r > keepT) { voiceAt = now; SEG.voiced += ms; }
   if (now - voiceAt > (+E.hang || 1150) || now - SEG.t0 > MAXMS) finish(); }

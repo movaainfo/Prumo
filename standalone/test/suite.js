@@ -2755,7 +2755,7 @@ async function domTests(b) { cur = 'Dominus'; console.log('\n=== Dominus: o her�
   ok('Muitos mais níveis (até 300) e títulos (25 ou mais)', await E(p, () => OS.Dom.lvH(1e12).l === 300 && OS.Dom.RANKS.length >= 25 && OS.Dom.lvH(500000).l < 25));
   ok('38 classes, cada uma com 5 graus e uma skin por grau', await E(p, () => Object.keys(OS.Dom.CLS).length === 38 && Object.keys(OS.Dom.CLS).every(n => [1, 2, 3, 4, 5].every(r => !!OS.Dom.clsSkin(n, r).top))));
   await E(p, () => location.hash = 'dominus.bestiario'); await sleep(900); await closeCel();
-  ok('Bestiário: 60 criaturas em pixel art (monstros do dia, chefes e colossos)', await E(p, () => Object.keys(OS.Monstros.ALL).length === 60 && document.querySelectorAll('.d3-bst').length === 60 && [...document.querySelectorAll('.d3-bst img')].every(i => /^blob:|^data:/.test(i.src))));
+  ok('Masmorras: 114 criaturas em pixel art (monstros dos andares, chefes e colossos)', await E(p, () => Object.keys(OS.Monstros.ALL).length === 114 && document.querySelectorAll('.d3-bst').length === 114 && [...document.querySelectorAll('.d3-bst img')].every(i => /^blob:|^data:/.test(i.src))));
   await E(p, () => location.hash = 'dominus.marcos'); await sleep(400);
   const leg = await E(p, () => OS.Dom.PK.map(k => OS.Dom.legList(k).length)); ok('Marcos: 5 pilares com 100 marcos cada (com o Espírito)', leg.length === 5 && leg.every(n => n === 100), JSON.stringify(leg));
   const lx0 = await E(p, () => OS.Dom.state().ax.intelecto); await clk('.d3-leg:not(.auto) .d3-legc'); await sleep(400);
@@ -2923,17 +2923,23 @@ async function earTests() { cur = 'Ouvido'; console.log('\n=== Spyke: ouvido sil
   // 3 · interromper falando: ele pára logo, ouve-te e continua a conversa a partir daí
   await E(p, () => OS.Spyke.stop()); await sleep(300); stt.length = 0;
   await E(p, () => { OS.Spyke.say('Esta é uma resposta muito comprida do Spyke. Tem várias frases para continuar a falar durante bastante tempo. E ainda mais uma frase no fim.'); }); await p.waitForFunction(() => OS.Spyke.state() === 'speaking', null, { timeout: 6000 }).catch(() => { });
-  const pz0 = await E(p, () => window.__pauses); say = ['Spyke, espera, quanto gastei este mês?']; await E(p, () => { __mic.g.gain.value = .5; }); await sleep(700);
-  const pzNow = await E(p, () => window.__pauses); await sleep(700); await E(p, () => { __mic.g.gain.value = 0; });
+  // (no 1,5 s inicial de cada pedaço ele ignora o microfone: é quando o eco da própria voz é mais forte)
+  await sleep(1700); const pz0 = await E(p, () => window.__pauses); say = ['Spyke, espera, quanto gastei este mês?']; await E(p, () => { __mic.g.gain.value = .5; }); await sleep(1000);
+  const pzNow = await E(p, () => window.__pauses); await sleep(500); await E(p, () => { __mic.g.gain.value = 0; });
   await p.waitForFunction(() => OS.Spyke.msgs().some(m => /Este mês gastaste/.test(m.t)), null, { timeout: 9000 }).catch(() => { });
-  ok('Interromper falando: assim que começas a falar ele pára a voz (logo, sem esperar que acabes)', pzNow > pz0, JSON.stringify({ pz0, pzNow }));
+  ok('Interromper falando: quando falas por cima (mais de meio segundo) ele pára a voz, sem esperar que acabes', pzNow > pz0, JSON.stringify({ pz0, pzNow }));
   ok('Interromper falando: ouve o que disseste e responde a isso (continua a conversa daí)', await E(p, () => OS.Spyke.msgs().some(m => m.r === 'user' && /quanto gastei/.test(m.t)) && OS.Spyke.msgs().some(m => /Este mês gastaste/.test(m.t))));
   // 4 · o eco da própria voz não o interrompe: retoma de onde estava
   await E(p, () => OS.Spyke.stop()); await sleep(300); stt.length = 0;
   await E(p, () => { OS.Spyke.say('Hoje tens três compromissos importantes na agenda e duas tarefas com prazo. Começa pela mais difícil.'); }); await p.waitForFunction(() => OS.Spyke.state() === 'speaking', null, { timeout: 6000 }).catch(() => { });
-  const pl0 = await E(p, () => window.__plays); say = ['hoje tens três compromissos importantes na agenda']; await talk(900, .5); await sleep(2200);
+  await sleep(1700); const pl0 = await E(p, () => window.__plays); say = ['hoje tens três compromissos importantes na agenda']; await talk(900, .5); await sleep(2200);
   const ec = await E(p, () => ({ st: OS.Spyke.state(), plays: window.__plays, last: OS.Spyke.msgs().slice(-1)[0] }));
   ok('Eco: se o que ouviu era a própria voz dele, continua a falar de onde estava', ec.plays > pl0 && !/user/.test(ec.last.r) && stt.length === 1, JSON.stringify({ ec, pl0 }));
+  // 4b · o eco logo no arranque da voz já não a pausa (era o "pára, chiado e volta")
+  await E(p, () => OS.Spyke.stop()); await sleep(300); stt.length = 0;
+  await E(p, () => { OS.Spyke.say('Uma frase para testar o arranque da voz sem cortes. E mais uma frase no fim para ele continuar a falar.'); }); await p.waitForFunction(() => OS.Spyke.state() === 'speaking', null, { timeout: 6000 }).catch(() => { });
+  const pzA = await E(p, () => window.__pauses); say = ['uma frase para testar o arranque da voz']; await talk(900, .5); await sleep(400); const pzB = await E(p, () => window.__pauses);
+  ok('O eco da própria voz no arranque não a pausa (sem "pára, chiado e volta")', pzB === pzA && stt.length === 0, JSON.stringify({ pzA, pzB, stt: stt.length }));
   // 5 · sair e voltar à app: o microfone não fecha nem reabre (sem som), e nunca usa o ditado
   await E(p, () => OS.Spyke.stop()); await sleep(300); const g0 = await E(p, () => window.__gum);
   await E(p, () => { Object.defineProperty(document, 'hidden', { configurable: true, get: () => true }); document.dispatchEvent(new Event('visibilitychange')); }); await sleep(800); const offW = await E(p, () => OS.Ear.on);
@@ -3021,8 +3027,22 @@ async function vidaTests(b) { cur = 'Projeto de Vida'; console.log('\n=== v2.53:
   await sleep(500); await E(p, () => location.hash = 'dominus.missoes'); await sleep(600); await closeCel();
   const r = await E(p, () => { const M = OS.Dom.missions(), f = OS.Dom.bossFight(); return { ok: M.dl.filter(m => m.ok).map(m => m.id), t: M.dl.map(m => m.t), gid: f.gid, goal: f.goal, hp: f.hp, dmg: f.dmg, guard: !!document.querySelector('.d3-ms .d3-m') }; });
   ok('Fazer a tarefa da meta cumpre a missão do dia (a missão diz o nome da tarefa e da meta)', r.ok.some(id => /:t:/.test(id)) && /Resumo do capítulo 1/.test(r.t[0]) && /CPA-10/.test(r.t[0]), JSON.stringify(r));
+  // masmorras: o monstro do dia é o andar onde estás; ao morrer abre o seguinte
+  await E(p, () => { const g = OS.all('goals').find(x => x.vid === 'v2.21'), t = OS.all('tasks').find(x => x.goal === g.id && x.prio === 2); OS.upd('tasks', t.id, { status: 'Feita', doneAt: OS.U.today() }); OS.emit('change', 'tasks'); }); await sleep(500); await closeCel();
+  const dg = await E(p, () => { const M = OS.Dom.missions(), m = OS.Dom.monsterOf(), D = OS.Dom.dungeons(), f = OS.Dom.floorOf(m), by = a => D.find(d => d.a === a); return { all: M.dl.every(x => x.ok), m, f, k: (OS.Dom.kills()[m] || 0), at: f ? by(f.a).at : -1, car: by('carreira').open, corpo: by('corpo').open, L1: OS.Monstros.ofA('carreira')[0] }; });
+  ok('Masmorras: o monstro do dia é o andar 1; com as 3 missões feitas morre e abre o andar 2', dg.all && dg.f && dg.f.n === 1 && dg.k === 1 && dg.at === 1, JSON.stringify(dg));
+  ok('A masmorra de Carreira abriu com a meta da CPA-10; a de Corpo continua fechada (sem meta de corpo)', dg.car && !dg.corpo);
+  const cap = await E(p, () => { const b = OS.Dom.bossOf(OS.U.addDays(OS.U.monday(OS.U.today()), 7)), d = OS.Dom.dungeons().find(x => x.id === 'carreira:1'); return Object.assign({ want: d.L[d.at] }, b); });
+  ok('Chefe da semana seguinte: o capitão do andar onde estás na masmorra da meta (o chefe verdadeiro só depois dos 5 andares)', cap.cap === cap.want && cap.a === 'carreira' && !cap.full, JSON.stringify(cap));
+  await E(p, () => location.hash = 'dominus.bestiario'); await sleep(900); await closeCel();
+  ok('Ecrã das masmorras: 16 masmorras em 2 círculos (fechadas as que não têm meta), andares bloqueados às escuras, insígnias e o Abismo', await E(p, () => document.querySelectorAll('.d3-dg').length === 16 && document.querySelectorAll('.d3-dg.shut').length >= 12 && document.querySelectorAll('.d3-bst').length === 114 && document.querySelectorAll('.d3-badges span').length === 16 && document.querySelectorAll('.d3-bst.unk').length >= 80));
   await E(p, () => location.hash = 'dominus.chefe'); await sleep(600); await closeCel();
   ok('O chefe da semana guarda a tua meta e o XP dela dá dano inteiro', r.gid && /CPA-10/.test(r.goal) && r.hp >= 3000 && r.dmg > 0 && await E(p, () => /Guarda a tua meta/.test(document.querySelector('.d3-bossw').textContent)), JSON.stringify(r));
+  const c2 = await E(p, () => { const s = OS.one('dominus'), T = OS.U.today(), w0 = OS.U.addDays(OS.U.monday(T), -7), L = OS.Monstros.ofA('carreira'), k0 = OS.Dom.kills; // simula: 5 andares limpos e o chefe vencido na semana passada
+    s.boss[w0] = { a: 'carreira', hp: 100, t: 0, v: 2, gid: '', full: 1, tier: 1 }; OS.add('tasks', { title: 'Feita para o chefe', status: 'Feita', doneAt: OS.U.addDays(w0, 1), goal: OS.all('goals')[0].id }); OS.touch('dominus');
+    OS.Dom.kills = () => Object.assign({}, k0(), Object.fromEntries(L.map(m => [m, 1])));
+    try { const D = OS.Dom.dungeons(), c1 = D.find(d => d.id === 'carreira:1'), c2 = D.find(d => d.id === 'carreira:2'), o1 = D.find(d => d.id === 'corpo:2'); return { b1: c1.badge, c1: c1.cleared, o2: c2.open, n2: c2.n, at2: c2.at, boss2: c2.boss, corpo2: o1.open, n: D.length }; } finally { OS.Dom.kills = k0; delete s.boss[w0]; OS.touch('dominus'); } });
+  ok('Insígnia da primeira masmorra abre o segundo círculo, com monstros e chefe novos', !!c2.b1 && c2.c1 && c2.o2 && c2.n2 === 'Escritório Sem Janelas' && c2.at2 === 0 && c2.boss2 === 'burocrata' && !c2.corpo2 && c2.n === 16, JSON.stringify(c2));
   ok('Conquistas novas: metas cumpridas, etapas e objetivos de vida', await E(p, () => ['metas', 'etapas', 'vida'].every(id => OS.Dom.achievements().some(a => a.id === id)) && OS.Dom.achievements().find(a => a.id === 'vida').v >= 3));
   // Codex → objetivo (sem XP a dobrar)
   const cx = await E(p, () => { const s = OS.one('dominus'), ax = OS.Dom.state().ax.intelecto; s.legacy.int = (s.legacy.int || []).concat({ t: 'Inglês C1', d: OS.U.today(), proof: 'Certificado C1 Advanced' }); OS.touch('dominus'); const r = OS.Vida.doneOf(OS.Vida.list().by['v1.96']); return { how: r && r.how, xp: OS.Vida.xpOf(OS.Vida.list().by['v1.96']), dx: OS.Dom.state().ax.intelecto - ax }; });
@@ -3033,6 +3053,14 @@ async function vidaTests(b) { cur = 'Projeto de Vida'; console.log('\n=== v2.53:
   await E(p, () => location.hash = 'dominus.vida'); await sleep(500); await closeCel();
   await closeCel(); await p.fill('form[data-form=vdAdd] input[name=t]', 'Correr a Meia Maratona de Lisboa'); await p.selectOption('form[data-form=vdAdd] select[name=c]', '7'); await p.click('form[data-form=vdAdd] button'); await sleep(300);
   ok('Acrescentar um objetivo teu', await E(p, () => OS.Vida.list().some(o => o.own && o.t === 'Correr a Meia Maratona de Lisboa' && o.c === 7 && o.a === 'corpo')));
+  // testosterona: simulação ao lado da bioimpedância
+  await E(p, () => { OS.setOne('diet', Object.assign({}, OS.one('diet'), { age: 19, sex: 'M', h: 178 })); OS.add('body', { date: OS.U.today(), weight: 84, bf: 24, bio: true, waist: 92 }); for (let i = 0; i < 6; i++) OS.add('sleep', { date: OS.U.addDays(OS.U.today(), -i - 1), min: 330 }); location.hash = 'treino.peso'; }); await sleep(900); await closeCel();
+  const t0 = await E(p, () => { const r = OS.Testo.sim(); return { has: !!document.querySelector('.to-pn .to-big'), est: r.est, base: r.base, F: r.F.map(f => f.k + ':' + f.m), pot: r.pot }; });
+  ok('Testosterona: simulação ao lado da bioimpedância, com o que está a pesar (gordura 24%, 5,5 h de sono)', t0.has && t0.base === 600 && t0.est < t0.base && t0.pot > t0.est && t0.F.some(x => /^gordura:0\.88/.test(x)) && t0.F.some(x => /^sono:0\.88/.test(x)), JSON.stringify(t0));
+  await E(p, () => { const f = document.querySelector('form[data-form=toSim]'); f.alc.value = '12'; f.requestSubmit(); }); await sleep(500);
+  await E(p, () => { const f = document.querySelector('form[data-form=toLab]'); f.total.value = '22.5'; f.unit.value = 'nmol'; f.requestSubmit(); }); await sleep(500);
+  const t1 = await E(p, () => { const s = OS.one('testo'); return { sims: s.sims.length, est: s.sims[0] && s.sims[0].est, lab: (OS.Testo.lastLab() || {}).total, auto: OS.Dom.autoLeg('Testosterona total > 600 ng/dL') }; });
+  ok('Simular guarda o resultado; a análise em nmol/L passa a ng/dL e prova o marco "Testosterona > 600" do Codex', t1.sims === 1 && t1.est < t0.est && t1.lab === 649 && t1.auto && t1.auto.ok, JSON.stringify(t1));
   ok('Sem erros de JavaScript', !errs.length, errs.slice(0, 3).join(' | '));
   await ctx.close();
   // conta pública: a lista do Ryan não aparece

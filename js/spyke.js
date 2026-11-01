@@ -137,7 +137,10 @@ const envBuf = async ab => { try { const C = window.OfflineAudioContext || windo
   for (let i = 0; i < ch.length; i += step) { let s = 0, c = 0; for (let j = i; j < Math.min(ch.length, i + step); j += 8) { s += ch[j] * ch[j]; c++; } const r = Math.sqrt(s / Math.max(1, c)); out.push(r); if (r > mx) mx = r; } return out.map(x => Math.min(1, x / mx)); } catch (e) { return null; } };
 const wav = ({ b64, rate }) => { const bin = atob(b64), n = bin.length, buf = new ArrayBuffer(44 + n), v = new DataView(buf), w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
   w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n, true);
-  const u8 = new Uint8Array(buf, 44); for (let i = 0; i < n; i++) u8[i] = bin.charCodeAt(i); return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' })); };
+  const u8 = new Uint8Array(buf, 44); for (let i = 0; i < n; i++) u8[i] = bin.charCodeAt(i);
+  // 12 ms de entrada e de saída suaves: o primeiro e o último som do pedaço deixam de dar estalo
+  const ns = n >> 1, f = Math.min(ns >> 2, Math.round(rate * .012)); for (let i = 0; i < f; i++) { const k = i / f; [i, ns - 1 - i].forEach(j => { const o = 44 + j * 2; v.setInt16(o, Math.round(v.getInt16(o, true) * k), true); }); }
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' })); };
 const ttsModels = async key => { const c = U.ls.get('os2ttsl', null); if (c && Date.now() - c.at < 864e5 && c.k === key.slice(-6)) return c.m; try { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key=${encodeURIComponent(key)}`), j = await r.json(); const m = (j.models || []).filter(x => /tts/i.test(x.name) && (x.supportedGenerationMethods || ['generateContent']).includes('generateContent')).map(x => x.name.replace(/^models\//, '')).sort((a, b) => (/flash/.test(b) - /flash/.test(a)) || (/preview/.test(a) - /preview/.test(b)) || (b > a ? 1 : -1)); U.ls.set('os2ttsl', { at: Date.now(), m, k: key.slice(-6) }); return m; } catch (e) { return []; } };
 // A língua vai na configuração da voz (languageCode), não no texto: antes as instruções iam escritas no pedido e o modelo às vezes
 // lia-as em voz alta ("fala sempre em português…") antes do resumo. Agora o pedido leva SÓ o texto a dizer.
@@ -183,7 +186,7 @@ const elClip = async text => { const c = cfg(); if (!c.elKey) throw new Error('f
 let envNow = null, lvlBump = 0;
 S.level = () => { if (playing && envNow && AU && !AU.paused) { const i = Math.floor(AU.currentTime / .04 * (AU.playbackRate || 1) / (AU.playbackRate || 1)); return envNow[Math.min(envNow.length - 1, Math.max(0, Math.floor(AU.currentTime / .04)))] || 0; } if (st === 'speaking') { lvlBump *= .9; return lvlBump; } return 0; };
 const playClip = (clip, my) => new Promise(res => { if (my !== tok) return res('stop'); const a = au(); let done = false; const end = r => { if (done) return; done = true; playing = null; envNow = null; a.onended = a.onerror = null; res(r); };
-  outSession(); a.src = clip.url; a.playbackRate = +cfg().speed || 1; a.onended = () => end('ok'); a.onerror = () => end('erro'); envNow = clip.env || null;
+  outSession(); if (OS.Ear) OS.Ear.playAt = performance.now(); a.src = clip.url; a.playbackRate = +cfg().speed || 1; a.onended = () => end('ok'); a.onerror = () => end('erro'); envNow = clip.env || null;
   playing = { stop: () => { try { a.pause(); } catch (e) { } end('stop'); } }; orb();
   const p = a.play(); if (p && p.catch) p.catch(e => end(e && e.name === 'NotAllowedError' ? 'blocked' : 'erro')); });
 const MALE = /felipe|daniel|duarte|ricardo|thiago|tiago|joaquim|ant[oó]nio|jorge|paulo|eddy|reed|rocko|grandpa|male|mascul/i, GOOD = /premium|enhanced|melhorad|neural|natural|siri/i;
@@ -288,10 +291,10 @@ const earStart = () => { if (ear || !earWanted()) return; if (silent()) return e
     if (earWanted()) setTimeout(earStart, quick ? Math.min(15000, 400 * Math.pow(2, earFails)) : 250); else outSession(); };
   ear = r; earAt = Date.now(); setEarCls(); try { session('play-and-record'); r.start(); } catch (e) { ear = null; setEarCls(); } };
 /* ---------- ouvido silencioso ---------- */
-let bargeP = false, sttBusy = 0, echoN = 0, echoTok = -1, noisy = [], quietUntil = 0;
+let bargeP = false, sttBusy = 0, echoN = 0, echoTok = -1, noisy = [], quietUntil = 0, bargeLvl = 0;
 const stLbl = t => { const l = el && el.querySelector('.spy-st'); if (l) l.textContent = t; };
 const earSilent = () => { wakeMode(true); const E = OS.Ear; E.hang = Math.round((+cfg().pausa || 1.2) * 1000); ear = E; earAt = Date.now(); setEarCls(); session('play-and-record');
-  E.start({ onStart: () => { if (st === 'speaking') { if (echoTok !== tok) { echoTok = tok; echoN = 0; } if (cfg().bargeS !== false && echoN < 2 && S.pauseVoice()) { bargeP = true; stLbl('A ouvir-te…'); } return; }
+  E.start({ onStart: () => { if (st === 'speaking') { if (echoTok !== tok) { echoTok = tok; echoN = 0; } if (cfg().bargeS !== false && echoN < 1 && S.pauseVoice()) { bargeP = true; bargeLvl = OS.Ear.level || 0; stLbl('A ouvir-te…'); } return; }
       if (el && !el.hidden && (st === 'listening' || convOn() || armed > Date.now())) { live = '…'; renderChat(); stLbl('A ouvir-te…'); } },
     onDrop: () => { if (bargeP) { bargeP = false; S.resumeVoice(); stLbl(STL.speaking); } if (live === '…') { live = ''; renderChat(); } },
     onUtt: u => { const idle = st === 'idle' && !(el && !el.hidden) && armed <= Date.now() && !convOn() && tapEar <= Date.now();
@@ -305,7 +308,7 @@ const sttTake = async u => { const wasB = bargeP; bargeP = false; sttBusy++; if 
   if (live === '…') { live = ''; renderChat(); }
   const n = N(text);
   // falaste por cima do Spyke
-  if (wasB) { if (!n || echo(n)) { echoN++; S.resumeVoice(); stLbl(STL.speaking); return; } S.stop(); armed = 0; convGo(30000); const c = wakeSplit(text); S.handle(c !== null && N(c) ? c : text); return; }
+  if (wasB) { if (!n || echo(n)) { echoN++; if (OS.Ear) OS.Ear.echo = Math.max(OS.Ear.echo || 0, bargeLvl * 1.2); S.resumeVoice(); stLbl(STL.speaking); return; } S.stop(); armed = 0; convGo(30000); const c = wakeSplit(text); S.handle(c !== null && N(c) ? c : text); return; }
   if (!n) { if (st === 'listening') stLbl(idleTxt()); return; }
   // continuaste a falar enquanto ele pensava: junta ao que já tinhas dito
   if (st === 'thinking' && curAsk && Date.now() - curAskAt < 60000 && !echo(n)) { const prev = curAsk; askTok++; S.stop(); S.handle(prev + ' ' + (wakeSplit(text) || text)); return; }
@@ -536,7 +539,7 @@ const bargeOn = () => { if (ear || !cfg().barge || !SR || barge || st !== 'speak
   r.onerror = () => { }; r.onend = () => { if (barge === r) { barge = null; if (st === 'speaking') setTimeout(bargeOn, 250); } }; barge = r; try { r.start(); } catch (e) { barge = null; } };
 const idleTxt = () => ear ? (convOn() ? 'A ouvir. Fala à vontade.' : 'A ouvir. Diz "Spyke" para chamar.') : earStopped ? 'Microfone desligado. Toca no microfone para falar.' : 'Toca no microfone e fala';
 const setSt = s => { if ((st === 'speaking') !== (s === 'speaking')) { earMark(); if (st === 'speaking') sayEnd = Date.now(); }
-  if (OS.Ear) OS.Ear.playing = s === 'speaking';
+  if (OS.Ear) { if (s === 'speaking' && !OS.Ear.playing) OS.Ear.playAt = performance.now(); OS.Ear.playing = s === 'speaking'; if (s === 'idle') OS.Ear.echo *= .6; }
   const talk = s === 'speaking' || s === 'thinking'; if (talk && !hush && !cfg().barge && !silent()) { hush = true; earOff(); } else if (!talk && hush) { hush = false; setTimeout(bgSync, 350); }
   st = s; if (s === 'speaking' && !silent()) setTimeout(bargeOn, 400); else bargeOff(); if (el) { el.dataset.st = s; const l = el.querySelector('.spy-st'); if (l) l.textContent = STL[s] || idleTxt(); el.querySelectorAll('.spy-m.talking').forEach(x => x.classList.remove('talking')); if (s === 'speaking') { const m = el.querySelectorAll('.spy-m.spyke'); m.length && m[m.length - 1].classList.add('talking'); } } if (s === 'idle') setTimeout(bgSync, 300); orb(); };
 const bubbles = () => msgs.map(m => `<div class="spy-m ${m.r}"><div class="spy-bb">${esc(m.t)}${m.tap ? `<button class="btn xs pri spy-tap" data-act="spyTap">${UI.ic('play')}Ouvir</button>` : ''}</div></div>`).join('') + (live ? `<div class="spy-m user live"><div class="spy-bb">${esc(live)}</div></div>` : '');

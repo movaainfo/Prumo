@@ -216,9 +216,48 @@ const COLOSSI = [
   ['devorador', 'Devorador de Mundos', 'vazio', '#0E0618', '#FF3B3B', '', 'Já engoliu sonhos maiores do que o teu.'], ['caido', 'Anjo Caído', 'oco', '#2A2A3A', '#F2C48D', '#1A0A10', 'Já foi o que tu queres ser. Desistiu.'],
   ['behemoth', 'Behemoth', 'golem', '#3A2A20', '#FF5A1F', '', 'A soma de todos os teus maus hábitos.'], ['rainha', 'Rainha Aranha', 'aranha', '#140E18', '#FF2D55', '#FF2D55', 'Mãe de todas as ansiedades.'],
   ['ceifador', 'O Ceifador', 'espectro', '#141418', '#E8E2EE', '', 'Lembra-te de que o tempo acaba.'], ['dominador', 'O Dominador Sombrio', 'demonio', '#0E0E18', '#38BDF8', '#14141E', 'A tua pior versão. O último chefe.']];
-const ALL = {}; BOSSES.forEach(b => { ALL[b[0]] = { id: b[0], n: b[1], a: b[2], p: b[3], b: b[4], ac: b[5], c: b[6], lore: b[7], k: 'boss' }; });
-MINIONS.forEach(b => { ALL[b[0]] = { id: b[0], n: b[1], a: b[2], p: b[3], b: b[4], ac: b[5], c: b[6], lore: b[7], k: 'min' }; });
-COLOSSI.forEach(b => { ALL[b[0]] = { id: b[0], n: b[1], a: '', p: b[2], b: b[3], ac: b[4], c: b[5], lore: b[6], k: 'col' }; });
+// v2.53: o segundo círculo de masmorras (abre com a insígnia da primeira de cada área): 40 monstros e 8 chefes novos
+const MINIONS2 = [
+  ['lesao', 'Espectro da Lesão', 'corpo', 'espectro', '#3A2A2A', '#FF6A3B', '', 'Aparece quando treinas sem aquecer e levas semanas parado.'], ['fastfood', 'Lodo da Comida Rápida', 'corpo', 'lodo', '#6A4A1E', '#FFB13B', '', 'Cheira bem, pesa muito e nunca te enche.'],
+  ['sedent', 'Golem da Cadeira', 'corpo', 'golem', '#4A4A4A', '#C6FF3A', '', 'Fica sentado oito horas e chama-lhe trabalho.'], ['desidr', 'Verme da Sede', 'corpo', 'verme', '#7A6A3A', '#7DF9FF', '', 'Seca-te por dentro enquanto bebes só café.'],
+  ['ombro', 'Gárgula da Má Postura', 'corpo', 'garg', '#3A3A44', '#FF8A3B', '', 'Curva-te as costas um milímetro por dia.'],
+  ['comparar', 'Espelho da Comparação', 'mente', 'olho', '#2A3A4A', '#9BE7FF', '', 'Só te mostra a vida dos outros, já editada.'], ['enxame-r', 'Enxame do Ruído', 'mente', 'aranha', '#1E2A2A', '#E8FF5A', '#4A5A3A', 'Mil vozes a falar ao mesmo tempo dentro da tua cabeça.'],
+  ['pressa', 'Lobo da Pressa', 'mente', 'lobo', '#3A3044', '#FF5A8A', '', 'Morde-te os calcanhares para nunca acabares nada com calma.'], ['culpa', 'Espectro da Culpa', 'mente', 'espectro', '#2A2438', '#B388FF', '', 'Repete-te o que correu mal até de madrugada.'],
+  ['burnout', 'Cinza do Esgotamento', 'mente', 'lodo', '#3A3A3A', '#FF8A3B', '', 'Já foi fogo. Agora é cinza que não acende.'],
+  ['decor', 'Papagaio da Decoreba', 'intelecto', 'garg', '#2A4A3A', '#C6FF3A', '', 'Repete fórmulas sem saber de onde vêm.'], ['cola', 'Diabrete da Cola', 'intelecto', 'demonio', '#3A3A1E', '#FFD23B', '#2A2A10', 'Promete-te a nota sem o saber.'],
+  ['vespera', 'Lich da Véspera', 'intelecto', 'caveira', '#2A1F2A', '#FF8A3B', '#1A1418', 'Só estuda na noite antes do exame.'], ['resumo', 'Verme dos Resumos', 'intelecto', 'verme', '#3A3A5A', '#9BE7FF', '', 'Lê o resumo do resumo e acha que leu o livro.'],
+  ['ego', 'Olho da Arrogância', 'intelecto', 'olho', '#4A2A3A', '#FFB13B', '', 'Já sabe tudo. Por isso não aprende nada.'],
+  ['juros', 'Hidra dos Juros', 'fortuna', 'hidra', '#3A1E1E', '#FF5A5A', '', 'Cada prestação que falhas faz-lhe nascer outra cabeça.'], ['credito', 'Mímico do Crédito Fácil', 'fortuna', 'oco', '#3A3A2A', '#FFD23B', '#2A1A10', 'Parece um presente. É uma corrente.'],
+  ['bolha', 'Lodo da Especulação', 'fortuna', 'lodo', '#2A4A3A', '#5AFF8A', '', 'Sobe, sobe, sobe… e rebenta-te na mão.'], ['taxas', 'Aranha das Comissões', 'fortuna', 'aranha', '#2A2A1E', '#FFB13B', '#6A6A3A', 'Tece taxas pequenas que comem anos de juros.'],
+  ['ostent', 'Gárgula da Ostentação', 'fortuna', 'garg', '#4A3A1E', '#FFD23B', '', 'Compra para mostrar a quem nem gosta de ti.'],
+  ['fantasma', 'Fantasma do Visto', 'relacoes', 'espectro', '#2A2A3A', '#9BE7FF', '', 'Lê a tua mensagem e nunca responde. Ensinou-te a fazer o mesmo.'], ['ressent', 'Verme do Ressentimento', 'relacoes', 'verme', '#3A1E2A', '#FF5A8A', '', 'Guarda cada mágoa e alimenta-se delas.'],
+  ['inveja', 'Olho da Inveja', 'relacoes', 'olho', '#1E3A2A', '#5AFF8A', '', 'Não suporta ver os outros a crescer.'], ['fofoca', 'Diabrete da Intriga', 'relacoes', 'demonio', '#3A2A3A', '#FF8AD8', '#2A1A2A', 'Conta o segredo de um a outro e ri-se no meio.'],
+  ['muro', 'Golem do Muro', 'relacoes', 'golem', '#4A4458', '#9BE7FF', '', 'Ergue paredes para ninguém te magoar. Nem chegar.'],
+  ['miragem', 'Miragem do Sucesso', 'espirito', 'espectro', '#3A3A2A', '#F5E7B8', '', 'Promete que o próximo degrau vai encher o vazio.'], ['cinismo', 'Lobo do Cinismo', 'espirito', 'lobo', '#2A2A2A', '#B388FF', '', 'Ri-se de tudo o que é sagrado.'],
+  ['idolo', 'Ídolo de Ouro', 'espirito', 'tita', '#5A4A1E', '#FFD23B', '#3A2A10', 'Ocupa o lugar do que devia estar no centro.'], ['amargura', 'Lodo da Amargura', 'espirito', 'lodo', '#2A1E1E', '#B388FF', '', 'Torna tudo azedo, até as bênçãos.'],
+  ['soberba', 'Gárgula da Soberba', 'espirito', 'garg', '#3A2A4A', '#F5E7B8', '', 'Acha que já não precisa de ninguém, nem de Deus.'],
+  ['reuniao', 'Hidra das Reuniões', 'carreira', 'hidra', '#3A4250', '#FF4D2E', '', 'Cada reunião inútil marca mais duas.'], ['impostor', 'Espectro do Impostor', 'carreira', 'espectro', '#2A2A3A', '#FF8A3B', '', 'Sussurra que não mereces estar ali.'],
+  ['email', 'Aranha da Caixa de Entrada', 'carreira', 'aranha', '#2A2A3A', '#7DF9FF', '#5A5A6A', 'Tece mil e-mails para nunca fazeres o trabalho a sério.'], ['microchefe', 'Demónio do Micro-chefe', 'carreira', 'demonio', '#3A2A2A', '#FF4D2E', '#2A1A1A', 'Vigia cada minuto e não te deixa crescer.'],
+  ['medo-r', 'Lodo do Medo de Arriscar', 'carreira', 'lodo', '#3A3A30', '#FF4D2E', '', 'Prefere o salário certo ao sonho incerto.'],
+  ['desvio', 'Lobo do Desvio', 'disciplina', 'lobo', '#4A1A1A', '#FF8A3B', '', 'Leva-te para outra tarefa a meio desta.'], ['perfeito', 'Golem do Perfeccionismo', 'disciplina', 'golem', '#3A3A44', '#FF3B3B', '', 'Não começa porque ainda não está perfeito.'],
+  ['segunda', 'Espectro da Segunda-feira', 'disciplina', 'espectro', '#2A1A2A', '#FF3B3B', '', '"Começo na segunda." Há 52 segundas por ano.'], ['redes', 'Verme das Redes', 'disciplina', 'verme', '#1E2A4A', '#FF3B5C', '', 'Só cinco minutos. Três horas depois ainda está a comer.'],
+  ['cansaco', 'Gárgula do Cansaço Fingido', 'disciplina', 'garg', '#3A2A2A', '#FF8A3B', '', 'Está cansada de não fazer nada.']];
+const BOSSES2 = [
+  ['minotauro', 'Minotauro do Platô', 'corpo', 'tita', '#4A2A1E', '#FF5A1F', '#6A4A30', 'Guarda o labirinto onde os teus números deixam de subir. Só cai com treino progressivo.'],
+  ['quimera', 'Quimera da Ansiedade', 'mente', 'hidra', '#2A1E3A', '#FF2D55', '', 'Três cabeças: o passado, o futuro e o que os outros pensam. Corta-as com presença.'],
+  ['esfinge-g', 'A Grande Esfinge', 'intelecto', 'tita', '#5A4A2A', '#E8C26A', '#3A2A10', 'Faz a pergunta que nunca estudaste. Só passa quem entende o porquê.'],
+  ['mamon', 'Mâmon', 'fortuna', 'dragao', '#3A2A10', '#FFD23B', '#8A6A2A', 'O deus do dinheiro pelo dinheiro. Quer que trabalhes para ele para sempre.'],
+  ['sereia', 'Sereia da Solidão', 'relacoes', 'vazio', '#14283A', '#7DF9FF', '', 'Canta que estás melhor sozinho. Quem a ouve não volta.'],
+  ['serp-d', 'Serpente do Deserto', 'espirito', 'hidra', '#4A3A1E', '#F5E7B8', '', 'Enrola-se na tua fé até a apertar. Só a oração de todos os dias a solta.'],
+  ['burocrata', 'O Grande Burocrata', 'carreira', 'caveira', '#2A2A2A', '#FF4D2E', '#3A3A3A', 'Carimba "indeferido" em todos os teus planos. Só cai com entregas reais.'],
+  ['cronos', 'Cronos Corrompido', 'disciplina', 'tita', '#2A1A2A', '#FF3B3B', '#3A2A2A', 'O tempo que perdeste, de armadura. Só o vences com dias cumpridos.']];
+const COLOSSI2 = [
+  ['hidra-p', 'Hidra Primordial', 'hidra', '#0E2A1E', '#5AFF8A', '', 'Cada vício cortado deixa uma raiz. Ela é todas as raízes.'], ['tita-f', 'Titã do Fim do Mundo', 'tita', '#2A1A14', '#FF5A1F', '#3A2A20', 'Carrega todos os "nunca" que disseste a ti mesmo.'],
+  ['olho-a', 'O Olho do Abismo', 'olho', '#0E0E1E', '#FF2D55', '', 'Olha para ti há tanto tempo que já te conhece.'], ['fenrir', 'Fenrir', 'lobo', '#1A1A24', '#7DF9FF', '', 'O lobo que engole o sol de quem desiste.'],
+  ['garg-r', 'Rainha das Gárgulas', 'garg', '#1E1E2A', '#B388FF', '', 'Cada estátua do castelo dela foi alguém que parou.'], ['lodo-p', 'O Lodo Primordial', 'lodo', '#0E1A0E', '#C6FF3A', '', 'É dele que nascem todos os maus hábitos.']];
+const ALL = {}; BOSSES.forEach(b => { ALL[b[0]] = { id: b[0], n: b[1], a: b[2], p: b[3], b: b[4], ac: b[5], c: b[6], lore: b[7], k: 'boss', tr: 1 }; }); BOSSES2.forEach(b => { ALL[b[0]] = { id: b[0], n: b[1], a: b[2], p: b[3], b: b[4], ac: b[5], c: b[6], lore: b[7], k: 'boss', tr: 2 }; });
+MINIONS.forEach(b => { ALL[b[0]] = { id: b[0], n: b[1], a: b[2], p: b[3], b: b[4], ac: b[5], c: b[6], lore: b[7], k: 'min', tr: 1 }; }); MINIONS2.forEach(b => { ALL[b[0]] = { id: b[0], n: b[1], a: b[2], p: b[3], b: b[4], ac: b[5], c: b[6], lore: b[7], k: 'min', tr: 2 }; });
+COLOSSI.push(...COLOSSI2); COLOSSI.forEach(b => { ALL[b[0]] = { id: b[0], n: b[1], a: '', p: b[2], b: b[3], ac: b[4], c: b[5], lore: b[6], k: 'col' }; });
 
 // ameaça: quanto mais vezes já o venceste, mais forte (e mais escuro) ele volta
 const THREAT = ['', 'Antigo', 'Corrompido', 'Supremo'];
@@ -241,6 +280,6 @@ const url = (mid, o = {}) => { const m = ALL[mid] || ALL.golem, t = Math.max(0, 
     px.forEach((v, i) => { if (!v) return; x.fillStyle = v; x.fillRect((i % W) * sc, ((i / W) | 0) * sc, sc, sc); }); return (CACHE[key] = blobUrl(c.toDataURL('image/png'))); } catch (e) { return ''; } };
 const img = (mid, o = {}, cls = '') => `<img class="mo-px ${cls}" src="${url(mid, o)}" alt="${(ALL[mid] || {}).n || ''}" draggable="false">`;
 const name = (mid, t = 0) => { const m = ALL[mid]; return m ? (t ? m.n + ' ' + THREAT[Math.min(3, t)] : m.n) : ''; };
-const ofA = a => MINIONS.filter(m => m[2] === a).map(m => m[0]);
-OS.Monstros = { ALL, BOSSES: BOSSES.map(b => b[0]), MINIONS: MINIONS.map(m => m[0]), COLOSSI: COLOSSI.map(c => c[0]), THREAT, url, img, name, ofA, bossOf: a => (BOSSES.find(b => b[2] === a) || BOSSES[0])[0], pixels: (mid, o = {}) => paint(ALL[mid], { t: o.t | 0, hurt: o.hurt || 0, dead: !!o.dead }), A };
+const ofA = (a, t = 1) => (t === 2 ? MINIONS2 : MINIONS).filter(m => m[2] === a).map(m => m[0]);
+OS.Monstros = { ALL, BOSSES: BOSSES.concat(BOSSES2).map(b => b[0]), MINIONS: MINIONS.concat(MINIONS2).map(m => m[0]), COLOSSI: COLOSSI.map(c => c[0]), THREAT, url, img, name, ofA, bossOf: (a, t = 1) => ((t === 2 ? BOSSES2 : BOSSES).find(b => b[2] === a) || BOSSES[0])[0], pixels: (mid, o = {}) => paint(ALL[mid], { t: o.t | 0, hurt: o.hurt || 0, dead: !!o.dead }), A };
 })();
