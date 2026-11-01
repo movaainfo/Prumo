@@ -82,3 +82,16 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - **Admin em tempo real**: `uso` grava `u.ab` (entrada no app), `u.on` (presença), `u.tot` e `u.pf` (minutos por perfil); `adminVivo` (a cada 20 s). Ranking mostra `tm` (minutos no app do perfil; não conta para os pontos).
 - **Investimentos**: navegação em 4 blocos (`NAVG` em `js/invest.js`).
 - **Movimento**: o modo leve automático (`html.lite`) já não desliga animações; só `html.lite-x` (Leve escolhido ou "reduzir movimento") desliga. Troca de páginas com View Transitions (`js/app.js`).
+
+### 2.53 (segunda parte): Dominus ligado às metas, Projeto de Vida, masmorras
+- Missões do dia/semana/mês geradas das metas ativas: `js/dominus3.js` (`genIds`, `mev`, `misHist`); ids `g:<meta>:<tipo>:<x>` e `v:<tipo>` (sem metas).
+- Chefe da semana guarda uma meta (`bossOf` → `gid`); colosso só com avanço real (peso 10% para o resto). Eventos com `g` = id da meta; `pre` = já feito antes (não fere chefes).
+- Projeto de Vida (1000 objetivos do Ryan, só na conta dele): `js/vidadata.js` (lista, dificuldade, atributo, ligações ao Codex em `OS.VIDAX`) e `js/vida.js` (verificação pelos registos, por confirmar, tornar meta, revisão anual, importar lista).
+- Masmorras (5 andares + chefe, círculos sem fim, Abismo sem fundo): `D.dungeons`, `floorAt`, `badges` em `js/dominus3.js`; salas desenhadas em `js/masmorras.js` (24 temas).
+- Monstros: gerador por peças em `js/monstros.js` (`TORSO`, `HEAD`, `ARMS`, `LEGS`, `build`, `pickSeq`, `genCircle`, `colAt`), 96 px; nenhum par corpo+cabeça repetido nos 114 com nome; poder sobe sempre (`powOf`).
+- Testosterona (simulação + análises): `js/testo.js`, painel em Treino › Peso.
+- Voz: o eco da própria voz já não pausa a fala (limiar `echoT`, 1,5 s de aquecimento por pedaço em `js/ear.js`; entrada/saída suave em `wav()` de `js/spyke.js`).
+- IA: `consultar` tem `dominus`, `projeto_de_vida`, `sono`, `corpo`, `rotina`, `capital_profissional`, `mundo` (`js/brain.js`).
+- Página Eu: botão "Quando eu partir" (ainda sem função).
+- Testes: grupo `vida` em `standalone/test/suite.js`.
+- Por fazer quando a Vercel desbloquear: publicar (main) e gerar as traduções pt-BR dos textos novos (packgen + packfix).
