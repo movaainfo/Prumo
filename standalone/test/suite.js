@@ -2979,6 +2979,44 @@ async function earTests() { cur = 'Ouvido'; console.log('\n=== Spyke: ouvido sil
   ok('Cérebro: leva o resumo completo da tua vida (não cortado), pode pesquisar na internet e procurar em toda a app', /pesquisar_internet/.test(bq) && /procurar_na_app/.test(bq) && /Património e investimentos/.test(bq) && /A ler/.test(bq), bq.length + ' carateres');
   const er = errs.filter(e => !/Failed to load|net::|sandboxed|about:srcdoc|Content Security Policy|NotSupportedError|play\(\)/.test(e)); ok('sem erros de JavaScript (ouvido)', !er.length, er.slice(0, 3).join(' | ')); await ctx.close(); await b2.close(); }
 
+let RAWCTX = null;
+async function introTests(b) { cur = 'Intro'; console.log('\n=== Intro ao abrir: prumo, cera, carimbo, selo e nome; depois o ecrã de carregamento ===');
+  const mk = async (o = {}, init) => { const c = await RAWCTX(Object.assign({}, PROFILES[0].o, o)); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+    await p.addInitScript(([H, init]) => { if (!localStorage.getItem('__seeded')) { localStorage.setItem('os2:one~security', JSON.stringify({ data: { hash: H } })); Object.entries(init || {}).forEach(([k, v]) => localStorage.setItem(k, v)); localStorage.setItem('__seeded', '1'); } window.__noOnb = 1; }, [HASH, init]); return { c, p, errs }; };
+  // 1) ao abrir: a intro corre, o ecrã do código só vem depois, e entre os dois aparece o ecrã de carregamento
+  let { c, p, errs } = await mk(); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(600);
+  const a = await E(p, () => ({ intro: !!document.getElementById('intro'), on: document.documentElement.classList.contains('intro-on'), code: !!document.getElementById('lkCode'), st: PrumoIntro.state(), n: document.getElementById('intro').getAnimations({ subtree: true }).length }));
+  ok('Ao abrir, a intro aparece por cima de tudo (e o ecrã do código ainda não)', a.intro && a.on && !a.code && a.st === 'playing' && a.n > 40, JSON.stringify(a));
+  const pos = await E(p, () => { const el = document.querySelector('#intro .in-selo'), r = el.getBoundingClientRect(); return { cx: Math.round(r.left + r.width / 2), w: el.offsetWidth, vw: innerWidth }; });
+  ok('O selo da intro fica ao centro, maior do que no ecrã de carregamento', Math.abs(pos.cx - pos.vw / 2) <= 3 && pos.w === 144, JSON.stringify(pos));
+  await p.waitForFunction(() => PrumoIntro.state() === 'done', null, { timeout: 9000 });
+  const b2 = await E(p, () => ({ intro: !!document.getElementById('intro'), after: document.documentElement.classList.contains('intro-after'), code: !!document.getElementById('lkCode'), sp: !document.getElementById('splash').hidden, img: !!document.querySelector('#splash img.oc-logo') }));
+  ok('Quando a intro acaba, vê-se o ecrã de carregamento de sempre (com a sua entrada), ainda sem o código', !b2.intro && b2.after && !b2.code && b2.sp && b2.img, JSON.stringify(b2));
+  await p.waitForSelector('#lkCode', { timeout: 6000 }); ok('Depois do ecrã de carregamento abre o ecrã do código', true);
+  // 2) a mesma sessão não repete (recarregar)
+  await p.reload({ waitUntil: 'domcontentloaded' }); await sleep(500);
+  ok('Recarregar na mesma sessão não repete a intro', await E(p, () => !document.getElementById('intro') && PrumoIntro.state() === 'off'));
+  // 3) Definições: escolher e ver agora
+  await unlock(p); await E(p, () => location.hash = 'definicoes'); await sleep(700); await E(p, () => { const el = document.getElementById('introSet'); el && el.classList.remove('shut'); });
+  const s = await E(p, () => { const el = document.getElementById('introSet'); return el && { n: el.querySelectorAll('[data-act="introSet"]').length, on: (el.querySelector('[data-act="introSet"].on') || {}).dataset.v, ver: !!el.querySelector('[data-act="introVer"]') }; });
+  ok('Definições: "Intro ao abrir" com Sempre, Uma vez por dia e Nunca, e "Ver a intro agora"', s && s.n === 3 && s.on === 'sempre' && s.ver, JSON.stringify(s));
+  await E(p, () => document.querySelector('#introSet [data-act="introVer"]').click()); await sleep(300);
+  const v = await E(p, () => !!document.getElementById('intro') && PrumoIntro.state() === 'playing');
+  await p.mouse.click(200, 300); await sleep(600);
+  const v2 = await E(p, () => !document.getElementById('intro') && PrumoIntro.state() === 'done');
+  ok('"Ver a intro agora" mostra-a por cima do app e um toque salta-a', v && v2, JSON.stringify([v, v2]));
+  await E(p, () => document.querySelector('#introSet [data-act="introSet"][data-v="nunca"]').click()); await sleep(200);
+  ok('Escolher "Nunca" fica guardado', await E(p, () => localStorage.getItem('nau:intro') === '"nunca"'));
+  ok('sem erros JS (intro)', !errs.length, errs.slice(0, 3).join(' | ')); await c.close();
+  // 4) saltar logo no início: o ecrã do código chega cedo
+  ({ c, p, errs } = await mk()); const t0 = Date.now(); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(700); await p.mouse.click(195, 400);
+  await p.waitForSelector('#lkCode', { timeout: 6000 }); const dt = Date.now() - t0;
+  ok('Um toque salta a intro e o app segue (ecrã de carregamento, depois o código)', dt < 4200, dt + ' ms'); await c.close();
+  // 5) "Nunca" e "reduzir movimento": não aparece
+  ({ c, p, errs } = await mk({}, { 'nau:intro': '"nunca"' })); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(400);
+  ok('Com "Nunca", abre direto no ecrã de carregamento', await E(p, () => !document.getElementById('intro'))); await c.close();
+  ({ c, p, errs } = await mk({ reducedMotion: 'reduce' })); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(400);
+  ok('Com "reduzir movimento" no aparelho, a intro não aparece', await E(p, () => !document.getElementById('intro'))); await c.close(); }
 async function coresTests(b) { cur = 'Cores do app'; console.log('\n=== Cores do app: paletas (a do logo por omissão) ===');
   const { ctx, p, errs } = await newPage(b, PROFILES[0]);
   const bg = () => E(p, () => getComputedStyle(document.documentElement).backgroundColor.match(/\d+/g).slice(0, 3).map(Number));
@@ -3108,8 +3146,10 @@ async function vidaTests(b) { cur = 'Projeto de Vida'; console.log('\n=== v2.53:
 (async () => {
   await new Promise(r => srv.listen(PORT, r));
   const b = await chromium.launch(); const t0 = Date.now();
+  // a intro ao abrir fica desligada nos testes (cada um abre o app muitas vezes); os testes da intro usam RAWCTX
+  RAWCTX = b.newContext.bind(b); b.newContext = async (...a) => { const c = await RAWCTX(...a); await c.addInitScript(() => { window.__noIntro = 1; }); return c; };
   const ONLY = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean), run = k => !ONLY.length || ONLY.includes(k);
-  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('vida')) await vidaTests(b); if (run('cores')) await coresTests(b); if (run('mundo')) await muTests(b); if (run('contas')) await accTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
+  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('vida')) await vidaTests(b); if (run('cores')) await coresTests(b); if (run('intro')) await introTests(b); if (run('mundo')) await muTests(b); if (run('contas')) await accTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
   catch (e) { R.push({ p: cur, name: 'execução da bateria', pass: false, info: e.message.split('\n')[0] }); console.log('ERRO NA BATERIA:', e.message); try { for (const c of b.contexts()) for (const pg of c.pages()) { const d = await pg.evaluate(() => ({ u: location.hash, now: Date.now(), pend: window.__pend ? [...window.__pend.values()] : null, acc: ((document.getElementById('acc') || {}).innerText || '').slice(0, 80).replace(/\n/g, ' '), msg: (document.querySelector('#acc .ac-msg') || {}).textContent || '' })).catch(() => null); if (d && d.pend) console.log('    [pagina]', JSON.stringify(d)); } } catch (e2) { } }
   await b.close(); srv.close();
   const f = R.filter(x => !x.pass);

@@ -22,6 +22,15 @@ const panel = () => { const cur = P.cur();
     <p class="mut" style="margin:0 0 12px">A paleta que predomina em todo o Prumo: fundos, cartões, botões e destaques. As cores com significado (gastos, avisos, metas) e os desenhos do Dominus ficam iguais. Cada perfil escolhe a sua.</p>
     <div class="pal-g" role="radiogroup" aria-label="Paleta de cores">${P.LIST.map(([id, n, d]) => `<button type="button" class="pal-c${id === cur ? ' on' : ''}" role="radio" aria-checked="${id === cur}" data-act="palSet" data-v="${id}">${sw(id)}<span class="pal-t"><b>${esc(n)}${id === P.DEF ? ' <em>do logo</em>' : ''}</b><small>${esc(d)}</small></span></button>`).join('')}</div></div>`; };
 A.palSet = b => { const id = b.dataset.v; if (!ok(id)) return; P.apply(id); OS.Fundo && OS.Fundo.refresh && OS.Fundo.refresh(); LS.set(K(), id); LS.set('nau:pal', id); UI.toast('Cores do app: ' + name(id), 'pos'); OS.request(); };
-OS.Cores = { panel, mine };
-OS.on('ready', () => { const o = OS.views.definicoes; if (!o || o._pal) return; OS.views.definicoes = sub => o(sub) + (String(sub || '') === '' ? panel() : ''); OS.views.definicoes._pal = 1; });
+// a intro ao abrir (js/intro.js): sempre, uma vez por dia ou nunca; e ver agora
+const IN = window.PrumoIntro;
+const introPanel = () => { if (!IN) return ''; const m = IN.mode();
+  return `<div class="pn" id="introSet"><div class="pn-h"><h3>${UI.ic('play')}Intro ao abrir</h3><span class="mut" style="font-size:12px">${esc((IN.MODES.find(x => x[0] === m) || [])[1] || '')}</span></div>
+    <p class="mut" style="margin:0 0 10px">A animação do selo antes do ecrã de carregamento: o prumo, a cera, o carimbo e o nome. Um toque salta-a. Com "reduzir movimento" ligado no aparelho ou no modo Leve não aparece.</p>
+    <div class="seg" role="group" aria-label="Quando mostrar a intro">${IN.MODES.map(([v, n]) => `<button type="button" class="${v === m ? 'on' : ''}" aria-pressed="${v === m}" data-act="introSet" data-v="${v}">${esc(n)}</button>`).join('')}</div>
+    <button type="button" class="btn sm" style="margin-top:10px" data-act="introVer">${UI.ic('play')}Ver a intro agora</button></div>`; };
+A.introSet = b => { if (!IN) return; IN.setMode(b.dataset.v); UI.toast(b.dataset.v === 'nunca' ? 'A intro não volta a aparecer' : b.dataset.v === 'dia' ? 'A intro aparece uma vez por dia' : 'A intro aparece sempre que abres', 'pos'); OS.request(); };
+A.introVer = () => { if (IN && !IN.play()) UI.toast('Não foi possível mostrar a intro aqui'); };
+OS.Cores = { panel, mine, introPanel };
+OS.on('ready', () => { const o = OS.views.definicoes; if (!o || o._pal) return; OS.views.definicoes = sub => o(sub) + (String(sub || '') === '' ? panel() + introPanel() : ''); OS.views.definicoes._pal = 1; });
 })();

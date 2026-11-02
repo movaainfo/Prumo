@@ -96,6 +96,11 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Testes: grupo `vida` em `standalone/test/suite.js`.
 - Por fazer quando a Vercel desbloquear: publicar (main) e gerar as traduções pt-BR dos textos novos (packgen + packfix).
 
+### Intro ao abrir
+- `js/intro.js` corre logo a seguir ao `#splash` (antes dos outros scripts) e monta a intro com as imagens do próprio ecrã de carregamento (selo, nome, lema) mais o prumo, a gota, o carimbo e o círculo de medida desenhados lá. A coreografia é toda em `css/intro.css` (tempos no comentário do topo; só transform e opacity).
+- `PrumoIntro.wait(cb)`: `js/app.js` só chama `OS.Lock.gate` depois da intro e de ~1,1 s do ecrã de carregamento (que volta a entrar com `html.intro-after`).
+- Uma vez por sessão (`sessionStorage nau:introOk`); `nau:intro` = sempre | dia | nunca; não aparece com reduzir movimento nem no modo Leve (`lite-x`). `window.__noIntro` desliga-a (os testes fazem isto em todos os contextos; os da intro usam `RAWCTX`). Testes: `--only=intro`.
+
 ### Cores do app (paletas)
 - `js/paleta.js` corre no `<head>` (o build.sh põe-no lá) e muda as cores azuis das folhas de estilo no próprio sítio (CSSOM), pelo papel de cada azul: fundo escuro, cinzento, destaque claro, botão. A ordem e a força das regras não mudam. As cores fora do azul (verde, vermelho, âmbar, violeta) ficam iguais.
 - Paletas em `LIST` (Selo por omissão, Mar = o tema base sem mudanças, Floresta, Ametista, Café, Grafite). `PrumoPaleta.apply(id)`, `.color(id, cor)`, `.recolor(svg)` (as cenas do fundo, em `js/cores.js`).

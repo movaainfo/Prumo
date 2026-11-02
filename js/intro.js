@@ -1,0 +1,98 @@
+/* PRUMO — a intro ao abrir (antes do ecrã de carregamento de sempre).
+   1) o fio de prumo cai e oscila até ficar a prumo (0°), dentro de um círculo de medida;
+   2) uma gota de cera desce pelo fio e espalha-se; 3) o carimbo desce: impacto, faíscas, ondas, e fica o selo;
+   4) "Prumo" letra a letra, o traço e o lema dourados; 5) a intro desaparece e por baixo está o ecrã de carregamento, igual.
+   Corre logo a seguir ao #splash (antes dos outros scripts). Só transform e opacity (o compositor anima mesmo com o
+   processador ocupado a carregar o resto), sem desfoques. Um toque salta. Com "reduzir movimento" ou o modo Leve não aparece.
+   Definições › Aplicação › Intro ao abrir: sempre (por omissão), uma vez por dia ou nunca. */
+(() => {
+'use strict';
+const HOLD = 1100;  // depois da intro, o ecrã de carregamento (com a sua entrada) fica à vista pelo menos isto (ms)
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } };
+const ssGet = k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
+const ssSet = (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) { } };
+const day = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+const mode = () => { const v = lsGet('nau:intro'); return v === 'nunca' || v === 'dia' ? v : 'sempre'; };
+const calm = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('lite-x'); } catch (e) { return false; } };
+
+// as imagens da marca vêm do ecrã de carregamento (já estão no HTML): o selo, o nome e o lema
+const svgOf = src => decodeURIComponent(String(src || '').replace(/^data:image\/svg\+xml(;utf8)?,/, ''));
+const url = s => 'data:image/svg+xml,' + encodeURIComponent(s);
+const only = (svg, keep) => { let i = -1; return svg.replace(/<path\b[^>]*\/>/g, m => (++i === keep ? m : '')); };
+const parts = () => {
+  const sp = document.getElementById('splash'); if (!sp) return null;
+  const selo = sp.querySelector('img.oc-logo'), nome = sp.querySelector('img.sp-name'), lema = sp.querySelector('img.pr-lema');
+  if (!selo || !nome || !lema) return null;
+  const S = svgOf(selo.getAttribute('src')), N = svgOf(nome.getAttribute('src')), L = svgOf(lema.getAttribute('src'));
+  // a cera derretida: o mesmo contorno do selo, sem o prato nem os louros
+  const vb = (S.match(/viewBox='([^']+)'/) || S.match(/viewBox="([^"]+)"/) || [])[1], defs = (S.match(/<defs>[\s\S]*?<\/defs>/) || [''])[0];
+  const wax = (S.match(/<path\b[^>]*url\(#wax\)[^>]*\/>/) || [''])[0], rim = (S.match(/<path\b[^>]*stroke=['"]#FF8A9A['"][^>]*\/>/) || [''])[0];
+  if (!vb || !wax) return null;
+  const blob = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='${vb}'>${defs}${wax}${rim}</svg>`;
+  const n = (N.match(/<path\b/g) || []).length, letters = Array.from({ length: n }, (_, i) => url(only(N, i)));
+  return { selo: selo.getAttribute('src'), nome: nome.getAttribute('src'), blob: url(blob), letters, rule: url(L.replace(/<g\b[\s\S]*<\/g>/, '')), tag: url(L.replace(/<rect\b[^>]*\/>/, '')),
+    vb: vb.split(/\s+/).map(Number) };
+};
+// guardadas logo ao abrir: depois o ecrã de carregamento passa a ser o ecrã do código (para "Ver a intro agora" nas Definições)
+let PC = null; const getParts = () => PC || (PC = parts());
+const bgNow = () => { const sp = document.getElementById('splash'); return sp ? getComputedStyle(sp).backgroundColor : '#070D16'; };
+
+// peças desenhadas aqui: o prumo de latão, a gota, o carimbo visto de cima e o círculo de medida
+const BOB = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 40'><defs><linearGradient id='b' x1='0' x2='1'><stop offset='0' stop-color='#6B4C1A'/><stop offset='.32' stop-color='#F6DC97'/><stop offset='.55' stop-color='#C9A24A'/><stop offset='1' stop-color='#4E3712'/></linearGradient></defs><rect x='9' y='0' width='6' height='5' rx='1.6' fill='url(#b)'/><path d='M3.5 5h17l-1.2 6.2H4.7z' fill='url(#b)'/><path d='M4.7 11.2h14.6L12 40z' fill='url(#b)'/><path d='M4.7 11.2h14.6' stroke='#3A270B' stroke-opacity='.55' stroke-width='.9'/><path d='M8 13l4 22' stroke='#FFF3CF' stroke-opacity='.45' stroke-width='1.1'/></svg>`);
+const DROP = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 28'><defs><radialGradient id='d' cx='.38' cy='.62' r='.7'><stop offset='0' stop-color='#E8475E'/><stop offset='.55' stop-color='#A21A2F'/><stop offset='1' stop-color='#5C0A19'/></radialGradient></defs><path d='M10 0C10 0 20 13 20 18.5a10 9.5 0 0 1-20 0C0 13 10 0 10 0z' fill='url(#d)'/><ellipse cx='6.6' cy='17' rx='2' ry='3.4' fill='#FFC2CB' fill-opacity='.55'/></svg>`);
+const STAMP = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><radialGradient id='r' cx='.35' cy='.3' r='.85'><stop offset='0' stop-color='#F4D894'/><stop offset='.45' stop-color='#B88A35'/><stop offset='1' stop-color='#4A3310'/></radialGradient><radialGradient id='w' cx='.4' cy='.35' r='.8'><stop offset='0' stop-color='#5A3826'/><stop offset='.6' stop-color='#2E1B12'/><stop offset='1' stop-color='#170C08'/></radialGradient></defs><circle cx='50' cy='50' r='49' fill='url(#r)'/>${Array.from({ length: 48 }, (_, i) => { const a = i * Math.PI / 24, x = 50 + Math.cos(a) * 46.5, y = 50 + Math.sin(a) * 46.5; return `<circle cx='${x.toFixed(2)}' cy='${y.toFixed(2)}' r='1.3' fill='#3A270B' fill-opacity='.45'/>`; }).join('')}<circle cx='50' cy='50' r='41' fill='url(#w)'/><circle cx='50' cy='50' r='41' fill='none' stroke='#E9C77A' stroke-opacity='.5' stroke-width='1'/><circle cx='50' cy='50' r='13' fill='url(#r)'/><path d='M22 34a32 32 0 0 1 22-15' stroke='#FFE9B8' stroke-opacity='.35' stroke-width='3' fill='none' stroke-linecap='round'/></svg>`);
+const GEO = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='-160 -160 320 320' fill='none' stroke='#C9A24A'><circle r='72' stroke-opacity='.32' stroke-width='.8'/><circle r='112' stroke-opacity='.22' stroke-width='.8' stroke-dasharray='2 5'/><circle r='150' stroke-opacity='.16' stroke-width='.8'/>${Array.from({ length: 72 }, (_, i) => { const a = i * Math.PI / 36, L = i % 6 === 0 ? 14 : i % 2 === 0 ? 7 : 4, r0 = 150 - L, c = Math.cos(a), s = Math.sin(a); return `<path d='M${(c * r0).toFixed(1)} ${(s * r0).toFixed(1)}L${(c * 150).toFixed(1)} ${(s * 150).toFixed(1)}' stroke-opacity='${i % 6 === 0 ? .55 : .3}' stroke-width='${i % 6 === 0 ? 1.1 : .8}'/>`; }).join('')}</svg>`);
+
+let st = 'off', endAt = 0, waiters = [], EL = null, safety = 0;
+const done = () => { if (st !== 'playing') return; st = 'done'; endAt = Date.now(); clearTimeout(safety); if (EL) { EL.remove(); EL = null; } const R = document.documentElement; R.classList.remove('intro-on'); R.classList.add('intro-after'); const w = waiters; waiters = []; setTimeout(() => R.classList.remove('intro-after'), HOLD); w.forEach(cb => setTimeout(cb, HOLD)); };
+// rede de segurança: se a animação final não avisar, acaba na mesma (mas não enquanto alguém a tem pausada)
+const guard = () => { if (st !== 'playing' || !EL) return; const a = EL.getAnimations ? EL.getAnimations().find(x => x.animationName === 'inOut') : null; if (a && a.playState === 'paused') { safety = setTimeout(guard, 1000); return; } done(); };
+const skip = () => { if (st !== 'playing' || !EL || EL.classList.contains('in-skip')) return; EL.classList.add('in-skip'); setTimeout(done, 380); };
+const rnd = (a, b) => a + Math.random() * (b - a);
+
+const build = P => {
+  const lite = document.documentElement.classList.contains('lite');
+  // ponto do impacto: o centro do prato do selo (256,256 nas coordenadas do desenho), dentro da caixa do selo (144 px)
+  const k = 144 / P.vb[2], cx = ((256 - P.vb[0]) * k).toFixed(1), cy = ((256 - P.vb[1]) * k).toFixed(1);
+  const sparks = Array.from({ length: lite ? 18 : 34 }, () => { const a = rnd(-Math.PI, Math.PI), d = rnd(55, 175), up = -rnd(20, 95), c = ['#F6DC97', '#FFE9B8', '#E9C77A', '#FF9A5A', '#FFF6E0'][Math.random() * 5 | 0];
+    return `<i class="in-p" style="--dx:${(Math.cos(a) * d).toFixed(0)}px;--up:${(Math.sin(a) * d * .55 + up).toFixed(0)}px;--dy:${(Math.sin(a) * d * .4 + rnd(70, 160)).toFixed(0)}px;--t:${rnd(.75, 1.25).toFixed(2)}s;--d:${(2.82 + rnd(0, .06)).toFixed(2)}s;--z:${rnd(2, 4.2).toFixed(1)}px;--c:${c}"><b></b></i>`; }).join('');
+  const drops = Array.from({ length: lite ? 5 : 9 }, () => { const a = rnd(-Math.PI * .95, -Math.PI * .05), d = rnd(40, 95);
+    return `<i class="in-p in-w" style="--dx:${(Math.cos(a) * d).toFixed(0)}px;--up:${(Math.sin(a) * d * .7).toFixed(0)}px;--dy:${rnd(60, 120).toFixed(0)}px;--t:${rnd(.7, 1).toFixed(2)}s;--d:${(2.83 + rnd(0, .05)).toFixed(2)}s;--z:${rnd(3, 5.5).toFixed(1)}px;--c:#B8243A"><b></b></i>`; }).join('');
+  const embers = Array.from({ length: lite ? 6 : 14 }, () => `<i class="in-e" style="--x:${rnd(-120, 120).toFixed(0)}px;--y:${rnd(-30, 40).toFixed(0)}px;--h:${rnd(-220, -120).toFixed(0)}px;--t:${rnd(1.6, 2.4).toFixed(2)}s;--d:${rnd(2.95, 3.6).toFixed(2)}s;--z:${rnd(1.6, 3).toFixed(1)}px"></i>`).join('');
+  const el = document.createElement('div'); el.id = 'intro'; el.setAttribute('aria-hidden', 'true'); el.style.background = bgNow();
+  el.innerHTML = `<div class="in-vig"></div><div class="in-out"><div class="in-cam"><div class="sp-in in-col">
+    <div class="in-seal" style="--cx:${cx}px;--cy:${cy}px">
+      <i class="in-glow"></i><i class="in-dot"></i>
+      <div class="in-geo"><i class="in-cross"></i><i class="in-cross v"></i><img class="in-ring" src="${GEO}" alt=""><b class="in-deg">0°</b></div>
+      <div class="in-plumb"><div class="in-swing"><i class="in-line"></i><img class="in-bob" src="${BOB}" alt=""></div></div>
+      <img class="in-drop" src="${DROP}" alt="">
+      <img class="in-blob" src="${P.blob}" alt="">
+      <i class="in-shade"></i><img class="in-stamp" src="${STAMP}" alt="">
+      <i class="in-flash"></i><i class="in-wave"></i><i class="in-wave w2"></i>
+      <img class="in-selo" src="${P.selo}" alt="">
+      <div class="in-glint" style="-webkit-mask-image:url(&quot;${P.selo}&quot;);mask-image:url(&quot;${P.selo}&quot;)"><i></i></div>
+      <div class="in-fx">${sparks}${drops}${embers}</div>
+    </div>
+    <div class="in-word">${P.letters.map((s, i) => `<img src="${s}" alt="" style="--i:${i}">`).join('')}<div class="in-shine" style="-webkit-mask-image:url(&quot;${P.nome}&quot;);mask-image:url(&quot;${P.nome}&quot;)"><i></i></div></div>
+    <div class="in-lema"><img class="in-rule" src="${P.rule}" alt=""><img class="in-tag" src="${P.tag}" alt=""></div>
+  </div></div></div><button type="button" class="in-skip-b">Saltar</button>`;
+  return el; };
+
+const I = window.PrumoIntro = {
+  MODES: [['sempre', 'Sempre'], ['dia', 'Uma vez por dia'], ['nunca', 'Nunca']],
+  mode, setMode: v => lsSet('nau:intro', v), state: () => st,
+  // o que vem depois (o ecrã do código, a app) espera pelo fim da intro e por um instante do ecrã de carregamento
+  wait: cb => { if (st === 'playing') { waiters.push(cb); return; } const left = endAt ? endAt + HOLD - Date.now() : 0; if (left > 0) setTimeout(cb, left); else cb(); },
+  play: () => { if (st === 'playing') return false; const P = getParts(); if (!P) return false;
+    EL = build(P); st = 'playing'; document.documentElement.classList.add('intro-on'); document.body.appendChild(EL);
+    EL.addEventListener('animationend', e => { if (e.target === EL && e.animationName === 'inOut') done(); });
+    ['pointerdown', 'keydown'].forEach(ev => EL.addEventListener(ev, skip)); document.addEventListener('keydown', skip, { once: true });
+    safety = setTimeout(guard, 7500); return true; },
+  skip };
+
+// ao abrir: uma vez por sessão (as recargas da mesma sessão não repetem), conforme a escolha
+const auto = () => { if (window.__noIntro || calm() || ssGet('nau:introOk')) return false; const m = mode(); if (m === 'nunca' || (m === 'dia' && lsGet('nau:introDia') === day())) return false; return true; };
+try { getParts(); } catch (e) { }
+if (auto()) { ssSet('nau:introOk', '1'); lsSet('nau:introDia', day()); I.play(); }
+})();
