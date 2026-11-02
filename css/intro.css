@@ -70,6 +70,17 @@
 .in-skip-b{position:absolute;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));padding:8px 12px;border:0;background:none;color:rgba(237,230,218,.55);font:500 13px/1 var(--sans,system-ui);letter-spacing:.04em;cursor:pointer;animation:inFade .5s ease-out .8s both}
 .in-skip-b:focus-visible{outline:1px solid rgba(237,230,218,.6);outline-offset:2px;border-radius:6px}
 
+/* à espera do toque (no iPhone o som só pode começar com um toque): tudo parado no primeiro instante, um ponto de luz a pulsar */
+#intro.in-wait,#intro.in-wait .in-out,#intro.in-wait .in-out *{animation-play-state:paused}
+.in-tdot{left:calc(var(--cx) - 4px);top:calc(var(--cy) - 4px);width:8px;height:8px;border-radius:50%;background:#FFE9B8;box-shadow:0 0 12px 4px rgba(246,220,151,.55),0 0 40px 14px rgba(201,162,74,.2);opacity:0}
+#intro.in-wait .in-tdot{animation:inTdot 2.2s ease-in-out infinite;animation-play-state:running}
+#intro:not(.in-wait) .in-tdot{animation:inTdotOut .5s ease-out both}
+.in-tapt{position:absolute;left:0;right:0;bottom:calc(19% + env(safe-area-inset-bottom,0px));display:none;flex-direction:column;align-items:center;gap:8px;color:rgba(237,230,218,.8);font:500 15px/1.2 var(--sans,system-ui);letter-spacing:.03em;pointer-events:none}
+#intro.in-wait .in-tapt{display:flex;animation:inFade .8s ease-out .25s both}
+.in-tapt svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.75;margin-bottom:2px}
+.in-tapt small{font-size:12px;color:rgba(237,230,218,.45);letter-spacing:.02em}
+@keyframes inTdot{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes inTdotOut{from{opacity:1}to{opacity:0}}
 @keyframes inOut{to{opacity:0}}
 @keyframes inDot{0%{opacity:0;transform:scale(.2)}14%{opacity:1;transform:scale(1.25)}24%{transform:scale(1)}40%{opacity:.65}56%{opacity:1}72%{opacity:.7}88%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.4)}}
 @keyframes inExit{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.07)}}

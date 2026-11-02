@@ -2983,8 +2983,22 @@ let RAWCTX = null;
 async function introTests(b) { cur = 'Intro'; console.log('\n=== Intro ao abrir: prumo, cera, carimbo, selo e nome; depois o ecrã de carregamento ===');
   const mk = async (o = {}, init) => { const c = await RAWCTX(Object.assign({}, PROFILES[0].o, o)); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.addInitScript(([H, init]) => { if (!localStorage.getItem('__seeded')) { localStorage.setItem('os2:one~security', JSON.stringify({ data: { hash: H } })); Object.entries(init || {}).forEach(([k, v]) => localStorage.setItem(k, v)); localStorage.setItem('__seeded', '1'); } window.__noOnb = 1; }, [HASH, init]); return { c, p, errs }; };
-  // 1) ao abrir: a intro corre, o ecrã do código só vem depois, e entre os dois aparece o ecrã de carregamento
-  let { c, p, errs } = await mk(); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(600);
+  const MUDO = { 'nau:introSom': 'false' };
+  // 0) com som (por omissão): sem um toque o áudio não pode começar (iPhone, e este navegador de teste) → "Toca para começar"; o toque começa imagem e som juntos
+  let { c, p, errs } = await mk(); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(1100);
+  const w = await E(p, () => { const el = document.getElementById('intro'), a = el && el.querySelector('.in-selo').getAnimations()[0]; return { st: PrumoIntro.state(), wait: el && el.classList.contains('in-wait'), tap: el && getComputedStyle(el.querySelector('.in-tapt')).display, t: a ? Math.round(a.currentTime) : -1, code: !!document.getElementById('lkCode') }; });
+  ok('Com som: a intro abre em "Toca para começar", parada no primeiro instante, e o ecrã do código espera', w.st === 'waiting' && w.wait && w.tap === 'flex' && w.t === 0 && !w.code, JSON.stringify(w));
+  await p.mouse.click(195, 420); await sleep(400);
+  const w2 = await E(p, () => ({ st: PrumoIntro.state(), au: PrumoIntro.audio(), wait: document.getElementById('intro').classList.contains('in-wait'), t: Math.round(document.querySelector('#intro .in-selo').getAnimations()[0].currentTime) }));
+  ok('O toque começa a intro com o som ligado (áudio a correr) e a animação a andar', w2.st === 'playing' && w2.au === 'running' && !w2.wait && w2.t > 150, JSON.stringify(w2));
+  const snd = await E(p, async () => { const oc = new OfflineAudioContext(2, 44100 * 6.2, 44100); PrumoIntroSom.play(oc, 0); const b = await oc.startRendering(), d = b.getChannelData(0); let pk = 0, bad = 0; for (let i = 0; i < d.length; i++) { const v = Math.abs(d[i]); if (!isFinite(v)) bad++; else if (v > pk) pk = v; } const at = s => { let m = 0; for (let i = Math.floor(s * 44100); i < (s + .1) * 44100; i++) m = Math.max(m, Math.abs(d[i])); return m; }; return { pk: +pk.toFixed(3), bad, imp: +at(2.82).toFixed(3), calm: +at(1.5).toFixed(3), end: +at(6.05).toFixed(4) }; });
+  ok('A trilha: sem cortes nem valores inválidos, o impacto bem acima do resto e silêncio no fim', snd.bad === 0 && snd.pk < .99 && snd.imp > snd.calm * 2 && snd.end < .003, JSON.stringify(snd));
+  await p.waitForSelector('#lkCode', { timeout: 9000 }); ok('No fim (com som), o ecrã de carregamento e depois o código', true); await c.close();
+  ({ c, p, errs } = await mk()); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(900); await p.click('#intro .in-skip-b'); await sleep(500);
+  ok('Em "Toca para começar", o botão Saltar salta tudo (sem som)', await E(p, () => !document.getElementById('intro') && PrumoIntro.state() === 'done' && PrumoIntro.audio() === null));
+  await p.waitForSelector('#lkCode', { timeout: 6000 }); await c.close();
+  // 1) sem som: a intro corre logo, o ecrã do código só vem depois, e entre os dois aparece o ecrã de carregamento
+  ({ c, p, errs } = await mk({}, MUDO)); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(600);
   const a = await E(p, () => ({ intro: !!document.getElementById('intro'), on: document.documentElement.classList.contains('intro-on'), code: !!document.getElementById('lkCode'), st: PrumoIntro.state(), n: document.getElementById('intro').getAnimations({ subtree: true }).length }));
   ok('Ao abrir, a intro aparece por cima de tudo (e o ecrã do código ainda não)', a.intro && a.on && !a.code && a.st === 'playing' && a.n > 40, JSON.stringify(a));
   const pos = await E(p, () => { const el = document.querySelector('#intro .in-selo'), r = el.getBoundingClientRect(); return { cx: Math.round(r.left + r.width / 2), w: el.offsetWidth, vw: innerWidth }; });
@@ -2998,18 +3012,20 @@ async function introTests(b) { cur = 'Intro'; console.log('\n=== Intro ao abrir:
   ok('Recarregar na mesma sessão não repete a intro', await E(p, () => !document.getElementById('intro') && PrumoIntro.state() === 'off'));
   // 3) Definições: escolher e ver agora
   await unlock(p); await E(p, () => location.hash = 'definicoes'); await sleep(700); await E(p, () => { const el = document.getElementById('introSet'); el && el.classList.remove('shut'); });
-  const s = await E(p, () => { const el = document.getElementById('introSet'); return el && { n: el.querySelectorAll('[data-act="introSet"]').length, on: (el.querySelector('[data-act="introSet"].on') || {}).dataset.v, ver: !!el.querySelector('[data-act="introVer"]') }; });
-  ok('Definições: "Intro ao abrir" com Sempre, Uma vez por dia e Nunca, e "Ver a intro agora"', s && s.n === 3 && s.on === 'sempre' && s.ver, JSON.stringify(s));
-  await E(p, () => document.querySelector('#introSet [data-act="introVer"]').click()); await sleep(300);
-  const v = await E(p, () => !!document.getElementById('intro') && PrumoIntro.state() === 'playing');
-  await p.mouse.click(200, 300); await sleep(600);
+  const s = await E(p, () => { const el = document.getElementById('introSet'); return el && { n: el.querySelectorAll('[data-act="introSet"]').length, on: (el.querySelector('[data-act="introSet"].on') || {}).dataset.v, ver: !!el.querySelector('[data-act="introVer"]'), som: el.querySelectorAll('[data-act="introSom"]').length }; });
+  ok('Definições: "Intro ao abrir" com Sempre, Uma vez por dia e Nunca, "Com som"/"Sem som" e "Ver a intro agora"', s && s.n === 3 && s.on === 'sempre' && s.ver && s.som === 2, JSON.stringify(s));
+  await E(p, () => document.querySelector('#introSet [data-act="introSom"][data-v="1"]').click()); await sleep(300);
+  await E(p, () => { const el = document.getElementById('introSet'); el && el.classList.remove('shut'); el && el.scrollIntoView({ block: 'center' }); }); await sleep(200);
+  await p.click('#introSet [data-act="introVer"]'); await sleep(300);
+  const v = await E(p, () => !!document.getElementById('intro') && PrumoIntro.state() === 'playing' && PrumoIntro.audio() === 'running');
+  await sleep(400); await p.mouse.click(200, 300); await sleep(600);
   const v2 = await E(p, () => !document.getElementById('intro') && PrumoIntro.state() === 'done');
-  ok('"Ver a intro agora" mostra-a por cima do app e um toque salta-a', v && v2, JSON.stringify([v, v2]));
+  ok('"Ver a intro agora" mostra-a por cima do app já com som (veio de um toque) e um toque salta-a', v && v2, JSON.stringify([v, v2]));
   await E(p, () => document.querySelector('#introSet [data-act="introSet"][data-v="nunca"]').click()); await sleep(200);
   ok('Escolher "Nunca" fica guardado', await E(p, () => localStorage.getItem('nau:intro') === '"nunca"'));
   ok('sem erros JS (intro)', !errs.length, errs.slice(0, 3).join(' | ')); await c.close();
   // 4) saltar logo no início: o ecrã do código chega cedo
-  ({ c, p, errs } = await mk()); const t0 = Date.now(); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(700); await p.mouse.click(195, 400);
+  ({ c, p, errs } = await mk({}, MUDO)); const t0 = Date.now(); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(700); await p.mouse.click(195, 400);
   await p.waitForSelector('#lkCode', { timeout: 6000 }); const dt = Date.now() - t0;
   ok('Um toque salta a intro e o app segue (ecrã de carregamento, depois o código)', dt < 4200, dt + ' ms'); await c.close();
   // 5) "Nunca" e "reduzir movimento": não aparece

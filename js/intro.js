@@ -44,11 +44,29 @@ const DROP = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 28'><d
 const STAMP = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><radialGradient id='r' cx='.35' cy='.3' r='.85'><stop offset='0' stop-color='#F4D894'/><stop offset='.45' stop-color='#B88A35'/><stop offset='1' stop-color='#4A3310'/></radialGradient><radialGradient id='w' cx='.4' cy='.35' r='.8'><stop offset='0' stop-color='#5A3826'/><stop offset='.6' stop-color='#2E1B12'/><stop offset='1' stop-color='#170C08'/></radialGradient></defs><circle cx='50' cy='50' r='49' fill='url(#r)'/>${Array.from({ length: 48 }, (_, i) => { const a = i * Math.PI / 24, x = 50 + Math.cos(a) * 46.5, y = 50 + Math.sin(a) * 46.5; return `<circle cx='${x.toFixed(2)}' cy='${y.toFixed(2)}' r='1.3' fill='#3A270B' fill-opacity='.45'/>`; }).join('')}<circle cx='50' cy='50' r='41' fill='url(#w)'/><circle cx='50' cy='50' r='41' fill='none' stroke='#E9C77A' stroke-opacity='.5' stroke-width='1'/><circle cx='50' cy='50' r='13' fill='url(#r)'/><path d='M22 34a32 32 0 0 1 22-15' stroke='#FFE9B8' stroke-opacity='.35' stroke-width='3' fill='none' stroke-linecap='round'/></svg>`);
 const GEO = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='-160 -160 320 320' fill='none' stroke='#C9A24A'><circle r='72' stroke-opacity='.32' stroke-width='.8'/><circle r='112' stroke-opacity='.22' stroke-width='.8' stroke-dasharray='2 5'/><circle r='150' stroke-opacity='.16' stroke-width='.8'/>${Array.from({ length: 72 }, (_, i) => { const a = i * Math.PI / 36, L = i % 6 === 0 ? 14 : i % 2 === 0 ? 7 : 4, r0 = 150 - L, c = Math.cos(a), s = Math.sin(a); return `<path d='M${(c * r0).toFixed(1)} ${(s * r0).toFixed(1)}L${(c * 150).toFixed(1)} ${(s * 150).toFixed(1)}' stroke-opacity='${i % 6 === 0 ? .55 : .3}' stroke-width='${i % 6 === 0 ? 1.1 : .8}'/>`; }).join('')}</svg>`);
 
-let st = 'off', endAt = 0, waiters = [], EL = null, safety = 0;
-const done = () => { if (st !== 'playing') return; st = 'done'; endAt = Date.now(); clearTimeout(safety); if (EL) { EL.remove(); EL = null; } const R = document.documentElement; R.classList.remove('intro-on'); R.classList.add('intro-after'); const w = waiters; waiters = []; setTimeout(() => R.classList.remove('intro-after'), HOLD); w.forEach(cb => setTimeout(cb, HOLD)); };
+let st = 'off', endAt = 0, waiters = [], EL = null, safety = 0, AC = null, SND = null, t0 = 0;
+const ACx = window.AudioContext || window.webkitAudioContext;
+const snd = () => lsGet('nau:introSom') !== false;   // som ligado por omissão
+const done = () => { if (st !== 'playing' && st !== 'waiting') return; st = 'done'; endAt = Date.now(); clearTimeout(safety); if (EL) { EL.remove(); EL = null; }
+  if (SND) SND.stop(.25); const ac = AC; AC = null; SND = null; if (ac) setTimeout(() => { try { ac.close(); } catch (e) { } }, 900);
+  const R = document.documentElement; R.classList.remove('intro-on'); R.classList.add('intro-after'); const w = waiters; waiters = []; setTimeout(() => R.classList.remove('intro-after'), HOLD); w.forEach(cb => setTimeout(cb, HOLD)); };
 // rede de segurança: se a animação final não avisar, acaba na mesma (mas não enquanto alguém a tem pausada)
 const guard = () => { if (st !== 'playing' || !EL) return; const a = EL.getAnimations ? EL.getAnimations().find(x => x.animationName === 'inOut') : null; if (a && a.playState === 'paused') { safety = setTimeout(guard, 1000); return; } done(); };
-const skip = () => { if (st !== 'playing' || !EL || EL.classList.contains('in-skip')) return; EL.classList.add('in-skip'); setTimeout(done, 380); };
+// saltar: um toque durante a intro (o primeiro meio segundo não conta, para o toque que a começou não a saltar) ou o botão "Saltar"
+const out = () => { if (!EL || EL.classList.contains('in-skip')) return; if (SND) SND.stop(.3); EL.classList.add('in-skip'); setTimeout(done, 380); };
+const skip = () => { if (st === 'playing' && Date.now() - t0 > 450) out(); };
+const skipAll = e => { if (e) { e.preventDefault(); e.stopPropagation(); } if (st === 'playing' || st === 'waiting') out(); };
+// começar: a imagem e o som arrancam juntos
+const begin = () => { if (st !== 'waiting' || !EL) return; st = 'playing'; t0 = Date.now(); EL.classList.remove('in-wait');
+  if (AC && window.PrumoIntroSom) { try { SND = window.PrumoIntroSom.play(AC, AC.currentTime + .03); } catch (e) { SND = null; } }
+  safety = setTimeout(guard, 7500); };
+// no iPhone o som só pode começar com um toque: o toque desbloqueia o áudio e começa a intro
+const tapStart = e => { if (st !== 'waiting' || (e.target && e.target.closest && e.target.closest('.in-skip-b'))) return;
+  const ac = AC; if (!ac) { begin(); return; } let go = false; const fire = () => { if (go) return; go = true; begin(); };
+  try { const b = ac.createBuffer(1, 1, 22050), s = ac.createBufferSource(); s.buffer = b; s.connect(ac.destination); s.start(0); } catch (e2) { }
+  let p = null; try { p = ac.resume && ac.resume(); } catch (e2) { }
+  if (p && p.then) { p.then(fire, () => { AC = null; try { ac.close(); } catch (e3) { } fire(); }); setTimeout(() => { if (!go && ac.state !== 'running') { AC = null; } fire(); }, 700); } else fire(); };
+const keys = e => { if (st === 'waiting') { if (e.key === 'Escape') skipAll(e); else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tapStart(e); } } else if (st === 'playing') skip(); };
 const rnd = (a, b) => a + Math.random() * (b - a);
 
 const build = P => {
@@ -63,7 +81,7 @@ const build = P => {
   const el = document.createElement('div'); el.id = 'intro'; el.setAttribute('aria-hidden', 'true'); el.style.background = bgNow();
   el.innerHTML = `<div class="in-vig"></div><div class="in-out"><div class="in-cam"><div class="sp-in in-col">
     <div class="in-seal" style="--cx:${cx}px;--cy:${cy}px">
-      <i class="in-glow"></i><i class="in-dot"></i>
+      <i class="in-glow"></i><i class="in-dot"></i><i class="in-tdot"></i>
       <div class="in-geo"><i class="in-cross"></i><i class="in-cross v"></i><img class="in-ring" src="${GEO}" alt=""><b class="in-deg">0°</b></div>
       <div class="in-plumb"><div class="in-swing"><i class="in-line"></i><img class="in-bob" src="${BOB}" alt=""></div></div>
       <img class="in-drop" src="${DROP}" alt="">
@@ -76,19 +94,30 @@ const build = P => {
     </div>
     <div class="in-word">${P.letters.map((s, i) => `<img src="${s}" alt="" style="--i:${i}">`).join('')}<div class="in-shine" style="-webkit-mask-image:url(&quot;${P.nome}&quot;);mask-image:url(&quot;${P.nome}&quot;)"><i></i></div></div>
     <div class="in-lema"><img class="in-rule" src="${P.rule}" alt=""><img class="in-tag" src="${P.tag}" alt=""></div>
-  </div></div></div><button type="button" class="in-skip-b">Saltar</button>`;
+  </div></div></div><div class="in-tapt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>Toca para começar<small>com som</small></div><button type="button" class="in-skip-b">Saltar</button>`;
   return el; };
 
 const I = window.PrumoIntro = {
   MODES: [['sempre', 'Sempre'], ['dia', 'Uma vez por dia'], ['nunca', 'Nunca']],
   mode, setMode: v => lsSet('nau:intro', v), state: () => st,
   // o que vem depois (o ecrã do código, a app) espera pelo fim da intro e por um instante do ecrã de carregamento
-  wait: cb => { if (st === 'playing') { waiters.push(cb); return; } const left = endAt ? endAt + HOLD - Date.now() : 0; if (left > 0) setTimeout(cb, left); else cb(); },
-  play: () => { if (st === 'playing') return false; const P = getParts(); if (!P) return false;
-    EL = build(P); st = 'playing'; document.documentElement.classList.add('intro-on'); document.body.appendChild(EL);
+  wait: cb => { if (st === 'playing' || st === 'waiting') { waiters.push(cb); return; } const left = endAt ? endAt + HOLD - Date.now() : 0; if (left > 0) setTimeout(cb, left); else cb(); },
+  sound: snd, setSound: on => lsSet('nau:introSom', !!on), audio: () => (AC ? AC.state : null),
+  // gesture: chamada a partir de um toque (Definições › Ver a intro agora): o som pode começar já
+  play: (o = {}) => { if (st === 'playing' || st === 'waiting') return false; const P = getParts(); if (!P) return false;
+    EL = build(P); st = 'waiting'; document.documentElement.classList.add('intro-on'); document.body.appendChild(EL);
     EL.addEventListener('animationend', e => { if (e.target === EL && e.animationName === 'inOut') done(); });
-    ['pointerdown', 'keydown'].forEach(ev => EL.addEventListener(ev, skip)); document.addEventListener('keydown', skip, { once: true });
-    safety = setTimeout(guard, 7500); return true; },
+    EL.addEventListener('pointerdown', skip); EL.addEventListener('pointerup', tapStart); EL.addEventListener('click', tapStart);
+    EL.querySelector('.in-skip-b').addEventListener('click', skipAll); document.addEventListener('keydown', keys);
+    const want = o.sound == null ? snd() : o.sound;
+    if (want && ACx) { try { AC = new ACx(); if (o.gesture && AC.resume) AC.resume(); } catch (e) { AC = null; } }
+    // sem som, ou com o áudio livre (Android com o app instalado, computador): começa logo; senão espera pelo toque.
+    // O áudio novo nasce "suspenso" e só passa a ativo um instante depois quando é permitido: dá-lhe até 0,4 s.
+    if (!AC || ((AC.state === 'running' || o.gesture) && !window.__introTap)) { begin(); return true; }
+    EL.classList.add('in-wait'); if (window.__introTap) return true;
+    const c0 = Date.now(); let pr = null; try { pr = AC.resume(); } catch (e) { }
+    if (pr && pr.then) pr.then(() => { if (st === 'waiting' && Date.now() - c0 < 400) begin(); }, () => { });
+    return true; },
   skip };
 
 // ao abrir: uma vez por sessão (as recargas da mesma sessão não repetem), conforme a escolha

@@ -26,11 +26,14 @@ A.palSet = b => { const id = b.dataset.v; if (!ok(id)) return; P.apply(id); OS.F
 const IN = window.PrumoIntro;
 const introPanel = () => { if (!IN) return ''; const m = IN.mode();
   return `<div class="pn" id="introSet"><div class="pn-h"><h3>${UI.ic('play')}Intro ao abrir</h3><span class="mut" style="font-size:12px">${esc((IN.MODES.find(x => x[0] === m) || [])[1] || '')}</span></div>
-    <p class="mut" style="margin:0 0 10px">A animação do selo antes do ecrã de carregamento: o prumo, a cera, o carimbo e o nome. Um toque salta-a. Com "reduzir movimento" ligado no aparelho ou no modo Leve não aparece.</p>
+    <p class="mut" style="margin:0 0 10px">A animação do selo antes do ecrã de carregamento: o prumo, a cera, o carimbo e o nome, com som. Um toque salta-a. Com "reduzir movimento" ligado no aparelho ou no modo Leve não aparece.</p>
     <div class="seg" role="group" aria-label="Quando mostrar a intro">${IN.MODES.map(([v, n]) => `<button type="button" class="${v === m ? 'on' : ''}" aria-pressed="${v === m}" data-act="introSet" data-v="${v}">${esc(n)}</button>`).join('')}</div>
-    <button type="button" class="btn sm" style="margin-top:10px" data-act="introVer">${UI.ic('play')}Ver a intro agora</button></div>`; };
+    <p class="mut" style="margin:14px 0 8px">Som: no iPhone o som só pode começar com um toque, por isso a intro abre em "Toca para começar". Sem som, começa sozinha. Com o iPhone em silêncio não se ouve.</p>
+    <div class="seg" role="group" aria-label="Som da intro">${[[1, 'Com som'], [0, 'Sem som']].map(([v, n]) => `<button type="button" class="${!!v === IN.sound() ? 'on' : ''}" aria-pressed="${!!v === IN.sound()}" data-act="introSom" data-v="${v}">${esc(n)}</button>`).join('')}</div>
+    <button type="button" class="btn sm" style="margin-top:12px" data-act="introVer">${UI.ic('play')}Ver a intro agora</button></div>`; };
 A.introSet = b => { if (!IN) return; IN.setMode(b.dataset.v); UI.toast(b.dataset.v === 'nunca' ? 'A intro não volta a aparecer' : b.dataset.v === 'dia' ? 'A intro aparece uma vez por dia' : 'A intro aparece sempre que abres', 'pos'); OS.request(); };
-A.introVer = () => { if (IN && !IN.play()) UI.toast('Não foi possível mostrar a intro aqui'); };
+A.introSom = b => { if (!IN) return; IN.setSound(b.dataset.v === '1'); UI.toast(b.dataset.v === '1' ? 'A intro tem som' : 'A intro fica sem som', 'pos'); OS.request(); };
+A.introVer = () => { if (IN && !IN.play({ gesture: true })) UI.toast('Não foi possível mostrar a intro aqui'); };
 OS.Cores = { panel, mine, introPanel };
 OS.on('ready', () => { const o = OS.views.definicoes; if (!o || o._pal) return; OS.views.definicoes = sub => o(sub) + (String(sub || '') === '' ? panel() + introPanel() : ''); OS.views.definicoes._pal = 1; });
 })();

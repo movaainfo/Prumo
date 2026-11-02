@@ -101,6 +101,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `PrumoIntro.wait(cb)`: `js/app.js` só chama `OS.Lock.gate` depois da intro e de ~1,1 s do ecrã de carregamento (que volta a entrar com `html.intro-after`).
 - Uma vez por sessão (`sessionStorage nau:introOk`); `nau:intro` = sempre | dia | nunca; não aparece com reduzir movimento nem no modo Leve (`lite-x`). `window.__noIntro` desliga-a (os testes fazem isto em todos os contextos; os da intro usam `RAWCTX`). Testes: `--only=intro`.
 
+- Som: `js/introsom.js` (carrega antes de `js/intro.js`) sintetiza a trilha com Web Audio, a tempo de `css/intro.css` (`PrumoIntroSom.play(ctx, t0)`, também com OfflineAudioContext para gravar/medir). Com som (`nau:introSom`, ligado por omissão) e sem o áudio livre, a intro fica parada em "Toca para começar" (`#intro.in-wait`) até um toque (`pointerup`/`click`, que desbloqueia o áudio no iPhone); onde o áudio é livre, começa logo (espera até 0,4 s pelo `resume()`). `PrumoIntro.audio()` diz o estado do áudio; `window.__introTap` força o ecrã do toque nos testes.
+
 ### Cores do app (paletas)
 - `js/paleta.js` corre no `<head>` (o build.sh põe-no lá) e muda as cores azuis das folhas de estilo no próprio sítio (CSSOM), pelo papel de cada azul: fundo escuro, cinzento, destaque claro, botão. A ordem e a força das regras não mudam. As cores fora do azul (verde, vermelho, âmbar, violeta) ficam iguais.
 - Paletas em `LIST` (Selo por omissão, Mar = o tema base sem mudanças, Floresta, Ametista, Café, Grafite). `PrumoPaleta.apply(id)`, `.color(id, cor)`, `.recolor(svg)` (as cenas do fundo, em `js/cores.js`).

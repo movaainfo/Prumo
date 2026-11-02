@@ -3,13 +3,13 @@
   "p": "iPhone",
   "name": "abre o ecrã do código",
   "pass": true,
-  "info": "490 ms"
+  "info": "466 ms"
  },
  {
   "p": "iPhone",
   "name": "versão visível no ecrã do código",
   "pass": true,
-  "info": "MIND CONTROL · v2.83"
+  "info": "MIND CONTROL · v2.87"
  },
  {
   "p": "iPhone",
@@ -69,7 +69,7 @@
   "p": "iPhone",
   "name": "páginas rápidas",
   "pass": true,
-  "info": "máx 238 ms"
+  "info": "máx 179 ms"
  },
  {
   "p": "iPhone",
@@ -99,7 +99,7 @@
   "p": "iPhone",
   "name": "sem fugas de memória (200 mudanças de página)",
   "pass": true,
-  "info": "heap +0 MB · 2049 elementos"
+  "info": "heap +0 MB · 2050 elementos"
  },
  {
   "p": "iPhone",
@@ -111,13 +111,13 @@
   "p": "Android tel",
   "name": "abre o ecrã do código",
   "pass": true,
-  "info": "535 ms"
+  "info": "525 ms"
  },
  {
   "p": "Android tel",
   "name": "versão visível no ecrã do código",
   "pass": true,
-  "info": "MIND CONTROL · v2.83"
+  "info": "MIND CONTROL · v2.87"
  },
  {
   "p": "Android tel",
@@ -177,7 +177,7 @@
   "p": "Android tel",
   "name": "páginas rápidas",
   "pass": true,
-  "info": "máx 214 ms"
+  "info": "máx 112 ms"
  },
  {
   "p": "Android tel",
@@ -207,7 +207,7 @@
   "p": "Android tel",
   "name": "sem fugas de memória (200 mudanças de página)",
   "pass": true,
-  "info": "heap +0 MB · 2051 elementos"
+  "info": "heap +0 MB · 2052 elementos"
  },
  {
   "p": "Android tel",
@@ -219,13 +219,13 @@
   "p": "Tablet horiz",
   "name": "abre o ecrã do código",
   "pass": true,
-  "info": "2731 ms"
+  "info": "2924 ms"
  },
  {
   "p": "Tablet horiz",
   "name": "versão visível no ecrã do código",
   "pass": true,
-  "info": "MIND CONTROL · v2.83"
+  "info": "MIND CONTROL · v2.87"
  },
  {
   "p": "Tablet horiz",
@@ -285,7 +285,7 @@
   "p": "Tablet horiz",
   "name": "páginas rápidas (processador 6× mais lento)",
   "pass": true,
-  "info": "máx 704 ms"
+  "info": "máx 683 ms"
  },
  {
   "p": "Tablet horiz",
@@ -315,7 +315,7 @@
   "p": "Tablet horiz",
   "name": "sem fugas de memória (200 mudanças de página)",
   "pass": true,
-  "info": "heap +0 MB · 1607 elementos"
+  "info": "heap +0 MB · 1608 elementos"
  },
  {
   "p": "Tablet horiz",
@@ -327,13 +327,13 @@
   "p": "Tablet vert",
   "name": "abre o ecrã do código",
   "pass": true,
-  "info": "654 ms"
+  "info": "1137 ms"
  },
  {
   "p": "Tablet vert",
   "name": "versão visível no ecrã do código",
   "pass": true,
-  "info": "MIND CONTROL · v2.83"
+  "info": "MIND CONTROL · v2.87"
  },
  {
   "p": "Tablet vert",
@@ -393,7 +393,7 @@
   "p": "Tablet vert",
   "name": "páginas rápidas",
   "pass": true,
-  "info": "máx 242 ms"
+  "info": "máx 185 ms"
  },
  {
   "p": "Tablet vert",
@@ -423,7 +423,7 @@
   "p": "Tablet vert",
   "name": "sem fugas de memória (200 mudanças de página)",
   "pass": true,
-  "info": "heap +0 MB · 1633 elementos"
+  "info": "heap +0 MB · 2052 elementos"
  },
  {
   "p": "Tablet vert",
@@ -435,13 +435,13 @@
   "p": "Computador",
   "name": "abre o ecrã do código",
   "pass": true,
-  "info": "708 ms"
+  "info": "712 ms"
  },
  {
   "p": "Computador",
   "name": "versão visível no ecrã do código",
   "pass": true,
-  "info": "MIND CONTROL · v2.83"
+  "info": "MIND CONTROL · v2.87"
  },
  {
   "p": "Computador",
@@ -501,7 +501,7 @@
   "p": "Computador",
   "name": "páginas rápidas",
   "pass": true,
-  "info": "máx 139 ms"
+  "info": "máx 138 ms"
  },
  {
   "p": "Computador",
@@ -525,7 +525,7 @@
   "p": "Computador",
   "name": "sem fugas de memória (200 mudanças de página)",
   "pass": true,
-  "info": "heap +0 MB · 2025 elementos"
+  "info": "heap +0 MB · 2026 elementos"
  },
  {
   "p": "Computador",
@@ -777,19 +777,19 @@
   "p": "Projeto de Vida",
   "name": "…e a meta fica ligada ao objetivo (aparece \"Em meta\" e no Painel de metas)",
   "pass": true,
-  "info": "{\"id\":\"10egbxkk9qr\",\"due\":\"2027-01-01\",\"imp\":5}"
+  "info": "{\"id\":\"5dbxpcrafzq\",\"due\":\"2027-01-01\",\"imp\":5}"
  },
  {
   "p": "Projeto de Vida",
   "name": "Com metas, todas as missões são passos de uma meta (tarefa da meta, avanço %, etapas, ações)",
   "pass": true,
-  "info": "{\"d\":[\"g:10egbxkk9qr:t:r35bqakka7u\",\"g:10egbxkk9qr:tn:2\",\"g:10egbxkk9qr:a:2\"],\"w\":[\"g:10egbxkk9qr:p:15\",\"g:10egbxkk9qr:s:1\",\"g:10egbxkk9qr:tn:3\"],\"g\":\"10egbxkk9qr\"}"
+  "info": "{\"d\":[\"g:5dbxpcrafzq:t:aq93chraggs\",\"g:5dbxpcrafzq:tn:2\",\"g:5dbxpcrafzq:a:2\"],\"w\":[\"g:5dbxpcrafzq:p:15\",\"g:5dbxpcrafzq:s:1\",\"g:5dbxpcrafzq:tn:3\"],\"g\":\"5dbxpcrafzq\"}"
  },
  {
   "p": "Projeto de Vida",
   "name": "Fazer a tarefa da meta cumpre a missão do dia (a missão diz o nome da tarefa e da meta)",
   "pass": true,
-  "info": "{\"ok\":[\"g:10egbxkk9qr:t:r35bqakka7u\"],\"t\":[\"Faz \\\"Resumo do capítulo 1 da CPA-10\\\" · meta «Obter a certificação CPA-10, se ainda pertinente»\",\"2 ações pela meta «Obter a certificação CPA-10, se ainda pertinente» (tarefas, estudo, treinos, blocos da rotina…)\",\"2 tarefas da meta «Obter a certificação CPA-10, se ainda pertinente»\"],\"gid\":\"10egbxkk9qr\",\"goal\":\"Obter a certificação CPA-10, se ainda pertinente\",\"hp\":3000,\"dmg\":374,\"guard\":true}"
+  "info": "{\"ok\":[\"g:5dbxpcrafzq:t:aq93chraggs\"],\"t\":[\"Faz \\\"Resumo do capítulo 1 da CPA-10\\\" · meta «Obter a certificação CPA-10, se ainda pertinente»\",\"2 ações pela meta «Obter a certificação CPA-10, se ainda pertinente» (tarefas, estudo, treinos, blocos da rotina…)\",\"2 tarefas da meta «Obter a certificação CPA-10, se ainda pertinente»\"],\"gid\":\"5dbxpcrafzq\",\"goal\":\"Obter a certificação CPA-10, se ainda pertinente\",\"hp\":3000,\"dmg\":374,\"guard\":true}"
  },
  {
   "p": "Projeto de Vida",
@@ -807,7 +807,7 @@
   "p": "Projeto de Vida",
   "name": "Chefe da semana seguinte: o capitão do andar onde estás na masmorra da meta (o chefe verdadeiro só depois dos 5 andares)",
   "pass": true,
-  "info": "{\"want\":\"cav-est\",\"a\":\"carreira\",\"hp\":3000,\"t\":0,\"v\":2,\"gid\":\"10egbxkk9qr\",\"cap\":\"cav-est\"}"
+  "info": "{\"want\":\"cav-est\",\"a\":\"carreira\",\"hp\":3000,\"t\":0,\"v\":2,\"gid\":\"5dbxpcrafzq\",\"cap\":\"cav-est\"}"
  },
  {
   "p": "Projeto de Vida",
@@ -819,7 +819,7 @@
   "p": "Projeto de Vida",
   "name": "O chefe da semana guarda a tua meta e o XP dela dá dano inteiro",
   "pass": true,
-  "info": "{\"ok\":[\"g:10egbxkk9qr:t:r35bqakka7u\"],\"t\":[\"Faz \\\"Resumo do capítulo 1 da CPA-10\\\" · meta «Obter a certificação CPA-10, se ainda pertinente»\",\"2 ações pela meta «Obter a certificação CPA-10, se ainda pertinente» (tarefas, estudo, treinos, blocos da rotina…)\",\"2 tarefas da meta «Obter a certificação CPA-10, se ainda pertinente»\"],\"gid\":\"10egbxkk9qr\",\"goal\":\"Obter a certificação CPA-10, se ainda pertinente\",\"hp\":3000,\"dmg\":374,\"guard\":true}"
+  "info": "{\"ok\":[\"g:5dbxpcrafzq:t:aq93chraggs\"],\"t\":[\"Faz \\\"Resumo do capítulo 1 da CPA-10\\\" · meta «Obter a certificação CPA-10, se ainda pertinente»\",\"2 ações pela meta «Obter a certificação CPA-10, se ainda pertinente» (tarefas, estudo, treinos, blocos da rotina…)\",\"2 tarefas da meta «Obter a certificação CPA-10, se ainda pertinente»\"],\"gid\":\"5dbxpcrafzq\",\"goal\":\"Obter a certificação CPA-10, se ainda pertinente\",\"hp\":3000,\"dmg\":374,\"guard\":true}"
  },
  {
   "p": "Projeto de Vida",
@@ -921,7 +921,7 @@
   "p": "Cores do app",
   "name": "Ao voltar a abrir, já abre com a paleta escolhida (sem piscar a azul)",
   "pass": true,
-  "info": "[\"floresta\",{\"lk\":false,\"sp\":false,\"view\":14387,\"h\":\"#definicoes\"}]"
+  "info": "[\"floresta\",{\"lk\":false,\"sp\":false,\"view\":14574,\"h\":\"#definicoes\"}]"
  },
  {
   "p": "Cores do app",
@@ -933,7 +933,7 @@
   "p": "Cores do app",
   "name": "Trocar de paleta é rápido (sem recarregar)",
   "pass": true,
-  "info": "14 ms"
+  "info": "16 ms"
  },
  {
   "p": "Cores do app",
@@ -943,9 +943,39 @@
  },
  {
   "p": "Intro",
+  "name": "Com som: a intro abre em \"Toca para começar\", parada no primeiro instante, e o ecrã do código espera",
+  "pass": true,
+  "info": "{\"st\":\"waiting\",\"wait\":true,\"tap\":\"flex\",\"t\":0,\"code\":false}"
+ },
+ {
+  "p": "Intro",
+  "name": "O toque começa a intro com o som ligado (áudio a correr) e a animação a andar",
+  "pass": true,
+  "info": "{\"st\":\"playing\",\"au\":\"running\",\"wait\":false,\"t\":383}"
+ },
+ {
+  "p": "Intro",
+  "name": "A trilha: sem cortes nem valores inválidos, o impacto bem acima do resto e silêncio no fim",
+  "pass": true,
+  "info": "{\"pk\":0.906,\"bad\":0,\"imp\":0.906,\"calm\":0.266,\"end\":0}"
+ },
+ {
+  "p": "Intro",
+  "name": "No fim (com som), o ecrã de carregamento e depois o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
+  "name": "Em \"Toca para começar\", o botão Saltar salta tudo (sem som)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
   "name": "Ao abrir, a intro aparece por cima de tudo (e o ecrã do código ainda não)",
   "pass": true,
-  "info": "{\"intro\":true,\"on\":true,\"code\":false,\"st\":\"playing\",\"n\":82}"
+  "info": "{\"intro\":true,\"on\":true,\"code\":false,\"st\":\"playing\",\"n\":83}"
  },
  {
   "p": "Intro",
@@ -973,13 +1003,13 @@
  },
  {
   "p": "Intro",
-  "name": "Definições: \"Intro ao abrir\" com Sempre, Uma vez por dia e Nunca, e \"Ver a intro agora\"",
+  "name": "Definições: \"Intro ao abrir\" com Sempre, Uma vez por dia e Nunca, \"Com som\"/\"Sem som\" e \"Ver a intro agora\"",
   "pass": true,
-  "info": "{\"n\":3,\"on\":\"sempre\",\"ver\":true}"
+  "info": "{\"n\":3,\"on\":\"sempre\",\"ver\":true,\"som\":2}"
  },
  {
   "p": "Intro",
-  "name": "\"Ver a intro agora\" mostra-a por cima do app e um toque salta-a",
+  "name": "\"Ver a intro agora\" mostra-a por cima do app já com som (veio de um toque) e um toque salta-a",
   "pass": true,
   "info": "[true,true]"
  },
@@ -999,7 +1029,7 @@
   "p": "Intro",
   "name": "Um toque salta a intro e o app segue (ecrã de carregamento, depois o código)",
   "pass": true,
-  "info": "2998 ms"
+  "info": "2930 ms"
  },
  {
   "p": "Intro",
@@ -1029,7 +1059,7 @@
   "p": "Contas",
   "name": "Criar conta: mostra o código de recuperação (só uma vez)",
   "pass": true,
-  "info": "VJDK-3J9X-H5F3-UPBA"
+  "info": "ZGHC-5RX3-XWVT-J3G5"
  },
  {
   "p": "Contas",
@@ -1077,7 +1107,7 @@
   "p": "Contas",
   "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
   "pass": true,
-  "info": "17 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~foco,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+  "info": "16 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
  },
  {
   "p": "Contas",
@@ -1149,13 +1179,13 @@
   "p": "Contas",
   "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
   "pass": true,
-  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"071d86f9b3c47ac7c01c54d2\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-02T01:18:03.904Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"1cca5a31b33857166bdb7ff3\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-02T04:26:35.889Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
  },
  {
   "p": "Contas",
   "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
   "pass": true,
-  "info": "{\"ult\":1793582299233,\"ent\":1,\"dias\":{\"2026-11-02\":45}}"
+  "info": "{\"ult\":1793593612434,\"ent\":1,\"dias\":{\"2026-11-02\":49}}"
  },
  {
   "p": "Contas",
@@ -1329,13 +1359,13 @@
   "p": "Contas",
   "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
   "pass": true,
-  "info": "20261102011846-89b5a6"
+  "info": "20261102042719-9601c3"
  },
  {
   "p": "Contas",
   "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
   "pass": true,
-  "info": "{\"id\":\"20261102011846-89b5a6\",\"uid\":\"7b951e062fb7a66bffa72cdd\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+  "info": "{\"id\":\"20261102042719-9601c3\",\"uid\":\"dac3dd297cbbeb84e58ed57e\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
  },
  {
   "p": "Contas",
