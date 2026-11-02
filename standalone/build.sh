@@ -14,7 +14,7 @@ mkdir -p "$OUT/vendor" && cp -r standalone/vendor/. "$OUT/vendor/"
 # línguas: a lista dos textos do app (para a IA do servidor traduzir) e os dicionários que vêm com o app
 mkdir -p "$OUT/i18n"; NODE_PATH="${NODE_PATH:-/opt/node22/lib/node_modules}" I18N_SKIP=brands.js,fastfood.js node standalone/i18n/extract.js && cp standalone/i18n/strings.json "$OUT/i18n/"
 [ -d standalone/i18n/packs ] && cp standalone/i18n/packs/*.json "$OUT/i18n/" 2>/dev/null || true
-BODY=$(sed -e '/<title>/d' -e '/os2lite/d' -e '/rel="preconnect"/d' -e '/fonts.googleapis.com\/css2/d' -e '/<link rel="stylesheet"/d' index.html \
+BODY=$(sed -e '/<title>/d' -e '/os2lite/d' -e '/js\/paleta.js/d' -e '/rel="preconnect"/d' -e '/fonts.googleapis.com\/css2/d' -e '/<link rel="stylesheet"/d' index.html \
   | sed -e 's#<script src="js/app.js"></script>#<script src="js/cloud.js"></script>\n<script src="js/app.js"></script>#')
 CSS=$(grep '<link rel="stylesheet" href="css/' index.html)
 cat > "$OUT/index.html" <<HTML
@@ -40,6 +40,7 @@ $CSS
 <style>[hidden]{display:none!important}</style>
 <script>$VERJS</script>
 $(grep os2lite index.html)
+<script src="js/paleta.js"></script>
 <script src="config.js"></script>
 <script src="js/update.js"></script>
 </head>
@@ -58,8 +59,8 @@ cat > "$OUT/manifest.webmanifest" <<'JSON'
   "start_url": "./#visao",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#070D16",
-  "theme_color": "#070D16",
+  "background_color": "#130A0B",
+  "theme_color": "#130A0B",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

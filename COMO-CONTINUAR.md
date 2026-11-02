@@ -96,6 +96,12 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Testes: grupo `vida` em `standalone/test/suite.js`.
 - Por fazer quando a Vercel desbloquear: publicar (main) e gerar as traduções pt-BR dos textos novos (packgen + packfix).
 
+### Cores do app (paletas)
+- `js/paleta.js` corre no `<head>` (o build.sh põe-no lá) e muda as cores azuis das folhas de estilo no próprio sítio (CSSOM), pelo papel de cada azul: fundo escuro, cinzento, destaque claro, botão. A ordem e a força das regras não mudam. As cores fora do azul (verde, vermelho, âmbar, violeta) ficam iguais.
+- Paletas em `LIST` (Selo por omissão, Mar = o tema base sem mudanças, Floresta, Ametista, Café, Grafite). `PrumoPaleta.apply(id)`, `.color(id, cor)`, `.recolor(svg)` (as cenas do fundo, em `js/cores.js`).
+- `js/cores.js`: o painel "Cores do app" (`#palSet`, grupo Aplicação), a escolha por perfil em `nau:pal:<perfil>` e a última em `nau:pal` (o `<head>` usa esta para abrir já com as cores certas). Testes: `--only=cores`.
+- Cores novas no CSS: escreve no azul do tema base (ex.: `#0E1724`, `#8FB8E8`, `#2B5C93`) e as paletas tratam do resto.
+
 ### Logo (selo de cera)
 - O logo é o selo de cera vermelho com o P e os louros (pacote `prumo_logo_pack`). `js/marca.js` (gerado, não editar à mão) tem `OS.Marca.selo`, `.nome` e `.lema` em data URLs (SVG).
 - `OS.Lock.logo(px)` desenha o selo, `OS.Lock.word(altura, alt)` o nome "Prumo" com as letras do logo e `OS.Lock.lema(altura)` "Foco · Disciplina". O ecrã de abertura em `index.html` tem as mesmas imagens.

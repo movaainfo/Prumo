@@ -1,185 +1,5 @@
 [
  {
-  "p": "Dominus",
-  "name": "Criar o herói: boneco em pixel art à tua imagem (cabelo cacheado, óculos, cavanhaque) num cenário em pixel art",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Personalizar: mudar o cabelo muda o personagem",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Conjuntos prontos (fatos, armaduras, mago, samurai, Dominus…) com cadeado até teres o nível",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Muitas peças para escolher: armaduras, fatos, elmos, capas, armas e escudos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Herói criado com nome",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Os 8 atributos sobem sozinhos com o que registas (treino, foco, estudo, gastos, pessoas, fé, trabalho, tarefas)",
-  "pass": true,
-  "info": "corpo,mente,intelecto,fortuna,relacoes,espirito,carreira,disciplina"
- },
- {
-  "p": "Dominus",
-  "name": "Missões: 3 de hoje, 3 da semana e 3 campanhas do mês",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Missões difíceis a sério (estudo de 2 h, 90 min de foco, 8 tarefas…) e o monstro do dia em pixel art",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Chefe da semana em pixel art, com vida e dano feito pelo que registaste",
-  "pass": true,
-  "info": "[3000,8,\"Capitão Bobo do Adiar\",true]"
- },
- {
-  "p": "Dominus",
-  "name": "Colosso do mês (só o avanço real dá dano inteiro)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Conquistas mais difíceis: 5 graus (bronze a diamante), \"Forjado no Ferro\" só aos 25 treinos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "…e aos 26 treinos chega o bronze",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Muitos mais níveis (até 300) e títulos (25 ou mais)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "38 classes, cada uma com 5 graus e uma skin por grau",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Masmorras: 114 criaturas em pixel art (monstros dos andares, chefes e colossos)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Marcos: 5 pilares com 100 marcos cada (com o Espírito)",
-  "pass": true,
-  "info": "[100,100,100,100,100]"
- },
- {
-  "p": "Dominus",
-  "name": "Marcar um marco pede a prova por escrito (não basta tocar)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Uma prova curta demais não conta",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Com prova, o marco dá +25 000 XP e guarda a prova",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Marcos que se provam sozinhos pelos registos (livros, maratona, países…)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Acrescentar um marco teu: fica como o próximo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Tirar marcos da lista (os teus e os de base)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Repor os marcos tirados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Visual: separador Classes com as 5 skins da tua classe (as dos graus acima com cadeado)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Visual: roupas melhores ficam presas até subires a Fortuna",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "Loja: comprar uma moldura com o ouro ganho",
-  "pass": true,
-  "info": "ouro 760"
- },
- {
-  "p": "Dominus",
-  "name": "Ao registar noutra página aparece o +XP no canto",
-  "pass": true,
-  "info": "+16 Corpo"
- },
- {
-  "p": "Dominus",
-  "name": "Aventuras: catálogo grande para escolher (montanha, céu, neve, água…)",
-  "pass": true,
-  "info": "125 ideias"
- },
- {
-  "p": "Dominus",
-  "name": "Aventura feita dá XP de Corpo e conta para a conquista \"Aventureiro\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Dominus",
-  "name": "sem erros de JavaScript",
-  "pass": true,
-  "info": ""
- },
- {
   "p": "Projeto de Vida",
   "name": "Projeto de Vida: os 1000 objetivos em 10 eixos, mais os novos da biografia",
   "pass": true,
@@ -243,19 +63,19 @@
   "p": "Projeto de Vida",
   "name": "…e a meta fica ligada ao objetivo (aparece \"Em meta\" e no Painel de metas)",
   "pass": true,
-  "info": "{\"id\":\"ebkggpi2lqr\",\"due\":\"2027-01-01\",\"imp\":5}"
+  "info": "{\"id\":\"5o4onbje4br\",\"due\":\"2027-01-01\",\"imp\":5}"
  },
  {
   "p": "Projeto de Vida",
   "name": "Com metas, todas as missões são passos de uma meta (tarefa da meta, avanço %, etapas, ações)",
   "pass": true,
-  "info": "{\"d\":[\"g:ebkggpi2lqr:t:oxmmfyi2m7v\",\"g:ebkggpi2lqr:tn:2\",\"g:ebkggpi2lqr:a:2\"],\"w\":[\"g:ebkggpi2lqr:p:15\",\"g:ebkggpi2lqr:s:1\",\"g:ebkggpi2lqr:tn:3\"],\"g\":\"ebkggpi2lqr\"}"
+  "info": "{\"d\":[\"g:5o4onbje4br:t:fvlkdjje4sv\",\"g:5o4onbje4br:tn:2\",\"g:5o4onbje4br:a:2\"],\"w\":[\"g:5o4onbje4br:p:15\",\"g:5o4onbje4br:s:1\",\"g:5o4onbje4br:tn:3\"],\"g\":\"5o4onbje4br\"}"
  },
  {
   "p": "Projeto de Vida",
   "name": "Fazer a tarefa da meta cumpre a missão do dia (a missão diz o nome da tarefa e da meta)",
   "pass": true,
-  "info": "{\"ok\":[\"g:ebkggpi2lqr:t:oxmmfyi2m7v\"],\"t\":[\"Faz \\\"Resumo do capítulo 1 da CPA-10\\\" · meta «Obter a certificação CPA-10, se ainda pertinente»\",\"2 ações pela meta «Obter a certificação CPA-10, se ainda pertinente» (tarefas, estudo, treinos, blocos da rotina…)\",\"2 tarefas da meta «Obter a certificação CPA-10, se ainda pertinente»\"],\"gid\":\"ebkggpi2lqr\",\"goal\":\"Obter a certificação CPA-10, se ainda pertinente\",\"hp\":3000,\"dmg\":374,\"guard\":true}"
+  "info": "{\"ok\":[\"g:5o4onbje4br:t:fvlkdjje4sv\"],\"t\":[\"Faz \\\"Resumo do capítulo 1 da CPA-10\\\" · meta «Obter a certificação CPA-10, se ainda pertinente»\",\"2 ações pela meta «Obter a certificação CPA-10, se ainda pertinente» (tarefas, estudo, treinos, blocos da rotina…)\",\"2 tarefas da meta «Obter a certificação CPA-10, se ainda pertinente»\"],\"gid\":\"5o4onbje4br\",\"goal\":\"Obter a certificação CPA-10, se ainda pertinente\",\"hp\":3000,\"dmg\":374,\"guard\":true}"
  },
  {
   "p": "Projeto de Vida",
@@ -273,7 +93,7 @@
   "p": "Projeto de Vida",
   "name": "Chefe da semana seguinte: o capitão do andar onde estás na masmorra da meta (o chefe verdadeiro só depois dos 5 andares)",
   "pass": true,
-  "info": "{\"want\":\"cav-est\",\"a\":\"carreira\",\"hp\":3000,\"t\":0,\"v\":2,\"gid\":\"ebkggpi2lqr\",\"cap\":\"cav-est\"}"
+  "info": "{\"want\":\"cav-est\",\"a\":\"carreira\",\"hp\":3000,\"t\":0,\"v\":2,\"gid\":\"5o4onbje4br\",\"cap\":\"cav-est\"}"
  },
  {
   "p": "Projeto de Vida",
@@ -285,7 +105,7 @@
   "p": "Projeto de Vida",
   "name": "O chefe da semana guarda a tua meta e o XP dela dá dano inteiro",
   "pass": true,
-  "info": "{\"ok\":[\"g:ebkggpi2lqr:t:oxmmfyi2m7v\"],\"t\":[\"Faz \\\"Resumo do capítulo 1 da CPA-10\\\" · meta «Obter a certificação CPA-10, se ainda pertinente»\",\"2 ações pela meta «Obter a certificação CPA-10, se ainda pertinente» (tarefas, estudo, treinos, blocos da rotina…)\",\"2 tarefas da meta «Obter a certificação CPA-10, se ainda pertinente»\"],\"gid\":\"ebkggpi2lqr\",\"goal\":\"Obter a certificação CPA-10, se ainda pertinente\",\"hp\":3000,\"dmg\":374,\"guard\":true}"
+  "info": "{\"ok\":[\"g:5o4onbje4br:t:fvlkdjje4sv\"],\"t\":[\"Faz \\\"Resumo do capítulo 1 da CPA-10\\\" · meta «Obter a certificação CPA-10, se ainda pertinente»\",\"2 ações pela meta «Obter a certificação CPA-10, se ainda pertinente» (tarefas, estudo, treinos, blocos da rotina…)\",\"2 tarefas da meta «Obter a certificação CPA-10, se ainda pertinente»\"],\"gid\":\"5o4onbje4br\",\"goal\":\"Obter a certificação CPA-10, se ainda pertinente\",\"hp\":3000,\"dmg\":374,\"guard\":true}"
  },
  {
   "p": "Projeto de Vida",
@@ -356,6 +176,396 @@
  {
   "p": "Projeto de Vida",
   "name": "Contas públicas não veem os objetivos do Ryan (só a estrutura vazia para escrever ou colar a sua)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cores do app",
+  "name": "Sem escolha, o app abre com a paleta do logo (Selo) já no ecrã do código",
+  "pass": true,
+  "info": "[{\"pal\":\"selo\",\"cur\":\"selo\",\"tc\":\"rgb(19, 10, 11)\"},[19,10,11]]"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Definições: \"Cores do app\" com 6 paletas e a atual marcada",
+  "pass": true,
+  "info": "{\"n\":6,\"on\":\"selo\",\"grp\":true}"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Escolher \"Mar\" volta exatamente ao azul de antes e fica guardado neste perfil",
+  "pass": true,
+  "info": "[[7,13,22],{\"ls\":\"\\\"mar\\\"\",\"last\":\"\\\"mar\\\"\",\"tc\":\"#070D16\",\"on\":\"mar\"}]"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Floresta: fundos verdes; as cores com significado (gastos, avisos) não mudam",
+  "pass": true,
+  "info": "[[10,19,16],\"#E8807A\",\"#E8807A\"]"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Ao voltar a abrir, já abre com a paleta escolhida (sem piscar a azul)",
+  "pass": true,
+  "info": "[\"floresta\",{\"lk\":false,\"sp\":false,\"view\":14137,\"h\":\"#definicoes\"}]"
+ },
+ {
+  "p": "Cores do app",
+  "name": "As cenas do fundo tomam a paleta (sem estragar as ligações #id nem as cores com significado)",
+  "pass": true,
+  "info": "<rect fill=\"#130a0b\"/><use href=\"#abc\"/><path fill=\"url(#def)\"/><i style=\"color:#E8807A\">"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Trocar de paleta é rápido (sem recarregar)",
+  "pass": true,
+  "info": "11 ms"
+ },
+ {
+  "p": "Cores do app",
+  "name": "sem erros JS (cores)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Aparelho novo: abre o ecrã da conta (criar conta ou entrar) e não o código pessoal",
+  "pass": true,
+  "info": "{\"gate\":true,\"lock\":false,\"mode\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Criar conta sem aceitar os termos: não cria (as três caixas são obrigatórias)",
+  "pass": true,
+  "info": "{\"gate\":true,\"msg\":\" Please check this box if you want to proceed.\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Criar conta: mostra o código de recuperação (só uma vez)",
+  "pass": true,
+  "info": "VVMV-N8QD-72VQ-UEEA"
+ },
+ {
+  "p": "Contas",
+  "name": "Depois pede o primeiro perfil, já com o nome",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Códigos diferentes: avisa e não cria",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfis como na Netflix: \"Quem está a usar\", a bolinha do perfil e \"Adicionar perfil\"",
+  "pass": true,
+  "info": "{\"n\":1,\"name\":\"Ana\",\"av\":\"🌊\",\"add\":true,\"title\":\"Quem está a usar o Prumo?\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Escolher o perfil abre o mesmo ecrã de bloqueio, com o nome do perfil e \"Trocar de perfil\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "O código pessoal (do Ryan) não abre um perfil de uma conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfil novo começa limpo: nada do Ryan (sem disciplinas, candidaturas, contactos, metas), com o nome do perfil",
+  "pass": true,
+  "info": "{\"subj\":0,\"apps\":0,\"contacts\":0,\"goals\":0,\"short\":\"Ana\",\"uni\":\"\",\"hab\":6,\"acc\":2,\"bub\":true,\"mova\":\"O meu negócio\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "A bolinha do perfil aparece na barra de cima",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
+  "pass": true,
+  "info": "17 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~foco,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+ },
+ {
+  "p": "Contas",
+  "name": "Senha errada: mensagem clara",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Noutro aparelho (computador): entra com a mesma conta e vê os mesmos dados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sincroniza nos dois sentidos em segundos (computador → telemóvel)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Segundo perfil na mesma conta: dados separados (não vê as tarefas da Ana)",
+  "pass": true,
+  "info": "{\"t\":[],\"short\":\"Bruno\",\"p\":\"Bruno\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Conta e perfis: blocos fechados com seta; abertos mostram e-mail, perfis, sincronização, senha, sair e apagar a conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: escolher um personagem do Dominus (heróis e, à medida que os derrotas, monstros e chefes) passa a ser a bolinha do perfil",
+  "pass": true,
+  "info": "{\"n\":12,\"ok\":true,\"unl\":true,\"img\":\"data:image/png;base64,\",\"bub\":true,\"modal\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: uma foto tua fica cortada em quadrado (160 px, leve) e guardada no perfil, em todos os aparelhos",
+  "pass": true,
+  "info": "[{\"jpg\":true,\"len\":1991,\"prev\":true},{\"w\":160,\"h\":160,\"jpg\":true}]"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã \"Quem está a usar\": o perfil aparece com a foto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Gerir perfis › Editar: tirar a foto volta ao emoji",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta de administração: aparece o separador \"Admin\" no fim do menu (ou em \"Mais\", se não couber)",
+  "pass": true,
+  "info": "{\"adm\":true,\"nav\":\"Admin\",\"shown\":true,\"side\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: lista as contas (e-mail, nome, perfis), último acesso, última entrada e minutos por dia, sem senhas",
+  "pass": true,
+  "info": "{\"r\":[\"ana teste ana@exemplo.pt ana bruno\"],\"contas\":true,\"ana\":true,\"hoje\":true,\"kpi\":8,\"senha\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
+  "pass": true,
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"c69131d526511f4f98da3b60\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-02T00:45:02.197Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+ },
+ {
+  "p": "Contas",
+  "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
+  "pass": true,
+  "info": "{\"ult\":1793580317609,\"ent\":1,\"dias\":{\"2026-11-02\":45}}"
+ },
+ {
+  "p": "Contas",
+  "name": "Tocar numa conta mostra o detalhe: perfis, criada, última entrada, último acesso e o gráfico dos 30 dias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal (aparelho que já tinha o Prumo): igual a antes, sem ecrã de conta nem bolinha",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sair da conta limpa este aparelho e volta ao ecrã de entrar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Esqueci a senha: o código de recuperação muda a senha e dá um código novo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Com a senha mudada, os outros aparelhos pedem para entrar outra vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Atalho de gastos do iPhone numa conta sem script: o link do perfil regista e o gasto entra nas finanças desse perfil",
+  "pass": true,
+  "info": "✓ 12,4 € registado no Prumo / 403"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Atalhos do iPhone mostra o link do perfil (sem pedir o script Google)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sono numa conta: o atalho do app Saúde envia para o link do perfil (tipo=sono) e a noite entra no Painel",
+  "pass": true,
+  "info": "{\"lk\":true,\"r1\":\"✓ Sono enviado para o Prumo\",\"sl\":[{\"d\":\"2026-11-02\",\"m\":450,\"src\":\"saude\"}]}"
+ },
+ {
+  "p": "Contas",
+  "name": "Jornal numa conta sem script: as notícias vêm do servidor do Prumo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta nova: pergunta o nome da IA uma vez, e a IA já está ligada sem chave nenhuma",
+  "pass": true,
+  "info": "{\"ask\":true,\"key\":\"nautilo-servidor\",\"own\":\"\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Nome da IA: \"Luna\" (é ela) — chama-se por voz pelo nome e o texto fica no feminino",
+  "pass": true,
+  "info": "{\"n\":\"Luna\",\"f\":true,\"w1\":true,\"w2\":false,\"t\":\"Cérebro da Luna · fala com a Luna\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições: o separador e os blocos usam o nome da IA (sem \"Spyke\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar (servidor do Prumo → IA grátis): responde, e o pedido leva o nome dela",
+  "pass": true,
+  "info": "Olá! Aqui é a tua IA. · {\"model\":\"openai\",\"messages\":[{\"role\":\"user\",\"content\":\"Diz olá à Luna\"}],\"temperature\":0.4,\"private\":true,\"referrer\":\"nautilo\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar: pedidos em JSON (decisões, resumos, tutor) também funcionam",
+  "pass": true,
+  "info": "{\"ok\":true,\"resposta\":\"feito\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fotos sem a chave Google: mensagem clara a explicar como ligar (sem ficar a carregar)",
+  "pass": true,
+  "info": "A IA não respondeu (Ler fotos, PDFs e voz precisa da IA do Google. Liga a tua chave grátis em Definições › Spyke › Cérebro.). Verifica a internet e tenta de novo."
+ },
+ {
+  "p": "Contas",
+  "name": "A IA do servidor só responde a quem tem sessão numa conta",
+  "pass": true,
+  "info": "401"
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal: Definições tem \"Conta Prumo\" para guardar o Prumo numa conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ao guardar numa conta nova, o código de recuperação da senha aparece uma vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Guardar na conta: este aparelho passa a usar a conta com o mesmo código e os mesmos dados; o perfil continua o do Ryan (marcos e textos dele)",
+  "pass": true,
+  "info": "{\"on\":true,\"pub\":false,\"ps\":true,\"t\":true,\"g\":true,\"short\":\"Ryan\",\"leg\":100,\"who\":\"o Ryan (brasileiro)\",\"bub\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta sem administração: sem o separador \"Admin\" e o servidor recusa a lista de contas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Noutro aparelho: entra na conta do Ryan e aparece tudo o que estava no Prumo pessoal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Outro aparelho no modo pessoal: \"Entrar na conta neste aparelho\" leva ao ecrã de entrar, com o e-mail (os dados pessoais deste aparelho saem)",
+  "pass": true,
+  "info": "{\"has\":true,\"em\":\"ryan@exemplo.pt\",\"keys\":[],\"meta\":null,\"tasks\":0}"
+ },
+ {
+  "p": "Contas",
+  "name": "O servidor recusa criar conta sem a aceitação dos termos",
+  "pass": true,
+  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.\",\"code\":\"term"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã de entrar: Termos, Privacidade, Cookies e Acessibilidade abrem por cima (LGPD e RGPD, ANPD e CNPD) e fecham com Esc",
+  "pass": true,
+  "info": "{\"open\":true,\"t\":\"Política de Privacidade\",\"lgpd\":true,\"tabs\":6}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta que ainda não aceitou esta versão: ao entrar, pede para aceitar os termos uma vez",
+  "pass": true,
+  "info": "{\"termos\":true,\"boxes\":3}"
+ },
+ {
+  "p": "Contas",
+  "name": "Aceitar fica guardado na conta (versão e data) e segue para os perfis",
+  "pass": true,
+  "info": "{\"still\":true,\"t\":\"2026-10-22\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Depois de aceitar não volta a pedir (nem ao recarregar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Privacidade e termos: os 6 documentos, o que aceitaste e quando",
+  "pass": true,
+  "info": "{\"tab\":true,\"docs\":6,\"ac\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
+  "pass": true,
+  "info": "20261102004544-15faca"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
+  "pass": true,
+  "info": "{\"id\":\"20261102004544-15faca\",\"uid\":\"7985e3027e0f4a112e80ab3c\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: marcar o pedido como respondido; o que falta configurar (chave da IA) só para o administrador; o Gmail já não está pendente (chave do Google verificada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Contas públicas mostram as mesmas fotos dos alimentos",
+  "pass": true,
+  "info": "{\"pub\":true,\"pin\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
  }

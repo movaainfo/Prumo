@@ -403,3 +403,15 @@ body.onb-open{overflow:hidden}
 .hj-top .tx2,.hj-top .today-q{color:rgba(243,245,248,.82)!important;text-shadow:0 1px 8px rgba(0,0,0,.5)}.hj-top .today-clock{color:#F6F1E8;text-shadow:0 2px 14px rgba(0,0,0,.5)}
 @media (max-width:860px){.hj-top{margin:-16px -16px 0;border-radius:0;border:0;border-bottom:1px solid var(--line);padding:18px;min-height:300px}}
 @media (prefers-reduced-motion:reduce){.fd-live *{animation:none!important}}
+/* Cores do app (Definições): as paletas, cada uma com uma amostra pequena do app */
+.pal-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.pal-c{display:flex;align-items:center;gap:12px;text-align:left;padding:10px;border-radius:12px;border:1px solid var(--line2);background:var(--pn2);color:var(--tx);font:inherit;cursor:pointer;min-height:64px}
+.pal-c:hover{border-color:var(--line3)}
+.pal-c.on{border-color:var(--farol);box-shadow:inset 0 0 0 1px var(--farol)}
+.pal-c:focus-visible{outline:2px solid var(--farol);outline-offset:2px}
+.pal-sw{flex:none;width:60px;height:46px;border-radius:9px;border:1px solid;display:grid;grid-template-columns:22px 1fr;grid-template-rows:1fr 1fr;gap:4px;padding:5px;box-sizing:border-box}
+.pal-sw i{display:block;border-radius:3px}.pal-sw i:first-child{grid-row:span 2}
+.pal-sw b{display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--sans);letter-spacing:0;border-bottom:2px solid;margin:0 3px}
+.pal-t{display:flex;flex-direction:column;gap:2px;min-width:0}.pal-t b{font-size:14.5px}.pal-t em{font-style:normal;font-size:11px;color:var(--farol);margin-left:4px}
+.pal-t small{color:var(--tx2);font-size:12.5px;line-height:1.35}
+

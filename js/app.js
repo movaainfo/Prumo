@@ -230,7 +230,7 @@ OS.Fold = (() => {
   const GROUPS = [['Tu', 'Os teus dados e metas: entram nos cálculos de todo o Prumo.', ['pfMe', 'paisSet', 'relSet', 'rkSet', 'onbSet', 'pfUni', 'pfWork', 'pfGoals', 'contextos']],
     ['Segurança e conta', 'Código de bloqueio, Face ID e a tua conta.', ['seguranca', 'codigo neste aparelho', 'accMig']],
     ['Aparelhos e dados', 'Sincronizar aparelhos, cópias de segurança e mudar de endereço.', ['syncPn', 'dataPn', 'mudanca de endereco']],
-    ['Aplicação', 'Aparência, música, desempenho e atualizações.', ['fdSet', 'animSet', 'spSet', 'desempenho', 'verPn']]];
+    ['Aplicação', 'Cores, aparência, música, desempenho e atualizações.', ['palSet', 'fdSet', 'animSet', 'spSet', 'desempenho', 'verPn']]];
   const html = (h, sub) => { const tab = tabOf(sub), t = document.createElement('template'); t.innerHTML = h; const S = st(), all = U.ls.get('os2foldAll', false), F = t.content;
     // blocos com o título solto (sem .pn-h): o título passa a ser o cabeçalho que abre e fecha
     [...F.querySelectorAll('.pn')].forEach(pn => { const f = pn.firstElementChild; if (f && f.tagName === 'H3' && !(pn.parentElement && pn.parentElement.closest('.pn'))) { const h = document.createElement('div'); h.className = 'pn-h'; pn.insertBefore(h, f); h.appendChild(f); } });
