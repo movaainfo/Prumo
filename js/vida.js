@@ -126,7 +126,8 @@ V.sync = () => { if (!V.has()) return 0; const s = S(), first = !s.since, T = to
   if (first) s.since = T;
   all().forEach(o => { if (s.done[o.id] || s.no[o.id] === 'x' || doneOf(o)) return; const r = detect(o); if (!r || !r.ok) return; const d = r.d && /^\d{4}-\d\d-\d\d$/.test(r.d) && r.d <= T ? r.d : T, pre = first || d < s.since ? 1 : 0;
     s.done[o.id] = { d: pre ? d : T, how: 'auto', proof: r.why || `${U.nf(r.c)} ${r.u}`, pre }; n++; got.push(o); });
-  if (n || first) { LIST = null; qsave(); }
+  // a primeira vez é só a importação do que já tinhas feito: grava em silêncio (sem redesenhar o ecrã de repente; aparece no próximo desenho)
+  if (first) { LIST = null; OS.touchQuiet ? OS.touchQuiet('vida') : qsave(); } else if (n) { LIST = null; qsave(); }
   if (n && !first) UI.toast(n === 1 ? `Objetivo de vida conquistado: ${got[0].t} (+${xpTxt(xpOf(got[0], S().done[got[0].id]))} XP)` : `${n} objetivos de vida conquistados pelos teus registos`, 'pos');
   return n; };
 let SY = 0; OS.on('change', c => { if (['books', 'learn', 'subjects', 'skills', 'certs', 'assets', 'invtx', 'transactions', 'workouts', 'runs', 'experiences', 'shifts', 'goals', 'notes'].includes(c)) { clearTimeout(SY); SY = setTimeout(() => safe(V.sync), 3000); } });

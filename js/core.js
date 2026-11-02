@@ -138,6 +138,8 @@ OS.clearColl = (c, opt) => { const n = OS.all(c).length; if (n) OS.setColl(c, []
 OS.one = k => OS.ONE[k] || (OS.ONE[k] = U.clone(OS.ONE_DEF[k] || {}));
 OS.setOne = (k, patch) => { Object.assign(OS.one(k), patch); OS.touch(k); };
 OS.touch = k => { mark('one~' + k); OS.emit('one:' + k); OS.request(); };
+// grava e avisa os módulos (caches), mas sem pedir para redesenhar o ecrã já (aparece no próximo desenho)
+OS.touchQuiet = k => { mark('one~' + k); OS.emit('one:' + k); };
 
 function mark(docId) { dirty.add(docId); clearTimeout(flushTimer); flushTimer = setTimeout(flush, 700); setStatus(db ? 'busy' : 'local'); }
 const flushNow = () => { if (dirty.size) { clearTimeout(flushTimer); try { flush(); } catch (e) { } } };

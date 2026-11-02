@@ -72,7 +72,7 @@ html.vv .vv-burst b{position:absolute;left:-22px;top:-22px;width:44px;height:44p
 /* passar o rato por cima (computador): os cartões levantam-se um pouco */
 @media (hover:hover){html.vv-full :is(.li.click,.pn.click,.dc[data-go],.kpi[data-go],.fe-plan,.btn):hover{translate:0 -2px}}
 /* ---------- menu, logo, avisos e janelas ---------- */
-html.vv .vv-spin svg{animation:vvSpin 1s var(--vv-e)!important}
+html.vv .vv-spin :is(svg,.pr-logo){animation:vvSpin 1s var(--vv-e)!important}
 html.vv-full #side.vv-navin :is(a,.side-g,.side-h){animation:vvSide .45s var(--vv-e) both!important}
 html.vv-full #side.vv-navin a:nth-of-type(2n){animation-delay:.03s!important}html.vv-full #side.vv-navin a:nth-of-type(3n){animation-delay:.06s!important}html.vv-full #side.vv-navin a:nth-of-type(4n){animation-delay:.09s!important}
 html.vv .toast:not([hidden]){animation:vvToast .5s var(--vv-e)!important}

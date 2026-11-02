@@ -8,10 +8,13 @@ const U = OS.U;
 const L = OS.Lock = {};
 const SALT = 'oceanum-v1|';
 const DEFAULT_HASH = 'e18cf01ee14b8fc1001060a44feca6635d905597402a61e893d315e38bb72d5c';
-// logo do Prumo: quatro anéis (mais finos para fora) cortados no topo pela linha de prumo, e o ponto vermelho ao centro
-const MARK = 'M53.42 32.72A17.61 17.61 0 1 1 46.58 32.72L46.58 38.71A11.8 11.8 0 1 0 53.42 38.71ZM53.42 21.99A28.22 28.22 0 1 1 46.58 21.99L46.58 26.48A23.77 23.77 0 1 0 53.42 26.48ZM53.42 12.71A37.45 37.45 0 1 1 46.58 12.71L46.58 15.8A34.37 34.37 0 1 0 53.42 15.8ZM53.42 4.13A46 46 0 1 1 46.58 4.13L46.58 5.84A44.29 44.29 0 1 0 53.42 5.84Z', MDOT = 4.86;
-L.logo = (size = 96, color = '#E9E3D8', dot = '#E0431F') => `<svg class="oc-logo pr-logo" viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true"><path fill="${color}" d="${MARK}"/><circle cx="50" cy="50" r="${MDOT}" fill="${dot}"/></svg>`;
-L.word = (t = 'Prumo') => `<span class="pr-word">${t}</span>`;
+// logo do Prumo: o selo de cera vermelho com o P e os louros (OS.Marca, em js/marca.js, gerado do pacote do logo)
+const MK = () => OS.Marca || {};
+L.logo = (size = 96) => `<img class="oc-logo pr-logo" src="${MK().selo}" width="${size}" height="${size}" alt="" aria-hidden="true" decoding="async" draggable="false">`;
+// o nome "Prumo" com as letras do logo (creme); h = altura das letras em px. alt vazio quando o link já diz "Prumo"
+L.word = (h = 20, alt = 'Prumo') => `<img class="pr-word pr-wimg" src="${MK().nome}" height="${h}" width="${Math.round(h * 4.2316)}" alt="${alt}" decoding="async" draggable="false">`;
+// "Foco · Disciplina" em dourado, com o traço por cima
+L.lema = (h = 13) => `<img class="pr-lema" src="${MK().lema}" height="${h}" width="${Math.round(h * 7.687)}" alt="Foco · Disciplina" decoding="async" draggable="false">`;
 
 const sha = async s => { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); };
 const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -95,7 +98,7 @@ async function showLock() {
   const qs = q.length < 42 ? 'l' : q.length < 75 ? 'm' : 's';
   s.innerHTML = `${scene()}${OS.Fundo ? '<button type="button" class="lk-bgb" id="lkBg" aria-label="Mudar o fundo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg>Fundo</button>' : ''}<div class="lk-top"><div class="lk-time" id="lkTime">${hm()}</div><div class="lk-date">${OS.U ? OS.U.esc(OS.U.longDate(OS.U.today())) : ''}</div></div>
     <div class="lk-mid"><p class="lk-hi">${hello()}, ${OS.U ? OS.U.esc(name) : 'Ryan'}.</p>${q ? `<p class="lk-q ${qs}">${OS.U.esc(q)}</p>` : ''}</div>
-    <div class="sp-in lk-bot"><div class="lk-brand">${L.logo(26)}<span class="sp-name">Prumo</span></div>
+    <div class="sp-in lk-bot"><div class="lk-brand">${L.logo(34)}${L.word(20)}</div>
     <form class="lk" id="lkForm" autocomplete="off">
       ${can ? `<button type="button" class="lk-bio" id="lkBio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3H5a2 2 0 0 0-2 2v2M17 3h2a2 2 0 0 1 2 2v2M7 21H5a2 2 0 0 1-2-2v-2M17 21h2a2 2 0 0 0 2-2v-2M9 9v1M15 9v1M12 9v4h-1M9 16c1.5 1 4.5 1 6 0"/></svg>Desbloquear com Face ID</button><div class="lk-or">ou código</div>` : ''}
       ${codeInput()}

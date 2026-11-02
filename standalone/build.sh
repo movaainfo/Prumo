@@ -33,6 +33,7 @@ cat > "$OUT/index.html" <<HTML
 <meta name="apple-mobile-web-app-title" content="Prumo">
 <meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 $CSS

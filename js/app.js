@@ -26,7 +26,7 @@ const setH = (el, h) => { if (OS.aiN) h = OS.aiN(h); if (el && el._h !== h) { el
 // abas que a pessoa escolheu (Definições › Geral › Abas do menu, ou o questionário de boas-vindas): as outras saem do menu
 const navVis = () => { const h = OS.Areas ? OS.Areas.hidden() : new Set(); return h.size ? NAV.map(([g, items]) => [g, items.filter(([k]) => !h.has(k))]).filter(([, items]) => items.length) : NAV; };
 function renderSide(cur) {
-  setH(U.$('#side'), `<a class="brand" href="#visao"><span class="brand-mark oc">${OS.Lock.logo(20)}</span><span><b class="pr-word">Prumo</b></span></a>
+  setH(U.$('#side'), `<a class="brand" href="#visao"><span class="brand-mark oc">${OS.Lock.logo(30)}</span>${OS.Lock.word(18)}</a>
   <a class="side-set ${cur === 'definicoes' ? 'on' : ''}" href="#definicoes">${UI.ic('settings')}<span>Definições</span></a>
   ${navVis().map(([g, items]) => `<div class="nav-g"><h6>${g}</h6>${items.map(([k, l, ic, cnt]) => { let c = null; if (cnt) { try { c = cnt(); } catch (e) { } } return `<a href="#${k}" class="${cur === k ? 'on' : ''}">${UI.ic(ic)}<span>${k === 'mova' ? esc(OS.one('mova').name || 'Mova') : l}</span>${c && c[1] === 'neg' ? `<span class="cnt neg">${c[0]}</span>` : ''}</a>`; }).join('')}</div>`).join('')}
   <div class="side-foot"><i class="sync-dot ${OS.sync.status}" id="syncDot"></i><span id="syncMsg">${esc(OS.sync.msg)}</span><button class="icon-btn" style="margin-left:auto" data-act="lockNow" aria-label="Bloquear" title="Bloquear">${UI.ic('lock')}</button><a class="icon-btn" href="#definicoes" aria-label="Definições">${UI.ic('settings')}</a></div>`);
@@ -40,7 +40,7 @@ TITLES.visao = ['Painel', 'Visão geral'];
 function renderTop(cur) {
   const grp = (NAV.find(([, items]) => items.some(([k]) => k === cur)) || [''])[0];
   setH(U.$('#top'), `<button class="icon-btn tn-menu" data-act="navOpen" aria-label="Menu">${UI.ic('menu')}</button>
-  <a class="tn-brand" href="#visao" aria-label="Prumo, Painel">${OS.Lock.logo(22)}<b class="pr-word">Prumo</b></a>
+  <a class="tn-brand" href="#visao" aria-label="Prumo, Painel">${OS.Lock.logo(28)}${OS.Lock.word(16, '')}</a>
   <nav class="tn" aria-label="Secções">${navVis().map(([g, items], i) => `<div class="tn-g ${grp === g ? 'cur' : ''}" data-tni="${i}"><button class="tn-b" data-act="tnToggle" aria-haspopup="true">${g === 'Visão geral' ? 'Visão Geral' : g}<svg viewBox="0 0 24 24" class="ic tn-car"><path d="M6 9l6 6 6-6"/></svg></button>
     <div class="tn-dd">${tnLinks(items, cur)}</div></div>`).join('')}
     <div class="tn-g tn-more" hidden><button class="tn-b" data-act="tnToggle" aria-haspopup="true">Mais<svg viewBox="0 0 24 24" class="ic tn-car"><path d="M6 9l6 6 6-6"/></svg></button><div class="tn-dd">${navVis().map(([g, items], i) => `<div class="tn-mg" data-tni="${i}" hidden><small class="tn-mh">${g === 'Visão geral' ? 'Visão Geral' : g}</small>${tnLinks(items, cur)}</div>`).join('')}</div></div></nav>

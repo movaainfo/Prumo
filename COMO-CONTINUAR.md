@@ -95,3 +95,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Página Eu: botão "Quando eu partir" (ainda sem função).
 - Testes: grupo `vida` em `standalone/test/suite.js`.
 - Por fazer quando a Vercel desbloquear: publicar (main) e gerar as traduções pt-BR dos textos novos (packgen + packfix).
+
+### Logo (selo de cera)
+- O logo é o selo de cera vermelho com o P e os louros (pacote `prumo_logo_pack`). `js/marca.js` (gerado, não editar à mão) tem `OS.Marca.selo`, `.nome` e `.lema` em data URLs (SVG).
+- `OS.Lock.logo(px)` desenha o selo, `OS.Lock.word(altura, alt)` o nome "Prumo" com as letras do logo e `OS.Lock.lema(altura)` "Foco · Disciplina". O ecrã de abertura em `index.html` tem as mesmas imagens.
+- Ícones em `standalone/icons/`: `apple-touch-icon.png` (quadrado, o iPhone arredonda), `icon-192/512.png` (cantos arredondados), `icon-maskable-512.png` (selo a 84% sobre o papel, dentro da zona segura), `favicon-32.png` e `selo-96.png` (páginas legais e o regresso do Google).
