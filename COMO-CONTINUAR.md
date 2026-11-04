@@ -94,7 +94,7 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - IA: `consultar` tem `dominus`, `projeto_de_vida`, `sono`, `corpo`, `rotina`, `capital_profissional`, `mundo` (`js/brain.js`).
 - Página Eu: botão "Quando eu partir" (ainda sem função).
 - Testes: grupo `vida` em `standalone/test/suite.js`.
-- Por fazer quando a Vercel desbloquear: publicar (main) e gerar as traduções pt-BR dos textos novos (packgen + packfix).
+- Publicado a 4/11/2026 (v2.88, depois de a equipa MOVAA passar a Pro), com as traduções pt-BR dos textos novos.
 
 ### Intro ao abrir
 - `js/intro.js` corre logo a seguir ao `#splash` (antes dos outros scripts) e monta a intro com as imagens do próprio ecrã de carregamento (selo, nome, lema) mais o prumo, a gota, o carimbo e o círculo de medida desenhados lá. A coreografia é toda em `css/intro.css` (tempos no comentário do topo; só transform e opacity).
