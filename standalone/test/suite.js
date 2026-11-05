@@ -2991,8 +2991,14 @@ async function introTests(b) { cur = 'Intro'; console.log('\n=== Intro ao abrir:
   await p.mouse.click(195, 420); await sleep(400);
   const w2 = await E(p, () => ({ st: PrumoIntro.state(), au: PrumoIntro.audio(), wait: document.getElementById('intro').classList.contains('in-wait'), t: Math.round(document.querySelector('#intro .in-selo').getAnimations()[0].currentTime) }));
   ok('O toque começa a intro com o som ligado (áudio a correr) e a animação a andar', w2.st === 'playing' && w2.au === 'running' && !w2.wait && w2.t > 150, JSON.stringify(w2));
-  const snd = await E(p, async () => { const oc = new OfflineAudioContext(2, 44100 * 6.2, 44100); PrumoIntroSom.play(oc, 0); const b = await oc.startRendering(), d = b.getChannelData(0); let pk = 0, bad = 0; for (let i = 0; i < d.length; i++) { const v = Math.abs(d[i]); if (!isFinite(v)) bad++; else if (v > pk) pk = v; } const at = s => { let m = 0; for (let i = Math.floor(s * 44100); i < (s + .1) * 44100; i++) m = Math.max(m, Math.abs(d[i])); return m; }; return { pk: +pk.toFixed(3), bad, imp: +at(2.82).toFixed(3), calm: +at(1.5).toFixed(3), end: +at(6.05).toFixed(4) }; });
-  ok('A trilha: sem cortes nem valores inválidos, o impacto bem acima do resto e silêncio no fim', snd.bad === 0 && snd.pk < .99 && snd.imp > snd.calm * 2 && snd.end < .003, JSON.stringify(snd));
+  const snd = await E(p, async () => { const b = await PrumoIntroSom.render(44100), oc = new OfflineAudioContext(1, b.length, 44100), src = oc.createBufferSource(); src.buffer = b;
+    // o altifalante do telemóvel: sem graves abaixo de ~300 Hz
+    const h1 = oc.createBiquadFilter(), h2 = oc.createBiquadFilter(); h1.type = h2.type = 'highpass'; h1.frequency.value = h2.frequency.value = 300; src.connect(h1); h1.connect(h2); h2.connect(oc.destination); src.start(); const ph = (await oc.startRendering()).getChannelData(0);
+    const raw = b.getChannelData(0); let pk = 0, bad = 0; for (let i = 0; i < raw.length; i++) { const v = Math.abs(raw[i]); if (!isFinite(v)) bad++; else if (v > pk) pk = v; }
+    const db = (s, w = .25) => { let q = 0, n = 0; for (let i = Math.floor(s * 44100); i < (s + w) * 44100 && i < ph.length; i++) { q += ph[i] * ph[i]; n++; } return Math.round(10 * Math.log10(q / Math.max(1, n) + 1e-12)); };
+    const bed = [.1, .6, 1.1, 1.6, 2.1, 3.1, 3.6, 4.1, 4.6].map(t => db(t));
+    return { len: +(b.length / 44100).toFixed(2), pk: +pk.toFixed(3), bad, bed, gap: db(2.755, .05), imp: db(2.83, .1), before: db(2.6, .1), end: db(6.0, .2) }; });
+  ok('A música: audível no altifalante do telemóvel do princípio ao fim, silêncio antes do golpe, impacto por cima, sem cortes e silêncio no fim', snd.bad === 0 && snd.pk <= 1 && snd.bed.every(x => x > -30) && snd.gap < snd.imp - 8 && snd.imp > snd.before && snd.end < -60 && snd.len > 6, JSON.stringify(snd));
   await p.waitForSelector('#lkCode', { timeout: 9000 }); ok('No fim (com som), o ecrã de carregamento e depois o código', true); await c.close();
   ({ c, p, errs } = await mk()); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(900); await p.click('#intro .in-skip-b'); await sleep(500);
   ok('Em "Toca para começar", o botão Saltar salta tudo (sem som)', await E(p, () => !document.getElementById('intro') && PrumoIntro.state() === 'done' && PrumoIntro.audio() === null));
@@ -3016,9 +3022,9 @@ async function introTests(b) { cur = 'Intro'; console.log('\n=== Intro ao abrir:
   ok('Definições: "Intro ao abrir" com Sempre, Uma vez por dia e Nunca, "Com som"/"Sem som" e "Ver a intro agora"', s && s.n === 3 && s.on === 'sempre' && s.ver && s.som === 2, JSON.stringify(s));
   await E(p, () => document.querySelector('#introSet [data-act="introSom"][data-v="1"]').click()); await sleep(300);
   await E(p, () => { const el = document.getElementById('introSet'); el && el.classList.remove('shut'); el && el.scrollIntoView({ block: 'center' }); }); await sleep(200);
-  await p.click('#introSet [data-act="introVer"]'); await sleep(300);
+  await p.click('#introSet [data-act="introVer"]'); await p.waitForFunction(() => window.PrumoIntro && PrumoIntro.state() === 'playing', null, { timeout: 3000 }).catch(() => { });
   const v = await E(p, () => !!document.getElementById('intro') && PrumoIntro.state() === 'playing' && PrumoIntro.audio() === 'running');
-  await sleep(400); await p.mouse.click(200, 300); await sleep(600);
+  await sleep(700); await p.mouse.click(200, 300); await sleep(600);
   const v2 = await E(p, () => !document.getElementById('intro') && PrumoIntro.state() === 'done');
   ok('"Ver a intro agora" mostra-a por cima do app já com som (veio de um toque) e um toque salta-a', v && v2, JSON.stringify([v, v2]));
   await E(p, () => document.querySelector('#introSet [data-act="introSet"][data-v="nunca"]').click()); await sleep(200);

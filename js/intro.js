@@ -44,11 +44,11 @@ const DROP = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 28'><d
 const STAMP = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><radialGradient id='r' cx='.35' cy='.3' r='.85'><stop offset='0' stop-color='#F4D894'/><stop offset='.45' stop-color='#B88A35'/><stop offset='1' stop-color='#4A3310'/></radialGradient><radialGradient id='w' cx='.4' cy='.35' r='.8'><stop offset='0' stop-color='#5A3826'/><stop offset='.6' stop-color='#2E1B12'/><stop offset='1' stop-color='#170C08'/></radialGradient></defs><circle cx='50' cy='50' r='49' fill='url(#r)'/>${Array.from({ length: 48 }, (_, i) => { const a = i * Math.PI / 24, x = 50 + Math.cos(a) * 46.5, y = 50 + Math.sin(a) * 46.5; return `<circle cx='${x.toFixed(2)}' cy='${y.toFixed(2)}' r='1.3' fill='#3A270B' fill-opacity='.45'/>`; }).join('')}<circle cx='50' cy='50' r='41' fill='url(#w)'/><circle cx='50' cy='50' r='41' fill='none' stroke='#E9C77A' stroke-opacity='.5' stroke-width='1'/><circle cx='50' cy='50' r='13' fill='url(#r)'/><path d='M22 34a32 32 0 0 1 22-15' stroke='#FFE9B8' stroke-opacity='.35' stroke-width='3' fill='none' stroke-linecap='round'/></svg>`);
 const GEO = url(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='-160 -160 320 320' fill='none' stroke='#C9A24A'><circle r='72' stroke-opacity='.32' stroke-width='.8'/><circle r='112' stroke-opacity='.22' stroke-width='.8' stroke-dasharray='2 5'/><circle r='150' stroke-opacity='.16' stroke-width='.8'/>${Array.from({ length: 72 }, (_, i) => { const a = i * Math.PI / 36, L = i % 6 === 0 ? 14 : i % 2 === 0 ? 7 : 4, r0 = 150 - L, c = Math.cos(a), s = Math.sin(a); return `<path d='M${(c * r0).toFixed(1)} ${(s * r0).toFixed(1)}L${(c * 150).toFixed(1)} ${(s * 150).toFixed(1)}' stroke-opacity='${i % 6 === 0 ? .55 : .3}' stroke-width='${i % 6 === 0 ? 1.1 : .8}'/>`; }).join('')}</svg>`);
 
-let st = 'off', endAt = 0, waiters = [], EL = null, safety = 0, AC = null, SND = null, t0 = 0;
+let st = 'off', endAt = 0, waiters = [], EL = null, safety = 0, AC = null, SND = null, t0 = 0, BUF = null, BUFV = null, prepping = false;
 const ACx = window.AudioContext || window.webkitAudioContext;
 const snd = () => lsGet('nau:introSom') !== false;   // som ligado por omissão
 const done = () => { if (st !== 'playing' && st !== 'waiting') return; st = 'done'; endAt = Date.now(); clearTimeout(safety); if (EL) { EL.remove(); EL = null; }
-  if (SND) SND.stop(.25); const ac = AC; AC = null; SND = null; if (ac) setTimeout(() => { try { ac.close(); } catch (e) { } }, 900);
+  if (SND) SND.stop(.25); const ac = AC; AC = null; SND = null; BUF = null; BUFV = null; prepping = false; if (ac) setTimeout(() => { try { ac.close(); } catch (e) { } }, 900);
   const R = document.documentElement; R.classList.remove('intro-on'); R.classList.add('intro-after'); const w = waiters; waiters = []; setTimeout(() => R.classList.remove('intro-after'), HOLD); w.forEach(cb => setTimeout(cb, HOLD)); };
 // rede de segurança: se a animação final não avisar, acaba na mesma (mas não enquanto alguém a tem pausada)
 const guard = () => { if (st !== 'playing' || !EL) return; const a = EL.getAnimations ? EL.getAnimations().find(x => x.animationName === 'inOut') : null; if (a && a.playState === 'paused') { safety = setTimeout(guard, 1000); return; } done(); };
@@ -56,16 +56,26 @@ const guard = () => { if (st !== 'playing' || !EL) return; const a = EL.getAnima
 const out = () => { if (!EL || EL.classList.contains('in-skip')) return; if (SND) SND.stop(.3); EL.classList.add('in-skip'); setTimeout(done, 380); };
 const skip = () => { if (st === 'playing' && Date.now() - t0 > 450) out(); };
 const skipAll = e => { if (e) { e.preventDefault(); e.stopPropagation(); } if (st === 'playing' || st === 'waiting') out(); };
-// começar: a imagem e o som arrancam juntos
-const begin = () => { if (st !== 'waiting' || !EL) return; st = 'playing'; t0 = Date.now(); EL.classList.remove('in-wait');
-  if (AC && window.PrumoIntroSom) { try { SND = window.PrumoIntroSom.play(AC, AC.currentTime + .03); } catch (e) { SND = null; } }
+// a música já gravada (js/introsom.js) toca de uma só vez, a partir do ponto em que a imagem vai (off, em segundos)
+const startAudio = off => { if (!AC || !BUFV || SND || AC.state !== 'running') return; const L = window.PrumoIntroSom ? window.PrumoIntroSom.LEN : 6.4; if (off > L - .6) return;
+  try { const src = AC.createBufferSource(), g = AC.createGain(); src.buffer = BUFV; src.connect(g); g.connect(AC.destination); const at = AC.currentTime + .04; src.start(at, Math.max(0, off));
+    SND = { stop: (sec = .3) => { try { const n = AC.currentTime; g.gain.cancelScheduledValues(n); g.gain.setValueAtTime(g.gain.value, n); g.gain.linearRampToValueAtTime(0, n + sec); src.stop(n + sec + .05); } catch (e) { } } }; } catch (e) { SND = null; } };
+// começar: a imagem e o som arrancam juntos (se a música ainda não estiver pronta, entra no ponto certo quando estiver)
+const begin = () => { if (st !== 'waiting' || !EL) return; st = 'playing'; t0 = Date.now(); prepping = false; EL.classList.remove('in-wait', 'in-prep');
+  if (AC) { if (BUFV) startAudio(0); else if (BUF) BUF.then(b => { BUFV = b; if (st === 'playing') startAudio((Date.now() - t0) / 1000); }, () => { });
+    if (AC.state !== 'running') { const f = () => { if (AC && AC.state === 'running' && st === 'playing') startAudio((Date.now() - t0) / 1000); }; try { AC.addEventListener('statechange', f, { once: true }); } catch (e) { } } }
   safety = setTimeout(guard, 7500); };
-// no iPhone o som só pode começar com um toque: o toque desbloqueia o áudio e começa a intro
-const tapStart = e => { if (st !== 'waiting' || (e.target && e.target.closest && e.target.closest('.in-skip-b'))) return;
-  const ac = AC; if (!ac) { begin(); return; } let go = false; const fire = () => { if (go) return; go = true; begin(); };
-  try { const b = ac.createBuffer(1, 1, 22050), s = ac.createBufferSource(); s.buffer = b; s.connect(ac.destination); s.start(0); } catch (e2) { }
-  let p = null; try { p = ac.resume && ac.resume(); } catch (e2) { }
-  if (p && p.then) { p.then(fire, () => { AC = null; try { ac.close(); } catch (e3) { } fire(); }); setTimeout(() => { if (!go && ac.state !== 'running') { AC = null; } fire(); }, 700); } else fire(); };
+// esperar (no primeiro instante, parado, com o ponto de luz) até o áudio estar a correr e a música pronta — no máximo 1,5 s
+const prep = () => { if (st !== 'waiting' || !EL || prepping) return; prepping = true; EL.classList.add('in-wait', 'in-prep'); const c0 = Date.now();
+  const tick = () => { if (st !== 'waiting' || !prepping) return; const ok = !AC || (AC.state === 'running' && (BUFV || !BUF)); if (ok || Date.now() - c0 > 1500) begin(); else setTimeout(tick, 40); };
+  if (BUF) BUF.then(b => { BUFV = b; }, () => { BUF = null; }); tick(); };
+// no iPhone o som só pode começar com um toque: o áudio nasce (ou acorda) dentro do toque, e a intro começa
+const unlock = () => { let ac = AC;
+  if (!ac || ac.state !== 'running') { try { if (ac) ac.close(); } catch (e) { } try { ac = AC = new ACx(); } catch (e) { AC = null; return; } }
+  try { if (ac.resume) ac.resume(); } catch (e) { }
+  try { const b = ac.createBuffer(1, 1, 22050), s = ac.createBufferSource(); s.buffer = b; s.connect(ac.destination); s.start(0); } catch (e) { } };
+const tapStart = e => { if (st !== 'waiting' || prepping || (e.target && e.target.closest && e.target.closest('.in-skip-b'))) return;
+  if (AC || BUF) unlock(); prep(); };
 const keys = e => { if (st === 'waiting') { if (e.key === 'Escape') skipAll(e); else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tapStart(e); } } else if (st === 'playing') skip(); };
 const rnd = (a, b) => a + Math.random() * (b - a);
 
@@ -110,13 +120,16 @@ const I = window.PrumoIntro = {
     EL.addEventListener('pointerdown', skip); EL.addEventListener('pointerup', tapStart); EL.addEventListener('click', tapStart);
     EL.querySelector('.in-skip-b').addEventListener('click', skipAll); document.addEventListener('keydown', keys);
     const want = o.sound == null ? snd() : o.sound;
-    if (want && ACx) { try { AC = new ACx(); if (o.gesture && AC.resume) AC.resume(); } catch (e) { AC = null; } }
-    // sem som, ou com o áudio livre (Android com o app instalado, computador): começa logo; senão espera pelo toque.
-    // O áudio novo nasce "suspenso" e só passa a ativo um instante depois quando é permitido: dá-lhe até 0,4 s.
-    if (!AC || ((AC.state === 'running' || o.gesture) && !window.__introTap)) { begin(); return true; }
+    if (want && ACx && window.PrumoIntroSom) { try { AC = new ACx(); if (o.gesture) unlock(); } catch (e) { AC = null; }
+      // a música grava-se já (enquanto se vê "Toca para começar"), num só som
+      if (AC) { try { BUF = window.PrumoIntroSom.render(AC.sampleRate || 48000); BUF.then(b => { BUFV = b; }, () => { BUF = null; }); } catch (e) { BUF = null; } } }
+    // sem som: começa logo. Com o áudio livre (Android com o app instalado, computador) ou vindo de um toque: prepara e começa.
+    // Senão (iPhone): espera pelo toque. O áudio novo nasce "suspenso" e só passa a ativo um instante depois quando é permitido.
+    if (!AC) { begin(); return true; }
+    if ((AC.state === 'running' || o.gesture) && !window.__introTap) { prep(); return true; }
     EL.classList.add('in-wait'); if (window.__introTap) return true;
     const c0 = Date.now(); let pr = null; try { pr = AC.resume(); } catch (e) { }
-    if (pr && pr.then) pr.then(() => { if (st === 'waiting' && Date.now() - c0 < 400) begin(); }, () => { });
+    if (pr && pr.then) pr.then(() => { if (st === 'waiting' && !prepping && Date.now() - c0 < 400) prep(); }, () => { });
     return true; },
   skip };
 

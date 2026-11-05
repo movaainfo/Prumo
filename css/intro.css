@@ -77,6 +77,7 @@
 #intro:not(.in-wait) .in-tdot{animation:inTdotOut .5s ease-out both}
 .in-tapt{position:absolute;left:0;right:0;bottom:calc(19% + env(safe-area-inset-bottom,0px));display:none;flex-direction:column;align-items:center;gap:8px;color:rgba(237,230,218,.8);font:500 15px/1.2 var(--sans,system-ui);letter-spacing:.03em;pointer-events:none}
 #intro.in-wait .in-tapt{display:flex;animation:inFade .8s ease-out .25s both}
+#intro.in-prep .in-tapt{display:none}
 .in-tapt svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.75;margin-bottom:2px}
 .in-tapt small{font-size:12px;color:rgba(237,230,218,.45);letter-spacing:.02em}
 @keyframes inTdot{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1.2)}}

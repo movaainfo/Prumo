@@ -1,155 +1,5 @@
 [
  {
-  "p": "Cores do app",
-  "name": "Sem escolha, o app abre com a paleta do logo (Selo) já no ecrã do código",
-  "pass": true,
-  "info": "[{\"pal\":\"selo\",\"cur\":\"selo\",\"tc\":\"rgb(19, 10, 11)\"},[19,10,11]]"
- },
- {
-  "p": "Cores do app",
-  "name": "Definições: \"Cores do app\" com 6 paletas e a atual marcada",
-  "pass": true,
-  "info": "{\"n\":6,\"on\":\"selo\",\"grp\":true}"
- },
- {
-  "p": "Cores do app",
-  "name": "Escolher \"Mar\" volta exatamente ao azul de antes e fica guardado neste perfil",
-  "pass": true,
-  "info": "[[7,13,22],{\"ls\":\"\\\"mar\\\"\",\"last\":\"\\\"mar\\\"\",\"tc\":\"#070D16\",\"on\":\"mar\"}]"
- },
- {
-  "p": "Cores do app",
-  "name": "Floresta: fundos verdes; as cores com significado (gastos, avisos) não mudam",
-  "pass": true,
-  "info": "[[10,19,16],\"#E8807A\",\"#E8807A\"]"
- },
- {
-  "p": "Cores do app",
-  "name": "Ao voltar a abrir, já abre com a paleta escolhida (sem piscar a azul)",
-  "pass": true,
-  "info": "[\"floresta\",{\"lk\":false,\"sp\":false,\"view\":14574,\"h\":\"#definicoes\"}]"
- },
- {
-  "p": "Cores do app",
-  "name": "As cenas do fundo tomam a paleta (sem estragar as ligações #id nem as cores com significado)",
-  "pass": true,
-  "info": "<rect fill=\"#130a0b\"/><use href=\"#abc\"/><path fill=\"url(#def)\"/><i style=\"color:#E8807A\">"
- },
- {
-  "p": "Cores do app",
-  "name": "Trocar de paleta é rápido (sem recarregar)",
-  "pass": true,
-  "info": "13 ms"
- },
- {
-  "p": "Cores do app",
-  "name": "sem erros JS (cores)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Intro",
-  "name": "Com som: a intro abre em \"Toca para começar\", parada no primeiro instante, e o ecrã do código espera",
-  "pass": true,
-  "info": "{\"st\":\"waiting\",\"wait\":true,\"tap\":\"flex\",\"t\":0,\"code\":false}"
- },
- {
-  "p": "Intro",
-  "name": "O toque começa a intro com o som ligado (áudio a correr) e a animação a andar",
-  "pass": true,
-  "info": "{\"st\":\"playing\",\"au\":\"running\",\"wait\":false,\"t\":367}"
- },
- {
-  "p": "Intro",
-  "name": "A trilha: sem cortes nem valores inválidos, o impacto bem acima do resto e silêncio no fim",
-  "pass": true,
-  "info": "{\"pk\":0.853,\"bad\":0,\"imp\":0.853,\"calm\":0.249,\"end\":0}"
- },
- {
-  "p": "Intro",
-  "name": "No fim (com som), o ecrã de carregamento e depois o código",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Intro",
-  "name": "Em \"Toca para começar\", o botão Saltar salta tudo (sem som)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Intro",
-  "name": "Ao abrir, a intro aparece por cima de tudo (e o ecrã do código ainda não)",
-  "pass": true,
-  "info": "{\"intro\":true,\"on\":true,\"code\":false,\"st\":\"playing\",\"n\":83}"
- },
- {
-  "p": "Intro",
-  "name": "O selo da intro fica ao centro, maior do que no ecrã de carregamento",
-  "pass": true,
-  "info": "{\"cx\":197,\"w\":144,\"vw\":393}"
- },
- {
-  "p": "Intro",
-  "name": "Quando a intro acaba, vê-se o ecrã de carregamento de sempre (com a sua entrada), ainda sem o código",
-  "pass": true,
-  "info": "{\"intro\":false,\"after\":true,\"code\":false,\"sp\":true,\"img\":true}"
- },
- {
-  "p": "Intro",
-  "name": "Depois do ecrã de carregamento abre o ecrã do código",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Intro",
-  "name": "Recarregar na mesma sessão não repete a intro",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Intro",
-  "name": "Definições: \"Intro ao abrir\" com Sempre, Uma vez por dia e Nunca, \"Com som\"/\"Sem som\" e \"Ver a intro agora\"",
-  "pass": true,
-  "info": "{\"n\":3,\"on\":\"sempre\",\"ver\":true,\"som\":2}"
- },
- {
-  "p": "Intro",
-  "name": "\"Ver a intro agora\" mostra-a por cima do app já com som (veio de um toque) e um toque salta-a",
-  "pass": true,
-  "info": "[true,true]"
- },
- {
-  "p": "Intro",
-  "name": "Escolher \"Nunca\" fica guardado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Intro",
-  "name": "sem erros JS (intro)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Intro",
-  "name": "Um toque salta a intro e o app segue (ecrã de carregamento, depois o código)",
-  "pass": true,
-  "info": "3004 ms"
- },
- {
-  "p": "Intro",
-  "name": "Com \"Nunca\", abre direto no ecrã de carregamento",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Intro",
-  "name": "Com \"reduzir movimento\" no aparelho, a intro não aparece",
-  "pass": true,
-  "info": ""
- },
- {
   "p": "Contas",
   "name": "Aparelho novo: abre o ecrã da conta (criar conta ou entrar) e não o código pessoal",
   "pass": true,
@@ -165,7 +15,7 @@
   "p": "Contas",
   "name": "Criar conta: mostra o código de recuperação (só uma vez)",
   "pass": true,
-  "info": "AX34-Q9JR-LP9K-S7V4"
+  "info": "C9HL-T5FJ-WHQR-X78S"
  },
  {
   "p": "Contas",
@@ -212,8 +62,8 @@
  {
   "p": "Contas",
   "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
-  "pass": true,
-  "info": "17 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~foco,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+  "pass": false,
+  "info": "15 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~foco,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0"
  },
  {
   "p": "Contas",
@@ -285,13 +135,13 @@
   "p": "Contas",
   "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
   "pass": true,
-  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"a5b24b6425d6b5e13195de6f\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-04T13:28:31.131Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"0a53491ab5d4d8e8a20c5285\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-05T05:27:43.325Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
  },
  {
   "p": "Contas",
   "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
   "pass": true,
-  "info": "{\"ult\":1793798928254,\"ent\":1,\"dias\":{\"2026-11-04\":49}}"
+  "info": "{\"ult\":1793856481434,\"ent\":1,\"dias\":{\"2026-11-05\":50}}"
  },
  {
   "p": "Contas",
@@ -339,7 +189,7 @@
   "p": "Contas",
   "name": "Sono numa conta: o atalho do app Saúde envia para o link do perfil (tipo=sono) e a noite entra no Painel",
   "pass": true,
-  "info": "{\"lk\":true,\"r1\":\"✓ Sono enviado para o Prumo\",\"sl\":[{\"d\":\"2026-11-04\",\"m\":450,\"src\":\"saude\"}]}"
+  "info": "{\"lk\":true,\"r1\":\"✓ Sono enviado para o Prumo\",\"sl\":[{\"d\":\"2026-11-05\",\"m\":450,\"src\":\"saude\"}]}"
  },
  {
   "p": "Contas",
@@ -465,13 +315,13 @@
   "p": "Contas",
   "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
   "pass": true,
-  "info": "20261104132916-ccd08c"
+  "info": "20261105052834-c99106"
  },
  {
   "p": "Contas",
   "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
   "pass": true,
-  "info": "{\"id\":\"20261104132916-ccd08c\",\"uid\":\"1310393eaf13bc4b45b05c13\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+  "info": "{\"id\":\"20261105052834-c99106\",\"uid\":\"aacb329f967dec1f3ee04b78\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
  },
  {
   "p": "Contas",
@@ -490,95 +340,5 @@
   "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
- },
- {
-  "p": "Línguas",
-  "name": "Dicionários das línguas principais vêm com o app (inglês com mais de 15 mil textos)",
-  "pass": true,
-  "info": "19102"
- },
- {
-  "p": "Línguas",
-  "name": "Estados Unidos: o app passa a inglês (títulos traduzidos)",
-  "pass": true,
-  "info": "{\"h1\":\"Finance\",\"want\":\"Finance\"}"
- },
- {
-  "p": "Línguas",
-  "name": "Estados Unidos: dólares, datas e números à americana, notas de 0 a 100",
-  "pass": true,
-  "info": "{\"lang\":\"en\",\"h1\":\"Finance\",\"cur\":\"USD\",\"eur\":\"$1,234.50\",\"date\":\"Saturday, October 24\",\"d\":\"10/24/2026\",\"g\":\"0–100\",\"html\":\"en\"}"
- },
- {
-  "p": "Línguas",
-  "name": "Traduz frases com números, plurais, ícones e contagens, sem mexer no que a pessoa escreveu",
-  "pass": true,
-  "info": "{\"plural\":\"Do 4 more workouts this week\",\"um\":\"Do 1 more workout this week\",\"icone\":\"Animations\",\"conta\":\"2 of 3\",\"par\":\"Completed (3)\",\"ponto\":\"Experience · 40%\",\"verso\":true,\"casa\":\"Casa de praia\",\"prova\":\"Prova de Matemática\",\"com\":\"comprimida\"}"
- },
- {
-  "p": "Línguas",
-  "name": "Saudação na língua da pessoa (\"Good …, Sam\")",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Línguas",
-  "name": "Feriados de qualquer país (4 de julho nos EUA)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Línguas",
-  "name": "Páginas principais em inglês quase sem português à vista",
-  "pass": true,
-  "info": "15 textos"
- },
- {
-  "p": "Línguas",
-  "name": "A IA responde na língua da pessoa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Línguas",
-  "name": "Definições › País, língua e moeda: escolher espanhol traduz tudo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Línguas",
-  "name": "Brasil: português do Brasil e reais",
-  "pass": true,
-  "info": "pt-BR R$ 1.234,50"
- },
- {
-  "p": "Línguas",
-  "name": "Outra língua qualquer (japonês): a IA do servidor prepara o dicionário aos poucos",
-  "pass": true,
-  "info": "{\"t\":21059,\"f\":160}"
- },
- {
-  "p": "Línguas",
-  "name": "sem erros de JavaScript",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Línguas",
-  "name": "Perfil do Ryan: português de Portugal e euros (mesmo num aparelho em inglês)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Línguas",
-  "name": "Aparelho novo em en-US: o ecrã da conta abre em inglês",
-  "pass": true,
-  "info": "{\"code\":\"en\",\"tabs\":[\"Log in\",\"Create account\"]}"
- },
- {
-  "p": "Línguas",
-  "name": "Aparelho novo em pt-BR: o ecrã da conta abre em português do Brasil",
-  "pass": true,
-  "info": "{\"code\":\"pt-BR\",\"tabs\":[\"Entrar\",\"Criar conta\"]}"
  }
 ]
