@@ -21,7 +21,7 @@ const room = (ctx, sec = 2.6, k = 3) => { const r = ctx.sampleRate, n = Math.flo
 const satCurve = k => { const c = new Float32Array(1024); for (let i = 0; i < 1024; i++) { const x = i / 511.5 - 1; c[i] = Math.tanh(x * k) / Math.tanh(k); } return c; };
 
 const play = (ctx, t0, opt = {}) => {
-  const VOL = opt.vol == null ? .9 : opt.vol, T = x => t0 + x, Z = .0001, R = (a, b) => a + Math.random() * (b - a);
+  const VOL = opt.vol == null ? .84 : opt.vol, T = x => t0 + x, Z = .0001, R = (a, b) => a + Math.random() * (b - a);
   // saída para o altifalante do telemóvel: tira o sub-grave (não se ouve e come a margem), realça a presença, comprime e limita
   const out = ctx.createGain(); out.gain.setValueAtTime(VOL, t0);
   const eq = [['highpass', 95, .7, 0], ['lowshelf', 220, 0, -4], ['peaking', 2500, .8, 3]].map(([type, f, q, g]) => { const b = ctx.createBiquadFilter(); b.type = type; b.frequency.value = f; if (q) b.Q.value = q; if (g) b.gain.value = g; return b; });
