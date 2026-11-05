@@ -1,109 +1,163 @@
 [
  {
-  "p": "Intro",
-  "name": "Com som: a intro abre em \"Toca para começar\", parada no primeiro instante, e o ecrã do código espera",
-  "pass": true,
-  "info": "{\"st\":\"waiting\",\"wait\":true,\"tap\":\"flex\",\"t\":0,\"code\":false}"
- },
- {
-  "p": "Intro",
-  "name": "O toque começa a intro com o som ligado (áudio a correr) e a animação a andar",
-  "pass": true,
-  "info": "{\"st\":\"playing\",\"au\":\"running\",\"wait\":false,\"t\":283}"
- },
- {
-  "p": "Intro",
-  "name": "A música continua a tocar com a imagem (não só o começo): passado o selo, o som vai no mesmo ponto",
-  "pass": true,
-  "info": "{\"au\":\"running\",\"at\":3.25,\"vis\":3.283}"
- },
- {
-  "p": "Intro",
-  "name": "A música: audível no altifalante do telemóvel do princípio ao fim, silêncio antes do golpe, impacto por cima, sem cortes e silêncio no fim",
-  "pass": true,
-  "info": "{\"len\":6.4,\"pk\":0.984,\"bad\":0,\"bed\":[-18,-18,-18,-17,-16,-15,-16,-17,-14],\"gap\":-30,\"imp\":-13,\"before\":-16,\"end\":-117}"
- },
- {
-  "p": "Intro",
-  "name": "No fim (com som), o ecrã de carregamento e depois o código",
+  "p": "Atualização",
+  "name": "iPhone: app instalada (a funcionar com a cópia guardada)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Intro",
-  "name": "Em \"Toca para começar\", o botão Saltar salta tudo (sem som)",
+  "p": "Atualização",
+  "name": "iPhone: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "iPhone: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "2.0 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "iPhone: sem erros de JavaScript (atualização)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Intro",
-  "name": "Ao abrir, a intro aparece por cima de tudo (e o ecrã do código ainda não)",
-  "pass": true,
-  "info": "{\"intro\":true,\"on\":true,\"code\":false,\"st\":\"playing\",\"n\":83}"
- },
- {
-  "p": "Intro",
-  "name": "O selo da intro fica ao centro, maior do que no ecrã de carregamento",
-  "pass": true,
-  "info": "{\"cx\":197,\"w\":144,\"vw\":393}"
- },
- {
-  "p": "Intro",
-  "name": "Quando a intro acaba, vê-se o ecrã de carregamento de sempre (com a sua entrada), ainda sem o código",
-  "pass": true,
-  "info": "{\"intro\":false,\"after\":true,\"code\":false,\"sp\":true,\"img\":true}"
- },
- {
-  "p": "Intro",
-  "name": "Depois do ecrã de carregamento abre o ecrã do código",
+  "p": "Atualização",
+  "name": "Android tel: app instalada (a funcionar com a cópia guardada)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Intro",
-  "name": "Recarregar na mesma sessão não repete a intro",
+  "p": "Atualização",
+  "name": "Android tel: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "Android tel: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "2.0 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "Android tel: sem erros de JavaScript (atualização)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Intro",
-  "name": "Definições: \"Intro ao abrir\" com Sempre, Uma vez por dia e Nunca, \"Com som\"/\"Sem som\" e \"Ver a intro agora\"",
-  "pass": true,
-  "info": "{\"n\":3,\"on\":\"sempre\",\"ver\":true,\"som\":2}"
- },
- {
-  "p": "Intro",
-  "name": "\"Ver a intro agora\" mostra-a por cima do app já com som (veio de um toque) e um toque salta-a",
-  "pass": true,
-  "info": "[true,true]"
- },
- {
-  "p": "Intro",
-  "name": "Escolher \"Nunca\" fica guardado",
+  "p": "Atualização",
+  "name": "Tablet horiz: app instalada (a funcionar com a cópia guardada)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Intro",
-  "name": "sem erros JS (intro)",
+  "p": "Atualização",
+  "name": "Tablet horiz: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet horiz: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "2.9 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet horiz: sem erros de JavaScript (atualização)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Intro",
-  "name": "Um toque salta a intro e o app segue (ecrã de carregamento, depois o código)",
-  "pass": true,
-  "info": "3311 ms"
- },
- {
-  "p": "Intro",
-  "name": "Com \"Nunca\", abre direto no ecrã de carregamento",
+  "p": "Atualização",
+  "name": "Tablet vert: app instalada (a funcionar com a cópia guardada)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Intro",
-  "name": "Com \"reduzir movimento\" no aparelho, a intro não aparece",
+  "p": "Atualização",
+  "name": "Tablet vert: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet vert: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "1.8 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet vert: sem erros de JavaScript (atualização)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: app instalada (a funcionar com a cópia guardada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "2.0 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: sem erros de JavaScript (atualização)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: mesmo com um ficheiro da instalação a falhar, a versão nova entra",
+  "pass": true,
+  "info": "ficou 9.3"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: se recarregar não chegar, limpa a cópia guardada e entra a nova",
+  "pass": false,
+  "info": "ficou 2.95"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: os dados ficam depois de atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: com um formulário a meio, espera (não perde o que escreves)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: depois de fechar o formulário, atualiza sozinha",
+  "pass": true,
+  "info": "ficou 9.5"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: com rede muito lenta, abre em menos de 5 s com a cópia guardada",
+  "pass": true,
+  "info": "4.4 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: sem internet a app abre na mesma",
   "pass": true,
   "info": ""
  }

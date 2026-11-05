@@ -10,6 +10,7 @@ cp standalone/cloud.js "$OUT/js/cloud.js"
 [ -f "$OUT/config.js" ] || cp standalone/config.js "$OUT/config.js"
 [ -f standalone/config.local.js ] && cp standalone/config.local.js "$OUT/config.js"
 cp standalone/icons/* "$OUT/icons/"
+mkdir -p "$OUT/som" && cp standalone/som/*.mp3 "$OUT/som/"   # a música da intro (gerada por standalone/gensom.js)
 mkdir -p "$OUT/vendor" && cp -r standalone/vendor/. "$OUT/vendor/"
 # línguas: a lista dos textos do app (para a IA do servidor traduzir) e os dicionários que vêm com o app
 mkdir -p "$OUT/i18n"; NODE_PATH="${NODE_PATH:-/opt/node22/lib/node_modules}" I18N_SKIP=brands.js,fastfood.js node standalone/i18n/extract.js && cp standalone/i18n/strings.json "$OUT/i18n/"

@@ -71,10 +71,13 @@ const prep = () => { if (st !== 'waiting' || !EL || prepping) return; prepping =
   if (!READY || URLM) { begin(); return; } const t = setTimeout(begin, 2000); READY.then(() => { clearTimeout(t); begin(); }, () => { clearTimeout(t); begin(); }); };
 // o toque (no iPhone o som só pode começar com um toque): arma o áudio aqui mesmo, dentro do toque, e começa
 const arm = () => { if (!MUS || armed) return; armed = true;
-  try { if (URLM) { MUS.src = URLM; MUS.currentTime = 0; } else MUS.src = SILENT; const p = MUS.play(); if (p && p.catch) p.catch(() => { }); if (!URLM) setTimeout(() => { try { if (MUS && MUS.getAttribute('src') === SILENT) MUS.pause(); } catch (e) { } }, 60); } catch (e) { } };
+  try { if (URLM) { if (MUS.getAttribute('src') !== URLM) MUS.src = URLM; try { MUS.currentTime = 0; } catch (e) { } } else MUS.src = SILENT; const p = MUS.play(); if (p && p.catch) p.catch(() => { }); if (!URLM) setTimeout(() => { try { if (MUS && MUS.getAttribute('src') === SILENT) MUS.pause(); } catch (e) { } }, 60); } catch (e) { } };
 const tapStart = e => { if (st !== 'waiting' || prepping || (e.target && e.target.closest && e.target.closest('.in-skip-b'))) return;
   if (e.type === 'touchend') e.preventDefault();   // não deixa vir depois um "click" que contaria como outro toque
-  arm(); if (URLM) { prepping = true; begin(); } else prep(); };
+  arm(); if (URLM) startWithMusic(); else prep(); };
+// a música já está a tocar (começou no toque): a imagem arranca quando o som arranca de facto (no máximo 0,5 s depois)
+const startWithMusic = () => { if (st !== 'waiting' || !EL) return; prepping = true; EL.classList.add('in-wait', 'in-prep'); let ok = false;
+  const go = () => { if (ok) return; ok = true; begin(); }; if (MUS && !MUS.paused && MUS.currentTime > 0) go(); else { try { MUS.addEventListener('playing', go, { once: true }); } catch (e) { } setTimeout(go, 500); } };
 const keys = e => { if (st === 'waiting') { if (e.key === 'Escape') skipAll(e); else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tapStart(e); } } else if (st === 'playing') skip(); };
 const rnd = (a, b) => a + Math.random() * (b - a);
 
@@ -111,7 +114,7 @@ const I = window.PrumoIntro = {
   mode, setMode: v => lsSet('nau:intro', v), state: () => st,
   // o que vem depois (o ecrã do código, a app) espera pelo fim da intro e por um instante do ecrã de carregamento
   wait: cb => { if (st === 'playing' || st === 'waiting') { waiters.push(cb); return; } const left = endAt ? endAt + HOLD - Date.now() : 0; if (left > 0) setTimeout(cb, left); else cb(); },
-  sound: snd, setSound: on => lsSet('nau:introSom', !!on), audio: () => (MUS ? (playing && !MUS.paused ? 'running' : 'suspended') : null), audioTime: () => (MUS ? MUS.currentTime : -1),
+  sound: snd, setSound: on => lsSet('nau:introSom', !!on), audio: () => (MUS ? (playing && !MUS.paused ? 'running' : 'suspended') : null), audioTime: () => (MUS ? MUS.currentTime : -1), audioSrc: () => (MUS ? MUS.currentSrc || MUS.src : ''),
   // gesture: chamada a partir de um toque (Definições › Ver a intro agora): o som pode começar já
   play: (o = {}) => { if (st === 'playing' || st === 'waiting') return false; const P = getParts(); if (!P) return false;
     EL = build(P); st = 'waiting'; document.documentElement.classList.add('intro-on'); document.body.appendChild(EL);
@@ -119,17 +122,19 @@ const I = window.PrumoIntro = {
     EL.addEventListener('pointerdown', skip); EL.addEventListener('touchend', tapStart); EL.addEventListener('click', tapStart);
     EL.querySelector('.in-skip-b').addEventListener('click', skipAll); document.addEventListener('keydown', keys);
     const want = o.sound == null ? snd() : o.sound, S = window.PrumoIntroSom;
-    if (want && S && S.render && S.wav && window.Audio && window.URL && URL.createObjectURL) {
-      try { MUS = new Audio(); MUS.preload = 'auto'; MUS.setAttribute('playsinline', ''); } catch (e) { MUS = null; }
-      // a música grava-se já (enquanto se vê "Toca para começar") e fica num WAV em memória
-      if (MUS) READY = S.render(44100).then(b => { if (!MUS) return; URLM = URL.createObjectURL(S.wav(b)); if (!playing) { MUS.src = URLM; try { MUS.load(); } catch (e) { } } }).catch(() => { READY = null; });
+    if (want && window.Audio) {
+      // a música vem num ficheiro que vai com o app (som/intro.mp3, gerado por standalone/gensom.js); fica já a carregar
+      try { MUS = new Audio(); MUS.preload = 'auto'; MUS.setAttribute('playsinline', ''); URLM = new URL('som/intro.mp3', document.baseURI).href; MUS.src = URLM; MUS.load(); } catch (e) { MUS = null; URLM = ''; }
+      // reserva: se o ficheiro falhar, grava-se aqui mesmo (js/introsom.js) num WAV em memória
+      if (MUS && S && S.render && S.wav && window.URL && URL.createObjectURL) MUS.addEventListener('error', () => { if (!MUS || playing || (URLM && URLM.indexOf('blob:') === 0)) return; URLM = '';
+        READY = S.render(44100).then(b => { if (!MUS) return; URLM = URL.createObjectURL(S.wav(b)); MUS.src = URLM; try { MUS.load(); } catch (e) { } }).catch(() => { READY = null; }); }, { once: true });
     }
-    // sem som: começa logo. Vindo de um toque (Definições), arma já o áudio e começa quando a música estiver pronta.
+    // sem som: começa logo. Vindo de um toque (Definições): a música começa já, e a imagem com ela.
     if (!MUS) { begin(); return true; }
-    if (o.gesture) { arm(); prep(); return true; }
-    // ao abrir: o áudio pode tocar sozinho (Android com o app instalado, computador)? Experimenta com o som mudo; senão espera pelo toque.
+    if (o.gesture) { arm(); if (URLM) startWithMusic(); else prep(); return true; }
+    // ao abrir: o áudio pode tocar sozinho (Android com o app instalado, computador)? Prova com um som mudo noutro elemento; senão espera pelo toque.
     EL.classList.add('in-wait'); if (window.__introTap) return true;
-    try { MUS.src = SILENT; const p = MUS.play(); if (p && p.then) p.then(() => { armed = true; try { MUS.pause(); } catch (e) { } if (st === 'waiting' && !prepping) prep(); }, () => { }); } catch (e) { }
+    try { const pr = new Audio(SILENT), q = pr.play(); if (q && q.then) q.then(() => { try { pr.pause(); } catch (e) { } if (st === 'waiting' && !prepping) { arm(); if (URLM) startWithMusic(); else prep(); } }, () => { }); } catch (e) { }
     return true; },
   skip };
 

@@ -12,13 +12,14 @@ open(f'{out}/manifest.webmanifest', 'w').write(man)
 for f in os.listdir(f'{src}/icons'): shutil.copy(f'{src}/icons/{f}', out)
 for f in ['config.js', 'LANCAR.md', 'firestore.rules']: shutil.copy(f'{src}/{f}', out)
 if os.path.isdir(f'{src}/vendor'): shutil.copytree(f'{src}/vendor', f'{out}/vendor')
+if os.path.isdir(f'{src}/som'): shutil.copytree(f'{src}/som', f'{out}/som')  # a música da intro
 # funções do Vercel (cotações de reserva)
 if os.path.isdir('standalone/api'): shutil.copytree('standalone/api', f'{out}/api')
 if os.path.isdir(f'{src}/i18n'): shutil.copytree(f'{src}/i18n', f'{out}/i18n')  # dicionários das línguas e a lista dos textos
 shutil.copy('standalone/vercel.json', f'{out}/vercel.json')
 # páginas públicas dos documentos legais (/privacidade, /termos…)
 import subprocess; subprocess.run(['node', 'standalone/legalpages.js', out], check=True)
-files = ['manifest.webmanifest'] + sorted(x for x in os.listdir(out) if x.endswith('.png')) + (['vendor/fonts/' + x for x in sorted(os.listdir(f'{out}/vendor/fonts'))] if os.path.isdir(f'{out}/vendor/fonts') else [])
+files = ['manifest.webmanifest'] + sorted(x for x in os.listdir(out) if x.endswith('.png')) + (['som/' + x for x in sorted(os.listdir(f'{out}/som'))] if os.path.isdir(f'{out}/som') else []) + (['vendor/fonts/' + x for x in sorted(os.listdir(f'{out}/vendor/fonts'))] if os.path.isdir(f'{out}/vendor/fonts') else [])
 ver = hashlib.sha1(html.encode()).hexdigest()[:10]
 sw = open('standalone/sw.js').read().replace('__VERSION__', ver).replace('__FILES__', '[' + ','.join(f'"{x}"' for x in files) + ']')
 open(f'{out}/sw.js', 'w').write(sw)
