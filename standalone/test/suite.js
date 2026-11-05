@@ -2991,6 +2991,8 @@ async function introTests(b) { cur = 'Intro'; console.log('\n=== Intro ao abrir:
   await p.mouse.click(195, 420); await sleep(400);
   const w2 = await E(p, () => ({ st: PrumoIntro.state(), au: PrumoIntro.audio(), wait: document.getElementById('intro').classList.contains('in-wait'), t: Math.round(document.querySelector('#intro .in-selo').getAnimations()[0].currentTime) }));
   ok('O toque começa a intro com o som ligado (áudio a correr) e a animação a andar', w2.st === 'playing' && w2.au === 'running' && !w2.wait && w2.t > 150, JSON.stringify(w2));
+  await sleep(3000); const w3 = await E(p, () => ({ au: PrumoIntro.audio(), at: +PrumoIntro.audioTime().toFixed(2), vis: Math.round(document.querySelector('#intro .in-selo').getAnimations()[0].currentTime) / 1000 }));
+  ok('A música continua a tocar com a imagem (não só o começo): passado o selo, o som vai no mesmo ponto', w3.au === 'running' && w3.at > 2.9 && Math.abs(w3.at - w3.vis) < .6, JSON.stringify(w3));
   const snd = await E(p, async () => { const b = await PrumoIntroSom.render(44100), oc = new OfflineAudioContext(1, b.length, 44100), src = oc.createBufferSource(); src.buffer = b;
     // o altifalante do telemóvel: sem graves abaixo de ~300 Hz
     const h1 = oc.createBiquadFilter(), h2 = oc.createBiquadFilter(); h1.type = h2.type = 'highpass'; h1.frequency.value = h2.frequency.value = 300; src.connect(h1); h1.connect(h2); h2.connect(oc.destination); src.start(); const ph = (await oc.startRendering()).getChannelData(0);

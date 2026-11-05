@@ -64,15 +64,22 @@ const play = (ctx, t0, opt = {}) => {
   [[1318.5, .06], [1975.5 * 1.012, .035], [3135, .02]].forEach(([f, g]) => tone('sine', f, T(.86), { a: .003, g, d: .9, send: .5 }));
   // os tiques do pêndulo (madeira + nota), cada vez mais fracos
   [.75, 1.06, 1.33, 1.58, 1.81].forEach((t, i) => { const g = .2 * Math.pow(.75, i); hiss(T(t), { f: 2600, q: 6, a: .002, g, d: .05, send: .35, pan: i % 2 ? .3 : -.3 }); tone('triangle', 1567.98, T(t), { a: .002, g: g * .3, d: .08, send: .3 }); });
-  // 0°: o sino
-  bell(1046.5, T(1.95), .07, 2);
+  // o círculo de medida aparece: um véu que sobe
+  hiss(T(.9), { f: 1800, f2: 6500, ft: .6, q: 2.5, a: .3, g: .06, d: .4, send: .6 });
+  [1318.5, 1567.98, 1760].forEach((f, i) => tone('sine', f, T(.95 + i * .09), { a: .04, g: .03, d: .9, send: .7 }));
+  // 0°: o sino (mais claro)
+  bell(1046.5, T(1.95), .1, 2);
+  // o prumo sobe (sopro para cima) e a gota cai pelo fio (assobio que desce)
+  hiss(T(2.04), { f: 700, f2: 4200, ft: .3, q: 1.6, a: .1, g: .1, d: .25, send: .3 });
+  tone('sine', 1900, T(2.1), { a: .03, g: .035, d: .3, to: 700, tt: .32, send: .4 });
   // a tensão sobe: ruído a abrir, uma nota a subir, um prato ao contrário
   // (tudo corta em 2,74: um instante de silêncio e só então o golpe, como nos trailers)
   hiss(T(2.0), { f: 500, f2: 5200, ft: .74, q: 1.4, a: .72, g: .16, d: .02, send: .2 });
   tone('sawtooth', 220, T(2.0), { a: .72, g: .06, d: .02, to: 880, tt: .74, lp: 1200, lp2: 5000, lpt: .74, send: .15 });
   hiss(T(2.06), { type: 'highpass', f: 5500, q: .7, a: .66, g: .14, d: .01, send: .1 });
-  // a gota de cera
-  tone('sine', 640, T(2.42), { a: .002, g: .16, d: .14, to: 190, tt: .12, send: .3 }); hiss(T(2.42), { f: 900, q: 1.4, a: .002, g: .1, d: .08, send: .25 });
+  // a gota de cera: o "plop" e a cera a espalhar-se
+  tone('sine', 640, T(2.42), { a: .002, g: .22, d: .14, to: 190, tt: .12, send: .3 }); hiss(T(2.42), { f: 900, q: 1.4, a: .002, g: .14, d: .08, send: .25 });
+  hiss(T(2.45), { type: 'lowpass', f: 1400, f2: 500, ft: .2, q: .8, a: .02, g: .06, d: .2, send: .3 });
 
   // ===== 2) IMPACTO =====
   const I = T(2.82); DST = out;
@@ -82,6 +89,10 @@ const play = (ctx, t0, opt = {}) => {
   [1, 2.76, 5.4, 8.93].forEach((m, i) => tone('sine', 220 * m, I + .004, { a: .002, g: .13 / (1 + i * .45), d: 1.9 - i * .3, send: .7, det: R(-5, 5) })); // o latão
   strings([220, 277.18, 329.63, 440, 554.37], I, .012, .22, 1.1, .05, 4500, 1600, .6);     // o acorde de metais (lá maior), forte e a abrir
   for (let i = 0; i < 22; i++) { const t = I + .03 + Math.pow(Math.random(), 1.6) * .9; hiss(t, { type: 'highpass', f: R(3000, 7000), q: .9, a: .001, g: .09 * (1 - (t - I) / 1.1) + .015, d: R(.01, .03), send: .45, pan: R(-.75, .75) }); }
+
+  // o selo abre-se: uma harpa a subir e um brilho que cresce
+  [440, 554.37, 659.25, 880, 1108.73, 1318.5, 1760, 2217.46].forEach((f, i) => tone('triangle', f, T(2.9 + i * .035), { a: .003, g: .07, d: .6, send: .6, pan: -.6 + i * .17 }));
+  hiss(T(2.88), { f: 2500, f2: 9000, ft: .4, q: 1.8, a: .15, g: .07, d: .4, send: .6 });
 
   // ===== 3) o selo e o nome (ré maior → lá maior) =====
   DST = bed;
@@ -102,6 +113,8 @@ const play = (ctx, t0, opt = {}) => {
   hiss(F, { type: 'highpass', f: 4500, q: .6, a: .004, g: .12, d: 1.1, send: .6 });         // o prato
   bell(1760, T(4.2), .04, 1.6); bell(2217.46, T(4.45), .035, 1.6);
 
+  // a saída: um sopro que leva tudo
+  hiss(T(5.0), { f: 3500, f2: 500, ft: .8, q: 1, a: .15, g: .07, d: .7, send: .5 });
   // ---- o fim: sai com a imagem ----
   out.gain.setValueAtTime(VOL, T(5.1)); out.gain.linearRampToValueAtTime(Z, T(5.9));
   return { stop: (sec = .3) => { try { const n = ctx.currentTime; out.gain.cancelScheduledValues(n); out.gain.setValueAtTime(Math.max(out.gain.value, Z), n); out.gain.linearRampToValueAtTime(Z, n + sec); } catch (e) { } } };
@@ -109,5 +122,10 @@ const play = (ctx, t0, opt = {}) => {
 // grava a música num só som (sem esperar pelo tempo real): no iPhone toca-se depois de uma só vez, sem engasgos
 const render = (sr = 44100) => { const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext; if (!OAC) return Promise.reject(new Error('sem áudio'));
   const oc = new OAC(2, Math.ceil(sr * LEN), sr); play(oc, 0); const p = oc.startRendering(); return p && p.then ? p : new Promise((ok, ko) => { oc.oncomplete = e => ok(e.renderedBuffer); setTimeout(() => ko(new Error('tempo')), 8000); }); };
-window.PrumoIntroSom = { play, render, LEN };
+// o som gravado num ficheiro WAV (16 bits) em memória: no iPhone toca como um áudio normal, começado no toque
+const wav = buf => { const ch = Math.min(2, buf.numberOfChannels), n = buf.length, sr = buf.sampleRate, dv = new DataView(new ArrayBuffer(44 + n * ch * 2)), W = (o, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(o + i, s.charCodeAt(i)); };
+  W(0, 'RIFF'); dv.setUint32(4, 36 + n * ch * 2, true); W(8, 'WAVE'); W(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, ch, true); dv.setUint32(24, sr, true); dv.setUint32(28, sr * ch * 2, true); dv.setUint16(32, ch * 2, true); dv.setUint16(34, 16, true); W(36, 'data'); dv.setUint32(40, n * ch * 2, true);
+  const D = []; for (let c = 0; c < ch; c++) D.push(buf.getChannelData(c)); let o = 44; for (let i = 0; i < n; i++) for (let c = 0; c < ch; c++) { const v = Math.max(-1, Math.min(1, D[c][i])); dv.setInt16(o, v < 0 ? v * 32768 : v * 32767, true); o += 2; }
+  return new Blob([dv.buffer], { type: 'audio/wav' }); };
+window.PrumoIntroSom = { play, render, wav, LEN };
 })();
