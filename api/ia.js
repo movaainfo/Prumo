@@ -38,10 +38,11 @@ const stt = async (b64, lang) => { const buf = Buffer.from(String(b64 || ''), 'b
   finally { clearTimeout(to); } };
 /* ---------- o cérebro: o pedido do SDK da Anthropic, com a chave do projeto ---------- */
 const claude = async (req, b) => { if (!b || !CL_MODELS.test(String(b.model || ''))) throw Object.assign(new Error('Modelo desconhecido.'), { status: 400 });
-  const body = Object.assign({}, b, { max_tokens: Math.min(+b.max_tokens || 4000, 8000) }); delete body.stream;
+  const body = Object.assign({}, b, { max_tokens: Math.min(+b.max_tokens || 4000, 32000) }); delete body.stream;
   const h = { 'x-api-key': akey(), 'anthropic-version': String(req.headers['anthropic-version'] || '2023-06-01'), 'content-type': 'application/json' }, beta = String(req.headers['anthropic-beta'] || '');
   if (/^[a-z0-9,-]{1,300}$/.test(beta)) h['anthropic-beta'] = beta;
-  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 55e3);
+  // v2.96 (Vercel Pro): a função pode durar até 300 s, por isso o Claude tem tempo para pensar a sério
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 280e3);
   try { const r = await fetch((env('ANTHROPIC_BASE_URL') || 'https://api.anthropic.com') + '/v1/messages', { method: 'POST', headers: h, body: JSON.stringify(body), signal: ac.signal }); return { status: r.status, txt: await r.text() }; }
   catch (e) { return { status: 504, txt: JSON.stringify({ type: 'error', error: { type: 'timeout_error', message: 'O Claude demorou demasiado. Tenta outra vez.' } }) }; }
   finally { clearTimeout(to); } };
@@ -52,7 +53,7 @@ const toChat = b => { const msgs = [], txt = parts => (parts || []).map(p => p.t
   (b.contents || []).forEach(c => { const t = txt(c.parts); if (t) msgs.push({ role: c.role === 'model' ? 'assistant' : 'user', content: t }); });
   return msgs; };
 const hasMedia = b => (b.contents || []).some(c => (c.parts || []).some(p => p.inline_data || p.inlineData || p.file_data || p.fileData)) || /AUDIO|IMAGE/i.test(JSON.stringify((b.generationConfig || {}).responseModalities || ''));
-const free = async b => { const gc = b.generationConfig || {}, json = /json/i.test(gc.responseMimeType || ''), ac = new AbortController(), to = setTimeout(() => ac.abort(), 50e3);
+const free = async b => { const gc = b.generationConfig || {}, json = /json/i.test(gc.responseMimeType || ''), ac = new AbortController(), to = setTimeout(() => ac.abort(), 90e3);
   try { const r = await fetch(FREE(), { method: 'POST', headers: { 'content-type': 'application/json' }, signal: ac.signal,
       body: JSON.stringify(Object.assign({ model: 'openai', messages: toChat(b), temperature: gc.temperature == null ? .3 : gc.temperature, private: true, referrer: 'nautilo' }, json ? { response_format: { type: 'json_object' } } : {})) });
     const j = await r.json().catch(() => ({})); const m = j.choices && j.choices[0] && j.choices[0].message;
@@ -78,8 +79,8 @@ module.exports = N.handler(async (req, res) => {
     const r = await fetch(G + p + (p.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(k)); res.statusCode = r.status; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.setHeader('Cache-Control', 'no-store'); return res.end(await r.text()); }
   if (req.method !== 'POST') return gErr(res, 405, 'Só POST.');
   const b = await N.body(req);
-  if (k) { const ac = new AbortController(), to = setTimeout(() => ac.abort(), 40e3); let r, txt;
-    // modelo lento demais (o Vercel corta aos 60 s): responde antes como limite, para a app passar a outro modelo
+  if (k) { const ac = new AbortController(), to = setTimeout(() => ac.abort(), 90e3); let r, txt;
+    // modelo lento demais: responde como limite, para a app passar a outro modelo (v2.96, Vercel Pro: 90 s, para os modelos "pro" pensarem; antes 40 s)
     try { r = await fetch(G + p + '?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b), signal: ac.signal }); txt = await r.text(); }
     catch (e) { return gErr(res, 429, 'Modelo demasiado lento no Google agora (temporário).'); } finally { clearTimeout(to); }
     // modelo sobrecarregado no Google (503): a app trata como limite e passa ao modelo seguinte durante 1 minuto

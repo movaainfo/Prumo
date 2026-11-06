@@ -39,8 +39,8 @@ ${l === 'pt-BR' ? '7. Rewrite in Brazilian Portuguese: você, celular, tela, sal
 const ask = async (l, items) => { const input = {}; items.forEach((s, i) => { input[i] = s; });
   const user = JSON.stringify(input), k = gkey();
   if (k) { let last = null; const t0 = Date.now();
-    for (const m of MODELS) { const left = 52e3 - (Date.now() - t0); if (left < 8e3) break; const body = { systemInstruction: { parts: [{ text: RULES(l) }] }, contents: [{ role: 'user', parts: [{ text: user }] }], generationConfig: Object.assign({ temperature: .2, responseMimeType: 'application/json', maxOutputTokens: 16000 }, /^gemini-3/.test(m) ? { thinkingConfig: { thinkingLevel: 'low' } } : /2\.5/.test(m) ? { thinkingConfig: { thinkingBudget: 0 } } : {}) };
-      const ac = new AbortController(), to = setTimeout(() => ac.abort(), Math.min(40e3, left)); let r, j;
+    for (const m of MODELS) { const left = 170e3 - (Date.now() - t0); if (left < 8e3) break; const body = { systemInstruction: { parts: [{ text: RULES(l) }] }, contents: [{ role: 'user', parts: [{ text: user }] }], generationConfig: Object.assign({ temperature: .2, responseMimeType: 'application/json', maxOutputTokens: 16000 }, /^gemini-3/.test(m) ? { thinkingConfig: { thinkingLevel: 'low' } } : /2\.5/.test(m) ? { thinkingConfig: { thinkingBudget: 0 } } : {}) };
+      const ac = new AbortController(), to = setTimeout(() => ac.abort(), Math.min(80e3, left)); let r, j;
       try { r = await fetch(G + m + ':generateContent?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: ac.signal }); j = await r.json().catch(() => ({})); }
       catch (e) { last = 'tempo'; continue; } finally { clearTimeout(to); }
       if (!r.ok) { last = (j.error && j.error.message) || r.status; continue; }
@@ -70,7 +70,7 @@ module.exports = N.handler(async (req, res) => {
   const t = await N.readToken(req); if (!t) return N.send(res, 401, { ok: false, msg: 'Entra numa conta para preparar uma língua nova.' });
   if (N.limit(req, 'lingua|' + t.u, 40, 60e3)) return N.send(res, 429, { ok: false, msg: 'Devagar: tenta daqui a um minuto.' });
   // um lote de cada vez por língua (nesta instância)
-  if (BUSY.get(l) && Date.now() - BUSY.get(l) < 50e3) { const { d } = await load(l), feito = S.all.filter(s => d.m[s] != null).length; return N.send(res, 200, { ok: true, ocupado: true, total: S.all.length, feito, completo: feito >= S.all.length }); }
+  if (BUSY.get(l) && Date.now() - BUSY.get(l) < 180e3) { const { d } = await load(l), feito = S.all.filter(s => d.m[s] != null).length; return N.send(res, 200, { ok: true, ocupado: true, total: S.all.length, feito, completo: feito >= S.all.length }); }
   BUSY.set(l, Date.now());
   try {
     // sz: depois de um lote que a IA não conseguiu devolver, os seguintes vão mais pequenos (até um texto de cada vez)
