@@ -38,7 +38,7 @@ const analyse = async (rec, file, vaga) => { if (BUSY) return; if (!(OS.AI && OS
   BUSY = vaga ? 'vaga' : 'cv'; ERR = ''; OS.request();
   try { const parts = [{ text: ASK(rec.alvo, vaga) }];
     if (file) parts.push({ inline_data: { mime_type: file.mime, data: file.data } }); else parts.push({ text: 'CURRÍCULO:\n' + String(rec.text || '').slice(0, 30000) });
-    const o = await OS.AI.json(parts, .2), arr = (x, n) => (Array.isArray(x) ? x : []).slice(0, n);
+    const o = await OS.AI.json(parts, .2, { deep: 1 }), arr = (x, n) => (Array.isArray(x) ? x : []).slice(0, n);
     const an = { at: Date.now(), nota: Math.max(0, Math.min(100, Math.round(+o.nota || 0))), resumo: String(o.resumo || '').slice(0, 800), fortes: arr(o.fortes, 8).map(String),
       melhorar: arr(o.melhorar, 10).map(x => ({ o: String(x.o || x || '').slice(0, 300), como: String(x.como || '').slice(0, 400) })), reescrever: arr(o.reescrever, 8).map(x => ({ antes: String(x.antes || '').slice(0, 400), depois: String(x.depois || '').slice(0, 400) })),
       faltam: arr(o.faltam_palavras, 20).map(String), falta: arr(o.falta_no_cv, 12).map(String), formato: String(o.formato || '').slice(0, 400), len: file ? -1 : String(rec.text || '').length };

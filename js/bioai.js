@@ -88,6 +88,9 @@ AI.markDead = m => { const q = U.ls.get(QK, {}) || {}; q[m] = { dead: Date.now()
 AI.isDead = (status, msg) => status === 404 || (status === 400 && /no longer available|is not found|not supported for generateContent|deprecated|has been shut ?down/i.test(msg || ''));
 AI.models = list => (list || MODELS).filter(m => !AI.blocked(m));
 AI.gemini = () => AI.models(MODELS).filter(m => !/^gemma/.test(m));
+// v2.96: análises a fundo (planos, currículo, mentor…) tentam primeiro os modelos "pro" do Google (pensam mais; o Vercel Pro dá-lhes tempo). Se a cota "pro" acabar, seguem os rápidos como sempre.
+AI.order = (list, deep) => { if (!deep) return list; const pro = list.filter(m => /pro/.test(m) && !/^gemma/.test(m)).slice(0, 2); return pro.concat(list.filter(m => !pro.includes(m))); };
+AI.deep = q => { const s = String(q || ''); return s.length > 260 || /analis|anális|plano|planej|planei|estratég|estrateg|compar|avalia|aconselh|devo |decid|prioriz|otimiz|diagn|projeç|projec|previs|simula/i.test(s); };
 AI.limitMsg = 'A cota grátis dos modelos do Google acabou por hoje e a IA de reserva não respondeu. Tenta daqui a um minuto.';
 // IA grátis de reserva: sem chave e sem limite diário (modelo aberto GPT-OSS na Pollinations). Desliga-se em Definições da IA (freeAI = false).
 AI.freeOn = () => OS.one('diet').freeAI !== false;
@@ -102,8 +105,8 @@ AI.free = async (messages, o = {}) => { if (!AI.freeOn()) throw new Error('A IA 
 const freeJSON = async (parts, temp) => { const txt = parts.filter(p => p.text).map(p => p.text).join('\n'); if (!txt || parts.some(p => p.inline_data)) throw new Error('sem texto');
   const m = await AI.free([{ role: 'system', content: 'Respondes APENAS com JSON válido, sem texto à volta.' }, { role: 'user', content: txt }], { temp, json: true }), t = String(m.content || '').replace(/```(?:json)?/g, '').trim();
   try { return JSON.parse(t); } catch (e) { const mm = t.match(/[\[{][\s\S]*[\]}]/); if (mm) return JSON.parse(mm[0]); throw e; } };
-AI.json = async (parts, temp = .2) => { const key = AI.key(); if (!key) { if (AI.freeOn()) return freeJSON(parts, temp); throw Object.assign(new Error('A IA não está ligada.'), { fatal: 1 }); }
-  let last = '', limited = 0; await AI.discover(); const list = AI.models();
+AI.json = async (parts, temp = .2, o = {}) => { const key = AI.key(); if (!key) { if (AI.freeOn()) return freeJSON(parts, temp); throw Object.assign(new Error('A IA não está ligada.'), { fatal: 1 }); }
+  let last = '', limited = 0; await AI.discover(); const list = AI.order(AI.models(), o.deep);
   for (const m of list) { const gemma = /^gemma/.test(m); try { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: gemma ? parts.concat([{ text: '\nResponde APENAS com o JSON pedido, sem texto à volta.' }]) : parts }], generationConfig: gemma ? { temperature: temp } : { responseMimeType: 'application/json', temperature: temp } }) });
       const j = await r.json().catch(() => ({})), msg = (j.error && j.error.message) || '';
       if (!r.ok) { if (/API key not valid|API_KEY_INVALID/i.test(msg)) throw Object.assign(new Error('A chave da IA não é válida. Volta a copiá-la em aistudio.google.com/apikey.'), { fatal: 1 });
@@ -116,7 +119,7 @@ AI.json = async (parts, temp = .2) => { const key = AI.key(); if (!key) { if (AI
   if (limited && !AI.models().length) throw Object.assign(new Error(AI.limitMsg), { fatal: 1 });
   throw new Error('A IA não respondeu (' + last + '). Verifica a internet e tenta de novo.'); };
 // texto simples (resumos, explicações): Google primeiro, reserva grátis depois
-AI.text = async (prompt, o = {}) => { const key = AI.key(); if (key) { await AI.discover(); for (const m of AI.models()) { try { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: (o.system ? o.system + '\n\n' : '') + prompt }] }], generationConfig: { temperature: o.temp == null ? .4 : o.temp } }) });
+AI.text = async (prompt, o = {}) => { const key = AI.key(); if (key) { await AI.discover(); for (const m of AI.order(AI.models(), o.deep)) { try { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: (o.system ? o.system + '\n\n' : '') + prompt }] }], generationConfig: { temperature: o.temp == null ? .4 : o.temp } }) });
       const j = await r.json().catch(() => ({})), msg = (j.error && j.error.message) || ''; if (!r.ok) { if (r.status === 429) AI.markLimit(m, msg); else if (AI.isDead(r.status, msg)) AI.markDead(m); continue; }
       const t = ((((j.candidates || [])[0] || {}).content || {}).parts || []).map(p => p.text || '').join('').trim(); if (t) { AI.lastEngine = m; return t; } } catch (e) { } } }
   const m = await AI.free([o.system ? { role: 'system', content: o.system } : null, { role: 'user', content: prompt }].filter(Boolean), { temp: o.temp }); return String(m.content || '').trim(); };
@@ -182,7 +185,7 @@ let busy = '';
 BIO.analyse = async id => { const b = OS.get('body', id); if (!b) return; if (!AI.key()) { UI.modal(`<div class="row" style="justify-content:flex-end"><button class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div>${AI.setup('')}`, 'bio-m'); return; }
   const all = U.sortBy(OS.all('body').filter(x => x.bio || n(x.bf)), x => x.date), prev = all.filter(x => x.date < b.date).pop();
   busy = id; OS.request();
-  try { const r = await AI.json([{ text: ASK(ctx(b, prev)) }], .4); if (!r || !r.resumo) throw new Error('resposta vazia');
+  try { const r = await AI.json([{ text: ASK(ctx(b, prev)) }], .4, { deep: 1 }); if (!r || !r.resumo) throw new Error('resposta vazia');
     OS.upd('body', id, { ai: { at: new Date().toISOString(), resumo: String(r.resumo), nota: Math.round(n(r.nota)) || null, fortes: (r.fortes || []).slice(0, 6).map(String), melhorar: (r.melhorar || []).slice(0, 8).map(x => ({ area: String(x.area || ''), pri: /alta/i.test(x.prioridade) ? 'alta' : /baixa/i.test(x.prioridade) ? 'baixa' : 'media', why: String(x.porque || ''), how: String(x.como || '') })), metas: (r.metas || []).slice(0, 6).map(x => ({ m: String(x.medida || ''), a: String(x.atual ?? ''), t: String(x.alvo ?? ''), p: String(x.prazo || '') })), treino: (r.treino || []).slice(0, 6).map(String), dieta: (r.dieta || []).slice(0, 6).map(String), corrida: (r.corrida || []).slice(0, 4).map(String), evolucao: r.evolucao ? String(r.evolucao) : '' } });
     UI.toast('Análise pronta', 'pos'); }
   catch (e) { UI.toast(e.message, 'neg'); }

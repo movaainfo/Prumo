@@ -104,7 +104,7 @@ A.lpAI = async () => { if (busy) return; busy = true; OS.request();
   try { const o = await OS.AI.json([{ text: `És o Spyke, o mentor pessoal ${OS.whoCtx('do Ryan (brasileiro, vive em Aveiro, estuda, trabalha e investe)', 'de')}. Com base nos dados reais abaixo, cria o plano de próximos passos da vida dele para alcançar as metas e a estrela-guia.
 Regras: para cada área (estudos, dinheiro, corpo, carreira, pessoal) dá 3 a 6 passos NOVOS (não repitas os "passos_atuais"), do mais pequeno ao maior, concretos e acionáveis, em português de Portugal. Nível: 1 = hoje (pequeno), 2 = esta semana, 3 = este mês, 4 = este ano, 5 = longo prazo. Se uma área não tiver metas, sugere passos para começar.
 Responde APENAS JSON: {"foco":"1 frase: o que mais importa agora","passos":[{"area":"estudos|dinheiro|corpo|carreira|pessoal","nivel":1,"passo":"…","porque":"ligação à meta ou à visão (curto)"}]}
-DADOS: ${ctx()}` }], .4);
+DADOS: ${ctx()}` }], .4, { deep: 1 });
     const steps = (o.passos || []).filter(s => s && s.passo && CATS.some(c => c[0] === s.area)).slice(0, 40).map(s => ({ cat: s.area, lvl: Math.min(5, Math.max(1, +s.nivel || 3)), t: String(s.passo).slice(0, 160), why: String(s.porque || '').slice(0, 160) }));
     if (!steps.length) throw new Error('a IA não devolveu passos');
     OS.setOne('lifeplan', { at: Date.now(), foco: String(o.foco || '').slice(0, 220), steps }); UI.toast('Plano atualizado pelo Spyke', 'pos'); }

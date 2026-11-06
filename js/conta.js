@@ -153,7 +153,7 @@ const start = (cb, errCb) => { if (started) return; started = true;
     catch (e) { SY.err = e.message; SY.state = 'sem ligação (guardado neste aparelho)'; }
     finally { polling = false; } };
   Acc.poll = poll;
-  setInterval(poll, window.__accPoll || 90000); // a cada 90 s com a app à vista; ao voltar à app verifica logo (v2.53: menos pedidos, cotas da base de dados)
+  setInterval(poll, window.__accPoll || 30000); // a cada 30 s com a app à vista (v2.96, Vercel Pro: o que mudas no telemóvel aparece no computador em segundos; antes 90 s); ao voltar à app verifica logo
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { poll(); if (pend.size) repush(); } });
   addEventListener('online', () => { poll(); if (pend.size) repush(); }); };
 const DB = { collection: () => ({ onSnapshot: (cb, err) => { start(cb, err); return () => { }; } }), doc: path => ({ set: data => put(path.split('/').slice(1).join('/'), data) }) };

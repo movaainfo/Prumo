@@ -67,7 +67,7 @@ Destes e-mails (Gmail e notificações do LinkedIn), diz quais trazem uma OPORTU
 Não contes: publicidade genérica, faturas, segurança, convites para ligar, quem viu o perfil, reações e newsletters sem nada concreto.
 Para cada e-mail: {"id","ok":true/false,"titulo":"nome curto da oportunidade","instituicao":"quem oferece","tipo":"Curso|Certificação|Evento|Palestra|Programa universitário|Estágio|Emprego|Projeto|Competição|Networking|Bolsa|Negócio","prazo":"AAAA-MM-DD ou null","porque":"porque lhe interessa, máx. 14 palavras"}
 Não inventes nada que não esteja no e-mail. JSON: {"itens":[…]}
-E-mails: ${JSON.stringify(todo.map(([x]) => ({ id: x.id, de: x.f, assunto: x.s, data: String(x.d || '').slice(0, 10), inicio: String(x.sn || '').slice(0, 360) })))}` }], .1);
+E-mails: ${JSON.stringify(todo.map(([x]) => ({ id: x.id, de: x.f, assunto: x.s, data: String(x.d || '').slice(0, 10), inicio: String(x.sn || '').slice(0, 360) })))}` }], .1, { deep: 1 });
     (o.itens || []).forEach(r => { if (!r || !r.id) return; AI[r.id] = r.ok ? { ok: 1, t: String(r.titulo || '').slice(0, 120), i: String(r.instituicao || '').slice(0, 80), k: S_KINDS.includes(r.tipo) ? r.tipo : 'Emprego', p: /^\d{4}-\d\d-\d\d$/.test(r.prazo || '') ? r.prazo : '', w: String(r.porque || '').slice(0, 120), at: Date.now() } : { ok: 0, at: Date.now() }; });
     todo.forEach(([it]) => { if (!AI[it.id]) AI[it.id] = { ok: 0, at: Date.now(), skip: 1 }; }); saveAI(); }
   catch (e) { if (OS.debug) console.warn('oportunidades IA', e); }

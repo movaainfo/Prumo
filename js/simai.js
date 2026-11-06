@@ -55,7 +55,7 @@ Nos cenários usa SÓ estes campos: ${sim.inputs.map(i => i.campo + ' (' + i.rot
 A.simAIAsk = async b => { const s = S(); const q = (b && b.dataset.q) || s.q.trim(); if (!q || s.busy) { if (!q) UI.toast('Escreve a tua dúvida ou toca numa sugestão', ''); return; }
   if (!OS.AI || !OS.AI.key()) { s.err = ''; s.needKey = true; OS.request(); return; }
   const sim = readSim(); if (!sim) return; s.busy = true; s.err = ''; s.q = q; OS.request();
-  try { const o = await OS.AI.json([{ text: PROMPT(q, sim, s.hist) }], .3);
+  try { const o = await OS.AI.json([{ text: PROMPT(q, sim, s.hist) }], .3, { deep: 1 });
     const L = x => (Array.isArray(x) ? x : []).map(t => String(t || '').slice(0, 400)).filter(Boolean).slice(0, 4), fields = new Set(sim.inputs.map(i => i.campo));
     const cen = (Array.isArray(o.cenarios) ? o.cenarios : []).slice(0, 3).map(c => ({ titulo: String(c.titulo || 'Cenário').slice(0, 80), efeito: String(c.efeito || '').slice(0, 300), valores: Object.fromEntries(Object.entries(c.valores || {}).filter(([k, v]) => fields.has(k) && isFinite(+v)).map(([k, v]) => [k, +v])) })).filter(c => Object.keys(c.valores).length);
     s.ans = { q, nivel: ['bom', 'atencao', 'evitar', 'neutro'].includes(o.nivel) ? o.nivel : 'neutro', veredicto: String(o.veredicto || '').slice(0, 240), resposta: String(o.resposta || '').slice(0, 1200), porque: L(o.porque), riscos: L(o.riscos), passos: L(o.passos), falta: L(o.falta), cenarios: cen, lab: Object.fromEntries(sim.inputs.map(i => [i.campo, i.rotulo + (i.unidade ? ' (' + i.unidade + ')' : '')])) };

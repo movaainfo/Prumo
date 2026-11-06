@@ -63,10 +63,10 @@
   ],
   "functions": {
     "api/ia.js": {
-      "maxDuration": 60
+      "maxDuration": 300
     },
     "api/lingua.js": {
-      "maxDuration": 60
+      "maxDuration": 300
     }
   },
   "cleanUrls": true

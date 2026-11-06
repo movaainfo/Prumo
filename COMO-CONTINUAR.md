@@ -113,3 +113,14 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - O logo é o selo de cera vermelho com o P e os louros (pacote `prumo_logo_pack`). `js/marca.js` (gerado, não editar à mão) tem `OS.Marca.selo`, `.nome` e `.lema` em data URLs (SVG).
 - `OS.Lock.logo(px)` desenha o selo, `OS.Lock.word(altura, alt)` o nome "Prumo" com as letras do logo e `OS.Lock.lema(altura)` "Foco · Disciplina". O ecrã de abertura em `index.html` tem as mesmas imagens.
 - Ícones em `standalone/icons/`: `apple-touch-icon.png` (quadrado, o iPhone arredonda), `icon-192/512.png` (cantos arredondados), `icon-maskable-512.png` (selo a 84% sobre o papel, dentro da zona segura), `favicon-32.png` e `selo-96.png` (páginas legais e o regresso do Google).
+
+### 2.96: o que o Vercel Pro permite (IA mais inteligente)
+- `standalone/vercel.json`: `api/ia.js` e `api/lingua.js` com `maxDuration: 300` (antes 60, limite do plano grátis).
+- `standalone/api/ia.js`: Gemini espera até 90 s por modelo (os "pro" pensam mais; antes 40 s), Claude até 280 s e até 32 000 tokens de saída (antes 55 s e 8 000), reserva grátis 90 s.
+- `standalone/api/lingua.js`: cada lote de tradução tem 170 s (80 s por modelo).
+- `js/bioai.js`: `AI.deep(pergunta)` reconhece perguntas difíceis (análises, planos, decisões, comparações, previsões); `AI.order(lista, deep)` põe os 2 modelos "pro" mais novos à frente. `AI.json(parts, temp, { deep: 1 })` e `AI.text(prompt, { deep: 1 })`.
+- Chamadas a fundo marcadas com `deep`: análise da bioimpedância, planos de treino/dieta e perguntas ao treinador, currículo, plano de vida, biografia e capítulos, decisões (análise) e evolução, diagnóstico do estudo, oportunidades, simuladores, resumo aprofundado do jornal, plano de desporto.
+- `js/brain.js`: o Spyke usa `deep` nas perguntas difíceis (Gemini "pro" primeiro; até 8 voltas de ferramentas). Claude: `timeout` 300 s, `max_iterations` 10, e nas perguntas difíceis `effort: 'medium'` e 16 000 tokens (nas simples `low` e 8 000). Erro de rede num modelo do Gemini passa ao seguinte.
+- `js/conta.js`: sincronização entre aparelhos a cada 30 s com a app à vista (antes 90 s).
+- O maior salto de inteligência é ligar o Claude: o dono põe `ANTHROPIC_API_KEY` no Vercel (Settings › Environment Variables, Sensitive, Production) e faz Redeploy. Pago por uso à Anthropic; limite por pessoa e por dia em `NAUTILO_CLAUDE_DIA` (120); modelo em `NAUTILO_CLAUDE_MODEL` (por omissão Sonnet 5.5).
+- Testes: grupo `pro` em `standalone/test/suite.js` (9 testes). Falhas que já existiam: `direcao` (4, o câmbio real do dia) e `novidades` › "execução da bateria".

@@ -90,7 +90,7 @@ OS.forms.decThink = async f => { const t = f.elements.t.value.trim(); if (t.leng
 VIDA DELE (dados do PRUMO):
 ${OS.Spyke && OS.Spyke.ctx ? OS.Spyke.ctx() : ''}
 Organiza a decisão em português de Portugal. Responde só JSON: {"titulo":"a decisão em poucas palavras","contexto":"o que está em jogo, em 2 a 3 frases, com as palavras dele","prazo":"AAAA-MM-DD se ele indicou uma data, senão vazio","alternativas":[{"nome":"nome curto","notas":"o que ele disse sobre esta opção"}]}
-Inclui 2 a 4 alternativas: as que ele referiu e, se só falou de uma, também "Não fazer / manter como está".` }], .3);
+Inclui 2 a 4 alternativas: as que ele referiu e, se só falou de uma, também "Não fazer / manter como está".` }], .3, { deep: 1 });
     const alts = (r.alternativas || []).filter(a => a && a.nome).slice(0, 5).map(a => ({ name: String(a.nome).slice(0, 60), notes: String(a.notas || '').slice(0, 300) }));
     const d = OS.add('decisions', { title: String(r.titulo || t.slice(0, 60)).slice(0, 90), context: (r.contexto ? r.contexto + '\n\n' : '') + 'O que escrevi: ' + t, deadline: /^\d{4}-\d\d-\d\d$/.test(r.prazo || '') ? r.prazo : '', status: 'Em análise', alts: alts.length ? alts : [{ name: 'Fazer' }, { name: 'Não fazer' }], alpha: {}, weights: Object.assign({}, W0) });
     THINK.busy = false; const el = document.getElementById('decThinkT'); if (el) el.value = ''; decDrawer(d.id); await decRun(d.id, 'an'); }
@@ -150,7 +150,7 @@ const FILL = `Estima os valores dos critérios que estão VAZIOS em cada alterna
 const aiOn = () => !!(OS.AI && (OS.AI.key() || (OS.AI.freeOn && OS.AI.freeOn())));
 const decRun = async (id, kind, q) => { const d = OS.get('decisions', id); if (!d || DECB[id]) return; if (!aiOn()) return UI.toast('Liga o Spyke (IA) primeiro em Definições → Spyke', 'warn');
   DECB[id] = kind; decDrawer(id);
-  try { if (kind === 'an') { const r = await OS.AI.json(decPrompt(d, AN), .35); OS.upd('decisions', id, { ai: { at: Date.now(), r } }); }
+  try { if (kind === 'an') { const r = await OS.AI.json(decPrompt(d, AN), .35, { deep: 1 }); OS.upd('decisions', id, { ai: { at: Date.now(), r } }); }
     else if (kind === 'fill') { const r = await OS.AI.json(decPrompt(d, FILL), .2), alts = U.clone(d.alts || []); let n = 0;
       (r.alts || []).forEach(x => { const a = alts[+x.i]; if (!a) return; CRIT.forEach(([k, , t]) => { const v = x[k]; if ((a[k] === '' || a[k] == null) && v != null && v !== '' && isFinite(+v)) { a[k] = t === 'r' ? Math.max(1, Math.min(5, Math.round(+v))) : Math.round(+v * 100) / 100; n++; } }); });
       OS.upd('decisions', id, { alts }); UI.toast(n ? `O Spyke preencheu ${n} valores${r.nota ? ': ' + String(r.nota).slice(0, 120) : ''}` : 'Não havia nada por preencher', n ? 'pos' : ''); }
@@ -268,7 +268,7 @@ ${lines}
 METAS ATIVAS:
 ${goals || 'sem metas ativas'}
 NORTE (o que ele quer): ${JSON.stringify(OS.one('northstar') || {}).slice(0, 800)}
-Responde só JSON: {"resumo":"3 frases sobre como está a evoluir no geral","nota":1-10,"por_area":[{"area":"Dinheiro|Estudos|Desporto e corpo|Carreira|Execução e hábitos|Metas","nota":1-10,"comentario":"1 a 2 frases com números"}],"a_melhorar":["o que está a evoluir bem (até 4)"],"a_piorar":["o que está a piorar ou parado (até 4)"],"foco":["3 ações concretas para os próximos 30 dias que mais o aproximam dos objetivos"],"alerta":"um alerta importante, ou vazio"}` }], .3);
+Responde só JSON: {"resumo":"3 frases sobre como está a evoluir no geral","nota":1-10,"por_area":[{"area":"Dinheiro|Estudos|Desporto e corpo|Carreira|Execução e hábitos|Metas","nota":1-10,"comentario":"1 a 2 frases com números"}],"a_melhorar":["o que está a evoluir bem (até 4)"],"a_piorar":["o que está a piorar ou parado (até 4)"],"foco":["3 ações concretas para os próximos 30 dias que mais o aproximam dos objetivos"],"alerta":"um alerta importante, ou vazio"}` }], .3, { deep: 1 });
     U.ls.set('oc_evoai', Object.assign(r, { at: Date.now() })); }
   catch (e) { EVAI.err = e.message || 'O Spyke não respondeu.'; }
   EVAI.busy = false; OS.request(); };

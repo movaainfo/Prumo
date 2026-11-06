@@ -53,7 +53,7 @@ Responde APENAS JSON: {"nota":0-100,"veredicto":"2–3 frases: está ou não a l
 const BUSY = {}, ERR = {}, QA = {};
 const run = async k => { if (BUSY[k]) return; if (!(OS.AI && OS.AI.key())) { UI.toast('Liga a IA em Definições › Spyke', 'warn'); return; }
   BUSY[k] = 1; ERR[k] = ''; OS.request();
-  try { const o = await OS.AI.json([{ text: ASK[k](k === 'treino' ? treinoCtx() : dietaCtx()) }], .25), arr = (x, m) => (Array.isArray(x) ? x : []).slice(0, m);
+  try { const o = await OS.AI.json([{ text: ASK[k](k === 'treino' ? treinoCtx() : dietaCtx()) }], .25, { deep: 1 }), arr = (x, m) => (Array.isArray(x) ? x : []).slice(0, m);
     cfg()[k] = { at: Date.now(), d: today(), nota: Math.max(0, Math.min(100, Math.round(+o.nota || 0))), veredicto: String(o.veredicto || '').slice(0, 900), bom: arr(o.bom, 8).map(String),
       problemas: arr(o.problemas, 8).map(x => ({ o: String(x.o || x || '').slice(0, 300), mudar: String(x.mudar || '').slice(0, 500) })), extra: String(o.musculos || o.metas || '').slice(0, 600),
       plano: arr(o.plano, 8).map(x => k === 'treino' ? { t: String(x.dia || ''), s: String(x.foco || ''), L: arr(x.exercicios, 10).map(String) } : { t: String(x.refeicao || ''), s: String(x.ideia || ''), kcal: Math.round(+x.kcal || 0), p: Math.round(+x.proteina_g || 0) }),
@@ -64,7 +64,7 @@ const run = async k => { if (BUSY[k]) return; if (!(OS.AI && OS.AI.key())) { UI.
 A.caRun = b => run(b.dataset.k);
 OS.forms.caAsk = async (f, v) => { const k = f.dataset.k, q = v('q'); if (!q || BUSY['q' + k]) return; if (!(OS.AI && OS.AI.key())) return UI.toast('Liga a IA em Definições › Spyke', 'warn');
   BUSY['q' + k] = 1; QA[k] = { q, a: '' }; OS.request();
-  try { QA[k].a = await OS.AI.text(`${k === 'treino' ? 'És um treinador de força e condicionamento experiente.' : 'És um nutricionista desportivo experiente.'} Responde em português de Portugal, curto (até 8 frases), prático e honesto, com base nos dados da pessoa. Dados do Prumo: ${JSON.stringify(k === 'treino' ? treinoCtx() : dietaCtx())}${cfg()[k] ? ' A tua última análise: ' + JSON.stringify(cfg()[k]).slice(0, 2500) : ''}\nPergunta: ${q}`); }
+  try { QA[k].a = await OS.AI.text(`${k === 'treino' ? 'És um treinador de força e condicionamento experiente.' : 'És um nutricionista desportivo experiente.'} Responde em português de Portugal, curto (até 8 frases), prático e honesto, com base nos dados da pessoa. Dados do Prumo: ${JSON.stringify(k === 'treino' ? treinoCtx() : dietaCtx())}${cfg()[k] ? ' A tua última análise: ' + JSON.stringify(cfg()[k]).slice(0, 2500) : ''}\nPergunta: ${q}`, { deep: 1 }); }
   catch (e) { QA[k].a = 'Não consegui responder agora: ' + (e.message || 'tenta outra vez.'); }
   BUSY['q' + k] = 0; OS.request(); };
 

@@ -166,8 +166,8 @@ const brief = () => { try { return OS.Spyke && OS.Spyke.ctx ? OS.Spyke.ctx().sli
 const gemCall = async (model, body) => { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(OS.AI.key())}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const j = await r.json().catch(() => ({})); if (!r.ok) { const m = (j.error && j.error.message) || 'erro ' + r.status; if (r.status === 429 && OS.AI.markLimit) OS.AI.markLimit(model, m); if (OS.AI.isDead && OS.AI.isDead(r.status, m)) { OS.AI.markDead(model); const e = new Error('modelo desligado'); e.status = 404; throw e; } const e = new Error(/API key/i.test(m) ? 'a chave da IA não é válida' : r.status === 429 ? 'limite grátis da IA atingido por agora' : m); e.status = r.status; throw e; } return j; };
 // limite grátis: passa ao modelo seguinte (cada um tem a sua cota)
-const gemModel = async body => { await OS.AI.discover(); const list = OS.AI.gemini(); if (!list.length) { const e = new Error(OS.AI.limitMsg || 'limite grátis da IA atingido'); e.status = 429; throw e; } let last;
-  for (const m of list) { try { return await gemCall(m, body); } catch (e) { last = e; if (e.status !== 404 && e.status !== 400 && e.status !== 429 && e.status !== 500 && e.status !== 503) throw e; } }
+const gemModel = async (body, deep) => { await OS.AI.discover(); const list = OS.AI.order ? OS.AI.order(OS.AI.gemini(), deep) : OS.AI.gemini(); if (!list.length) { const e = new Error(OS.AI.limitMsg || 'limite grátis da IA atingido'); e.status = 429; throw e; } let last;
+  for (const m of list) { try { return await gemCall(m, body); } catch (e) { last = e; if (e.status == null && navigator.onLine !== false && !/chave/.test(e.message || '')) continue; if (e.status !== 404 && e.status !== 400 && e.status !== 429 && e.status !== 500 && e.status !== 502 && e.status !== 503 && e.status !== 504) throw e; } }
   throw last; };
 // pesquisa na internet (Google) feita pelo Gemini, com as fontes
 const webSearch = async q => { const j = await gemModel({ contents: [{ role: 'user', parts: [{ text: `Pesquisa e responde em português, de forma factual e atual, em 4 a 6 frases: ${q}` }] }], tools: [{ google_search: {} }] });
@@ -180,8 +180,8 @@ B.search = async (prompt, temp = .3) => { if (!OS.AI.key()) throw new Error('pes
   if (!txt) throw new Error('a IA não respondeu'); return { text: txt, src }; };
 const WEB = { name: 'pesquisar_internet', description: 'Pesquisa na internet (Google) informação atual: notícias, factos, preços, horários, como fazer algo.', props: { pergunta: { type: 'string' } }, req: ['pergunta'], run: async a => cut(await webSearch(String(a.pergunta).slice(0, 300)), 4000) };
 const gemTools = list => [{ functionDeclarations: list.map(t => ({ name: t.name, description: t.description, parameters: { type: 'object', properties: t.props, required: t.req } })) }];
-const askGemini = async (q, hist) => { const tools = T.concat([WEB]), contents = hist.concat([{ role: 'user', parts: [{ text: `Resumo atual dos dados dele (para contexto; consulta para detalhes):\n${brief()}\n\nPedido: ${q}` }] }]);
-  for (let i = 0; i < 6; i++) { const j = await gemModel({ systemInstruction: { parts: [{ text: system() }] }, contents, tools: gemTools(tools), generationConfig: { temperature: .4 } });
+const askGemini = async (q, hist) => { const tools = T.concat([WEB]), deep = OS.AI.deep && OS.AI.deep(q), contents = hist.concat([{ role: 'user', parts: [{ text: `Resumo atual dos dados dele (para contexto; consulta para detalhes):\n${brief()}\n\nPedido: ${q}` }] }]);
+  for (let i = 0; i < 8; i++) { const j = await gemModel({ systemInstruction: { parts: [{ text: system() }] }, contents, tools: gemTools(tools), generationConfig: { temperature: .4 } }, deep);
     const c = (j.candidates || [])[0]; if (!c || !c.content) throw new Error('a IA não respondeu'); contents.push(c.content);
     const calls = (c.content.parts || []).filter(p => p.functionCall); if (!calls.length) return (c.content.parts || []).map(p => p.text || '').join('').trim();
     const res = []; for (const p of calls) { const f = tools.find(t => t.name === p.functionCall.name); let out; try { out = f ? await f.run(p.functionCall.args || {}) : 'Ferramenta desconhecida.'; } catch (e) { out = 'Erro: ' + (e.message || 'falhou'); } res.push({ functionResponse: { name: p.functionCall.name, response: { resultado: String(out) } } }); }
@@ -197,12 +197,14 @@ const own = () => !!(cfg().anKey && cfg().anKey.trim());
 const viaSrv = (url, init = {}) => { const h = new Headers(init.headers || {}); h.delete('x-api-key'); h.set('authorization', 'Bearer ' + OS.Acc.token());
   return fetch(String(url).includes('/v1/messages') ? new URL('api/ia?p=claude', document.baseURI).href : url, Object.assign({}, init, { headers: h })); };
 const askClaude = async (q, hist) => { const { Anthropic, betaTool } = await sdk(), c = cfg(), mine = own();
-  const client = new Anthropic(Object.assign({ apiKey: mine ? c.anKey.trim() : 'prumo-servidor', dangerouslyAllowBrowser: true, maxRetries: 1, timeout: 60000 }, mine ? {} : { fetch: viaSrv }));
+  const client = new Anthropic(Object.assign({ apiKey: mine ? c.anKey.trim() : 'prumo-servidor', dangerouslyAllowBrowser: true, maxRetries: 1, timeout: 300000 }, mine ? {} : { fetch: viaSrv }));
   const tools = T.map(t => betaTool({ name: t.name, description: t.description, inputSchema: { type: 'object', properties: t.props, required: t.req, additionalProperties: false }, run: async a => String(await t.run(a)) }));
   const srvM = (U.ls.get('os2iaSrv', {}) || {}).mod, model = mine ? c.anModel || B.MODELS[0][0] : srvM || 'claude-sonnet-5-5', fb = model === 'claude-opus-5-5' || model === 'claude-sonnet-5-5';
   // com a chave própria, a pesquisa web da Anthropic; no servidor do Prumo, o Claude pensa e o Gemini pesquisa no Google (ferramenta pesquisar_internet)
   const web = mine ? [{ type: 'web_search_20260209', name: 'web_search', max_uses: 3 }] : OS.AI && OS.AI.key() ? [betaTool({ name: WEB.name, description: WEB.description, inputSchema: { type: 'object', properties: WEB.props, required: WEB.req, additionalProperties: false }, run: async a => String(await WEB.run(a)) })] : [];
-  const runner = client.beta.messages.toolRunner(Object.assign({ model, max_tokens: 8000, max_iterations: 6, system: system(), output_config: { effort: 'low' },
+  // v2.96 (Vercel Pro: até 300 s por pedido): perguntas difíceis (planos, análises, decisões) pensam mais; as rápidas continuam rápidas
+  const deep = OS.AI && OS.AI.deep && OS.AI.deep(q);
+  const runner = client.beta.messages.toolRunner(Object.assign({ model, max_tokens: deep ? 16000 : 8000, max_iterations: 10, system: system(), output_config: { effort: deep ? 'medium' : 'low' },
     tools: tools.concat(web),
     messages: hist.concat([{ role: 'user', content: `Resumo atual dos dados dele (para contexto; consulta para detalhes):\n${brief()}\n\nPedido: ${q}` }]) },
     // se um pedido for recusado por engano, a Anthropic responde com outro modelo no mesmo pedido

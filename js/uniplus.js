@@ -263,7 +263,7 @@ A.dpAI = async b => { if (DPB) return; const sid = b.dataset.s, s = OS.get('subj
   try { const o = await OS.AI.json([{ text: `És um orientador de estudo universitário exigente e prático. Analisa os dados reais ${OS.whoCtx('do Ryan', 'de')} em "${s.name}" e diz-lhe onde tem de melhorar, em português de Portugal. Baseia-te SÓ nos dados.
 Dados: ${JSON.stringify(data)}
 Para cada foco: porque é prioritário (com números dos dados), exercícios específicos e concretos que deve fazer (tipo de exercício, quantidade), e 2-3 pesquisas curtas de aulas para o YouTube (só o texto da pesquisa, não inventes links).
-JSON: {"diagnostico":"…","focos":[{"tema":"…","porque":"…","exercicios":["…"],"aulas":["…"]}],"dicas":["…"],"plano":"plano curto dia a dia para esta semana"}` }], .4);
+JSON: {"diagnostico":"…","focos":[{"tema":"…","porque":"…","exercicios":["…"],"aulas":["…"]}],"dicas":["…"],"plano":"plano curto dia a dia para esta semana"}` }], .4, { deep: 1 });
     U.ls.set('oc_dprec_' + sid, { o, at: Date.now() }); } catch (e) { U.ls.set('oc_dprec_' + sid, { err: e.message || 'Erro', at: Date.now() }); } DPB = false; OS.request(); };
 OS.UniPlus = { sm2, planFor, parseBulk };
 })();

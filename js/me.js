@@ -184,7 +184,7 @@ REGRAS:
 ${upd ? `- MODO ATUALIZAR: abaixo está a biografia atual. Os capítulos com "editado_por_ele": true foram escritos/corrigidos por ele — devolve-os EXATAMENTE iguais (mesmo id, mesmo texto). Nos outros, mantém o estilo e o que já está, e acrescenta/ajusta só com factos novos. Mantém os ids existentes; capítulos novos sem id.
 BIOGRAFIA ATUAL: ${JSON.stringify(cur)}` : ''}
 Devolve JSON: {"titulo":"título bonito","subtitulo":"uma linha","resumo":"2-3 frases: quem ele é","capitulos":[{"id":"(se existir)","titulo":"…","texto":"…"}],"faltam":["até 8 perguntas para completar a história"]}
-FACTOS: ${JSON.stringify(F).slice(0, 60000)}` }], .6);
+FACTOS: ${JSON.stringify(F).slice(0, 60000)}` }], .6, { deep: 1 });
     if (me().bio) snap(upd ? 'Antes da atualização pela IA' : 'Antes de reescrever com IA'); const old = upd ? me().bio : null;
     const ch = (o.capitulos || []).filter(c => c && (c.texto || '').trim()).map(c => { const prev = old && old.ch.find(x => x.id === c.id); return prev && prev.lock ? prev : { id: (prev && prev.id) || chId(), t: c.titulo || 'Capítulo', txt: String(c.texto).trim() }; });
     if (old) old.ch.filter(c => c.lock && !ch.some(x => x.id === c.id)).forEach(c => ch.push(c));
@@ -255,7 +255,7 @@ A.meBook = async b => { if (BK.run || BUSY) return; const mode = (b && b.dataset
   Object.assign(BK, { run: true, stop: false, i: 0, n: todo.length }); ERR = ''; OS.request();
   for (const c of todo) { if (BK.stop) break; BK.i++; BUSY = `A escrever o capítulo ${BK.i} de ${BK.n}: "${c.t}"…`; OS.request();
     const p = partOf(c.part), b2 = curBio(), idx = b2.ch.findIndex(x => x.id === c.id), prev = (b2.ch.slice(0, idx).reverse().find(x => x.txt) || {}).txt || '';
-    try { const t = clean(await OS.AI.text(chapPrompt(p, matOf(p), idx + 1, titles, prev, pov), { temp: .7 })); if (wc(t) < 40) throw new Error('a IA devolveu um texto vazio');
+    try { const t = clean(await OS.AI.text(chapPrompt(p, matOf(p), idx + 1, titles, prev, pov), { deep: 1, temp: .7 })); if (wc(t) < 40) throw new Error('a IA devolveu um texto vazio');
       setCh(c.id, { txt: t, words: wc(t), todo: 0, at: Date.now() }); }
     catch (e) { ERR = `Parei no capítulo "${c.t}": ${e.message || 'erro'}. Toca em "Continuar a escrever" para seguir de onde parou.`; break; } }
   if (!BK.stop && !ERR) { BUSY = 'A dar título ao livro e a ver o que falta contar…'; OS.request();
