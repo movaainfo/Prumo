@@ -152,3 +152,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `fromDiet()`: refeições dos últimos 30 dias → média por dia registado × dias do mês; gramas arredondadas a 50, ovos em unidades (55 g), líquidos em ml; secções por categoria da base de alimentos (`secOf`). "Atualizar com a dieta" mantém os itens à mão, os preços, as quantidades trancadas e os comprados do mês.
 - `version.py`: a partir de n=200 a versão é 3.x (3.0 = n 200).
 - Testes: grupo `mercado`.
+
+### 3.1: Universidade arrumada
+- `js/unilayout.js` (carrega depois de todos os módulos da Universidade): `GROUPS` (Visão geral, O curso, Avaliações, Estudar) e redefine `V.universidade` com os grupos (`nav.ug`) e os separadores de cada grupo (`nav.tabs.ug-t`, os dos outros grupos ficam `hidden`, para os testes de rotas os continuarem a ver). Separador novo em `OS.UT` que não esteja nos grupos vai para "Estudar". `OS.ui.uniG` lembra o último separador de cada grupo.
+- A Visão geral é recomposta por blocos a partir do HTML de cada módulo (classes `uv-*`, `un-today`, `hw-vis`); o que não for reconhecido fica no fim.
+- Testes: grupo `unilayout`. Falhas que já existiam: `faltas` (3, datas relativas a hoje que caem no feriado de 1 de novembro).

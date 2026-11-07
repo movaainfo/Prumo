@@ -1,529 +1,73 @@
 [
  {
-  "p": "Áreas",
-  "name": "finanças: saldo da conta = abertura + receitas − despesas − transferências (1279,50 €)",
+  "p": "Faltas",
+  "name": "Aulas que já passaram contam sozinhas: presença quando a rotina te põe na faculdade",
   "pass": true,
-  "info": "{\"a\":1279.5,\"c\":100,\"inc\":500,\"exp\":1119.5,\"fut\":true,\"up\":true}"
+  "info": "{\"e\":[4,0,4],\"c\":[2,0,3],\"why6\":\"Feriado: Todos os Santos\",\"st6\":\"Sem aula\",\"st7\":\"Presente\",\"why7\":\"Rotina: Faculdade 09:00–17:00\"}"
  },
  {
-  "p": "Áreas",
-  "name": "finanças: transferência entra na conta de destino (100 €)",
-  "pass": true,
-  "info": ""
+  "p": "Faltas",
+  "name": "Falta sozinha quando estavas a trabalhar à hora da aula (turno do horário importado)",
+  "pass": false,
+  "info": "{\"e\":[4,0,4],\"c\":[2,0,3],\"why6\":\"Feriado: Todos os Santos\",\"st6\":\"Sem aula\",\"st7\":\"Presente\",\"why7\":\"Rotina: Faculdade 09:00–17:00\"}"
  },
  {
-  "p": "Áreas",
-  "name": "finanças: mês soma receitas e despesas (despesa futura ainda não conta no saldo)",
+  "p": "Faltas",
+  "name": "Feriados de Portugal (e o de Aveiro) contam como \"sem aula\"",
   "pass": true,
-  "info": "{\"a\":1279.5,\"c\":100,\"inc\":500,\"exp\":1119.5,\"fut\":true,\"up\":true}"
+  "info": "[\"Implantação da República\",\"Sexta-feira Santa\",\"Feriado de Aveiro\",\"\"]"
  },
  {
-  "p": "Áreas",
-  "name": "finanças: despesa agendada aparece nos próximos pagamentos",
+  "p": "Faltas",
+  "name": "Falta sozinha quando a tua rotina não te põe na faculdade nesse dia",
   "pass": true,
-  "info": ""
+  "info": "{\"st\":\"Falta\",\"why\":\"A tua rotina não tem faculdade neste dia\"}"
  },
  {
-  "p": "Áreas",
-  "name": "finanças: compra em 3 parcelas cria 3 movimentos de 100 € em meses seguidos",
-  "pass": true,
-  "info": "[[100,1,3,\"2026-11\"],[100,2,3,\"2026-12\"],[100,3,3,\"2027-01\"]]"
+  "p": "Faltas",
+  "name": "Universidade → Faltas: cada disciplina com faltas/limite, presenças e as aulas (com o motivo)",
+  "pass": false,
+  "info": "{\"tab\":true,\"cards\":2,\"chips\":7}"
  },
  {
-  "p": "Áreas",
-  "name": "finanças: recorrente aparece antes de pagar e desaparece depois de pago",
-  "pass": true,
-  "info": "{\"before\":true,\"paid\":true,\"after\":false}"
- },
- {
-  "p": "Áreas",
-  "name": "finanças: pagar 200 € de uma dívida de 1000 € deixa 800 € (património igual)",
-  "pass": true,
-  "info": "{\"bal\":800,\"nwDelta\":0}"
- },
- {
-  "p": "Áreas",
-  "name": "finanças: orçamento soma o gasto da categoria no mês",
+  "p": "Faltas",
+  "name": "Avisa quando um turno vai bater com uma aula",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "tarefas: \"Rever balanço @Universidade !1 amanhã\" → título, prioridade 1, amanhã, área",
+  "p": "Faltas",
+  "name": "Corrigir com um toque: Presente → Falta → Justificada → Sem aula → volta ao automático",
   "pass": true,
-  "info": "[\"Rever balanço\",\"1\",true,\"Universidade\",\"Próxima\"]"
+  "info": "Falta*,Falta justificada*,Sem aula*,Presente,Falta*"
  },
  {
-  "p": "Áreas",
-  "name": "tarefas: concluir tarefa diária marca a data e cria a de amanhã",
+  "p": "Faltas",
+  "name": "A falta corrigida conta para o limite",
   "pass": true,
-  "info": "{\"done\":true,\"next\":true}"
+  "info": "1"
  },
  {
-  "p": "Áreas",
-  "name": "tarefas: prazo passado conta como atrasada",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "próxima ação: prioridade 1 com prazo hoje vem antes da prioridade 4",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "hábitos: 3 dias seguidos = sequência de 3",
-  "pass": true,
-  "info": "{\"streak\":3,\"wkend\":false,\"auto\":true,\"past\":true}"
- },
- {
-  "p": "Áreas",
-  "name": "hábitos: \"dias úteis\" não conta ao sábado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "hábitos: automático (registar um gasto) marca-se sozinho",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "hábitos: não deixa marcar dias passados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "metas: manual 5 de 10 = 50%",
-  "pass": true,
-  "info": "[0.5,0.5,0.25,\"Atrás do ritmo\"]"
- },
- {
-  "p": "Áreas",
-  "name": "metas: 2 de 4 passos = 50%",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "metas: meta ligada a uma conta segue o saldo (100 de 400 = 25%)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "metas: atrás do ritmo é detetado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "universidade: média ponderada 40%×12 + 60%×16 = 14,4",
-  "pass": true,
-  "info": "{\"avg\":14.4,\"due1\":true,\"r1\":true,\"next\":true}"
- },
- {
-  "p": "Áreas",
-  "name": "universidade: revisão de ontem está para hoje e a seguinte é a 7 dias",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "calendário: evento semanal repete-se daqui a 7 dias",
-  "pass": true,
-  "info": "{\"ev0\":true,\"ev7\":true,\"shift\":true,\"exam\":true}"
- },
- {
-  "p": "Áreas",
-  "name": "calendário: turnos e avaliações aparecem",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "decisões: filtro Alpha (24 h, 3 dias, passado)",
-  "pass": true,
-  "info": "[\"Responde às 5 perguntas\",\"Esperar 24 h\",\"Filtro passado\",\"Esperar 3 dias\",\"Filtro passado\"]"
- },
- {
-  "p": "Áreas",
-  "name": "segurança: mudar o código pede o atual e 6+ caracteres",
-  "pass": true,
-  "info": "[\"O código atual não está certo.\",\"O novo código precisa de pelo menos 6 caracteres.\",null,null,\"Código incorreto.\",null]"
- },
- {
-  "p": "Áreas",
-  "name": "segurança: depois de mudar, o novo código entra e o antigo não",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "segurança: o código nunca fica guardado em texto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "segurança: 5 códigos errados bloqueiam 30 s (mesmo com o certo)",
-  "pass": true,
-  "info": "[\"Código errado 5 vezes. Espera 30 s.\",\"Muitas tentativas. Espera 30 s.\"]"
- },
- {
-  "p": "Áreas",
-  "name": "clima: frase com cidade, graus, sensação e chuva",
-  "pass": true,
-  "info": "Em Aveiro estão 18 graus, sensação de 14, chuva fraca. Máxima de 21 e mínima de 13, 70% de probabilidade de chuva: leva guarda-chuva."
- },
- {
-  "p": "Áreas",
-  "name": "clima: amanhã e ícone sem emojis",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "mudança: recuperar recusa endereço errado e aceita o do script (tira as aspas da chave)",
-  "pass": true,
-  "info": "{\"bad\":null,\"ok\":true,\"done\":1}"
- },
- {
-  "p": "Áreas",
-  "name": "todas as 169 páginas: cada botão tem função",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "todas as páginas: cada formulário tem função",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "todas as páginas: \"editar\" aponta para dados que existem",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "todas as páginas: sem \"undefined\", \"NaN\" ou \"[object Object]\" no ecrã",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "IA unificada: nenhuma página tem o cartão antigo \"Ligar a IA\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "IA unificada: o cartão do Spyke aparece onde a IA faz falta",
-  "pass": true,
-  "info": "universidade.flashcards, universidade.simulados, universidade.questoes, trabalho.foto"
- },
- {
-  "p": "Áreas",
-  "name": "IA unificada: a página do Spyke tem o cérebro (IA) com os passos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "IA unificada: ligar uma vez liga a app inteira",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "sem erros de JavaScript (áreas)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "iPhone: app instalada (a funcionar com a cópia guardada)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "iPhone: ao abrir a app depois de publicar, abre logo a versão nova",
-  "pass": true,
-  "info": "versão 9.1"
- },
- {
-  "p": "Atualização",
-  "name": "iPhone: ao voltar à app, atualiza-se sozinha em poucos segundos",
-  "pass": true,
-  "info": "1.7 s"
- },
- {
-  "p": "Atualização",
-  "name": "iPhone: sem erros de JavaScript (atualização)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "Android tel: app instalada (a funcionar com a cópia guardada)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "Android tel: ao abrir a app depois de publicar, abre logo a versão nova",
-  "pass": true,
-  "info": "versão 9.1"
- },
- {
-  "p": "Atualização",
-  "name": "Android tel: ao voltar à app, atualiza-se sozinha em poucos segundos",
-  "pass": true,
-  "info": "1.7 s"
- },
- {
-  "p": "Atualização",
-  "name": "Android tel: sem erros de JavaScript (atualização)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "Tablet horiz: app instalada (a funcionar com a cópia guardada)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "Tablet horiz: ao abrir a app depois de publicar, abre logo a versão nova",
-  "pass": true,
-  "info": "versão 9.1"
- },
- {
-  "p": "Atualização",
-  "name": "Tablet horiz: ao voltar à app, atualiza-se sozinha em poucos segundos",
-  "pass": true,
-  "info": "2.3 s"
- },
- {
-  "p": "Atualização",
-  "name": "Tablet horiz: sem erros de JavaScript (atualização)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "Tablet vert: app instalada (a funcionar com a cópia guardada)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "Tablet vert: ao abrir a app depois de publicar, abre logo a versão nova",
-  "pass": true,
-  "info": "versão 9.1"
- },
- {
-  "p": "Atualização",
-  "name": "Tablet vert: ao voltar à app, atualiza-se sozinha em poucos segundos",
-  "pass": true,
-  "info": "1.7 s"
- },
- {
-  "p": "Atualização",
-  "name": "Tablet vert: sem erros de JavaScript (atualização)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "Computador: app instalada (a funcionar com a cópia guardada)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "Computador: ao abrir a app depois de publicar, abre logo a versão nova",
-  "pass": true,
-  "info": "versão 9.1"
- },
- {
-  "p": "Atualização",
-  "name": "Computador: ao voltar à app, atualiza-se sozinha em poucos segundos",
-  "pass": true,
-  "info": "1.7 s"
- },
- {
-  "p": "Atualização",
-  "name": "Computador: sem erros de JavaScript (atualização)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "atualização: mesmo com um ficheiro da instalação a falhar, a versão nova entra",
-  "pass": true,
-  "info": "ficou 9.3"
- },
- {
-  "p": "Atualização",
-  "name": "atualização: se recarregar não chegar, limpa a cópia guardada e entra a nova",
-  "pass": true,
-  "info": "ficou 9.4"
- },
- {
-  "p": "Atualização",
-  "name": "atualização: os dados ficam depois de atualizar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "atualização: com um formulário a meio, espera (não perde o que escreves)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Atualização",
-  "name": "atualização: depois de fechar o formulário, atualiza sozinha",
-  "pass": true,
-  "info": "ficou 9.5"
- },
- {
-  "p": "Atualização",
-  "name": "atualização: com rede muito lenta, abre em menos de 5 s com a cópia guardada",
-  "pass": true,
-  "info": "4.2 s"
- },
- {
-  "p": "Atualização",
-  "name": "atualização: sem internet a app abre na mesma",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: \"Lista de compras\" no menu Eu e a página começa com \"Fazer a lista do mês\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: a lista do mês sai da Dieta (média dos dias registados × dias do mês)",
-  "pass": true,
-  "info": "{\"n\":5,\"days\":10,\"a\":4500,\"dm\":30,\"b\":30}"
- },
- {
-  "p": "Compras",
-  "name": "Compras: ovos em unidades, leite em ml, e cada coisa na sua secção do supermercado",
-  "pass": true,
-  "info": "[\"un\",66,\"ml\",\"Mercearia\",\"Talho e peixaria\",\"Laticínios e ovos\"]"
- },
- {
-  "p": "Compras",
-  "name": "Compras: com a embalagem e o preço calcula as embalagens e o custo do mês (arroz + detergente)",
-  "pass": true,
-  "info": "{\"packs\":5,\"cost\":6,\"kpi\":\"Custo do mês€ 8,502 de 6 com preçoItens6Comprados0/6Por semana€ 1,98\",\"manual\":true}"
- },
- {
-  "p": "Compras",
-  "name": "Compras: a vista da semana mostra só uma semana de quantidades",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: marcar como comprado risca o item e conta nos comprados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: atualizar com a dieta junta o que é novo e guarda o que fizeste à mão (item, preço, comprado)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: no telemóvel nada sai do ecrã",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: numa conta de outra pessoa a página não aparece",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: sem erros na consola",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: separador \"Troféus\" em Quem sou eu, com a vitrine vazia e o botão para a primeira conquista",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: a vitrine desenha cada peça (troféu, medalhas, certificado) numa prateleira",
-  "pass": true,
-  "info": "{\"items\":4,\"arts\":4,\"hon\":\"1.º lugar no torneio de futsal\",\"q\":\"1/1/1\",\"years\":\"2026,2025,2019\",\"chips\":4}"
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: a peça de honra é a melhor (o troféu de ouro) e o quadro de medalhas conta ouro/prata/bronze",
-  "pass": true,
-  "info": "{\"items\":4,\"arts\":4,\"hon\":\"1.º lugar no torneio de futsal\",\"q\":\"1/1/1\",\"years\":\"2026,2025,2019\",\"chips\":4}"
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: linha do tempo por ano (mais recente primeiro) e filtros por área",
-  "pass": true,
-  "info": "{\"items\":4,\"arts\":4,\"hon\":\"1.º lugar no torneio de futsal\",\"q\":\"1/1/1\",\"years\":\"2026,2025,2019\",\"chips\":4}"
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: tocar numa peça abre a ficha com a história, o evento e os botões (editar, foto, honra)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: \"Peça de honra\" põe essa peça em destaque",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: a foto aparece na ficha",
-  "pass": true,
-  "info": ""
+  "p": "Faltas",
+  "name": "Painel: avisa do limite de faltas e do turno à hora da aula",
+  "pass": false,
+  "info": "[\"Turno à hora de Contabilidade Financeira\"]"
  },
  {
-  "p": "Troféus",
-  "name": "Troféus: o Retrato mostra o cartão da vitrine com a peça de honra",
+  "p": "Faltas",
+  "name": "Spyke: \"faltei à aula de estatística\" marca a falta na última aula",
   "pass": true,
-  "info": ""
+  "info": "Faltei à aula de estatística | Marquei falta na aula de Estatística de hoje às 10:00. Tens 2 faltas de 3."
  },
  {
-  "p": "Troféus",
-  "name": "Troféus: no telemóvel nada sai do ecrã",
+  "p": "Faltas",
+  "name": "Spyke: \"quantas faltas tenho\" e sabe as faltas no resumo da tua vida",
   "pass": true,
-  "info": ""
+  "info": "Faltas: Estatística: 2 faltas de 3, 2 presenças (50%); Contabilidade Financeira: 0 faltas de 2, 2 presenças (100%)."
  },
  {
-  "p": "Troféus",
-  "name": "Troféus: sem erros na consola",
+  "p": "Faltas",
+  "name": "sem erros de JavaScript (faltas)",
   "pass": true,
   "info": ""
  }
