@@ -3050,6 +3050,30 @@ html.vv-full #view.pg-in .cv-ring{animation:vvRingP 1.3s .2s var(--vv-e,ease-out
 
 /* v2.97: ADM — repor senha e mudar e-mail */
 .adm-f{display:flex;gap:8px;flex-wrap:wrap}.adm-f input{flex:1;min-width:170px}.adm-out{margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.03)}.adm-tmp{font:600 16px var(--mono);letter-spacing:.04em;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.06);user-select:all}
+/* v2.98 · Leituras › Top 10 da vida: pódio, tier list e a lista ordenada */
+.bt-hd{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.bt-pod{display:flex;justify-content:center;align-items:flex-end;gap:18px;padding:22px 12px 0;overflow:hidden}
+.bt-pl{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;color:var(--tx);font:inherit;cursor:pointer;width:150px;text-align:center}
+.bt-pl.p1{width:180px}.bt-pl .bk-cv{box-shadow:0 14px 26px rgba(0,0,0,.5)}.bt-pl.p1 .bk-cv{width:150px}.bt-pl:not(.p1) .bk-cv{width:104px}
+.bt-step{display:grid;place-items:center;width:100%;border-radius:8px 8px 0 0;margin-top:4px}.bt-step b{font-size:26px;color:#1c1408}
+.bt-step.ouro{height:74px;background:linear-gradient(180deg,#F6D77E,#C99A2E)}.bt-step.prata{height:52px;background:linear-gradient(180deg,#EEF1F4,#A9B2BC)}.bt-step.bronze{height:38px;background:linear-gradient(180deg,#F0B98F,#B06D3D)}
+.bt-pl .bt-t{font-size:13.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.bt-pl small{font-size:11.5px;color:var(--mut)}
+.bt-pl:hover .bk-cv{transform:translateY(-4px)}
+.bt-tiers{display:flex;flex-direction:column;gap:6px}
+.bt-row{display:grid;grid-template-columns:86px minmax(0,1fr);border-radius:10px;overflow:hidden;border:1px solid var(--line2)}
+.bt-tl{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:8px 4px;color:#1c1408;text-align:center}.bt-tl b{font:800 26px/1 var(--serif,Georgia,serif)}.bt-tl small{font-size:10.5px;font-weight:600;opacity:.8}
+.bt-row.tS .bt-tl{background:#E8C26A}.bt-row.tA .bt-tl{background:#D9A07A}.bt-row.tB .bt-tl{background:#B9C2CC}.bt-row.tC .bt-tl{background:#9FB89A}
+.bt-tc{display:flex;flex-wrap:wrap;gap:8px;padding:8px;align-items:center;background:rgba(255,255,255,.02);min-height:86px}
+.bt-tk{position:relative;background:none;border:0;padding:0;cursor:pointer}.bt-tk span{position:absolute;left:-4px;top:-4px;min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;font-size:11px;background:var(--bg);border:1px solid var(--line2);color:var(--tx)}
+.bt-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.bt-list li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}.bt-list li:first-child{border-top:0}
+.bt-n{width:30px;flex:none;font-size:20px;font-weight:700;color:var(--accent2);text-align:center;padding-top:6px}
+.bt-list b{display:block;font-size:14.5px}.bt-list small{display:block}.bt-list p{margin:4px 0 0;font-size:13px;color:var(--tx2);line-height:1.45}
+.bt-ac{display:flex;gap:2px;flex:none}.bt-dn .ic{transform:rotate(180deg)}
+.bt-sug{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.bt-sg{display:flex;align-items:center;gap:10px;padding:6px 10px 6px 6px;border-radius:10px;border:1px dashed var(--line2);background:none;color:var(--tx);font:inherit;text-align:left;cursor:pointer}.bt-sg span{flex:1;min-width:0}.bt-sg b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bt-sg small{color:#E8C26A}
+.bt-f{padding:18px;display:flex;flex-direction:column;gap:10px}.bt-f label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--tx2)}
+@media (max-width:600px){.bt-pod{gap:8px;padding-top:14px}.bt-pl{width:31%}.bt-pl.p1{width:36%}.bt-pl.p1 .bk-cv{width:100%}.bt-pl:not(.p1) .bk-cv{width:88%}.bt-row{grid-template-columns:64px minmax(0,1fr)}.bt-tl b{font-size:22px}.bt-list li{flex-wrap:wrap}.bt-ac{width:100%;justify-content:flex-end}}
 
 </style>
 <style>
@@ -3198,6 +3222,53 @@ html.vv-full #view.pg-in .cv-ring{animation:vvRingP 1.3s .2s var(--vv-e,ease-out
 .sym{fill:none;stroke:#F4E6CF;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.sym.od{stroke:#F2A65A}
 .mu-ico .sym{stroke-width:1.9}
 .mdl-ic.sym{stroke:#E8C77A;stroke-width:1.5}
+
+</style>
+<style>
+/* PRUMO — Troféus e medalhas: a vitrine (madeira escura, vidro e luz de vitrine). Metais com significado: não mudam com a paleta. */
+.tf-art{display:block;width:100%;height:auto;overflow:visible}
+.tf-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:center;overflow:hidden}
+.tf-hon{position:relative;display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:center;text-align:left;background:none;border:0;padding:6px 0;color:var(--tx);cursor:pointer;font:inherit}
+.tf-spot{position:absolute;left:-30px;top:-60px;width:230px;height:260px;background:radial-gradient(ellipse 50% 60% at 50% 30%,rgba(255,236,190,.22),rgba(255,236,190,.05) 55%,transparent 72%);pointer-events:none}
+.tf-art.hon{width:150px;filter:drop-shadow(0 14px 18px rgba(0,0,0,.45));animation:tfFloat 6s ease-in-out infinite}
+@keyframes tfFloat{50%{transform:translateY(-5px)}}
+.tf-ht{display:flex;flex-direction:column;gap:4px;min-width:0}.tf-ht small{font-size:11.5px;letter-spacing:.06em;color:var(--accent2)}.tf-ht b{font:600 22px/1.2 var(--serif,Georgia,serif)}.tf-ht .mut{font-size:13px}
+.tf-tab{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.tf-qs{display:flex;gap:14px}
+.tf-q{display:grid;grid-template-columns:34px auto;grid-template-rows:auto auto;column-gap:8px;align-items:center}.tf-q svg{grid-row:span 2;width:34px;height:34px}.tf-q b{font-size:22px;line-height:1}.tf-q span{font-size:11.5px;color:var(--mut)}.tf-q.z{opacity:.45}
+.tf-sum{margin:0;color:var(--tx2);font-size:13.5px}.tf-sum b{color:var(--tx)}
+/* a vitrine: prateleiras contínuas (cada peça traz o seu bocado de prateleira) */
+.tf-cab{background:linear-gradient(180deg,rgba(255,236,190,.05),transparent 30%),var(--card)}
+.tf-fs{flex-wrap:wrap;margin:0 0 12px}
+.tf-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));column-gap:0;row-gap:28px;padding:8px 0 4px}
+.tf-shelf.sm{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+.tf-it{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 10px 14px;background:none;border:0;color:var(--tx);font:inherit;text-align:center;cursor:pointer;opacity:0;transform:translateY(12px);animation:tfIn .6s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i) * 60ms)}
+.tf-it::after{content:'';position:absolute;left:0;right:0;bottom:0;height:9px;background:linear-gradient(180deg,#6A4A30,#3C2819 60%,#2A1C12);box-shadow:0 6px 10px rgba(0,0,0,.35)}
+.tf-it .tf-art{width:84px;transition:transform .25s ease;filter:drop-shadow(0 8px 8px rgba(0,0,0,.35))}
+.tf-shelf.sm .tf-it .tf-art{width:62px}
+.tf-it:hover .tf-art,.tf-it:focus-visible .tf-art{transform:translateY(-4px) rotate(-2deg)}
+.tf-it b{font-size:12.5px;line-height:1.25;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tf-it small{font-size:11px;color:var(--mut)}
+@keyframes tfIn{to{opacity:1;transform:none}}
+.tf-sub{margin:0 0 6px;font-size:12.5px}
+/* linha do tempo */
+.tf-tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tf-tl li{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;padding:8px 0;border-top:1px dashed var(--line2)}.tf-tl li:first-child{border-top:0}
+.tf-tl li>b{font-size:14px;color:var(--accent2)}.tf-tl li>div{display:flex;flex-direction:column;gap:4px}
+.tf-tl button{display:flex;align-items:center;gap:8px;background:none;border:0;padding:2px 0;color:var(--tx);font:inherit;font-size:13.5px;text-align:left;cursor:pointer}.tf-tl small{color:var(--mut)}
+.tf-dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--mut)}
+/* ficha */
+.tf-md{padding:18px}.tf-mh{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:14px;align-items:center}.tf-mart .tf-art{width:96px}
+.tf-mh h3{margin:2px 0;font:600 20px/1.25 var(--serif,Georgia,serif)}.tf-mh p{margin:0;font-size:13px}.tf-kick{font-size:11.5px;color:var(--accent2)}
+.tf-ph{display:block;width:100%;max-height:360px;object-fit:cover;border-radius:12px;margin:14px 0 0}
+.tf-story{margin:14px 0 0;line-height:1.55;font-size:14px;color:var(--tx2)}
+.tf-mb{flex-wrap:wrap;margin-top:14px}
+/* vazio e cartão no Retrato */
+.tf-empty{text-align:center;padding:26px 18px}.tf-empty h3{margin:12px 0 6px}.tf-empty p{max-width:34em;margin:0 auto 14px}
+.tf-ghost{display:flex;justify-content:center;gap:18px}.tf-art.ghost{width:64px;opacity:.28;filter:grayscale(1)}
+.tf-card{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--tx)}.tf-card .tf-art.sm{width:46px;flex:none}.tf-card small{display:block;font-size:11.5px;color:var(--accent2)}.tf-card b{display:block;font-size:15px}.tf-card .mut{font-size:12.5px}
+@media (max-width:700px){.tf-hero{grid-template-columns:minmax(0,1fr)}.tf-hon{grid-template-columns:110px minmax(0,1fr)}.tf-art.hon{width:110px}.tf-ht b{font-size:19px}.tf-shelf{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}.tf-it .tf-art{width:70px}}
+@media (prefers-reduced-motion:reduce){.tf-art.hon,.tf-it{animation:none;opacity:1;transform:none}}
+html.lite-x .tf-art.hon,html.lite-x .tf-it{animation:none;opacity:1;transform:none}
 
 </style>
 <style>
@@ -4274,7 +4345,7 @@ html.intro-after #splash .sp-foot{animation:inFade .8s ease-out .35s both}
 
 </style>
 <style>[hidden]{display:none!important}</style>
-<script>window.OCEANUM_VERSION={"v": "2.98", "date": "07/11/2026", "notes": ["Administração: repor a senha de login de uma conta (a pessoa entra com uma senha temporária e escolhe logo outra) e passar uma conta para outro e-mail sem perder nada (perfis, dados, ranking, Google e atalhos). A pessoa vê um aviso ao entrar. O cofre de Senhas continua só de quem o criou.", "O Spyke ganha as cores do tema (dourado e vinho no Selo, prateado no Grafite) e mais vida: radar, partículas em órbita, ondas ao ritmo da tua voz e números a contar ao abrir o Modo Comando. No Mundo: frases e a rota de A Volta ao Mundo em 80 Dias (Júlio Verne) e da Odisseia (Homero), com o relógio dos 80 dias e o mapa do Mediterrâneo de Odisseu; o mapa do mundo fica sempre com o mar azul e o aviso ao marcar um país diz o XP certo.", "IA mais inteligente: as perguntas difíceis (planos, análises, decisões, comparações) usam os modelos que pensam mais e têm até 5 minutos para responder. O mentor, o plano de vida, o currículo, a biografia, os planos de treino e dieta, as decisões e a evolução tentam primeiro o modelo \"pro\" do Google. O que mudas num aparelho aparece nos outros 3 vezes mais depressa.", "Música na intro do princípio ao fim, com um som para cada momento (o prumo, o pêndulo, o 0°, a gota, o carimbo, o selo a abrir, o nome e o remate), feita para se ouvir no altifalante do telemóvel e a tocar como um vídeo no iPhone. Abre em \"Toca para começar\"; dá para tirar o som nas Definições.", "Intro ao abrir: o fio de prumo cai e fica a prumo, a gota de cera, o carimbo com impacto e faíscas, o selo e \"Prumo\" letra a letra; depois entra o ecrã de carregamento. Um toque salta. Definições › Aplicação › Intro ao abrir (sempre, uma vez por dia ou nunca).", "Cores do app (Definições › Aplicação): escolhe a paleta que predomina. Por omissão, a do logo (Selo: vinho, creme e dourado); também Mar, Floresta, Ametista, Café e Grafite. As cenas do fundo acompanham.", "Logo novo: o selo de cera vermelho com o P e os louros, no ícone do app, na abertura, no ecrã do código e no topo.", "Dominus ligado às tuas metas: as missões do dia, da semana e do mês saem das tuas metas (as atrasadas e as mais importantes primeiro); o chefe da semana guarda uma meta tua e o colosso só cai com avanço real.", "Projeto de Vida no Dominus: os teus objetivos de vida em 10 eixos, cada um com a sua dificuldade; num toque vira meta, e o que os teus registos já provam conta sozinho.", "Rotina por horas em Hábitos e rotina: o dia numa linha de horas (das tantas às tantas), adicionar rápido, copiar dias, modelos, avisos na hora e tudo no Calendário e no Google Calendar.", "Metas honestas: \"No ritmo\" só com avanço real; \"Por começar\" quando ainda não houve avanço; cada meta mostra o que fizeste por ela na semana e no mês e a tua visão da Estrela-guia.", "Capital profissional ligado aos teus objetivos: competências até ao nível alvo, certificações, rede, projetos, eventos, mercado e metas de carreira.", "Jornal em tempo real (destaques de cada país, mais recentes primeiro, \"Última hora\") e cada tema do resumo abre a fundo com a avaliação da IA.", "A IA faz o que pedes dentro do app: cria, muda e apaga registos (apagar pede sempre confirmação).", "Admin em tempo real (online agora, última entrada e último acesso) e tempo de uso no ranking.", "Investimentos arrumados em 4 blocos, com todas as funções. Mais animações e transições suaves, também em Android."]};</script>
+<script>window.OCEANUM_VERSION={"v": "2.99", "date": "07/11/2026", "notes": ["Troféus e medalhas em Eu › Quem sou eu: a tua vitrine de conquistas reais (troféus, medalhas, placas, certificados e distinções desenhados no metal que ganhaste), com a peça de honra, o quadro de ouro, prata e bronze, a linha do tempo, a história e a foto de cada uma, e as medalhas ganhas no Prumo. Nas Leituras, o Top 10 da vida: pódio, tier list (S, A, B, C) e a lista do 1.º ao 10.º, com livros da estante ou escritos à mão.", "Administração: repor a senha de login de uma conta (a pessoa entra com uma senha temporária e escolhe logo outra) e passar uma conta para outro e-mail sem perder nada (perfis, dados, ranking, Google e atalhos). A pessoa vê um aviso ao entrar. O cofre de Senhas continua só de quem o criou.", "O Spyke ganha as cores do tema (dourado e vinho no Selo, prateado no Grafite) e mais vida: radar, partículas em órbita, ondas ao ritmo da tua voz e números a contar ao abrir o Modo Comando. No Mundo: frases e a rota de A Volta ao Mundo em 80 Dias (Júlio Verne) e da Odisseia (Homero), com o relógio dos 80 dias e o mapa do Mediterrâneo de Odisseu; o mapa do mundo fica sempre com o mar azul e o aviso ao marcar um país diz o XP certo.", "IA mais inteligente: as perguntas difíceis (planos, análises, decisões, comparações) usam os modelos que pensam mais e têm até 5 minutos para responder. O mentor, o plano de vida, o currículo, a biografia, os planos de treino e dieta, as decisões e a evolução tentam primeiro o modelo \"pro\" do Google. O que mudas num aparelho aparece nos outros 3 vezes mais depressa.", "Música na intro do princípio ao fim, com um som para cada momento (o prumo, o pêndulo, o 0°, a gota, o carimbo, o selo a abrir, o nome e o remate), feita para se ouvir no altifalante do telemóvel e a tocar como um vídeo no iPhone. Abre em \"Toca para começar\"; dá para tirar o som nas Definições.", "Intro ao abrir: o fio de prumo cai e fica a prumo, a gota de cera, o carimbo com impacto e faíscas, o selo e \"Prumo\" letra a letra; depois entra o ecrã de carregamento. Um toque salta. Definições › Aplicação › Intro ao abrir (sempre, uma vez por dia ou nunca).", "Cores do app (Definições › Aplicação): escolhe a paleta que predomina. Por omissão, a do logo (Selo: vinho, creme e dourado); também Mar, Floresta, Ametista, Café e Grafite. As cenas do fundo acompanham.", "Logo novo: o selo de cera vermelho com o P e os louros, no ícone do app, na abertura, no ecrã do código e no topo.", "Dominus ligado às tuas metas: as missões do dia, da semana e do mês saem das tuas metas (as atrasadas e as mais importantes primeiro); o chefe da semana guarda uma meta tua e o colosso só cai com avanço real.", "Projeto de Vida no Dominus: os teus objetivos de vida em 10 eixos, cada um com a sua dificuldade; num toque vira meta, e o que os teus registos já provam conta sozinho.", "Rotina por horas em Hábitos e rotina: o dia numa linha de horas (das tantas às tantas), adicionar rápido, copiar dias, modelos, avisos na hora e tudo no Calendário e no Google Calendar.", "Metas honestas: \"No ritmo\" só com avanço real; \"Por começar\" quando ainda não houve avanço; cada meta mostra o que fizeste por ela na semana e no mês e a tua visão da Estrela-guia.", "Capital profissional ligado aos teus objetivos: competências até ao nível alvo, certificações, rede, projetos, eventos, mercado e metas de carreira.", "Jornal em tempo real (destaques de cada país, mais recentes primeiro, \"Última hora\") e cada tema do resumo abre a fundo com a avaliação da IA.", "A IA faz o que pedes dentro do app: cria, muda e apaga registos (apagar pede sempre confirmação).", "Admin em tempo real (online agora, última entrada e último acesso) e tempo de uso no ranking.", "Investimentos arrumados em 4 blocos, com todas as funções. Mais animações e transições suaves, também em Android."]};</script>
 <script>(function(){try{var n=navigator,ua=n.userAgent||"",low=(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||/Android/i.test(ua)||matchMedia("(prefers-reduced-motion: reduce)").matches;var f=localStorage.getItem("os2lite"),rm=matchMedia("(prefers-reduced-motion: reduce)").matches,R=document.documentElement;if(f==="1"||(f!=="0"&&low))R.classList.add("lite");if(f==="1"||(f!=="0"&&rm))R.classList.add("lite-x")}catch(e){}})();</script>
 <script>
 /* PRUMO — paletas de cores (Definições › Aplicação › Cores do app).
@@ -11932,7 +12003,9 @@ document.addEventListener('change', e => { const el = e.target; if (!el.dataset 
 
 /* ---------- vistas ---------- */
 const T = {};
-const TABS = [['', 'Retrato'], ['bio', 'Biografia'], ['pessoas', 'Família & amigos'], ['historia', 'Linha do tempo'], ['sobre', 'Tudo sobre mim'], ['entrevista', 'Entrevista']];
+const TABS = [['', 'Retrato'], ['trofeus', 'Troféus'], ['bio', 'Biografia'], ['pessoas', 'Família & amigos'], ['historia', 'Linha do tempo'], ['sobre', 'Tudo sobre mim'], ['entrevista', 'Entrevista']];
+// v2.98: troféus e medalhas (js/trofeus.js)
+T.trofeus = () => OS.Trofeus ? OS.Trofeus.view() : '';
 V.eu = sub => { const k = TABS.some(t => t[0] === (sub || '')) ? (sub || '') : '';
   return UI.head(`Quem sou eu`, `A tua vida num só lugar: a tua história, as pessoas que amas, os momentos que te marcaram e quem és.`, '', 'Eu') + UI.tabs('eu', TABS, k) + `<div class="me">${T[k]()}</div>`; };
 
@@ -11943,6 +12016,7 @@ T[''] = () => { const m = me(), p = P(), a = age(m.birth), cp = completeness(), 
   return `<div class="pn me-hero"><div class="me-hero-ph">${avatar('lg')}<div class="row gap6"><button class="btn xs ghost" data-act="mePhoto">${m.photo ? 'Mudar foto' : 'Pôr foto'}</button>${m.photo ? `<button class="btn xs ghost" data-act="mePhotoDel">Tirar</button>` : ''}</div></div>
     <div class="me-hero-t"><div class="eyebrow">Quem sou eu</div><h2>${esc(p.name || first())}</h2><p class="me-tag">${esc(m.motto || (b && b.sum) || 'Filho de Deus, estudante, sonhador — a história ainda está a ser escrita.')}</p>
       <div class="me-facts">${fact('Idade', a != null ? a + ' anos' : '')}${fact('Nasci em', m.birthplace)}${fact('Vivo em', p.city ? p.city + (m.ptSince ? ' · há ' + yrs(m.ptSince) : '') : '')}${fact('Estudo', [p.course, p.uni].filter(Boolean).join(' · '))}${fact('Trabalho', [p.jobRole, p.employer].filter(Boolean).join(' · '))}${fact('Fé', m.church)}${fact('Línguas', m.langs)}${fact('Versículo', m.verse)}</div></div></div>
+  ${OS.Trofeus ? OS.Trofeus.card() : ''}
   <div class="g g3">
     <div class="pn"><div class="pn-h"><h3>${UI.ic('note')}A minha biografia</h3><a class="acc" href="#eu.bio" style="font-size:12px">abrir →</a></div>${b ? `<p class="me-q">${esc(b.sum || (b.ch[0] || {}).txt || '').slice(0, 320)}${(b.sum || '').length > 320 ? '…' : ''}</p><small class="mut">${b.ch.length} capítulos · atualizada ${U.rel(U.iso(new Date(b.at)))}</small>` : `<p class="mut">A IA escreve a tua história com tudo o que está no Prumo — e tu podes mudar tudo.</p><a class="btn sm pri" href="#eu.bio">Escrever a minha biografia</a>`}</div>
     <div class="pn"><div class="pn-h"><h3>${UI.ic('users')}Pessoas da minha vida</h3><a class="acc" href="#eu.pessoas" style="font-size:12px">ver →</a></div><div class="co-own"><div><b>${ppl.filter(x => (x.group || grpOf(x.rel)) === 'Família').length}</b><small>família</small></div><div><b>${ppl.filter(x => (x.group || grpOf(x.rel)) === 'Amigos').length}</b><small>amigos</small></div><div><b>${ppl.length}</b><small>no total</small></div></div>
@@ -12040,6 +12114,106 @@ document.addEventListener('change', e => { if (e.target && e.target.id === 'meQs
 if (OS.Cal && OS.Cal.items) { OS.Cal.src.bday = ['Aniversários', '#F472B6']; const _it = OS.Cal.items; OS.Cal.items = (from, to) => { const out = _it(from, to); OS.all('people').forEach(x => { if (!x.birthday) return; for (let y = +from.slice(0, 4); y <= +to.slice(0, 4); y++) { const d = y + x.birthday.slice(4); if (d >= from && d <= to) out.push({ date: d, title: '' + x.name + (x.rel ? ' (' + x.rel + ')' : ''), src: 'bday', edit: 'people:' + x.id, sub: +x.birthday.slice(0, 4) > 1900 && y - +x.birthday.slice(0, 4) > 0 ? 'faz ' + (y - +x.birthday.slice(0, 4)) + ' anos' : '' }); } }); return out.sort((a, b) => (a.date + (a.start || '99')).localeCompare(b.date + (b.start || '99'))); }; }
 
 OS.Me = { facts, draft, age, nextBday, completeness, PARTS, qList, matOf, pages, wc };
+})();
+
+</script>
+<script>
+/* PRUMO — Troféus e medalhas (Eu › Quem sou eu › Troféus), para todas as contas.
+   A vitrine das conquistas reais: troféus, medalhas, placas, certificados e distinções, com a data, o evento, a história e uma foto.
+   Cada peça é desenhada (SVG) no metal que ganhaste; a peça de honra fica em destaque, com o quadro de medalhas e a linha do tempo.
+   Também há a prateleira das medalhas ganhas no Prumo (as conquistas do Dominus). */
+(() => {
+'use strict';
+const U = OS.U, UI = OS.UI, esc = U.esc, A = OS.act;
+const TIPOS = ['Troféu', 'Medalha', 'Placa', 'Certificado', 'Distinção'];
+const NIV = ['Ouro', 'Prata', 'Bronze', 'Mérito', 'Participação'];
+const CAT = ['Desporto', 'Estudos', 'Trabalho', 'Competição', 'Arte e cultura', 'Voluntariado', 'Pessoal', 'Outro'];
+OS.S.trophies = { label: 'Troféu ou medalha', title: r => r.title || 'Conquista', fields: [
+  { k: 'title', l: 'O que ganhaste', t: 'text', req: 1, ph: 'Ex.: 1.º lugar no torneio de futsal da faculdade' },
+  { k: 'kind', l: 'Tipo', t: 'sel', o: TIPOS }, { k: 'level', l: 'Metal ou nível', t: 'sel', o: NIV },
+  { k: 'place', l: 'Lugar (1, 2, 3…), se houve classificação', t: 'num' }, { k: 'cat', l: 'Área', t: 'sel', o: CAT },
+  { k: 'date', l: 'Quando', t: 'date' }, { k: 'event', l: 'Evento, prova ou organização', t: 'text', ph: 'Ex.: Liga Universitária de Aveiro 2026' },
+  { k: 'story', l: 'A história: o que custou, quem estava lá, o que sentiste', t: 'area', rows: 4 },
+  { k: 'fav', l: 'Peça de honra (fica em destaque na vitrine)', t: 'bool' }],
+  defaults: () => ({ kind: 'Medalha', level: 'Ouro', cat: 'Desporto', date: U.today() }) };
+
+/* ---------- metais (cores com significado: não mudam com a paleta) ---------- */
+const MET = { Ouro: ['#FFF1BF', '#E7B84A', '#8F6210'], Prata: ['#FBFCFD', '#C6CDD5', '#6F7984'], Bronze: ['#FBD2B0', '#C77F4A', '#6E3B18'],
+  Mérito: ['#EFE4FF', '#A98BF2', '#4E36A0'], Participação: ['#E1ECF5', '#93AECB', '#3E5873'], Platina: ['#F1FBFA', '#A9DCD6', '#3F7F7A'], Diamante: ['#F3F8FF', '#AFCBF4', '#3D5F9E'] };
+const RIB = { Desporto: ['#1F4E8C', '#F5F1E8'], Estudos: ['#7A1F2B', '#E8C77A'], Trabalho: ['#2F3E4E', '#C9D3DC'], Competição: ['#8C1D18', '#F5F1E8'], 'Arte e cultura': ['#4A2A6B', '#E9D6A0'],
+  Voluntariado: ['#2E6B4A', '#F5F1E8'], Pessoal: ['#6B4A2E', '#E8C77A'], Outro: ['#3A3F47', '#E3E6EA'] };
+let uid = 0;
+const grad = (id, m) => `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2=".25"><stop offset="0" stop-color="${m[0]}"/><stop offset=".38" stop-color="${m[1]}"/><stop offset=".72" stop-color="${m[2]}"/><stop offset="1" stop-color="${m[1]}"/></linearGradient>`;
+const num = (x, y, n, sz, col) => n ? `<text x="${x}" y="${y}" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="${sz}" fill="${col}" opacity=".8">${n}</text>` : '';
+const star = (cx, cy, r, col) => { const p = []; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r; p.push((cx + Math.cos(a) * rr).toFixed(1) + ',' + (cy + Math.sin(a) * rr).toFixed(1)); } return `<polygon points="${p.join(' ')}" fill="${col}"/>`; };
+// cada peça num quadro 100×120
+const ART = {
+  'Troféu': (m, g, r) => `<path d="M30 13h40v20c0 18-9 29-20 31-11-2-20-13-20-31z" fill="url(#${g})"/><path d="M30 19c-15 0-15 24 2 25M70 19c15 0 15 24-2 25" fill="none" stroke="url(#${g})" stroke-width="4.5" stroke-linecap="round"/>
+    <ellipse cx="50" cy="13" rx="20" ry="3.6" fill="${m[2]}"/><path d="M45 64h10l-2 15h-6z" fill="url(#${g})"/><ellipse cx="50" cy="80" rx="9" ry="3" fill="${m[1]}"/>
+    <rect x="31" y="83" width="38" height="10" rx="2" fill="#4A3424"/><rect x="25" y="93" width="50" height="15" rx="2.5" fill="#2E2017"/><rect x="36" y="97.5" width="28" height="6" rx="1" fill="url(#${g})"/>
+    ${r.place ? num(50, 47, r.place, 20, m[2]) : star(50, 38, 9, m[2])}<path d="M35 18c2 14 5 24 11 30" stroke="#fff" stroke-opacity=".45" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  Medalha: (m, g, r, rb) => `<path d="M33 0h15l9 46-12 5z" fill="${rb[0]}"/><path d="M67 0H52l-9 46 12 5z" fill="${rb[0]}"/><path d="M39 0h4l8 47-3 1zM61 0h-4l-8 47 3 1z" fill="${rb[1]}" opacity=".9"/>
+    <circle cx="50" cy="80" r="27" fill="url(#${g})"/><circle cx="50" cy="80" r="21" fill="none" stroke="${m[2]}" stroke-opacity=".5" stroke-width="1.6"/>
+    <path d="M33 87c-3-8-1-17 6-22M67 87c3-8 1-17-6-22" fill="none" stroke="${m[2]}" stroke-opacity=".55" stroke-width="2" stroke-dasharray="3 2.4" stroke-linecap="round"/>
+    ${r.place ? num(50, 89, r.place, 24, m[2]) : star(50, 80, 10, m[2])}<path d="M33 70a20 20 0 0 1 14-11" stroke="#fff" stroke-opacity=".55" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  Placa: (m, g) => `<path d="M20 12h60v54c0 22-30 40-30 40S20 88 20 66z" fill="#5A3D26"/><path d="M25 17h50v48c0 18-25 34-25 34S25 83 25 65z" fill="#3D2A1B"/>
+    <rect x="33" y="36" width="34" height="24" rx="2" fill="url(#${g})"/><rect x="37" y="42" width="26" height="2.4" rx="1" fill="${m[2]}" opacity=".6"/><rect x="40" y="48" width="20" height="2.4" rx="1" fill="${m[2]}" opacity=".45"/><rect x="42" y="53.5" width="16" height="2.4" rx="1" fill="${m[2]}" opacity=".35"/>
+    ${star(50, 26, 6, m[1])}`,
+  Certificado: (m, g) => `<rect x="12" y="16" width="76" height="70" rx="3" fill="#F3EAD7"/><rect x="17" y="21" width="66" height="60" rx="2" fill="none" stroke="${m[1]}" stroke-width="1.6"/>
+    <rect x="28" y="31" width="44" height="3.4" rx="1.5" fill="#6B5A44" opacity=".75"/><rect x="24" y="41" width="52" height="2.2" rx="1" fill="#6B5A44" opacity=".4"/><rect x="24" y="47" width="46" height="2.2" rx="1" fill="#6B5A44" opacity=".4"/><rect x="24" y="53" width="50" height="2.2" rx="1" fill="#6B5A44" opacity=".4"/>
+    <path d="M62 88l-5 20 8-6 6 7 2-21z" fill="#7E1622"/><circle cx="68" cy="80" r="12" fill="#9E1B2A"/><circle cx="68" cy="80" r="8" fill="none" stroke="#C9474F" stroke-width="1.4"/>${star(68, 80, 4.5, '#E3A6A6')}`,
+  'Distinção': (m, g, r, rb) => { let p = ''; for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; p += `<circle cx="${(50 + Math.cos(a) * 19).toFixed(1)}" cy="${(46 + Math.sin(a) * 19).toFixed(1)}" r="8" fill="${rb[0]}"/>`; }
+    return `<path d="M40 56l-8 52 10-7 6 9 4-54zM60 56l8 52-10-7-6 9-4-54z" fill="${rb[0]}"/><path d="M44 58l-5 44M56 58l5 44" stroke="${rb[1]}" stroke-width="2"/>${p}<circle cx="50" cy="46" r="18" fill="${rb[1]}"/><circle cx="50" cy="46" r="13" fill="url(#${g})"/>${r.place ? num(50, 52, r.place, 15, m[2]) : star(50, 46, 7, m[2])}`; } };
+const art = (r, cls = '') => { const m = MET[r.level] || MET.Ouro, rb = RIB[r.cat] || RIB.Outro, g = 'tg' + (++uid), f = ART[r.kind] || ART.Medalha;
+  return `<svg class="tf-art ${cls}" viewBox="0 0 100 120" role="img" aria-label="${esc((r.kind || 'Medalha') + ' de ' + (r.level || 'ouro').toLowerCase())}"><defs>${grad(g, m)}</defs>${f(m, g, r, rb)}</svg>`; };
+
+/* ---------- foto (pequena, como a do retrato) ---------- */
+let photoFor = null;
+A.tfPhoto = b => { photoFor = b.dataset.id; const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
+  i.onchange = () => { const f = i.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { const im = new Image(); im.onload = () => { const M = 720, k = Math.min(1, M / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); OS.upd('trophies', photoFor, { photo: c.toDataURL('image/jpeg', .8) }); UI.toast('Foto guardada', 'pos'); A.tfOpen({ dataset: { id: photoFor } }); }; im.src = rd.result; }; rd.readAsDataURL(f); }; i.click(); };
+A.tfPhotoDel = b => { OS.upd('trophies', b.dataset.id, { photo: '' }); A.tfOpen(b); };
+
+/* ---------- ações ---------- */
+A.tfNew = () => UI.openForm('trophies', null);
+A.tfEdit = b => { UI.closeModal(); UI.openForm('trophies', b.dataset.id); };
+A.tfFav = b => { const id = b.dataset.id; OS.all('trophies').forEach(r => { if (r.fav && r.id !== id) OS.upd('trophies', r.id, { fav: false }, { silent: true }); }); OS.upd('trophies', id, { fav: true }); UI.closeModal(); UI.toast('É a tua peça de honra', 'pos'); };
+A.tfOpen = b => { const r = OS.get('trophies', b.dataset.id); if (!r) return;
+  UI.modal(`<div class="tf-md"><div class="tf-mh"><div class="tf-mart">${art(r, 'lg')}</div><div><small class="tf-kick">${esc([r.kind, r.level, r.cat].filter(Boolean).join(' · '))}</small><h3>${esc(r.title || 'Conquista')}</h3>
+      <p class="mut">${esc([r.event, r.date ? U.fmtD(r.date) : '', r.place ? r.place + '.º lugar' : ''].filter(Boolean).join(' · '))}</p></div><button class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div>
+    ${r.photo ? `<img class="tf-ph" src="${r.photo}" alt="Foto: ${esc(r.title || '')}">` : ''}
+    ${r.story ? `<p class="tf-story">${esc(r.story).replace(/\n/g, '<br>')}</p>` : ''}
+    <div class="row gap8 tf-mb"><button class="btn sm" data-act="tfEdit" data-id="${r.id}">${UI.ic('edit')}Editar</button><button class="btn sm ghost" data-act="tfPhoto" data-id="${r.id}">${r.photo ? 'Mudar a foto' : 'Pôr uma foto'}</button>${r.photo ? `<button class="btn sm ghost" data-act="tfPhotoDel" data-id="${r.id}">Tirar a foto</button>` : ''}${r.fav ? '' : `<button class="btn sm ghost" data-act="tfFav" data-id="${r.id}">${UI.ic('star')}Peça de honra</button>`}</div></div>`, 'tf-modal'); };
+A.tfF = b => OS.setUI('tfF', b.dataset.v);
+
+/* ---------- vista ---------- */
+const rank = r => (r.level === 'Ouro' ? 0 : r.level === 'Prata' ? 1 : r.level === 'Bronze' ? 2 : 3) * 10 + (r.kind === 'Troféu' ? 0 : 1) + (+r.place || 9) / 100;
+const yearOf = r => String(r.date || '').slice(0, 4);
+const disc = (lvl, n) => { const m = MET[lvl], g = 'tq' + (++uid); return `<div class="tf-q ${n ? '' : 'z'}"><svg viewBox="0 0 40 40" aria-hidden="true"><defs>${grad(g, m)}</defs><circle cx="20" cy="20" r="17" fill="url(#${g})"/><circle cx="20" cy="20" r="12.5" fill="none" stroke="${m[2]}" stroke-opacity=".5" stroke-width="1.2"/></svg><b class="mono">${n}</b><span>${lvl}</span></div>`; };
+const prumoShelf = () => { if (!OS.Dom || !OS.Dom.achievements) return ''; let L = []; try { L = OS.Dom.achievements().filter(a => a.t > 0); } catch (e) { return ''; } if (!L.length) return '';
+  const TN = ['Bronze', 'Prata', 'Ouro', 'Platina', 'Diamante'];
+  return `<section class="pn tf-pr"><div class="pn-h"><h3>${UI.ic('crown')}Medalhas do Prumo</h3><span class="mut">${L.length}</span></div><p class="mut tf-sub">As conquistas que o Dominus te deu pelo que fizeste aqui.</p>
+    <div class="tf-shelf sm">${L.map((a, i) => { const lvl = TN[Math.min(4, a.t - 1)]; return `<div class="tf-it" style="--i:${i}">${art({ kind: 'Medalha', level: lvl, cat: 'Outro' })}<b>${esc(a.n)}</b><small>${esc(lvl)} · ${U.nf(a.v)} ${esc(a.u)}</small></div>`; }).join('')}</div></section>`; };
+const view = () => { const all = OS.all('trophies'), f = OS.ui.tfF || 'todas', L = U.sortBy(all.filter(r => f === 'todas' || r.cat === f), r => rank(r) + ' ' + (9999 - (+yearOf(r) || 0)));
+  const hon = all.find(r => r.fav) || U.sortBy(all, r => rank(r))[0], cnt = lv => all.filter(r => r.level === lv && r.kind !== 'Certificado').length, tro = all.filter(r => r.kind === 'Troféu').length;
+  const cats = CAT.filter(c => all.some(r => r.cat === c));
+  if (!all.length) return `<section class="pn tf-empty"><div class="tf-ghost">${['Troféu', 'Medalha', 'Placa'].map(k => art({ kind: k, level: 'Prata', cat: 'Outro' }, 'ghost')).join('')}</div>
+    <h3>A tua vitrine está à espera da primeira peça</h3><p class="mut">Guarda aqui os troféus, as medalhas, os certificados e as distinções que ganhaste: no desporto, nos estudos, no trabalho, em concursos. Com a data, a história e uma foto. Vale tudo o que te deu orgulho.</p>
+    <button class="btn pri" data-act="tfNew">${UI.ic('plus')}Pôr a primeira conquista</button></section>${prumoShelf()}`;
+  const years = [...new Set(all.map(yearOf).filter(Boolean))].sort().reverse();
+  return `<section class="pn tf-hero">${hon ? `<button class="tf-hon" data-act="tfOpen" data-id="${hon.id}"><span class="tf-spot" aria-hidden="true"></span>${art(hon, 'hon')}<span class="tf-ht"><small>Peça de honra</small><b>${esc(hon.title || '')}</b><span class="mut">${esc([hon.event, hon.date ? U.fmtD(hon.date) : ''].filter(Boolean).join(' · '))}</span></span></button>` : ''}
+    <div class="tf-tab"><div class="tf-qs">${disc('Ouro', cnt('Ouro'))}${disc('Prata', cnt('Prata'))}${disc('Bronze', cnt('Bronze'))}</div>
+      <p class="tf-sum"><b class="mono">${all.length}</b> ${all.length === 1 ? 'conquista' : 'conquistas'} · <b class="mono">${tro}</b> ${tro === 1 ? 'troféu' : 'troféus'}${years.length ? ` · desde ${years[years.length - 1]}` : ''}</p>
+      <button class="btn pri" data-act="tfNew">${UI.ic('plus')}Nova conquista</button></div></section>
+  <section class="pn tf-cab"><div class="pn-h"><h3>${UI.ic('award')}A vitrine</h3><span class="mut">${L.length}</span></div>
+    ${cats.length > 1 ? `<div class="row gap6 tf-fs">${UI.chip('Todas', 'tfF', f === 'todas', 'data-v="todas"')}${cats.map(c => UI.chip(c, 'tfF', f === c, `data-v="${esc(c)}"`)).join('')}</div>` : ''}
+    <div class="tf-shelf">${L.map((r, i) => `<button class="tf-it" style="--i:${i}" data-act="tfOpen" data-id="${r.id}">${art(r)}<b>${esc(r.title || '')}</b><small>${esc([r.level, yearOf(r)].filter(Boolean).join(' · '))}</small></button>`).join('')}</div></section>
+  <section class="pn"><div class="pn-h"><h3>${UI.ic('clock')}Linha do tempo</h3></div><ol class="tf-tl">${years.map(y => `<li><b class="mono">${y}</b><div>${U.sortBy(all.filter(r => yearOf(r) === y), r => r.date || '').reverse().map(r => `<button data-act="tfOpen" data-id="${r.id}"><i class="tf-dot" style="background:${(MET[r.level] || MET.Ouro)[1]}"></i>${esc(r.title || '')}${r.event ? `<small> · ${esc(r.event)}</small>` : ''}</button>`).join('')}</div></li>`).join('')}${all.some(r => !yearOf(r)) ? `<li><b class="mono">—</b><div>${all.filter(r => !yearOf(r)).map(r => `<button data-act="tfOpen" data-id="${r.id}"><i class="tf-dot"></i>${esc(r.title || '')}</button>`).join('')}</div></li>` : ''}</ol></section>
+  ${prumoShelf()}`; };
+// um cartão pequeno no Retrato (Quem sou eu)
+const card = () => { const all = OS.all('trophies'); if (!all.length) return ''; const hon = all.find(r => r.fav) || U.sortBy(all, r => rank(r))[0];
+  return `<a class="pn tf-card" href="#eu.trofeus">${art(hon, 'sm')}<span><small>Troféus e medalhas</small><b>${all.length} ${all.length === 1 ? 'conquista' : 'conquistas'}</b><span class="mut">${esc(hon.title || '')}</span></span></a>`; };
+OS.Trofeus = { view, card, art };
 })();
 
 </script>
@@ -12159,7 +12333,7 @@ V.certificacoes = () => { const Cs = OS.all('certs'), f = OS.ui.cef || {}, t = t
     ${it.length ? `<div class="g g2">${it.map(card).join('')}</div>` : UI.empty(Cs.length ? 'Nenhuma certificação com estes filtros.' : 'Junta aqui todas as tuas certificações — qualquer uma conta.', UI.addBtn('certs', 'Adicionar certificação', null, ''))}`; };
 
 /* ================= LEITURAS ================= */
-const LT = [['', 'Estante'], ['minha', 'Minha estante'], ['buscar', 'Pesquisar livros'], ['desafios', 'Desafios'], ['estatisticas', 'Estatísticas'], ['resenhas', 'Resenhas & citações']];
+const LT = [['', 'Estante'], ['top', 'Top 10 da vida'], ['minha', 'Minha estante'], ['buscar', 'Pesquisar livros'], ['desafios', 'Desafios'], ['estatisticas', 'Estatísticas'], ['resenhas', 'Resenhas & citações']];
 V.leituras = sub => { const k = sub === 'livro' ? 'livro' : LT.some(t => t[0] === (sub || '')) ? (sub || '') : '';
   return UI.head('Leituras', 'A tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios literários.', `<a class="btn pri" href="#leituras.buscar">${UI.ic('search')}<span>Adicionar livro</span></a>`, 'Estudos') + UI.tabs('leituras', LT, k === 'livro' ? '' : k) + `<div class="bk">${LT_[k]()}</div>`; };
 const LT_ = {};
@@ -12180,6 +12354,43 @@ OS.forms.bkPage = (f, v) => { const b = OS.get('books', f.dataset.id); if (!b) r
   if (+b.pages && p >= +b.pages) { OS.upd('books', b.id, { status: 'Lido', end: today() }); UI.toast(`Terminaste “${b.title}” Escreve a tua resenha!`, 'pos'); OS.setUI('bk', b.id); location.hash = 'leituras.livro'; } else UI.toast('Página ' + p + ' ✓', 'pos'); };
 A.bkSet = b => { const x = OS.get('books', b.dataset.id); if (!x) return; const v = b.dataset.v, p = { status: v }; if (v === 'A ler') { p.start = x.start && x.status !== 'Quero ler' ? x.start : today(); p.end = ''; } if (v === 'Lido' || v === 'Abandonado') p.end = today(); if (v === 'Lido' && +x.pages) p.curPage = +x.pages; OS.upd('books', x.id, p); if (v === 'Lido') UI.toast('Mais um lido', 'pos'); };
 A.bkRate = b => { const x = OS.get('books', b.dataset.id); OS.upd('books', x.id, { rating: +x.rating === +b.dataset.v ? 0 : +b.dataset.v }); };
+
+/* ---------- v2.98 · Top 10 da vida: os 10 melhores livros que já leste, por ordem, com pódio e tier list ---------- */
+// guardado em one('booktop').list: [{ id, bid (livro da estante, se houver), title, author, cover, why, tier }]; a ordem da lista é o lugar
+OS.ONE_DEF.booktop = { list: [] };
+const TIERS = [['S', 'Lendários'], ['A', 'Obras-primas'], ['B', 'Muito bons'], ['C', 'Marcaram-me']];
+const tierOf = (x, i) => x.tier || (i < 3 ? 'S' : i < 6 ? 'A' : 'B');
+const topL = () => (OS.one('booktop').list || []).slice(0, 10);
+const topSave = L => OS.setOne('booktop', { list: L.slice(0, 10) });
+const topBook = x => { const b = x.bid ? OS.get('books', x.bid) : null; return { title: (b && b.title) || x.title || '', author: (b && b.author) || x.author || '', cover: (b && b.cover) || x.cover || '', b }; };
+const topForm = (x, i) => { const B = U.sortBy(OS.all('books').filter(b => b.status !== 'Quero ler'), b => -(+b.rating || 0)), y = x || {};
+  UI.modal(`<form class="bt-f" data-form="btSave" data-i="${i == null ? '' : i}"><div class="row between" style="align-items:center"><h3 style="margin:0">${x ? 'Editar' : 'Juntar ao'} top 10</h3><button type="button" class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div>
+    ${B.length ? `<label>Da tua estante<select name="bid" class="field"><option value="">Escrever outro livro…</option>${B.map(b => `<option value="${b.id}"${y.bid === b.id ? ' selected' : ''}>${esc(b.title)}${b.author ? ' · ' + esc(b.author) : ''}${+b.rating ? ' · ' + '★'.repeat(+b.rating) : ''}</option>`).join('')}</select></label>` : ''}
+    <label>Título<input class="field" name="title" value="${esc(y.title || '')}" placeholder="Se não está na estante"></label><label>Autor<input class="field" name="author" value="${esc(y.author || '')}"></label>
+    <label>Porque está no teu top (opcional)<textarea class="field" name="why" rows="3" placeholder="O que este livro te deu">${esc(y.why || '')}</textarea></label>
+    <label>Tier<select name="tier" class="field">${TIERS.map(([t, n]) => `<option value="${t}"${(y.tier || '') === t ? ' selected' : ''}>${t} · ${n}</option>`).join('')}<option value=""${!y.tier ? ' selected' : ''}>Pelo lugar no top</option></select></label>
+    <button class="btn pri">${x ? 'Guardar' : 'Juntar ao top'}</button></form>`, 'bt-modal'); };
+OS.forms.btSave = (f, v) => { const L = topL(), i = f.dataset.i === '' ? null : +f.dataset.i, bid = v('bid'), title = v('title').trim(), b = bid ? OS.get('books', bid) : null;
+  if (!b && !title) { UI.toast('Escolhe um livro da estante ou escreve o título', 'warn'); return false; }
+  const it = { id: i != null && L[i] ? L[i].id : U.uid(), bid: b ? b.id : '', title: b ? b.title : title, author: b ? b.author || '' : v('author').trim(), cover: b ? b.cover || '' : '', why: v('why').trim(), tier: v('tier') };
+  if (i != null && L[i]) L[i] = it; else { if (L.length >= 10) { UI.toast('O top já tem 10. Tira um primeiro: só cabem os 10 melhores.', 'warn'); return false; } if (b && L.some(x => x.bid === b.id)) { UI.toast('Esse livro já está no teu top', 'warn'); return false; } L.push(it); }
+  topSave(L); UI.closeModal(); UI.toast(i != null ? 'Guardado' : `“${it.title}” entrou no teu top, em ${L.indexOf(it) + 1}.º`, 'pos'); };
+A.btNew = () => topForm(null, null);
+A.btAdd = b => { const L = topL(), x = OS.get('books', b.dataset.id); if (!x) return; if (L.length >= 10) return UI.toast('O top já tem 10. Tira um primeiro.', 'warn'); if (L.some(y => y.bid === x.id)) return; L.push({ id: U.uid(), bid: x.id, title: x.title, author: x.author || '', cover: x.cover || '', why: '', tier: '' }); topSave(L); UI.toast(`“${x.title}” entrou em ${L.length}.º`, 'pos'); };
+A.btEdit = b => { const i = +b.dataset.i; topForm(topL()[i], i); };
+A.btMove = b => { const L = topL(), i = +b.dataset.i, j = i + +b.dataset.d; if (j < 0 || j >= L.length) return; [L[i], L[j]] = [L[j], L[i]]; topSave(L); };
+A.btDel = b => { const L = topL(), i = +b.dataset.i, x = L[i]; if (!x) return; UI.ask('Tirar do top?', `“${esc(topBook(x).title)}” sai do teu top 10 (continua na estante).`, 'Tirar', () => { L.splice(i, 1); topSave(L); }); };
+A.btCopy = async () => { const t = 'O meu top 10 de livros da vida:\n' + topL().map((x, i) => { const k = topBook(x); return `${i + 1}. ${k.title}${k.author ? ' (' + k.author + ')' : ''}`; }).join('\n'); try { await navigator.clipboard.writeText(t); UI.toast('Top 10 copiado', 'pos'); } catch (e) { UI.toast('Não consegui copiar', 'warn'); } };
+LT_.top = () => { const L = topL(), P = ['ouro', 'prata', 'bronze'];
+  const sug = U.sortBy(OS.all('books').filter(b => b.status === 'Lido' && +b.rating >= 4 && !L.some(x => x.bid === b.id)), b => -(+b.rating || 0)).slice(0, 8);
+  const pod = L.slice(0, 3), order = [1, 0, 2].filter(i => pod[i]);
+  const head = `<div class="pn bt-hd"><div><h3 style="margin:0 0 4px">Os 10 livros da tua vida</h3><p class="mut" style="margin:0">Por ordem: o 1.º é o livro que mais te marcou. Mexe a ordem com as setas e põe cada um no seu tier.</p></div><div class="row gap6" style="flex-wrap:wrap">${L.length < 10 ? `<button class="btn pri" data-act="btNew">${UI.ic('plus')}Juntar livro (${L.length}/10)</button>` : '<span class="pos">Top completo</span>'}${L.length ? `<button class="btn ghost" data-act="btCopy">Copiar a lista</button>` : ''}</div></div>`;
+  if (!L.length) return head + UI.empty('Ainda não escolheste os teus 10. Começa pelo livro que mais te marcou na vida.', `<button class="btn pri" data-act="btNew">${UI.ic('plus')}Escolher o 1.º</button>`) + (sug.length ? `<div class="pn"><div class="pn-h"><h3>Da tua estante (4 ou 5 estrelas)</h3></div><div class="bt-sug">${sug.map(b => `<button class="bt-sg" data-act="btAdd" data-id="${b.id}">${cover(b, 'xs')}<span><b>${esc(b.title)}</b><small>${'★'.repeat(+b.rating || 0)}</small></span>${UI.ic('plus')}</button>`).join('')}</div></div>` : '');
+  return head + `<div class="pn bt-pod" aria-label="Pódio">${order.map(i => { const k = topBook(pod[i]); return `<button class="bt-pl p${i + 1}" data-act="btEdit" data-i="${i}">${cover(k, i === 0 ? 'lg' : '')}<span class="bt-step ${P[i]}"><b class="mono">${i + 1}</b></span><b class="bt-t">${esc(k.title)}</b><small>${esc(k.author)}</small></button>`; }).join('')}</div>
+    <div class="pn"><div class="pn-h"><h3>Tier list</h3></div><div class="bt-tiers">${TIERS.map(([t, n]) => { const xs = L.map((x, i) => ({ x, i })).filter(o => tierOf(o.x, o.i) === t); return `<div class="bt-row t${t}"><div class="bt-tl"><b>${t}</b><small>${n}</small></div><div class="bt-tc">${xs.map(o => { const k = topBook(o.x); return `<button class="bt-tk" data-act="btEdit" data-i="${o.i}" title="${esc(k.title)}">${cover(k, 'sm')}<span class="mono">${o.i + 1}</span></button>`; }).join('') || '<span class="mut">—</span>'}</div></div>`; }).join('')}</div></div>
+    <div class="pn"><div class="pn-h"><h3>Do 1.º ao ${L.length}.º</h3></div><ol class="bt-list">${L.map((x, i) => { const k = topBook(x); return `<li><span class="bt-n mono">${i + 1}</span>${cover(k, 'xs')}<div class="grow" style="min-width:0"><b>${esc(k.title)}</b><small class="mut">${esc(k.author)}${' · tier ' + tierOf(x, i)}</small>${x.why ? `<p>${esc(x.why)}</p>` : ''}</div>
+      <div class="bt-ac"><button class="icon-btn" data-act="btMove" data-i="${i}" data-d="-1" aria-label="Subir" ${i ? '' : 'disabled'}>${UI.ic('arrowUp')}</button><button class="icon-btn bt-dn" data-act="btMove" data-i="${i}" data-d="1" aria-label="Descer" ${i < L.length - 1 ? '' : 'disabled'}>${UI.ic('arrowUp')}</button><button class="icon-btn" data-act="btEdit" data-i="${i}" aria-label="Editar">${UI.ic('edit')}</button><button class="icon-btn" data-act="btDel" data-i="${i}" aria-label="Tirar do top">${UI.ic('x')}</button></div></li>`; }).join('')}</ol></div>
+    ${sug.length && L.length < 10 ? `<div class="pn"><div class="pn-h"><h3>Sugestões da tua estante</h3></div><div class="bt-sug">${sug.map(b => `<button class="bt-sg" data-act="btAdd" data-id="${b.id}">${cover(b, 'xs')}<span><b>${esc(b.title)}</b><small>${'★'.repeat(+b.rating || 0)}</small></span>${UI.ic('plus')}</button>`).join('')}</div></div>` : ''}`; };
 
 LT_.minha = () => { const B = OS.all('books'), g = OS.ui.bkOw || 'casa', out = B.filter(b => ['Doado', 'Vendido', 'Trocado'].includes(b.own)), have = B.filter(b => OWNED(b.own));
   const sets = { casa: have.filter(b => b.own === 'Tenho'), fis: have.filter(b => (b.format || 'Físico') === 'Físico'), dig: have.filter(b => ['Ebook', 'Audiolivro'].includes(b.format)), emp: B.filter(b => ['Emprestei', 'Pedi emprestado', 'Biblioteca'].includes(b.own)), doar: B.filter(b => b.own === 'Para doar'), sai: out, nl: have.filter(b => b.status !== 'Lido') };
