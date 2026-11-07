@@ -1,0 +1,44 @@
+/* PRUMO — Troféus e medalhas: a vitrine (madeira escura, vidro e luz de vitrine). Metais com significado: não mudam com a paleta. */
+.tf-art{display:block;width:100%;height:auto;overflow:visible}
+.tf-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:center;overflow:hidden}
+.tf-hon{position:relative;display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:center;text-align:left;background:none;border:0;padding:6px 0;color:var(--tx);cursor:pointer;font:inherit}
+.tf-spot{position:absolute;left:-30px;top:-60px;width:230px;height:260px;background:radial-gradient(ellipse 50% 60% at 50% 30%,rgba(255,236,190,.22),rgba(255,236,190,.05) 55%,transparent 72%);pointer-events:none}
+.tf-art.hon{width:150px;filter:drop-shadow(0 14px 18px rgba(0,0,0,.45));animation:tfFloat 6s ease-in-out infinite}
+@keyframes tfFloat{50%{transform:translateY(-5px)}}
+.tf-ht{display:flex;flex-direction:column;gap:4px;min-width:0}.tf-ht small{font-size:11.5px;letter-spacing:.06em;color:var(--accent2)}.tf-ht b{font:600 22px/1.2 var(--serif,Georgia,serif)}.tf-ht .mut{font-size:13px}
+.tf-tab{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.tf-qs{display:flex;gap:14px}
+.tf-q{display:grid;grid-template-columns:34px auto;grid-template-rows:auto auto;column-gap:8px;align-items:center}.tf-q svg{grid-row:span 2;width:34px;height:34px}.tf-q b{font-size:22px;line-height:1}.tf-q span{font-size:11.5px;color:var(--mut)}.tf-q.z{opacity:.45}
+.tf-sum{margin:0;color:var(--tx2);font-size:13.5px}.tf-sum b{color:var(--tx)}
+/* a vitrine: prateleiras contínuas (cada peça traz o seu bocado de prateleira) */
+.tf-cab{background:linear-gradient(180deg,rgba(255,236,190,.05),transparent 30%),var(--card)}
+.tf-fs{flex-wrap:wrap;margin:0 0 12px}
+.tf-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));column-gap:0;row-gap:28px;padding:8px 0 4px}
+.tf-shelf.sm{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+.tf-it{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 10px 14px;background:none;border:0;color:var(--tx);font:inherit;text-align:center;cursor:pointer;opacity:0;transform:translateY(12px);animation:tfIn .6s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i) * 60ms)}
+.tf-it::after{content:'';position:absolute;left:0;right:0;bottom:0;height:9px;background:linear-gradient(180deg,#6A4A30,#3C2819 60%,#2A1C12);box-shadow:0 6px 10px rgba(0,0,0,.35)}
+.tf-it .tf-art{width:84px;transition:transform .25s ease;filter:drop-shadow(0 8px 8px rgba(0,0,0,.35))}
+.tf-shelf.sm .tf-it .tf-art{width:62px}
+.tf-it:hover .tf-art,.tf-it:focus-visible .tf-art{transform:translateY(-4px) rotate(-2deg)}
+.tf-it b{font-size:12.5px;line-height:1.25;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tf-it small{font-size:11px;color:var(--mut)}
+@keyframes tfIn{to{opacity:1;transform:none}}
+.tf-sub{margin:0 0 6px;font-size:12.5px}
+/* linha do tempo */
+.tf-tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tf-tl li{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;padding:8px 0;border-top:1px dashed var(--line2)}.tf-tl li:first-child{border-top:0}
+.tf-tl li>b{font-size:14px;color:var(--accent2)}.tf-tl li>div{display:flex;flex-direction:column;gap:4px}
+.tf-tl button{display:flex;align-items:center;gap:8px;background:none;border:0;padding:2px 0;color:var(--tx);font:inherit;font-size:13.5px;text-align:left;cursor:pointer}.tf-tl small{color:var(--mut)}
+.tf-dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--mut)}
+/* ficha */
+.tf-md{padding:18px}.tf-mh{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:14px;align-items:center}.tf-mart .tf-art{width:96px}
+.tf-mh h3{margin:2px 0;font:600 20px/1.25 var(--serif,Georgia,serif)}.tf-mh p{margin:0;font-size:13px}.tf-kick{font-size:11.5px;color:var(--accent2)}
+.tf-ph{display:block;width:100%;max-height:360px;object-fit:cover;border-radius:12px;margin:14px 0 0}
+.tf-story{margin:14px 0 0;line-height:1.55;font-size:14px;color:var(--tx2)}
+.tf-mb{flex-wrap:wrap;margin-top:14px}
+/* vazio e cartão no Retrato */
+.tf-empty{text-align:center;padding:26px 18px}.tf-empty h3{margin:12px 0 6px}.tf-empty p{max-width:34em;margin:0 auto 14px}
+.tf-ghost{display:flex;justify-content:center;gap:18px}.tf-art.ghost{width:64px;opacity:.28;filter:grayscale(1)}
+.tf-card{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--tx)}.tf-card .tf-art.sm{width:46px;flex:none}.tf-card small{display:block;font-size:11.5px;color:var(--accent2)}.tf-card b{display:block;font-size:15px}.tf-card .mut{font-size:12.5px}
+@media (max-width:700px){.tf-hero{grid-template-columns:minmax(0,1fr)}.tf-hon{grid-template-columns:110px minmax(0,1fr)}.tf-art.hon{width:110px}.tf-ht b{font-size:19px}.tf-shelf{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}.tf-it .tf-art{width:70px}}
+@media (prefers-reduced-motion:reduce){.tf-art.hon,.tf-it{animation:none;opacity:1;transform:none}}
+html.lite-x .tf-art.hon,html.lite-x .tf-it{animation:none;opacity:1;transform:none}

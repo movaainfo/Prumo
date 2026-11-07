@@ -322,7 +322,9 @@ document.addEventListener('change', e => { const el = e.target; if (!el.dataset 
 
 /* ---------- vistas ---------- */
 const T = {};
-const TABS = [['', 'Retrato'], ['bio', 'Biografia'], ['pessoas', 'Família & amigos'], ['historia', 'Linha do tempo'], ['sobre', 'Tudo sobre mim'], ['entrevista', 'Entrevista']];
+const TABS = [['', 'Retrato'], ['trofeus', 'Troféus'], ['bio', 'Biografia'], ['pessoas', 'Família & amigos'], ['historia', 'Linha do tempo'], ['sobre', 'Tudo sobre mim'], ['entrevista', 'Entrevista']];
+// v2.98: troféus e medalhas (js/trofeus.js)
+T.trofeus = () => OS.Trofeus ? OS.Trofeus.view() : '';
 V.eu = sub => { const k = TABS.some(t => t[0] === (sub || '')) ? (sub || '') : '';
   return UI.head(`Quem sou eu`, `A tua vida num só lugar: a tua história, as pessoas que amas, os momentos que te marcaram e quem és.`, '', 'Eu') + UI.tabs('eu', TABS, k) + `<div class="me">${T[k]()}</div>`; };
 
@@ -333,6 +335,7 @@ T[''] = () => { const m = me(), p = P(), a = age(m.birth), cp = completeness(), 
   return `<div class="pn me-hero"><div class="me-hero-ph">${avatar('lg')}<div class="row gap6"><button class="btn xs ghost" data-act="mePhoto">${m.photo ? 'Mudar foto' : 'Pôr foto'}</button>${m.photo ? `<button class="btn xs ghost" data-act="mePhotoDel">Tirar</button>` : ''}</div></div>
     <div class="me-hero-t"><div class="eyebrow">Quem sou eu</div><h2>${esc(p.name || first())}</h2><p class="me-tag">${esc(m.motto || (b && b.sum) || 'Filho de Deus, estudante, sonhador — a história ainda está a ser escrita.')}</p>
       <div class="me-facts">${fact('Idade', a != null ? a + ' anos' : '')}${fact('Nasci em', m.birthplace)}${fact('Vivo em', p.city ? p.city + (m.ptSince ? ' · há ' + yrs(m.ptSince) : '') : '')}${fact('Estudo', [p.course, p.uni].filter(Boolean).join(' · '))}${fact('Trabalho', [p.jobRole, p.employer].filter(Boolean).join(' · '))}${fact('Fé', m.church)}${fact('Línguas', m.langs)}${fact('Versículo', m.verse)}</div></div></div>
+  ${OS.Trofeus ? OS.Trofeus.card() : ''}
   <div class="g g3">
     <div class="pn"><div class="pn-h"><h3>${UI.ic('note')}A minha biografia</h3><a class="acc" href="#eu.bio" style="font-size:12px">abrir →</a></div>${b ? `<p class="me-q">${esc(b.sum || (b.ch[0] || {}).txt || '').slice(0, 320)}${(b.sum || '').length > 320 ? '…' : ''}</p><small class="mut">${b.ch.length} capítulos · atualizada ${U.rel(U.iso(new Date(b.at)))}</small>` : `<p class="mut">A IA escreve a tua história com tudo o que está no Prumo — e tu podes mudar tudo.</p><a class="btn sm pri" href="#eu.bio">Escrever a minha biografia</a>`}</div>
     <div class="pn"><div class="pn-h"><h3>${UI.ic('users')}Pessoas da minha vida</h3><a class="acc" href="#eu.pessoas" style="font-size:12px">ver →</a></div><div class="co-own"><div><b>${ppl.filter(x => (x.group || grpOf(x.rel)) === 'Família').length}</b><small>família</small></div><div><b>${ppl.filter(x => (x.group || grpOf(x.rel)) === 'Amigos').length}</b><small>amigos</small></div><div><b>${ppl.length}</b><small>no total</small></div></div>

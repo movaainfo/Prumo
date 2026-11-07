@@ -140,3 +140,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - O cofre de Senhas de outra pessoa não se muda nem se abre (cifrado no aparelho dela): só o próprio cofre.
 - Política de Privacidade (secção 3) diz que a administração pode repor a senha ou mudar o e-mail.
 - Testes: grupo `admsenha` (cria o seu próprio administrador).
+
+### 2.99: Troféus e medalhas; Top 10 da vida
+- `js/trofeus.js` + `css/trofeus.css` (todas as contas): coleção `trophies` (título, tipo, metal/nível, lugar, área, data, evento, história, foto em data URL até 720 px, `fav` = peça de honra). Peças desenhadas em SVG (`ART`: Troféu, Medalha, Placa, Certificado, Distinção; metais em `MET`, fitas por área em `RIB`; não mudam com a paleta). Separador "Troféus" em Quem sou eu (`T.trofeus` em `js/me.js`) e cartão no Retrato. Prateleira "Medalhas do Prumo" com `OS.Dom.achievements()`.
+- `js/study.js`: Leituras › "Top 10 da vida" (`LT_.top`), guardado em `one('booktop').list` (a ordem é o lugar; `tier` S/A/B/C ou pelo lugar). Pódio, tier list, setas para mudar a ordem, sugestões da estante (4–5 estrelas), copiar a lista. Máximo 10.
+- Testes: grupos `trofeus` e `toplivros`.

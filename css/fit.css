@@ -1304,3 +1304,27 @@ html.vv-full #view.pg-in .cv-ring{animation:vvRingP 1.3s .2s var(--vv-e,ease-out
 
 /* v2.97: ADM — repor senha e mudar e-mail */
 .adm-f{display:flex;gap:8px;flex-wrap:wrap}.adm-f input{flex:1;min-width:170px}.adm-out{margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.03)}.adm-tmp{font:600 16px var(--mono);letter-spacing:.04em;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.06);user-select:all}
+/* v2.98 · Leituras › Top 10 da vida: pódio, tier list e a lista ordenada */
+.bt-hd{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.bt-pod{display:flex;justify-content:center;align-items:flex-end;gap:18px;padding:22px 12px 0;overflow:hidden}
+.bt-pl{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;color:var(--tx);font:inherit;cursor:pointer;width:150px;text-align:center}
+.bt-pl.p1{width:180px}.bt-pl .bk-cv{box-shadow:0 14px 26px rgba(0,0,0,.5)}.bt-pl.p1 .bk-cv{width:150px}.bt-pl:not(.p1) .bk-cv{width:104px}
+.bt-step{display:grid;place-items:center;width:100%;border-radius:8px 8px 0 0;margin-top:4px}.bt-step b{font-size:26px;color:#1c1408}
+.bt-step.ouro{height:74px;background:linear-gradient(180deg,#F6D77E,#C99A2E)}.bt-step.prata{height:52px;background:linear-gradient(180deg,#EEF1F4,#A9B2BC)}.bt-step.bronze{height:38px;background:linear-gradient(180deg,#F0B98F,#B06D3D)}
+.bt-pl .bt-t{font-size:13.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.bt-pl small{font-size:11.5px;color:var(--mut)}
+.bt-pl:hover .bk-cv{transform:translateY(-4px)}
+.bt-tiers{display:flex;flex-direction:column;gap:6px}
+.bt-row{display:grid;grid-template-columns:86px minmax(0,1fr);border-radius:10px;overflow:hidden;border:1px solid var(--line2)}
+.bt-tl{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:8px 4px;color:#1c1408;text-align:center}.bt-tl b{font:800 26px/1 var(--serif,Georgia,serif)}.bt-tl small{font-size:10.5px;font-weight:600;opacity:.8}
+.bt-row.tS .bt-tl{background:#E8C26A}.bt-row.tA .bt-tl{background:#D9A07A}.bt-row.tB .bt-tl{background:#B9C2CC}.bt-row.tC .bt-tl{background:#9FB89A}
+.bt-tc{display:flex;flex-wrap:wrap;gap:8px;padding:8px;align-items:center;background:rgba(255,255,255,.02);min-height:86px}
+.bt-tk{position:relative;background:none;border:0;padding:0;cursor:pointer}.bt-tk span{position:absolute;left:-4px;top:-4px;min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;font-size:11px;background:var(--bg);border:1px solid var(--line2);color:var(--tx)}
+.bt-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.bt-list li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}.bt-list li:first-child{border-top:0}
+.bt-n{width:30px;flex:none;font-size:20px;font-weight:700;color:var(--accent2);text-align:center;padding-top:6px}
+.bt-list b{display:block;font-size:14.5px}.bt-list small{display:block}.bt-list p{margin:4px 0 0;font-size:13px;color:var(--tx2);line-height:1.45}
+.bt-ac{display:flex;gap:2px;flex:none}.bt-dn .ic{transform:rotate(180deg)}
+.bt-sug{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.bt-sg{display:flex;align-items:center;gap:10px;padding:6px 10px 6px 6px;border-radius:10px;border:1px dashed var(--line2);background:none;color:var(--tx);font:inherit;text-align:left;cursor:pointer}.bt-sg span{flex:1;min-width:0}.bt-sg b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bt-sg small{color:#E8C26A}
+.bt-f{padding:18px;display:flex;flex-direction:column;gap:10px}.bt-f label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--tx2)}
+@media (max-width:600px){.bt-pod{gap:8px;padding-top:14px}.bt-pl{width:31%}.bt-pl.p1{width:36%}.bt-pl.p1 .bk-cv{width:100%}.bt-pl:not(.p1) .bk-cv{width:88%}.bt-row{grid-template-columns:64px minmax(0,1fr)}.bt-tl b{font-size:22px}.bt-list li{flex-wrap:wrap}.bt-ac{width:100%;justify-content:flex-end}}
