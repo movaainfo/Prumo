@@ -415,3 +415,8 @@ body.onb-open{overflow:hidden}
 .pal-t{display:flex;flex-direction:column;gap:2px;min-width:0}.pal-t b{font-size:14.5px}.pal-t em{font-style:normal;font-size:11px;color:var(--farol);margin-left:4px}
 .pal-t small{color:var(--tx2);font-size:12.5px;line-height:1.35}
 
+/* v3.2: fundos de lugares — bondinho (linha) e pétalas a cair */
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-line{animation:fdLine var(--du,14s) ease-in-out var(--dl,0s) infinite alternate!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-fall{transform-box:fill-box;transform-origin:center;animation:fdFall var(--du,12s) linear var(--dl,0s) infinite!important}
+@keyframes fdLine{from{transform:translate(0,0)}to{transform:translate(var(--fx),var(--fy))}}
+@keyframes fdFall{0%{opacity:0;transform:translate(0,0) rotate(0deg)}8%{opacity:.95}90%{opacity:.8}100%{opacity:0;transform:translate(var(--fx),var(--fy)) rotate(540deg)}}

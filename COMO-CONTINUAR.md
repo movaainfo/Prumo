@@ -157,3 +157,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `js/unilayout.js` (carrega depois de todos os módulos da Universidade): `GROUPS` (Visão geral, O curso, Avaliações, Estudar) e redefine `V.universidade` com os grupos (`nav.ug`) e os separadores de cada grupo (`nav.tabs.ug-t`, os dos outros grupos ficam `hidden`, para os testes de rotas os continuarem a ver). Separador novo em `OS.UT` que não esteja nos grupos vai para "Estudar". `OS.ui.uniG` lembra o último separador de cada grupo.
 - A Visão geral é recomposta por blocos a partir do HTML de cada módulo (classes `uv-*`, `un-today`, `hw-vis`); o que não for reconhecido fica no fim.
 - Testes: grupo `unilayout`. Falhas que já existiam: `faltas` (3, datas relativas a hoje que caem no feriado de 1 de novembro).
+
+### 3.2: Fundos de lugares do mundo
+- `js/fundos.js`: ficam `farol` e `liso`; as cenas antigas (ondas, serra, cidade, chuva, dunas, pinhal, estrelas, aneis) saíram (quem as tinha escolhido volta ao Farol). Novas: `rio`, `lisboa`, `paris`, `aurora` (sempre de noite), `fuji`, `gize`, `novaiorque`. Céu da hora (`S.pal`), cores convertidas para a paleta (o `cores.js` passa o SVG por `PrumoPaleta.recolor`).
+- Animações novas em `css/forte.css`: `.fd-line` (bondinho) e `.fd-fall` (pétalas); usam também `fd-fly`, `fd-bob`, `fd-tw`, `fd-spin`, `fd-aur`, `fd-shoot`, `fd-blink`, `fd-glow`, `fd-sand`, `fd-heat`, `fd-shim`.
+- Testes: grupo `lugares` (e `fundo` atualizado).
