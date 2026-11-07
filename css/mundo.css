@@ -66,6 +66,7 @@
 .mu-rn{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:9px 2px;background:none;border:0;color:var(--tx);font:inherit;font-size:15px;text-align:left;cursor:pointer}
 .mu-rn b{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mu-row.on .mu-rn b{color:var(--accent2);font-weight:600}
+.mu-tag.v{background:rgba(56,189,248,.16);color:#7DD3FC}
 .mu-tag{flex:none;font-size:10.5px;padding:2px 7px;border-radius:999px;background:var(--accentBg);color:var(--accent2)}.mu-tag.m{background:rgba(45,212,191,.14);color:#5EEAD4}.mu-tag.w{background:rgba(185,138,46,.16);color:#E8C26A}
 .mu-tg{flex:none;width:36px;height:36px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--mut);cursor:pointer}
 .mu-tg .ic{width:17px;height:17px}
@@ -93,3 +94,52 @@
 .mu-doc{display:flex;align-items:center;gap:10px;flex-wrap:wrap;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
 .mu-doc>b{flex:1;min-width:120px}.mu-dt{display:flex;gap:4px;flex-wrap:wrap}
 .mu-tag.d-cid{background:rgba(63,207,142,.16);color:#7EE2B2}.mu-tag.d-pass{background:rgba(56,189,248,.16);color:#7DD3FC}.mu-tag.d-res{background:rgba(154,140,245,.18);color:#C3B9FF}.mu-tag.d-visto{background:rgba(242,181,68,.16);color:#F5CD7E}
+/* v2.97 — Júlio Verne: a frase do dia, a rota de Phileas Fogg no mapa e o plano das 8 etapas */
+.mu-vq{flex:1 1 100%;display:flex;flex-direction:column;gap:4px;text-align:left;background:none;border:0;border-left:2px solid var(--accent2);padding:2px 0 2px 14px;margin:2px 0 0;color:var(--tx);cursor:pointer;font:inherit}
+.mu-vq q{font:italic 500 19px/1.35 var(--serif,Georgia,serif);quotes:'«' '»';max-width:38em}
+.mu-vq small{color:var(--mut);font-size:12px;line-height:1.4}.mu-vq cite{font-style:italic}
+.mu-vq:active{opacity:.75}
+.mu-fogg path{fill:none;stroke:#F4E6CF;stroke-linecap:round;stroke-linejoin:round;opacity:.9;pointer-events:none}
+.mu-fogg circle{fill:#F4E6CF;stroke:#2A1A0E;stroke-width:.6;pointer-events:auto}
+.mu-leg i.fogg{background:none;border:0;border-top:2px dashed #F4E6CF;border-radius:0;height:0;width:16px;vertical-align:3px}
+.mu-fn{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:rgba(244,230,207,.06);border:1px solid rgba(244,230,207,.18);font-size:13px;line-height:1.45;color:var(--tx2)}.mu-fn b{color:var(--tx)}
+.mu-fgi{margin:0 0 12px;color:var(--tx2);font-size:13.5px;line-height:1.5;max-width:60em}
+.mu-leg8{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.mu-leg8 li{display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-top:1px dashed var(--line2)}
+.mu-leg8 li:first-child{border-top:0}
+.mu-day{font-size:11.5px;color:var(--mut);white-space:nowrap}
+.mu-leg8 b{display:block;font-size:14px}.mu-leg8 small{display:block;color:var(--mut);font-size:12px;line-height:1.35}
+.mu-fcs{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.mu-fc{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:16px;line-height:1;border:1px dashed var(--line2);background:none;cursor:pointer;filter:grayscale(1);opacity:.5;padding:0}
+.mu-fc.on{filter:none;opacity:1;border:1.5px solid var(--accent2);background:var(--accentBg)}
+.mu-fgn{margin:12px 0 0;font-size:12.5px;line-height:1.5}.mu-fgn b{color:var(--tx2)}
+@media (max-width:600px){.mu-vq q{font-size:17px}.mu-leg8 li{grid-template-columns:62px minmax(0,1fr);row-gap:6px}.mu-fcs{grid-column:2;justify-content:flex-start}}
+/* v2.97 — Odisseia e o relógio dos 80 dias */
+.mu-odi path{fill:none;stroke:#F2A65A;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.mu-leg i.odi{background:none;border:0;border-top:3px dotted #F2A65A;border-radius:0;height:0;width:16px;vertical-align:3px}
+.mu-ico text{text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.mu-fn.od{background:rgba(242,166,90,.07);border-color:rgba(242,166,90,.25)}
+.mu-fgw{display:grid;grid-template-columns:minmax(200px,250px) minmax(0,1fr);gap:18px;align-items:center}
+.mdl{width:100%;max-width:250px;height:auto;display:block;margin:0 auto}
+.mdl-rim{fill:#120E0A;stroke:#C9A86A;stroke-width:2.5}.mdl-face{fill:#F2E6CF;opacity:.06}
+.mdl-arc{fill:none;stroke:rgba(244,230,207,.22);stroke-width:9;stroke-linecap:butt}.mdl-arc.on{stroke:#E8C77A}
+.mdl-t{stroke:rgba(244,230,207,.45);stroke-width:1.1;fill:none}
+.mdl-n{fill:rgba(244,230,207,.7);font:600 10px var(--mono,monospace);text-anchor:middle}
+.mdl-ic{font-size:14px;text-anchor:middle}
+.mdl-cap{fill:rgba(244,230,207,.6);font:500 9.5px var(--sans,system-ui);text-anchor:middle;letter-spacing:.06em}
+.mdl-h{stroke:#F4E6CF;stroke-width:4;stroke-linecap:round}.mdl-m{stroke:#F4E6CF;stroke-width:2.2;stroke-linecap:round}.mdl-pin{fill:#C9A86A}
+.mu-odw{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:start}
+.od-map{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line2)}
+.od-sea{fill:#0D3557}
+.od-land path{fill:#2B4A68;stroke:#0A2440;stroke-linejoin:round}.od-land path.od{fill:#4A6A8A}.od-land path.on{fill:#7DB8E8}
+.od-route{fill:none;stroke:#F2A65A;stroke-linecap:round;stroke-linejoin:round}
+.od-pin circle{fill:#F4E6CF;stroke:#0A2440;stroke-width:.25}.od-pin.end circle{fill:#F2A65A}
+.od-pin text{fill:#0A2440;font-weight:700;text-anchor:middle;font-family:var(--mono,monospace)}
+.od-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;max-height:520px;overflow:auto}
+.od-l li{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px 0;border-top:1px dashed var(--line2)}.od-l li:first-child{border-top:0}
+.od-num{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;background:rgba(244,230,207,.12);color:var(--tx)}
+.od-l b{display:block;font-size:13.5px}.od-l small{display:block;color:var(--mut);font-size:11.5px}.od-l span:not(.od-num){display:block;font-size:12.5px;color:var(--tx2);line-height:1.4;margin-top:2px}
+@media (max-width:760px){.mu-fgw,.mu-odw{grid-template-columns:minmax(0,1fr)}.od-l{max-height:none}}
+.sym{fill:none;stroke:#F4E6CF;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.sym.od{stroke:#F2A65A}
+.mu-ico .sym{stroke-width:1.9}
+.mdl-ic.sym{stroke:#E8C77A;stroke-width:1.5}

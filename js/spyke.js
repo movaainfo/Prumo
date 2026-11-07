@@ -562,17 +562,36 @@ const wakeSnd = () => { try { const rate = 22050, n = Math.round(rate * .9), b =
   let bin = ''; for (let i = 0; i < b.length; i += 8192) bin += String.fromCharCode.apply(null, b.subarray(i, i + 8192)); if (!SFX) { SFX = document.createElement('audio'); SFX.setAttribute('playsinline', ''); document.body.appendChild(SFX); } SFX.src = wav({ b64: btoa(bin), rate }); const p = SFX.play(); p && p.catch(() => { }); } catch (e) { } };
 S.wakeSound = () => wakeSnd();
 S.wakeFx = () => { wakeAt = performance.now(); open(); wakeSnd(); cancelAnimationFrame(raf); raf = 0; orb(); };
-function orb() { if (!el || el.hidden) return; const c = el.querySelector('.spy-orb'); if (!c) return; if (raf) return; const g = c.getContext('2d'), W = c.width, H = c.height, cx = W / 2, cy = H / 2; let t0 = performance.now(), sm = 0;
-  const frame = now => { if (!el || el.hidden || !c.isConnected) { raf = 0; return; } const t = (now - t0) / 1000, wk = wakeAt ? Math.min(1, (now - wakeAt) / 1100) : 1;
-    const lv = st === 'speaking' ? S.level() : 0; sm += (lv - sm) * .35;
-    const base = st === 'listening' ? .32 + .12 * Math.sin(t * 6) : st === 'thinking' ? .22 + .06 * Math.sin(t * 9) : st === 'speaking' ? .18 + sm * .95 : .1;
+// cores do Spyke: seguem a paleta do app (Definições › Cores do app); usadas aqui e no Modo Comando
+let ACK = null, ACV = null;
+OS.aiCol = () => { const P = window.PrumoPaleta, k = P ? P.cur() : ''; if (ACV && ACK === k) return ACV; ACK = k; const t = (r, g, b) => P && P.tone ? P.tone(r, g, b) : r + ',' + g + ',' + b;
+  return (ACV = { hi: t(120, 230, 255), mid: t(14, 165, 233), tick: t(160, 235, 255), arc: t(170, 240, 255), core: t(235, 252, 255), day: t(56, 189, 248), wave: t(200, 245, 255) }); };
+const orbCalm = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('lite-x'); } catch (e) { return false; } };
+// v2.97: a bola do Spyke respira sempre que a conversa está aberta, com partículas em órbita; a ouvir sai em ondas (ao ritmo da tua voz),
+// a pensar corre com três cometas, a falar vibra com a voz e ao acordar rebenta em faíscas
+let orbC = null;
+function orb() { if (!el || el.hidden) return; const c = el.querySelector('.spy-orb'); if (!c) return; if (raf && orbC === c) return; cancelAnimationFrame(raf); raf = 0; orbC = c;
+  const dpr = Math.min(2, window.devicePixelRatio || 1), css = c.clientWidth || 170, px = Math.round(css * dpr); if (px > 80 && Math.abs(c.width - px) > 2) c.width = c.height = px;
+  const g = c.getContext('2d'), W = c.width, H = c.height, cx = W / 2, cy = H / 2, k = W / 360, TAU = Math.PI * 2, still = orbCalm(); let t0 = performance.now(), sm = 0, ml = 0;
+  const rn = s => { const x = Math.sin(s * 91.7 + 17.3) * 43758.5453; return x - Math.floor(x); }, ORB = Array.from({ length: 12 }, (_, i) => ({ r: i % 2 ? .86 : .7, s: (.25 + rn(i) * .35) * (i % 3 ? 1 : -1), a: rn(i + 5) * TAU, z: 1.4 + rn(i + 9) * 1.6 })), BURST = Array.from({ length: 18 }, (_, i) => ({ a: i / 18 * TAU + rn(i) * .3, v: .7 + rn(i + 20) * .5 }));
+  const frame = now => { if (!el || el.hidden || !c.isConnected) { raf = 0; return; } const C = OS.aiCol(), t = still ? 2 : Math.max(0, (now - t0) / 1000), wk = wakeAt && !still ? Math.max(0, Math.min(1, (now - wakeAt) / 1100)) : 1;
+    const lv = st === 'speaking' ? S.level() : 0; sm += (lv - sm) * .35; const mic = st === 'listening' && OS.Ear ? Math.min(1, (OS.Ear.level || 0) * 14) : 0; ml += (mic - ml) * .3;
+    const base = st === 'listening' ? .3 + .1 * Math.sin(t * 6) + ml * .25 : st === 'thinking' ? .22 + .06 * Math.sin(t * 9) : st === 'speaking' ? .18 + sm * .95 : .1 + .04 * Math.sin(t * 1.4);
     const R = W * .44 * (wk < 1 ? .2 + .8 * (1 - Math.pow(1 - wk, 3)) : 1);
-    g.clearRect(0, 0, W, H); const grd = g.createRadialGradient(cx, cy, 6, cx, cy, R); grd.addColorStop(0, `rgba(120,230,255,${.5 + base * .45})`); grd.addColorStop(.38, `rgba(14,165,233,${.22 + base * .35})`); grd.addColorStop(1, 'rgba(14,165,233,0)'); g.fillStyle = grd; g.beginPath(); g.arc(cx, cy, R, 0, 7); g.fill();
-    g.lineCap = 'round'; [[.78, 1.6, .9, 8], [.64, -1, .6, 3], [.52, .7, .45, 5], [.92, -.4, .3, 12]].forEach(([rr, sp, al, seg], k) => { const r0 = Math.max(2, R * rr + base * 16 * (k % 2 ? -1 : 1)); g.strokeStyle = `rgba(160,235,255,${al * (wk < 1 ? wk : 1)})`; g.lineWidth = k === 3 ? 1.4 : 2.6; for (let i = 0; i < seg; i++) { const a = t * sp * (st === 'thinking' ? 3 : 1) * (wk < 1 ? 4 - 3 * wk : 1) + i * Math.PI * 2 / seg; g.beginPath(); g.arc(cx, cy, r0, a, a + Math.PI * 2 / seg * .62 * (wk < 1 ? wk : 1)); g.stroke(); } });
-    if (st === 'speaking') { g.strokeStyle = `rgba(200,245,255,${.25 + sm * .6})`; g.lineWidth = 2; g.beginPath(); for (let i = 0; i <= 64; i++) { const a = i / 64 * Math.PI * 2, rr = R * .36 + sm * 22 * Math.sin(a * 6 + t * 10) * Math.sin(a * 3 - t * 7); g.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); } g.stroke(); }
-    if (wk < 1) { g.strokeStyle = `rgba(190,245,255,${1 - wk})`; g.lineWidth = 3; g.beginPath(); g.arc(cx, cy, Math.max(1, R * (.3 + wk * .9)), 0, 7); g.stroke(); }
-    g.fillStyle = 'rgba(232,250,255,.95)'; g.beginPath(); g.arc(cx, cy, Math.max(1, (R * .17 + base * 30) * (wk < 1 ? .4 + .6 * wk : 1)), 0, 7); g.fill();
-    if (st === 'idle' && wk >= 1 && t > 1.2) { raf = 0; return; } raf = requestAnimationFrame(frame); };
+    g.clearRect(0, 0, W, H); const grd = g.createRadialGradient(cx, cy, 6 * k, cx, cy, R); grd.addColorStop(0, `rgba(${C.hi},${.5 + base * .45})`); grd.addColorStop(.38, `rgba(${C.mid},${.22 + base * .35})`); grd.addColorStop(1, `rgba(${C.mid},0)`); g.fillStyle = grd; g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.fill();
+    // ondas: a ouvir saem ao ritmo da voz; parada, uma onda lenta de vez em quando
+    if (!still) { const P = st === 'listening' ? 1.1 - ml * .5 : st === 'speaking' ? 1.4 : 3.4, n = st === 'idle' ? 1 : 2; for (let j = 0; j < n; j++) { const p = ((t / P) + j / n) % 1; g.strokeStyle = `rgba(${C.wave},${(1 - p) * (st === 'idle' ? .18 : .4 + ml * .4)})`; g.lineWidth = (2.4 - p * 1.6) * k; g.beginPath(); g.arc(cx, cy, R * (.3 + p * .72), 0, TAU); g.stroke(); } }
+    g.lineCap = 'round'; [[.78, 1.6, .9, 8], [.64, -1, .6, 3], [.52, .7, .45, 5], [.92, -.4, .3, 12]].forEach(([rr, sp, al, seg], kk) => { const r0 = Math.max(2, R * rr + base * 16 * k * (kk % 2 ? -1 : 1)); g.strokeStyle = `rgba(${C.tick},${al * (wk < 1 ? wk : 1)})`; g.lineWidth = (kk === 3 ? 1.4 : 2.6) * k; g.beginPath(); for (let i = 0; i < seg; i++) { const a = t * sp * (st === 'thinking' ? 3 : 1) * (wk < 1 ? 4 - 3 * wk : 1) + i * TAU / seg; g.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); g.arc(cx, cy, r0, a, a + TAU / seg * .62 * (wk < 1 ? wk : 1)); } g.stroke(); });
+    // partículas em órbita (mais rápidas a pensar)
+    g.fillStyle = `rgba(${C.arc},${.75 * (wk < 1 ? wk : 1)})`; g.beginPath(); ORB.forEach(p => { const a = p.a + t * p.s * (st === 'thinking' ? 2.5 : 1), x = cx + Math.cos(a) * R * p.r, y = cy + Math.sin(a) * R * p.r; g.moveTo(x + p.z * k, y); g.arc(x, y, p.z * k, 0, TAU); }); g.fill();
+    // a pensar: três cometas a correr à volta, com rasto
+    if (st === 'thinking' && !still) for (let j = 0; j < 3; j++) { const a = t * 4.2 + j * TAU / 3; for (let q = 0; q < 6; q++) { const aa = a - q * .09; g.fillStyle = `rgba(${C.core},${(1 - q / 6) * .9})`; g.beginPath(); g.arc(cx + Math.cos(aa) * R * .58, cy + Math.sin(aa) * R * .58, (3.4 - q * .45) * k, 0, TAU); g.fill(); } }
+    if (st === 'speaking') { [[.36, 6, 3, 10, 7, .25 + sm * .6, 2], [.44, 4, 5, -8, 5, .12 + sm * .35, 1.4]].forEach(([b0, f1, f2, s1, s2, al, lw]) => { g.strokeStyle = `rgba(${C.wave},${al})`; g.lineWidth = lw * k; g.beginPath(); for (let i = 0; i <= 72; i++) { const a = i / 72 * TAU, rr = R * b0 + sm * 22 * k * Math.sin(a * f1 + t * s1) * Math.sin(a * f2 - t * s2); g.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); } g.closePath(); g.stroke(); }); }
+    // ao acordar: anel que abre e faíscas que saltam do centro
+    if (wk < 1) { g.strokeStyle = `rgba(${C.wave},${1 - wk})`; g.lineWidth = 3 * k; g.beginPath(); g.arc(cx, cy, Math.max(1, R * (.3 + wk * .9)), 0, TAU); g.stroke();
+      g.fillStyle = `rgba(${C.core},${1 - wk})`; g.beginPath(); BURST.forEach(b => { const d = W * .48 * b.v * (1 - Math.pow(1 - wk, 2)), x = cx + Math.cos(b.a) * d, y = cy + Math.sin(b.a) * d; g.moveTo(x + 2.4 * k, y); g.arc(x, y, 2.4 * k, 0, TAU); }); g.fill(); }
+    g.fillStyle = `rgba(${C.core},.95)`; g.beginPath(); g.arc(cx, cy, Math.max(1, (R * .17 + base * 30 * k) * (wk < 1 ? .4 + .6 * wk : 1)), 0, TAU); g.fill();
+    if (still) { raf = 0; return; } raf = requestAnimationFrame(frame); };
   raf = requestAnimationFrame(frame); }
 A.spyOpen = () => { const was = !el || el.hidden; open(); if (was && st === 'idle' && !msgs.length) push('spyke', pickR([`Olá, ${name()}. Em que posso ajudar?`, 'Às ordens.', `Diz, ${name()}.`])); if (was) { wakeAt = performance.now(); orb(); } };
 A.spyClose = () => close();

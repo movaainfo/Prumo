@@ -39,7 +39,9 @@ const ANY = LIST[0][3], hasBlue = (v, hex) => conv(ANY, v, hex) !== v;
 // só as propriedades que levam cor (as outras nem se leem: é o que faz isto ser rápido)
 const CP = /color$|^--|shadow|^background-image$|^fill$|^stroke$|^filter$/, SER = /^--c\d+$/; // --c1…--c10: as séries dos gráficos ficam distintas
 const ORIG = new WeakMap(); let CUR = 'mar';
-const walk = (rules, fn) => { for (let i = 0; i < rules.length; i++) { const r = rules[i]; if (r.style) fn(r.style); if (r.cssRules) walk(r.cssRules, fn); } };
+// o mapa do mundo fica sempre com cores de mapa (mar azul), seja qual for a paleta (v2.97: "não quero o mapa do mundo vermelho")
+const KEEP = /\.mu-(map|eq|o|cs|dots|isl|tag\.v)\b|\.mu-leg i|\.od-(sea|land|pin)\b/;
+const walk = (rules, fn) => { for (let i = 0; i < rules.length; i++) { const r = rules[i]; if (r.style && !(r.selectorText && KEEP.test(r.selectorText))) fn(r.style); if (r.cssRules) walk(r.cssRules, fn); } };
 const get = id => LIST.find(x => x[0] === id) || null;
 const apply = id => { const it = get(id) || get(DEF), P = it[3]; if (it[0] === CUR) return CUR;
   for (const sh of Array.from(document.styleSheets)) { let rules; try { rules = sh.cssRules; } catch (e) { continue; } if (!rules) continue;
@@ -57,6 +59,10 @@ const recolor = (str, id) => { const it = get(id || CUR), P = it && it[3]; if (!
   if (MC.size > 8) MC.delete(MC.keys().next().value); MC.set(k, r); return r; };
 // uma cor do tema base vista nesta paleta (para as amostras nas Definições)
 const color = (id, c) => { const it = get(id); return it && it[3] ? conv(it[3], c, 1) : c; };
-window.PrumoPaleta = { LIST, DEF, apply, color, recolor, cur: () => CUR };
+// uma cor (r, g, b) do tema base na paleta atual, como "r,g,b" (para desenhos em canvas: o núcleo do Spyke, a bola da conversa)
+const TC = new Map();
+const tone = (r, g, b) => { const it = get(CUR), P = it && it[3]; if (!P) return r + ',' + g + ',' + b; const k = CUR + '|' + r + ',' + g + ',' + b; let v = TC.get(k);
+  if (!v) { v = (map(P, r, g, b) || [r, g, b]).join(','); TC.set(k, v); } return v; };
+window.PrumoPaleta = { LIST, DEF, apply, color, recolor, tone, cur: () => CUR };
 try { const v = JSON.parse(localStorage.getItem('nau:pal') || 'null'); apply(get(v) ? v : DEF); } catch (e) { try { apply(DEF); } catch (e2) { } }
 })();

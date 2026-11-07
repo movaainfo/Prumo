@@ -13,7 +13,7 @@ const ALL = WORLD.C.map(([c3, c2, n, ct, area, x, y, lat, lng, d]) => ({ c3, c2,
 const AREA = ALL.reduce((a, c) => a + c.area, 0);
 const flag = c2 => c2 && c2.length === 2 ? String.fromCodePoint(...[...c2.toUpperCase()].map(ch => 127397 + ch.charCodeAt(0))) : '';
 const pf = x => x > 0 && x < 10 ? x.toFixed(1).replace('.', ',') : String(Math.round(x));
-const ST = ['Visitei', 'Morei', 'Quero ir'], RANK = { Morei: 3, Visitei: 2, 'Quero ir': 1 };
+const ST = ['Visitei', 'Morei', 'Quero ir'], RANK = { Morei: 3, Visitei: 2, 'Quero ir': 1 }; let M_XP = null;
 OS.S.countries = { label: 'País', title: r => (BY[r.code] || {}).n || r.code || 'País', fields: [
   { k: 'code', l: 'País', t: 'sel', o: ALL.map(c => [c.c3, c.n]), req: 1 }, { k: 'status', l: 'Estado', t: 'sel', o: ST },
   { k: 'date', l: 'Primeira vez que fui (ou quando quero ir)', t: 'date' }, { k: 'trips', l: 'Quantas vezes já fui', t: 'num' },
@@ -29,13 +29,111 @@ const DOC = { cid: 'Cidadania', pass: 'Passaporte', res: 'Residência', visto: '
 const docsOf = c => { const s = new Set(); recOf(c).forEach(r => (Array.isArray(r.docs) ? r.docs : []).forEach(d => DOC[d] && s.add(d))); return [...s]; };
 const docRec = c => recOf(c).find(r => Array.isArray(r.docs) && r.docs.length) || recOf(c)[0];
 // marcos da volta ao mundo
-const MIL = [[1, 'Primeiro carimbo'], [5, 'Viajante'], [10, 'Explorador'], [25, 'Cidadão do mundo'], [50, 'Globetrotter'], [100, 'Lenda das viagens'], [195, 'Volta ao mundo completa']];
+const MIL = [[1, 'Primeiro carimbo'], [5, 'Viajante'], [10, 'Explorador'], [25, 'Cidadão do mundo'], [50, 'Globetrotter'], [80, 'Os 80 de Fogg'], [100, 'Lenda das viagens'], [195, 'Volta ao mundo completa']];
+/* v2.97 — Júlio Verne, "A Volta ao Mundo em 80 Dias" (Le Tour du monde en quatre-vingts jours, 1872, domínio público).
+   As frases são do original francês, em tradução livre, com o capítulo; a rota, os dias e os episódios são os do livro. */
+const VERNE = [
+  ['O imprevisto não existe.', 'Phileas Fogg, no Reform Club', 'III'],
+  ['Um mínimo bem aproveitado chega para tudo.', 'Phileas Fogg', 'III'],
+  ['Saltarei matematicamente.', 'Phileas Fogg, quando lhe dizem que terá de saltar dos comboios para os paquetes sem perder um minuto', 'III'],
+  ['Tudo incluído.', 'Phileas Fogg, quando lhe lembram o mau tempo, os naufrágios e os descarrilamentos', 'III'],
+  ['Um bom inglês nunca brinca quando se trata de uma coisa tão séria como uma aposta.', 'Phileas Fogg', 'III'],
+  ['Aposto vinte mil libras contra quem quiser que darei a volta à Terra em oitenta dias ou menos, ou seja, mil novecentas e vinte horas ou cento e quinze mil e duzentos minutos.', 'Phileas Fogg', 'III'],
+  ['O comboio de Dover parte às oito e quarenta e cinco. Vou apanhá-lo.', 'Phileas Fogg, na noite da aposta', 'III'],
+  ['Pior para o sol, senhor! Ele é que estará errado!', 'Passepartout, que se recusa a acertar o relógio pela hora de cada país', 'VIII'],
+  ['Não viajava, descrevia uma circunferência.', 'o narrador, sobre Phileas Fogg', 'XI'],
+  ['Phileas Fogg era daquelas pessoas matematicamente exatas que, nunca apressadas e sempre prontas, poupam os passos e os movimentos.', 'o narrador', 'II'],
+  ['Ninguém conhecia melhor do que ele o mapa do mundo.', 'o narrador, sobre Phileas Fogg', 'I'],
+  ['Na verdade, quem não daria, por menos do que isso, a volta ao mundo?', 'a última frase do livro', 'XXXVII']];
+// o plano do Morning Chronicle (cap. III): 80 dias em 8 etapas
+const FOGG = [['Londres', 'Suez', 7, 'comboio e paquete, pelo Mont-Cenis e Brindisi', ['GBR', 'FRA', 'ITA', 'EGY']], ['Suez', 'Bombaim', 13, 'paquete, com escala em Aden', ['YEM', 'IND']],
+  ['Bombaim', 'Calcutá', 3, 'comboio (e um elefante)', ['IND']], ['Calcutá', 'Hong Kong', 13, 'paquete, por Singapura', ['SGP', 'CHN']], ['Hong Kong', 'Yokohama', 6, 'paquete', ['JPN']],
+  ['Yokohama', 'São Francisco', 22, 'paquete', ['USA']], ['São Francisco', 'Nova Iorque', 7, 'comboio', ['USA']], ['Nova Iorque', 'Londres', 9, 'paquete e comboio, por Queenstown e Liverpool', ['IRL', 'GBR']]];
+const FOGGC = ['GBR', 'FRA', 'ITA', 'EGY', 'YEM', 'IND', 'SGP', 'CHN', 'JPN', 'USA', 'IRL'];
+const FOGGN = { GBR: 'Partida do Reform Club, em Londres, a 2 de outubro de 1872, às 20h45; o regresso tinha de ser a 21 de dezembro, à mesma hora.', FRA: 'Na primeira noite: Dover, Calais e, de manhã, Paris.',
+  ITA: 'Pelo Mont-Cenis até Turim e daí a Brindisi, onde embarca no paquete Mongolia.', EGY: 'Suez: o detetive Fix espera-o aqui, convencido de que Fogg é o ladrão que levou 55 mil libras do Banco de Inglaterra.',
+  YEM: 'Escala em Aden, à saída do mar Vermelho, para carregar carvão.', IND: 'De Bombaim a Calcutá: a linha do comboio ainda não estava acabada, Fogg segue de elefante (o Kiouni) e salva a Aouda.',
+  SGP: 'Escala em Singapura, a bordo do Rangoon, a caminho de Hong Kong.', CHN: 'Hong Kong: Passepartout parte sozinho no Carnatic e Fogg segue no pequeno Tankadère até Xangai.',
+  JPN: 'Yokohama: Passepartout, sem dinheiro, entra numa trupe de acrobatas, os Longos-Narizes.', USA: 'De São Francisco a Nova Iorque, de comboio: manadas de bisontes, a ponte de Medicine Bow e um ataque dos Sioux.',
+  IRL: 'Queenstown: depois de queimar a madeira do Henrietta para ter vapor, corre de comboio para Dublin e daí para Liverpool.' };
+// a rota no mapa (projeção Natural Earth, a mesma do mapa); [lat, lng], com as paragens principais
+const FROUTE = [[[51.51, -.13], [51.13, 1.31], [50.95, 1.86], [48.86, 2.35], [45.07, 7.69], [40.63, 17.94], [36.3, 21.6], [33.6, 27.5], [31.26, 32.3], [29.97, 32.55], [27.5, 34], [20, 38.6], [14.3, 42.4], [12.6, 43.4], [12.79, 45.02], [18.96, 72.82], [25.44, 81.85], [22.57, 88.36], [20.5, 88.3], [13, 90.5], [6.2, 95.5], [3.2, 100.5], [1.29, 103.85], [5, 105.5], [10, 110], [18, 113], [22.3, 114.17], [24.6, 119.8], [31.23, 121.47], [31, 129], [31.2, 131.5], [33.4, 136], [35.44, 139.64], [37, 180]],
+  [[37, -180], [37.77, -122.42], [41.22, -111.97], [41.26, -95.94], [41.88, -87.63], [40.71, -74.01], [51.85, -8.29], [53.35, -6.26], [53.41, -2.98], [51.51, -.13]]];
+const FSTOP = [['Londres', 51.51, -.13], ['Suez', 29.97, 32.55], ['Bombaim', 18.96, 72.82], ['Calcutá', 22.57, 88.36], ['Hong Kong', 22.3, 114.17], ['Yokohama', 35.44, 139.64], ['São Francisco', 37.77, -122.42], ['Nova Iorque', 40.71, -74.01]];
+const proj = (lat, lng) => { const p = lat * Math.PI / 180, l = lng * Math.PI / 180, p2 = p * p, p4 = p2 * p2, p6 = p4 * p2, p8 = p4 * p4, p10 = p8 * p2, p12 = p6 * p6;
+  return [500 + 182.8 * l * (.8707 - .131979 * p2 - .013791 * p4 + .003971 * p10 - .001529 * p12), 260 - 182.8 * p * (1.007226 + .015085 * p2 - .044475 * p6 + .028874 * p8 - .005916 * p10)]; };
+const foggSvg = k => `<g class="mu-fogg" aria-hidden="true">${FROUTE.map(seg => `<path style="stroke-width:${(1.5 * k).toFixed(2)};stroke-dasharray:${(4.5 * k).toFixed(2)} ${(3.5 * k).toFixed(2)}" d="M${seg.map(([a, b]) => proj(a, b).map(v => v.toFixed(1)).join(' ')).join('L')}"/>`).join('')}
+  ${FSTOP.map(([n, a, b]) => { const [x, y] = proj(a, b); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(2.6 * Math.max(.5, k)).toFixed(2)}"><title>${esc(n)} (rota de Phileas Fogg)</title></circle>`; }).join('')}</g>`;
+const verneQ = () => { const n = OS.ui.muVq != null ? +OS.ui.muVq : Math.floor(Date.now() / 864e5); return QUOTES[((n % QUOTES.length) + QUOTES.length) % QUOTES.length]; };
+A.muVq = () => { const n = OS.ui.muVq != null ? +OS.ui.muVq : Math.floor(Date.now() / 864e5); OS.setUI('muVq', n + 1); };
+A.muFogg = () => OS.setUI('muFogg', OS.ui.muFogg === false ? true : false);
+/* v2.97 — Homero, "Odisseia": a viagem de Odisseu (Ulisses) de Troia a Ítaca. Frases em tradução livre a partir da tradução inglesa de Samuel Butler (1900, domínio público),
+   com o canto. Os lugares da Odisseia são lendários: estão onde a tradição os põe. */
+const HOMER = [
+  ['Fala-me, Musa, do herói engenhoso que tanto viajou depois de saquear a famosa cidade de Troia. Muitas foram as cidades que visitou e muitos os povos cujos costumes conheceu.', 'os primeiros versos', 'I'],
+  ['O meu nome é Ninguém: é assim que o meu pai, a minha mãe e os meus amigos sempre me chamaram.', 'Odisseu, ao Ciclope Polifemo', 'IX'],
+  ['Não há nada mais querido a um homem do que a sua terra e os seus pais.', 'Odisseu, aos Feácios', 'IX'],
+  ['O lótus era tão delicioso que quem o comia deixava de pensar em casa e já nem queria voltar.', 'Odisseu, sobre os Lotófagos', 'IX'],
+  ['Atem-me ao mastro, de pé, com um nó que eu não consiga desfazer. Se eu pedir e implorar que me soltem, atem-me ainda com mais força.', 'Odisseu, antes de passar pelas Sereias', 'XII'],
+  ['Calma, coração: já suportaste pior do que isto no dia em que o terrível Ciclope devorou os teus bravos companheiros.', 'Odisseu, em casa, disfarçado de mendigo', 'XX'],
+  ['Víamo-la a tecer a sua grande teia o dia inteiro, mas à noite desfazia os pontos à luz das tochas. Enganou-nos assim durante três anos.', 'Antínoo, um dos pretendentes, sobre Penélope', 'II'],
+  ['Ao fim de vinte anos de andanças, cheguei finalmente a casa.', 'Odisseu, à ama Euricleia', 'XIX']];
+// a frase do dia alterna entre os dois livros
+const QUOTES = (() => { const L = []; for (let i = 0; i < Math.max(VERNE.length, HOMER.length); i++) { if (VERNE[i]) L.push(VERNE[i].concat('v')); if (HOMER[i]) L.push(HOMER[i].concat('h')); } return L; })();
+// os episódios, por ordem: [nome, onde a tradição o põe, país, canto, o que acontece, lat, lng]
+const ODI = [['Troia', 'Hisarlik, na Turquia', 'TUR', 'I e IX', 'O ponto de partida, depois de dez anos de guerra.', 39.96, 26.24],
+  ['Ísmaro, terra dos Cícones', 'Trácia, hoje Grécia', 'GRC', 'IX', 'O primeiro saque e o primeiro contra-ataque.', 40.9, 25.5],
+  ['Os Lotófagos', 'Djerba, na Tunísia', 'TUN', 'IX', 'Desviados pelo vento no cabo Maleia, chegam à terra do lótus que faz esquecer a casa.', 33.81, 10.85],
+  ['A ilha dos Ciclopes', 'Sicília, junto ao Etna', 'ITA', 'IX', '«Ninguém» cega Polifemo e foge agarrado à lã dos carneiros.', 37.55, 15.2],
+  ['A ilha de Éolo', 'ilhas Eólias, Itália', 'ITA', 'X', 'O saco dos ventos: já se viam as fogueiras de Ítaca quando os companheiros o abriram.', 38.6, 14.8],
+  ['Eeia, a ilha de Circe', 'Monte Circeo, Itália', 'ITA', 'X', 'Circe transforma os companheiros em porcos; ficam lá um ano inteiro.', 41.23, 13.05],
+  ['As Sereias', 'ilhas Li Galli, costa de Amalfi', 'ITA', 'XII', 'Odisseu ouve o canto atado ao mastro; os companheiros levam cera nos ouvidos.', 40.58, 14.43],
+  ['Cila e Caríbdis', 'estreito de Messina, Itália', 'ITA', 'XII', 'Entre o monstro de seis cabeças e o redemoinho.', 38.05, 15.75],
+  ['Trinácia, a ilha do Sol', 'Sicília', 'ITA', 'XII', 'Os companheiros comem os bois do Sol e o navio afunda-se; só Odisseu se salva.', 36.85, 14.55],
+  ['Ogígia, a ilha de Calipso', 'Gozo, em Malta', 'MLT', 'V e VII', 'Sete anos com a ninfa Calipso, que lhe oferece a imortalidade para ele ficar.', 36.05, 14.25],
+  ['Esquéria, terra dos Feácios', 'Corfu, Grécia', 'GRC', 'VI a XIII', 'Náufrago, é acolhido pela princesa Nausícaa e conta aqui as suas aventuras.', 39.62, 19.92],
+  ['Ítaca', 'Ítaca, Grécia', 'GRC', 'XIII a XXIV', 'Volta disfarçado de mendigo; o velho cão Argos reconhece-o logo.', 38.37, 20.72]];
+const ODIC = ['TUR', 'GRC', 'TUN', 'ITA', 'MLT'];
+const ODIN = { TUR: 'Troia (Hisarlik): daqui parte Odisseu, depois de dez anos de guerra, num regresso que demora outros dez.', GRC: 'Ísmaro, na Trácia; Esquéria, terra dos Feácios (Corfu, pela tradição); e Ítaca, a casa a que Odisseu volta ao fim de vinte anos.',
+  TUN: 'Djerba é, pela tradição, a ilha dos Lotófagos: quem comia o lótus esquecia a casa.', ITA: 'Pela tradição: o Ciclope e a ilha do Sol na Sicília, os ventos de Éolo nas ilhas Eólias, Circe no Monte Circeo, as Sereias na costa de Amalfi e Cila e Caríbdis no estreito de Messina.',
+  MLT: 'Gozo é, pela tradição, Ogígia, a ilha onde a ninfa Calipso reteve Odisseu durante sete anos.' };
+// a rota no mapa: os episódios e alguns pontos no mar para o traço não cortar terra
+const OROUTE = [[39.96, 26.24], [40.9, 25.5], [39.2, 25], [36.3, 23.3], [35, 19], [33.81, 10.85], [36.2, 13.6], [36.65, 15.25], [37.55, 15.2], [38.6, 14.8], [41.23, 13.05], [40.58, 14.43], [38.05, 15.75], [37.4, 15.35], [36.85, 14.55], [36.6, 15.2], [36.05, 14.25], [37.5, 17.5], [39.62, 19.92], [38.37, 20.72]];
+const odiSvg = k => `<g class="mu-odi" aria-hidden="true"><path style="stroke-width:${(1.4 * k).toFixed(2)};stroke-dasharray:0 ${(3.2 * k).toFixed(2)}" d="M${OROUTE.map(([a, b]) => proj(a, b).map(v => v.toFixed(1)).join(' ')).join('L')}"/></g>`;
+// símbolos desenhados (24×24, traço fino): o paquete e o comboio de Fogg, o Kiouni e a galera de Odisseu
+const SYM = { navio: '<path d="M3 15.5h18l-2.6 4H5.6z"/><path d="M6.5 15.5V12h10v3.5M9.5 12V8.2h3V12M14 12V9.5h2.2V12"/><path d="M11 6.3c0-1.6 2-1.4 2-3.3M14.6 7.8c0-1.2 1.4-1.1 1.4-2.5"/>',
+  comboio: '<path d="M3.5 16.5V9.5h7v7M10.5 12h6.5v4.5H3.5"/><path d="M2.5 9.5h9M14 12V8.7h2.2V12M17 16.5l2.5 2"/><circle cx="6.2" cy="18.6" r="1.7"/><circle cx="11.2" cy="18.6" r="1.7"/><circle cx="15.4" cy="18.6" r="1.3"/>',
+  elefante: '<path d="M3.5 13.2c0-3.4 2.4-5.4 5.8-5.4h3.6c1.8 0 3 .7 3.8 1.9 1.7-.2 3.1 1 3.1 2.7v3.3c0 1.1.6 1.8 1.4 1.9v1.1c-1.6 0-2.6-1-2.6-2.8v-1.2h-1.3v4.6H15v-3.5H8.9v3.5H6.7v-3.8c-2-.4-3.2-1.2-3.2-2.3z"/><path d="M12.6 8.6c-1.4.6-1.8 2.3-.9 4"/><circle cx="16.8" cy="11.3" r=".45"/>',
+  galera: '<path d="M2.5 14.5c3.2 3 15.8 3 19 0l-1.6-1H4.1z"/><path d="M12 13.5V3.5M7.5 5h9v6.5h-9z"/><path d="M6 16.8l-1 2.6M9 17.4l-.6 2.6M12 17.6v2.6M15 17.4l.6 2.6M18 16.8l1 2.6"/>' };
+const sym = (n, x, y, sz, cls) => `<g class="sym ${cls || ''}" transform="translate(${(x - sz / 2).toFixed(2)} ${(y - sz / 2).toFixed(2)}) scale(${(sz / 24).toFixed(3)})">${SYM[n]}</g>`;
+const ICONS = [['navio', 37, 165, 'f'], ['navio', 46, -38, 'f'], ['comboio', 41.5, -104, 'f'], ['elefante', 24.5, 80.5, 'f'], ['galera', 37.6, 18.6, 'o']];
+const iconsSvg = (k, fo, od) => `<g class="mu-ico" aria-hidden="true">${ICONS.filter(x => x[3] === 'f' ? fo : od).map(([n, a, b, w]) => { const [x, y] = proj(a, b); return sym(n, x, y - 7 * Math.max(.42, k), 13 * Math.max(.42, k), w === 'o' ? 'od' : ''); }).join('')}</g>`;
+// o mapa da Odisseia: o Mediterrâneo de perto, com o mar Egeu e os episódios numerados por ordem
+const odiMap = m => { const a = proj(46.2, 7.6), b = proj(31.2, 30.2), box = [a[0], a[1], b[0] - a[0], b[1] - a[1]], s = box[2] / 100;
+  const near = ALL.filter(c => c.d && c.x > box[0] - 140 && c.x < box[0] + box[2] + 140 && c.y > box[1] - 120 && c.y < box[1] + box[3] + 120);
+  return `<svg class="od-map" viewBox="${box.map(v => v.toFixed(1)).join(' ')}" role="img" aria-label="Mapa do Mediterrâneo com a viagem de Odisseu, de Troia a Ítaca">
+    <rect x="${box[0] - 5}" y="${box[1] - 5}" width="${box[2] + 10}" height="${box[3] + 10}" class="od-sea"/>
+    <g class="od-land" style="stroke-width:${(.12 * s).toFixed(3)}">${near.map(c => `<path d="${c.d}" class="${ODIC.includes(c.c3) ? (been(m[c.c3]) ? 'on' : 'od') : ''}"/>`).join('')}</g>
+    <path class="od-route" style="stroke-width:${(.5 * s).toFixed(3)};stroke-dasharray:${(1.1 * s).toFixed(2)} ${(.9 * s).toFixed(2)}" d="M${OROUTE.map(([la, lo]) => proj(la, lo).map(v => v.toFixed(2)).join(' ')).join('L')}"/>
+    ${ODI.map(([n, , , , , la, lo], i) => { const [x, y] = proj(la, lo); return `<g class="od-pin${i === ODI.length - 1 ? ' end' : ''}"><circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${(1.25 * s).toFixed(2)}"/><text x="${x.toFixed(2)}" y="${(y + .45 * s).toFixed(2)}" style="font-size:${(1.3 * s).toFixed(2)}px">${i + 1}</text><title>${i + 1}. ${esc(n)}</title></g>`; }).join('')}
+  </svg>`; };
+A.muOdi = () => OS.setUI('muOdi', OS.ui.muOdi === false ? true : false);
+// o relógio dos 80 dias: cada etapa é um arco do mostrador; os ponteiros marcam as 20h45 da partida
+const foggDial = m => { const R = 82, C = 120, pt = (deg, r) => [C + r * Math.cos((deg - 90) * Math.PI / 180), C + r * Math.sin((deg - 90) * Math.PI / 180)], ICO = ['comboio', 'navio', 'elefante', 'navio', 'navio', 'navio', 'comboio', 'navio']; let d = 0;
+  const arcs = FOGG.map(([a, b, n, , cs], i) => { const a0 = d / 80 * 360 + 1.2, a1 = (d + n) / 80 * 360 - 1.2, mid = (d + n / 2) / 80 * 360, on = cs.every(c => been(m[c])), p0 = pt(a0, R), p1 = pt(a1, R), ic = pt(mid, R + 20); d += n;
+    return `<path d="M${p0[0].toFixed(1)} ${p0[1].toFixed(1)}A${R} ${R} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}" class="mdl-arc${on ? ' on' : ''}"><title>${esc(a)} → ${esc(b)}: ${n} dias</title></path>${sym(ICO[i], ic[0], ic[1], 17, 'mdl-ic')}`; }).join('');
+  const ticks = Array.from({ length: 80 }, (_, i) => { const L = i % 10 ? 4 : 8, p0 = pt(i * 4.5, R - 9), p1 = pt(i * 4.5, R - 9 - L); return `M${p0[0].toFixed(1)} ${p0[1].toFixed(1)}L${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`; }).join('');
+  const nums = [0, 20, 40, 60].map(v => { const p = pt(v / 80 * 360, R - 27); return `<text x="${p[0].toFixed(1)}" y="${(p[1] + 4).toFixed(1)}" class="mdl-n">${v || 80}</text>`; }).join('');
+  const hand = (deg, len, cls) => { const p = pt(deg, len); return `<line x1="${C}" y1="${C}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" class="${cls}"/>`; };
+  return `<svg class="mdl" viewBox="0 0 240 240" role="img" aria-label="Relógio dos 80 dias de Phileas Fogg, com as 8 etapas da viagem e os ponteiros às 20h45">
+    <circle cx="${C}" cy="${C}" r="${R + 34}" class="mdl-rim"/><circle cx="${C}" cy="${C}" r="${R - 6}" class="mdl-face"/>${arcs}<path d="${ticks}" class="mdl-t"/>${nums}
+    <text x="${C}" y="${C + 34}" class="mdl-cap">dias · 20h45</text>${hand(8.75 * 30, 40, 'mdl-h')}${hand(270, 58, 'mdl-m')}<circle cx="${C}" cy="${C}" r="4" class="mdl-pin"/></svg>`; };
 const stats = () => { const m = mine(), v = ALL.filter(c => been(m[c.c3])), w = ALL.filter(c => m[c.c3] && m[c.c3].status === 'Quero ir'), area = v.reduce((a, c) => a + c.area, 0);
   const byC = CONT.map((n, i) => ({ i, n, tot: ALL.filter(c => c.ct === i).length, v: v.filter(c => c.ct === i).length }));
   const hem = [['Norte', v.some(c => c.lat > 0)], ['Sul', v.some(c => c.lat < 0)], ['Este', v.some(c => c.lng > 0)], ['Oeste', v.some(c => c.lng < 0)]];
   return { m, v, w, n: v.length, pct: v.length / ALL.length * 100, apct: area / AREA * 100, byC, conts: byC.filter(c => c.v).length, hem, next: MIL.find(x => x[0] > v.length) }; };
 const dateOf = r => r.date || (r._c ? U.iso(new Date(r._c)) : U.today());
-OS.Mundo = { ALL, BY, CONT, name: c => (BY[c] || {}).n || c, flag: c => flag((BY[c] || {}).c2), flag2: flag, stats, been, dateOf, mine,
+OS.Mundo = { ALL, BY, CONT, name: c => (BY[c] || {}).n || c, flag: c => flag((BY[c] || {}).c2), flag2: flag, stats, been, dateOf, mine, xp: () => M_XP,
   scale: z => (z !== '' && WORLD.B[z] ? WORLD.B[z] : WORLD.Z)[2] / WORLD.W };
 
 // ---------- ações ----------
@@ -45,11 +143,16 @@ A.muPick = b => { const c = BY[b.dataset.c]; if (!c) return; const r = mine()[c.
     <div class="mu-mst">${ST.map(v => `<button class="btn ${s === v ? 'pri' : 'ghost'}" data-act="muSet" data-c="${c.c3}" data-v="${v}">${v === 'Visitei' ? UI.ic('check') : v === 'Morei' ? UI.ic('home') : UI.ic('heart')}<span>${v}</span></button>`).join('')}</div>
     <div class="mu-docs"><small class="mut">Documentos deste país</small><div>${Object.keys(DOC).map(d => { const on = docsOf(c.c3).includes(d); return `<button class="chip ${on ? 'on' : ''}" data-act="muDoc" data-c="${c.c3}" data-d="${d}" aria-pressed="${on}">${UI.ic(DOCI[d])}${DOC[d]}</button>`; }).join('')}</div>
       ${(() => { const x = docRec(c.c3); return x && (x.vistoTipo || x.vistoAte) ? `<small class="mut">${esc(x.vistoTipo || '')}${x.vistoAte ? ` · válido até ${U.fmtD(x.vistoAte)}${x.vistoAte < U.today() ? ' (expirado)' : ''}` : ''}</small>` : ''; })()}</div>
+    ${FOGGN[c.c3] ? `<p class="mu-fn"><b>Na rota de Phileas Fogg.</b> ${esc(FOGGN[c.c3])}</p>` : ''}${ODIN[c.c3] ? `<p class="mu-fn od"><b>Na viagem de Odisseu.</b> ${esc(ODIN[c.c3])}</p>` : ''}
     ${r ? `<div class="mu-mi">${r.date ? `<span>${UI.ic('cal')}${U.fmtD(r.date)}</span>` : ''}${r.cities ? `<span>${UI.ic('pin')}${esc(r.cities)}</span>` : ''}${+r.trips > 1 ? `<span>${r.trips} vezes</span>` : ''}</div>
       <div class="row gap8"><button class="btn sm" data-act="muEdit" data-id="${r.id}">${UI.ic('edit')}<span>Data, cidades e memórias</span></button><button class="btn sm ghost" data-act="muClear" data-c="${c.c3}">Tirar</button></div>` : '<p class="mut">Marca se já foste, se viveste lá ou se queres ir.</p>'}</div>`, 'mu-modal'); };
-A.muSet = b => { const c = b.dataset.c, v = b.dataset.v, L = recOf(c), name = (BY[c] || {}).n || c, was = been(mine()[c]);
+// v2.97: o aviso diz o XP que o Dominus deu mesmo (desde que o Dominus ficou exigente, a rotina vale menos do que os antigos 900)
+const mente = () => { try { return OS.Dom && OS.Dom.state ? +OS.Dom.state().ax.mente || 0 : null; } catch (e) { return null; } };
+const xpTxt = (x0, x1) => x0 == null || x1 == null ? '' : x1 - x0 >= 1 ? ` +${Math.round(x1 - x0)} XP de Mente no Dominus.` : '';
+M_XP = { mente, xpTxt };
+A.muSet = b => { const c = b.dataset.c, v = b.dataset.v, L = recOf(c), name = (BY[c] || {}).n || c, was = been(mine()[c]), x0 = v === 'Quero ir' || was ? null : mente();
   if (L.length) { OS.upd('countries', L[0].id, { status: v }); L.slice(1).forEach(r => OS.del('countries', r.id)); } else OS.add('countries', { code: c, status: v });
-  UI.closeModal(); UI.toast(v === 'Quero ir' ? `${name} está nos teus próximos destinos` : was ? `${name}: ${v.toLowerCase()}` : `${flag((BY[c] || {}).c2)} ${name} no teu mapa! +900 XP de Mente no Dominus`, 'pos'); };
+  UI.closeModal(); UI.toast(v === 'Quero ir' ? `${name} está nos teus próximos destinos` : was ? `${name}: ${v.toLowerCase()}` : `${flag((BY[c] || {}).c2)} ${name} no teu mapa!${xpTxt(x0, x0 == null ? null : mente())}${FOGGC.includes(c) && ODIC.includes(c) ? ' Phileas Fogg e Odisseu também passaram por aqui.' : FOGGC.includes(c) ? ' Phileas Fogg também passou por aqui.' : ODIC.includes(c) ? ' Odisseu também passou por aqui.' : ''}`, 'pos'); };
 // cidadania, passaporte, residência, visto: liga e desliga (sem mexer no mapa); a validade do visto vai no formulário
 A.muDoc = b => { const c = b.dataset.c, d = b.dataset.d, L = recOf(c); if (!BY[c] || !DOC[d]) return;
   if (!L.length) OS.add('countries', { code: c, status: '', docs: [d] }); else { const r = docRec(c), cur = Array.isArray(r.docs) ? r.docs : [], on = cur.includes(d); OS.upd('countries', r.id, { docs: on ? cur.filter(x => x !== d) : cur.concat(d) }); }
@@ -64,7 +167,7 @@ A.muF = b => OS.setUI('muF', b.dataset.v);
 // ---------- mapa ----------
 const FILL = { Visitei: 'v', Morei: 'm', 'Quero ir': 'w' };
 let MC = { k: '', h: '' };
-const mapSvg = (m, z) => { const k = z + '|' + Object.keys(m).map(c => c + m[c].status).join(','); if (MC.k === k) return MC.h; MC = { k, h: mapSvg0(m, z) }; return MC.h; };
+const mapSvg = (m, z) => { const k = z + '|' + (OS.ui.muFogg !== false) + (OS.ui.muOdi !== false) + '|' + Object.keys(m).map(c => c + m[c].status).join(','); if (MC.k === k) return MC.h; MC = { k, h: mapSvg0(m, z) }; return MC.h; };
 const mapSvg0 = (m, z) => { const box = z !== '' && WORLD.B[z] ? WORLD.B[z] : WORLD.Z, k = box[2] / WORLD.W, eq = Math.round(WORLD.H * .565);
   return `<svg class="mu-svg" viewBox="${box.join(' ')}" role="img" aria-label="Mapa do mundo com os países que já conheces pintados">
     <defs><radialGradient id="muSea" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#0E3A66"/><stop offset="1" stop-color="#05172C"/></radialGradient></defs>
@@ -72,7 +175,7 @@ const mapSvg0 = (m, z) => { const box = z !== '' && WORLD.B[z] ? WORLD.B[z] : WO
     <path d="M0 ${eq}H${WORLD.W}" class="mu-eq" style="stroke-width:${(1 * k).toFixed(2)}"/>
     <path d="${WORLD.O}" class="mu-o"/>
     <g class="mu-cs" style="stroke-width:${(.6 * k).toFixed(2)}">${ALL.filter(c => c.d).map(c => { const r = m[c.c3]; return `<path d="${c.d}" class="${r ? FILL[r.status] || '' : ''}" data-act="muPick" data-c="${c.c3}"><title>${esc(c.n)}</title></path>`; }).join('')}</g>
-    <g class="mu-dots">${ALL.filter(c => !c.d).map(c => { const r = m[c.c3]; return `<circle cx="${c.x}" cy="${c.y}" r="${(3.4 * Math.max(.45, k)).toFixed(2)}" class="${r ? FILL[r.status] || '' : ''}" data-act="muPick" data-c="${c.c3}"><title>${esc(c.n)}</title></circle>`; }).join('')}</g></svg>`; };
+    <g class="mu-dots">${ALL.filter(c => !c.d).map(c => { const r = m[c.c3]; return `<circle cx="${c.x}" cy="${c.y}" r="${(3.4 * Math.max(.45, k)).toFixed(2)}" class="${r ? FILL[r.status] || '' : ''}" data-act="muPick" data-c="${c.c3}"><title>${esc(c.n)}</title></circle>`; }).join('')}</g>${OS.ui.muFogg !== false ? foggSvg(k) : ''}${OS.ui.muOdi !== false ? odiSvg(k) : ''}${iconsSvg(k, OS.ui.muFogg !== false, OS.ui.muOdi !== false)}</svg>`; };
 const ring = (p, sz = 112) => { const r = 46, C = 2 * Math.PI * r; return `<svg class="mu-ring" viewBox="0 0 100 100" width="${sz}" height="${sz}" aria-hidden="true"><circle cx="50" cy="50" r="${r}" class="bg"/><circle cx="50" cy="50" r="${r}" class="fg" stroke-dasharray="${(C * Math.min(1, p / 100)).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/></svg>`; };
 const tilt = s => { let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) % 997; return (h % 7) - 3; };
 
@@ -88,13 +191,23 @@ V.mundo = () => { const S = stats(), z = OS.ui.muZ != null ? String(OS.ui.muZ) :
   <section class="pn mu-hero"><div class="mu-hp">${ring(S.pct)}<div class="mu-hn"><b class="mono">${pf(S.pct)}%</b><small>do mundo</small></div></div>
     <div class="mu-ht"><h2>A tua volta ao mundo</h2><p><b class="mono">${S.n}</b> de <b class="mono">${ALL.length}</b> países · <b class="mono">${pf(S.apct)}%</b> da terra firme · <b class="mono">${S.conts}</b> de 6 continentes</p>
       ${S.next ? `<p class="mut">Faltam <b>${S.next[0] - S.n}</b> ${S.next[0] - S.n === 1 ? 'país' : 'países'} para <b>${esc(S.next[1])}</b> (${S.next[0]}).</p>` : '<p class="pos">Conheceste o mundo inteiro. Lenda.</p>'}
-      <div class="mu-hem">${S.hem.map(([n, ok]) => `<span class="${ok ? 'on' : ''}">${ok ? '✓' : '○'} Hemisfério ${n}</span>`).join('')}</div></div></section>
-  <section class="pn mu-mapc"><div class="mu-zc">${UI.chip('Mundo', 'muZoom', z === '', 'data-v=""')}${CONT.map((n, i) => UI.chip(n, 'muZoom', z === String(i), `data-v="${i}"`)).join('')}</div>
+      <div class="mu-hem">${S.hem.map(([n, ok]) => `<span class="${ok ? 'on' : ''}">${ok ? '✓' : '○'} Hemisfério ${n}</span>`).join('')}</div></div>
+    ${(() => { const [q, who, cap, bk] = verneQ(); return `<button class="mu-vq" data-act="muVq" aria-label="Outra frase de viagem"><q>${esc(q)}</q><small>${esc(who)} · ${bk === 'h' ? `<cite>Odisseia</cite>, Homero, canto ${cap}` : `<cite>A Volta ao Mundo em 80 Dias</cite>, Júlio Verne, cap. ${cap}`}</small></button>`; })()}</section>
+  <section class="pn mu-mapc"><div class="mu-zc">${UI.chip('Mundo', 'muZoom', z === '', 'data-v=""')}${CONT.map((n, i) => UI.chip(n, 'muZoom', z === String(i), `data-v="${i}"`)).join('')}${UI.chip('Rota de Phileas Fogg', 'muFogg', OS.ui.muFogg !== false)}${UI.chip('Viagem de Odisseu', 'muOdi', OS.ui.muOdi !== false)}</div>
     <div class="mu-map">${mapSvg(m, z)}</div>
-    <div class="mu-leg"><span><i class="v"></i>Visitei</span><span><i class="m"></i>Morei</span><span><i class="w"></i>Quero ir</span><span><i></i>Por conhecer</span><span class="mut">Toca num país para o marcar.</span></div></section>
+    <div class="mu-leg"><span><i class="v"></i>Visitei</span><span><i class="m"></i>Morei</span><span><i class="w"></i>Quero ir</span><span><i></i>Por conhecer</span>${OS.ui.muFogg !== false ? '<span><i class="fogg"></i>Rota de Phileas Fogg (1872)</span>' : ''}${OS.ui.muOdi !== false ? '<span><i class="odi"></i>Viagem de Odisseu (Odisseia)</span>' : ''}<span class="mut">Toca num país para o marcar.</span></div></section>
   <section class="mu-conts">${S.byC.map(c => `<button class="mu-ct ${z === String(c.i) ? 'on' : ''}" data-act="muZoom" data-v="${c.i}" style="--c:${CCOL[c.i]}"><b>${esc(c.n)}</b><span class="mono">${c.v}/${c.tot}</span>${UI.bar(c.v / c.tot)}<small>${pf(c.v / c.tot * 100)}%</small></button>`).join('')}</section>
   <section class="pn"><div class="pn-h"><h3>${UI.ic('award')}Volta ao mundo</h3><span class="mut">marcos</span></div><div class="mu-mil">${MIL.map(([n, t]) => `<div class="${S.n >= n ? 'on' : ''}"><b class="mono">${n}</b><span>${esc(t)}</span></div>`).join('')}
-    <div class="${S.conts >= 6 ? 'on' : ''}"><b class="mono">6/6</b><span>Todos os continentes</span></div><div class="${S.hem.every(h => h[1]) ? 'on' : ''}"><b class="mono">4/4</b><span>Os 4 hemisférios</span></div></div></section>
+    <div class="${S.conts >= 6 ? 'on' : ''}"><b class="mono">6/6</b><span>Todos os continentes</span></div><div class="${S.hem.every(h => h[1]) ? 'on' : ''}"><b class="mono">4/4</b><span>Os 4 hemisférios</span></div><div class="${FOGGC.every(c => been(m[c])) ? 'on' : ''}"><b class="mono">11/11</b><span>A rota de Phileas Fogg</span></div><div class="${ODIC.every(c => been(m[c])) ? 'on' : ''}"><b class="mono">5/5</b><span>A viagem de Odisseu</span></div></div></section>
+  ${(() => { const got = FOGGC.filter(c => been(m[c])); let d = 0;
+    return `<section class="pn mu-fg"><div class="pn-h"><h3>${UI.ic('compass')}A rota de Phileas Fogg</h3><span class="mut">${got.length} de ${FOGGC.length} países</span></div>
+    <p class="mu-fgi">Em 1872, no Reform Club, Phileas Fogg apostou 20 mil libras em como dava a volta ao mundo em 80 dias. Este era o plano dele, etapa a etapa (no livro de Júlio Verne). Os carimbos mostram os países da rota que já conheces.</p>
+    <div class="mu-fgw">${foggDial(m)}<ol class="mu-leg8">${FOGG.map(([a, b, n, how, cs]) => { const d0 = d; d += n; return `<li><span class="mu-day mono">dia ${d0}–${d}</span><div><b>${esc(a)} → ${esc(b)}</b><small>${n} dias · ${esc(how)}</small></div><span class="mu-fcs">${cs.map(c => `<button class="mu-fc ${been(m[c]) ? 'on' : ''}" data-act="muPick" data-c="${c}" aria-label="${esc((BY[c] || {}).n || c)}${been(m[c]) ? ', já conheces' : ''}" title="${esc((BY[c] || {}).n || c)}">${flag((BY[c] || {}).c2)}</button>`).join('')}</span></li>`; }).join('')}</ol></div>
+    <p class="mu-fgn mut"><b>Nota de bordo.</b> Fogg chegou a Londres convencido de que tinha perdido a aposta: era sábado à noite, achava ele. Afinal era sexta-feira, 20 de dezembro. Ao viajar sempre para leste, tinha ganho um dia sem dar por isso (cap. XXXVII).</p></section>`; })()}
+  ${(() => { const got = ODIC.filter(c => been(m[c]));
+    return `<section class="pn mu-od"><div class="pn-h"><h3>${UI.ic('map')}A viagem de Odisseu</h3><span class="mut">${got.length} de ${ODIC.length} países</span></div>
+    <p class="mu-fgi">Depois de dez anos de guerra em Troia, Odisseu (Ulisses) levou outros dez a voltar a casa, em Ítaca. É a <i>Odisseia</i>, de Homero. Os lugares do poema são lendários: estão aqui onde a tradição os põe, pela ordem da viagem. Os países que já conheces ficam acesos.</p>
+    <div class="mu-odw">${odiMap(m)}<ol class="od-l">${ODI.map(([n, where, c, canto, what], i) => `<li><span class="od-num mono">${i + 1}</span><div><b>${esc(n)}</b><small>${esc(where)} · canto ${esc(canto)}</small><span>${esc(what)}</span></div><button class="mu-fc ${been(m[c]) ? 'on' : ''}" data-act="muPick" data-c="${c}" aria-label="${esc((BY[c] || {}).n || c)}${been(m[c]) ? ', já conheces' : ''}" title="${esc((BY[c] || {}).n || c)}">${flag((BY[c] || {}).c2)}</button></li>`).join('')}</ol></div></section>`; })()}
   ${(() => { const D = ALL.map(c => ({ c, d: docsOf(c.c3), r: docRec(c.c3) })).filter(x => x.d.length); return `<section class="pn"><div class="pn-h"><h3>${UI.ic('flag')}Cidadania, passaportes e vistos</h3><span class="mut">${D.length}</span></div>
     ${D.length ? `<div class="mu-docl">${D.map(({ c, d, r }) => `<button class="mu-doc" data-act="muPick" data-c="${c.c3}"><span class="mu-fl">${flag(c.c2)}</span><b>${esc(c.n)}</b><span class="mu-dt">${d.map(k => `<small class="mu-tag d-${k}">${DOC[k]}</small>`).join('')}</span>${r && r.vistoAte ? `<small class="mut">${r.vistoAte < U.today() ? 'expirou' : 'até'} ${U.fmtD(r.vistoAte)}</small>` : ''}</button>`).join('')}</div>`
       : '<p class="mut">Ter vivido ou passado por um país não quer dizer ter o passaporte dele. Toca num país e marca o que tens: cidadania, passaporte, autorização de residência ou visto (com a validade).</p>'}</section>`; })()}
@@ -107,5 +220,5 @@ V.mundo = () => { const S = stats(), z = OS.ui.muZ != null ? String(OS.ui.muZ) :
     ${CONT.map((n, i) => { const L = list.filter(c => c.ct === i); if (!L.length) return ''; const op = !!q || f !== 'todos' || !!(OS.ui.muG || {})[i];
       // (para não pesar, a lista de cada continente só se desenha quando a abres, procuras ou filtras)
       return `<div class="mu-g"><button class="mu-gh" data-act="muGrp" data-i="${i}" aria-expanded="${op}" style="--c:${CCOL[i]}"><b>${esc(n)}</b> <small class="mono">${L.filter(c => been(m[c.c3])).length}/${L.length}</small>${UI.ic(op ? 'up' : 'down')}</button>${op ? L.map(row).join('') : ''}</div>`; }).join('') || '<p class="mut">Nada encontrado.</p>'}</section>
-  <p class="mut mu-src">Mapa: Natural Earth (domínio público). Países: os 193 membros da ONU, o Vaticano e a Palestina (dados de mledoze/countries, ODbL).</p></div>`; };
+  <p class="mut mu-src">Mapa: Natural Earth (domínio público). Países: os 193 membros da ONU, o Vaticano e a Palestina (dados de mledoze/countries, ODbL). Frases e rota de <i>A Volta ao Mundo em 80 Dias</i>, de Júlio Verne (1872, domínio público), em tradução livre do original francês. Frases da <i>Odisseia</i>, de Homero, em tradução livre a partir da tradução de Samuel Butler (1900, domínio público).</p></div>`; };
 })();

@@ -762,6 +762,33 @@ html.jv-open,html.jv-open body{overflow:hidden}
 #jvFab i{width:34px;height:34px;border-radius:50%;border:2px dashed rgba(155,231,255,.7)}
 .spy-morn{z-index:88}
 .jv-bar{height:5px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin:2px 0 6px}.jv-bar i{display:block;height:100%;background:#22c55e;border-radius:9px}
+/* v2.97: o Modo Comando ganha vida (só transform, opacity e clip; nada de desfoque) */
+.jv-sw{position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none}
+.jv-sw::after{content:'';position:absolute;top:0;bottom:0;left:-45%;width:45%;background:linear-gradient(90deg,rgba(155,231,255,0),rgba(155,231,255,.12),rgba(155,231,255,0));transform:translateX(0);opacity:0}
+#jv.fx .jv-sw::after{animation:jvSw 1.1s cubic-bezier(.3,.6,.2,1) calc(var(--i) * 80ms + 380ms) both}
+@keyframes jvSw{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(330%)}}
+#jv.fx .jv-c::before{animation:jvCa .6s cubic-bezier(.2,.8,.2,1) calc(var(--i) * 80ms + 220ms) both}
+#jv.fx .jv-c::after{animation:jvCb .6s cubic-bezier(.2,.8,.2,1) calc(var(--i) * 80ms + 220ms) both}
+@keyframes jvCa{from{opacity:0;transform:translate(10px,10px)}}
+@keyframes jvCb{from{opacity:0;transform:translate(-10px,-10px)}}
+#jv.fx .jv-brand b,#jv.fx .jv-brand small{animation:jvTy .9s steps(12,end) .15s both}#jv.fx .jv-brand small{animation-delay:.55s}
+@keyframes jvTy{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+#jv.fx .jv-bar i{animation:jvBar 1.1s cubic-bezier(.2,.8,.2,1) .7s both;transform-origin:left}
+@keyframes jvBar{from{transform:scaleX(0)}}
+#jv.fx .jv-hi{animation:jvUp .7s cubic-bezier(.2,.8,.2,1) .5s both}#jv.fx .jv-meta{animation:jvUp .7s cubic-bezier(.2,.8,.2,1) .62s both}#jv.fx .jv-btns{animation:jvUp .7s cubic-bezier(.2,.8,.2,1) .74s both}
+@keyframes jvUp{from{opacity:0;transform:translateY(8px)}}
+.jv-co{font-style:normal;animation:jvBlink 1s steps(1,end) infinite}
+@keyframes jvBlink{50%{opacity:.25}}
+.jv-meta i{animation:jvDot 2.6s ease-in-out infinite}.jv-meta span:nth-child(2) i{animation-delay:.4s}.jv-meta span:nth-child(3) i{animation-delay:.8s}
+@keyframes jvDot{50%{transform:scale(1.45);opacity:.7}}
+.jv-big.neg{animation:jvAl 2.4s ease-in-out infinite}
+@keyframes jvAl{50%{opacity:.62}}
+.jv-c[data-jvgo]{transition:opacity .55s ease,transform .25s ease,border-color .2s ease}.jv-c[data-jvgo]:active{transform:scale(.985)}
+.jv-c h4{position:relative}
+#jvFab i{animation:jvSpin 14s linear infinite}
+@keyframes jvSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#jv *,#jv *::before,#jv *::after,#jvFab i{animation:none!important}}
+html.lite-x #jv *,html.lite-x #jv *::before,html.lite-x #jv *::after,html.lite-x #jvFab i{animation:none!important}
 /* ---------- mudança de endereço ---------- */
 .mv-p{padding:18px;max-width:520px}.mv-p p{margin:0 0 10px;line-height:1.5}
 .mv-o{display:flex;flex-direction:column;gap:6px;align-items:flex-start;padding:12px;border-radius:12px;border:1px solid var(--line);margin-bottom:8px;background:rgba(255,255,255,.02)}

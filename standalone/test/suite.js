@@ -1347,6 +1347,39 @@ async function proTests(b) { cur = 'Pro'; console.log('\n=== IA mais inteligente
   await E(p, () => OS.setOne('spyke', { brain: 'gemini', anKey: '' }));
   ok('Pro: sem erros na consola', !errs.filter(e => !/favicon|net::|Failed to load resource/.test(e)).length, errs.slice(0, 3).join(' | '));
   await ctx.close(); }
+// v2.97: o Spyke (Modo Comando e conversa) com as cores da paleta e mais animação
+async function nucleoTests(b) { cur = 'Núcleo'; console.log('\n=== Spyke: cores do tema e animação ===');
+  const { ctx, p, errs } = await newPage(b, PROFILES[0]); const SH = process.env.SHOTS || '';
+  await p.setViewportSize({ width: 1000, height: 640 }); await p.goto(BASE); await unlock(p);
+  const px = () => E(p, () => { const c = document.querySelector('#jv .jv-cv'); if (!c) return null; const g = c.getContext('2d'), W = c.width, d = g.getImageData(0, 0, W, W).data; let r = 0, gg = 0, bb = 0, n = 0, h = 0;
+    for (let i = 0; i < d.length; i += 4 * 7) { if (d[i + 3] < 60) continue; r += d[i]; gg += d[i + 1]; bb += d[i + 2]; n++; h = (h * 31 + d[i] + d[i + 1] * 3 + d[i + 2] * 7) % 1e9; } return { r: r / n | 0, g: gg / n | 0, b: bb / n | 0, n, h, W }; });
+  const seen = {};
+  for (const id of ['mar', 'selo', 'grafite']) {
+    await E(p, id => { OS.act.palSet({ dataset: { v: id } }); OS.Jarvis.close(); OS.Jarvis.open(false); }, id); await sleep(1900);
+    seen[id] = await px(); if (SH) await p.screenshot({ path: SH + '/jv-' + id + '.png' }); }
+  const M = seen.mar || {}, Sl = seen.selo || {}, G = seen.grafite || {};
+  ok('Núcleo: no Mar o núcleo é azul', M.b > M.r + 40, JSON.stringify(M));
+  ok('Núcleo: no Selo (logo) deixa de ser azul e fica nas cores do logo', Sl.r > Sl.b + 20, JSON.stringify(Sl));
+  ok('Núcleo: no Grafite fica sem cor (cinzentos)', Math.abs(G.r - G.b) < 26, JSON.stringify(G));
+  ok('Núcleo: o ponto "Dia" da legenda acompanha a paleta', await E(p, () => { const i = document.querySelector('#jv .jv-meta i'); return !!i && /rgb/.test(i.style.background) && !/56, 189, 248/.test(i.style.background); }));
+  const a1 = await px(); await sleep(400); const a2 = await px();
+  ok('Núcleo: está sempre a mexer (órbitas, radar, faíscas)', a1 && a2 && a1.h !== a2.h);
+  ok('Núcleo: nítido no ecrã (desenhado à densidade do aparelho)', await E(p, () => { const c = document.querySelector('#jv .jv-cv'); return c.width >= Math.round(c.clientWidth * Math.min(2, devicePixelRatio || 1)) - 2; }));
+  await E(p, () => { OS.Jarvis.close(); OS.Jarvis.open(false); }); await sleep(120);
+  const fx = await E(p, () => ({ on: document.getElementById('jv').classList.contains('fx'), sw: !!document.querySelector('#jv .jv-c .jv-sw'), an: getComputedStyle(document.querySelector('#jv .jv-c .jv-sw'), '::after').animationName }));
+  ok('Núcleo: ao abrir, os cartões entram com varrimento e os cantos a encaixar', fx.on && fx.sw && /jvSw/.test(fx.an), JSON.stringify(fx));
+  const cu = await E(p, async () => { const b = document.querySelector('#jv .jv-meta span'), fin = b.textContent; await new Promise(r => setTimeout(r, 520)); const mid = b.textContent; await new Promise(r => setTimeout(r, 1200)); const nowM = new Date().getHours() * 60 + new Date().getMinutes(); return { mid, end: b.textContent, fin, want: Math.round(Math.min(1, Math.max(0, (nowM - 360) / (1440 - 360 - 60))) * 100) }; });
+  ok('Núcleo: os números contam do zero ao abrir e acabam certos', / 0%/.test(cu.fin) && cu.mid !== cu.end && cu.end === 'Dia ' + cu.want + '%', JSON.stringify(cu));
+  ok('Núcleo: o relógio pisca os dois pontos', await E(p, () => !!document.querySelector('#jv [data-jvt] .jv-co')));
+  // conversa: a bola respira sempre e muda de cor com a paleta
+  await E(p, () => { OS.Jarvis.close(); OS.act.palSet({ dataset: { v: 'selo' } }); OS.act.spyOpen(); }); await sleep(2200);
+  const ob = () => E(p, () => { const c = document.querySelector('#spy .spy-orb'); if (!c) return null; const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let r = 0, b = 0, n = 0, h = 0; for (let i = 0; i < d.length; i += 4 * 5) { if (d[i + 3] < 60) continue; r += d[i]; b += d[i + 2]; n++; h = (h * 31 + d[i] + d[i + 2] * 7) % 1e9; } return { r: r / n | 0, b: b / n | 0, h }; });
+  const o1 = await ob(); await sleep(300); const o2 = await ob(); if (SH) await p.screenshot({ path: SH + '/spy-selo.png' });
+  ok('Conversa: a bola do Spyke continua a respirar parada (antes parava)', o1 && o2 && o1.h !== o2.h);
+  ok('Conversa: a bola tem as cores da paleta (Selo, não azul)', o2 && o2.r > o2.b, JSON.stringify(o2));
+  await E(p, () => { OS.Spyke.close(); OS.act.palSet({ dataset: { v: 'selo' } }); });
+  ok('Núcleo: sem erros na consola', !errs.filter(e => !/favicon|net::|Failed to load resource|open-meteo/.test(e)).length, errs.slice(0, 3).join(' | '));
+  await ctx.close(); }
 async function aiTests(b) { cur = 'IA'; console.log('\n=== IA sem limites ===');
   const { ctx, p, errs } = await newPage(b, PROFILES[0]); let mode = 'ok'; const hits = [], free = [];
   await ctx.route(/generativelanguage\.googleapis\.com/, rt => { const u = rt.request().url(), J = (st, o) => rt.fulfill({ status: st, contentType: 'application/json', body: JSON.stringify(o) });
@@ -2055,6 +2088,56 @@ async function resetTests(b) { cur = 'Limpar testes'; console.log('\n=== Limpar 
   const er = errs.filter(e => !/Failed to load|net::|sandboxed|about:srcdoc|Content Security Policy|NotSupportedError|play\(\)/.test(e)); ok('sem erros de JavaScript (limpar testes)', !er.length, er.slice(0, 3).join(' | ')); await ctx.close(); }
 
 /* ---------- Faltas: marcadas sozinhas pelo horário, pela rotina e pelos turnos; corrigir com um toque; limite e avisos ---------- */
+// v2.97: Júlio Verne no Mundo (frases do livro, a rota de Phileas Fogg no mapa e as 8 etapas)
+async function verneTests(b) { cur = 'Verne'; console.log('\n=== Mundo: A Volta ao Mundo em 80 Dias ===');
+  const { ctx, p, errs } = await newPage(b, PROFILES[0]); const SH = process.env.SHOTS || '';
+  await p.setViewportSize({ width: 1100, height: 900 }); await p.goto(BASE); await unlock(p);
+  await E(p, () => { OS.all('countries').slice().forEach(r => OS.del('countries', r.id)); OS.setUI('muVq', 0); location.hash = 'mundo'; }); await sleep(900);
+  const q1 = await E(p, () => { const x = document.querySelector('.mu-vq'); return x ? x.textContent : ''; });
+  ok('Verne: a página Mundo abre com uma frase do livro, com quem a diz e o capítulo', /O imprevisto não existe/.test(q1) && /Phileas Fogg/.test(q1) && /A Volta ao Mundo em 80 Dias/.test(q1) && /cap\. III/.test(q1), q1);
+  await p.click('.mu-vq'); await sleep(300); const q2 = await E(p, () => document.querySelector('.mu-vq').textContent);
+  ok('Verne e Homero: tocar na frase mostra outra, alternando os dois livros (Odisseia, canto I)', q2 !== q1 && /Muitas foram as cidades que visitou/.test(q2) && /Odisseia, Homero, canto I\b/.test(q2), q2.slice(-80));
+  const mp = await E(p, () => ({ paths: document.querySelectorAll('.mu-svg .mu-fogg path').length, stops: document.querySelectorAll('.mu-svg .mu-fogg circle').length, leg: /Rota de Phileas Fogg/.test(document.querySelector('.mu-leg').textContent) }));
+  ok('Verne: a rota de Fogg aparece no mapa (8 paragens) e na legenda', mp.paths === 2 && mp.stops === 8 && mp.leg, JSON.stringify(mp));
+  // a rota passa nos sítios certos do mapa: Londres perto do Reino Unido e Bombaim perto da Índia
+  const near = await E(p, () => { const c = [...document.querySelectorAll('.mu-fogg circle')]; const at = n => { const x = c.find(e => e.textContent.startsWith(n)); return x ? [+x.getAttribute('cx'), +x.getAttribute('cy')] : null; };
+    const box = code => { const pa = document.querySelector(`.mu-cs path[data-c="${code}"]`); const bb = pa.getBBox(); return [bb.x - 6, bb.y - 6, bb.x + bb.width + 6, bb.y + bb.height + 6]; };
+    const inn = (pt, b) => !!pt && pt[0] >= b[0] && pt[0] <= b[2] && pt[1] >= b[1] && pt[1] <= b[3]; return { lon: inn(at('Londres'), box('GBR')), bom: inn(at('Bombaim'), box('IND')), ny: inn(at('Nova Iorque'), box('USA')), yk: inn(at('Yokohama'), box('JPN')) }; });
+  ok('Verne: as paragens caem nos países certos do mapa (Londres, Bombaim, Nova Iorque, Yokohama)', near.lon && near.bom && near.ny && near.yk, JSON.stringify(near));
+  ok('Odisseu: a viagem aparece no mapa e na legenda, com o barco e o navio de Fogg desenhados', await E(p, () => !!document.querySelector('.mu-svg .mu-odi path') && /Viagem de Odisseu/.test(document.querySelector('.mu-leg').textContent) && document.querySelectorAll('.mu-svg .mu-ico .sym').length === 5 && !/[\u{1F680}-\u{1F6FF}\u{26F5}\u{1F418}]/u.test(document.querySelector('.mu').textContent)));
+  const od = await E(p, () => ({ pins: document.querySelectorAll('.od-map .od-pin').length, li: document.querySelectorAll('.od-l li').length, first: (document.querySelector('.od-l li') || {}).textContent, last: [...document.querySelectorAll('.od-l li')].pop().textContent, got: (document.querySelector('.mu-od .pn-h .mut') || {}).textContent }));
+  ok('Odisseu: o mapa do Mediterrâneo tem os 12 episódios numerados, de Troia a Ítaca', od.pins === 12 && od.li === 12 && /Troia/.test(od.first) && /Ítaca/.test(od.last) && /Argos/.test(od.last) && /0 de 5/.test(od.got), JSON.stringify(od).slice(0, 220));
+  ok('Fogg: o relógio dos 80 dias tem as 8 etapas e os ponteiros às 20h45', await E(p, () => document.querySelectorAll('.mdl .mdl-arc').length === 8 && !!document.querySelector('.mdl .mdl-h') && /20h45/.test(document.querySelector('.mdl').textContent)));
+  if (SH) await (await p.$('.mu-mapc')).screenshot({ path: SH + '/mundo-mapa.png' });
+  const lg = await E(p, () => { const L = [...document.querySelectorAll('.mu-leg8 li')]; return { n: L.length, last: L.length ? L[L.length - 1].textContent : '', first: L.length ? L[0].textContent : '', got: (document.querySelector('.mu-fg .pn-h .mut') || {}).textContent }; });
+  ok('Verne: o plano das 8 etapas soma 80 dias (Londres → Suez … Nova Iorque → Londres)', lg.n === 8 && /dia 0–7/.test(lg.first) && /Londres → Suez/.test(lg.first) && /dia 71–80/.test(lg.last) && /Nova Iorque → Londres/.test(lg.last) && /0 de 11/.test(lg.got), JSON.stringify(lg));
+  await E(p, () => OS.act.muSet({ dataset: { c: 'IND', v: 'Visitei' } })); await sleep(300);
+  const t = await E(p, () => [...document.querySelectorAll('.toast, #toast, .tst')].map(x => x.textContent).join(' | '));
+  { const xs = await E(p, async () => { const x0 = OS.Dom.state().ax.mente; OS.act.muSet({ dataset: { c: 'EGY', v: 'Visitei' } }); const x1 = OS.Dom.state().ax.mente; await new Promise(r => setTimeout(r, 200)); return { d: Math.round(x1 - x0), t: [...document.querySelectorAll('.toast, #toast, .tst')].map(x => x.textContent).join(' | ') }; });
+    ok('Mundo: o aviso diz o XP que o Dominus deu mesmo (e não os antigos +900)', xs.d > 0 && xs.t.includes('+' + xs.d + ' XP de Mente') && !/\+900 XP/.test(xs.t), JSON.stringify(xs).slice(0, 200)); }
+  ok('Verne: marcar a Índia avisa que Fogg também passou por lá', /Phileas Fogg também passou por aqui/.test(t), t.slice(0, 140));
+  const st = await E(p, () => ({ on: document.querySelectorAll('.mu-fc.on').length, got: document.querySelector('.mu-fg .pn-h .mut').textContent }));
+  ok('Verne: a Índia (e o Egito) ficam carimbados nas etapas da rota (2 de 11)', st.on >= 3 && /2 de 11/.test(st.got), JSON.stringify(st));
+  await E(p, () => OS.act.muPick({ dataset: { c: 'IND' } })); await sleep(300);
+  const md = await E(p, () => (document.querySelector('.mu-fn') || {}).textContent || '');
+  ok('Verne: o país da rota conta o episódio do livro (Índia: o elefante Kiouni e a Aouda)', /Kiouni/.test(md) && /Aouda/.test(md), md);
+  await E(p, () => OS.UI.closeModal()); await E(p, () => OS.act.muPick({ dataset: { c: 'BRA' } })); await sleep(200);
+  ok('Verne: um país fora da rota não tem a nota', await E(p, () => !document.querySelector('.mu-fn'))); await E(p, () => OS.UI.closeModal());
+  ok('Verne: há o marco "A rota de Phileas Fogg" (11/11) e o de 80 países', await E(p, () => /A rota de Phileas Fogg/.test(document.querySelector('.mu-mil').textContent) && /Os 80 de Fogg/.test(document.querySelector('.mu-mil').textContent)));
+  await E(p, () => OS.act.muSet({ dataset: { c: 'ITA', v: 'Visitei' } })); await sleep(250);
+  { const t2 = await E(p, () => [...document.querySelectorAll('.toast, #toast, .tst')].map(x => x.textContent).join(' | ')); ok('Odisseu: marcar Itália lembra que Fogg e Odisseu passaram por lá', /Phileas Fogg e Odisseu também passaram por aqui/.test(t2), t2.slice(-120)); }
+  ok('Odisseu: Itália fica acesa no mapa da Odisseia e conta 1 de 5', await E(p, () => !!document.querySelector('.od-land path.on') && /1 de 5/.test(document.querySelector('.mu-od .pn-h .mut').textContent)));
+  await E(p, () => OS.act.muPick({ dataset: { c: 'MLT' } })); await sleep(200);
+  ok('Odisseu: Malta conta que Gozo é a ilha de Calipso', await E(p, () => /Calipso/.test((document.querySelector('.mu-fn.od') || {}).textContent || ''))); await E(p, () => OS.UI.closeModal());
+  await p.click('.mu-zc .chip:nth-last-child(2)'); await sleep(300);
+  ok('Verne: o botão "Rota de Phileas Fogg" esconde a rota do mapa', await E(p, () => !document.querySelector('.mu-svg .mu-fogg') && !/Rota de Phileas Fogg \(1872\)/.test(document.querySelector('.mu-leg').textContent)));
+  await p.click('.mu-zc .chip:nth-last-child(2)'); await sleep(200);
+  await p.click('.mu-zc .chip:last-child'); await sleep(250); ok('Odisseu: o botão "Viagem de Odisseu" esconde a viagem do mapa', await E(p, () => !document.querySelector('.mu-svg .mu-odi'))); await p.click('.mu-zc .chip:last-child'); await sleep(200);
+  ok('Verne e Homero: as fontes dos livros estão no fim da página', await E(p, () => /Júlio Verne \(1872, domínio público\)/.test(document.querySelector('.mu-src').textContent) && /Samuel Butler \(1900, domínio público\)/.test(document.querySelector('.mu-src').textContent)));
+  if (SH) { await (await p.$('.mu-hero')).screenshot({ path: SH + '/mundo-hero.png' }); await (await p.$('.mu-fg')).screenshot({ path: SH + '/mundo-rota.png' }); await (await p.$('.mu-od')).screenshot({ path: SH + '/mundo-odisseia.png' }); await p.setViewportSize({ width: 390, height: 844 }); await sleep(400); await (await p.$('.mu-fg')).screenshot({ path: SH + '/mundo-rota-tel.png' }); }
+  await E(p, () => OS.all('countries').slice().forEach(r => OS.del('countries', r.id)));
+  ok('Verne: sem erros na consola', !errs.filter(e => !/favicon|net::|Failed to load resource|open-meteo/.test(e)).length, errs.slice(0, 3).join(' | '));
+  await ctx.close(); }
 async function muTests(b) { cur = 'Mundo'; console.log('\n=== Mundo: mapa, países, percentagem, passaporte e Dominus ===');
   const { ctx, p, errs } = await newPage(b, PROFILES[0]); await ctx.route(/script\.google\.com|generativelanguage/, rt => rt.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true,"items":[],"docs":{}}' }));
   await p.goto(BASE); await unlock(p); await E(p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); OS.setOne('spyke', { eng: 'device' }); });
@@ -2071,7 +2154,7 @@ async function muTests(b) { cur = 'Mundo'; console.log('\n=== Mundo: mapa, país
   await E(p, () => { const b = document.querySelector('[data-act=muTog][data-c=JPN][data-v="Quero ir"]'); b && b.click(); }); await sleep(400);
   const m1 = await E(p, () => { const s = OS.Mundo.stats(); return { n: s.n, w: s.w.length, pct: document.querySelector('.mu-hn b').textContent, painted: document.querySelectorAll('.mu-cs path.m, .mu-cs path.v').length, stamps: document.querySelectorAll('.mu-st').length }; });
   ok('O mapa pinta-se e a percentagem do mundo sobe (2 de 195 = 1%)', m1.n === 2 && m1.pct === '1,0%' && m1.painted === 2 && m1.stamps === 2 && m1.w === 1, JSON.stringify(m1));
-  ok('Cada país conhecido dá XP de Mente no Dominus (900 por país)', (await E(p, () => OS.Dom.state().ax.mente)) - x0 === 1800);
+  { const x1 = await E(p, () => OS.Dom.state().ax.mente); ok('Cada país conhecido dá XP de Mente no Dominus (o que o Dominus dá à rotina)', x1 - x0 > 0, 'subiu ' + (x1 - x0)); }
   await E(p, () => OS.setUI('muZ', '4')); await sleep(300); ok('Ver só um continente (Europa) aproxima o mapa', await E(p, () => +document.querySelector('.mu-svg').getAttribute('viewBox').split(' ')[2] < 400));
   await E(p, () => { const i = document.querySelector('[data-uif="mu.q"]'); i.value = 'japa'; i.dispatchEvent(new Event('input', { bubbles: true })); }); await sleep(700);
   ok('Procurar um país na lista', await E(p, () => [...document.querySelectorAll('.mu-row b')].filter(b => !b.closest('#ilhas')).map(b => b.textContent).join() === 'Japão'));
@@ -2084,7 +2167,7 @@ async function muTests(b) { cur = 'Mundo'; console.log('\n=== Mundo: mapa, país
   await E(p, () => document.querySelector('[data-act=muTogI][data-i=bali][data-v="Quero ir"]').click()); await sleep(400);
   const i1 = await E(p, () => ({ n: OS.Mundo.istats().n, hero: document.querySelector('.mu-ht p').innerText, v: !!document.querySelector('.mu-isl path.v[data-i=madeira]'), w: !!document.querySelector('.mu-isl path.w[data-i=bali]'), head: document.querySelector('#ilhas .pn-h').innerText, countries: OS.Mundo.stats().n }));
   ok('Marcar a Madeira como visitada: conta 1 ilha, pinta o losango no mapa e não mexe nos países', i1.n === 1 && /1 ilha/.test(i1.hero) && i1.v && i1.w && /1 de \d+ conhecidas/.test(i1.head) && i1.countries === 2, JSON.stringify(i1));
-  ok('Cada ilha conhecida dá XP de Mente no Dominus (300 por ilha)', (await E(p, () => OS.Dom.state().ax.mente)) - xi === 300);
+  { const x2 = await E(p, () => OS.Dom.state().ax.mente); ok('Cada ilha conhecida dá XP de Mente no Dominus', x2 - xi > 0, 'subiu ' + (x2 - xi)); }
   await E(p, () => document.querySelector('.mu-isl path[data-i=saomiguel]').dispatchEvent(new MouseEvent('click', { bubbles: true }))); await sleep(300);
   ok('Tocar num losango do mapa abre a janela dessa ilha', await E(p, () => /São Miguel/.test((document.querySelector('.mu-mh h3') || {}).textContent || '') && !!document.querySelector('[data-act=muSetI][data-i=saomiguel]')));
   await E(p, () => OS.UI.closeModal()); await sleep(200);
@@ -3213,7 +3296,7 @@ async function vidaTests(b) { cur = 'Projeto de Vida'; console.log('\n=== v2.53:
   // a intro ao abrir fica desligada nos testes (cada um abre o app muitas vezes); os testes da intro usam RAWCTX
   RAWCTX = b.newContext.bind(b); b.newContext = async (...a) => { const c = await RAWCTX(...a); await c.addInitScript(() => { window.__noIntro = 1; }); return c; };
   const ONLY = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean), run = k => !ONLY.length || ONLY.includes(k);
-  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('pro')) await proTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('vida')) await vidaTests(b); if (run('cores')) await coresTests(b); if (run('intro')) await introTests(b); if (run('mundo')) await muTests(b); if (run('contas')) await accTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
+  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('pro')) await proTests(b); if (run('nucleo')) await nucleoTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('vida')) await vidaTests(b); if (run('cores')) await coresTests(b); if (run('intro')) await introTests(b); if (run('mundo')) await muTests(b); if (run('verne')) await verneTests(b); if (run('contas')) await accTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
   catch (e) { R.push({ p: cur, name: 'execução da bateria', pass: false, info: e.message.split('\n')[0] }); console.log('ERRO NA BATERIA:', e.message); try { for (const c of b.contexts()) for (const pg of c.pages()) { const d = await pg.evaluate(() => ({ u: location.hash, now: Date.now(), pend: window.__pend ? [...window.__pend.values()] : null, acc: ((document.getElementById('acc') || {}).innerText || '').slice(0, 80).replace(/\n/g, ' '), msg: (document.querySelector('#acc .ac-msg') || {}).textContent || '' })).catch(() => null); if (d && d.pend) console.log('    [pagina]', JSON.stringify(d)); } } catch (e2) { } }
   await b.close(); srv.close();
   const f = R.filter(x => !x.pass);
