@@ -145,3 +145,10 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `js/trofeus.js` + `css/trofeus.css` (todas as contas): coleção `trophies` (título, tipo, metal/nível, lugar, área, data, evento, história, foto em data URL até 720 px, `fav` = peça de honra). Peças desenhadas em SVG (`ART`: Troféu, Medalha, Placa, Certificado, Distinção; metais em `MET`, fitas por área em `RIB`; não mudam com a paleta). Separador "Troféus" em Quem sou eu (`T.trofeus` em `js/me.js`) e cartão no Retrato. Prateleira "Medalhas do Prumo" com `OS.Dom.achievements()`.
 - `js/study.js`: Leituras › "Top 10 da vida" (`LT_.top`), guardado em `one('booktop').list` (a ordem é o lugar; `tier` S/A/B/C ou pelo lugar). Pódio, tier list, setas para mudar a ordem, sugestões da estante (4–5 estrelas), copiar a lista. Máximo 10.
 - Testes: grupos `trofeus` e `toplivros`.
+
+### 3.0: Lista de compras ligada à Dieta (perfil pessoal)
+- `js/compras.js`: página `#mercado` (no menu Eu; `#compras` continua a ser a "Pensar antes de comprar" das Finanças). Só no perfil pessoal: `PERSONAL` em `js/onboard.js` esconde-a nas contas públicas e a vista recusa.
+- `one('shop')`: `items` [{ name, auto (da dieta), qty, unit g/ml/un/porções/pacotes, sec, pic, photo, have, got, lock (quantidade mudada à mão), note }], `prices` por nome normalizado { pack, price }, `view` mês/semana, `base` { days }.
+- `fromDiet()`: refeições dos últimos 30 dias → média por dia registado × dias do mês; gramas arredondadas a 50, ovos em unidades (55 g), líquidos em ml; secções por categoria da base de alimentos (`secOf`). "Atualizar com a dieta" mantém os itens à mão, os preços, as quantidades trancadas e os comprados do mês.
+- `version.py`: a partir de n=200 a versão é 3.x (3.0 = n 200).
+- Testes: grupo `mercado`.

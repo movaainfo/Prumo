@@ -11,7 +11,9 @@ const pub = () => !!(OS.Acc && OS.Acc.on && OS.Acc.pub);
 
 /* ---------- abas (áreas) do menu ---------- */
 const MUST = ['visao', 'definicoes'];
-const hiddenSet = () => new Set(((OS.one('areas') || {}).hide || []).filter(k => !MUST.includes(k)));
+// páginas só do perfil pessoal (o Prumo do Ryan): não aparecem nas outras contas
+const PERSONAL = ['mercado'];
+const hiddenSet = () => new Set(((OS.one('areas') || {}).hide || []).filter(k => !MUST.includes(k)).concat(pub() ? PERSONAL : []));
 const groups = () => (OS.NAV || []).filter(([g]) => g !== 'Admin');
 // prune: o que pertence a uma área desligada sai do ecrã (data-area="k1 k2": sai quando TODAS essas áreas estão desligadas)
 const prune = root => { const h = hiddenSet(); if (!h.size || !root) return; root.querySelectorAll('[data-area]').forEach(el => { const ks = el.dataset.area.split(/\s+/).filter(Boolean); if (ks.length && ks.every(k => h.has(k))) el.remove(); }); };
