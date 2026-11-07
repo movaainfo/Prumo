@@ -11,7 +11,7 @@ const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/;
 const TV = /^\d{4}-\d{2}-\d{2}$/;
 const termsOf = b => { if (!TV.test(String(b.termos || '')) || b.saude !== true || b.idade !== true) throw N.err('termos', 'Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.', 400);
   return { v: b.termos, at: new Date().toISOString(), saude: true, idade: true }; };
-const pub = (r, eid) => ({ email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
+const pub = (r, eid) => ({ trocar: !!r.trocar, avisos: (r.avisos || []).slice(-5), email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
 const cleanName = (s, max) => String(s || '').replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
 const cleanProfile = (p, old) => { const o = Object.assign({}, old || {});
   if (p.nome != null) o.nome = cleanName(p.nome, 24);
@@ -39,6 +39,9 @@ const session = async req => { const t = await N.readToken(req); if (!t) throw N
   const a = await readAcc(t.a); if (!a || a.rec.uid !== t.u || (a.rec.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   return { t, eid: t.a, rec: a.rec }; };
 const needPw = async (rec, pw) => { if (!(await N.checkPw(pw, rec.pw))) throw N.err('senha', 'A senha não está certa.', 403); };
+// senha temporária fácil de ditar: 3 grupos de 4 (sem letras que se confundem)
+const tempPw = () => { const C = 'abcdefghjkmnpqrstuvwxyz23456789', b = N.crypto.randomBytes(12); let o = ''; for (let i = 0; i < 12; i++) { o += C[b[i] % C.length]; if (i === 3 || i === 7) o += '-'; } return o; };
+const aviso = (r, a) => { r.avisos = (r.avisos || []).concat([Object.assign({ at: new Date().toISOString() }, a)]).slice(-10); };
 const dropData = async (uid, pid) => { const s = N.store(), sub = pid ? pid + '/' : ''; const L = (await s.list('d/' + uid + '/' + sub)).concat(await s.list('i/' + uid + '/' + sub), pid ? await s.list('m/' + uid + '/' + pid) : await s.list('m/' + uid + '/'), await s.list('g/' + uid + '/' + (pid || '')), await s.list('r/' + uid + '/' + (pid || ''))); if (L.length) await s.del(L); RK.rows = null; };
 
 /* ---------- ranking: a disciplina de cada perfil (0–100 por dia) e os dias de foco seguidos ---------- */
@@ -132,6 +135,12 @@ const OPS = {
     const pw = await N.hashPw(nova), rec = await change(s.eid, r => { r.pw = pw; r.tv = (r.tv || 1) + 1; });
     return { token: await N.signToken(rec, s.eid), conta: pub(rec) }; },
 
+  // depois de o administrador repor a senha: a pessoa entra com a temporária e escolhe aqui a sua (só enquanto "trocar" estiver ligado)
+  async senhaTroca(req, b) { const s = await session(req); if (!s.rec.trocar) throw N.err('senha', 'Para mudar a senha usa Definições › Conta.', 400); const nova = String(b.nova || '');
+    if (nova.length < 8) throw N.err('senha', 'A nova senha precisa de pelo menos 8 caracteres.', 400); if (nova.length > 200) throw N.err('senha', 'A senha é longa demais.', 400);
+    const pw = await N.hashPw(nova), rec = await change(s.eid, r => { r.pw = pw; r.tv = (r.tv || 1) + 1; delete r.trocar; });
+    return { token: await N.signToken(rec, s.eid), conta: pub(rec) }; },
+
   async recuperar(req, b) {
     if (N.limit(req, 'recuperar', 10, 3600e3)) throw N.err('limite', 'Muitas tentativas. Tenta mais tarde.', 429);
     const email = N.normEmail(b.email), eid = await N.emailId(email), a = await readAcc(eid), nova = String(b.nova || '');
@@ -203,6 +212,37 @@ const OPS = {
     await dropData(a.rec.uid); await N.store().del([{ pathname: 'a/' + eid }, { pathname: 'u/' + a.rec.uid }]); RK.rows = null;
     const sl = await spList(); if (sl.includes(email)) { await N.store().put(SPK, N.seal(await N.accKey(), { emails: sl.filter(x => x !== email), at: Date.now() })); SPC.at = 0; }
     return { apagada: true, email }; },
+
+  // v2.97 · o administrador repõe a senha de login de outra pessoa (com a sua própria senha). A pessoa entra com a senha temporária e tem logo de escolher outra;
+  // as sessões dela terminam e ela vê um aviso ao entrar. Os dados não mudam (a chave da conta não depende da senha) e o cofre de Senhas também não
+  // (está cifrado no aparelho dela com a senha mestra, que ninguém conhece).
+  async adminSenha(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+    const email = N.normEmail(b.email); if (!email) throw N.err('email', 'Falta o e-mail da conta.', 400);
+    if (email === N.normEmail(s0.rec.email)) throw N.err('propria', 'A tua própria senha muda-se em Definições › Conta.', 400);
+    if (isAdmin(email)) throw N.err('admin', 'Não dá para repor a senha de outra conta de administrador.', 403);
+    let nova = String(b.nova || '').trim(); const gerada = !nova; if (gerada) nova = tempPw();
+    if (nova.length < 8 || nova.length > 200) throw N.err('senha', 'A senha temporária precisa de 8 a 200 caracteres.', 400);
+    const eid = await N.emailId(email), pw = await N.hashPw(nova);
+    await change(eid, r => { r.pw = pw; r.tv = (r.tv || 1) + 1; r.trocar = 1; r.falhas = 0; r.bloq = 0; aviso(r, { t: 'senha' }); });
+    return { email, temporaria: nova, gerada }; },
+
+  // v2.97 · o administrador muda o e-mail de uma conta: a conta passa inteira para o novo e-mail (perfis, dados, ranking, Google, atalhos), nada se perde.
+  // A conta fica guardada pelo novo e-mail; as sessões terminam e a pessoa entra com o novo e-mail e a mesma senha.
+  async adminEmail(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+    const de = N.normEmail(b.email), para = N.normEmail(b.novo);
+    if (!de) throw N.err('email', 'Falta o e-mail da conta.', 400); if (!EMAIL.test(para)) throw N.err('email', 'O novo e-mail não parece válido.', 400);
+    if (de === para) throw N.err('email', 'O novo e-mail é igual ao atual.', 400);
+    if (de === N.normEmail(s0.rec.email) || isAdmin(de)) throw N.err('admin', 'O e-mail de uma conta de administrador não se muda por aqui.', 403);
+    if (isAdmin(para)) throw N.err('admin', 'Esse e-mail é de administrador.', 403);
+    const e0 = await N.emailId(de), e1 = await N.emailId(para), a = await readFresh(e0); if (!a) throw N.err('conta', 'Essa conta já não existe.', 404);
+    const rec = Object.assign({}, a.rec, { email: para, tv: (a.rec.tv || 1) + 1 }); aviso(rec, { t: 'email', de });
+    try { await writeAcc(e1, rec); } catch (e) { if (e.code === 'exists') throw N.err('existe', 'Já existe uma conta com esse e-mail.', 409); throw e; }
+    const s = N.store(), key = await N.accKey();
+    // os atalhos do iPhone têm o id antigo dentro da chave: ficam a apontar para a conta nova
+    await s.put('x/' + e0, N.seal(key, { to: e1, at: Date.now() })).catch(() => { });
+    await s.del([{ pathname: 'a/' + e0 }]);
+    const sl = await spList(); if (sl.includes(de)) { await s.put(SPK, N.seal(key, { emails: sl.map(x => x === de ? para : x), at: Date.now() })); SPC.at = 0; }
+    RK.rows = null; return { email: para, de }; },
 
   // a app manda a pontuação dos últimos dias deste perfil (só dos últimos 8 dias: o passado não se muda)
   async rank(req, b) { const s = await session(req), p = (s.rec.perfis || []).find(x => x.id === b.id); if (!p) throw N.err('perfil', 'Esse perfil já não existe.', 404);
