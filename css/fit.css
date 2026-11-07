@@ -1301,3 +1301,6 @@ html.vv-full #view.pg-in .cv-ring{animation:vvRingP 1.3s .2s var(--vv-e,ease-out
 .to-labs{display:grid;gap:4px;margin-top:10px}.to-labs>div{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14px}
 .to-h{display:flex;align-items:flex-end;gap:4px;height:44px;margin-top:10px}.to-h span{flex:1;max-width:22px;border-radius:3px 3px 0 0;background:#58AACF;opacity:.8}
 @media (max-width:560px){.to-top{grid-template-columns:minmax(0,1fr)}.to-labs>div{grid-template-columns:auto minmax(0,1fr) auto}.to-labs small{grid-column:1/-1}}
+
+/* v2.97: ADM — repor senha e mudar e-mail */
+.adm-f{display:flex;gap:8px;flex-wrap:wrap}.adm-f input{flex:1;min-width:170px}.adm-out{margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.03)}.adm-tmp{font:600 16px var(--mono);letter-spacing:.04em;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.06);user-select:all}

@@ -132,3 +132,11 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `js/mundo.js`: frase do dia (alterna Verne e Homero; tocar muda), rota de Phileas Fogg no mapa (projeção Natural Earth, `proj`), símbolos desenhados (`SYM`: navio, comboio, elefante, galera; nada de emojis), relógio dos 80 dias (`foggDial`, ponteiros às 20h45), as 8 etapas do Morning Chronicle (cap. III), nota de bordo do dia ganho; a viagem de Odisseu (`ODI`, 12 episódios com o canto e onde a tradição os põe) num mapa do Mediterrâneo (`odiMap`); marcos "Os 80 de Fogg", "11/11 rota de Fogg" e "5/5 Odisseu"; notas no país (`FOGGN`, `ODIN`). Frases verificadas no original (Gutenberg #800 e #1727, Butler), traduzidas por nós.
 - O aviso ao marcar um país ou ilha diz o XP que o Dominus deu mesmo (antes prometia +900/+300; desde o Dominus exigente a rotina vale ~72).
 - Testes: grupos `nucleo` e `verne`. Falha que já existia: `fundo` › "Escolher Cidade" (os fundos vão ser refeitos).
+
+### 2.98: Administração — repor senha e mudar e-mail
+- `standalone/api/conta.js`: `adminSenha` (senha temporária `tempPw` ou escolhida; `trocar=1`, `tv++`, aviso), `senhaTroca` (só com `trocar`), `adminEmail` (grava `a/<novo>`, apaga `a/<antigo>`, `x/<antigo>` aponta para o novo para os atalhos do iPhone, lista do Spotify atualizada). `pub()` leva `trocar` e `avisos` (últimos 5).
+- `standalone/api/atalho.js`: se `a/<id>` não existir, segue `x/<id>`.
+- `js/conta.js`: ecrã "Escolhe uma senha nova" (`gMode='trocar'`), avisos da administração uma vez por aparelho (`nau:avisos:<email>`), formulários na ficha da conta (ADM) e cartão do cofre (`admVault` abre Senhas › Senha mestra e segurança).
+- O cofre de Senhas de outra pessoa não se muda nem se abre (cifrado no aparelho dela): só o próprio cofre.
+- Política de Privacidade (secção 3) diz que a administração pode repor a senha ou mudar o e-mail.
+- Testes: grupo `admsenha` (cria o seu próprio administrador).

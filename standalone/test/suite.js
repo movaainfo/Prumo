@@ -2180,6 +2180,66 @@ async function muTests(b) { cur = 'Mundo'; console.log('\n=== Mundo: mapa, país
   ok('Nome Prumo: Definições mostra como passar o Google para o nome novo (partes 1 a 3) até o script ser da versão 12', rn.panel && rn.btns === 3 && !(await E(p, () => !!document.getElementById('nautilo'))), JSON.stringify(rn));
   ok('Nome Prumo: os calendários antigos "Oceanum…" continuam a ser reconhecidos como do app (sem duplicar)', await E(p, () => OS.CalPush && OS.CalPush.CATS.every(c => /^Náutilo/.test(c[1]))));
   ok('sem erros de JavaScript', !errs.length, errs.slice(0, 3).join(' | ')); await ctx.close(); }
+// v2.97: ADM — repor a senha de login de uma pessoa (troca obrigatória ao entrar) e mudar o e-mail da conta sem perder nada
+async function admSenhaTests(b) { cur = 'ADM'; console.log('\n=== ADM: repor senha e mudar e-mail ===');
+  const ipx = '10.7.' + crypto.randomBytes(1)[0] + '.' + crypto.randomBytes(1)[0];
+  const call = (body, tok, ep = 'conta') => fetch(BASE + 'api/' + ep, { method: 'POST', headers: Object.assign({ 'content-type': 'application/json', origin: 'http://localhost:' + PORT, 'x-forwarded-for': ipx }, tok ? { authorization: 'Bearer ' + tok } : {}), body: JSON.stringify(body) }).then(async r => Object.assign({ _st: r.status }, await r.json().catch(() => ({}))));
+  const AE = 'adm' + crypto.randomBytes(4).toString('hex') + '@teste.pt'; process.env.NAUTILO_ADMIN = String(process.env.NAUTILO_ADMIN || '') + ',' + AE;
+  const adm = await call({ op: 'registar', email: AE, senha: 'segredo123', nome: 'Ana', termos: TERMOS_V, saude: true, idade: true });
+  const A = adm.token, em = 'bia' + crypto.randomBytes(4).toString('hex') + '@teste.pt', em2 = 'bia.nova' + crypto.randomBytes(4).toString('hex') + '@teste.pt';
+  const u = await call({ op: 'registar', email: em, senha: 'senhaDaBia1', nome: 'Bia', termos: TERMOS_V, saude: true, idade: true }), pf = await call({ op: 'perfil', acao: 'criar', perfil: { nome: 'Bia', lk: HASH } }, u.token), pid = pf.perfil.id;
+  await call({ op: 'gravar', p: pid, docs: { 'one~goals': { data: { meta: 'Correr 10 km' } } } }, u.token, 'dados');
+  const ak = await call({ op: 'atalho', id: pid }, u.token);
+  // não-administrador não pode
+  const no = await call({ op: 'adminSenha', email: AE, senha: 'senhaDaBia1' }, u.token);
+  ok('ADM: só a administração pode repor senhas', no._st === 403, JSON.stringify(no).slice(0, 100));
+  const bad = await call({ op: 'adminSenha', email: em, senha: 'errada000' }, A);
+  ok('ADM: repor a senha pede a senha do administrador', bad._st === 403, JSON.stringify(bad).slice(0, 100));
+  const self = await call({ op: 'adminSenha', email: AE, senha: 'segredo123' }, A);
+  ok('ADM: a própria senha não se repõe por aqui', self._st === 400, JSON.stringify(self).slice(0, 100));
+  const rs = await call({ op: 'adminSenha', email: em, senha: 'segredo123' }, A);
+  ok('ADM: repor a senha dá uma senha temporária fácil de ditar', rs._st === 200 && /^[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/.test(rs.temporaria || '') && rs.gerada, JSON.stringify(rs).slice(0, 120));
+  ok('ADM: as sessões da pessoa terminam', (await call({ op: 'eu' }, u.token))._st === 401);
+  ok('ADM: a senha antiga deixa de entrar', (await call({ op: 'entrar', email: em, senha: 'senhaDaBia1' }))._st === 401);
+  const t1 = await call({ op: 'entrar', email: em, senha: rs.temporaria });
+  ok('ADM: com a temporária entra, mas tem de escolher uma senha nova (e vê o aviso)', !!t1.token && t1.conta.trocar === true && (t1.conta.avisos || []).some(a => a.t === 'senha'), JSON.stringify(t1.conta || t1).slice(0, 160));
+  ok('ADM: os dados ficaram todos (perfil e documentos)', (await call({ op: 'lista', p: pid }, t1.token, 'dados')).docs['one~goals'] != null);
+  const tr = await call({ op: 'senhaTroca', nova: 'bia-nova-123' }, t1.token);
+  ok('Troca obrigatória: a pessoa escolhe a sua senha e entra normalmente', !!tr.token && !tr.conta.trocar && !!(await call({ op: 'entrar', email: em, senha: 'bia-nova-123' })).token);
+  ok('Troca obrigatória: depois disso, "senhaTroca" já não serve (a senha muda-se em Definições)', (await call({ op: 'senhaTroca', nova: 'outra-coisa-1' }, tr.token))._st === 400);
+  // mudar o e-mail
+  const ex = await call({ op: 'adminEmail', email: em, novo: AE, senha: 'segredo123' }, A);
+  ok('ADM: não dá para passar uma conta para o e-mail do administrador', ex._st === 403, JSON.stringify(ex).slice(0, 100));
+  const me = await call({ op: 'adminEmail', email: em, novo: em2, senha: 'segredo123' }, A);
+  ok('ADM: muda o e-mail da conta', me._st === 200 && me.email === em2 && me.de === em, JSON.stringify(me).slice(0, 140));
+  ok('ADM: o e-mail antigo deixa de entrar', (await call({ op: 'entrar', email: em, senha: 'bia-nova-123' }))._st === 401);
+  const n1 = await call({ op: 'entrar', email: em2, senha: 'bia-nova-123' });
+  ok('ADM: o novo e-mail entra com a mesma senha e tem os mesmos perfis e dados (nada se perde)', !!n1.token && n1.conta.perfis.some(p => p.id === pid) && (await call({ op: 'lista', p: pid }, n1.token, 'dados')).docs['one~goals'] != null && (n1.conta.avisos || []).some(a => a.t === 'email' && a.de === em), JSON.stringify(n1.conta || n1).slice(0, 160));
+  const at = await fetch(BASE + 'api/atalho?op=ping&k=' + encodeURIComponent(ak.chave || ''), { headers: { origin: 'http://localhost:' + PORT, 'x-forwarded-for': ipx } }).then(r => r.status);
+  ok('ADM: o atalho do iPhone feito antes da mudança continua a funcionar', at === 200, 'estado ' + at);
+  const dup = { email: em2 };
+  { const o2 = await call({ op: 'registar', email: 'ocupado' + crypto.randomBytes(3).toString('hex') + '@teste.pt', senha: 'segredo123', termos: TERMOS_V, saude: true, idade: true }); const used = await call({ op: 'adminEmail', email: dup.email || em2, novo: o2.conta.email, senha: 'segredo123' }, A); ok('ADM: não dá para mudar para um e-mail que já tem conta', used._st === 409, JSON.stringify(used).slice(0, 100)); }
+  // no aparelho: a troca obrigatória aparece logo depois de entrar
+  const rs2 = await call({ op: 'adminSenha', email: dup.email || em2, senha: 'segredo123' }, A);
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, locale: 'pt-PT' }), p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+  await p.goto(BASE); await p.waitForSelector('#acc', { timeout: 10000 }).catch(() => { }); await E(p, () => { const t = document.querySelector('#acc [data-ac=m][data-v=entrar]'); if (t) t.click(); }); await p.waitForSelector('#acc form[data-acf=entrar]', { timeout: 10000 }).catch(() => { }); if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + '/adm-entrar.png' });
+  await p.fill('#acc input[name=email]', dup.email || em2); await p.fill('#acc input[name=senha]', rs2.temporaria); await p.click('#acc button[type=submit]');
+  await p.waitForSelector('#acc form[data-acf=trocar]', { timeout: 8000 }).catch(() => { }); if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + '/adm-troca.png' });
+  ok('No aparelho: depois de entrar com a temporária aparece "Escolhe uma senha nova"', await E(p, () => !!document.querySelector('#acc form[data-acf=trocar]') && /Escolhe uma senha nova/.test(document.getElementById('acc').textContent)), await E(p, () => ((document.getElementById('acc') || {}).textContent || 'sem #acc: ' + location.hash + ' ' + document.body.innerText.slice(0, 200)).slice(0, 300)));
+  await p.fill('#acc input[name=nova]', 'minha-senha-9'); await p.fill('#acc input[name=nova2]', 'minha-senha-9'); await p.click('#acc form[data-acf=trocar] button[type=submit]'); await sleep(800);
+  ok('No aparelho: guardada a senha nova, segue para os perfis', await E(p, () => !document.querySelector('#acc form[data-acf=trocar]')) && !!(await call({ op: 'entrar', email: dup.email || em2, senha: 'minha-senha-9' })).token);
+  ok('ADM: sem erros na consola', !errs.length, errs.slice(0, 2).join(' | ')); await ctx.close();
+  // a aba de administração tem os dois formulários e o cofre
+  const { ctx: c2, p: P } = await newPage(b, PROFILES[0], await (async () => { const pr = await call({ op: 'perfil', acao: 'criar', perfil: { nome: 'Ana', lk: HASH, ps: true } }, A); const pid2 = pr.perfil ? pr.perfil.id : (pr.conta.perfis[0] || {}).id; return { 'nau:s': JSON.stringify({ t: A, e: AE, n: 'Ana', perfis: (pr.conta || {}).perfis || [], adm: true }), 'nau:p': JSON.stringify(pid2), 'nau:pd': JSON.stringify(pid2), 'nau:owner': JSON.stringify(AE) }; })());
+  P.removeAllListeners('dialog'); P.on('dialog', d => d.accept()); await P.goto(BASE); await unlock(P); await E(P, () => { location.hash = 'admin'; }); await P.waitForSelector('.adm-r[data-q]', { timeout: 10000 }).catch(() => { });
+  ok('ADM: a aba mostra o cofre (mudar a senha mestra do próprio cofre)', await E(P, () => !!document.querySelector('[data-act=admVault]')));
+  const ix = await E(P, em => { const r = [...document.querySelectorAll('.adm-r[data-q]')].find(x => x.dataset.q.includes(em)); if (r) r.click(); return !!r; }, (dup.email || em2).toLowerCase()); await sleep(300);
+  ok('ADM: a ficha da conta tem "Repor a senha de login" e "Mudar o e-mail da conta"', ix && await E(P, () => !!document.querySelector('form[data-form=admPw]') && !!document.querySelector('form[data-form=admEmail]')));
+  await P.fill('form[data-form=admPw] input[name=senha]', 'segredo123'); await P.click('form[data-form=admPw] button[type=submit]'); await sleep(900);
+  ok('ADM: repor no ecrã mostra a senha temporária para copiar', await E(P, () => { const o = document.getElementById('admPwOut'); return !!o && !o.hidden && /^[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/.test((o.querySelector('.adm-tmp') || {}).textContent || ''); }));
+  await E(P, () => { OS.UI.closeModal(); OS.act.admVault(); }); await sleep(400);
+  ok('ADM: o botão do cofre leva às Senhas', await E(P, () => /^#senhas/.test(location.hash)));
+  await c2.close(); }
 async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis (versão pública) ===');
   const errs = [], ctxs = [];
   const fresh = async (prof, init) => { const ctx = await b.newContext(prof.o); ctxs.push(ctx); const p = await ctx.newPage();
@@ -3296,7 +3356,7 @@ async function vidaTests(b) { cur = 'Projeto de Vida'; console.log('\n=== v2.53:
   // a intro ao abrir fica desligada nos testes (cada um abre o app muitas vezes); os testes da intro usam RAWCTX
   RAWCTX = b.newContext.bind(b); b.newContext = async (...a) => { const c = await RAWCTX(...a); await c.addInitScript(() => { window.__noIntro = 1; }); return c; };
   const ONLY = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean), run = k => !ONLY.length || ONLY.includes(k);
-  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('pro')) await proTests(b); if (run('nucleo')) await nucleoTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('vida')) await vidaTests(b); if (run('cores')) await coresTests(b); if (run('intro')) await introTests(b); if (run('mundo')) await muTests(b); if (run('verne')) await verneTests(b); if (run('contas')) await accTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
+  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('pro')) await proTests(b); if (run('nucleo')) await nucleoTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('vida')) await vidaTests(b); if (run('cores')) await coresTests(b); if (run('intro')) await introTests(b); if (run('mundo')) await muTests(b); if (run('verne')) await verneTests(b); if (run('contas')) await accTests(b); if (run('admsenha')) await admSenhaTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
   catch (e) { R.push({ p: cur, name: 'execução da bateria', pass: false, info: e.message.split('\n')[0] }); console.log('ERRO NA BATERIA:', e.message); try { for (const c of b.contexts()) for (const pg of c.pages()) { const d = await pg.evaluate(() => ({ u: location.hash, now: Date.now(), pend: window.__pend ? [...window.__pend.values()] : null, acc: ((document.getElementById('acc') || {}).innerText || '').slice(0, 80).replace(/\n/g, ' '), msg: (document.querySelector('#acc .ac-msg') || {}).textContent || '' })).catch(() => null); if (d && d.pend) console.log('    [pagina]', JSON.stringify(d)); } } catch (e2) { } }
   await b.close(); srv.close();
   const f = R.filter(x => !x.pass);

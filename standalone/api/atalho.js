@@ -8,7 +8,10 @@ const readKey = async k => { const m = String(k || '').match(/^([A-Za-z0-9_-]{10
   const want = await tag(m[1]), got = unb64u(m[2]); if (got.length !== want.length || !N.crypto.timingSafeEqual(got, want)) return null;
   let o; try { o = JSON.parse(unb64u(m[1]).toString()); } catch (e) { return null; }
   if (!/^[a-f0-9]{40}$/.test(o.a || '') || !/^[a-f0-9]{12}$/.test(o.p || '')) return null;
-  const g = await N.store().get('a/' + o.a); if (!g) return null; let r; try { r = N.open(await N.accKey(), g.buf); } catch (e) { return null; }
+  let g = await N.store().get('a/' + o.a);
+  // a conta mudou de e-mail (pelo administrador): segue para a conta nova
+  if (!g) { try { const x = await N.store().get('x/' + o.a); const to = x && N.open(await N.accKey(), x.buf).to; if (to && /^[a-f0-9]{40}$/.test(to)) g = await N.store().get('a/' + to); } catch (e) { } }
+  if (!g) return null; let r; try { r = N.open(await N.accKey(), g.buf); } catch (e) { return null; }
   const p = (r.perfis || []).find(x => x.id === o.p); if (!p || !p.ak || p.ak !== o.n) return null;
   return { uid: r.uid, pid: o.p }; };
 const text = (res, status, s) => { res.statusCode = status; res.setHeader('Content-Type', 'text/plain; charset=utf-8'); res.setHeader('Cache-Control', 'no-store'); res.end(s); };

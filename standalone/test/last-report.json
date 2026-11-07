@@ -1,127 +1,481 @@
 [
  {
-  "p": "Verne",
-  "name": "Verne: a página Mundo abre com uma frase do livro, com quem a diz e o capítulo",
+  "p": "Contas",
+  "name": "Aparelho novo: abre o ecrã da conta (criar conta ou entrar) e não o código pessoal",
   "pass": true,
-  "info": "O imprevisto não existe.Phileas Fogg, no Reform Club · A Volta ao Mundo em 80 Dias, Júlio Verne, cap. III"
+  "info": "{\"gate\":true,\"lock\":false,\"mode\":true}"
  },
  {
-  "p": "Verne",
-  "name": "Verne e Homero: tocar na frase mostra outra, alternando os dois livros (Odisseia, canto I)",
+  "p": "Contas",
+  "name": "Criar conta sem aceitar os termos: não cria (as três caixas são obrigatórias)",
   "pass": true,
-  "info": "os povos cujos costumes conheceu.os primeiros versos · Odisseia, Homero, canto I"
+  "info": "{\"gate\":true,\"msg\":\" Please check this box if you want to proceed.\"}"
  },
  {
-  "p": "Verne",
-  "name": "Verne: a rota de Fogg aparece no mapa (8 paragens) e na legenda",
+  "p": "Contas",
+  "name": "Criar conta: mostra o código de recuperação (só uma vez)",
   "pass": true,
-  "info": "{\"paths\":2,\"stops\":8,\"leg\":true}"
+  "info": "8PD9-9EXA-5A9Y-A9PP"
  },
  {
-  "p": "Verne",
-  "name": "Verne: as paragens caem nos países certos do mapa (Londres, Bombaim, Nova Iorque, Yokohama)",
-  "pass": true,
-  "info": "{\"lon\":true,\"bom\":true,\"ny\":true,\"yk\":true}"
- },
- {
-  "p": "Verne",
-  "name": "Odisseu: a viagem aparece no mapa e na legenda, com o barco e o navio de Fogg desenhados",
+  "p": "Contas",
+  "name": "Depois pede o primeiro perfil, já com o nome",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Verne",
-  "name": "Odisseu: o mapa do Mediterrâneo tem os 12 episódios numerados, de Troia a Ítaca",
-  "pass": true,
-  "info": "{\"pins\":12,\"li\":12,\"first\":\"1TroiaHisarlik, na Turquia · canto I e IXO ponto de partida, depois de dez anos de guerra.🇹🇷\",\"last\":\"12ÍtacaÍtaca, Grécia · canto XIII a XXIVVolta disfarçado de mendigo; o velho cão Argos r"
- },
- {
-  "p": "Verne",
-  "name": "Fogg: o relógio dos 80 dias tem as 8 etapas e os ponteiros às 20h45",
+  "p": "Contas",
+  "name": "Códigos diferentes: avisa e não cria",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Verne",
-  "name": "Verne: o plano das 8 etapas soma 80 dias (Londres → Suez … Nova Iorque → Londres)",
+  "p": "Contas",
+  "name": "Perfis como na Netflix: \"Quem está a usar\", a bolinha do perfil e \"Adicionar perfil\"",
   "pass": true,
-  "info": "{\"n\":8,\"last\":\"dia 71–80Nova Iorque → Londres9 dias · paquete e comboio, por Queenstown e Liverpool🇮🇪🇬🇧\",\"first\":\"dia 0–7Londres → Suez7 dias · comboio e paquete, pelo Mont-Cenis e Brindisi🇬🇧🇫🇷🇮🇹🇪🇬\",\"got\":\"0 de 11 países\"}"
+  "info": "{\"n\":1,\"name\":\"Ana\",\"av\":\"🌊\",\"add\":true,\"title\":\"Quem está a usar o Prumo?\"}"
  },
  {
-  "p": "Verne",
-  "name": "Mundo: o aviso diz o XP que o Dominus deu mesmo (e não os antigos +900)",
-  "pass": true,
-  "info": "{\"d\":72,\"t\":\"🇪🇬 Egito no teu mapa! +72 XP de Mente no Dominus. Phileas Fogg também passou por aqui.\"}"
- },
- {
-  "p": "Verne",
-  "name": "Verne: marcar a Índia avisa que Fogg também passou por lá",
-  "pass": true,
-  "info": "🇮🇳 Índia no teu mapa! +72 XP de Mente no Dominus. Phileas Fogg também passou por aqui."
- },
- {
-  "p": "Verne",
-  "name": "Verne: a Índia (e o Egito) ficam carimbados nas etapas da rota (2 de 11)",
-  "pass": true,
-  "info": "{\"on\":3,\"got\":\"2 de 11 países\"}"
- },
- {
-  "p": "Verne",
-  "name": "Verne: o país da rota conta o episódio do livro (Índia: o elefante Kiouni e a Aouda)",
-  "pass": true,
-  "info": "Na rota de Phileas Fogg. De Bombaim a Calcutá: a linha do comboio ainda não estava acabada, Fogg segue de elefante (o Kiouni) e salva a Aouda."
- },
- {
-  "p": "Verne",
-  "name": "Verne: um país fora da rota não tem a nota",
+  "p": "Contas",
+  "name": "Escolher o perfil abre o mesmo ecrã de bloqueio, com o nome do perfil e \"Trocar de perfil\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Verne",
-  "name": "Verne: há o marco \"A rota de Phileas Fogg\" (11/11) e o de 80 países",
+  "p": "Contas",
+  "name": "O código pessoal (do Ryan) não abre um perfil de uma conta",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Verne",
-  "name": "Odisseu: marcar Itália lembra que Fogg e Odisseu passaram por lá",
+  "p": "Contas",
+  "name": "Perfil novo começa limpo: nada do Ryan (sem disciplinas, candidaturas, contactos, metas), com o nome do perfil",
   "pass": true,
-  "info": "🇮🇹 Itália no teu mapa! +72 XP de Mente no Dominus. Phileas Fogg e Odisseu também passaram por aqui."
+  "info": "{\"subj\":0,\"apps\":0,\"contacts\":0,\"goals\":0,\"short\":\"Ana\",\"uni\":\"\",\"hab\":6,\"acc\":2,\"bub\":true,\"mova\":\"O meu negócio\"}"
  },
  {
-  "p": "Verne",
-  "name": "Odisseu: Itália fica acesa no mapa da Odisseia e conta 1 de 5",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Odisseu: Malta conta que Gozo é a ilha de Calipso",
+  "p": "Contas",
+  "name": "A bolinha do perfil aparece na barra de cima",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Verne",
-  "name": "Verne: o botão \"Rota de Phileas Fogg\" esconde a rota do mapa",
+  "p": "Contas",
+  "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
+  "pass": true,
+  "info": "16 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+ },
+ {
+  "p": "Contas",
+  "name": "Senha errada: mensagem clara",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Verne",
-  "name": "Odisseu: o botão \"Viagem de Odisseu\" esconde a viagem do mapa",
+  "p": "Contas",
+  "name": "Noutro aparelho (computador): entra com a mesma conta e vê os mesmos dados",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Verne",
-  "name": "Verne e Homero: as fontes dos livros estão no fim da página",
+  "p": "Contas",
+  "name": "Sincroniza nos dois sentidos em segundos (computador → telemóvel)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Verne",
-  "name": "Verne: sem erros na consola",
+  "p": "Contas",
+  "name": "Segundo perfil na mesma conta: dados separados (não vê as tarefas da Ana)",
+  "pass": true,
+  "info": "{\"t\":[],\"short\":\"Bruno\",\"p\":\"Bruno\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Conta e perfis: blocos fechados com seta; abertos mostram e-mail, perfis, sincronização, senha, sair e apagar a conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: escolher um personagem do Dominus (heróis e, à medida que os derrotas, monstros e chefes) passa a ser a bolinha do perfil",
+  "pass": true,
+  "info": "{\"n\":12,\"ok\":true,\"unl\":true,\"img\":\"data:image/png;base64,\",\"bub\":true,\"modal\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: uma foto tua fica cortada em quadrado (160 px, leve) e guardada no perfil, em todos os aparelhos",
+  "pass": true,
+  "info": "[{\"jpg\":true,\"len\":1991,\"prev\":true},{\"w\":160,\"h\":160,\"jpg\":true}]"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã \"Quem está a usar\": o perfil aparece com a foto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Gerir perfis › Editar: tirar a foto volta ao emoji",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta de administração: aparece o separador \"Admin\" no fim do menu (ou em \"Mais\", se não couber)",
+  "pass": true,
+  "info": "{\"adm\":true,\"nav\":\"Admin\",\"shown\":true,\"side\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: lista as contas (e-mail, nome, perfis), último acesso, última entrada e minutos por dia, sem senhas",
+  "pass": true,
+  "info": "{\"r\":[\"ana teste ana@exemplo.pt ana bruno\"],\"contas\":true,\"ana\":true,\"hoje\":true,\"kpi\":8,\"senha\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
+  "pass": true,
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"590c2fd0dfd7e36fbca76850\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-07T18:02:50.963Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+ },
+ {
+  "p": "Contas",
+  "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
+  "pass": true,
+  "info": "{\"ult\":1794074586110,\"ent\":1,\"dias\":{\"2026-11-07\":45}}"
+ },
+ {
+  "p": "Contas",
+  "name": "Tocar numa conta mostra o detalhe: perfis, criada, última entrada, último acesso e o gráfico dos 30 dias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal (aparelho que já tinha o Prumo): igual a antes, sem ecrã de conta nem bolinha",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sair da conta limpa este aparelho e volta ao ecrã de entrar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Esqueci a senha: o código de recuperação muda a senha e dá um código novo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Com a senha mudada, os outros aparelhos pedem para entrar outra vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Atalho de gastos do iPhone numa conta sem script: o link do perfil regista e o gasto entra nas finanças desse perfil",
+  "pass": true,
+  "info": "✓ 12,4 € registado no Prumo / 403"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Atalhos do iPhone mostra o link do perfil (sem pedir o script Google)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sono numa conta: o atalho do app Saúde envia para o link do perfil (tipo=sono) e a noite entra no Painel",
+  "pass": true,
+  "info": "{\"lk\":true,\"r1\":\"✓ Sono enviado para o Prumo\",\"sl\":[{\"d\":\"2026-11-07\",\"m\":450,\"src\":\"saude\"}]}"
+ },
+ {
+  "p": "Contas",
+  "name": "Jornal numa conta sem script: as notícias vêm do servidor do Prumo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta nova: pergunta o nome da IA uma vez, e a IA já está ligada sem chave nenhuma",
+  "pass": true,
+  "info": "{\"ask\":true,\"key\":\"nautilo-servidor\",\"own\":\"\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Nome da IA: \"Luna\" (é ela) — chama-se por voz pelo nome e o texto fica no feminino",
+  "pass": true,
+  "info": "{\"n\":\"Luna\",\"f\":true,\"w1\":true,\"w2\":false,\"t\":\"Cérebro da Luna · fala com a Luna\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições: o separador e os blocos usam o nome da IA (sem \"Spyke\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar (servidor do Prumo → IA grátis): responde, e o pedido leva o nome dela",
+  "pass": true,
+  "info": "Olá! Aqui é a tua IA. · {\"model\":\"openai\",\"messages\":[{\"role\":\"user\",\"content\":\"Diz olá à Luna\"}],\"temperature\":0.4,\"private\":true,\"referrer\":\"nautilo\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar: pedidos em JSON (decisões, resumos, tutor) também funcionam",
+  "pass": true,
+  "info": "{\"ok\":true,\"resposta\":\"feito\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fotos sem a chave Google: mensagem clara a explicar como ligar (sem ficar a carregar)",
+  "pass": true,
+  "info": "A IA não respondeu (Ler fotos, PDFs e voz precisa da IA do Google. Liga a tua chave grátis em Definições › Spyke › Cérebro.). Verifica a internet e tenta de novo."
+ },
+ {
+  "p": "Contas",
+  "name": "A IA do servidor só responde a quem tem sessão numa conta",
+  "pass": true,
+  "info": "401"
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal: Definições tem \"Conta Prumo\" para guardar o Prumo numa conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ao guardar numa conta nova, o código de recuperação da senha aparece uma vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Guardar na conta: este aparelho passa a usar a conta com o mesmo código e os mesmos dados; o perfil continua o do Ryan (marcos e textos dele)",
+  "pass": true,
+  "info": "{\"on\":true,\"pub\":false,\"ps\":true,\"t\":true,\"g\":true,\"short\":\"Ryan\",\"leg\":100,\"who\":\"o Ryan (brasileiro)\",\"bub\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta sem administração: sem o separador \"Admin\" e o servidor recusa a lista de contas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Noutro aparelho: entra na conta do Ryan e aparece tudo o que estava no Prumo pessoal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Outro aparelho no modo pessoal: \"Entrar na conta neste aparelho\" leva ao ecrã de entrar, com o e-mail (os dados pessoais deste aparelho saem)",
+  "pass": true,
+  "info": "{\"has\":true,\"em\":\"ryan@exemplo.pt\",\"keys\":[],\"meta\":null,\"tasks\":0}"
+ },
+ {
+  "p": "Contas",
+  "name": "O servidor recusa criar conta sem a aceitação dos termos",
+  "pass": true,
+  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.\",\"code\":\"term"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã de entrar: Termos, Privacidade, Cookies e Acessibilidade abrem por cima (LGPD e RGPD, ANPD e CNPD) e fecham com Esc",
+  "pass": true,
+  "info": "{\"open\":true,\"t\":\"Política de Privacidade\",\"lgpd\":true,\"tabs\":6}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta que ainda não aceitou esta versão: ao entrar, pede para aceitar os termos uma vez",
+  "pass": true,
+  "info": "{\"termos\":true,\"boxes\":3}"
+ },
+ {
+  "p": "Contas",
+  "name": "Aceitar fica guardado na conta (versão e data) e segue para os perfis",
+  "pass": true,
+  "info": "{\"still\":true,\"t\":\"2026-10-22\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Depois de aceitar não volta a pedir (nem ao recarregar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Privacidade e termos: os 6 documentos, o que aceitaste e quando",
+  "pass": true,
+  "info": "{\"tab\":true,\"docs\":6,\"ac\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
+  "pass": true,
+  "info": "20261107180331-239fae"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
+  "pass": true,
+  "info": "{\"id\":\"20261107180331-239fae\",\"uid\":\"03561517fa9bfcba787277ea\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: marcar o pedido como respondido; o que falta configurar (chave da IA) só para o administrador; o Gmail já não está pendente (chave do Google verificada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Contas públicas mostram as mesmas fotos dos alimentos",
+  "pass": true,
+  "info": "{\"pub\":true,\"pin\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: só a administração pode repor senhas",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"Sem acesso.\",\"code\":\"admin\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor a senha pede a senha do administrador",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"A senha não está certa.\",\"code\":\"senha\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: a própria senha não se repõe por aqui",
+  "pass": true,
+  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"A tua própria senha muda-se em Definições › Conta.\",\"code\":\"propria\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor a senha dá uma senha temporária fácil de ditar",
+  "pass": true,
+  "info": "{\"_st\":200,\"ok\":true,\"email\":\"bia0409f95b@teste.pt\",\"temporaria\":\"6upp-f22c-t7xa\",\"gerada\":true}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: as sessões da pessoa terminam",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: a senha antiga deixa de entrar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: com a temporária entra, mas tem de escolher uma senha nova (e vê o aviso)",
+  "pass": true,
+  "info": "{\"trocar\":true,\"avisos\":[{\"at\":\"2026-11-07T18:03:34.963Z\",\"t\":\"senha\"}],\"email\":\"bia0409f95b@teste.pt\",\"nome\":\"Bia\",\"criado\":\"2026-11-07T18:03:34.748Z\",\"adm\":fa"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: os dados ficaram todos (perfil e documentos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "Troca obrigatória: a pessoa escolhe a sua senha e entra normalmente",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "Troca obrigatória: depois disso, \"senhaTroca\" já não serve (a senha muda-se em Definições)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: não dá para passar uma conta para o e-mail do administrador",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"Esse e-mail é de administrador.\",\"code\":\"admin\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: muda o e-mail da conta",
+  "pass": true,
+  "info": "{\"_st\":200,\"ok\":true,\"email\":\"bia.nova506a1fab@teste.pt\",\"de\":\"bia0409f95b@teste.pt\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o e-mail antigo deixa de entrar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o novo e-mail entra com a mesma senha e tem os mesmos perfis e dados (nada se perde)",
+  "pass": true,
+  "info": "{\"trocar\":false,\"avisos\":[{\"at\":\"2026-11-07T18:03:34.963Z\",\"t\":\"senha\"},{\"at\":\"2026-11-07T18:03:35.166Z\",\"t\":\"email\",\"de\":\"bia0409f95b@teste.pt\"}],\"email\":\"bia."
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o atalho do iPhone feito antes da mudança continua a funcionar",
+  "pass": true,
+  "info": "estado 200"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: não dá para mudar para um e-mail que já tem conta",
+  "pass": true,
+  "info": "{\"_st\":409,\"ok\":false,\"msg\":\"Já existe uma conta com esse e-mail.\",\"code\":\"existe\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "No aparelho: depois de entrar com a temporária aparece \"Escolhe uma senha nova\"",
+  "pass": true,
+  "info": "\n  \n    \n    \n    \n    \n    \n  \n  \n  \n  \n  \n    \n    \n  O sistema operativo da tua vida: dinheiro, estudos, treino, metas e o teu jogo, num só sítio.Escolhe uma senha novaA administração do Prumo repôs a senha da tua conta e entraste com uma senha temporária. Escolhe agora uma senha só tua para cont"
+ },
+ {
+  "p": "ADM",
+  "name": "No aparelho: guardada a senha nova, segue para os perfis",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: sem erros na consola",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: a aba mostra o cofre (mudar a senha mestra do próprio cofre)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: a ficha da conta tem \"Repor a senha de login\" e \"Mudar o e-mail da conta\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor no ecrã mostra a senha temporária para copiar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o botão do cofre leva às Senhas",
   "pass": true,
   "info": ""
  }

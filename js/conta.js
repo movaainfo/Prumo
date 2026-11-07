@@ -31,7 +31,7 @@ const api = async (path, opt = {}, tries = 3) => { let last = null;
   throw last; };
 const conta = (op, body = {}) => api('conta', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, S ? { authorization: 'Bearer ' + S.t } : {}), body: JSON.stringify(Object.assign({ op }, body)) });
 const saveS = () => { if (S) LS.set(K.s, S); else LS.del(K.s); };
-const takeConta = (j, email) => { S = Object.assign(S || {}, { t: j.token || (S && S.t), e: (j.conta && j.conta.email) || email || (S && S.e), n: (j.conta && j.conta.nome) || '', perfis: (j.conta && j.conta.perfis) || [], adm: j.conta ? !!j.conta.adm : !!(S && S.adm), termos: j.conta ? j.conta.termos || '' : S && S.termos, termosAt: j.conta ? j.conta.termosAt || '' : S && S.termosAt },
+const takeConta = (j, email) => { S = Object.assign(S || {}, { t: j.token || (S && S.t), e: (j.conta && j.conta.email) || email || (S && S.e), n: (j.conta && j.conta.nome) || '', perfis: (j.conta && j.conta.perfis) || [], adm: j.conta ? !!j.conta.adm : !!(S && S.adm), termos: j.conta ? j.conta.termos || '' : S && S.termos, termosAt: j.conta ? j.conta.termosAt || '' : S && S.termosAt, trocar: j.conta ? !!j.conta.trocar : !!(S && S.trocar), avisos: j.conta ? j.conta.avisos || [] : (S && S.avisos) || [] },
     // Spotify: só o administrador e as contas que ele escolheu (vem na resposta "eu")
     j.conta && 'sp' in j.conta ? { sp: !!j.conta.sp, spc: j.conta.spc || '' } : {}); saveS(); if (OS.Acc && OS.Acc.navAdm) OS.Acc.navAdm(); try { OS.Spot && OS.Spot.draw(); } catch (e) { } };
 
@@ -258,6 +258,10 @@ const view = () => {
       ${OS.Legal ? OS.Legal.checks() : ''}${msg}
       <button class="ac-btn wide" type="submit" ${gBusy ? 'disabled' : ''}>${gBusy ? 'A guardar…' : 'Aceitar e continuar'}</button>
       <button class="ac-link" type="button" data-ac="sair">Não aceito: sair da conta</button></form>`;
+  if (m === 'trocar') return `<form class="ac-card" data-acf="trocar"><h2>Escolhe uma senha nova</h2><p class="ac-sub">A administração do Prumo repôs a senha da tua conta e entraste com uma senha temporária. Escolhe agora uma senha só tua para continuar. Os teus dados estão todos aqui.</p>
+      ${field('nova', 'Senha nova (8 ou mais)', 'password', 'minlength="8" autocomplete="new-password" required')}${field('nova2', 'Repete a senha nova', 'password', 'minlength="8" autocomplete="new-password" required')}${msg}
+      <button class="ac-btn wide" type="submit" ${gBusy ? 'disabled' : ''}>${gBusy ? 'A guardar…' : 'Guardar e continuar'}</button>
+      <button class="ac-link" type="button" data-ac="sair">Sair da conta</button></form>`;
   if (m === 'recuperar') return `<form class="ac-card" data-acf="recuperar"><h2>Recuperar a senha</h2><p class="ac-sub">Usa o código de recuperação que guardaste quando criaste a conta.</p>
       ${field('email', 'E-mail', 'email', 'autocomplete="email" required')}${field('codigo', 'Código de recuperação', 'text', 'autocomplete="off" required placeholder="XXXX-XXXX-XXXX-XXXX"')}${field('nova', 'Senha nova', 'password', 'minlength="8" autocomplete="new-password" required')}${msg}
       <div class="ac-row"><button class="ac-btn" type="submit" ${gBusy ? 'disabled' : ''}>Mudar a senha</button><button class="ac-btn ghost" type="button" data-ac="m" data-v="entrar">Voltar</button></div></form>`;
@@ -288,7 +292,12 @@ const choose = async id => { const was = LS.get(K.data, ''), booted = !!OS.dbRef
   gMsg = ''; const box = G && G.querySelector('.ac-in'); if (box) box.innerHTML = `<div class="ac-brand">${OS.Lock ? OS.Lock.logo(36) + OS.Lock.word(22) : '<span>Prumo</span>'}</div><p class="ac-hi">A abrir o perfil de ${esc(first((cur() || {}).nome))}…</p>`;
   try { prefetched = await prefetch(); } catch (e) { if (!hasLocal) { set('perfis', e.net ? 'Sem internet. Para abrir este perfil pela primeira vez neste aparelho precisas de rede.' : e.message); return; } }
   hideGate(); release(); };
-const afterLogin = (j, email) => { if (LS.get(K.owner, '') && LS.get(K.owner, '') !== email) { LS.del(K.p); wipeLocal(); } LS.set(K.owner, email); takeConta(j, email); endedOnce = false; };
+const afterLogin = (j, email) => { if (LS.get(K.owner, '') && LS.get(K.owner, '') !== email) { LS.del(K.p); wipeLocal(); } LS.set(K.owner, email); takeConta(j, email); endedOnce = false; if (!S.trocar) avisos(); };
+// v2.97: avisos da administração (senha reposta, e-mail mudado), uma vez em cada aparelho
+const avisos = () => { try { if (!S || !Array.isArray(S.avisos) || !S.avisos.length) return; const k = 'nau:avisos:' + (S.e || ''), seen = LS.get(k, ''), novos = S.avisos.filter(a => String(a.at || '') > seen); if (!novos.length) return;
+  LS.set(k, String(novos[novos.length - 1].at || '')); const dt = a => { try { return new Date(a.at).toLocaleString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
+  const txt = a => a.t === 'senha' ? `A administração repôs a senha da tua conta (${dt(a)}). Se não pediste isto, fala com a administração.` : a.t === 'email' ? `O e-mail da tua conta passou de ${a.de || 'o anterior'} para ${S.e} (${dt(a)}). Os teus dados vieram todos. A partir de agora entras com este e-mail.` : '';
+  setTimeout(() => { if (OS.UI && OS.UI.modal) OS.UI.modal(`<div style="padding:20px"><h3 style="margin:0 0 10px">Aviso da administração</h3>${novos.map(a => `<p style="margin:0 0 10px;line-height:1.5">${esc(txt(a))}</p>`).join('')}<button class="btn pri" data-mclose>Percebi</button></div>`); }, 1200); } catch (e) { } };
 
 async function onSubmit(e) { const f = e.target.closest('form[data-acf]'); if (!f) return; e.preventDefault(); if (gBusy) return;
   const v = n => (f.elements[n] ? f.elements[n].value : ''), kind = f.dataset.acf, val = n => { const r = [...f.querySelectorAll(`input[name=${n}]`)].find(x => x.checked); return r ? r.value : ''; };
@@ -296,7 +305,9 @@ async function onSubmit(e) { const f = e.target.closest('form[data-acf]'); if (!
   const code = async () => { if (v('c1').length < 6) throw new Error('O código precisa de pelo menos 6 caracteres.'); if (v('c1') !== v('c2')) throw new Error('Os dois códigos não são iguais.'); return sha(SALT + v('c1')); };
   gBusy = true; paint();
   try {
-    if (kind === 'entrar') { const email = v('email').trim().toLowerCase(), j = await conta('entrar', { email, senha: v('senha') }); afterLogin(j, email); set(needTerms() ? 'termos' : 'perfis'); return; }
+    if (kind === 'entrar') { const email = v('email').trim().toLowerCase(), j = await conta('entrar', { email, senha: v('senha') }); afterLogin(j, email); set(S.trocar ? 'trocar' : needTerms() ? 'termos' : 'perfis'); return; }
+    if (kind === 'trocar') { if (v('nova').length < 8) throw new Error('A senha nova precisa de pelo menos 8 caracteres.'); if (v('nova') !== v('nova2')) throw new Error('As duas senhas não são iguais.');
+      const j = await conta('senhaTroca', { nova: v('nova') }); takeConta(j); avisos(); set(needTerms() ? 'termos' : 'perfis'); return; }
     if (kind === 'termos') { const t = OS.Legal ? OS.Legal.read(f) : null; if (!t) throw new Error('Para continuar, marca as três caixas.'); const j = await conta('termos', t); takeConta(j);
       if (!booting || !cur()) { set('perfis'); return; } hideGate(); OS.request && OS.request(); return; }
     if (kind === 'criar') { const t = OS.Legal ? OS.Legal.read(f) : {}; if (!t) throw new Error('Para criar a conta, marca as três caixas: termos e privacidade, dados de saúde e de fé, e idade.');
@@ -339,7 +350,7 @@ const boot = () => {
   booting = true; (async () => { try { prefetched = await prefetch(); }
     catch (e) { if (e.status === 401 || e.status === 404) return; if (!hasLocal) return showGate('perfis', 'Sem internet. Para abrir este perfil neste aparelho precisas de rede: toca nele outra vez quando tiveres ligação.'); }
     release(); })();
-  conta('eu').then(j => { takeConta(j); if (!cur() && !endedOnce) return gone(); if (needTerms() && !(G && gMode === 'termos')) showGate('termos'); }).catch(() => { });
+  conta('eu').then(j => { takeConta(j); if (!cur() && !endedOnce) return gone(); if (S.trocar) { if (!(G && gMode === 'trocar')) showGate('trocar'); return; } if (needTerms() && !(G && gMode === 'termos')) showGate('termos'); avisos(); }).catch(() => { });
 };
 document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', boot) : setTimeout(boot, 0);
 
@@ -412,7 +423,9 @@ OS.views.admin = () => { const UI = OS.UI, head = UI.head('Administração', 'Qu
       return `<button class="adm-r${c.online ? ' is-on' : ''}" role="row" data-act="admOne" data-i="${i}" data-uid="${esc(c.uid || '')}" data-q="${esc((c.nome + ' ' + c.email + ' ' + P.join(' ')).toLowerCase())}"><span role="cell" class="adm-who"><b>${esc(c.nome || P[0] || '—')}${c.admin ? ' <small class="mu-tag">admin</small>' : ''}</b><small>${esc(c.email)}</small><small class="mut">${P.length} ${P.length === 1 ? 'perfil' : 'perfis'}${P.length ? ': ' + esc(P.join(', ')) : ''}</small></span>
         <span role="cell"><em>Último acesso</em><span class="adm-ua" data-t="${c.ultUso || c.ultEntrada || ''}" data-on="${c.online ? '1' : ''}">${liveCell(c.ultUso || c.ultEntrada, c.online)}</span></span><span role="cell"><em>Última entrada</em><span class="adm-ue" data-t="${c.ultEntrada || ''}">${ago(c.ultEntrada)}</span>${c.entradas ? ` <small class="mut" title="logins com e-mail e senha">(${c.entradas} ${c.entradas === 1 ? 'login' : 'logins'})</small>` : ''}</span><span role="cell" class="mono"><em>Hoje</em><span class="adm-hj">${hmin((c.dias || {})[t] || 0)}</span></span><span role="cell"><em>7 dias</em>${bars(c.dias || {}, 7, 22)} <small class="mono">${hmin(d7)}</small></span><span role="cell"><em>Criada</em>${c.criado ? new Date(c.criado).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</span></button>`; }).join('') || '<p class="mut" style="padding:12px">Ainda não há contas.</p>'}</div></div>
   ${spPn()}${pendPn()}${pedidosPn()}
+  <div class="pn"><div class="pn-h"><h3>${UI.ic('lock')}O teu cofre de Senhas</h3></div><p class="mut" style="margin:0 0 10px">A senha mestra do teu cofre muda-se no próprio cofre (pede a atual). O cofre de cada pessoa está cifrado no aparelho dela com a senha mestra dela, que nunca sai de lá: ninguém o consegue abrir nem mudar, nem a administração. É isso que o protege.</p><button class="btn sm" data-act="admVault">${UI.ic('lock')}Mudar a senha mestra do meu cofre</button></div>
   <p class="mut adm-note">Atualizado <span id="admAt">${ago(ADM.vivoAt || ADM.at)}</span> (sozinho, a cada 20 s). O tempo de uso conta os minutos com o Prumo aberto e à vista (desbloqueado). Estes dados estão descritos na Política de Privacidade.</p></div>`; };
+A.admVault = () => { OS.setUI('vltMx', 1); OS.go('senhas'); };
 A.admRefresh = () => { ADM = null; admErr = ''; admLoad(); OS.request(); };
 // tempo real: com o separador aberto e à vista, pergunta ao servidor a cada 20 s quem está online e atualiza as células sem redesenhar a página
 const liveCell = (t, on) => on ? '<i class="adm-on" aria-hidden="true"></i><b class="pos">online agora</b>' : ago(t);
@@ -432,8 +445,25 @@ A.admOne = b => { const c = ADM && ADM.contas[+b.dataset.i]; if (!c) return; con
     <div class="dc-rows"><div><span>Perfis</span><b>${esc((c.perfis || []).join(', ') || '—')}</b></div><div><span>Conta criada</span><b>${c.criado ? new Date(c.criado).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Última entrada no app</span><b>${c.ultEntrada ? new Date(c.ultEntrada).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Último acesso</span><b>${c.online ? '<span class="pos">online agora</span>' : c.ultUso ? new Date(c.ultUso).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Último login (e-mail e senha)</span><b>${c.login ? new Date(c.login).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</b></div><div><span>Logins</span><b class="mono">${c.entradas || 0}</b></div><div><span>Tempo total no app</span><b class="mono">${hmin(c.tot || 0)}</b></div><div><span>Termos aceites</span><b>${c.termos ? 'versão de ' + esc(c.termos) + (c.termosAt ? ' · ' + new Date(c.termosAt).toLocaleString(OS.loc ? OS.loc() : 'pt-PT') : '') : 'ainda não'}</b></div><div><span>Uso nos últimos 30 dias</span><b class="mono">${hmin(tot)} · ${on} ${on === 1 ? 'dia' : 'dias'}</b></div></div>
     <h4 style="margin:16px 0 6px">Minutos por dia (30 dias)</h4>${bars(c.dias || {}, 30, 90)}<div class="adm-ax"><span>${D[0].slice(8)}/${D[0].slice(5, 7)}</span><span>hoje</span></div>
     ${c.admin ? '<p class="mut" style="margin:14px 0 0">Spotify: tens sempre (administrador).</p>' : `<div class="row gap8" style="margin-top:14px;align-items:center;flex-wrap:wrap"><span class="grow">Spotify: <b>${c.sp ? 'tem acesso' : 'sem acesso'}</b></span>${c.sp ? `<button class="btn sm ghost" data-act="admSp" data-e="${esc(c.email)}" data-on="">Tirar acesso ao Spotify</button>` : `<button class="btn sm" data-act="admSp" data-e="${esc(c.email)}" data-on="1" ${((ADM && ADM.spotify) || []).length >= ((ADM && ADM.spMax) || 4) ? 'disabled title="Já há 4 contas com o Spotify"' : ''}>Dar acesso ao Spotify</button>`}</div>`}
+    ${c.admin || c.email === Acc.email() ? '' : `<div class="adm-acc"><h4 style="margin:18px 0 6px">Repor a senha de login</h4><p class="mut" style="margin:0 0 10px">A pessoa entra com uma senha temporária e tem logo de escolher outra. As sessões abertas terminam e ela vê um aviso. Os dados ficam todos. O cofre de Senhas dela não muda (só ela o abre).</p>
+      <form data-form="admPw" data-i="${+b.dataset.i}" class="adm-f"><input type="text" name="nova" autocomplete="off" placeholder="Senha temporária (vazio = gerar uma)" minlength="8"><input type="password" name="senha" autocomplete="current-password" placeholder="A tua senha (administrador)" required><button class="btn" type="submit">Repor a senha</button></form><div class="adm-out" id="admPwOut" hidden></div>
+      <h4 style="margin:18px 0 6px">Mudar o e-mail da conta</h4><p class="mut" style="margin:0 0 10px">A conta passa inteira para o novo e-mail: perfis, dados, ranking, Google e atalhos. Nada se perde. A pessoa entra com o novo e-mail e a mesma senha.</p>
+      <form data-form="admEmail" data-i="${+b.dataset.i}" class="adm-f"><input type="email" name="novo" autocomplete="off" placeholder="Novo e-mail" required><input type="password" name="senha" autocomplete="current-password" placeholder="A tua senha (administrador)" required><button class="btn" type="submit">Mudar o e-mail</button></form></div>`}
     ${c.admin || c.email === Acc.email() ? '' : `<div class="adm-del"><h4 style="margin:18px 0 6px">Apagar esta conta</h4><p class="mut" style="margin:0 0 10px">Apaga a conta, todos os perfis e os dados dela (também do ranking). Não se pode desfazer.</p>
       <form data-form="admDel" data-i="${+b.dataset.i}" class="row gap8" style="flex-wrap:wrap"><input type="password" name="senha" autocomplete="current-password" placeholder="A tua senha (administrador)" required style="flex:1;min-width:180px"><button class="btn danger" type="submit">Apagar a conta</button></form></div>`}</div>`); };
+// v2.97: repor a senha de login e mudar o e-mail de uma conta (pedem a senha do administrador)
+OS.forms.admPw = async (f, v) => { const c = ADM && ADM.contas[+f.dataset.i]; if (!c) return; if (!confirm(`Repor a senha de ${c.email}? As sessões dela terminam.`)) return;
+  const bt = f.querySelector('button'); bt.disabled = true;
+  try { const j = await conta('adminSenha', { email: c.email, nova: v('nova'), senha: v('senha') }); f.reset(); const o = document.getElementById('admPwOut');
+    if (o) { o.hidden = false; o.innerHTML = `<p style="margin:0 0 6px">Senha temporária de <b>${esc(j.email)}</b>:</p><div class="row gap8" style="align-items:center"><code class="adm-tmp">${esc(j.temporaria)}</code><button class="btn sm" type="button" data-act="admCopy" data-v="${esc(j.temporaria)}">Copiar</button></div><p class="mut" style="margin:8px 0 0">Envia-a à pessoa por um canal seguro. Só aparece agora; ao entrar, ela escolhe uma senha nova.</p>`; }
+    OS.UI.toast('Senha reposta: ' + j.email, 'pos'); }
+  catch (e) { OS.UI.toast(e.message || 'Não consegui repor a senha.', 'neg'); } finally { bt.disabled = false; } };
+A.admCopy = async b => { try { await navigator.clipboard.writeText(b.dataset.v); OS.UI.toast('Copiado', 'pos'); } catch (e) { OS.UI.toast('Não consegui copiar: seleciona e copia à mão', 'warn'); } };
+OS.forms.admEmail = async (f, v) => { const c = ADM && ADM.contas[+f.dataset.i]; if (!c) return; const novo = v('novo').trim().toLowerCase();
+  if (!confirm(`Passar a conta ${c.email} para ${novo}? A pessoa passa a entrar com o novo e-mail.`)) return;
+  const bt = f.querySelector('button'); bt.disabled = true;
+  try { const j = await conta('adminEmail', { email: c.email, novo, senha: v('senha') }); c.email = j.email; OS.UI.closeModal(); OS.UI.toast(`E-mail mudado: ${j.de} → ${j.email}`, 'pos'); OS.request(); }
+  catch (e) { bt.disabled = false; OS.UI.toast(e.message || 'Não consegui mudar o e-mail.', 'neg'); } };
 // o administrador apaga a conta de outra pessoa: pede a senha do administrador e confirma o e-mail
 OS.forms.admDel = async (f, v) => { const c = ADM && ADM.contas[+f.dataset.i]; if (!c) return;
   if (!confirm(`Apagar a conta ${c.email} e todos os dados dela? Não se pode desfazer.`)) return;
