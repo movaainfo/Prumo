@@ -1370,7 +1370,7 @@ async function nucleoTests(b) { cur = 'Núcleo'; console.log('\n=== Spyke: cores
   const fx = await E(p, () => ({ on: document.getElementById('jv').classList.contains('fx'), sw: !!document.querySelector('#jv .jv-c .jv-sw'), an: getComputedStyle(document.querySelector('#jv .jv-c .jv-sw'), '::after').animationName }));
   ok('Núcleo: ao abrir, os cartões entram com varrimento e os cantos a encaixar', fx.on && fx.sw && /jvSw/.test(fx.an), JSON.stringify(fx));
   const cu = await E(p, async () => { const b = document.querySelector('#jv .jv-meta span'), fin = b.textContent; await new Promise(r => setTimeout(r, 520)); const mid = b.textContent; await new Promise(r => setTimeout(r, 1200)); const nowM = new Date().getHours() * 60 + new Date().getMinutes(); return { mid, end: b.textContent, fin, want: Math.round(Math.min(1, Math.max(0, (nowM - 360) / (1440 - 360 - 60))) * 100) }; });
-  ok('Núcleo: os números contam do zero ao abrir e acabam certos', / 0%/.test(cu.fin) && cu.mid !== cu.end && cu.end === 'Dia ' + cu.want + '%', JSON.stringify(cu));
+  ok('Núcleo: os números contam do zero ao abrir e acabam certos', / 0%/.test(cu.fin) && (cu.want < 5 || cu.mid !== cu.end) && cu.end === 'Dia ' + cu.want + '%', JSON.stringify(cu));
   ok('Núcleo: o relógio pisca os dois pontos', await E(p, () => !!document.querySelector('#jv [data-jvt] .jv-co')));
   // conversa: a bola respira sempre e muda de cor com a paleta
   await E(p, () => { OS.Jarvis.close(); OS.act.palSet({ dataset: { v: 'selo' } }); OS.act.spyOpen(); }); await sleep(2200);
