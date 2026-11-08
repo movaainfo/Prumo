@@ -1270,16 +1270,16 @@ html.vv-full #view.pg-in .cv-ring{animation:vvRingP 1.3s .2s var(--vv-e,ease-out
 .nw-av p{margin:0 0 8px;line-height:1.55}
 /* Investimentos: navegação por blocos (v2.53) */
 .inv-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 10px}
-.inv-g{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--pn);color:var(--tx2);min-width:0}
-.inv-g:hover{border-color:var(--line3);color:var(--tx)}
-.inv-g.on{border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:color-mix(in srgb,var(--accent) 10%,var(--pn));color:var(--tx)}
+a.inv-g{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--pn);color:var(--tx2);min-width:0}
+a.inv-g:hover{border-color:var(--line3);color:var(--tx)}
+a.inv-g.on{border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:color-mix(in srgb,var(--accent) 10%,var(--pn));color:var(--tx)}
 .inv-gi{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--pn2);color:var(--accent)}
-.inv-g.on .inv-gi{background:var(--accent);color:var(--ink)}
+a.inv-g.on .inv-gi{background:var(--accent);color:var(--ink)}
 .inv-gt{display:flex;flex-direction:column;min-width:0}.inv-gt b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.inv-gt small{font-size:12px;color:var(--mut);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .inv-sub{margin:0 0 14px}
 @media (max-width:980px){.inv-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:560px){.inv-nav{gap:8px}.inv-g{padding:10px;gap:8px;flex-direction:column;align-items:flex-start}.inv-gt small{display:none}.inv-gi{width:30px;height:30px}.inv-gt b{font-size:13px;white-space:normal}}
-.inv-nav{row-gap:8px;align-content:start}.inv-nav>.inv-g{margin:0!important}
+@media (max-width:560px){.inv-nav{gap:8px}a.inv-g{padding:10px;gap:8px;flex-direction:column;align-items:flex-start}.inv-gt small{display:none}.inv-gi{width:30px;height:30px}.inv-gt b{font-size:13px;white-space:normal}}
+.inv-nav{row-gap:8px;align-content:start}.inv-nav>a.inv-g{margin:0!important}
 
 /* v2.53 · Testosterona (simulação) */
 .to-pn .pn-h h3{display:flex;gap:8px;align-items:center}

@@ -1,80 +1,50 @@
 [
  {
-  "p": "iPhone",
-  "name": "abre o ecrã do código",
+  "p": "Check-up iPhone",
+  "name": "Check-up: dados de teste em todas as áreas da app (243 registos)",
   "pass": true,
-  "info": "365 ms"
+  "info": "{\"err\":[],\"skip\":[\"reports\",\"files\"]}"
  },
  {
-  "p": "iPhone",
-  "name": "versão visível no ecrã do código",
-  "pass": true,
-  "info": "MIND CONTROL · v3.4"
- },
- {
-  "p": "iPhone",
-  "name": "sem pedido biométrico em modo de teste",
+  "p": "Check-up iPhone",
+  "name": "Check-up: todas as páginas e abas abrem sem erros nem valores partidos (142 visitadas)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "iPhone",
-  "name": "campo do código sem gestor de palavras-passe",
-  "pass": true,
-  "info": "{\"t\":\"text\",\"sec\":\"disc\",\"bg\":\"rgba(0, 0, 0, 0)\",\"ac\":\"off\"}"
- },
- {
-  "p": "iPhone",
-  "name": "modo leve conforme o aparelho",
+  "p": "Check-up iPhone",
+  "name": "Check-up: nenhuma página recarrega a app sozinha (cada página que falhe é tentada outra vez)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "iPhone",
-  "name": "código errado é recusado",
+  "p": "Check-up iPhone",
+  "name": "Check-up: nenhuma página trava (cada uma desenha em menos de 1,5 s, com dados em todas as áreas)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "iPhone",
-  "name": "código certo abre a Visão Geral",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "iPhone",
-  "name": "sem animações infinitas nem desfoque de fundo",
+  "p": "Check-up iPhone",
+  "name": "Check-up: tudo cabe no ecrã (nenhuma página desliza para o lado nem tem partes cortadas)",
   "pass": false,
-  "info": "{\"inf\":1,\"bf\":0,\"fixedBg\":\"scroll\"}"
+  "info": "investimentos.carteira: div.tblw (27→556 de 393) em section.inv-g[flex 361] < div.inv[block 361]"
  },
  {
-  "p": "iPhone",
-  "name": "parado não se redesenha (Visão Geral)",
-  "pass": true,
-  "info": "0 renders em 4 s"
- },
- {
-  "p": "iPhone",
-  "name": "169 páginas abrem com conteúdo",
+  "p": "Check-up iPhone",
+  "name": "Check-up: todos os formulários (criar e editar) abrem sem erros (164)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "iPhone",
-  "name": "nada sai para o lado",
+  "p": "Check-up iPhone",
+  "name": "Check-up: cabeçalho, menu, Spyke, modo Comando, procurar, registar e ecrã de bloqueio cabem no ecrã",
   "pass": true,
   "info": ""
  },
  {
-  "p": "iPhone",
-  "name": "páginas rápidas",
+  "p": "Check-up iPhone",
+  "name": "Check-up: sem erros de JavaScript em toda a app",
   "pass": true,
-  "info": "máx 130 ms"
- },
- {
-  "p": "iPhone",
-  "name": "execução da bateria",
-  "pass": false,
-  "info": "page.evaluate: Target page, context or browser has been closed"
+  "info": ""
  }
 ]
