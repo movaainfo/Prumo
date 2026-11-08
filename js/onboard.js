@@ -14,7 +14,8 @@ const MUST = ['visao', 'definicoes'];
 // páginas só do perfil pessoal (o Prumo do Ryan): não aparecem nas outras contas
 const PERSONAL = ['mercado'];
 const hiddenSet = () => new Set(((OS.one('areas') || {}).hide || []).filter(k => !MUST.includes(k)).concat(pub() ? PERSONAL : []));
-const groups = () => (OS.NAV || []).filter(([g]) => g !== 'Admin');
+// nas contas públicas, o que é só do perfil pessoal nem aparece para escolher
+const groups = () => (OS.NAV || []).filter(([g]) => g !== 'Admin').map(G => pub() ? [G[0], G[1].filter(([k]) => !PERSONAL.includes(k))].concat(G.slice(2)) : G);
 // prune: o que pertence a uma área desligada sai do ecrã (data-area="k1 k2": sai quando TODAS essas áreas estão desligadas)
 const prune = root => { const h = hiddenSet(); if (!h.size || !root) return; root.querySelectorAll('[data-area]').forEach(el => { const ks = el.dataset.area.split(/\s+/).filter(Boolean); if (ks.length && ks.every(k => h.has(k))) el.remove(); }); };
 OS.Areas = { prune, on: k => !hiddenSet().has(k), hidden: hiddenSet, set: hide => { OS.setOne('areas', { hide: [...new Set(hide)].filter(k => !MUST.includes(k)) }); if (OS.fitNav) setTimeout(OS.fitNav, 60); } };
