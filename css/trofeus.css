@@ -42,3 +42,5 @@
 @media (max-width:700px){.tf-hero{grid-template-columns:minmax(0,1fr)}.tf-hon{grid-template-columns:110px minmax(0,1fr)}.tf-art.hon{width:110px}.tf-ht b{font-size:19px}.tf-shelf{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}.tf-it .tf-art{width:70px}}
 @media (prefers-reduced-motion:reduce){.tf-art.hon,.tf-it{animation:none;opacity:1;transform:none}}
 html.lite-x .tf-art.hon,html.lite-x .tf-it{animation:none;opacity:1;transform:none}
+/* 3.3: os blocos da página Eu (e dos Troféus) não ficam colados uns aos outros */
+.me>*+*{margin-top:16px}
