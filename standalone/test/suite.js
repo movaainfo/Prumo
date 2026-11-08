@@ -2342,6 +2342,13 @@ async function uniLayoutTests(b) { cur = 'Universidade'; console.log('\n=== Univ
   ok('Universidade: todos os separadores abrem, com o grupo certo aceso', !bad.length, bad.join(','));
   await p.setViewportSize({ width: 390, height: 844 }); await E(p, () => { location.hash = 'universidade'; }); await sleep(500); if (SH) await p.screenshot({ path: SH + '/uni-depois-tel.png', fullPage: true });
   ok('Universidade: no telemóvel nada sai do ecrã', await E(p, () => document.documentElement.scrollWidth <= innerWidth + 1));
+  // Sessões: a rosca "Horas por disciplina" fica no sítio durante a animação de entrada (no iPhone o anel colorido saía para baixo)
+  const dn = await E(p, async () => { const sj = (OS.all('subjects')[0] || OS.add('subjects', { name: 'Métodos Quantitativos Aplicados', status: 'Em curso' })); OS.add('sessions', { date: OS.U.today(), minutes: 24, subject: sj.id });
+    document.documentElement.classList.add('vv-full'); location.hash = 'universidade.sessoes'; await new Promise(r => setTimeout(r, 400)); document.getElementById('view').classList.add('pg-in'); await new Promise(r => setTimeout(r, 1300));
+    const cs = [...document.querySelectorAll('#view .donut svg circle')]; if (cs.length < 2) return { n: cs.length }; const a = cs[0].getBoundingClientRect(), c = cs[1].getBoundingClientRect();
+    return { n: cs.length, dy: Math.round(Math.abs((c.top + c.height / 2) - (a.top + a.height / 2))), dx: Math.round(Math.abs((c.left + c.width / 2) - (a.left + a.width / 2))), t: (document.querySelector('#view .donut .dn-v') || {}).textContent }; });
+  if (SH) { await E(p, () => { const d = document.querySelector('#view .donut'); d && d.scrollIntoView({ block: 'center' }); }); await sleep(200); await p.screenshot({ path: SH + '/uni-sessoes-rosca.png' }); }
+  ok('Sessões: a rosca das horas fica no sítio (o anel colorido em cima do cinzento) e o centro mostra as décimas', dn.n >= 2 && dn.dy <= 2 && dn.dx <= 2 && /^0,4 h$/.test(dn.t), JSON.stringify(dn));
   ok('Universidade: sem erros na consola', !errs.filter(e => !/favicon|net::|Failed to load resource|open-meteo/.test(e)).length, errs.slice(0, 3).join(' | '));
   await ctx.close(); }
 // v3.2: fundos de lugares do mundo (o Farol fica; as cenas novas mexem e seguem a paleta)

@@ -50,7 +50,7 @@ html.vv-full #view.pg-in .chart svg rect{transform-box:fill-box;transform-origin
 html.vv-full #view.pg-in .chart svg rect:nth-of-type(2n){animation-delay:.22s!important}html.vv-full #view.pg-in .chart svg rect:nth-of-type(3n){animation-delay:.29s!important}html.vv-full #view.pg-in .chart svg rect:nth-of-type(5n){animation-delay:.36s!important}
 html.vv-full #view.pg-in :is(.chart,.spark) path[fill="none"]{animation:vvDraw 1.4s .15s ease-out backwards!important}
 html.vv-full #view.pg-in .chart svg path:not([fill="none"]){animation:vvFade 1s .5s ease-out backwards!important}
-html.vv-full #view.pg-in .chart svg circle{animation:vvPopIn .5s 1s var(--vv-e) backwards!important;transform-box:fill-box;transform-origin:center}
+html.vv-full #view.pg-in .chart svg circle:not([transform]):not([stroke-dasharray]){animation:vvPopIn .5s 1s var(--vv-e) backwards!important;transform-box:fill-box;transform-origin:center}
 html.vv-full #view.pg-in .donut circle:not(:first-of-type){animation:vvDash 1.2s .15s var(--vv-e) backwards!important}
 html.vv-full #view.pg-in .chart svg polygon:not(.gl){transform-box:fill-box;transform-origin:center;animation:vvPopIn .9s .2s var(--vv-e) backwards!important}
 html.vv-full #view.pg-in .heat i{animation:vvPopIn .5s var(--vv-e) backwards!important}

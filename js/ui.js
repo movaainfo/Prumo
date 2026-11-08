@@ -270,7 +270,7 @@ function donut(s, W, H) {
   if (!tot) return `<div class="chart-empty">${s.empty || 'Sem dados neste período.'}</div>`;
   const size = Math.min(H, 190), r = size / 2 - 12, cx = size / 2, cy = size / 2, C2 = 2 * Math.PI * r; let acc = 0;
   let g = `<div class="donut"><svg width="${size}" height="${size}" role="img" aria-label="${esc(s.label || '')}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--line)" stroke-width="18"/>`;
-  data.forEach((d, i) => { const len = d.v / tot * C2; g += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${d.c || PAL[i % PAL.length]}" stroke-width="18" stroke-dasharray="${Math.max(0, len - 1.5)} ${C2 - len + 1.5}" stroke-dashoffset="${-acc}" transform="rotate(-90 ${cx} ${cy})"><title>${esc(d.l)}: ${esc((s.fmt || U.eur)(d.v))}</title></circle>`; acc += len; });
+  data.forEach((d, i) => { const len = d.v / tot * C2; g += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${d.c || PAL[i % PAL.length]}" stroke-width="18" stroke-dasharray="${Math.max(0, len - 1.5)} ${C2 - len + 1.5}" stroke-dashoffset="${C2 / 4 - acc}"><title>${esc(d.l)}: ${esc((s.fmt || U.eur)(d.v))}</title></circle>`; acc += len; });
   g += `<text x="${cx}" y="${cy - 2}" text-anchor="middle" class="dn-v">${esc(s.center || (s.fmt || U.eurK)(tot))}</text><text x="${cx}" y="${cy + 15}" text-anchor="middle" class="cl">${esc(s.centerSub || 'total')}</text></svg>`;
   if (s.noleg) return g + '</div>';
   g += `<div class="dn-leg">${data.slice(0, s.max || 8).map((d, i) => `<div><i style="background:${d.c || PAL[i % PAL.length]}"></i><span>${esc(d.l)}</span><b>${esc((s.fmt || U.eur)(d.v))}</b><em>${Math.round(d.v / tot * 100)}%</em></div>`).join('')}</div></div>`;
