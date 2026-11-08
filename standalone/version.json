@@ -1,7 +1,8 @@
 {
- "n": 202,
- "hash": "afe7d2b50835",
+ "n": 203,
+ "hash": "c387fb1cb4ef",
  "notes": [
+  "Revisão de todas as contas: abrimos as 170 páginas e separadores e mais de 550 botões numa conta nova, sem erros. Corrigido o Jornal, que podia ficar a pedir as notícias sem parar quando uma secção não chegava, e um exemplo das Oportunidades que só fazia sentido no perfil pessoal. O anel do botão do Spyke só roda enquanto ele te ouve (poupa bateria no iPhone). No telemóvel, a Carteira dos Investimentos já não sai para o lado, e a página Eu e os Troféus ganham espaço entre os blocos.",
   "Fundos novos: o Farol fica e chegam lugares do mundo, desenhados e animados: o Rio de Janeiro (o bondinho do Pão de Açúcar e o Cristo iluminado), Lisboa (os carros na ponte 25 de Abril), Paris (a Torre Eiffel a cintilar e o farol a girar), a aurora boreal nas Lofoten, o Monte Fuji com pétalas de cerejeira a cair, as pirâmides de Gizé com uma caravana e Nova Iorque com o ferry. O céu segue a hora e as cores seguem a paleta do app.",
   "Universidade arrumada: os 18 separadores passam a 4 grupos (Visão geral, O curso, Avaliações, Estudar), cada um com os seus separadores por baixo e a lembrar-se do último que abriste. A Visão geral fica por blocos (O teu dia, Avaliações, O semestre, Histórico). Não saiu nenhuma opção.",
   "Lista de compras (Eu, no teu perfil): ligada à Dieta, a lista do mês faz-se sozinha a partir do que comes (média por dia × dias do mês), com a foto de cada alimento, arrumada pelas secções do supermercado, com embalagens e custo (o preço fica guardado). Juntas coisas à mão, editas tudo, pões foto, marcas o que já tens e o que compraste, e vês a lista da semana.",
@@ -23,5 +24,5 @@
   "Admin em tempo real (online agora, última entrada e último acesso) e tempo de uso no ranking.",
   "Investimentos arrumados em 4 blocos, com todas as funções. Mais animações e transições suaves, também em Android."
  ],
- "date": "07/11/2026"
+ "date": "08/11/2026"
 }
