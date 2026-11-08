@@ -785,7 +785,7 @@ html.jv-open,html.jv-open body{overflow:hidden}
 @keyframes jvAl{50%{opacity:.62}}
 .jv-c[data-jvgo]{transition:opacity .55s ease,transform .25s ease,border-color .2s ease}.jv-c[data-jvgo]:active{transform:scale(.985)}
 .jv-c h4{position:relative}
-#jvFab i{animation:jvSpin 14s linear infinite}
+html.spy-ear #jvFab i{animation:jvSpin 6s linear infinite}
 @keyframes jvSpin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){#jv *,#jv *::before,#jv *::after,#jvFab i{animation:none!important}}
 html.lite-x #jv *,html.lite-x #jv *::before,html.lite-x #jv *::after,html.lite-x #jvFab i{animation:none!important}

@@ -162,3 +162,9 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `js/fundos.js`: ficam `farol` e `liso`; as cenas antigas (ondas, serra, cidade, chuva, dunas, pinhal, estrelas, aneis) saíram (quem as tinha escolhido volta ao Farol). Novas: `rio`, `lisboa`, `paris`, `aurora` (sempre de noite), `fuji`, `gize`, `novaiorque`. Céu da hora (`S.pal`), cores convertidas para a paleta (o `cores.js` passa o SVG por `PrumoPaleta.recolor`).
 - Animações novas em `css/forte.css`: `.fd-line` (bondinho) e `.fd-fall` (pétalas); usam também `fd-fly`, `fd-bob`, `fd-tw`, `fd-spin`, `fd-aur`, `fd-shoot`, `fd-blink`, `fd-glow`, `fd-sand`, `fd-heat`, `fd-shim`.
 - Testes: grupo `lugares` (e `fundo` atualizado).
+
+### 3.3: Auditoria das contas (tudo o que é para todas as contas)
+- Teste novo, grupo `publico`: cria uma conta pública nova (pela api/conta), abre todas as páginas e separadores (170), verifica que nada sai para o lado no telemóvel, que não aparece nada do perfil pessoal (nome, ISCA, Aveiro, Lista de compras), carrega ~550 botões seguros sem erros de JavaScript e abre todos os formulários. Usa-o depois de qualquer mudança grande.
+- Corrigido: o texto de exemplo das Oportunidades (`js/views-work.js`) já não fala da UA nem de Aveiro numa conta pública (`OS.Acc.pub`).
+- Corrigido: Jornal (`js/news.js`, `NW.fetch`): se o script Google não devolver uma das secções pedidas, essa secção conta como buscada (fica o que já havia). Antes, o ecrã voltava a pedir tudo sem parar e a lista estava sempre a ser redesenhada (era a falha antiga do teste das Novidades). Teste: "a app não fica a pedir tudo sem parar".
+- Corrigido: o anel do botão flutuante do Spyke (`#jvFab i`, `css/fit.css`) rodava sem parar em todas as páginas (o teste do iPhone "sem animações infinitas" falhava). Agora só roda com `html.spy-ear` (enquanto ouve). O teste passa a dizer qual é o elemento (`who`).

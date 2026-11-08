@@ -38,6 +38,8 @@ NW.fetch = async (sp, force) => { const need = sp.filter(s => force || !NW.cache
   if (j && j.ok === false && /Valor inv/i.test(j.msg || '')) { NW.old = true; throw new Error('script antigo'); }
   if (j && j.ok === false) throw new Error(j.msg || 'o script recusou o pedido'); if (!j.nw) { NW.old = true; throw new Error('script antigo'); } NW.old = false;
   NW.okAt = Date.now(); Object.entries(j.nw).forEach(([id, items]) => { const prev = NW.cache[id]; NW.cache[id] = { at: Date.now(), items: items || [] }; if (prev && prev.items.length) { const old = new Set(prev.items.map(x => norm(x.t))); NW.cache[id].fresh = (items || []).filter(x => !old.has(norm(x.t))).map(x => norm(x.t)); } });
+  // o que o script não devolveu conta como buscado (fica o que já havia): sem isto o ecrã voltava a pedir tudo sem parar
+  need.forEach(s => { if (!j.nw[s.id]) NW.cache[s.id] = { at: Date.now(), items: (NW.cache[s.id] && NW.cache[s.id].items) || [] }; });
   try { U.ls.set('oc_news1', Object.fromEntries(Object.entries(NW.cache).slice(-24))); } catch (e) { } };
 Object.assign(NW.cache, U.ls.get('oc_news1', {}) || {});
 const itemsFor = (tab, topic, theme) => { const all = merge(specs(tab, topic, theme).map(s => NW.cache[s.id] && NW.cache[s.id].items)), cut = Date.now() - 48 * 36e5, rec = (OS.ui.nwSort || 'rec') === 'rec';
