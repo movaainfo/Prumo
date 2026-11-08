@@ -172,4 +172,4 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Corrigido: Boas-vindas numa conta pública não mostra a Lista de compras para escolher (`groups()` em `js/onboard.js` tira o que está em `PERSONAL`).
 - Corrigido: Investimentos › Carteira saía para o lado no telemóvel. A classe `.inv-g` servia para duas coisas: os grupos da Carteira (`section.inv-g`) e os cartões dos 4 blocos (`a.inv-g`, v2.53); o estilo dos cartões (flex) apanhava os grupos. Os estilos dos cartões passam a `a.inv-g`.
 - Testes que dependem do relógio ou do câmbio ficaram tolerantes: Núcleo (de madrugada o Dia está em 0%), anexo J (±2 € do EUR/USD ao vivo). Continuam a falhar por razões do ambiente de teste: `direcao` (4, câmbio ao vivo), `faltas` (3, feriado de 1 de novembro), `geral` (CORS do script TESTE, às vezes).
-- Check-up com `CKSHOT=1`: o que sai para o lado mostra também os elementos à volta (display e largura). `CKP=iPhone` corre só um aparelho.
+- Check-up com `CKSHOT=<pasta fora do repositório>` (grava capturas lá): o que sai para o lado mostra também os elementos à volta (display e largura). `CKP=iPhone` corre só um aparelho.
