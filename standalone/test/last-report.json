@@ -1,169 +1,55 @@
 [
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: entra como perfil de uma pessoa qualquer (não o pessoal)",
+  "p": "Universidade",
+  "name": "Universidade: 4 grupos (Visão geral, O curso, Avaliações, Estudar) em vez de 18 separadores numa fila",
   "pass": true,
-  "info": "{\"on\":true,\"pub\":true,\"name\":\"Marta\"}"
+  "info": "{\"groups\":[\"Visão geral\",\"O curso\",\"Avaliações\",\"Estudar\"],\"on\":\"Visão geral\",\"ut\":\"avaliacoes,desempenho,disciplinas,erros,exames,flashcards,horario,materiais,notas,plano,presencas,questoes,revisoes,"
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: o que é só do perfil pessoal não aparece (Lista de compras)",
+  "p": "Universidade",
+  "name": "Universidade: nenhuma opção se perdeu (todos os separadores continuam lá, cada um no seu grupo)",
   "pass": true,
-  "info": ""
+  "info": "avaliacoes,desempenho,disciplinas,erros,exames,flashcards,horario,materiais,notas,plano,presencas,questoes,revisoes,sessoes,simulados,trabalhos,tutor ≠ avaliacoes,desempenho,disciplinas,erros,exames,flashcards,horario,materiais,notas,plano,presencas,questoes,revisoes,sessoes,simulados,trabalhos,tutor"
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: 170 páginas e separadores abrem com conteúdo e sem \"undefined/NaN\"",
+  "p": "Universidade",
+  "name": "Universidade: a Visão geral por blocos (O teu dia, Avaliações, O semestre, Histórico) com todos os painéis de antes",
   "pass": true,
-  "info": ""
+  "info": "{\"secs\":\"O teu dia|Avaliações|O semestre|Histórico\",\"parts\":[]}"
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: nada sai para o lado no telemóvel",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas públicas",
-  "name": "Conta pública: nenhuma página mostra coisas do Ryan (nome, ISCA, Aveiro)",
+  "p": "Universidade",
+  "name": "Universidade: tocar em \"Avaliações\" abre o grupo e mostra só os separadores dele",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: 557 botões carregados sem erros de JavaScript",
-  "pass": true,
-  "info": " :: "
- },
- {
-  "p": "Contas públicas",
-  "name": "Conta pública: todos os formulários de registo abrem",
+  "p": "Universidade",
+  "name": "Universidade: o grupo lembra-se do último separador que abriste",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: sem erros na consola no fim",
+  "p": "Universidade",
+  "name": "Universidade: todos os separadores abrem, com o grupo certo aceso",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: \"Lista de compras\" no menu Eu e a página começa com \"Fazer a lista do mês\"",
+  "p": "Universidade",
+  "name": "Universidade: no telemóvel nada sai do ecrã",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: a lista do mês sai da Dieta (média dos dias registados × dias do mês)",
+  "p": "Universidade",
+  "name": "Sessões: a rosca das horas fica no sítio (o anel colorido em cima do cinzento) e o centro mostra as décimas",
   "pass": true,
-  "info": "{\"n\":5,\"days\":10,\"a\":4500,\"dm\":30,\"b\":30}"
+  "info": "{\"n\":2,\"dy\":0,\"dx\":0,\"t\":\"0,4 h\"}"
  },
  {
-  "p": "Compras",
-  "name": "Compras: ovos em unidades, leite em ml, e cada coisa na sua secção do supermercado",
-  "pass": true,
-  "info": "[\"un\",66,\"ml\",\"Mercearia\",\"Talho e peixaria\",\"Laticínios e ovos\"]"
- },
- {
-  "p": "Compras",
-  "name": "Compras: com a embalagem e o preço calcula as embalagens e o custo do mês (arroz + detergente)",
-  "pass": true,
-  "info": "{\"packs\":5,\"cost\":6,\"kpi\":\"Custo do mês€ 8,502 de 6 com preçoItens6Comprados0/6Por semana€ 1,98\",\"manual\":true}"
- },
- {
-  "p": "Compras",
-  "name": "Compras: a vista da semana mostra só uma semana de quantidades",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: marcar como comprado risca o item e conta nos comprados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: atualizar com a dieta junta o que é novo e guarda o que fizeste à mão (item, preço, comprado)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: no telemóvel nada sai do ecrã",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: numa conta de outra pessoa a página não aparece",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: sem erros na consola",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: separador \"Troféus\" em Quem sou eu, com a vitrine vazia e o botão para a primeira conquista",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: a vitrine desenha cada peça (troféu, medalhas, certificado) numa prateleira",
-  "pass": true,
-  "info": "{\"items\":4,\"arts\":4,\"hon\":\"1.º lugar no torneio de futsal\",\"q\":\"1/1/1\",\"years\":\"2026,2025,2019\",\"chips\":4}"
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: a peça de honra é a melhor (o troféu de ouro) e o quadro de medalhas conta ouro/prata/bronze",
-  "pass": true,
-  "info": "{\"items\":4,\"arts\":4,\"hon\":\"1.º lugar no torneio de futsal\",\"q\":\"1/1/1\",\"years\":\"2026,2025,2019\",\"chips\":4}"
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: linha do tempo por ano (mais recente primeiro) e filtros por área",
-  "pass": true,
-  "info": "{\"items\":4,\"arts\":4,\"hon\":\"1.º lugar no torneio de futsal\",\"q\":\"1/1/1\",\"years\":\"2026,2025,2019\",\"chips\":4}"
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: tocar numa peça abre a ficha com a história, o evento e os botões (editar, foto, honra)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: \"Peça de honra\" põe essa peça em destaque",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: a foto aparece na ficha",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: o Retrato mostra o cartão da vitrine com a peça de honra",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: no telemóvel nada sai do ecrã",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Troféus",
-  "name": "Troféus: sem erros na consola",
+  "p": "Universidade",
+  "name": "Universidade: sem erros na consola",
   "pass": true,
   "info": ""
  }
