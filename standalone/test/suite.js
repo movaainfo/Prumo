@@ -108,7 +108,7 @@ async function newPage(b, prof, init = {}) {
   if (ACCMODE) init = Object.assign(await mkAcc(), init);
   const ctx = await b.newContext(prof.o); const p = await ctx.newPage(); const errs = [];
   p.on('pageerror', e => errs.push('JS: ' + e.message));
-  p.on('console', m => { if (m.type() === 'error' && !/fonts\.g|net::ERR|Failed to load resource|ERR_INTERNET|ERR_CONNECTION/.test(m.text())) errs.push('consola: ' + m.text().slice(0, 160)); });
+  p.on('console', m => { if (m.type() === 'error' && !/fonts\.g|net::ERR|Failed to load resource|ERR_INTERNET|ERR_CONNECTION|Access to fetch at 'https:\/\/data-api\.ecb\.europa\.eu/.test(m.text())) errs.push('consola: ' + m.text().slice(0, 160)); });
   p.on('dialog', d => d.dismiss());
   await p.addInitScript(([HASH, init]) => {
     try { if (localStorage.getItem('os2foldAll') == null && !sessionStorage.getItem('__nofa')) localStorage.setItem('os2foldAll', 'true'); } catch (e) { }
