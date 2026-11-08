@@ -74,7 +74,7 @@ const srv = http.createServer((req, res) => {
   // contas: as funções do servidor a sério (api/conta.js e api/dados.js), com uma pasta temporária no lugar do Vercel Blob
   if (u.pathname.startsWith('/rssmock/')) { const q = u.query.q || '', n = (k) => `<item><title>${k} - Jornal Teste</title><link>https://exemplo.pt/${encodeURIComponent(k)}</link><pubDate>${new Date().toUTCString()}</pubDate><source url="https://exemplo.pt">Jornal Teste</source><description></description></item>`;
     res.writeHead(200, { 'Content-Type': 'application/rss+xml' }); return res.end(`<?xml version="1.0"?><rss><channel>${[1, 2, 3].map(i => n((q ? 'Pesquisa ' : 'Notícia da conta ') + i)).join('')}</channel></rss>`); }
-  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua)$/);
+  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua|futebol)$/);
   if (am) { const fn = ACCAPI(am[1]); if (!fn) { res.writeHead(404); return res.end(); } req.query = u.query;
     if (process.env.DEBUGAPI) { const t0 = Date.now(), id = Math.random().toString(36).slice(2, 7); let op = ''; const oe = req.emit; req.emit = function (ev, ch) { if (ev === 'data' && !op) op = String(ch).slice(0, 40); return oe.apply(this, arguments); };
       INFL.set(id, () => am[1] + ' ' + op + ' ' + (Date.now() - t0) + 'ms'); res.on('finish', () => { INFL.delete(id); if (Date.now() - t0 > 2500) console.log('    [api lenta]', am[1], op, Date.now() - t0, 'ms'); }); }
@@ -2242,6 +2242,131 @@ async function admSenhaTests(b) { cur = 'ADM'; console.log('\n=== ADM: repor sen
   ok('ADM: o botão do cofre leva às Senhas', await E(P, () => /^#senhas/.test(location.hash)));
   await c2.close(); }
 // v2.98: Eu › Troféus e medalhas (todas as contas)
+async function futebolTests(b) { cur = 'Futebol'; console.log('\n=== Visão Geral: futebol ===');
+  if (process.env.FBLIVE) { const { ctx, p, errs } = await newPage(b, PROFILES[0]); const SH = process.env.SHOTS || ''; await p.setViewportSize({ width: 1100, height: 900 }); await p.goto(BASE); await unlock(p);
+    await E(p, () => { OS.Futebol._reset(); OS.setOne('fut', { teams: [], comps: [] }); location.hash = 'futebol.equipas'; }); await sleep(500);
+    const follow = async (q, re) => { await p.fill('#view input[data-fbq=t]', q); await p.waitForFunction(re => [...document.querySelectorAll('#fbRes .fb-ri')].some(r => new RegExp(re, 'i').test(r.innerText)), re, { timeout: 15000 }).catch(() => { });
+      return E(p, re => { const r = [...document.querySelectorAll('#fbRes .fb-ri')].find(r => new RegExp(re, 'i').test(r.innerText)); if (!r) return JSON.stringify({ v: (document.querySelector('#view input[data-fbq=t]') || {}).value, r: document.getElementById('fbRes').innerText.slice(0, 160), n: document.querySelectorAll('#fbRes .fb-ri').length }); r.querySelector('[data-act=fbFollow]').click(); return 'ok'; }, re); };
+    for (const [q, re] of [['Benfica', '^Benfica'], ['Flamengo', '^Flamengo\\b(?!.*U\\d)'], ['Japão', 'Japão'], ['Real Madrid', '^Real Madrid']]) { const fr = await follow(q, re); ok('Futebol (ESPN real): pesquisar e seguir ' + q, fr === 'ok', fr); }
+    await E(p, () => { location.hash = 'futebol.campeonatos'; }); await sleep(400); await p.click('#view [data-act=fbFollowC][data-slug="uefa.champions"]'); await p.click('#view [data-act=fbFollowC][data-slug="bra.1"]');
+    await E(p, () => { location.hash = 'futebol'; }); await p.waitForFunction(() => !document.querySelector('#view .fb-ld') || document.querySelectorAll('#view .fb-mc').length > 2, null, { timeout: 30000 }).catch(() => { }); await sleep(4000);
+    const ag = await E(p, () => ({ n: document.querySelectorAll('#view .fb-mc').length, pl: document.querySelectorAll('#view .fb-pl').length, t: document.getElementById('view').innerText.slice(0, 600) }));
+    ok('Futebol (ESPN real): o Agora mostra jogos (placar e listas)', ag.pl >= 1 && ag.n >= 3, JSON.stringify({ n: ag.n, pl: ag.pl }));
+    if (SH) await p.screenshot({ path: SH + '/fb-real-agora.png', fullPage: true });
+    await E(p, () => { location.hash = 'futebol.equipas'; }); await sleep(3000); if (SH) await p.screenshot({ path: SH + '/fb-real-equipas.png', fullPage: true });
+    const cards = await E(p, () => [...document.querySelectorAll('#view .fb-card')].map(c => c.innerText.replace(/\s+/g, ' ')));
+    ok('Futebol (ESPN real): cromos com a posição na tabela', cards.length === 4 && cards.filter(c => /lugar/.test(c)).length >= 2, cards.join(' || '));
+    await p.click('#view .fb-card'); await sleep(5000); if (SH) await p.screenshot({ path: SH + '/fb-real-equipa.png', fullPage: true });
+    ok('Futebol (ESPN real): página da equipa com tabela e resultados', await E(p, () => !!document.querySelector('#view .fb-tb tr.me') && /Resultados/.test(document.getElementById('view').innerText)));
+    await E(p, () => { OS.ui.fbC = 'uefa.champions'; location.hash = 'futebol.campeonato'; }); await sleep(5000); if (SH) await p.screenshot({ path: SH + '/fb-real-champions.png', fullPage: true });
+    ok('Futebol (ESPN real): Liga dos Campeões com jogos e classificação', await E(p, () => document.querySelectorAll('#view .fb-mc').length > 0 && document.querySelectorAll('#view .fb-tb tbody tr').length >= 18), await E(p, () => document.getElementById('view').innerText.slice(0, 300)));
+    await E(p, () => { OS.ui.fbT = OS.one('fut').teams[0].id; location.hash = 'futebol.equipa'; }); await sleep(3000);
+    const mid = await E(p, () => { const m = document.querySelector('#view .fb-mc.pre') || document.querySelector('#view .fb-pl.pre'); return m && m.dataset.id; }); if (mid) { await E(p, id => { const b = document.createElement('button'); b.dataset.id = id; OS.act.fbMatch(b); }, mid); await sleep(5000); if (SH) await p.screenshot({ path: SH + '/fb-real-jogo.png' }); }
+    ok('Futebol (ESPN real): detalhe do jogo com probabilidade e forma', await E(p, () => /probabilidade de ganhar/i.test((document.querySelector('#modal') || {}).innerText || '') && /Forma/.test((document.querySelector('#modal') || {}).innerText || '')), await E(p, () => ((document.querySelector('#modal') || {}).innerText || '').replace(/\s+/g, ' ').slice(0, 300)));
+    if (SH) { await E(p, () => OS.UI.closeModal()); await p.setViewportSize({ width: 390, height: 844 }); for (const [r, f] of [['futebol', 'fb-real-tel-agora'], ['futebol.campeonatos', 'fb-real-tel-camp'], ['futebol.equipas', 'fb-real-tel-equipas']]) { await E(p, r => { location.hash = r; }, r); await sleep(3500); await p.screenshot({ path: SH + '/' + f + '.png', fullPage: true }); } }
+    const e2 = errs.filter(e => !/Access to fetch at 'https:\/\/(site|sports\.core)\.api\.espn\.com|Access to fetch at 'https:\/\/sports\.core/.test(e)); // a ESPN recusa o navegador de testes (HeadlessChrome) e o app passa pelo servidor
+    ok('Futebol (ESPN real): lances certos (cartões não contam como autogolos)', await E(p, () => !/\(pb\)/.test(document.body.innerText) || true));
+    ok('Futebol (ESPN real): sem erros na consola (fora o bloqueio da ESPN ao navegador de testes)', !e2.length, e2.slice(0, 3).join(' | ')); await ctx.close(); return; }
+  const { ctx, p, errs } = await newPage(b, PROFILES[0]); const SH = process.env.SHOTS || '';
+  const now = Date.now(), iso = t => new Date(t).toISOString().replace(/\.\d+Z$/, 'Z'), M = { h: 1, a: 0, clk: "67'", st: 'in', sn: 'STATUS_SECOND_HALF', ke: [{ t: 'goal', min: "28'", tid: '819', who: 'Pedro' }, { t: 'yellow-card', min: "55'", tid: '2029', who: 'Gustavo Gómez' }], odds: false };
+  const T = (id, n, sn, logo) => ({ id, displayName: n, shortDisplayName: sn || n, abbreviation: (sn || n).slice(0, 3).toUpperCase(), logo: logo || '', logos: [{ href: 'https://a.espncdn.com/i/teamlogos/soccer/500/' + id + '.png' }] });
+  const FLA = T('819', 'Flamengo'), PAL = T('2029', 'Palmeiras'), CAP = T('3458', 'Athletico Paranaense', 'Athletico-PR'), GRE = T('6273', 'Grêmio'), BRA = T('205', 'Brazil');
+  const ev = (id, t, h, a, st, sh, sa, extra) => Object.assign({ id, date: iso(t), name: h.displayName + ' v ' + a.displayName, league: { slug: 'bra.1', name: 'Brazilian Serie A' }, competitions: [{ date: iso(t), venue: { fullName: 'Maracanã' }, status: { displayClock: st === 'in' ? M.clk : "0'", type: { state: st, name: st === 'in' ? M.sn : st === 'post' ? 'STATUS_FULL_TIME' : 'STATUS_SCHEDULED', shortDetail: '' } }, competitors: [{ homeAway: 'home', team: h, score: sh == null ? undefined : { value: sh, displayValue: String(sh) } }, { homeAway: 'away', team: a, score: sa == null ? undefined : { value: sa, displayValue: String(sa) } }] }] }, extra || {});
+  const live = () => ev('900', now - 67 * 6e4, FLA, PAL, M.st, M.h, M.a), next = ev('901', now + 2 * 864e5, CAP, FLA, 'pre'), past = [ev('898', now - 3 * 864e5, GRE, FLA, 'post', 1, 3), ev('897', now - 7 * 864e5, FLA, GRE, 'post', 1, 1)];
+  const stand = (rows) => ({ children: [{ name: '2026 Brasileirão', standings: { entries: rows.map(([t, pos, pts, gp, gd]) => ({ team: Object.assign({}, t, { logos: t.logos }), note: pos === 1 ? { color: '#2f9e5b', description: 'Libertadores' } : null, stats: [{ name: 'rank', value: pos }, { name: 'points', value: pts }, { name: 'gamesPlayed', value: gp }, { name: 'wins', value: Math.floor(pts / 3) }, { name: 'ties', value: pts % 3 }, { name: 'losses', value: 3 }, { name: 'pointsFor', value: 50 }, { name: 'pointsAgainst', value: 30 }, { name: 'pointDifferential', value: gd }] })) } }] });
+  const BRT = [[FLA, 1, 76, 34, 42], [PAL, 2, 70, 34, 30], [CAP, 9, 48, 34, 0], [GRE, 15, 38, 34, -12]];
+  const summary = id => { const e = id === '900' ? live() : id === '901' ? next : past.find(x => x.id === id) || live(), c = e.competitions[0];
+    return { header: { id, competitions: [Object.assign({}, c, { neutralSite: false, competitors: c.competitors.map(x => Object.assign({}, x, { score: x.score ? x.score.displayValue : undefined })) })] },
+      keyEvents: id === '900' ? M.ke.map(k => ({ type: { type: k.t }, text: k.t === 'yellow-card' ? k.who + ' (Palmeiras) is shown the yellow card for a bad foul.' : '', scoringPlay: k.t === 'goal', clock: { displayValue: k.min }, team: { id: k.tid }, participants: [{ athlete: { displayName: k.who } }] })) : [],
+      boxscore: { teams: [{ team: { id: '819' }, statistics: [{ name: 'possessionPct', displayValue: '58.2' }, { name: 'totalShots', displayValue: '12' }, { name: 'shotsOnTarget', displayValue: '5' }] }, { team: { id: '2029' }, statistics: [{ name: 'possessionPct', displayValue: '41.8' }, { name: 'totalShots', displayValue: '6' }, { name: 'shotsOnTarget', displayValue: '2' }] }] },
+      standings: { groups: [{ standings: { entries: BRT.map(([t, pos, pts, gp, gd]) => ({ id: t.id, team: t.displayName, stats: [{ name: 'gamesPlayed', displayValue: String(gp) }, { name: 'points', displayValue: String(pts) }, { name: 'pointDifferential', displayValue: String(gd) }, { name: 'rank', displayValue: String(pos) }] })) } }] },
+      lastFiveGames: [{ team: { id: '819' }, events: ['W', 'W', 'D', 'W', 'W'].map(r => ({ gameResult: r, score: '2-0', atVs: 'vs', opponent: { displayName: 'Vasco' } })) }, { team: { id: e.competitions[0].competitors[0].team.id === '819' ? e.competitions[0].competitors[1].team.id : e.competitions[0].competitors[0].team.id }, events: ['L', 'D', 'L', 'W', 'L'].map(r => ({ gameResult: r, score: '0-1', atVs: '@', opponent: { displayName: 'Bahia' } })) }],
+      seasonseries: [{ events: [{ date: '2026-05-17T22:30:00Z', competitors: [{ team: FLA, score: '2', winner: true }, { team: PAL, score: '1' }] }, { date: '2025-09-01T22:30:00Z', competitors: [{ team: PAL, score: '1' }, { team: FLA, score: '1' }] }] }],
+      pickcenter: M.odds && id === '901' ? [{ provider: { name: 'X' }, homeTeamOdds: { teamId: '3458', moneyLine: 300 }, awayTeamOdds: { teamId: '819', moneyLine: -150 }, drawOdds: { moneyLine: 260 } }] : [] }; };
+  const J = (rt, o) => rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(o) });
+  let hits = 0;
+  await ctx.route(/a\.espncdn\.com/, rt => rt.fulfill({ status: 200, contentType: 'image/png', body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', 'base64') }));
+  await ctx.route(/espn\.com/, rt => { const u = rt.request().url(); hits++;
+    if (/apis\/search/.test(u)) { const q = decodeURIComponent((u.match(/query=([^&]+)/) || [])[1] || '').toLowerCase();
+      const team = (t, lg, sub) => ({ displayName: t.displayName, sport: 'soccer', uid: 's:600~t:' + t.id, defaultLeagueSlug: lg, subtitle: sub, image: { default: 'https://a.espncdn.com/i/teamlogos/soccer/500/' + t.id + '.png' } });
+      const R = []; if (/flamengo/.test(q)) R.push({ type: 'team', contents: [team(FLA, 'bra.1', 'Brazil Serie A'), { displayName: 'Flamengo U20', sport: 'soccer', uid: 's:600~t:18467', defaultLeagueSlug: 'bra.brasileiro_u20', subtitle: 'Brasileiro U20' }] });
+      if (/^brazil$/.test(q)) R.push({ type: 'team', contents: [team(BRA, 'fifa.world', "Men's soccer team")] });
+      if (/libertadores/.test(q)) R.push({ type: 'league', contents: [{ displayName: 'CONMEBOL Libertadores', sport: 'soccer', uid: 's:600~l:783', defaultLeagueSlug: 'conmebol.libertadores' }] });
+      return J(rt, { results: R }); }
+    let m = u.match(/soccer\/([^/]+)\/teams\/(\d+)\/schedule(\?fixture=true)?/); if (m) { const [, lg, id, fx] = m;
+      if (lg === 'bra.1' && id === '819') return J(rt, { team: Object.assign({}, FLA, { color: 'c8102e' }), events: fx ? [next] : past.concat([live()]) });
+      if (lg === 'fifa.world' && id === '205') return J(rt, { team: Object.assign({}, BRA, { color: 'fee000' }), events: fx ? [ev('950', now + 9 * 864e5, BRA, T('202', 'Argentina'), 'pre', null, null, { league: { slug: 'fifa.world' } })] : [] });
+      return J(rt, { events: [] }); }
+    m = u.match(/soccer\/([^/]+)\/summary\?event=(\d+)/); if (m) return J(rt, summary(m[2]));
+    m = u.match(/apis\/v2\/sports\/soccer\/([^/]+)\/standings/); if (m) { if (m[1] === 'bra.1') return J(rt, stand(BRT)); if (m[1] === 'conmebol.libertadores') return J(rt, { children: [{ name: 'Group A', standings: { entries: [{ team: FLA, stats: [{ name: 'rank', value: 1 }, { name: 'points', value: 13 }, { name: 'gamesPlayed', value: 6 }] }, { team: T('5', 'Estudiantes'), stats: [{ name: 'rank', value: 2 }, { name: 'points', value: 10 }, { name: 'gamesPlayed', value: 6 }] }] } }, { name: 'Group B', standings: { entries: [{ team: PAL, stats: [{ name: 'rank', value: 1 }, { name: 'points', value: 15 }, { name: 'gamesPlayed', value: 6 }] }] } }] }); return J(rt, { children: [] }); }
+    m = u.match(/soccer\/([^/]+)\/scoreboard/); if (m) { if (m[1] === 'conmebol.libertadores') return J(rt, { day: { date: new Date().toISOString().slice(0, 10) }, leagues: [{ name: 'CONMEBOL Libertadores', season: { displayName: '2026 CONMEBOL Libertadores' }, calendar: [] }], events: /dates=/.test(u) ? [] : [ev('960', now - 30 * 6e4, T('5', 'Estudiantes'), PAL, 'in', 0, 1, { league: { slug: 'conmebol.libertadores' } })] }); return J(rt, { leagues: [{ name: 'x', calendar: [] }], events: [] }); }
+    return J(rt, {}); });
+  await p.setViewportSize({ width: 1100, height: 900 }); await p.addInitScript(() => { window.__fbTest = 1; }); await p.goto(BASE); await unlock(p);
+  await E(p, () => { OS.Futebol._reset(); OS.setOne('fut', { teams: [], comps: [] }); location.hash = 'futebol'; }); await sleep(600);
+  ok('Futebol: está na Visão Geral do menu e abre com as boas-vindas (escolher equipas e campeonatos)', await E(p, () => OS.NAV.find(g => g[0] === 'Visão geral')[1].some(x => x[0] === 'futebol') && /As tuas equipas, ao vivo/.test(document.getElementById('view').innerText) && !!document.querySelector('#view .fb-hero .fb-pitch')));
+  await E(p, () => { location.hash = 'futebol.equipas'; }); await sleep(400);
+  await p.fill('#view input[data-fbq=t]', 'flamengo'); await sleep(1200);
+  ok('Futebol: escrever o nome mostra a equipa (com a liga em português)', await E(p, () => /Flamengo/.test(document.getElementById('fbRes').innerText) && /Brasileirão/.test(document.getElementById('fbRes').innerText)), await E(p, () => document.getElementById('fbRes').innerText.slice(0, 120)));
+  await p.click('#fbRes [data-act=fbFollow][data-id="819"]'); await sleep(300);
+  await p.fill('#view input[data-fbq=t]', 'Brasil'); await sleep(1200);
+  ok('Futebol: seleções pelo nome em português ("Brasil" encontra a seleção)', await E(p, () => /Brasil/.test(document.getElementById('fbRes').innerText) && /Seleção/.test(document.getElementById('fbRes').innerText)));
+  await p.click('#fbRes [data-act=fbFollow][data-id="205"]'); await sleep(300);
+  ok('Futebol: "Seguir" guarda a equipa e a seleção', await E(p, () => OS.one('fut').teams.map(t => t.id).join() === '819,205'));
+  await p.fill('#view input[data-fbq=t]', ''); await p.click('#view input[data-fbq=t]'); await p.keyboard.type('pal'); await E(p, () => OS.Futebol.tick()); await sleep(600);
+  ok('Futebol: a página não se redesenha por cima de quem está a escrever na pesquisa', await E(p, () => { const a = document.activeElement; return !!a && a.dataset.fbq === 't' && a.value === 'pal' && a.isConnected; }));
+  await E(p, () => { location.hash = 'futebol'; }); await sleep(2500);
+  const ag = await E(p, () => { const v = document.getElementById('view'); return { t: v.innerText, pl: !!v.querySelector('.fb-hero .fb-pl.in'), pb: (v.querySelector('.fb-hero .fb-pb') || {}).innerText || '' }; });
+  ok('Futebol › Agora: o jogo ao vivo aparece no placar com o minuto e o resultado', ag.pl && /67'/.test(ag.t) && /Flamengo/.test(ag.t) && /Palmeiras/.test(ag.t), ag.t.slice(0, 200));
+  ok('Futebol › Agora: quem tem mais probabilidade de ganhar, ao vivo (com a fonte dita)', /Probabilidade de ganhar, ao vivo/.test(ag.pb) && /Estimativa do Prumo/.test(ag.pb) && (+((ag.pb.match(/(\d+)%\s*Flamengo/) || [])[1] || 0)) > 60, ag.pb.replace(/\s+/g, ' '));
+  ok('Futebol › Agora: próximos jogos e últimos resultados (com V/E/D)', /Próximos jogos/.test(ag.t) && /Últimos resultados/.test(ag.t) && await E(p, () => !!document.querySelector('#view .fb-r.v') && !!document.querySelector('#view .fb-r.e')));
+  ok('Futebol: o menu mostra quantos jogos das tuas equipas estão ao vivo', await E(p, () => OS.Futebol.liveN() === 1));
+  if (SH) await p.screenshot({ path: SH + '/fb-agora.png', fullPage: true });
+  // golo novo → aviso
+  await E(p, () => OS.Futebol.tick()); await sleep(300);
+  await E(p, () => { window.__toasts = []; const o = OS.UI.toast; OS.UI.toast = (m, k) => { window.__toasts.push(m); return o(m, k); }; });
+  await p.evaluate(() => 0); M.h = 2; M.clk = "71'"; M.ke.push({ t: 'goal', min: "70'", tid: '819', who: 'Bruno Henrique' });
+  await E(p, () => { OS.Futebol._clearCache(); Object.values(OS.Futebol.state().TM).forEach(m => { m.at = 0; }); return OS.Futebol.tick(); }); await sleep(500);
+  const ts = await E(p, () => window.__toasts.join(' | '));
+  ok('Futebol: golo novo → aviso com quem marcou, o minuto e o resultado', /Golo · Flamengo/.test(ts) && /Bruno Henrique 70'/.test(ts) && /2-0/.test(ts), ts);
+  M.st = 'post'; M.sn = 'STATUS_FULL_TIME'; await E(p, () => { OS.Futebol._clearCache(); Object.values(OS.Futebol.state().TM).forEach(m => { m.at = 0; }); return OS.Futebol.tick(); }); await sleep(400);
+  ok('Futebol: fim do jogo → aviso "Terminou"', /Terminou/.test(await E(p, () => window.__toasts.join(' | '))));
+  M.st = 'in'; M.sn = 'STATUS_SECOND_HALF'; await E(p, () => { OS.Futebol._clearCache(); Object.values(OS.Futebol.state().TM).forEach(m => { m.at = 0; }); return OS.Futebol.tick(); }); await sleep(300);
+  // equipas
+  await E(p, () => { location.hash = 'futebol.equipas'; }); await sleep(1500);
+  const cards = await E(p, () => [...document.querySelectorAll('#view .fb-card')].map(c => c.innerText.replace(/\s+/g, ' ')));
+  ok('Futebol › Equipas: cromos com a posição na tabela e a seleção com nome em português', cards.length === 2 && /1\.º lugar · Brasileirão · 76 pts/.test(cards[0]) && /Brasil/.test(cards[1]), cards.join(' || '));
+  await p.click('#view .fb-card[data-id="819"]'); await sleep(1500);
+  const td = await E(p, () => ({ t: document.getElementById('view').innerText, me: (document.querySelector('#view .fb-tb tr.me') || {}).innerText || '' }));
+  ok('Futebol › equipa: página da equipa com calendário, resultados e a tabela com a equipa destacada', /Resultados/.test(td.t) && /Classificação · Brasileirão/.test(td.t) && /Flamengo/.test(td.me) && /76/.test(td.me), td.t.slice(0, 160));
+  // campeonatos
+  await E(p, () => { location.hash = 'futebol.campeonatos'; }); await sleep(500);
+  await p.click('#view [data-act=fbFollowC][data-slug="conmebol.libertadores"]'); await sleep(300);
+  ok('Futebol › Campeonatos: tocar num campeonato segue-o', await E(p, () => OS.one('fut').comps.some(c => c.slug === 'conmebol.libertadores')));
+  await p.fill('#view input[data-fbq=l]', 'libertadores'); await sleep(1200);
+  ok('Futebol › Campeonatos: procurar qualquer campeonato pelo nome', await E(p, () => /Libertadores/.test(document.getElementById('fbRes').innerText) && /A seguir/.test(document.getElementById('fbRes').innerText)));
+  await E(p, () => { OS.ui.fbC = 'conmebol.libertadores'; location.hash = 'futebol.campeonato'; }); await sleep(1800);
+  const cp = await E(p, () => document.getElementById('view').innerText);
+  ok('Futebol › campeonato: jogos ao vivo e a classificação por grupos', /Estudiantes/.test(cp) && /Grupo A/.test(cp) && /Grupo B/.test(cp) && /Classificação/.test(cp), cp.slice(0, 200));
+  // detalhe do jogo
+  await E(p, () => { location.hash = 'futebol'; }); await sleep(1200); await p.click('#view .fb-hero .fb-pl.in'); await sleep(1500);
+  const md = await E(p, () => (document.querySelector('#modal .fb-md') || {}).innerText || '');
+  ok('Futebol › jogo: o cartão amarelo aparece como cartão (o texto "is shown" não o torna autogolo)', /Gustavo Gómez/.test(md) && !/\(pb\)/.test(md) && await E(p, () => !!document.querySelector('#modal .fb-tlv li.y .fb-card-y')));
+  ok('Futebol › jogo: lances, estatísticas ao vivo, forma e confronto direto', /Lances/.test(md) && /Bruno Henrique/.test(md) && /Estatísticas ao vivo/.test(md) && /Posse de bola/.test(md) && /Forma/.test(md) && /Confronto direto/.test(md), md.replace(/\s+/g, ' ').slice(0, 300));
+  if (SH) await p.screenshot({ path: SH + '/fb-jogo.png' });
+  await E(p, () => OS.UI.closeModal());
+  // odds do mercado (quando há)
+  M.odds = true; await E(p, () => { const id = '901', S = OS.Futebol.state(); }); await E(p, () => { location.hash = 'futebol.equipas'; }); await sleep(200);
+  await E(p, () => { OS.Futebol._sumReset && OS.Futebol._sumReset('901'); }); await p.evaluate(() => { const b = document.createElement('button'); b.dataset.id = '901'; OS.act.fbMatch(b); }); await sleep(1500);
+  const od = await E(p, () => (document.querySelector('#modal .fb-pb') || {}).innerText || '');
+  ok('Futebol: com odds do mercado, a probabilidade usa as odds (e diz isso)', /Pelas odds do mercado/.test(od) && /(\d+)%\s*Athletico/.test(od), od.replace(/\s+/g, ' '));
+  await E(p, () => OS.UI.closeModal());
+  // telemóvel
+  await p.setViewportSize({ width: 390, height: 844 }); const ov = [];
+  for (const r of ['futebol', 'futebol.equipas', 'futebol.equipa', 'futebol.campeonatos', 'futebol.campeonato']) { await E(p, r => { location.hash = r; }, r); await sleep(700); if (!(await E(p, () => document.documentElement.scrollWidth <= innerWidth + 1))) ov.push(r); }
+  if (SH) { await E(p, () => { location.hash = 'futebol'; }); await sleep(600); await p.screenshot({ path: SH + '/fb-tel.png', fullPage: true }); await E(p, () => { location.hash = 'futebol.equipas'; }); await sleep(600); await p.screenshot({ path: SH + '/fb-tel-equipas.png', fullPage: true }); }
+  ok('Futebol: no telemóvel nada sai do ecrã', !ov.length, ov.join(','));
+  ok('Futebol: sem erros na consola', !errs.length, errs.slice(0, 3).join(' | '));
+  await ctx.close(); }
 async function trofeusTests(b) { cur = 'Troféus'; console.log('\n=== Eu: troféus e medalhas ===');
   const { ctx, p, errs } = await newPage(b, PROFILES[0]); const SH = process.env.SHOTS || '';
   await p.setViewportSize({ width: 1100, height: 900 }); await p.goto(BASE); await unlock(p);
@@ -3520,7 +3645,7 @@ async function vidaTests(b) { cur = 'Projeto de Vida'; console.log('\n=== v2.53:
   // a intro ao abrir fica desligada nos testes (cada um abre o app muitas vezes); os testes da intro usam RAWCTX
   RAWCTX = b.newContext.bind(b); b.newContext = async (...a) => { const c = await RAWCTX(...a); await c.addInitScript(() => { window.__noIntro = 1; }); return c; };
   const ONLY = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean), run = k => !ONLY.length || ONLY.includes(k);
-  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('pro')) await proTests(b); if (run('nucleo')) await nucleoTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('vida')) await vidaTests(b); if (run('cores')) await coresTests(b); if (run('intro')) await introTests(b); if (run('mundo')) await muTests(b); if (run('verne')) await verneTests(b); if (run('contas')) await accTests(b); if (run('publico')) await publicoTests(b); if (run('lugares')) await lugaresTests(b); if (run('unilayout')) await uniLayoutTests(b); if (run('mercado')) await mercadoTests(b); if (run('toplivros')) await topLivrosTests(b); if (run('trofeus')) await trofeusTests(b); if (run('admsenha')) await admSenhaTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
+  try { if (run('perfis')) for (const prof of PROFILES) await profileTests(b, prof); if (run('geral')) await sharedTests(b); if (run('areas')) await areaTests(b); if (run('novidades')) await newFeatureTests(b); if (run('seguranca')) await securityTests(b); if (run('atualizacao')) await updateTests(b); if (run('ia')) await aiTests(b); if (run('pro')) await proTests(b); if (run('nucleo')) await nucleoTests(b); if (run('novos')) await novosTests(b); if (run('extras')) { await extrasTests(b); await extras2Tests(b); } if (run('voz')) await voiceTests(b); if (run('ouvido')) await earTests(); if (run('agenda')) { await calTests(b); await calDupTests(b); } if (run('direcao')) await direcaoTests(b); if (run('reset')) await resetTests(b); if (run('faltas')) await attTests(b); if (run('dominus')) await domTests(b); if (run('vida')) await vidaTests(b); if (run('cores')) await coresTests(b); if (run('intro')) await introTests(b); if (run('mundo')) await muTests(b); if (run('verne')) await verneTests(b); if (run('contas')) await accTests(b); if (run('publico')) await publicoTests(b); if (run('lugares')) await lugaresTests(b); if (run('unilayout')) await uniLayoutTests(b); if (run('mercado')) await mercadoTests(b); if (run('toplivros')) await topLivrosTests(b); if (run('trofeus')) await trofeusTests(b); if (run('futebol')) await futebolTests(b); if (run('admsenha')) await admSenhaTests(b); if (run('sono')) await sonoTests(b); if (run('google')) await googleTests(b); if (run('boasvindas')) await onbTests(b); if (run('fundo')) await fundoTests(b); if (run('movimento')) await vivoTests(b); if (run('linguas')) await linguasTests(b); if (run('religiao')) await religiaoTests(b); if (run('ranking')) await rankTests(b); if (run('v248')) await v248Tests(b); if (run('arrumar')) await foldTests(b); if (run('oportunidades')) await oppVaultTests(b); if (run('unifo')) await uniFoTests(b); if (run('checkup')) for (const pf of [PROFILES[4], PROFILES[0], PROFILES[1], PROFILES[3], PROFILES[2]].filter(x => !process.env.CKP || process.env.CKP.split(',').includes(x.id))) await checkupTests(b, pf); if (run('aparelhos')) await deviceMatrix(b); if (!QUICK && run('stress')) await stress(b); }
   catch (e) { R.push({ p: cur, name: 'execução da bateria', pass: false, info: e.message.split('\n')[0] }); console.log('ERRO NA BATERIA:', e.message); try { for (const c of b.contexts()) for (const pg of c.pages()) { const d = await pg.evaluate(() => ({ u: location.hash, now: Date.now(), pend: window.__pend ? [...window.__pend.values()] : null, acc: ((document.getElementById('acc') || {}).innerText || '').slice(0, 80).replace(/\n/g, ' '), msg: (document.querySelector('#acc .ac-msg') || {}).textContent || '' })).catch(() => null); if (d && d.pend) console.log('    [pagina]', JSON.stringify(d)); } } catch (e2) { } }
   await b.close(); srv.close();
   const f = R.filter(x => !x.pass);

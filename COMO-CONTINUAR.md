@@ -178,3 +178,16 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `js/ui.js` `donut()`: os anéis coloridos já não usam `transform="rotate(-90 …)"`; começam às 12 horas com `stroke-dashoffset = C2/4 - acc`. Antes, a animação de entrada (`css/vivo.css`, `.chart svg circle` com `transform-box:fill-box; transform-origin:center`) mudava o centro da rotação e o anel descia um diâmetro (190 px) — via-se no iPhone. A regra passa a `circle:not([transform]):not([stroke-dasharray])`.
 - Universidade › Sessões: o centro da rosca mostra décimas abaixo de 10 h; a coluna Tipo mostra "—" quando a sessão não tem tipo.
 - Teste: grupo `unilayout`, "a rosca das horas fica no sítio" (força `vv-full` + `pg-in` e compara os centros dos anéis).
+
+### 3.5: Futebol (Visão Geral, todas as contas)
+- `js/futebol.js` + `css/futebol.css`, página `#futebol` (separadores: Agora, `equipas`, `campeonatos`; detalhe em `futebol.equipa` com `OS.ui.fbT` e `futebol.campeonato` com `OS.ui.fbC`). Menu: Visão geral, em `CORE`, com o número de jogos ao vivo das tuas equipas (`OS.Futebol.liveN`).
+- Dados: API pública da ESPN, sem chave (pesquisa `site.web.api.espn.com/apis/search/v2`, calendário `…/soccer/<liga>/teams/<id>/schedule` (+`?fixture=true`), `…/scoreboard`, `…/summary?event=` (lances, estatísticas, forma, confronto direto, odds em `pickcenter`), tabelas `apis/v2/sports/soccer/<liga>/standings`, símbolos das ligas em `sports.core.api.espn.com/v2/sports/soccer/leagues/<liga>`).
+- Plano B no servidor: `api/futebol.js` (só endereços de futebol da ESPN, só a própria app, cache curta na CDN). O app tenta direto e, se falhar, passa 10 min pelo servidor. A ESPN (Akamai) recusa o Chromium sem cabeça (HeadlessChrome) com 403, por isso nos testes com dados reais tudo passa pelo servidor; o Chrome e o Safari normais recebem os dados diretamente.
+- Guardado: `one('fut')` (`teams`, `comps`, `av` = avisos). No aparelho: `oc_fut_lg` (competições de cada equipa, 12 h), `oc_fut_snap`, `oc_fut_seen` (para os avisos), `oc_fut_feed`, `oc_fut_logo`, `oc_fut_qt` (sugestões com escudo).
+- Competições de cada equipa: a liga principal + taças e provas continentais do país (`CUPS`, `NAT` para seleções), verificadas uma vez por dia. Nomes em português em `LG` (ligas) e `CTYD` (seleções; a pesquisa aceita o nome em português, `CTY`).
+- Probabilidade de ganhar: odds do mercado quando a ESPN as tem (`pickcenter`, sobretudo ligas europeias); senão estimativa com tabela + forma + fator casa (Poisson); ao vivo junta o resultado e o tempo que falta. Diz sempre a fonte.
+- Avisos: `tick()` a cada 30 s com jogos ao vivo (60 s perto do início, 5 min no resto); começo, golo (com quem marcou), intervalo, fim. Só com o app aberto (no computador/Android também em segundo plano). Push com o app fechado ainda não.
+- Autogolos: só pelo tipo do lance (o texto dos cartões diz "is shown" e enganava).
+- Enquanto se escreve na pesquisa, o módulo não redesenha a página (redesenha ao sair do campo).
+- Paleta: o relvado, o "ao vivo", as cores V/E/D, as medalhas e o cabeçalho nas cores do clube estão no `KEEP` de `js/paleta.js`.
+- Testes: grupo `futebol` (ESPN simulada: pesquisa, seleção pelo nome em português, ao vivo, probabilidade, golo → aviso, fim, cromos, tabela, grupos, detalhe do jogo, odds, telemóvel). `FBLIVE=1 … --only=futebol` corre o mesmo com a ESPN a sério.

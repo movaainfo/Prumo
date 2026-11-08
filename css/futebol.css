@@ -1,0 +1,299 @@
+/* PRUMO — Futebol: noite de jogo. O relvado (riscas de corte e linhas a giz) com a luz dos holofotes, o placar por cima,
+   as equipas como cromos de caderneta com a faixa na cor do clube. O relvado e o "ao vivo" ficam com as cores reais
+   (estão no KEEP da paleta); o resto segue o tema do app. */
+.fb{display:flex;flex-direction:column;gap:18px;min-width:0}
+.fb-sec{min-width:0}
+.fb-sh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
+.fb-sh h3{margin:0;font-size:15px;display:flex;align-items:center;gap:8px}
+.fb-cr{border-radius:50%;object-fit:contain;flex:none;display:inline-block;vertical-align:middle;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+.fb-cr0{display:inline-grid;place-items:center;background:var(--pn2,rgba(255,255,255,.08));color:var(--tx2,var(--tx));font-weight:700;letter-spacing:.02em;border:1px solid var(--line)}
+.fb-ld{display:flex;align-items:center;gap:10px;color:var(--mut);padding:18px 4px;font-size:13.5px}
+.fb-ball .ic{width:22px;height:22px;animation:fbRoll 1.4s linear 6}
+@keyframes fbRoll{to{transform:rotate(360deg)}}
+.fb-err{margin:0}
+
+/* ---------- o relvado ---------- */
+.fb-hero{position:relative;border-radius:20px;overflow:hidden;isolation:isolate;
+  background:radial-gradient(120% 70% at 12% -12%,rgba(255,252,226,.30),transparent 55%),radial-gradient(120% 70% at 88% -12%,rgba(255,252,226,.26),transparent 55%),
+    linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.35)),repeating-linear-gradient(90deg,#1f6e3d 0 9.09%,#24804a 9.09% 18.18%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.fb-pitch{position:absolute;inset:0;width:100%;height:100%;opacity:.38;z-index:-1;pointer-events:none}
+.fb-hero-in{position:relative;padding:18px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr))}
+.fb-hero-in>.fb-pl:only-child{max-width:820px;width:100%;justify-self:center}
+.fb-hero-in>:not(.fb-pl){grid-column:1/-1}
+.fb-wel{color:#f3f6ef;max-width:62ch;padding:6px 4px}
+.fb-wel h2{margin:4px 0 8px;font-size:24px;letter-spacing:-.01em;color:#fff}
+.fb-wel p{margin:0 0 14px;color:rgba(243,246,239,.86);line-height:1.5}
+.fb-wb .ic{width:38px;height:38px;color:#fff}
+.fb-wel-b{display:flex;gap:8px;flex-wrap:wrap}
+.fb-more{margin:0;color:rgba(255,255,255,.8);font-size:12.5px}
+
+/* ---------- o placar ---------- */
+.fb-pl{background:rgba(9,16,12,.82);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px 14px 14px;color:#f4f6f2;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.fb-pl:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.fb-pl-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:rgba(244,246,242,.72);margin-bottom:8px}
+.fb-pl-top b{color:#fff;font-weight:600}
+.fb-pl-lg{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.fb-pl-lg .fb-lg{width:18px;height:18px}
+.fb-pl-g span{display:inline-flex;align-items:center;gap:5px}.fb-pl-g>div:last-child span{justify-content:flex-end}
+.fb-pl-g .ic{width:12px;height:12px;opacity:.8}
+.fb-pl-mid{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px}
+.fb-pl-t{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-width:0}
+.fb-pl-t b{font-size:14.5px;line-height:1.2;overflow-wrap:anywhere}
+.fb-pl-t .fb-cr{background:rgba(255,255,255,.06);padding:4px;width:64px;height:64px}
+.fb-pl-sc{display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);min-width:96px}
+.fb-pl-sc .fb-dg,.fb-pl-sc>i{font-size:42px;font-weight:700;line-height:1;color:#fff;font-style:normal}
+.fb-pl-sc{flex-direction:row;flex-wrap:wrap;gap:6px}
+.fb-pl-sc>i{opacity:.55;font-size:34px}
+.fb-pl-sc small{flex-basis:100%;text-align:center;font-family:inherit;font-size:11.5px;color:rgba(244,246,242,.7)}
+.fb-pl-sc .fb-cd{flex-basis:100%;text-align:center;font-size:22px;font-weight:700;color:#fff}
+.fb-dg{display:inline-block;min-width:.75em;text-align:center;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.06);box-shadow:inset 0 -2px 0 rgba(0,0,0,.3)}
+.fb-pl-g{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;font-size:12px;color:rgba(244,246,242,.82)}
+.fb-pl-g>div{display:flex;flex-direction:column;gap:2px}
+.fb-pl-g>div:last-child{text-align:right}
+.fb-pl-g b{color:#fff;font-weight:600}
+.fb-rc::before{content:"";display:inline-block;width:7px;height:10px;border-radius:1.5px;background:#e5484d;margin-right:5px;vertical-align:-1px}
+.fb-pen{font-family:var(--mono);font-size:11px;color:var(--mut)}
+.fb-pl .fb-pen{color:rgba(244,246,242,.7);flex-basis:100%;text-align:center}
+
+/* "ao vivo" */
+.fb-live{display:inline-flex;align-items:center;gap:6px;background:#d73a3f;color:#fff;font:700 11.5px/1 var(--mono);padding:4px 8px;border-radius:999px;white-space:nowrap}
+.fb-live i{width:6px;height:6px;border-radius:50%;background:#fff;animation:fbPulse 1.6s ease-in-out 10}
+@keyframes fbPulse{50%{opacity:.25}}
+
+/* probabilidade de ganhar */
+.fb-pb{margin-top:12px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.16)}
+.fb-pbt{font-size:11.5px;color:rgba(244,246,242,.72);margin-bottom:6px}
+.fb-pbb{display:flex;height:10px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08);gap:2px}
+.fb-pbb s{display:block;height:100%;text-decoration:none;transition:width .6s ease}
+.fb-pbb .h{background:#f2c46d}.fb-pbb .d{background:rgba(255,255,255,.35)}.fb-pbb .a{background:#7fb6ff}
+.fb-pbl{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:12px;color:rgba(244,246,242,.78)}
+.fb-pbl b{font-family:var(--mono);color:#fff}
+.fb-pbl .top{color:#fff;font-weight:600}
+.fb-pb small{display:block;margin-top:6px;font-size:11px;color:rgba(244,246,242,.55)}
+
+/* ---------- cartões de jogo ---------- */
+.fb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.fb-mc{position:relative;display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(160deg,color-mix(in srgb,var(--pn) 92%,#fff 8%),var(--pn));color:var(--tx);font:inherit;text-align:left;cursor:pointer;min-width:0;overflow:hidden;transition:transform .15s ease,border-color .15s ease}
+.fb-mc::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:transparent}
+.fb-mc:hover{border-color:var(--line3,var(--accent));transform:translateY(-1px)}
+.fb-mc.in{border-color:color-mix(in srgb,#d73a3f 55%,var(--line));background:linear-gradient(160deg,color-mix(in srgb,#d73a3f 12%,var(--pn)),var(--pn))}
+.fb-mc.in::before{background:#d73a3f}
+.fb-mc.r-v::before{background:#2f9e5b}.fb-mc.r-e::before{background:#8a8f98}.fb-mc.r-d::before{background:#d0484d}
+.fb-mch{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--mut);min-width:0}
+.fb-mcl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-mcs{margin-left:auto;white-space:nowrap;font-family:var(--mono);font-size:11.5px;color:var(--tx2,var(--tx))}
+.fb-mch .fb-live{font-size:10.5px;padding:3px 7px}
+.fb-mt{display:flex;align-items:center;gap:10px;min-width:0;font-size:14.5px}
+.fb-mt b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.fb-mt em{font:700 18px/1 var(--mono);font-style:normal;min-width:22px;text-align:right}
+.fb-mt em sup{font-size:10px;color:var(--mut);margin-left:2px}
+.fb-mt.l{opacity:.62}.fb-mt.w b{font-weight:700}
+.fb-mt .fb-cr{width:28px;height:28px}
+.fb-r{display:grid;place-items:center;width:20px;height:20px;border-radius:6px;font:700 10.5px/1 var(--mono);color:#fff;flex:none}
+.fb-r.v,.fb-form .v{background:#2f9e5b}.fb-r.e,.fb-form .e{background:#8a8f98}.fb-r.d,.fb-form .d{background:#d0484d}
+.fb-lg{border-radius:6px;object-fit:contain;flex:none;display:inline-block;vertical-align:middle}
+.fb-lg0{display:inline-grid;place-items:center;color:var(--accent)}
+.fb-lg0 .ic{width:70%;height:70%}
+.fb-sh h3 .fb-lg{width:22px;height:22px}
+
+/* campeonatos no "Agora" */
+.fb-cg+.fb-cg{margin-top:16px}
+.fb-cgh{display:flex;align-items:center;gap:10px;width:100%;padding:0 0 10px;background:none;border:0;color:var(--tx);font:inherit;cursor:pointer;text-align:left}
+.fb-cgh>span{display:flex;flex-direction:column;flex:1;min-width:0}
+.fb-cgh b{font-size:14.5px}.fb-cgh small{color:var(--mut);font-size:12px}
+.fb-cgh .fb-lg{width:28px;height:28px}
+
+/* ---------- cromos ---------- */
+.fb-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px}
+.fb-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 12px 14px;border-radius:16px;border:1px solid var(--line);background:var(--pn);color:var(--tx);font:inherit;cursor:pointer;overflow:hidden;text-align:center;min-width:0}
+.fb-card:hover{border-color:color-mix(in srgb,var(--tc) 60%,var(--line))}
+.fb-band{display:block;align-self:stretch;height:46px;margin:0 -12px -32px;background:linear-gradient(135deg,var(--tc),color-mix(in srgb,var(--tc) 55%,#000));position:relative}
+.fb-band::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.12) 0 6px,transparent 6px 14px)}
+.fb-cr.big{position:relative;background:var(--pn);border:3px solid var(--pn);box-shadow:0 4px 14px rgba(0,0,0,.25);padding:4px}
+.fb-cn{font-size:15px;line-height:1.2;margin-top:2px;overflow-wrap:anywhere}
+.fb-cs{font-size:12px;color:var(--mut)}
+.fb-cx{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2,var(--tx));text-align:left;line-height:1.35}
+.fb-cl{display:flex;align-items:center;gap:6px;font-size:12px;flex-wrap:wrap;justify-content:center}
+.fb-form{display:inline-flex;gap:3px}
+.fb-form i{display:grid;place-items:center;width:18px;height:18px;border-radius:5px;font:700 10px/1 var(--mono);color:#fff;font-style:normal}
+
+/* cabeçalho da equipa: nas cores do clube, com o escudo em marca de água e os números da época */
+.fb-tth{position:relative;overflow:hidden;isolation:isolate;border-radius:22px;padding:56px 20px 18px;color:#fff;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--tc) 46%,#07090c),color-mix(in srgb,var(--tc) 18%,#07090c) 70%)}
+.fb-tth::before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(115deg,rgba(255,255,255,.05) 0 10px,transparent 10px 22px)}
+.fb-wm{position:absolute;right:-40px;top:-30px;width:260px;height:260px;object-fit:contain;opacity:.12;z-index:-1;pointer-events:none;filter:saturate(.6)}
+.fb-back{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 8px;border-radius:999px;background:rgba(0,0,0,.35);color:#fff;font-size:13px;text-decoration:none;z-index:2}
+.fb-back .ic{width:16px;height:16px}
+.fb-tth-in{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px}
+.fb-tth .fb-cr.big{width:96px;height:96px;background:rgba(255,255,255,.95);border:0;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.fb-tth h2{margin:0 0 2px;font-size:28px;line-height:1.1;color:#fff;letter-spacing:-.01em}
+.fb-tth p{margin:0 0 8px;color:rgba(255,255,255,.75);font-size:13px}
+.fb-tth .fb-form i{box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.fb-btn-l{background:rgba(255,255,255,.12)!important;color:#fff!important;border-color:rgba(255,255,255,.28)!important}
+.fb-kp{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:16px}
+.fb-kp span{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.28);min-width:0}
+.fb-kp b{font:700 20px/1.1 var(--mono);color:#fff}
+.fb-kp small{font-size:11.5px;color:rgba(255,255,255,.7);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-cr.lg{border-radius:14px}
+
+/* cabeçalho do campeonato (no relvado) */
+.fb-hc .fb-hero-in{padding-top:52px}
+.fb-cth{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;color:#fff}
+.fb-cthl{display:grid;place-items:center;width:104px;height:104px;border-radius:24px;background:rgba(8,14,10,.78);border:1px solid rgba(255,255,255,.14);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.fb-cthl img{width:80px;height:80px;object-fit:contain}
+.fb-cthl .ic{width:48px;height:48px;color:#fff}
+.fb-ctht h2{margin:0 0 2px;font-size:26px;color:#fff;letter-spacing:-.01em}
+.fb-ctht p{margin:0 0 8px;color:rgba(255,255,255,.78);font-size:13px}
+.fb-lead{display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border-radius:999px;background:rgba(8,14,10,.7);font-size:12.5px}
+.fb-lead .fb-cr{width:22px;height:22px}
+
+/* pódio */
+.fb-pod{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:end;margin-bottom:12px}
+.fb-pd{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px 12px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in srgb,var(--pn) 88%,#fff 12%),var(--pn));color:var(--tx);font:inherit;cursor:pointer;text-align:center;min-width:0;position:relative}
+.fb-pd.p1{padding-top:22px;padding-bottom:20px;border-color:color-mix(in srgb,#e2b64a 55%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,#e2b64a 18%,var(--pn)),var(--pn))}
+.fb-pd.me{box-shadow:0 0 0 2px var(--accent)}
+.fb-pd b{font-size:13.5px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-pd small{font-size:12px;color:var(--mut)}
+.fb-pd small em{font:700 15px var(--mono);font-style:normal;color:var(--tx)}
+.fb-pdm{position:absolute;top:8px;left:8px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font:700 12px/1 var(--mono);color:#1b1406}
+.fb-pdm.ouro{background:linear-gradient(135deg,#f7dd8a,#c99a2e)}.fb-pdm.prata{background:linear-gradient(135deg,#eef1f4,#9aa3ad)}.fb-pdm.bronze{background:linear-gradient(135deg,#f0b98a,#a8623a)}
+
+/* ---------- pesquisa ---------- */
+.fb-find{display:flex;flex-direction:column;gap:10px}
+.fb-q{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 12px;border:1px solid var(--line);border-radius:14px;background:var(--pn)}
+.fb-q:focus-within{border-color:var(--accent)}
+.fb-qi .ic{width:18px;height:18px;color:var(--mut)}
+.fb-q input{flex:1;min-width:0;border:0;background:none;color:var(--tx);font:inherit;font-size:15px;padding:8px 2px;outline:none}
+.fb-res{display:flex;flex-direction:column;gap:6px}
+.fb-res:empty{display:none}
+.fb-ri{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--pn)}
+.fb-rn{display:flex;flex-direction:column;min-width:0;background:none;border:0;padding:0;color:var(--tx);font:inherit;text-align:left;cursor:pointer}
+.fb-rn b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-rn small{color:var(--mut);font-size:12px}
+.fb-rl{padding:10px 4px;color:var(--mut);font-size:13px}
+.fb-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fb-chips>small{color:var(--mut);margin-right:2px}
+.fb-pc .ic{width:14px;height:14px}
+.fb-pc.on{border-color:var(--accent);color:var(--tx)}
+.fb-none{margin:0}
+
+/* mural de campeonatos */
+.fb-lgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.fb-lgc{display:flex;align-items:center;gap:6px;padding:6px 6px 6px 10px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(160deg,color-mix(in srgb,var(--pn) 90%,#fff 10%),var(--pn));min-width:0}
+.fb-lgc.on{border-color:color-mix(in srgb,var(--accent) 60%,var(--line))}
+.fb-lgo{display:flex;align-items:center;gap:12px;flex:1;min-width:0;background:none;border:0;padding:6px 0;color:var(--tx);font:inherit;text-align:left;cursor:pointer}
+.fb-lgo .fb-lg{width:44px;height:44px;padding:5px;border-radius:12px;background:rgba(255,255,255,.06)}
+.fb-lgo>span{display:flex;flex-direction:column;min-width:0}
+.fb-lgo b{font-size:14px;line-height:1.25}
+.fb-lgo small{font-size:12px;color:var(--mut)}
+.fb-lgo .fb-live{font-size:10.5px;padding:3px 7px;align-self:flex-start}
+.fb-star{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:none;color:var(--tx2,var(--tx));cursor:pointer}
+.fb-star .ic{width:18px;height:18px}
+.fb-star.on{background:var(--accent);border-color:var(--accent);color:var(--ink,#111)}
+.fb-lgs.mine .fb-lgo .fb-lg{width:52px;height:52px}
+.fb-lgch{display:inline-flex;align-items:center;gap:6px}
+.fb-lgch .fb-lg{width:20px;height:20px}
+
+/* sugestões com escudo */
+.fb-sug{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.fb-sg{display:flex;align-items:center;gap:6px;padding:6px 6px 6px 10px;border-radius:16px;border:1px solid var(--line);background:var(--pn);min-width:0}
+.fb-sgo{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:10px;align-items:center;flex:1;min-width:0;background:none;border:0;padding:4px 0;color:var(--tx);font:inherit;text-align:left;cursor:pointer}
+.fb-sgo .fb-cr{grid-row:1/3}
+.fb-sgo b{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-sgo small{font-size:11.5px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- tabela ---------- */
+.fb-tw{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--pn)}
+.fb-tb{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.fb-tb th{font-size:11px;font-weight:600;color:var(--mut);padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
+.fb-tb td{padding:9px 6px;text-align:center;border-top:1px solid var(--line)}
+.fb-tb tr:first-child td{border-top:0}
+.fb-tb .l{text-align:left}
+.fb-tb td.p{position:relative;font-family:var(--mono);color:var(--mut);width:34px}
+.fb-tb td.p span{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:7px}
+.fb-tb tr[style] td.p span{background:color-mix(in srgb,var(--zc) 22%,transparent);color:var(--tx)}
+.fb-tb tr[style] td.p::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:2px;background:var(--zc)}
+.fb-tb .pts{font-weight:700}
+.fb-tb tr.me td{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.fb-tb tr.me .fb-tl span{font-weight:700}
+.fb-tb tr.gap td{border-top:2px dashed var(--line)}
+.fb-tl{display:flex;align-items:center;gap:7px;background:none;border:0;color:var(--tx);font:inherit;cursor:pointer;padding:0;max-width:100%}
+.fb-tl span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-gh{margin:12px 0 6px;font-size:13px;color:var(--mut)}
+.fb-zl{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:11.5px;color:var(--mut)}
+.fb-zl i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+.fb-src{font-size:11.5px;margin:0}
+
+/* avisos */
+.fb-av .pn-h h3{display:flex;align-items:center;gap:8px}
+.fb-tg{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+.fb-sw{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:13px;cursor:pointer}
+.fb-sw input{accent-color:var(--accent)}
+.fb-feed{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.fb-feed li{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--pn);font-size:13px}
+.fb-feed li{align-items:center}
+.fb-fi{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);flex:none}
+.fb-fi .ic{width:15px;height:15px}
+.fb-feed small{margin-left:auto;color:var(--mut);font-size:11.5px}
+
+/* ---------- detalhe do jogo ---------- */
+.fb-md{display:flex;flex-direction:column;gap:10px}
+.fb-md h4{margin:8px 0 2px;font-size:13.5px}
+.fb-md .fb-hero-in{padding:12px}
+.fb-ven{margin:0;font-size:12px}
+.fb-tlv{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.fb-tlv li{display:flex;align-items:center;gap:8px;font-size:13px}
+.fb-tlv li.a{flex-direction:row-reverse;text-align:right}
+.fb-km{font-family:var(--mono);font-size:12px;color:var(--mut);min-width:44px}
+.fb-tlv li.a .fb-km{text-align:right}
+.fb-kt{display:inline-flex;align-items:center;gap:6px}
+.fb-kt .ic{width:15px;height:15px}
+.fb-card-y,.fb-card-r{display:inline-block;width:9px;height:12px;border-radius:2px;background:#f2c94c}
+.fb-card-r{background:#e5484d}
+.fb-sts{display:flex;flex-direction:column;gap:8px}
+.fb-st{display:grid;grid-template-columns:48px minmax(0,1fr) 48px;align-items:center;gap:8px;font-size:12.5px}
+.fb-st>b{font-family:var(--mono);text-align:center}
+.fb-st span{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--mut)}
+.fb-st i{display:flex;width:100%;height:6px;border-radius:999px;overflow:hidden;gap:2px;background:var(--line)}
+.fb-st s{display:block;height:100%;text-decoration:none;background:#f2c46d}
+.fb-st s+s{background:#7fb6ff}
+.fb-fr{display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0}
+.fb-fr b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-h2{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--mut)}
+.fb-h2 b{font-family:var(--mono);font-size:18px;color:var(--tx);margin-right:4px}
+.fb-h2l{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:12.5px}
+.fb-h2l li{display:flex;gap:10px}
+.fb-h2l small{color:var(--mut);min-width:82px}
+
+@media (max-width:640px){
+  .fb-hero-in{padding:12px}
+  .fb-pl{padding:10px 10px 12px}
+  .fb-pl-t .fb-cr{width:48px;height:48px}
+  .fb-pl-t b{font-size:13px}
+  .fb-pl-sc{min-width:78px}
+  .fb-pl-sc .fb-dg,.fb-pl-sc>i{font-size:32px}
+  .fb-grid{grid-template-columns:minmax(0,1fr)}
+  .fb-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .fb-tth{padding:52px 14px 14px;border-radius:18px}
+  .fb-tth-in{grid-template-columns:auto minmax(0,1fr);gap:12px}
+  .fb-tth-in>.btn{grid-column:1/-1}
+  .fb-tth .fb-cr.big{width:72px;height:72px}
+  .fb-tth h2{font-size:22px}
+  .fb-kp{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .fb-kp span:nth-child(n+4){display:none}
+  .fb-cth{grid-template-columns:auto minmax(0,1fr);gap:12px}
+  .fb-cth>.btn{grid-column:1/-1}
+  .fb-cthl{width:76px;height:76px;border-radius:18px}.fb-cthl img{width:58px;height:58px}
+  .fb-ctht h2{font-size:21px}
+  .fb-pd{padding:12px 6px 10px}.fb-pd.p1{padding-top:16px}
+  .fb-pd .fb-cr{width:44px;height:44px}
+  .fb-lgs,.fb-sug{grid-template-columns:minmax(0,1fr)}
+  .fb-tb .hm{display:none}
+  .fb-ri{grid-template-columns:auto minmax(0,1fr) auto;row-gap:6px}
+  .fb-ri .btn.ghost{display:none}
+  .fb-q .btn{display:none}
+}
+@media (prefers-reduced-motion:reduce){.fb-live i,.fb-ball .ic{animation:none}.fb-pbb s{transition:none}}
+html.lite-x .fb-live i,html.lite-x .fb-ball .ic{animation:none}
+@media (prefers-reduced-motion:reduce){.fb-mc{transition:none}.fb-mc:hover{transform:none}}
