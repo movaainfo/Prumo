@@ -183,6 +183,42 @@ const probBar = (e, P) => { const [h, d, a] = P.p.map(pct); return `<div class="
   <div class="fb-pbl"><span class="${h >= a && h >= d ? 'top' : ''}"><b>${h}%</b> ${esc(tN(e.h.sn))}</span><span class="${d > h && d > a ? 'top' : ''}"><b>${d}%</b> empate</span><span class="${a > h && a >= d ? 'top' : ''}">${esc(tN(e.a.sn))} <b>${a}%</b></span></div>
   <small>${P.src === 'odds' ? 'Pelas odds do mercado' : 'Estimativa do Prumo: tabela, forma recente e fator casa'}${P.live ? ', com o resultado e o tempo que falta' : ''}. É uma estimativa, não uma certeza.</small></div>`; };
 
+/* ---------- análise da IA: quem tem mais probabilidade de ganhar, e porquê ----------
+   Só a pedido (botão no jogo) e guardada no aparelho, para não gastar a quota da IA: antes do jogo vale até ao apito inicial;
+   ao vivo pode pedir-se de novo ao fim de 5 min ou quando o resultado muda. A IA recebe só dados reais do jogo e não inventa lesões nem escalações. */
+const AIM = U.ls.get('oc_fut_ai', {}) || {}, AIBUSY = new Set(), AIERR = {};
+const scoreKey = e => sc0(e.h && e.h.s) + '-' + sc0(e.a && e.a.s);
+const aiOf = e => { const x = AIM[e.id]; if (!x || done(e)) return null; if (x.st === 'pre' && e.st !== 'pre') return null; return x; };
+const aiStale = e => { const x = AIM[e.id]; return !x || (e.st === 'in' && (Date.now() - x.at > 5 * 6e4 || x.sc !== scoreKey(e))); };
+const aiCtx = e => { const S = (SUM[e.id] && SUM[e.id].j) || {}, P = probs(e), RR = { W: 'V', D: 'E', L: 'D' };
+  const tab = id => { let o = null; ((S.standings && S.standings.groups) || []).forEach(g => (((g.standings || {}).entries) || []).forEach(r => { if (String(r.id || (r.team && r.team.id) || '') !== id) return; const v = k => { const x = (r.stats || []).find(z => z.name === k); return x ? x.displayValue : null; }; o = { posicao: v('rank'), pontos: v('points'), jogos: v('gamesPlayed'), saldo_golos: v('pointDifferential') }; })); return o; };
+  const frm = id => { const L = (S.lastFiveGames || []).find(x => String(x.team && x.team.id) === id); return L ? L.events.map(g => `${RR[g.gameResult] || '?'} ${g.atVs === '@' ? 'fora' : 'casa'} vs ${(g.opponent && g.opponent.displayName) || ''} ${g.score || ''}`) : null; };
+  const st2 = id => { const t = ((S.boxscore && S.boxscore.teams) || []).find(x => String(x.team && x.team.id) === id); if (!t || e.st === 'pre') return null; const o = {}; (t.statistics || []).forEach(x => { if (['possessionPct', 'totalShots', 'shotsOnTarget', 'wonCorners', 'saves', 'redCards', 'yellowCards'].includes(x.name)) o[x.name] = x.displayValue; }); return o; };
+  const side = x => ({ nome: tN(x.n), golos: e.st === 'pre' ? undefined : sc0(x.s), tabela: tab(x.id), ultimos_5: frm(x.id), estatisticas: st2(x.id) });
+  const ss = ((S.seasonseries || []).find(x => (x.events || []).length) || {});
+  return { competicao: lgN(e.lg, e.lgF), data: new Date(e.d).toLocaleString('pt-PT'), estado: e.st === 'pre' ? 'por começar' : e.st === 'in' ? 'a decorrer, ' + stat(e) : 'terminado', campo_neutro: !!(S.header && ((S.header.competitions || [])[0] || {}).neutralSite), estadio: e.ven || undefined,
+    casa: side(e.h), fora: side(e.a), lances: (e.ke || []).filter(k => k.t !== 'y').map(k => `${k.min} ${k.t === 'r' ? 'expulsão' : k.t === 'og' ? 'autogolo' : 'golo'} ${k.who || ''} (${k.tid === e.h.id ? tN(e.h.sn) : tN(e.a.sn)})`),
+    confronto_direto: ss.summary || undefined, probabilidade_calculada: P ? { casa: pct(P.p[0]), empate: pct(P.p[1]), fora: pct(P.p[2]), fonte: P.src === 'odds' ? 'odds do mercado' : 'estimativa por tabela, forma e fator casa' } : undefined }; };
+const aiRun = async e => { if (!SUM[e.id]) { try { await liveEv(e, 10 * 6e4); } catch (x) { } }
+  const ctx = aiCtx(e), live = e.st === 'in';
+  const o = await OS.AI.json([{ text: `És um analista de futebol experiente, sério e prudente. Com APENAS os dados abaixo (não inventes lesões, escalações, notícias nem números que não estejam aqui), diz quem tem mais probabilidade de ganhar este jogo e porquê, em português de Portugal, de forma clara para um adepto.${live ? ' O jogo está a decorrer: pesa o resultado, o minuto, as expulsões e as estatísticas do jogo.' : ''} Se os dados forem poucos, diz isso e baixa a confiança.
+Responde APENAS JSON: {"favorito":"casa|empate|fora","prob":{"casa":0,"empate":0,"fora":0},"titulo":"o veredicto numa frase curta","razoes":["3 a 4 razões curtas, cada uma com um número dos dados"],"atencao":"o que pode mudar o jogo, numa frase","confianca":"baixa|média|alta"} (as probabilidades em % somam 100).
+Dados: ${JSON.stringify(ctx)}` }], .3, { deep: 1 });
+  let p = o && o.prob ? [U.num(o.prob.casa), U.num(o.prob.empate), U.num(o.prob.fora)] : null; if (!p || !(p[0] + p[1] + p[2] > 0) || !o.titulo) throw new Error('a IA não deu uma resposta válida');
+  const t = p[0] + p[1] + p[2]; p = p.map(x => Math.round(x / t * 100)); p[1] = 100 - p[0] - p[2];
+  AIM[e.id] = { at: Date.now(), st: e.st, sc: scoreKey(e), o: { fav: ['casa', 'empate', 'fora'].includes(o.favorito) ? o.favorito : (p[0] >= p[2] ? 'casa' : 'fora'), p, titulo: String(o.titulo).slice(0, 200), razoes: (Array.isArray(o.razoes) ? o.razoes : []).slice(0, 4).map(x => String(x).slice(0, 240)), atencao: String(o.atencao || '').slice(0, 240), conf: ['baixa', 'média', 'alta'].includes(o.confianca) ? o.confianca : 'média' } };
+  const keys = Object.keys(AIM).sort((a, b) => AIM[b].at - AIM[a].at); keys.slice(40).forEach(k => delete AIM[k]); U.ls.set('oc_fut_ai', AIM); return AIM[e.id]; };
+const aiBox = e => { if (done(e) || /POSTPONED|CANCEL/.test(e.sn)) return ''; const x = aiOf(e), busy = AIBUSY.has(e.id), err = AIERR[e.id];
+  const btn = l => `<button type="button" class="btn sm ${x ? '' : 'pri'}" data-act="fbAI" data-id="${esc(e.id)}" ${busy ? 'disabled' : ''}>${UI.ic('brain')}${busy ? 'A IA está a analisar o jogo…' : l}</button>`;
+  if (!x) return `<div class="fb-ai fb-ai0"><div><b>Quem ganha? Pergunta à IA</b><p>A IA analisa a tabela, a forma, o confronto direto${e.st === 'in' ? ', o resultado, o minuto e as estatísticas do jogo' : ' e as probabilidades'} e diz quem tem mais probabilidade de ganhar, e porquê.</p>${err ? `<p class="fb-aie">${esc(err)}</p>` : ''}</div>${btn('Analisar o jogo')}</div>`;
+  const o = x.o, [h, d, a] = o.p, fav = o.fav === 'casa' ? e.h : o.fav === 'fora' ? e.a : null;
+  return `<div class="fb-ai"><div class="fb-aih">${UI.ic('brain')}<span>Análise da IA</span><small>${esc(x.st === 'in' ? 'ao vivo, ' : '')}às ${esc(hm(x.at))} · confiança ${esc(o.conf)}</small></div>
+    <div class="fb-aiv">${fav ? cr(fav.logo, fav.n, 40) : ''}<b>${esc(o.titulo)}</b></div>
+    <div class="fb-pbb fb-aib" role="img" aria-label="${esc(tN(e.h.sn))} ${h}%, empate ${d}%, ${esc(tN(e.a.sn))} ${a}%"><s class="h" style="width:${h}%"></s><s class="d" style="width:${d}%"></s><s class="a" style="width:${a}%"></s></div>
+    <div class="fb-pbl fb-ail"><span><b>${h}%</b> ${esc(tN(e.h.sn))}</span><span><b>${d}%</b> empate</span><span>${esc(tN(e.a.sn))} <b>${a}%</b></span></div>
+    ${o.razoes.length ? `<ul class="fb-air">${o.razoes.map(r => `<li>${esc(r)}</li>`).join('')}</ul>` : ''}${o.atencao ? `<p class="fb-aia"><b>Atenção:</b> ${esc(o.atencao)}</p>` : ''}
+    <div class="fb-aif"><small>É a leitura da IA com os dados do jogo, não uma certeza.</small>${aiStale(e) && e.st === 'in' ? btn('Analisar de novo') : ''}</div></div>`; };
+
 /* ---------- desenho ---------- */
 const WD = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 const p2 = n => String(n).padStart(2, '0');
@@ -223,7 +259,7 @@ const placard = (e, label) => `<div class="fb-pl ${e.st}" data-act="fbMatch" dat
   <div class="fb-pl-mid"><div class="fb-pl-t">${cr(e.h.logo, e.h.n, 64)}<b>${esc(tN(e.h.n))}</b></div>
     <div class="fb-pl-sc">${e.st === 'pre' ? `<small>faltam</small><span class="fb-cd">${esc(cd(e.d))}</span>` : `<span class="fb-dg">${esc(sc0(e.h.s))}</span><i>:</i><span class="fb-dg">${esc(sc0(e.a.s))}</span>`}${e.st === 'post' ? `<small>${esc(stat(e))}</small>` : ''}${pen(e)}</div>
     <div class="fb-pl-t">${cr(e.a.logo, e.a.n, 64)}<b>${esc(tN(e.a.n))}</b></div></div>
-  ${e.st !== 'pre' && (e.ke || []).some(k => k.t !== 'y') ? `<div class="fb-pl-g"><div>${goals(e, e.h)}${reds(e, e.h)}</div><div>${goals(e, e.a)}${reds(e, e.a)}</div></div>` : ''}${(() => { const P = probs(e); return P ? probBar(e, P) : ''; })()}</div>`;
+  ${e.st !== 'pre' && (e.ke || []).some(k => k.t !== 'y') ? `<div class="fb-pl-g"><div>${goals(e, e.h)}${reds(e, e.h)}</div><div>${goals(e, e.a)}${reds(e, e.a)}</div></div>` : ''}${(() => { const P = probs(e); return P ? probBar(e, P) : ''; })()}${(() => { const x = aiOf(e); return x ? `<div class="fb-plai">${UI.ic('brain')}<span><b>IA:</b> ${esc(x.o.titulo)}</span></div>` : ''; })()}</div>`;
 const PITCH = `<svg class="fb-pitch" viewBox="0 0 400 220" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"><rect x="12" y="12" width="376" height="196" rx="2"/><path d="M200 12v196"/><circle cx="200" cy="110" r="30"/><rect x="12" y="58" width="56" height="104"/><rect x="12" y="86" width="20" height="48"/><rect x="332" y="58" width="56" height="104"/><rect x="368" y="86" width="20" height="48"/><path d="M68 92a22 22 0 0 1 0 36M332 92a22 22 0 0 0 0 36"/></g><circle cx="200" cy="110" r="2.2" fill="#fff"/></svg>`;
 const hero = (inner, cls) => `<section class="fb-hero ${cls || ''}">${PITCH}<div class="fb-hero-in">${inner}</div></section>`;
 const sec = (t, body, side) => `<section class="fb-sec"><div class="fb-sh"><h3>${t}</h3>${side || ''}</div>${body}</section>`;
@@ -386,10 +422,15 @@ const mBody = e => { const S = SUM[e.id] && SUM[e.id].j, bx = (S && S.boxscore &
       return `<li><small>${esc(g.date ? U.fmtD ? U.fmtD(String(g.date).slice(0, 10)) : String(g.date).slice(0, 10) : '')}</small><span>${esc(tN((hm2.team && (hm2.team.shortDisplayName || hm2.team.displayName || hm2.team.abbreviation)) || ''))} <b>${esc(hm2.score || '0')}–${esc(aw2.score || '0')}</b> ${esc(tN((aw2.team && (aw2.team.shortDisplayName || aw2.team.displayName || aw2.team.abbreviation)) || ''))}</span></li>`; }).join('');
     return L ? `<div class="fb-h2"><span><b>${wh}</b> ${esc(tN(e.h.sn))}</span><span><b>${dr}</b> empates</span><span><b>${wa}</b> ${esc(tN(e.a.sn))}</span></div><ul class="fb-h2l">${L}</ul>` : ''; })() : '';
   const fr = frm(e.h) + frm(e.a);
-  return `<div class="fb-md">${hero(placard(e))}${e.ven ? `<p class="mut fb-ven">${esc(e.ven)}</p>` : ''}${tl ? `<h4>Lances</h4><ul class="fb-tlv">${tl}</ul>` : ''}${rows ? `<h4>Estatísticas${e.st === 'in' ? ' ao vivo' : ''}</h4><div class="fb-sts">${rows}</div>` : ''}${fr ? `<h4>Forma (últimos 5 jogos)</h4>${fr}` : ''}${h2 ? `<h4>Confronto direto (últimos jogos)</h4>${h2}` : ''}${!S ? loading('A buscar o detalhe do jogo…') : ''}</div>`; };
+  return `<div class="fb-md">${hero(placard(e))}${e.ven ? `<p class="mut fb-ven">${esc(e.ven)}</p>` : ''}${aiBox(e)}${tl ? `<h4>Lances</h4><ul class="fb-tlv">${tl}</ul>` : ''}${rows ? `<h4>Estatísticas${e.st === 'in' ? ' ao vivo' : ''}</h4><div class="fb-sts">${rows}</div>` : ''}${fr ? `<h4>Forma (últimos 5 jogos)</h4>${fr}` : ''}${h2 ? `<h4>Confronto direto (últimos jogos)</h4>${h2}` : ''}${!S ? loading('A buscar o detalhe do jogo…') : ''}</div>`; };
+const mdRedraw = id => { const b = document.getElementById('fbMd'), e = EVX.get(id); if (b && e && b.dataset.id === id) b.innerHTML = mBody(e); };
+A.fbAI = async b => { const id = b.dataset.id, e = EVX.get(id); if (!e || AIBUSY.has(id)) return; if (!OS.AI || !OS.AI.json) return UI.toast('A IA não está disponível neste aparelho', 'warn');
+  AIBUSY.add(id); delete AIERR[id]; mdRedraw(id);
+  try { await aiRun(e); } catch (x) { AIERR[id] = /não está ligada/i.test((x && x.message) || '') ? 'A IA ainda não está ligada: liga-a em Definições › IA.' : 'A IA não conseguiu analisar agora (' + ((x && x.message) || 'erro') + '). Tenta outra vez.'; }
+  finally { AIBUSY.delete(id); mdRedraw(id); req(); } };
 let mdT = 0;
 A.fbMatch = b => { const e = EVX.get(b.dataset.id); if (!e) return; clearTimeout(mdT);
-  UI.modal(`<div class="row between" style="align-items:center"><h3 style="margin:0">${esc(lgN(e.lg, e.lgF))}</h3><button type="button" class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div><div id="fbMd">${mBody(e)}</div>`, 'fb-modal');
+  UI.modal(`<div class="row between" style="align-items:center"><h3 style="margin:0">${esc(lgN(e.lg, e.lgF))}</h3><button type="button" class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div><div id="fbMd" data-id="${esc(e.id)}">${mBody(e)}</div>`, 'fb-modal');
   const upd = async () => { if (!document.getElementById('fbMd')) return; try { if (e.st !== 'pre' || !SUM[e.id]) await liveEv(e, e.st === 'in' ? 2e4 : 10 * 6e4); } catch (x) { } const box = document.getElementById('fbMd'); if (!box) return; box.innerHTML = mBody(e); if (e.st === 'in') mdT = setTimeout(upd, 3e4); };
   upd(); };
 
