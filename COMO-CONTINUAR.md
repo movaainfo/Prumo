@@ -192,3 +192,11 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Enquanto se escreve na pesquisa, o módulo não redesenha a página (redesenha ao sair do campo).
 - Paleta: o relvado, o "ao vivo", as cores V/E/D, as medalhas e o cabeçalho nas cores do clube estão no `KEEP` de `js/paleta.js`.
 - Testes: grupo `futebol` (ESPN simulada: pesquisa, seleção pelo nome em português, ao vivo, probabilidade, golo → aviso, fim, cromos, tabela, grupos, detalhe do jogo, odds, telemóvel). `FBLIVE=1 … --only=futebol` corre o mesmo com a ESPN a sério.
+
+### 3.6: Futebol — jogadores, escalações, IA com pesquisa e zonas das tabelas
+- Zonas: `ZC` (cores próprias, bem distintas) e `zcat` (categoria a partir da descrição traduzida); `ZRULE` dá as zonas habituais quando a ESPN não as marca (Brasileirão, Série B, Liga MX), com a nota "podem mudar com os campeões das taças". Linha com barra, posição na cor da zona, fundo suave e separador entre zonas; legenda por cima.
+- Plantel (`loadRoster`, `…/teams/<id>/roster`): por posições (`posOfP`), número, idade, bandeira, jogos/golos/assistências, lesionados. Treinador, lesionados e castigados: `teamAI` com `OS.Brain.search` (pesquisa Google do Gemini, com fontes; `B.search` aceita agora `{ deep }`), guardado em `oc_fut_ti`.
+- Escalações no detalhe do jogo: `lineupOf` (do `summary.rosters`, oficiais/em campo) ou `loadProbable` (os 11 mais frequentes nos titulares dos últimos 3 jogos, com um guarda-redes), desenhadas em `xiBox` (mini-campo).
+- Análise da IA: agora pesquisa as notícias do jogo (`OS.Brain.search`, deep) quando há chave; recebe também escalação (oficial/provável), marcadores e lesionados da ESPN; devolve palpite de resultado, jogadores-chave e escalações prováveis com treinador e desfalques; mostra as fontes. Sem chave usa `OS.AI.json` sem pesquisa.
+- `api/futebol.js`: 600 pedidos/min por endereço (abrir o Futebol pela primeira vez faz muitos pedidos).
+- Testes: grupo `futebol` (30) e `FBLIVE=1` (13, com a ESPN a sério).

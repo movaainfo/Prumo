@@ -174,7 +174,7 @@ const webSearch = async q => { const j = await gemModel({ contents: [{ role: 'us
   const c = (j.candidates || [])[0] || {}, txt = ((c.content || {}).parts || []).map(p => p.text || '').join(''), src = ((c.groundingMetadata || {}).groundingChunks || []).map(x => x.web && x.web.title).filter(Boolean).slice(0, 4);
   return txt + (src.length ? '\nFontes: ' + src.join(', ') : ''); };
 // pesquisa para outras partes da app (ex.: ler uma notícia inteira): texto + fontes { t, u }
-B.search = async (prompt, temp = .3) => { if (!OS.AI.key()) throw new Error('pesquisa precisa da chave do Google'); const j = await gemModel({ contents: [{ role: 'user', parts: [{ text: prompt }] }], tools: [{ google_search: {} }], generationConfig: { temperature: temp } });
+B.search = async (prompt, temp = .3, o = {}) => { if (!OS.AI.key()) throw new Error('pesquisa precisa da chave do Google'); const j = await gemModel({ contents: [{ role: 'user', parts: [{ text: prompt }] }], tools: [{ google_search: {} }], generationConfig: { temperature: temp } }, o.deep);
   const c = (j.candidates || [])[0] || {}, txt = ((c.content || {}).parts || []).map(p => p.text || '').join('').trim(), seen = new Set();
   const src = ((c.groundingMetadata || {}).groundingChunks || []).map(x => x.web).filter(w => w && w.title && !seen.has(w.title) && seen.add(w.title)).slice(0, 8).map(w => ({ t: w.title, u: w.uri }));
   if (!txt) throw new Error('a IA não respondeu'); return { text: txt, src }; };
