@@ -40,7 +40,7 @@ const ANY = LIST[0][3], hasBlue = (v, hex) => conv(ANY, v, hex) !== v;
 const CP = /color$|^--|shadow|^background-image$|^fill$|^stroke$|^filter$/, SER = /^--c\d+$/; // --c1…--c10: as séries dos gráficos ficam distintas
 const ORIG = new WeakMap(); let CUR = 'mar';
 // o mapa do mundo fica sempre com cores de mapa (mar azul), seja qual for a paleta (v2.97: "não quero o mapa do mundo vermelho")
-const KEEP = /\.mu-(map|eq|o|cs|dots|isl|tag\.v)\b|\.mu-leg i|\.od-(sea|land|pin)\b|\.fb-(hero|live|pl|pb|pbb|r|form|card-[yr]|rc|st|mc|pdm|pd|tth|cth|cthl|lead|back|kp|plai|tb|zl|xip|xipv|pp|inj)\b/;
+const KEEP = /\.mu-(map|eq|o|cs|dots|isl|tag\.v)\b|\.mu-leg i|\.od-(sea|land|pin)\b|\.fb-(hero|live|pl|pb|pbb|r|form|card-[yr]|rc|st|mc|pdm|pd|tth|cth|cthl|lead|back|kp|plai|tb|zl|xip|xipv|pp|inj|aisc|plsc)\b/;
 const walk = (rules, fn) => { for (let i = 0; i < rules.length; i++) { const r = rules[i]; if (r.style && !(r.selectorText && KEEP.test(r.selectorText))) fn(r.style); if (r.cssRules) walk(r.cssRules, fn); } };
 const get = id => LIST.find(x => x[0] === id) || null;
 const apply = id => { const it = get(id) || get(DEF), P = it[3]; if (it[0] === CUR) return CUR;

@@ -1,79 +1,259 @@
 [
  {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): pesquisar e seguir Benfica",
+  "p": "Contas públicas",
+  "name": "Conta pública: entra como perfil de uma pessoa qualquer (não o pessoal)",
   "pass": true,
-  "info": "ok"
+  "info": "{\"on\":true,\"pub\":true,\"name\":\"Marta\"}"
  },
  {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): pesquisar e seguir Flamengo",
+  "p": "Contas públicas",
+  "name": "Conta pública: o que é só do perfil pessoal não aparece (Lista de compras)",
   "pass": true,
-  "info": "ok"
+  "info": ""
  },
  {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): pesquisar e seguir Japão",
+  "p": "Contas públicas",
+  "name": "Conta pública: 173 páginas e separadores abrem com conteúdo e sem \"undefined/NaN\"",
   "pass": true,
-  "info": "ok"
+  "info": ""
  },
  {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): pesquisar e seguir Real Madrid",
+  "p": "Contas públicas",
+  "name": "Conta pública: nada sai para o lado no telemóvel",
   "pass": true,
-  "info": "ok"
+  "info": ""
  },
  {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): o Agora mostra jogos (placar e listas)",
+  "p": "Contas públicas",
+  "name": "Conta pública: nenhuma página mostra coisas do Ryan (nome, ISCA, Aveiro)",
   "pass": true,
-  "info": "{\"n\":22,\"pl\":1}"
+  "info": ""
  },
  {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): cromos com a posição na tabela",
+  "p": "Contas públicas",
+  "name": "Conta pública: 581 botões carregados sem erros de JavaScript",
   "pass": true,
-  "info": "Benfica 2.º lugar · Liga Portugal · 28 pts dom 22/11 20:45 · fora vs Torreense V V V V V || Flamengo 1.º lugar · Brasileirão · 76 pts qua 18/11 23:30 · em casa vs Athletico-PR V E V V V || Japão 2.º lugar · Taça Asiática, Grupo F · 0 pts seg 11/1 10:30 · em casa vs Indonesia V E D V V || Real Madrid 2.º lugar · LaLiga · 30 pts sáb 21/11 20:00 · em casa vs Celta Vigo V V V V V"
+  "info": " :: "
  },
  {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): página da equipa com tabela e resultados",
+  "p": "Contas públicas",
+  "name": "Conta pública: todos os formulários de registo abrem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: sem erros na consola no fim",
   "pass": true,
   "info": ""
  },
  {
   "p": "Futebol",
-  "name": "Futebol (ESPN real): plantel com os jogadores por posição",
-  "pass": true,
-  "info": "32 jogadores"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): Liga dos Campeões com jogos e classificação",
-  "pass": true,
-  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\nCampeonatos\nCampeonatos\nLiga dos Campeões\n\n2026-27 UEFA Champions League\n\nLíder:\nPSG\n· 12 pts\nA seguir\nÚltima jornada · qua 4/11\nFinal · qua"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): escalações (oficiais ou prováveis pelos últimos jogos) no jogo",
-  "pass": true,
-  "info": "22 Viktoria Plzen 3-4-2-1 provável 25 Kabongo 12 Sojka 99 Memic 29 Gabriel 14 Doski 17 Hrosovský 6 Cerv 98 Prebsl 40 Dweh 2 Paliscák 44 Wiegele Plantel completo Benfica 4-2-3-1 provável 14 Pavlidis 36 Pa"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): detalhe do jogo com probabilidade e forma",
-  "pass": true,
-  "info": "Liga Europa Liga Europa qui 26/11 · 17:45 Viktoria Plzen faltam 17 dias Benfica Quem tem mais probabilidade de ganhar 19% Viktoria Plzen 20% empate Benfica 62% Pelas odds do mercado. É uma estimativa, não uma certeza. Doosan Arena Quem ganha? Pergunta à IA A IA pesquisa as notícias do jogo (escalaçõ"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol (ESPN real): lances certos (cartões não contam como autogolos)",
+  "name": "Futebol: está na Visão Geral do menu e abre com as boas-vindas (escolher equipas e campeonatos)",
   "pass": true,
   "info": ""
  },
  {
   "p": "Futebol",
-  "name": "Futebol (ESPN real): sem erros na consola (fora o bloqueio da ESPN ao navegador de testes)",
+  "name": "Futebol: escrever o nome mostra a equipa (com a liga em português)",
+  "pass": true,
+  "info": "Flamengo\nBrasileirão\nVer\nSeguir\nFS\nFlamengo Sub-20\nBrasileirão Sub-20\nVer\nSeguir"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: seleções pelo nome em português (\"Brasil\" encontra a seleção)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: \"Seguir\" guarda a equipa e a seleção",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: a página não se redesenha por cima de quem está a escrever na pesquisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Agora: o jogo ao vivo aparece no placar com o minuto e o resultado",
+  "pass": true,
+  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\nCampeonatos\nBrasileirão\n67'\nFlamengo\n1\n:"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Agora: quem tem mais probabilidade de ganhar, ao vivo (com a fonte dita)",
+  "pass": true,
+  "info": "Probabilidade de ganhar, ao vivo 89% Flamengo 10% empate Palmeiras 1% Estimativa do Prumo: tabela, forma recente e fator casa, com o resultado e o tempo que falta. É uma estimativa, não uma certeza."
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Agora: próximos jogos e últimos resultados (com V/E/D)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: o menu mostra quantos jogos das tuas equipas estão ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: golo novo → aviso com quem marcou, o minuto e o resultado",
+  "pass": true,
+  "info": "Golo · Flamengo · Bruno Henrique 70' · Flamengo 2-0 Palmeiras"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: fim do jogo → aviso \"Terminou\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Equipas: cromos com a posição na tabela e a seleção com nome em português",
+  "pass": true,
+  "info": "Flamengo 1.º lugar · Brasileirão · 76 pts 71' 2-0 Palmeiras E V || Brasil Seleção qua 18/11 04:06 · em casa vs Argentina"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: fotos dos jogadores (Wikipédia, só se o nome bater certo; sem foto fica o número)",
+  "pass": true,
+  "info": "{\"pedro\":true,\"rossi\":true,\"cred\":true}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: plantel por posições, com números, idade, golos e quem está lesionado",
+  "pass": true,
+  "info": "{\"n\":5,\"inj\":true}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: a IA procura o treinador, os lesionados e os castigados (com fontes)",
+  "pass": true,
+  "info": "mpeonato. Pesquisado pela IA nas notícias · Hoje 04:06 · Fontes: ge.globo.com, lance.com.br 1 Pedro 21 golos · 4 assist. 2 Arrascaeta 9 golos · 11 assist. 3 Bruno Henrique 7 golos · 3 assist. Guarda-redes 1 1 A"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: página da equipa com calendário, resultados e a tabela com a equipa destacada",
+  "pass": true,
+  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\n"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › tabela: zonas com cores diferentes (Libertadores, Sul-Americana, rebaixamento) mesmo quando a ESPN não as marca",
+  "pass": true,
+  "info": "{\"fla\":\"top\",\"pal\":\"top\",\"cap\":\"eu\",\"gre\":\"\",\"juv\":\"rel\",\"leg\":\"Libertadores (fase de grupos)\\nSul-Americana\\nRebaixamento (Z4)\",\"nota\":true}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Campeonatos: tocar num campeonato segue-o",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Campeonatos: procurar qualquer campeonato pelo nome",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › campeonato: jogos ao vivo e a classificação por grupos",
+  "pass": true,
+  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\nCampeonatos\nCampeonatos\nLibertadores\n\n20"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a IA analisa e diz quem tem mais probabilidade de ganhar, com as razões",
+  "pass": true,
+  "info": "Análise da IA ao vivo, com pesquisa nas notícias, às 04:06 · confiança alta Placar previsto pela IA no fim do jogo Flamengo 3 × 1 Palmeiras O Flamengo deve ganhar: está a vencer por 2-0 aos 71 minutos e domina o jogo. 92"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a IA pesquisa nas notícias e dá o palpite de resultado, os jogadores-chave, o treinador e os desfalques",
+  "pass": true,
+  "info": "[true,true,true,true,true,true]  Ortiz · Arrascaeta · Pedro Desfalques: Bruno Henrique (lesão) Palmeiras 4-4-2 Treinador: Abel Ferreira Atenção: Um golo cedo do Palmeiras reabre o jogo. É a leitura da IA com os dados e as notícias do jogo, não uma certeza. Fontes: ge.globo.com, lance.com.br."
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a escalação mostra as fotos dos jogadores no campo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: escalações dos dois (titulares no campo, esquema, suplentes e quem entrou)",
+  "pass": true,
+  "info": "{\"n\":2,\"pp\":22} Flamengo 4-3-3 em campo 9 Fla8 10 Pedro 11 Fla10 6 Fla5 7 Fla6 8 Fla7 2 Fla1 3 Fla2 4 Fla3 5 Fla4 1 Fla0 Suplentes 20 Henrique entrou 21 Reserva Treinador: Fili"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: o palpite de placar ao vivo nunca fica abaixo do resultado atual",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a IA recebe só os dados reais do jogo (resultado, minuto, golos, tabela, forma)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: o palpite de placar da IA fica no placar do jogo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: o cartão amarelo aparece como cartão (o texto \"is shown\" não o torna autogolo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: lances, estatísticas ao vivo, forma e confronto direto",
+  "pass": true,
+  "info": "Brasileirão 71' Flamengo 2 : 0 Palmeiras Pedro 28' Bruno Henrique 70' Probabilidade de ganhar, ao vivo 99% Flamengo 1% empate Palmeiras 0% Estimativa do Prumo: tabela, forma recente e fator casa, com o resultado e o tempo que falta. É uma estimativa, não uma certeza. Maracanã Quem ganha? Pergunta à "
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo por começar: escalação provável pelos titulares dos últimos jogos (marcada como provável)",
+  "pass": true,
+  "info": "11 Brasileirão Brasileirão qua 11/11 · 04:06 Athletico Paranaense faltam 2 dias Flamengo Quem tem mais probabilidade de ganhar 22% Athletico-PR 25% empate Flamengo 53% Pelas odds do mercado. É uma estima"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: com odds do mercado, a probabilidade usa as odds (e diz isso)",
+  "pass": true,
+  "info": "Quem tem mais probabilidade de ganhar 22% Athletico-PR 25% empate Flamengo 53% Pelas odds do mercado. É uma estimativa, não uma certeza."
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: o jogo abre mesmo com uma análise guardada por uma versão antiga",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: sem IA (cota gasta e reserva em baixo) a análise aparece na mesma, feita pelo Prumo, com palpite e explicação",
+  "pass": true,
+  "info": "Análise do Prumo feita pelo Prumo com os números do jogo (sem IA), às 04:07 · confiança média A cota grátis da IA do Google acabou por hoje e a IA de reserva não respondeu. Esta análise foi feita pelo Prumo com as odds ou a tabela, a forma, o confronto direto e as escalações. Podes pedir à IA outra "
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: no telemóvel nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: sem erros na consola",
   "pass": true,
   "info": ""
  }
