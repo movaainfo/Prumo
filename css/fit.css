@@ -1355,3 +1355,11 @@ a.inv-g.on .inv-gi{background:var(--accent);color:var(--ink)}
 .uv .kpis{margin:0}
 @media (max-width:860px){.ug{grid-template-columns:repeat(2,minmax(0,1fr))}.uv-2{grid-template-columns:minmax(0,1fr)}}
 .uv-2 .hw-add{display:grid;grid-template-columns:1fr 1fr;gap:8px}.uv-2 .hw-add>input[name=t]{grid-column:1/-1}.uv-2 .hw-add>*{min-width:0;width:100%}
+/* v3.9 · revisão anual da entrevista: cada resposta volta todos os anos */
+.me-rev{padding:20px clamp(16px,4vw,30px);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 8%,transparent),transparent 70%)}
+.me-rev h3{margin:12px 0 4px}
+.me-rev.ok{padding:14px 18px;border-color:var(--line)}.me-rev.ok b{display:inline-flex;align-items:center;gap:6px;color:var(--pos,#4ade80)}.me-rev.ok .ic{width:16px;height:16px}
+.me-rvq{display:block;font-family:Georgia,'Times New Roman',serif;font-size:clamp(19px,3vw,24px);line-height:1.35;margin:6px 0 10px;color:var(--tx)}
+.me-old{margin:0 0 10px;padding:10px 14px;border-left:3px solid color-mix(in srgb,var(--accent) 60%,transparent);border-radius:0 10px 10px 0;background:rgba(255,255,255,.03);font-size:15.5px;line-height:1.5;white-space:pre-wrap}
+.me-old small{display:block;margin-bottom:3px;font-size:12px;color:var(--mut);white-space:normal}
+.me-hist{margin:8px 0 0}.me-hist summary{cursor:pointer;font-size:13.5px;color:var(--mut)}.me-hist .me-old{margin-top:8px}

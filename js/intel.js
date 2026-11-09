@@ -53,6 +53,8 @@ I.alerts = () => {
   // Carreira
   OS.all('opps').filter(o => o.deadline && !['Aceite', 'Recusada', 'Perdida', 'Descartada', 'Submetida', 'Em avaliação'].includes(o.status)).forEach(o => { const d = U.diff(o.deadline, t); if (d < 0) return; if (d <= 7) A('urgent', 'Oportunidades', o.name, `Prazo ${U.rel(o.deadline)}${o.next ? ' · próxima ação: ' + o.next : ''}`, '#oportunidades'); else if (d <= 21) A('attention', 'Oportunidades', o.name, `Prazo ${U.rel(o.deadline)}`, '#oportunidades'); });
   OS.all('applications').filter(a => a.interview && a.interview >= t && U.diff(a.interview, t) <= 3).forEach(a => A('urgent', 'Carreira', `Entrevista: ${a.company}`, U.rel(a.interview), '#carreira'));
+  // Eu: a revisão anual da entrevista (a partir de 1 de janeiro; em fevereiro passa a urgente)
+  try { const n = OS.Me && OS.Me.revDue ? OS.Me.revDue().length : 0; if (n) A(+t.slice(5, 7) > 1 ? 'urgent' : 'attention', 'Eu', `Revisão anual da entrevista: ${n} ${n === 1 ? 'resposta' : 'respostas'} por rever`, 'O teu eu deste ano relê o que respondeste e confirma ou atualiza', '#eu.entrevista'); } catch (e) { }
   const fu = OS.all('contacts').filter(c => c.next && c.next <= t); if (fu.length) A('attention', 'Carreira', `${fu.length} follow-up(s) de networking`, fu.slice(0, 3).map(c => c.name).join(' · '), '#carreira.rede');
   // Mova
   // (Mova removida da app)

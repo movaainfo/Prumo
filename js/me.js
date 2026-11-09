@@ -275,6 +275,37 @@ A.meBookHtml = () => { const b = curBio(); if (!b) return; const ch = b.ch.filte
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' })); a.download = (b.title || 'biografia').replace(/[^\wÀ-ÿ -]+/g, '').trim().slice(0, 60) + '.html'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
   UI.toast('Livro descarregado: abre-o e usa Imprimir → Guardar como PDF', 'pos'); };
 
+/* ---------- revisão anual da entrevista (v3.9): cada resposta volta todos os anos ----------
+   Cada resposta guarda o que disseste em cada ano: me().qaH[id] = [{ y, d, a, ok }]. A partir de 1 de janeiro, todas as respostas
+   dadas em anos anteriores ficam por rever nesse ano (obrigatório): o teu "eu" deste ano relê e confirma ("ainda faz sentido")
+   ou escreve a resposta deste ano. As dos anos anteriores ficam guardadas, para veres como mudaste. */
+const yr = () => +today().slice(0, 4);
+const qaH = () => { const m = me(); if (!m.qaH || typeof m.qaH !== 'object') m.qaH = {}; let add = 0;
+  // respostas de antes desta versão (ou vindas de um aparelho antigo): contam como dadas em 2026
+  Object.entries(m.qa || {}).forEach(([id, a]) => { if (String(a || '').trim() && !(m.qaH[id] || []).length) { m.qaH[id] = [{ y: Math.min(yr(), 2026), d: '', a: String(a) }]; add++; } });
+  if (add) setTimeout(() => OS.touch('me'), 0); return m.qaH; };
+const stamp = (id, a, ok) => { const H = qaH(), y = yr(), L = H[id] = H[id] || [], e = L.find(x => x.y === y), v = { y, d: today(), a: String(a) }; if (ok) v.ok = 1; if (e) { delete e.ok; Object.assign(e, v); } else L.push(v); L.sort((x, z) => x.y - z.y); if (L.length > 40) L.splice(0, L.length - 40); };
+const revAll = () => { const H = qaH(), y = yr(); return qList().filter(q => isAns(q) && (H[q.id] || []).length && H[q.id][0].y < y); };
+const revDue = () => { const H = qaH(), y = yr(); return revAll().filter(q => !H[q.id].some(e => e.y === y)); };
+const pastOf = id => (qaH()[id] || []).filter(e => e.y < yr()).slice().reverse();
+const oldBox = (id, open) => { const L = pastOf(id); if (!L.length) return ''; const one = e => `<blockquote class="me-old"><small>Em ${e.y}${e.ok ? ' (confirmada)' : ''} respondeste</small>${esc(e.a)}</blockquote>`;
+  return open ? one(L[0]) + (L.length > 1 ? `<details class="me-hist"><summary>Respostas de anos anteriores (${L.length - 1})</summary>${L.slice(1).map(one).join('')}</details>` : '') : `<details class="me-hist"><summary>O que respondeste noutros anos (${L.length})</summary>${L.map(one).join('')}</details>`; };
+const revCard = () => { const all = revAll(); if (!all.length) return ''; const D0 = revDue(), y = yr(), done = all.length - D0.length;
+  if (!D0.length) return `<div class="pn me-rev ok"><div class="row between gap8"><b>${UI.ic('check')}Revisão de ${y} feita</b><span class="mono">${done}/${all.length}</span></div><small class="mut">Releste todas as respostas dos anos anteriores. Para o ano, a 1 de janeiro, voltam todas.</small></div>`;
+  const q = D0.find(x => x.id === OS.ui.meRi) || D0[0], cur = (me().qa || {})[q.id] || '';
+  return `<div class="pn me-rev"><div class="row between gap8" style="flex-wrap:wrap"><div class="eyebrow">Revisão de ${y} · obrigatória</div><span class="mono">${done}/${all.length} revistas</span></div>${UI.bar(done / all.length, 'pos')}
+    <h3>O teu eu de ${y} relê o que respondeste</h3><small class="mut">Todas as respostas voltam uma vez por ano, a partir de 1 de janeiro. Vê se ainda faz sentido: confirma ou escreve a resposta deste ano. As dos anos anteriores ficam guardadas.</small>
+    <div class="eyebrow" style="margin-top:12px">${esc(q.g)}</div><label for="meqRev" class="me-rvq">${esc(OS.my(q.q))}</label>${oldBox(q.id, 1)}
+    <textarea class="field me-iva" id="meqRev" data-id="${q.id}" rows="5" aria-label="A tua resposta de ${y}">${esc(DR['r' + q.id] != null ? DR['r' + q.id] : cur)}</textarea>
+    <div class="row gap8 me-ivb"><button class="btn" data-act="meQDict" data-t="meqRev">${UI.ic('mic')}Ditar</button><button class="btn pri grow" data-act="meRevOk">${UI.ic('check')}Ainda faz sentido</button><button class="btn" data-act="meRevSave">Guardar a resposta de ${y}</button>${D0.length > 1 ? '<button class="btn ghost" data-act="meRevNext">Outra primeiro</button>' : ''}</div></div>`; };
+const revGo = id => { const D0 = revDue(); OS.setUI('meRi', (D0.find(q => q.id !== id) || {}).id || ''); };
+A.meRevOk = () => { const el = document.getElementById('meqRev'); if (!el) return; const id = el.dataset.id, a = String((me().qa || {})[id] || '').trim(); if (!a) return;
+  stamp(id, a, 1); delete DR['r' + id]; OS.touch('me'); revGo(id); UI.toast('Confirmado: ainda faz sentido', 'pos'); };
+A.meRevSave = () => { const el = document.getElementById('meqRev'); if (!el) return; const id = el.dataset.id, v = el.value.trim(); if (!v) return UI.toast('Escreve a resposta deste ano (ou toca em "Ainda faz sentido")', 'warn');
+  const old = String((me().qa || {})[id] || '').trim(); me().qa = me().qa || {}; me().qa[id] = v; stamp(id, v, v === old); delete DR['r' + id]; OS.touch('me'); revGo(id); UI.toast(v === old ? 'Confirmado: ainda faz sentido' : `Resposta de ${yr()} guardada (a de antes fica no histórico)`, 'pos'); };
+A.meRevNext = () => { const el = document.getElementById('meqRev'); if (!el) return; if (el.value !== String((me().qa || {})[el.dataset.id] || '')) DR['r' + el.dataset.id] = el.value; const D0 = revDue(), i = D0.findIndex(q => q.id === el.dataset.id); OS.setUI('meRi', (D0[i + 1] || D0[0] || {}).id || ''); };
+document.addEventListener('input', e => { const el = e.target; if (el && el.id === 'meqRev') DR['r' + el.dataset.id] = el.value; });
+
 /* ---------- entrevistador: uma pergunta de cada vez, com voz e perguntas de seguimento ---------- */
 let FUB = false; const DR = {};
 const isAns = q => String((me().qa || {})[q.id] || '').trim();
@@ -287,15 +318,15 @@ Faz até 3 perguntas de seguimento curtas e concretas para tirar mais detalhes d
     fu.push(...add); if (fu.length > 600) fu.splice(0, fu.length - 600); OS.touch('me'); return add; } catch (e) { return []; } };
 A.meQSave = async () => { const el = document.getElementById('meqCur'); if (!el) return; const id = el.dataset.id, v = el.value.trim(), q = qList().find(x => x.id === id);
   if (!q) return; if (!v) return UI.toast('Escreve ou dita a resposta (ou toca em Saltar)', 'warn');
-  me().qa = me().qa || {}; me().qa[id] = v; delete DR[id]; OS.touch('me'); FUB = true; OS.request();
+  me().qa = me().qa || {}; me().qa[id] = v; stamp(id, v); delete DR[id]; OS.touch('me'); FUB = true; OS.request();
   const add = await Promise.race([followUps(q), new Promise(r => setTimeout(() => r([]), 15000))]); FUB = false;
   const nx = add[0] || pool(OS.ui.meQg || '')[0]; OS.setUI('meQi', nx ? nx.id : ''); if (add.length) UI.toast(`Mais ${add.length} pergunta${add.length > 1 ? 's' : ''} para aprofundar esta história`, 'pos'); };
 A.meQSkip = () => { const el = document.getElementById('meqCur'); if (!el) return; const L = pool(OS.ui.meQg || ''), i = L.findIndex(x => x.id === el.dataset.id), nx = L[i + 1] || L[0]; if (el.value.trim()) DR[el.dataset.id] = el.value; OS.setUI('meQi', nx && nx.id !== el.dataset.id ? nx.id : ''); };
-A.meQDict = () => { const el = document.getElementById('meqCur'), SRc = window.SpeechRecognition || window.webkitSpeechRecognition; if (!el) return; if (!SRc) return UI.toast('Este navegador não deixa ditar: usa o microfone do teclado', 'warn');
+A.meQDict = b => { const tid = (b && b.dataset && b.dataset.t) || 'meqCur', el = document.getElementById(tid), SRc = window.SpeechRecognition || window.webkitSpeechRecognition; if (!el) return; if (!SRc) return UI.toast('Este navegador não deixa ditar: usa o microfone do teclado', 'warn');
   const r = new SRc(); r.lang = (OS.one('spyke').accent === 'PT') ? 'pt-PT' : 'pt-BR'; r.interimResults = false; r.continuous = true;
-  r.onresult = e => { const t = [...e.results].slice(e.resultIndex).map(x => x[0].transcript).join(' ').trim(); if (!t) return; const box = document.getElementById('meqCur'); if (!box) return; box.value = (box.value.trim() ? box.value.trim() + ' ' : '') + t; DR[box.dataset.id] = box.value; };
-  r.onerror = () => UI.toast('Não consegui ouvir', 'warn'); r.onend = () => { const b = document.querySelector('[data-act=meQDict]'); if (b) b.classList.remove('on'); };
-  const b = document.querySelector('[data-act=meQDict]'); if (b) b.classList.add('on'); UI.toast('A ouvir… fala à vontade; toca fora ou espera para terminar'); try { r.start(); } catch (e) { } };
+  r.onresult = e => { const t = [...e.results].slice(e.resultIndex).map(x => x[0].transcript).join(' ').trim(); if (!t) return; const box = document.getElementById(tid); if (!box) return; box.value = (box.value.trim() ? box.value.trim() + ' ' : '') + t; DR[(tid === 'meqRev' ? 'r' : '') + box.dataset.id] = box.value; };
+  r.onerror = () => UI.toast('Não consegui ouvir', 'warn'); r.onend = () => { const b2 = document.querySelector(`[data-act=meQDict]${tid === 'meqRev' ? '[data-t=meqRev]' : ':not([data-t])'}`); if (b2) b2.classList.remove('on'); };
+  const b2 = document.querySelector(`[data-act=meQDict]${tid === 'meqRev' ? '[data-t=meqRev]' : ':not([data-t])'}`); if (b2) b2.classList.add('on'); UI.toast('A ouvir… fala à vontade; toca fora ou espera para terminar'); try { r.start(); } catch (e) { } };
 A.meQMore = async b => { const p = partOf(b.dataset.p); if (!p || !aiOK()) return UI.toast('Liga a IA em Definições → Spyke', 'warn'); b.disabled = true; FUB = true; OS.request();
   try { const mat = matOf(p), o = await OS.AI.json([{ text: `És um biógrafo a preparar o capítulo "${p.t}" do livro da vida de ${first()}. Já sabes isto: ${JSON.stringify(mat).slice(0, 12000)}
 Faz 6 perguntas novas, concretas e profundas para este capítulo (o que ainda falta: cenas, pessoas, lugares, sentimentos, viragens). Não repitas o que ele já respondeu. Trata-o por tu. JSON: {"q":["…"]}` }], .6);
@@ -318,7 +349,7 @@ A.mePhotoDel = () => { me().photo = ''; OS.touch('me'); };
 const avatar = (cls = '') => me().photo ? `<img class="me-av ${cls}" src="${me().photo}" alt="${esc(first())}">` : `<div class="me-av ${cls} me-av0">${esc(first().charAt(0))}</div>`;
 
 /* ---------- entrevista: guardar respostas ---------- */
-document.addEventListener('change', e => { const el = e.target; if (!el.dataset || !el.dataset.meq) return; me().qa = me().qa || {}; me().qa[el.dataset.meq] = el.value; OS.touch('me'); });
+document.addEventListener('change', e => { const el = e.target; if (!el.dataset || !el.dataset.meq) return; me().qa = me().qa || {}; me().qa[el.dataset.meq] = el.value; if (el.value.trim()) stamp(el.dataset.meq, el.value.trim(), el.value.trim() === String(((qaH()[el.dataset.meq] || []).filter(x => x.y < yr()).pop() || {}).a || '').trim()); OS.touch('me'); });
 
 /* ---------- vistas ---------- */
 const T = {};
@@ -330,7 +361,7 @@ V.eu = sub => { const k = TABS.some(t => t[0] === (sub || '')) ? (sub || '') : '
 
 T[''] = () => { const m = me(), p = P(), a = age(m.birth), cp = completeness(), ppl = OS.all('people'), ev = OS.all('lifeev'), b = m.bio;
   const bd = U.sortBy(ppl.map(x => ({ x, n: nextBday(x.birthday) })).filter(o => o.n), o => o.n.days).slice(0, 4);
-  const miss = [!m.birth && ['Data de nascimento', 'eu.sobre'], !m.birthplace && ['Onde nasceste', 'eu.sobre'], !m.testimony && ['O teu testemunho', 'eu.sobre'], ppl.length < 3 && ['Família e amigos', 'eu.pessoas'], ev.length < 5 && ['Momentos da tua vida', 'eu.historia'], answered() < 5 && ['Responder à entrevista', 'eu.entrevista'], !b && ['Escrever a biografia', 'eu.bio']].filter(Boolean);
+  const miss = [!m.birth && ['Data de nascimento', 'eu.sobre'], !m.birthplace && ['Onde nasceste', 'eu.sobre'], !m.testimony && ['O teu testemunho', 'eu.sobre'], ppl.length < 3 && ['Família e amigos', 'eu.pessoas'], ev.length < 5 && ['Momentos da tua vida', 'eu.historia'], answered() < 5 && ['Responder à entrevista', 'eu.entrevista'], (n => n && [`Revisão anual da entrevista (${n} por rever)`, 'eu.entrevista'])(revDue().length), !b && ['Escrever a biografia', 'eu.bio']].filter(Boolean);
   const fact = (l, v) => v ? `<div class="me-f"><small>${l}</small><b>${esc(v)}</b></div>` : '';
   return `<div class="pn me-hero"><div class="me-hero-ph">${avatar('lg')}<div class="row gap6"><button class="btn xs ghost" data-act="mePhoto">${m.photo ? 'Mudar foto' : 'Pôr foto'}</button>${m.photo ? `<button class="btn xs ghost" data-act="mePhotoDel">Tirar</button>` : ''}</div></div>
     <div class="me-hero-t"><div class="eyebrow">Quem sou eu</div><h2>${esc(p.name || first())}</h2><p class="me-tag">${esc(m.motto || (b && b.sum) || 'Filho de Deus, estudante, sonhador — a história ainda está a ser escrita.')}</p>
@@ -416,7 +447,7 @@ T.entrevista = () => { const qa = me().qa || {}, all = qList(), g = OS.ui.meQg |
   const head = `<div class="pn me-ivh"><div class="row between gap8" style="flex-wrap:wrap"><div><h3 style="margin:0">Entrevista da tua vida</h3><small class="mut">Uma pergunta de cada vez, como numa conversa com um biógrafo. Depois de cada resposta, a IA pergunta mais sobre essa história.</small></div><span class="mono">${n}/${all.length}</span></div>${UI.bar(n / Math.max(1, all.length), 'pos')}
     <small class="mut">${U.nf(words)} palavras contadas · dá para ${pgs(Math.round(words * 2.4))} de livro</small>
     <label class="me-psel"><span>Parte do livro</span><select class="field" id="meQsel" aria-label="Parte do livro"><option value=""${!g ? ' selected' : ''}>Tudo, pela ordem do livro</option>${aiL.length ? `<option value="A IA quer saber"${g === 'A IA quer saber' ? ' selected' : ''}>A IA quer saber (${aiL.filter(isAns).length}/${aiL.length})</option>` : ''}${counts.map(([p, t, a]) => `<option value="${esc(p.n)}"${g === p.n ? ' selected' : ''}>${esc(p.n)} (${a}/${t})</option>`).join('')}<option value="_done"${g === '_done' ? ' selected' : ''}>Ver e editar as respondidas</option></select></label></div></div>`;
-  if (g === '_done') return head + (all.filter(isAns).map(q => `<div class="pn me-qa"><div class="eyebrow">${esc(q.g)}${q.fu ? ' · seguimento' : ''}</div><label for="meq-${q.id}"><b>${esc(OS.my(q.q))}</b></label><textarea class="field" id="meq-${q.id}" data-meq="${q.id}" rows="4">${esc(qa[q.id] || '')}</textarea></div>`).join('') || UI.empty('Ainda não respondeste a nenhuma.'));
+  if (g === '_done') return head + revCard() + (all.filter(isAns).map(q => `<div class="pn me-qa"><div class="eyebrow">${esc(q.g)}${q.fu ? ' · seguimento' : ''}</div><label for="meq-${q.id}"><b>${esc(OS.my(q.q))}</b></label><textarea class="field" id="meq-${q.id}" data-meq="${q.id}" rows="4">${esc(qa[q.id] || '')}</textarea>${oldBox(q.id)}</div>`).join('') || UI.empty('Ainda não respondeste a nenhuma.'));
   const card = cur ? `<div class="pn me-iv"><div class="eyebrow">${esc(cur.g)}${cur.fu ? ' · <span class="acc">a IA quer saber mais</span>' : ''} · pergunta ${idx}</div>
     <label for="meqCur" class="me-ivq">${esc(OS.my(cur.q))}</label>
     <textarea class="field me-iva" id="meqCur" data-id="${cur.id}" rows="7" placeholder="Conta com calma, com pormenores: quem, onde, quando, o que sentiste… (ou toca em Ditar e fala)">${esc(DR[cur.id] || '')}</textarea>
@@ -424,7 +455,7 @@ T.entrevista = () => { const qa = me().qa || {}, all = qList(), g = OS.ui.meQg |
     <label class="switch" style="margin-top:10px"><input type="checkbox" data-act="meFuTg" ${me().autoFu === false ? '' : 'checked'}><span></span>A IA faz perguntas de seguimento depois de cada resposta</label></div>`
     : `<div class="pn">${UI.empty(g ? `Respondeste a todas as perguntas de "${esc(g)}".` : 'Respondeste a todas as perguntas!', gp ? `<button class="btn pri" data-act="meQMore" data-p="${gp.k}" ${FUB ? 'disabled' : ''}>${UI.ic('zap')}A IA faz mais perguntas sobre "${esc(gp.n)}"</button>` : '')}</div>`;
   const rest = (g ? all.filter(q => q.g === g) : []).filter(isAns);
-  return head + card + (rest.length ? UI.toggle(`As tuas respostas em "${esc(g)}" (${rest.length})`, rest.map(q => `<div class="me-qa"><label for="meq-${q.id}"><b>${esc(OS.my(q.q))}</b></label><textarea class="field" id="meq-${q.id}" data-meq="${q.id}" rows="3">${esc(qa[q.id] || '')}</textarea></div>`).join(''), 'meQr_' + (gp ? gp.k : 'x')) : '')
+  return head + revCard() + card + (rest.length ? UI.toggle(`As tuas respostas em "${esc(g)}" (${rest.length})`, rest.map(q => `<div class="me-qa"><label for="meq-${q.id}"><b>${esc(OS.my(q.q))}</b></label><textarea class="field" id="meq-${q.id}" data-meq="${q.id}" rows="3">${esc(qa[q.id] || '')}</textarea></div>`).join(''), 'meQr_' + (gp ? gp.k : 'x')) : '')
     + (!g && gp == null ? `<div class="pn"><div class="pn-h"><h3>Partes do livro</h3></div><div class="me-pl">${counts.map(([p, t, a]) => `<button class="me-pi" data-act="meQg" data-v="${esc(p.n)}"><b>${esc(p.t)}</b><small>${a}/${t} respondidas</small>${UI.bar(a / Math.max(1, t), a >= t ? 'pos' : '')}</button>`).join('')}</div></div>` : ''); };
 A.meQg = b => { OS.setUI('meQi', ''); OS.setUI('meQg', b.dataset.v); };
 document.addEventListener('change', e => { if (e.target && e.target.id === 'meQsel') { OS.setUI('meQi', ''); OS.setUI('meQg', e.target.value); } });
@@ -432,5 +463,5 @@ document.addEventListener('change', e => { if (e.target && e.target.id === 'meQs
 /* aniversários no calendário */
 if (OS.Cal && OS.Cal.items) { OS.Cal.src.bday = ['Aniversários', '#F472B6']; const _it = OS.Cal.items; OS.Cal.items = (from, to) => { const out = _it(from, to); OS.all('people').forEach(x => { if (!x.birthday) return; for (let y = +from.slice(0, 4); y <= +to.slice(0, 4); y++) { const d = y + x.birthday.slice(4); if (d >= from && d <= to) out.push({ date: d, title: '' + x.name + (x.rel ? ' (' + x.rel + ')' : ''), src: 'bday', edit: 'people:' + x.id, sub: +x.birthday.slice(0, 4) > 1900 && y - +x.birthday.slice(0, 4) > 0 ? 'faz ' + (y - +x.birthday.slice(0, 4)) + ' anos' : '' }); } }); return out.sort((a, b) => (a.date + (a.start || '99')).localeCompare(b.date + (b.start || '99'))); }; }
 
-OS.Me = { facts, draft, age, nextBday, completeness, PARTS, qList, matOf, pages, wc };
+OS.Me = { facts, draft, age, nextBday, completeness, PARTS, qList, matOf, pages, wc, revDue, revAll, qaH };
 })();
