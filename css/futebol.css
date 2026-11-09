@@ -388,3 +388,17 @@ html.lite-x .fb-live i,html.lite-x .fb-ball .ic{animation:none}
 .fb-aixi{margin:6px 0 0;font-size:12.5px;line-height:1.5}
 .fb-aiout{margin:6px 0 0;font-size:12.5px;color:color-mix(in srgb,#e5484d 40%,var(--tx))}
 @media (max-width:640px){.fb-xip{min-height:240px}.fb-pp i{width:26px;height:26px;font-size:11px}.fb-pp small{font-size:9.5px}.fb-sq{grid-template-columns:minmax(0,1fr)}}
+
+/* fotos dos jogadores */
+.fb-ph{border-radius:50%;object-fit:cover;object-position:50% 18%;flex:none;background:var(--pn2,rgba(255,255,255,.06))}
+.fb-av{position:relative;flex:none;width:44px;height:44px}
+.fb-av .fb-ph{width:44px;height:44px;border:2px solid var(--line)}
+.fb-av i{position:absolute;right:-4px;bottom:-3px;display:grid;place-items:center;min-width:20px;height:18px;padding:0 4px;border-radius:7px;background:var(--pn);border:1px solid var(--line);font:700 10.5px/1 var(--mono);font-style:normal}
+.fb-pp.f .fb-ppf{position:relative;display:block;width:36px;height:36px}
+.fb-pp.f .fb-ph{width:36px;height:36px;border:2px solid #f4f6f2;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.fb-pp.f .fb-ppf i{position:absolute;right:-6px;bottom:-4px;width:18px;height:18px;font-size:9.5px}
+.fb-pp.f.out .fb-ph{border-color:#ffd27a}
+.fb-top3>div{padding-left:96px}
+.fb-top3 .fb-ph.tp{position:absolute;left:40px;top:50%;transform:translateY(-50%);width:44px;height:44px}
+.fb-aik .fb-ph{width:40px;height:40px}
+.fb-ain{margin:8px 0 0;font-size:12.5px;line-height:1.45;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,#e6a93a 14%,transparent);color:var(--tx)}

@@ -1,379 +1,79 @@
 [
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: entra como perfil de uma pessoa qualquer (não o pessoal)",
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): pesquisar e seguir Benfica",
   "pass": true,
-  "info": "{\"on\":true,\"pub\":true,\"name\":\"Marta\"}"
+  "info": "ok"
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: o que é só do perfil pessoal não aparece (Lista de compras)",
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): pesquisar e seguir Flamengo",
   "pass": true,
-  "info": ""
+  "info": "ok"
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: 173 páginas e separadores abrem com conteúdo e sem \"undefined/NaN\"",
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): pesquisar e seguir Japão",
   "pass": true,
-  "info": ""
+  "info": "ok"
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: nada sai para o lado no telemóvel",
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): pesquisar e seguir Real Madrid",
   "pass": true,
-  "info": ""
+  "info": "ok"
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: nenhuma página mostra coisas do Ryan (nome, ISCA, Aveiro)",
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): o Agora mostra jogos (placar e listas)",
   "pass": true,
-  "info": ""
+  "info": "{\"n\":22,\"pl\":1}"
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: 581 botões carregados sem erros de JavaScript",
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): cromos com a posição na tabela",
   "pass": true,
-  "info": " :: "
+  "info": "Benfica 2.º lugar · Liga Portugal · 28 pts dom 22/11 20:45 · fora vs Torreense V V V V V || Flamengo 1.º lugar · Brasileirão · 76 pts qua 18/11 23:30 · em casa vs Athletico-PR V E V V V || Japão 2.º lugar · Taça Asiática, Grupo F · 0 pts seg 11/1 10:30 · em casa vs Indonesia V E D V V || Real Madrid 2.º lugar · LaLiga · 30 pts sáb 21/11 20:00 · em casa vs Celta Vigo V V V V V"
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: todos os formulários de registo abrem",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas públicas",
-  "name": "Conta pública: sem erros na consola no fim",
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): página da equipa com tabela e resultados",
   "pass": true,
   "info": ""
  },
  {
   "p": "Futebol",
-  "name": "Futebol: está na Visão Geral do menu e abre com as boas-vindas (escolher equipas e campeonatos)",
+  "name": "Futebol (ESPN real): plantel com os jogadores por posição",
+  "pass": true,
+  "info": "32 jogadores"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): Liga dos Campeões com jogos e classificação",
+  "pass": true,
+  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\nCampeonatos\nCampeonatos\nLiga dos Campeões\n\n2026-27 UEFA Champions League\n\nLíder:\nPSG\n· 12 pts\nA seguir\nÚltima jornada · qua 4/11\nFinal · qua"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): escalações (oficiais ou prováveis pelos últimos jogos) no jogo",
+  "pass": true,
+  "info": "22 Viktoria Plzen 3-4-2-1 provável 25 Kabongo 12 Sojka 99 Memic 29 Gabriel 14 Doski 17 Hrosovský 6 Cerv 98 Prebsl 40 Dweh 2 Paliscák 44 Wiegele Plantel completo Benfica 4-2-3-1 provável 14 Pavlidis 36 Pa"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): detalhe do jogo com probabilidade e forma",
+  "pass": true,
+  "info": "Liga Europa Liga Europa qui 26/11 · 17:45 Viktoria Plzen faltam 17 dias Benfica Quem tem mais probabilidade de ganhar 19% Viktoria Plzen 20% empate Benfica 62% Pelas odds do mercado. É uma estimativa, não uma certeza. Doosan Arena Quem ganha? Pergunta à IA A IA pesquisa as notícias do jogo (escalaçõ"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol (ESPN real): lances certos (cartões não contam como autogolos)",
   "pass": true,
   "info": ""
  },
  {
   "p": "Futebol",
-  "name": "Futebol: escrever o nome mostra a equipa (com a liga em português)",
-  "pass": true,
-  "info": "Flamengo\nBrasileirão\nVer\nSeguir\nFS\nFlamengo Sub-20\nBrasileirão Sub-20\nVer\nSeguir"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: seleções pelo nome em português (\"Brasil\" encontra a seleção)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: \"Seguir\" guarda a equipa e a seleção",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: a página não se redesenha por cima de quem está a escrever na pesquisa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › Agora: o jogo ao vivo aparece no placar com o minuto e o resultado",
-  "pass": true,
-  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\nCampeonatos\nBrasileirão\n67'\nFlamengo\n1\n:"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › Agora: quem tem mais probabilidade de ganhar, ao vivo (com a fonte dita)",
-  "pass": true,
-  "info": "Probabilidade de ganhar, ao vivo 89% Flamengo 10% empate Palmeiras 1% Estimativa do Prumo: tabela, forma recente e fator casa, com o resultado e o tempo que falta. É uma estimativa, não uma certeza."
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › Agora: próximos jogos e últimos resultados (com V/E/D)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: o menu mostra quantos jogos das tuas equipas estão ao vivo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: golo novo → aviso com quem marcou, o minuto e o resultado",
-  "pass": true,
-  "info": "Golo · Flamengo · Bruno Henrique 70' · Flamengo 2-0 Palmeiras"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: fim do jogo → aviso \"Terminou\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › Equipas: cromos com a posição na tabela e a seleção com nome em português",
-  "pass": true,
-  "info": "Flamengo 1.º lugar · Brasileirão · 76 pts 71' 2-0 Palmeiras E V || Brasil Seleção qua 18/11 02:01 · em casa vs Argentina"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › equipa: plantel por posições, com números, idade, golos e quem está lesionado",
-  "pass": true,
-  "info": "{\"n\":5,\"inj\":true}"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › equipa: a IA procura o treinador, os lesionados e os castigados (com fontes)",
-  "pass": true,
-  "info": "mpeonato. Pesquisado pela IA nas notícias · Hoje 02:01 · Fontes: ge.globo.com, lance.com.br 1 Pedro 21 golos · 4 assist. 2 Arrascaeta 9 golos · 11 assist. 3 Bruno Henrique 7 golos · 3 assist. Guarda-redes 1 1 A"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › equipa: página da equipa com calendário, resultados e a tabela com a equipa destacada",
-  "pass": true,
-  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\n"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › tabela: zonas com cores diferentes (Libertadores, Sul-Americana, rebaixamento) mesmo quando a ESPN não as marca",
-  "pass": true,
-  "info": "{\"fla\":\"top\",\"pal\":\"top\",\"cap\":\"eu\",\"gre\":\"\",\"juv\":\"rel\",\"leg\":\"Libertadores (fase de grupos)\\nSul-Americana\\nRebaixamento (Z4)\",\"nota\":true}"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › Campeonatos: tocar num campeonato segue-o",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › Campeonatos: procurar qualquer campeonato pelo nome",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › campeonato: jogos ao vivo e a classificação por grupos",
-  "pass": true,
-  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\nCampeonatos\nCampeonatos\nLibertadores\n\n20"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › jogo: a IA analisa e diz quem tem mais probabilidade de ganhar, com as razões",
-  "pass": true,
-  "info": "Análise da IA ao vivo, com pesquisa nas notícias, às 02:01 · confiança alta O Flamengo deve ganhar: está a vencer por 2-0 aos 71 minutos e domina o jogo. Palpite: Flamengo 3–1 Palmeiras 92% Flamengo 6% empate Palmeiras 2"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › jogo: a IA pesquisa nas notícias e dá o palpite de resultado, os jogadores-chave, o treinador e os desfalques",
-  "pass": true,
-  "info": "[true,true,true,true,true,true]  Ortiz · Arrascaeta · Pedro Desfalques: Bruno Henrique (lesão) Palmeiras 4-4-2 Treinador: Abel Ferreira Atenção: Um golo cedo do Palmeiras reabre o jogo. É a leitura da IA com os dados e as notícias do jogo, não uma certeza. Fontes: ge.globo.com, lance.com.br."
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › jogo: escalações dos dois (titulares no campo, esquema, suplentes e quem entrou)",
-  "pass": true,
-  "info": "{\"n\":2,\"pp\":22} Flamengo 4-3-3 em campo 9 Fla8 10 Pedro 11 Fla10 6 Fla5 7 Fla6 8 Fla7 2 Fla1 3 Fla2 4 Fla3 5 Fla4 1 Fla0 Suplentes 20 Henrique entrou 21 Reserva Treinador: Fili"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › jogo: a IA recebe só os dados reais do jogo (resultado, minuto, golos, tabela, forma)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: o veredicto da IA fica no placar do jogo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › jogo: o cartão amarelo aparece como cartão (o texto \"is shown\" não o torna autogolo)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › jogo: lances, estatísticas ao vivo, forma e confronto direto",
-  "pass": true,
-  "info": "Brasileirão 71' Flamengo 2 : 0 Palmeiras Pedro 28' Bruno Henrique 70' Probabilidade de ganhar, ao vivo 99% Flamengo 1% empate Palmeiras 0% Estimativa do Prumo: tabela, forma recente e fator casa, com o resultado e o tempo que falta. É uma estimativa, não uma certeza. Maracanã Quem ganha? Pergunta à "
- },
- {
-  "p": "Futebol",
-  "name": "Futebol › jogo por começar: escalação provável pelos titulares dos últimos jogos (marcada como provável)",
-  "pass": true,
-  "info": "11 Brasileirão Brasileirão qua 11/11 · 02:01 Athletico Paranaense faltam 2 dias Flamengo Quem tem mais probabilidade de ganhar 22% Athletico-PR 25% empate Flamengo 53% Pelas odds do mercado. É uma estima"
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: com odds do mercado, a probabilidade usa as odds (e diz isso)",
-  "pass": true,
-  "info": "Quem tem mais probabilidade de ganhar 22% Athletico-PR 25% empate Flamengo 53% Pelas odds do mercado. É uma estimativa, não uma certeza."
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: no telemóvel nada sai do ecrã",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Futebol",
-  "name": "Futebol: sem erros na consola",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Primeira vez numa conta: abre \"Vamos fazer o Prumo à tua medida\" (com Saltar)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Abas: todas escolhidas de início, o Painel não se pode tirar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Estudos: \"Sugerir as disciplinas com IA\" preenche as disciplinas do curso",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Sem a área Carreira, salta a pergunta do trabalho (e, por ser do Brasil, já em português do Brasil)",
-  "pass": true,
-  "info": "pt-BR Seu corpo"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Rotina: sem a Fé, não sugere o hábito de oração",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Fim: resume o que vai criar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Perfil: nome, país (Brasil), cidade, curso e horário",
-  "pass": true,
-  "info": "{\"name\":\"Beatriz\",\"short\":\"Bia\",\"city\":\"Belo Horizonte\",\"uni\":\"UFMG\",\"course\":\"Administração\",\"year\":\"\",\"semester\":\"1.º Semestre 26/27\",\"semStart\":\"\",\"semEnd\":\"\",\"ectsTotal\":180,\"employer\":\"\",\"jobRole"
- },
- {
-  "p": "Boas-vindas",
-  "name": "País: feriados do Brasil (Consciência Negra, sem o 25 de Abril), moeda BRL e voz brasileira",
-  "pass": true,
-  "info": "Consciência Negra||BRL|BR"
- },
- {
-  "p": "Boas-vindas",
-  "name": "IA chamada \"Luna\" (no feminino)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Universidade: as disciplinas do curso dela",
-  "pass": true,
-  "info": "5"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Treino: 3 dias (seg, qua, sex), corrida ao sábado, rotinas com os exercícios e 3×12 para perder gordura",
-  "pass": true,
-  "info": "[[\"Corpo inteiro A\",5,3,12],[\"Corpo inteiro B\",5,3,12],[\"Corpo inteiro C\",5,3,12]]"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Desportos: corrida e voleibol",
-  "pass": true,
-  "info": "corrida,voleibol"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Dieta: meta de calorias e proteína para ela (a perder gordura)",
-  "pass": true,
-  "info": "{\"k\":1840,\"p\":150}"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Hábitos: os escolhidos ativos (sem duplicar os que a conta já tinha), os outros desligados",
-  "pass": true,
-  "info": "2 blocos de foco (100 min)|Acordar à hora, sem snooze|Beber 2 litros de água|Treino ou corrida"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Metas: as 2 que escreveu",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Marcos do Dominus feitos para ela (curso, reserva, peso) e sem os de oração",
-  "pass": true,
-  "info": "{\"int\":[\"Passar a todas as cadeiras do 1.º ano\",\"Fechar o 1.º ano de Administração sem nenhuma cadeira em atraso\",\"Média do semestre igual ou acima de 7\"],\"for\":[\"Juntar 3000 reais de reserva\",\"Juntar um fundo de emergência com 3 meses de despesas\",\"Juntar 1500 até ao verão\"],\"cor\":[\"Perder 5 kg com"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Menu: sem Fé nem Carreira (escondidas), com o resto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Definições › Geral: \"O teu Prumo\" abre só as abas do menu",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Pôr a Fé de volta no menu",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Explorar: \"Pôr no menu\" devolve uma aba escondida",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Responder outra vez não duplica disciplinas, rotinas, metas nem hábitos",
-  "pass": true,
-  "info": "5,3,2,4 → 5,3,2,4"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Depois de respondido, não volta a abrir sozinho",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "Saltar: fecha, guarda que saltou e não muda nada",
-  "pass": true,
-  "info": "{\"d\":\"skip\",\"open\":false,\"hide\":0}"
- },
- {
-  "p": "Boas-vindas",
-  "name": "Perfil do Ryan (ps): sem questionário",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Boas-vindas",
-  "name": "sem erros de JavaScript",
+  "name": "Futebol (ESPN real): sem erros na consola (fora o bloqueio da ESPN ao navegador de testes)",
   "pass": true,
   "info": ""
  }

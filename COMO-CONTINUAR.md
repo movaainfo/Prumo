@@ -200,3 +200,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Análise da IA: agora pesquisa as notícias do jogo (`OS.Brain.search`, deep) quando há chave; recebe também escalação (oficial/provável), marcadores e lesionados da ESPN; devolve palpite de resultado, jogadores-chave e escalações prováveis com treinador e desfalques; mostra as fontes. Sem chave usa `OS.AI.json` sem pesquisa.
 - `api/futebol.js`: 600 pedidos/min por endereço (abrir o Futebol pela primeira vez faz muitos pedidos).
 - Testes: grupo `futebol` (30) e `FBLIVE=1` (13, com a ESPN a sério).
+
+### 3.7: Fotos dos jogadores, jogo que não abria, análise sem falhas
+- Fotos (`needPhotos`/`phImg`): a da ESPN (`headshot`, raramente existe) ou a da Wikipédia (`w/api.php?generator=search&prop=pageimages`, en e pt, com o nome + clube; só aceite se o título tiver o apelido). Guardadas em `oc_fut_ph` (sem foto volta a tentar ao fim de 14 dias). A Wikipédia bloqueia o servidor de testes (robot policy), mas responde aos aparelhos das pessoas; nos testes é simulada.
+- Bug: uma análise guardada pela 3.5 (sem `chave`/`src`) fazia o detalhe do jogo dar erro e não abrir. `aiOf` normaliza as antigas; `A.fbMatch` procura o jogo em todo o lado (`evFind`) e `mSafe` mostra sempre o jogo, mesmo se uma parte falhar.
+- Análise do jogo em cadeia: `OS.Brain.search` (Google com pesquisa, modelos rápidos primeiro: os "pro" gastam a cota grátis num instante) → `OS.AI.json` (Google sem pesquisa ou IA grátis de reserva, sem limite diário) → `localAI` (análise do Prumo sem IA: probabilidade, resultado mais provável por Poisson, tabela, forma, confronto direto, marcadores, escalações). A caixa diz qual foi usada.
