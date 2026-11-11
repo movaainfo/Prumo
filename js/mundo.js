@@ -145,7 +145,8 @@ A.muPick = b => { const c = BY[b.dataset.c]; if (!c) return; const r = mine()[c.
       ${(() => { const x = docRec(c.c3); return x && (x.vistoTipo || x.vistoAte) ? `<small class="mut">${esc(x.vistoTipo || '')}${x.vistoAte ? ` · válido até ${U.fmtD(x.vistoAte)}${x.vistoAte < U.today() ? ' (expirado)' : ''}` : ''}</small>` : ''; })()}</div>
     ${FOGGN[c.c3] ? `<p class="mu-fn"><b>Na rota de Phileas Fogg.</b> ${esc(FOGGN[c.c3])}</p>` : ''}${ODIN[c.c3] ? `<p class="mu-fn od"><b>Na viagem de Odisseu.</b> ${esc(ODIN[c.c3])}</p>` : ''}
     ${r ? `<div class="mu-mi">${r.date ? `<span>${UI.ic('cal')}${U.fmtD(r.date)}</span>` : ''}${r.cities ? `<span>${UI.ic('pin')}${esc(r.cities)}</span>` : ''}${+r.trips > 1 ? `<span>${r.trips} vezes</span>` : ''}</div>
-      <div class="row gap8"><button class="btn sm" data-act="muEdit" data-id="${r.id}">${UI.ic('edit')}<span>Data, cidades e memórias</span></button><button class="btn sm ghost" data-act="muClear" data-c="${c.c3}">Tirar</button></div>` : '<p class="mut">Marca se já foste, se viveste lá ou se queres ir.</p>'}</div>`, 'mu-modal'); };
+      <div class="row gap8"><button class="btn sm" data-act="muEdit" data-id="${r.id}">${UI.ic('edit')}<span>Data, cidades e memórias</span></button><button class="btn sm ghost" data-act="muClear" data-c="${c.c3}">Tirar</button></div>` : '<p class="mut">Marca se já foste, se viveste lá ou se queres ir.</p>'}
+    ${OS.Mundo.plBtn ? `<div class="mu-plb">${OS.Mundo.plBtn(c.c3)}</div>` : ''}</div>`, 'mu-modal'); };
 // v2.97: o aviso diz o XP que o Dominus deu mesmo (desde que o Dominus ficou exigente, a rotina vale menos do que os antigos 900)
 const mente = () => { try { return OS.Dom && OS.Dom.state ? +OS.Dom.state().ax.mente || 0 : null; } catch (e) { return null; } };
 const xpTxt = (x0, x1) => x0 == null || x1 == null ? '' : x1 - x0 >= 1 ? ` +${Math.round(x1 - x0)} XP de Mente no Dominus.` : '';
@@ -184,7 +185,7 @@ V.mundo = () => { const S = stats(), z = OS.ui.muZ != null ? String(OS.ui.muZ) :
   const want = S.w.map(c => ({ c, r: m[c.c3] }));
   const list = ALL.filter(c => (!q || N(c.n).includes(q)) && (f === 'todos' || (f === 'conheci' ? been(m[c.c3]) : f === 'quero' ? m[c.c3] && m[c.c3].status === 'Quero ir' : !m[c.c3])));
   const row = c => { const r = m[c.c3], b = been(r), w = r && r.status === 'Quero ir';
-    return `<div class="mu-row ${b ? 'on' : ''}"><button class="mu-rn" data-act="muPick" data-c="${c.c3}"><span class="mu-fl">${flag(c.c2)}</span><b>${esc(c.n)}</b>${r ? `<small class="mu-tag ${FILL[r.status]}">${esc(r.status)}</small>` : ''}</button>
+    return `<div class="mu-row ${b ? 'on' : ''}"><button class="mu-rn" data-act="muPick" data-c="${c.c3}"><span class="mu-fl">${flag(c.c2)}</span><b>${esc(c.n)}</b>${r ? `<small class="mu-tag ${FILL[r.status]}">${esc(r.status)}</small>` : ''}${(n => n ? `<small class="mut mu-pln">${UI.ic('pin')}${n}</small>` : '')(OS.Mundo.plCount ? OS.Mundo.plCount(c.c3) : 0)}</button>
       <button class="mu-tg ${b ? 'on' : ''}" data-act="muTog" data-c="${c.c3}" data-v="Visitei" aria-label="${b ? 'Tirar' : 'Marcar'} ${esc(c.n)} como visitado" aria-pressed="${b}">${UI.ic('check')}</button>
       <button class="mu-tg w ${w ? 'on' : ''}" data-act="muTog" data-c="${c.c3}" data-v="Quero ir" aria-label="${w ? 'Tirar' : 'Pôr'} ${esc(c.n)} ${w ? 'dos' : 'nos'} próximos destinos" aria-pressed="${!!w}">${UI.ic('heart')}</button></div>`; };
   return `<div class="mu">

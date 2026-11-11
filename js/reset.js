@@ -29,7 +29,7 @@ const AREAS = [
   ['Carreira', ['applications', 'contacts', 'experiences', 'opps', 'skills', 'certs']],
   ['Mova', ['mvsales', 'mvexp', 'mvclients', 'mvproducts', 'mvmkt']],
   ['Pessoas', ['people', 'social']],
-  ['Mundo (países e ilhas)', ['countries', 'islands']],
+  ['Mundo (países, ilhas e lugares)', ['countries', 'islands', 'places']],
   ['Biografia', ['lifeev']],
   ['Spyke', ['spymem', 'spyroutines']],
   ['Floresta, recompensas e o jogo', ['trees', 'forewards', 'rewards', 'one:dominus', 'one:forest']]];

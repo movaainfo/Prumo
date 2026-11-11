@@ -115,6 +115,7 @@ const evs = () => { const T = today(), E = [], push = (d, a, x, t, k) => { d = S
   sf(() => OS.all('adventures').forEach(a => { if (a.status === 'Feita') add(a.date, 'corpo', OS.Adv ? OS.Adv.xp(a.diff) : 100, 'Aventura: ' + a.title); }), 'aventuras');
   sf(() => { if (OS.Mundo) { const m = OS.Mundo.mine(); Object.values(m).forEach(r => { if (OS.Mundo.been(r)) add(OS.Mundo.dateOf(r), 'mente', 150, 'País: ' + OS.Mundo.name(r.code)); }); } }, 'mundo');
   sf(() => { if (OS.Mundo && OS.Mundo.imine) Object.values(OS.Mundo.imine()).forEach(r => { if (OS.Mundo.been(r)) add(OS.Mundo.dateOf(r), 'mente', 50, 'Ilha: ' + OS.Mundo.iname(r.code)); }); }, 'ilhas');
+  sf(() => { if (OS.Mundo && OS.Mundo.pall) OS.Mundo.pall().forEach(r => { if (OS.Mundo.been(r)) add(OS.Mundo.dateOf(r), 'mente', 15, 'Lugar: ' + r.name); }); }, 'lugares');
   sf(() => OS.all('body').forEach(b => add(b.date, 'corpo', 5, 'Medição do corpo')), 'medidas');
   sf(() => { const by = U.groupBy(OS.all('meals'), m => m.date), lim = U.addDays(T, -60); Object.entries(by).forEach(([d, L]) => { if (L.length >= 3) add(d, 'disciplina', 5, 'Refeições do dia registadas'); if (d >= lim && OS.Diet && OS.Diet.protOk && OS.Diet.protOk(d)) add(d, 'corpo', 12, 'Meta de proteína'); }); }, 'dieta');
   // Intelecto
