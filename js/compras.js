@@ -30,9 +30,9 @@ const st = () => OS.one('shop');
 const save = (o) => OS.setOne('shop', Object.assign({ at: Date.now() }, o));
 const priceOf = it => (st().prices || {})[norm(it.name)] || {};
 // quantas embalagens e quanto custa (só se souber a embalagem e o preço)
-const calc = (it, k = 1) => { const p = priceOf(it), pack = n(it.pack != null ? it.pack : p.pack), price = n(it.price != null ? it.price : p.price), q = n(it.qty) * k;
-  if (it.have) return { q, packs: 0, cost: 0 };
-  const packs = pack > 0 ? Math.max(1, Math.ceil(q / pack - 1e-9)) : null; return { q, packs, cost: price > 0 ? (packs != null ? packs * price : 0) : 0, known: price > 0 && packs != null }; };
+const calc = (it, k = 1) => { const p = priceOf(it), pack = n(it.pack != null ? it.pack : p.pack), price = n(it.price != null ? it.price : p.price), stk = !it.have && !it.got && OS.Cozinha ? OS.Cozinha.stockOf(it.name, it.unit) : 0, q = Math.max(0, n(it.qty) * k - stk);
+  if (it.have || (stk > 0 && q <= 0)) return { q, packs: 0, cost: 0, stk, home: stk > 0 };
+  const packs = pack > 0 ? Math.max(1, Math.ceil(q / pack - 1e-9)) : null; return { q, packs, cost: price > 0 ? (packs != null ? packs * price : 0) : 0, known: price > 0 && packs != null, stk }; };
 
 /* ---------- a lista automática: a média do que comeste ---------- */
 const fromDiet = () => { const end = U.today(), start = U.addDays(end, -29), M = OS.all('meals').filter(m => m.date >= start && m.date <= end && m.food);
@@ -70,23 +70,30 @@ OS.forms.shopSave = (f, v) => { const s = st(), items = (s.items || []).slice(),
 A.shopNew = () => form(null);
 A.shopEdit = b => form((st().items || []).find(x => x.id === b.dataset.id));
 A.shopDel = b => { const s = st(); save({ items: (s.items || []).filter(x => x.id !== b.dataset.id) }); UI.closeModal(); };
-A.shopGot = b => { const s = st(), items = (s.items || []).map(x => x.id === b.dataset.id ? Object.assign({}, x, { got: !x.got }) : x); save({ items }); };
+A.shopGot = b => { const s = st(), it = (s.items || []).find(x => x.id === b.dataset.id); if (!it) return; const o = Object.assign({}, it, { got: !it.got }), K = OS.Cozinha;
+  if (K) { if (o.got) { const c = calc(it, s.view === 'semana' ? 7 / daysIn(ym()) : 1), pk = n(it.pack != null ? it.pack : priceOf(it).pack), q = c.packs && pk ? c.packs * pk : c.q, add = q > 0 ? K.stockAdd(it.name, q, it.unit, it.sec) : null; if (add) { o.pan = add; UI.toast(`${it.name} entrou na despensa`, 'pos'); } }
+    else if (it.pan) { K.stockSub(it.name, it.pan, it.unit); delete o.pan; } }
+  save({ items: (s.items || []).map(x => x.id === it.id ? o : x) }); };
+// juntar à mão (as receitas mandam para aqui o que falta)
+const addManual = name => { const s = st(), items = (s.items || []).slice(); if (items.some(x => norm(x.name) === norm(name) && !x.got)) return; items.push({ id: 'm' + U.uid(), name, qty: 1, unit: 'un', sec: secOf(name), note: 'para uma receita' }); save({ items, month: s.month || ym() }); };
 A.shopView = b => save({ view: b.dataset.v });
 A.shopClearGot = () => { const s = st(); save({ items: (s.items || []).map(x => Object.assign({}, x, { got: false })) }); };
 A.shopPhoto = b => { const id = b.dataset.id, i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
   i.onchange = () => { const f = i.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { const im = new Image(); im.onload = () => { const S = 240, c = document.createElement('canvas'), k = Math.min(im.width, im.height); c.width = c.height = S; c.getContext('2d').drawImage(im, (im.width - k) / 2, (im.height - k) / 2, k, k, 0, 0, S, S);
     const s = st(); save({ items: (s.items || []).map(x => x.id === id ? Object.assign({}, x, { photo: c.toDataURL('image/jpeg', .8) }) : x) }); UI.closeModal(); UI.toast('Foto guardada', 'pos'); }; im.src = rd.result; }; rd.readAsDataURL(f); }; i.click(); };
 A.shopCopy = async () => { const s = st(), k = s.view === 'semana' ? 7 / daysIn(ym()) : 1, by = {}; (s.items || []).filter(x => !x.have && !x.got).forEach(x => { (by[x.sec || 'Outros'] = by[x.sec || 'Outros'] || []).push(x); });
-  const t = `Lista de compras (${s.view === 'semana' ? 'semana' : 'mês'}):\n` + SEC.filter(([sec]) => by[sec]).map(([sec]) => sec + ':\n' + by[sec].map(x => { const c = calc(x, k); return '- ' + x.name + ': ' + fmtQ(c.q, x.unit) + (c.packs ? ` (${c.packs} emb.)` : ''); }).join('\n')).join('\n');
+  const pan = OS.Cozinha ? OS.Cozinha.needs() : [];
+  const t = `Lista de compras (${s.view === 'semana' ? 'semana' : 'mês'}):\n` + (pan.length ? 'Acabou em casa:\n' + pan.map(x => '- ' + x.name + ': ' + OS.Cozinha.buyOf(x) + ' ' + x.unit).join('\n') + '\n' : '') + SEC.filter(([sec]) => by[sec]).map(([sec]) => sec + ':\n' + by[sec].filter(x => calc(x, k).q > 0).map(x => { const c = calc(x, k); return '- ' + x.name + ': ' + fmtQ(c.q, x.unit) + (c.packs ? ` (${c.packs} emb.)` : ''); }).join('\n')).join('\n');
   try { await navigator.clipboard.writeText(t); UI.toast('Lista copiada', 'pos'); } catch (e) { UI.toast('Não consegui copiar', 'warn'); } };
 
 /* ---------- vista ---------- */
 const pic = it => it.photo ? `<img class="sh-pic" src="${it.photo}" alt="">` : OS.Diet && OS.Diet.img ? `<span class="sh-pic">${OS.Diet.img(it.name, '', 'sm', it.pic)}</span>` : `<span class="sh-pic sh-pic0">${esc((it.name || '?').charAt(0))}</span>`;
-V.mercado = () => { if (!ON()) return UI.head('Lista de compras', '', '', 'Eu') + UI.empty('Esta página é pessoal.');
+const listView = embed => { if (!ON()) return UI.head('Lista de compras', '', '', 'Eu') + UI.empty('Esta página é pessoal.');
   const s = st(), items = s.items || [], wk = s.view === 'semana', k = wk ? 7 / daysIn(ym()) : 1, old = s.month && s.month !== ym();
   const C = items.map(x => ({ x, c: calc(x, k) })), tot = C.reduce((a, o) => a + o.c.cost, 0), known = C.filter(o => o.c.known).length, need = C.filter(o => !o.x.have), got = need.filter(o => o.x.got).length;
   const secs = SEC.map(([sec, h]) => ({ sec, h, L: C.filter(o => (o.x.sec || 'Outros') === sec) })).filter(g => g.L.length), maxSec = Math.max(1, ...secs.map(g => g.L.reduce((a, o) => a + o.c.cost, 0)));
-  const head = UI.head('Lista de compras', 'Ligada à tua Dieta: a lista do mês sai do que comes, com as quantidades, as embalagens e o custo. Juntas o resto à mão.', `<button class="btn pri" data-act="shopGen">${UI.ic('sync')}<span>${items.some(x => x.auto) ? 'Atualizar com a dieta' : 'Fazer a lista do mês'}</span></button>`, 'Eu');
+  const gbtn = `<button class="btn pri" data-act="shopGen">${UI.ic('sync')}<span>${items.some(x => x.auto) ? 'Atualizar com a dieta' : 'Fazer a lista do mês'}</span></button>`;
+  const head = embed ? `<div class="sh-top"><p class="mut">Ligada à tua Dieta e à despensa: a lista do mês sai do que comes, menos o que já tens em casa, com as embalagens e o custo.</p>${gbtn}</div>` : UI.head('Lista de compras', 'Ligada à tua Dieta: a lista do mês sai do que comes, com as quantidades, as embalagens e o custo. Juntas o resto à mão.', gbtn, 'Eu');
   if (!items.length) return head + UI.empty('A lista ainda está vazia. Toca em "Fazer a lista do mês": junto o que comeste nos últimos 30 dias na Dieta e calculo quanto precisas para o mês.', `<button class="btn pri" data-act="shopGen">Fazer a lista do mês</button> <button class="btn" data-act="shopNew">${UI.ic('plus')}Juntar à mão</button>`);
   return head + `${old ? `<div class="pn sh-old"><b>A lista é de ${esc(s.month)}.</b> <span class="mut">Atualiza para este mês (o que mudaste à mão fica).</span> <button class="btn sm" data-act="shopGen">Atualizar</button></div>` : ''}
   <div class="kpis">${UI.kpi(wk ? 'Custo da semana' : 'Custo do mês', eur(tot), known < C.length ? `${known} de ${C.length} com preço` : 'tudo com preço')}${UI.kpi('Itens', need.length, items.length - need.length ? `${items.length - need.length} já em casa` : '')}${UI.kpi('Comprados', `${got}/${need.length}`)}${UI.kpi(wk ? 'Por mês' : 'Por semana', eur(wk ? tot / k : tot * 7 / daysIn(ym())))}</div>
@@ -95,8 +102,9 @@ V.mercado = () => { if (!ON()) return UI.head('Lista de compras', '', '', 'Eu') 
   ${s.base ? `<p class="mut sh-src">Da Dieta: ${s.base.days} ${s.base.days === 1 ? 'dia registado' : 'dias registados'} nos últimos 30 (média por dia × ${daysIn(ym())} dias). Toca num item para mudar a quantidade, a embalagem ou o preço: o preço fica guardado para os meses seguintes.</p>` : ''}
   ${secs.map(g => { const sc = g.L.reduce((a, o) => a + o.c.cost, 0); return `<section class="pn sh-sec"><div class="pn-h"><h3>${esc(g.sec)}</h3><span class="mut">${g.L.length}${sc ? ' · ' + eur(sc) : ''}</span></div>
     ${g.L.map(({ x, c }) => `<div class="sh-it${x.got ? ' got' : ''}${x.have ? ' have' : ''}"><button class="sh-ck2" data-act="shopGot" data-id="${x.id}" role="checkbox" aria-checked="${!!x.got}" aria-label="${x.got ? 'Desmarcar' : 'Marcar'} ${esc(x.name)} como comprado" ${x.have ? 'disabled' : ''}>${x.got ? UI.ic('check') : ''}</button>
-      ${pic(x)}<button class="sh-tx" data-act="shopEdit" data-id="${x.id}"><b>${esc(x.name)}</b><small>${x.have ? 'já tenho em casa' : esc(fmtQ(c.q, x.unit)) + (c.packs ? ` · ${c.packs} ${c.packs === 1 ? 'embalagem' : 'embalagens'}` : '')}${x.note ? ' · ' + esc(x.note) : ''}${x.auto ? ' · da dieta' : ''}</small></button>
+      ${pic(x)}<button class="sh-tx" data-act="shopEdit" data-id="${x.id}"><b>${esc(x.name)}</b><small>${x.have ? 'já tenho em casa' : c.home ? `tens ${esc(fmtQ(c.stk, x.unit))} em casa: chega` : esc(fmtQ(c.q, x.unit)) + (c.packs ? ` · ${c.packs} ${c.packs === 1 ? 'embalagem' : 'embalagens'}` : '') + (c.stk > 0 ? ` (já descontei ${esc(fmtQ(c.stk, x.unit))} que tens em casa)` : '')}${x.note ? ' · ' + esc(x.note) : ''}${x.auto ? ' · da dieta' : ''}</small></button>
       <span class="sh-pr mono">${c.known ? eur(c.cost) : x.have ? '' : '<span class="mut">sem preço</span>'}</span></div>`).join('')}</section>`; }).join('')}
   ${tot ? `<section class="pn"><div class="pn-h"><h3>Para onde vai o dinheiro</h3><span class="mut">${eur(tot)}</span></div>${secs.map(g => { const v = g.L.reduce((a, o) => a + o.c.cost, 0); return v ? `<div class="sh-cb"><span>${esc(g.sec)}</span>${UI.bar(v / maxSec)}<b class="mono">${eur(v)}</b></div>` : ''; }).join('')}</section>` : ''}`; };
-OS.Compras = { fromDiet, calc, secOf };
+V.mercado = () => V.cozinha ? V.cozinha('lista') : listView();
+OS.Compras = { fromDiet, calc, secOf, view: listView, addManual };
 })();

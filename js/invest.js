@@ -26,7 +26,8 @@ const liveBadge = () => { const st = IX.st, has = IX.hasScript(), t = IX.lastTic
 const NAVG = [['carteira', 'A minha carteira', 'wallet', 'O que tens, imóveis, renda passiva e movimentos', ['', 'carteira', 'imoveis', 'renda', 'movimentos']],
   ['desempenho', 'Desempenho', 'trend', 'Rentabilidade, proventos, risco, alocação e impostos', ['rentabilidade', 'proventos', 'risco', 'alocacao', 'impostos']],
   ['mercado', 'Mercado e análise', 'globe', 'Mercado, preços, empresas e comparar', ['mercado', 'cotacoes', 'empresas', 'comparar']],
-  ['ia', 'Assistente IA', 'brain', 'Pergunta e recebe conselhos sobre a carteira', ['ia']]];
+  ['ia', 'Assistente IA', 'brain', 'Pergunta e recebe conselhos sobre a carteira', ['ia']],
+  ['aprender', 'Aprender a investir', 'school', 'Do zero: tudo o que precisas de saber para começar', ['aprender']]];
 const invNav = cur => { const keys = TABS.map(t => t[0]), lab = Object.fromEntries(TABS), G = NAVG.map(g => g.slice(0, 4).concat([g[4].filter(k => keys.includes(k))]));
   const rest = keys.filter(k => !G.some(g => g[4].includes(k))); if (rest.length) G[0][4].push(...rest);
   const gi = Math.max(0, G.findIndex(g => g[4].includes(cur))), last = OS.ui.invLast || {};

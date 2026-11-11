@@ -12,7 +12,7 @@ const pub = () => !!(OS.Acc && OS.Acc.on && OS.Acc.pub);
 /* ---------- abas (áreas) do menu ---------- */
 const MUST = ['visao', 'definicoes'];
 // páginas só do perfil pessoal (o Prumo do Ryan): não aparecem nas outras contas
-const PERSONAL = ['mercado'];
+const PERSONAL = ['mercado', 'cozinha'];
 const hiddenSet = () => new Set(((OS.one('areas') || {}).hide || []).filter(k => !MUST.includes(k)).concat(pub() ? PERSONAL : []));
 // nas contas públicas, o que é só do perfil pessoal nem aparece para escolher
 const groups = () => (OS.NAV || []).filter(([g]) => g !== 'Admin').map(G => pub() ? [G[0], G[1].filter(([k]) => !PERSONAL.includes(k))].concat(G.slice(2)) : G);

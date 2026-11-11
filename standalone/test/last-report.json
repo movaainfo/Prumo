@@ -1,217 +1,61 @@
 [
  {
-  "p": "Mundo",
-  "name": "Aba Mundo no menu, com o mapa e os 195 países (os pequenos como pontos); a lista abre por continente",
-  "pass": true,
-  "info": "{\"menu\":true,\"paths\":166,\"dots\":29,\"rows\":0,\"all\":195}"
- },
- {
-  "p": "Mundo",
-  "name": "Abrir os continentes mostra os 195 países",
+  "p": "Compras",
+  "name": "Compras: a Cozinha no menu Eu e a lista (#mercado leva lá) começa com \"Fazer a lista do mês\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Mundo",
-  "name": "Tocar num país do mapa abre a janela desse país",
+  "p": "Compras",
+  "name": "Compras: a lista do mês sai da Dieta (média dos dias registados × dias do mês)",
+  "pass": true,
+  "info": "{\"n\":5,\"days\":10,\"a\":4500,\"dm\":30,\"b\":30}"
+ },
+ {
+  "p": "Compras",
+  "name": "Compras: ovos em unidades, leite em ml, e cada coisa na sua secção do supermercado",
+  "pass": true,
+  "info": "[\"un\",66,\"ml\",\"Mercearia\",\"Talho e peixaria\",\"Laticínios e ovos\"]"
+ },
+ {
+  "p": "Compras",
+  "name": "Compras: com a embalagem e o preço calcula as embalagens e o custo do mês (arroz + detergente)",
+  "pass": true,
+  "info": "{\"packs\":5,\"cost\":6,\"kpi\":\"Custo do mês€ 8,502 de 6 com preçoItens6Comprados0/6Por semana€ 1,98\",\"manual\":true}"
+ },
+ {
+  "p": "Compras",
+  "name": "Compras: a vista da semana mostra só uma semana de quantidades",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Mundo",
-  "name": "O mapa pinta-se e a percentagem do mundo sobe (2 de 195 = 1%)",
-  "pass": true,
-  "info": "{\"n\":2,\"w\":1,\"pct\":\"1,0%\",\"painted\":2,\"stamps\":2}"
- },
- {
-  "p": "Mundo",
-  "name": "Cada país conhecido dá XP de Mente no Dominus (o que o Dominus dá à rotina)",
-  "pass": true,
-  "info": "subiu 144"
- },
- {
-  "p": "Mundo",
-  "name": "Ver só um continente (Europa) aproxima o mapa",
+  "p": "Compras",
+  "name": "Compras: marcar como comprado risca o item e conta nos comprados",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Mundo",
-  "name": "Procurar um país na lista",
+  "p": "Compras",
+  "name": "Compras: atualizar com a dieta junta o que é novo e guarda o que fizeste à mão (item, preço, comprado)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Mundo",
-  "name": "Mundo › Ilhas e territórios: quase 200 (Madeira, Porto Santo, as 9 dos Açores, Noronha, Canárias, Havai, Bali, Gronelândia…) listadas e no mapa; abre no grupo Portugal e \"Todas\" mostra a lista inteira",
-  "pass": true,
-  "info": "{\"n\":191,\"az\":9,\"has\":[],\"rows\":16,\"dia\":191,\"all\":191}"
- },
- {
-  "p": "Mundo",
-  "name": "Marcar a Madeira como visitada: conta 1 ilha, pinta o losango no mapa e não mexe nos países",
-  "pass": true,
-  "info": "{\"n\":1,\"hero\":\"2 de 195 países · 6,5% da terra firme · 2 de 6 continentes · 1 ilha\",\"v\":true,\"w\":true,\"head\":\"Ilhas e territórios\\n1 de 191 conhecidas\",\"countries\":2}"
- },
- {
-  "p": "Mundo",
-  "name": "Cada ilha conhecida dá XP de Mente no Dominus",
-  "pass": true,
-  "info": "subiu 24"
- },
- {
-  "p": "Mundo",
-  "name": "Tocar num losango do mapa abre a janela dessa ilha",
+  "p": "Compras",
+  "name": "Compras: no telemóvel nada sai do ecrã",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Mundo",
-  "name": "Procurar uma ilha na lista",
+  "p": "Compras",
+  "name": "Compras: numa conta de outra pessoa a página não aparece",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Mundo",
-  "name": "Nome Prumo: Definições mostra como passar o Google para o nome novo (partes 1 a 3) até o script ser da versão 12",
-  "pass": true,
-  "info": "{\"panel\":true,\"btns\":3}"
- },
- {
-  "p": "Mundo",
-  "name": "Nome Prumo: os calendários antigos \"Oceanum…\" continuam a ser reconhecidos como do app (sem duplicar)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo",
-  "name": "sem erros de JavaScript",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Verne: a página Mundo abre com uma frase do livro, com quem a diz e o capítulo",
-  "pass": true,
-  "info": "O imprevisto não existe.Phileas Fogg, no Reform Club · A Volta ao Mundo em 80 Dias, Júlio Verne, cap. III"
- },
- {
-  "p": "Verne",
-  "name": "Verne e Homero: tocar na frase mostra outra, alternando os dois livros (Odisseia, canto I)",
-  "pass": true,
-  "info": "os povos cujos costumes conheceu.os primeiros versos · Odisseia, Homero, canto I"
- },
- {
-  "p": "Verne",
-  "name": "Verne: a rota de Fogg aparece no mapa (8 paragens) e na legenda",
-  "pass": true,
-  "info": "{\"paths\":2,\"stops\":8,\"leg\":true}"
- },
- {
-  "p": "Verne",
-  "name": "Verne: as paragens caem nos países certos do mapa (Londres, Bombaim, Nova Iorque, Yokohama)",
-  "pass": true,
-  "info": "{\"lon\":true,\"bom\":true,\"ny\":true,\"yk\":true}"
- },
- {
-  "p": "Verne",
-  "name": "Odisseu: a viagem aparece no mapa e na legenda, com o barco e o navio de Fogg desenhados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Odisseu: o mapa do Mediterrâneo tem os 12 episódios numerados, de Troia a Ítaca",
-  "pass": true,
-  "info": "{\"pins\":12,\"li\":12,\"first\":\"1TroiaHisarlik, na Turquia · canto I e IXO ponto de partida, depois de dez anos de guerra.🇹🇷\",\"last\":\"12ÍtacaÍtaca, Grécia · canto XIII a XXIVVolta disfarçado de mendigo; o velho cão Argos r"
- },
- {
-  "p": "Verne",
-  "name": "Fogg: o relógio dos 80 dias tem as 8 etapas e os ponteiros às 20h45",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Verne: o plano das 8 etapas soma 80 dias (Londres → Suez … Nova Iorque → Londres)",
-  "pass": true,
-  "info": "{\"n\":8,\"last\":\"dia 71–80Nova Iorque → Londres9 dias · paquete e comboio, por Queenstown e Liverpool🇮🇪🇬🇧\",\"first\":\"dia 0–7Londres → Suez7 dias · comboio e paquete, pelo Mont-Cenis e Brindisi🇬🇧🇫🇷🇮🇹🇪🇬\",\"got\":\"0 de 11 países\"}"
- },
- {
-  "p": "Verne",
-  "name": "Mundo: o aviso diz o XP que o Dominus deu mesmo (e não os antigos +900)",
-  "pass": true,
-  "info": "{\"d\":72,\"t\":\"🇪🇬 Egito no teu mapa! +72 XP de Mente no Dominus. Phileas Fogg também passou por aqui.\"}"
- },
- {
-  "p": "Verne",
-  "name": "Verne: marcar a Índia avisa que Fogg também passou por lá",
-  "pass": true,
-  "info": "🇮🇳 Índia no teu mapa! +72 XP de Mente no Dominus. Phileas Fogg também passou por aqui."
- },
- {
-  "p": "Verne",
-  "name": "Verne: a Índia (e o Egito) ficam carimbados nas etapas da rota (2 de 11)",
-  "pass": true,
-  "info": "{\"on\":3,\"got\":\"2 de 11 países\"}"
- },
- {
-  "p": "Verne",
-  "name": "Verne: o país da rota conta o episódio do livro (Índia: o elefante Kiouni e a Aouda)",
-  "pass": true,
-  "info": "Na rota de Phileas Fogg. De Bombaim a Calcutá: a linha do comboio ainda não estava acabada, Fogg segue de elefante (o Kiouni) e salva a Aouda."
- },
- {
-  "p": "Verne",
-  "name": "Verne: um país fora da rota não tem a nota",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Verne: há o marco \"A rota de Phileas Fogg\" (11/11) e o de 80 países",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Odisseu: marcar Itália lembra que Fogg e Odisseu passaram por lá",
-  "pass": true,
-  "info": "🇮🇹 Itália no teu mapa! +72 XP de Mente no Dominus. Phileas Fogg e Odisseu também passaram por aqui."
- },
- {
-  "p": "Verne",
-  "name": "Odisseu: Itália fica acesa no mapa da Odisseia e conta 1 de 5",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Odisseu: Malta conta que Gozo é a ilha de Calipso",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Verne: o botão \"Rota de Phileas Fogg\" esconde a rota do mapa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Odisseu: o botão \"Viagem de Odisseu\" esconde a viagem do mapa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Verne e Homero: as fontes dos livros estão no fim da página",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Verne",
-  "name": "Verne: sem erros na consola",
+  "p": "Compras",
+  "name": "Compras: sem erros na consola",
   "pass": true,
   "info": ""
  },
@@ -296,6 +140,162 @@
  {
   "p": "Mundo › lugares",
   "name": "Mundo › lugares: sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Cozinha no menu Eu, com Despensa, Lista de compras e Receitas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Despensa por lugar (Despensa, Frigorífico) com quanto tens e o estado (acabou, a acabar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "+ e − mudam a quantidade (o arroz em kg sobe meio quilo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Na lista de compras aparece o que acabou ou está a acabar na despensa, com quanto comprar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "\"Comprei\" repõe na despensa até à quantidade ideal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "O que já tens em casa sai da lista do mês (3 pacotes de massa − 1 que tens = 2)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Marcar como comprado na lista põe na despensa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Desmarcar tira da despensa outra vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Receitas que dá para fazer já com o que tens (massa com atum: massa, atum, tomate pelado, cebola)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Com a cebola reposta, a massa com atum passa para \"Dá para fazer já\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "\"Juntar o que falta à lista\" põe os ingredientes na lista de compras",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "\"Fiz esta receita\" tira da despensa o que usaste (massa, atum, tomate, cebola)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "A IA sugere receitas com o que está na despensa (e o que falta)",
+  "pass": true,
+  "info": "{\"model\":\"openai\",\"messages\":[{\"role\":\"system\",\"content\":\"Respondes APENAS com J"
+ },
+ {
+  "p": "Cozinha",
+  "name": "Cozinha no telemóvel: nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Cozinha: numa conta de outra pessoa não aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Cozinha: sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "Aprender a investir: bloco próprio nos Investimentos, com 11 capítulos e índice",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "Juros compostos certos (1000 + 150/mês a 6% durante 20 anos ≈ 72 616)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "Portugal: Certificados de Aforro, FGD de 100 000 €, 28% nas mais-valias, PPR e cripto isenta depois de 365 dias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "Brasil: Tesouro Direto, FGC de R$ 250 mil, IR regressivo, isenção dos R$ 20 mil nas ações e LCI/LCA isentas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "Teste de perfil: 5 perguntas dão o perfil (moderado) com um exemplo de divisão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "Perfil fica conservador se o dinheiro for para menos de 3 anos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "Marcar um capítulo como lido conta no progresso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "Fundo de emergência calculado com as despesas reais das Finanças",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "No telemóvel nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Aprender a investir",
+  "name": "Aprender a investir: sem erros de JavaScript",
   "pass": true,
   "info": ""
  }
