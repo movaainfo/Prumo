@@ -2692,7 +2692,7 @@ async function cozinhaTests(b) { cur = 'Cozinha'; console.log('\n=== Eu: cozinha
   await E(p, () => { location.hash = 'cozinha'; }); await sleep(400); if (SH) await p.screenshot({ path: SH + '/cozinha-despensa.png', fullPage: true, scale: 'css' });
   await p.setViewportSize({ width: 390, height: 844 }); await sleep(300);
   ok('Cozinha no telemóvel: nada sai do ecrã', await E(p, () => document.documentElement.scrollWidth <= innerWidth + 1));
-  ok('Cozinha: numa conta de outra pessoa não aparece', await E(p, () => { const o = { on: OS.Acc.on, pub: OS.Acc.pub }; OS.Acc.on = true; OS.Acc.pub = true; const h = OS.Areas.hidden().has('cozinha'), t = OS.views.cozinha(); Object.assign(OS.Acc, o); return h && /pessoal/.test(t); }));
+  ok('Cozinha: aparece também nas contas das outras pessoas (desde a 3.12)', await E(p, () => { const o = { on: OS.Acc.on, pub: OS.Acc.pub }; OS.Acc.on = true; OS.Acc.pub = true; const h = OS.Areas.hidden().has('cozinha'), t = OS.views.cozinha(); Object.assign(OS.Acc, o); return !h && !/pessoal/.test(t) && /Despensa/.test(t); }));
   ok('Cozinha: sem erros de JavaScript', !errs.filter(e => !/favicon|net::|Failed to load resource|open-meteo/.test(e)).length, errs.slice(0, 2).join(' | '));
   await E(p, () => { OS.all('pantry').slice().forEach(r => OS.del('pantry', r.id)); OS.setOne('shop', { month: '', items: [], prices: {}, view: 'mes', at: 0, base: null }); }); await ctx.close(); }
 // v3.10: dentro de cada país e ilha, os estados, províncias e cidades que conheces e que queres conhecer
@@ -2828,7 +2828,7 @@ async function mercadoTests(b) { cur = 'Compras'; console.log('\n=== Eu: lista d
   if (SH) await p.screenshot({ path: SH + '/mercado.png', fullPage: true });
   await p.setViewportSize({ width: 390, height: 844 }); await sleep(300); if (SH) await p.screenshot({ path: SH + '/mercado-tel.png', fullPage: true });
   ok('Compras: no telemóvel nada sai do ecrã', await E(p, () => document.documentElement.scrollWidth <= innerWidth + 1));
-  ok('Compras: numa conta de outra pessoa a página não aparece', await E(p, () => { const o = { on: OS.Acc.on, pub: OS.Acc.pub }; OS.Acc.on = true; OS.Acc.pub = true; const h = OS.Areas.hidden().has('cozinha'), t = OS.views.mercado(); Object.assign(OS.Acc, o); return h && /pessoal/.test(t) && !/shopGen/.test(t); }));
+  ok('Compras: a lista também aparece nas contas das outras pessoas (desde a 3.12)', await E(p, () => { const o = { on: OS.Acc.on, pub: OS.Acc.pub }; OS.Acc.on = true; OS.Acc.pub = true; const h = OS.Areas.hidden().has('cozinha'), t = OS.views.mercado(); Object.assign(OS.Acc, o); return !h && !/pessoal/.test(t); }));
   await E(p, () => { OS.setOne('shop', { items: [], prices: {}, base: null }); OS.all('meals').slice().forEach(m => OS.del('meals', m.id)); });
   ok('Compras: sem erros na consola', !errs.filter(e => !/favicon|net::|Failed to load resource|open-meteo/.test(e)).length, errs.slice(0, 3).join(' | '));
   await ctx.close(); }
@@ -2887,7 +2887,7 @@ async function publicoTests(b) { cur = 'Contas públicas'; console.log('\n=== Au
   const who = await E(p, () => ({ on: OS.Acc.on, pub: OS.Acc.pub, name: OS.who && OS.who() }));
   ok('Conta pública: entra como perfil de uma pessoa qualquer (não o pessoal)', who.on && who.pub, JSON.stringify(who));
   const nav = await E(p, () => [...document.querySelectorAll('#side a[href^="#"], .tn-dd a[href^="#"]')].map(a => a.getAttribute('href').slice(1)));
-  ok('Conta pública: o que é só do perfil pessoal não aparece (Lista de compras)', !nav.includes('mercado'), nav.filter(h => /mercado/.test(h)).join(','));
+  ok('Conta pública: a Cozinha (despensa, lista de compras e receitas) aparece no menu', nav.includes('cozinha'), nav.filter(h => /cozinha|mercado/.test(h)).join(','));
   const base = await E(p, () => Object.keys(OS.views).filter(k => !OS.Areas || OS.Areas.on(k))); let routes = [];
   for (const rt of base) { await E(p, rt => location.hash = rt, rt); await sleep(140); routes.push(rt, ...(await E(p, () => [...document.querySelectorAll('#view nav.tabs a, #view .dtabs a[href^="#"]')].map(a => a.getAttribute('href').slice(1))))); }
   routes = [...new Set(routes)];

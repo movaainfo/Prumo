@@ -1,4 +1,4 @@
-/* PRUMO — Eu › Cozinha (v3.11): a despensa, a lista de compras e as receitas, num só lugar (#cozinha). Pessoal, como a lista de compras.
+/* PRUMO — Eu › Cozinha (v3.11): a despensa, a lista de compras e as receitas, num só lugar (#cozinha). Em todas as contas (desde a 3.12).
    Despensa: o que tens em casa (onde está, quanto, o mínimo e a quantidade ideal, a validade). Quando algo acaba ou está a acabar,
    entra sozinho na lista de compras; o que compras entra na despensa; o que já tens em casa sai da lista do mês.
    Receitas: as que dá para fazer já com o que tens (e as que só falta 1 ou 2 coisas), de uma base própria, e as que a IA inventa com a tua despensa. */
@@ -7,7 +7,6 @@
 const U = OS.U, UI = OS.UI, esc = U.esc, A = OS.act, V = OS.views;
 const n = v => U.num(v) || 0;
 const N = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
-const ON = () => !(OS.Acc && OS.Acc.on && OS.Acc.pub);
 const today = () => U.today();
 const PLACES = ['Despensa', 'Frigorífico', 'Congelador', 'Limpeza e higiene'], PIC = { Despensa: 'home', 'Frigorífico': 'drop', Congelador: 'layers', 'Limpeza e higiene': 'sync' };
 const UNITS = ['un', 'g', 'kg', 'ml', 'L', 'pacotes', 'latas', 'garrafas', 'frascos'];
@@ -161,7 +160,6 @@ const receitas = () => { const M = recipes(), now = M.filter(m => !m.miss.length
   <p class="mut kz-nt">Conto que há sal, pimenta, azeite ou óleo e água. As quantidades são para 2 pessoas. "Fiz esta receita" tira da despensa o que usaste.</p>`; };
 const TABS = [['', 'Despensa'], ['lista', 'Lista de compras'], ['receitas', 'Receitas']];
 V.cozinha = sub => { const k = TABS.some(t => t[0] === (sub || '')) ? (sub || '') : '';
-  if (!ON()) return UI.head('Cozinha', '', '', 'Eu') + UI.empty('Esta página é pessoal.');
   const nd = needs().length, head = UI.head('Cozinha', 'O que tens em casa, o que falta comprar e o que dá para cozinhar com isso.', '', 'Eu');
   const tabs = UI.tabs('cozinha', TABS.map(([v, l]) => [v, v === 'lista' && nd ? `${l} · ${nd}` : l]), k);
   return head + tabs + `<div class="kz">${k === 'lista' ? needBox() + (OS.Compras && OS.Compras.view ? OS.Compras.view(1) : '') : k === 'receitas' ? receitas() : despensa()}</div>`; };

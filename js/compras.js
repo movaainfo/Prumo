@@ -1,4 +1,4 @@
-/* PRUMO — Lista de compras (Eu › Lista de compras, página #mercado; #compras é a "Pensar antes de comprar" das Finanças), só na conta do Ryan (perfil pessoal).
+/* PRUMO — Lista de compras (Eu › Lista de compras, página #mercado; #compras é a "Pensar antes de comprar" das Finanças), em todas as contas (desde a 3.12).
    Ligada à Dieta: a lista do mês sai sozinha do que comeste nos últimos 30 dias (média por dia × dias do mês), com a foto de cada alimento,
    arrumada pelas secções do supermercado. Calcula as embalagens e o custo (o preço e a embalagem de cada coisa ficam guardados para os meses seguintes).
    Dá para juntar coisas à mão, editar tudo, pôr foto, marcar o que já tens em casa e o que já compraste, e ver a lista da semana. */
@@ -8,7 +8,6 @@ const U = OS.U, UI = OS.UI, esc = U.esc, A = OS.act, V = OS.views;
 const n = v => U.num(v) || 0;
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
 OS.ONE_DEF.shop = { month: '', items: [], prices: {}, view: 'mes', at: 0, base: null };
-const ON = () => !(OS.Acc && OS.Acc.on && OS.Acc.pub);
 const SEC = [['Talho e peixaria', 'Carne, frango, peixe'], ['Laticínios e ovos', 'Leite, iogurtes, queijo, ovos'], ['Frutas e legumes', ''], ['Mercearia', 'Arroz, massa, aveia, pão, leguminosas, azeite'], ['Suplementos', ''], ['Bebidas', ''], ['Pratos prontos e congelados', ''], ['Snacks e doces', ''], ['Casa e higiene', ''], ['Outros', '']];
 const secOf = (name, cat) => { const s = norm(name);
   if (/whey|creatina|proteina em po|caseina|bcaa|multivitamin|omega ?3|pre.?treino/.test(s)) return 'Suplementos';
@@ -88,7 +87,7 @@ A.shopCopy = async () => { const s = st(), k = s.view === 'semana' ? 7 / daysIn(
 
 /* ---------- vista ---------- */
 const pic = it => it.photo ? `<img class="sh-pic" src="${it.photo}" alt="">` : OS.Diet && OS.Diet.img ? `<span class="sh-pic">${OS.Diet.img(it.name, '', 'sm', it.pic)}</span>` : `<span class="sh-pic sh-pic0">${esc((it.name || '?').charAt(0))}</span>`;
-const listView = embed => { if (!ON()) return UI.head('Lista de compras', '', '', 'Eu') + UI.empty('Esta página é pessoal.');
+const listView = embed => {
   const s = st(), items = s.items || [], wk = s.view === 'semana', k = wk ? 7 / daysIn(ym()) : 1, old = s.month && s.month !== ym();
   const C = items.map(x => ({ x, c: calc(x, k) })), tot = C.reduce((a, o) => a + o.c.cost, 0), known = C.filter(o => o.c.known).length, need = C.filter(o => !o.x.have), got = need.filter(o => o.x.got).length;
   const secs = SEC.map(([sec, h]) => ({ sec, h, L: C.filter(o => (o.x.sec || 'Outros') === sec) })).filter(g => g.L.length), maxSec = Math.max(1, ...secs.map(g => g.L.reduce((a, o) => a + o.c.cost, 0)));

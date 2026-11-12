@@ -238,3 +238,6 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Calculadora (`js/calc.js`, `#calcFab` e `#calc`, CSS no fim de `fit.css`): parser próprio sem `eval` (multiplicação implícita, graus/radianos), RPN de 4 registos com TVM (n, i, PV, PMT, FV; guardar vs calcular pelo último toque), CF0/CFj/Nj/NPV/IRR, amortização price/SAC e gráfico em canvas. Estado em `localStorage` `oc_calc`.
 - Pluggy: movimentos por `GET /v2/transactions` (cursor `after` lido de `next`; o `/transactions` antigo sai depois de 31/12/2026 e fica só como recurso se a v2 der 404/410).
 - Testes: grupos `banco` (46, com a Pluggy e o Enable Banking simulados em `/pgmock` e `/ebmock`) e `calc` (16).
+
+### 3.13: Cozinha em todas as contas
+- `PERSONAL` em `onboard.js` ficou vazio (a Cozinha e `#mercado` aparecem em todas as contas) e saiu a trava `ON()` de `cozinha.js` e `compras.js`. Testes `cozinha`, `mercado` e `publico` atualizados (a conta pública vê a Cozinha no menu).
