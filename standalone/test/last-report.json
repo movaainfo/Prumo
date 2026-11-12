@@ -1,205 +1,241 @@
 [
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: entra como perfil de uma pessoa qualquer (não o pessoal)",
-  "pass": true,
-  "info": "{\"on\":true,\"pub\":true,\"name\":\"Marta\"}"
- },
- {
-  "p": "Contas públicas",
-  "name": "Conta pública: a Cozinha (despensa, lista de compras e receitas) aparece no menu",
-  "pass": true,
-  "info": "cozinha,cozinha,cozinha"
- },
- {
-  "p": "Contas públicas",
-  "name": "Conta pública: 178 páginas e separadores abrem com conteúdo e sem \"undefined/NaN\"",
+  "p": "Futebol",
+  "name": "Futebol: está na Visão Geral do menu e abre com as boas-vindas (escolher equipas e campeonatos)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: nada sai para o lado no telemóvel",
+  "p": "Futebol",
+  "name": "Futebol: escrever o nome mostra a equipa (com a liga em português)",
+  "pass": true,
+  "info": "Flamengo\nBrasileirão\nVer\nSeguir\nFS\nFlamengo Sub-20\nBrasileirão Sub-20\nVer\nSeguir"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: seleções pelo nome em português (\"Brasil\" encontra a seleção)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: nenhuma página mostra coisas do Ryan (nome, ISCA, Aveiro)",
+  "p": "Futebol",
+  "name": "Futebol: \"Seguir\" guarda a equipa e a seleção",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: 606 botões carregados sem erros de JavaScript",
-  "pass": true,
-  "info": " :: "
- },
- {
-  "p": "Contas públicas",
-  "name": "Conta pública: todos os formulários de registo abrem",
+  "p": "Futebol",
+  "name": "Futebol: a página não se redesenha por cima de quem está a escrever na pesquisa",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: sem erros na consola no fim",
+  "p": "Futebol",
+  "name": "Futebol › Agora: o jogo ao vivo aparece no placar com o minuto e o resultado",
+  "pass": true,
+  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\nCampeonatos\nBrasileirão\n67'\nFlamengo\n1\n:"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Agora: quem tem mais probabilidade de ganhar, ao vivo (com a fonte dita)",
+  "pass": true,
+  "info": "Probabilidade de ganhar, ao vivo 89% Flamengo 10% empate Palmeiras 1% Estimativa do Prumo: tabela, forma recente e fator casa, com o resultado e o tempo que falta. É uma estimativa, não uma certeza."
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Agora: próximos jogos e últimos resultados (com V/E/D)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: a Cozinha no menu Eu e a lista (#mercado leva lá) começa com \"Fazer a lista do mês\"",
+  "p": "Futebol",
+  "name": "Futebol: o menu mostra quantos jogos das tuas equipas estão ao vivo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: a lista do mês sai da Dieta (média dos dias registados × dias do mês)",
+  "p": "Futebol",
+  "name": "Futebol: golo novo → aviso com quem marcou, o minuto e o resultado",
   "pass": true,
-  "info": "{\"n\":5,\"days\":10,\"a\":4500,\"dm\":30,\"b\":30}"
+  "info": "Golo · Flamengo · Bruno Henrique 70' · Flamengo 2-0 Palmeiras"
  },
  {
-  "p": "Compras",
-  "name": "Compras: ovos em unidades, leite em ml, e cada coisa na sua secção do supermercado",
-  "pass": true,
-  "info": "[\"un\",66,\"ml\",\"Mercearia\",\"Talho e peixaria\",\"Laticínios e ovos\"]"
- },
- {
-  "p": "Compras",
-  "name": "Compras: com a embalagem e o preço calcula as embalagens e o custo do mês (arroz + detergente)",
-  "pass": true,
-  "info": "{\"packs\":5,\"cost\":6,\"kpi\":\"Custo do mês€ 8,502 de 6 com preçoItens6Comprados0/6Por semana€ 1,98\",\"manual\":true}"
- },
- {
-  "p": "Compras",
-  "name": "Compras: a vista da semana mostra só uma semana de quantidades",
+  "p": "Futebol",
+  "name": "Futebol: fim do jogo → aviso \"Terminou\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: marcar como comprado risca o item e conta nos comprados",
+  "p": "Futebol",
+  "name": "Futebol › Equipas: cromos com a posição na tabela e a seleção com nome em português",
+  "pass": true,
+  "info": "Flamengo 1.º lugar · Brasileirão · 76 pts 71' 2-0 Palmeiras E V || Brasil Seleção sáb 21/11 00:50 · em casa vs Argentina"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: fotos dos jogadores (Wikipédia, só se o nome bater certo; sem foto fica o número)",
+  "pass": true,
+  "info": "{\"pedro\":true,\"rossi\":true,\"cred\":true}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: plantel por posições, com números, idade, golos e quem está lesionado",
+  "pass": true,
+  "info": "{\"n\":5,\"inj\":true}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: a IA procura o treinador, os lesionados e os castigados (com fontes)",
+  "pass": true,
+  "info": "mpeonato. Pesquisado pela IA nas notícias · Hoje 00:51 · Fontes: ge.globo.com, lance.com.br 1 Pedro 21 golos · 4 assist. 2 Arrascaeta 9 golos · 11 assist. 3 Bruno Henrique 7 golos · 3 assist. Guarda-redes 1 1 A"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: página da equipa com calendário, resultados e a tabela com a equipa destacada",
+  "pass": true,
+  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\n"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › tabela: zonas com cores diferentes (Libertadores, Sul-Americana, rebaixamento) mesmo quando a ESPN não as marca",
+  "pass": true,
+  "info": "{\"fla\":\"top\",\"pal\":\"top\",\"cap\":\"eu\",\"gre\":\"\",\"juv\":\"rel\",\"leg\":\"Libertadores (fase de grupos)\\nSul-Americana\\nRebaixamento (Z4)\",\"nota\":true}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Campeonatos: tocar num campeonato segue-o",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: atualizar com a dieta junta o que é novo e guarda o que fizeste à mão (item, preço, comprado)",
+  "p": "Futebol",
+  "name": "Futebol › Campeonatos: procurar qualquer campeonato pelo nome",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: no telemóvel nada sai do ecrã",
+  "p": "Futebol",
+  "name": "Futebol › campeonato: jogos ao vivo e a classificação por grupos",
+  "pass": true,
+  "info": "Visão geral\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nAtualizar\nAgora\nEquipas e seleções\nCampeonatos\nCampeonatos\nLibertadores\n\n20"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a IA analisa e diz quem tem mais probabilidade de ganhar, com as razões",
+  "pass": true,
+  "info": "Análise da IA ao vivo, com pesquisa nas notícias, às 00:51 · confiança alta Placar previsto pela IA no fim do jogo Flamengo 3 × 1 Palmeiras O Flamengo deve ganhar: está a vencer por 2-0 aos 71 minutos e domina o jogo. 92"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a IA pesquisa nas notícias e dá o palpite de resultado, os jogadores-chave, o treinador e os desfalques",
+  "pass": true,
+  "info": "[true,true,true,true,true,true]  Ortiz · Arrascaeta · Pedro Desfalques: Bruno Henrique (lesão) Palmeiras 4-4-2 Treinador: Abel Ferreira Atenção: Um golo cedo do Palmeiras reabre o jogo. É a leitura da IA com os dados e as notícias do jogo, não uma certeza. Fontes: ge.globo.com, lance.com.br."
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a escalação mostra as fotos dos jogadores no campo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: a lista também aparece nas contas das outras pessoas (desde a 3.12)",
+  "p": "Futebol",
+  "name": "Futebol › jogo: escalações dos dois (titulares no campo, esquema, suplentes e quem entrou)",
+  "pass": true,
+  "info": "{\"n\":2,\"pp\":22} Flamengo 4-3-3 em campo 9 Fla8 10 Pedro 11 Fla10 6 Fla5 7 Fla6 8 Fla7 2 Fla1 3 Fla2 4 Fla3 5 Fla4 1 Fla0 Suplentes 20 Henrique entrou 21 Reserva Treinador: Fili"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo ao vivo: \"Ver o jogo\" encontra a transmissão oficial da CazéTV (a ao vivo, não os melhores momentos nem outro jogo)",
+  "pass": true,
+  "info": "{\"t\":\"Ver o jogo CazéTV · grátis e oficial, no YouTube Ver aqui no Prumo abrir no YouTube AO VIVO: FLAMENGO X PALMEIRAS | BRASILEIRÃO 2026 | 37ª RODADA Onde passa em Portugal Premiere TV paga CazéTV YouTube grátis Canal Desconhecido TV segundo a pesquisa da IA; confirma na programação do canal\",\"tv\""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: \"Onde passa\" vem da pesquisa da IA, com link para o site oficial (Premiere → Globoplay, CazéTV → YouTube) e o resto só com o nome",
+  "pass": true,
+  "info": "[[\"Premiere TV paga\",\"https://globoplay.globo.com/\"],[\"CazéTV YouTube grátis\",\"https://www.youtube.com/@CazeTV/streams\"],[\"Canal Desconhecido TV\",\"\"]]"
+ },
+ {
+  "p": "Futebol",
+  "name": "Ver aqui no Prumo: o vídeo oficial toca dentro do app (YouTube sem cookies) e o botão passa a \"Fechar o vídeo\"",
+  "pass": true,
+  "info": "{\"src\":\"https://www.youtube-nocookie.com/embed/cazeAoVivo1?autoplay=1&playsinline=1&rel=0\",\"btn\":\"Fechar o vídeo\"}"
+ },
+ {
+  "p": "Futebol",
+  "name": "O vídeo não recomeça quando o jogo se atualiza (fica fora da parte que se redesenha)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: sem erros na consola",
+  "p": "Futebol",
+  "name": "Fechar o vídeo tira o quadro do YouTube",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "Cozinha no menu Eu, com Despensa, Lista de compras e Receitas",
+  "p": "Futebol",
+  "name": "Futebol: o palpite de placar ao vivo nunca fica abaixo do resultado atual",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "Despensa por lugar (Despensa, Frigorífico) com quanto tens e o estado (acabou, a acabar)",
+  "p": "Futebol",
+  "name": "Futebol › jogo: a IA recebe só os dados reais do jogo (resultado, minuto, golos, tabela, forma)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "+ e − mudam a quantidade (o arroz em kg sobe meio quilo)",
+  "p": "Futebol",
+  "name": "Futebol: o palpite de placar da IA fica no placar do jogo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "Na lista de compras aparece o que acabou ou está a acabar na despensa, com quanto comprar",
+  "p": "Futebol",
+  "name": "Futebol › jogo: o cartão amarelo aparece como cartão (o texto \"is shown\" não o torna autogolo)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "\"Comprei\" repõe na despensa até à quantidade ideal",
+  "p": "Futebol",
+  "name": "Futebol › jogo: lances, estatísticas ao vivo, forma e confronto direto",
+  "pass": true,
+  "info": "Brasileirão 71' Flamengo 2 : 0 Palmeiras Pedro 28' Bruno Henrique 70' Probabilidade de ganhar, ao vivo 99% Flamengo 1% empate Palmeiras 0% Estimativa do Prumo: tabela, forma recente e fator casa, com o resultado e o tempo que falta. É uma estimativa, não uma certeza. Maracanã Ver o jogo CazéTV · grá"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo por começar: escalação provável pelos titulares dos últimos jogos (marcada como provável)",
+  "pass": true,
+  "info": "11 Brasileirão Brasileirão sáb 14/11 · 00:50 Athletico Paranaense faltam 2 dias Flamengo Quem tem mais probabilidade de ganhar 22% Athletico-PR 25% empate Flamengo 53% Pelas odds do mercado. É uma estima"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: com odds do mercado, a probabilidade usa as odds (e diz isso)",
+  "pass": true,
+  "info": "Quem tem mais probabilidade de ganhar 22% Athletico-PR 25% empate Flamengo 53% Pelas odds do mercado. É uma estimativa, não uma certeza."
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: o jogo abre mesmo com uma análise guardada por uma versão antiga",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "O que já tens em casa sai da lista do mês (3 pacotes de massa − 1 que tens = 2)",
+  "p": "Futebol",
+  "name": "Futebol: sem IA (cota gasta e reserva em baixo) a análise aparece na mesma, feita pelo Prumo, com palpite e explicação",
+  "pass": true,
+  "info": "Análise do Prumo feita pelo Prumo com os números do jogo (sem IA), às 00:51 · confiança média A cota grátis da IA do Google acabou por hoje e a IA de reserva não respondeu. Esta análise foi feita pelo Prumo com as odds ou a tabela, a forma, o confronto direto e as escalações. Podes pedir à IA outra "
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: no telemóvel nada sai do ecrã",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "Marcar como comprado na lista põe na despensa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Cozinha",
-  "name": "Desmarcar tira da despensa outra vez",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Cozinha",
-  "name": "Receitas que dá para fazer já com o que tens (massa com atum: massa, atum, tomate pelado, cebola)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Cozinha",
-  "name": "Com a cebola reposta, a massa com atum passa para \"Dá para fazer já\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Cozinha",
-  "name": "\"Juntar o que falta à lista\" põe os ingredientes na lista de compras",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Cozinha",
-  "name": "\"Fiz esta receita\" tira da despensa o que usaste (massa, atum, tomate, cebola)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Cozinha",
-  "name": "A IA sugere receitas com o que está na despensa (e o que falta)",
-  "pass": true,
-  "info": "{\"model\":\"openai\",\"messages\":[{\"role\":\"system\",\"content\":\"Respondes APENAS com J"
- },
- {
-  "p": "Cozinha",
-  "name": "Cozinha no telemóvel: nada sai do ecrã",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Cozinha",
-  "name": "Cozinha: aparece também nas contas das outras pessoas (desde a 3.12)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Cozinha",
-  "name": "Cozinha: sem erros de JavaScript",
+  "p": "Futebol",
+  "name": "Futebol: sem erros na consola",
   "pass": true,
   "info": ""
  }
