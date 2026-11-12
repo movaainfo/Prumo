@@ -1,21 +1,25 @@
 // PRUMO · ligação ao banco (Open Finance no Brasil, PSD2 na Europa), só leitura: contas, saldos e movimentos. Nunca faz pagamentos.
-// Dois caminhos gratuitos para uso pessoal, só na conta do dono do Prumo (e-mail em NAUTILO_ADMIN), porque as chaves são dele e os
-// planos gratuitos só deixam ler as contas do próprio:
-//   Brasil · Pluggy com o "Meu Pluggy" (o banco liga-se por Open Finance na app Meu Pluggy; aqui lemos pelos ids dos itens):
-//            PLUGGY_CLIENT_ID e PLUGGY_CLIENT_SECRET
+// Na conta do dono do Prumo (e-mail em NAUTILO_ADMIN) funciona com os planos gratuitos de uso pessoal, que só leem as contas do próprio.
+// Para todas as contas (cada pessoa liga os próprios bancos dentro do app) é preciso o plano de produção de cada fornecedor, com contrato;
+// quando houver, liga-se no Vercel com PLUGGY_TODOS=1 e/ou ENABLEBANKING_TODOS=1.
+//   Brasil · Pluggy: o widget Pluggy Connect (connect token por pessoa, com um clientUserId opaco) ou, no dono, o "Meu Pluggy" pelo ID
+//            do item: PLUGGY_CLIENT_ID e PLUGGY_CLIENT_SECRET
 //   Europa · Enable Banking em modo restrito (autorizas no teu banco e voltas aqui): ENABLEBANKING_APP_ID e ENABLEBANKING_KEY
 //            (a chave privada em PEM); o endereço de regresso registado no Enable Banking é este (…/api/banco)
 // As chaves vivem só nas variáveis do projeto no Vercel. As ligações (ids dos itens e das sessões) ficam cifradas no perfil (b/<conta>/<perfil>).
-//   estado · pg.add {item} · pg.del {item} · eb.bancos {c} · eb.inicio {bank, c} · GET ?code=&state= (regresso do banco) · eb.del {sid} · sync {from}
+//   estado · pg.token · pg.add {item} · pg.del {item} · eb.bancos {c} · eb.inicio {bank, c} · GET ?code=&state= (regresso do banco) · eb.del {sid} · sync {from}
 'use strict';
 const N = require('./_nuvem');
 const PGA = () => process.env.PLUGGY_API || 'https://api.pluggy.ai', EBA = () => process.env.ENABLEBANKING_API || 'https://api.enablebanking.com';
 const PG_ID = () => String(process.env.PLUGGY_CLIENT_ID || '').trim(), PG_SEC = () => String(process.env.PLUGGY_CLIENT_SECRET || '').trim();
 const EB_ID = () => String(process.env.ENABLEBANKING_APP_ID || '').trim(), EB_KEY = () => String(process.env.ENABLEBANKING_KEY || '').replace(/\\n/g, '\n').trim();
 const REDIR = () => process.env.BANCO_REDIRECT || 'https://prumo-vida.vercel.app/api/banco', APP = () => REDIR().replace(/api\/banco$/, '');
+const TODOS = k => /^(1|sim|true)$/i.test(String(process.env[k] || '').trim());
 const isAdmin = e => String(process.env.NAUTILO_ADMIN || '').toLowerCase().split(',').map(x => x.trim()).filter(Boolean).includes(String(e || '').toLowerCase());
 const PID = /^[a-f0-9]{12}$/, UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, DAY = /^\d{4}-\d\d-\d\d$/, STATE_MIN = 20;
 const linkPath = (uid, pid) => 'b/' + uid + '/' + pid;
+// quem é a pessoa para a Pluggy: um código sem dados pessoais (nem e-mail nem nome), o mesmo para o mesmo perfil
+const cuid = async (uid, pid) => 'prumo-' + N.crypto.createHmac('sha256', await N.master()).update('pluggy:' + uid + ':' + pid).digest('hex').slice(0, 24);
 const b64u = b => Buffer.from(b).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
 /* ---------- quem pede: sessão válida, perfil desta conta e o dono do Prumo ---------- */
@@ -45,7 +49,7 @@ const pgSync = async (items, from) => { const acc = [], mov = [], err = [];
   for (const it of items) { try { const item = await pg('/items/' + it.item), bank = (item.connector && item.connector.name) || it.name || 'Pluggy';
       const A = (await pg('/accounts?itemId=' + it.item)).results || [];
       for (const a of A.slice(0, 12)) { const card = a.type === 'CREDIT';
-        acc.push({ id: 'pg:' + a.id, prov: 'pg', bank, name: a.marketingName || a.name || (card ? 'Cartão' : 'Conta'), num: String(a.number || '').slice(-8), cur: a.currencyCode || 'BRL', bal: card ? -Math.abs(+a.balance || 0) : +a.balance || 0, kind: card ? 'card' : 'bank', at: item.lastUpdatedAt || '' });
+        acc.push({ id: 'pg:' + a.id, prov: 'pg', src: it.item, bank, name: a.marketingName || a.name || (card ? 'Cartão' : 'Conta'), num: String(a.number || '').slice(-8), cur: a.currencyCode || 'BRL', bal: card ? -Math.abs(+a.balance || 0) : +a.balance || 0, kind: card ? 'card' : 'bank', at: item.lastUpdatedAt || '' });
         const add = t => { const v = Math.abs(+t.amount || 0); if (!v) return; const dir = t.type === 'CREDIT' ? 1 : t.type === 'DEBIT' ? -1 : (+t.amount >= 0 ? 1 : -1);
           mov.push({ ext: 'pg:' + t.id, acc: 'pg:' + a.id, date: String(t.date || '').slice(0, 10), amount: +(dir * v).toFixed(2), desc: String(t.description || t.descriptionRaw || (t.merchant && t.merchant.name) || '').slice(0, 140), cat: String(t.category || '').slice(0, 60), pend: t.status === 'PENDING' ? 1 : 0 }); };
         // GET /v2/transactions com cursor (o /transactions antigo sai depois de 31/12/2026); se a v2 não existir para este item, usa a antiga
@@ -68,7 +72,7 @@ const eb = async (p, init = {}) => { for (let i = 0; i < 3; i++) { const r = awa
 const ebSync = async (sessions, from) => { const acc = [], mov = [], err = [];
   for (const s of sessions) { for (const a of (s.accounts || []).slice(0, 10)) { try {
       let bal = null; try { const B = (await eb('/accounts/' + encodeURIComponent(a.uid) + '/balances')).balances || []; const b = B.find(x => /CLBD|ITAV|XPCD|ITBD/.test(x.balance_type || '')) || B[0]; if (b && b.balance_amount) bal = +b.balance_amount.amount; } catch (e) { if (e.code === 'eb_exp') throw e; }
-      acc.push({ id: 'eb:' + a.uid, prov: 'eb', bank: s.bank, name: a.name || a.product || (a.iban ? 'Conta ' + a.iban.slice(-4) : 'Conta'), num: a.iban ? a.iban.slice(-8) : '', cur: a.cur || 'EUR', bal, kind: /card|credit/i.test((a.type || '') + ' ' + (a.product || '')) ? 'card' : 'bank', until: s.until });
+      acc.push({ id: 'eb:' + a.uid, prov: 'eb', src: s.sid, bank: s.bank, name: a.name || a.product || (a.iban ? 'Conta ' + a.iban.slice(-4) : 'Conta'), num: a.iban ? a.iban.slice(-8) : '', cur: a.cur || 'EUR', bal, kind: /card|credit/i.test((a.type || '') + ' ' + (a.product || '')) ? 'card' : 'bank', until: s.until });
       let ck = '';
       for (let k = 0; k < 25; k++) { const T = await eb('/accounts/' + encodeURIComponent(a.uid) + '/transactions?date_from=' + from + (ck ? '&continuation_key=' + encodeURIComponent(ck) : ''));
         (T.transactions || []).forEach(t => { const amt = t.transaction_amount || {}, v = Math.abs(+amt.amount || 0); if (!v || t.status === 'RJCT') return; const dir = t.credit_debit_indicator === 'DBIT' ? -1 : 1, date = String(t.booking_date || t.value_date || t.transaction_date || '').slice(0, 10);
@@ -87,7 +91,7 @@ const page = (res, ok, title, text) => { res.statusCode = ok ? 200 : 400; res.se
 const callback = async (req, res, q) => { const st = await readState(q.state);
   if (!st) return page(res, false, 'O pedido expirou', 'Passaram mais de ' + STATE_MIN + ' minutos ou o endereço não é válido. Volta ao Prumo e liga o banco outra vez.');
   if (q.error) return page(res, false, 'Não ficou ligado', 'O banco não autorizou (' + String(q.error_description || q.error).slice(0, 80) + '). Nada foi ligado.');
-  try { const r = await accOf({ u: st.u, a: st.a, v: st.v }, st.p); if (!isAdmin(r.email)) throw new Error('admin'); } catch (e) { return page(res, false, 'Não ficou ligado', 'A sessão do Prumo terminou entretanto. Entra outra vez e liga de novo.'); }
+  try { const r = await accOf({ u: st.u, a: st.a, v: st.v }, st.p); if (!isAdmin(r.email) && !TODOS('ENABLEBANKING_TODOS')) throw new Error('admin'); } catch (e) { return page(res, false, 'Não ficou ligado', 'A sessão do Prumo terminou entretanto. Entra outra vez e liga de novo.'); }
   let j; try { j = await eb('/sessions', { method: 'POST', body: JSON.stringify({ code: String(q.code || '') }) }); } catch (e) { return page(res, false, 'Não ficou ligado', e.message); }
   const accounts = (j.accounts || []).map(a => typeof a === 'string' ? { uid: a } : { uid: a.uid || a.account_uid || '', name: a.name || a.details || '', product: a.product || '', iban: (a.account_id && a.account_id.iban) || '', cur: a.currency || '', type: a.cash_account_type || '' }).filter(a => a.uid).slice(0, 20);
   const L = await readLink(st.u, st.p); L.eb = (L.eb || []).filter(s => s.bank !== (st.bank || '')).concat({ sid: j.session_id, bank: (j.aspsp && j.aspsp.name) || st.bank || 'Banco', c: (j.aspsp && j.aspsp.country) || st.c || '', until: (j.access && j.access.valid_until) || '', accounts, at: new Date().toISOString() }).slice(-6);
@@ -104,13 +108,26 @@ module.exports = N.handler(async (req, res) => {
   if (!PID.test(pid)) return N.send(res, 400, { ok: false, msg: 'Perfil inválido.' });
   if (N.limit(req, 'banco|' + t.u, 40, 60e3)) return N.send(res, 429, { ok: false, msg: 'Demasiados pedidos. Espera um pouco.' });
   const rec = await accOf(t, pid), adm = isAdmin(rec.email), pronto = { pg: !!(PG_ID() && PG_SEC()), eb: !!(EB_ID() && EB_KEY()) };
-  if (op === 'estado') { const L = adm ? await readLink(t.u, pid) : { pg: [], eb: [] };
-    return N.send(res, 200, { ok: true, adm, pronto, regresso: REDIR(), pg: (L.pg || []).map(x => ({ item: x.item, name: x.name || '', at: x.at })), eb: (L.eb || []).map(s => ({ sid: s.sid, bank: s.bank, c: s.c, until: s.until, n: (s.accounts || []).length, exp: !!s.exp || (s.until && Date.parse(s.until) < Date.now()) })) }); }
-  if (!adm) return N.send(res, 403, { ok: false, code: 'admin', msg: 'A ligação automática ao banco é só para a conta do dono do Prumo (os planos gratuitos só leem as contas do próprio). Usa "Importar extrato".' });
+  // quem pode ligar bancos: o dono sempre; as outras contas só quando o plano de produção do fornecedor estiver ligado
+  const pode = { pg: pronto.pg && (adm || TODOS('PLUGGY_TODOS')), eb: pronto.eb && (adm || TODOS('ENABLEBANKING_TODOS')) };
+  if (op === 'estado') { const L = adm || pode.pg || pode.eb ? await readLink(t.u, pid) : { pg: [], eb: [] };
+    return N.send(res, 200, { ok: true, adm, pronto, pode, todos: adm ? { pg: TODOS('PLUGGY_TODOS'), eb: TODOS('ENABLEBANKING_TODOS') } : {}, regresso: REDIR(), pg: (L.pg || []).map(x => ({ item: x.item, name: x.name || '', at: x.at })), eb: (L.eb || []).map(s => ({ sid: s.sid, bank: s.bank, c: s.c, until: s.until, n: (s.accounts || []).length, exp: !!s.exp || (s.until && Date.parse(s.until) < Date.now()) })) }); }
+  const NO = N.send.bind(null, res, 403, { ok: false, code: 'admin', msg: 'A ligação automática ao banco ainda não está aberta a todas as contas. Por agora usa "Importar extrato".' });
+  if (/^pg\./.test(op) && !pode.pg && !adm) return NO(); if (/^eb\./.test(op) && !pode.eb && !adm) return NO(); if (op === 'sync' && !pode.pg && !pode.eb) return NO();
+  // um connect token para o widget Pluggy Connect desta pessoa (vale uns 30 minutos; o widget corre no aparelho dela)
+  if (op === 'pg.token') { if (!pronto.pg) return N.send(res, 503, { ok: false, code: 'config', msg: 'Faltam as chaves da Pluggy no Vercel.' }); const L = await readLink(t.u, pid); if ((L.pg || []).length >= 5) return N.send(res, 400, { ok: false, msg: 'Já tens 5 bancos ligados. Desliga um para ligar outro.' });
+    const r = await fetch(PGA() + '/connect_token', { method: 'POST', headers: { 'X-API-KEY': await pgKey(), 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ options: { clientUserId: await cuid(t.u, pid), avoidDuplicates: true } }) }); const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.accessToken) return N.send(res, 502, { ok: false, msg: 'A Pluggy não abriu a ligação agora. Tenta outra vez daqui a pouco.' }); return N.send(res, 200, { ok: true, token: j.accessToken, sandbox: TODOS('PLUGGY_SANDBOX') }); }
   if (op === 'pg.add') { if (!pronto.pg) return N.send(res, 503, { ok: false, code: 'config', msg: 'Faltam as chaves da Pluggy no Vercel.' }); const id = String(b.item || '').trim(); if (!UUID.test(id)) return N.send(res, 400, { ok: false, msg: 'O ID do item tem este formato: 8-4-4-4-12 letras e números (copia-o no Pluggy Dashboard).' });
-    const item = await pg('/items/' + id), L = await readLink(t.u, pid); L.pg = (L.pg || []).filter(x => x.item !== id).concat({ item: id, name: (item.connector && item.connector.name) || 'Pluggy', at: new Date().toISOString() }).slice(-5); await writeLink(t.u, pid, L);
+    const item = await pg('/items/' + id), mine = item.clientUserId && item.clientUserId === await cuid(t.u, pid);
+    // nas outras contas só entram itens criados pelo widget desta pessoa (o código opaco tem de bater certo)
+    if (!adm && !mine) return N.send(res, 403, { ok: false, msg: 'Esta ligação não é tua. Liga o banco pelo botão "Ligar banco".' });
+    const L = await readLink(t.u, pid); L.pg = (L.pg || []).filter(x => x.item !== id).concat({ item: id, name: (item.connector && item.connector.name) || 'Pluggy', at: new Date().toISOString(), w: mine ? 1 : 0 }).slice(-5); await writeLink(t.u, pid, L);
     return N.send(res, 200, { ok: true, name: (item.connector && item.connector.name) || 'Pluggy', status: item.status || '' }); }
-  if (op === 'pg.del') { const L = await readLink(t.u, pid); L.pg = (L.pg || []).filter(x => x.item !== String(b.item || '')); await writeLink(t.u, pid, L); return N.send(res, 200, { ok: true }); }
+  if (op === 'pg.del') { const L = await readLink(t.u, pid), x = (L.pg || []).find(x => x.item === String(b.item || ''));
+    // o que foi ligado pelo widget é apagado também na Pluggy (a autorização no banco termina); o do Meu Pluggy fica lá
+    if (x && x.w && pronto.pg) { try { await fetch(PGA() + '/items/' + x.item, { method: 'DELETE', headers: { 'X-API-KEY': await pgKey() } }); } catch (e) { } }
+    L.pg = (L.pg || []).filter(x => x.item !== String(b.item || '')); await writeLink(t.u, pid, L); return N.send(res, 200, { ok: true }); }
   if (op === 'eb.bancos') { if (!pronto.eb) return N.send(res, 503, { ok: false, code: 'config', msg: 'Faltam as chaves do Enable Banking no Vercel.' }); const c = /^[A-Z]{2}$/.test(String(b.c || '')) ? b.c : 'PT';
     const j = await eb('/aspsps?country=' + c); return N.send(res, 200, { ok: true, bancos: (j.aspsps || []).filter(x => !x.psu_types || x.psu_types.includes('personal')).map(x => ({ name: x.name, c: x.country, logo: x.logo || '', max: +x.maximum_consent_validity || 0 })).slice(0, 300) }); }
   if (op === 'eb.inicio') { if (!pronto.eb) return N.send(res, 503, { ok: false, code: 'config', msg: 'Faltam as chaves do Enable Banking no Vercel.' }); const name = String(b.bank || '').slice(0, 120), c = /^[A-Z]{2}$/.test(String(b.c || '')) ? b.c : 'PT', max = Math.max(0, +b.max || 0);
@@ -119,7 +136,7 @@ module.exports = N.handler(async (req, res) => {
     if (!j.url) return N.send(res, 502, { ok: false, msg: 'O Enable Banking não devolveu o endereço do banco.' }); return N.send(res, 200, { ok: true, url: j.url, validade: STATE_MIN * 60 }); }
   if (op === 'eb.del') { const L = await readLink(t.u, pid), s = (L.eb || []).find(x => x.sid === String(b.sid || '')); if (s && pronto.eb) { try { await eb('/sessions/' + encodeURIComponent(s.sid), { method: 'DELETE' }); } catch (e) { } } L.eb = (L.eb || []).filter(x => x.sid !== String(b.sid || '')); await writeLink(t.u, pid, L); return N.send(res, 200, { ok: true }); }
   if (op === 'sync') { const from = DAY.test(String(b.from || '')) && b.from > new Date(Date.now() - 730 * 864e5).toISOString().slice(0, 10) ? b.from : new Date(Date.now() - 90 * 864e5).toISOString().slice(0, 10);
-    const L = await readLink(t.u, pid), R1 = pronto.pg && L.pg.length ? await pgSync(L.pg, from) : { acc: [], mov: [], err: [] }, R2 = pronto.eb && L.eb.length ? await ebSync(L.eb.filter(s => !(s.until && Date.parse(s.until) < Date.now())), from) : { acc: [], mov: [], err: [] };
+    const L = await readLink(t.u, pid), R1 = pode.pg && L.pg.length ? await pgSync(L.pg, from) : { acc: [], mov: [], err: [] }, R2 = pode.eb && L.eb.length ? await ebSync(L.eb.filter(s => !(s.until && Date.parse(s.until) < Date.now())), from) : { acc: [], mov: [], err: [] };
     if (L.eb.some(s => s.exp)) await writeLink(t.u, pid, L);
     return N.send(res, 200, { ok: true, from, contas: R1.acc.concat(R2.acc), mov: R1.mov.concat(R2.mov).slice(0, 8000), erros: R1.err.concat(R2.err) }); }
   return N.send(res, 400, { ok: false, msg: 'Pedido desconhecido.' });
