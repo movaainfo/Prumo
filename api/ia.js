@@ -8,7 +8,7 @@
 //   p=stt    → o ouvido: transcrição dedicada (GROQ_API_KEY → Whisper; DEEPGRAM_API_KEY → Nova; OPENAI_API_KEY → gpt-4o-transcribe;
 //              AZURE_SPEECH_KEY + AZURE_SPEECH_REGION → Microsoft). Sem nenhuma, a app transcreve com o Gemini como antes.
 'use strict';
-const N = require('./_nuvem');
+const N = require('./_nuvem'), P = require('./_planos');
 const G = 'https://generativelanguage.googleapis.com/';
 const FREE = () => process.env.NAUTILO_IA_LIVRE || 'https://text.pollinations.ai/openai';
 const gkey = () => String(process.env.GEMINI_API_KEY || '').trim();
@@ -18,10 +18,12 @@ const akey = () => String(process.env.ANTHROPIC_API_KEY || '').trim(), CL_DIA = 
 const env = k => String(process.env[k] || '').trim();
 const sttName = () => env('GROQ_API_KEY') ? 'groq' : env('DEEPGRAM_API_KEY') ? 'deepgram' : env('OPENAI_API_KEY') ? 'openai' : env('AZURE_SPEECH_KEY') && env('AZURE_SPEECH_REGION') ? 'azure' : '';
 const SEEN = new Map(), DAY = new Map();
+// v3.21: a sessão traz também o plano da conta (o limite de IA por dia, as fotos e o Claude dependem dele)
 const okSession = async req => { const t = await N.readToken(req); if (!t) return null; const c = SEEN.get(t.a);
-  if (c && Date.now() - c.at < 60e3) return c.ok ? t : null;
-  let ok = false; try { const g = await N.store().get('a/' + t.a); if (g) { const r = N.open(await N.accKey(), g.buf); ok = r.uid === t.u && (r.tv || 1) === t.v; } } catch (e) { }
-  SEEN.set(t.a, { ok, at: Date.now() }); if (SEEN.size > 5000) SEEN.delete(SEEN.keys().next().value); return ok ? t : null; };
+  if (c && Date.now() - c.at < 60e3) return c.ok ? Object.assign({}, t, { ef: c.ef }) : null;
+  let ok = false, ef = null; try { const g = await N.store().get('a/' + t.a); if (g) { const r = N.open(await N.accKey(), g.buf); ok = r.uid === t.u && (r.tv || 1) === t.v && !r.verif; ef = P.efetivo(r); } } catch (e) { }
+  SEEN.set(t.a, { ok, ef, at: Date.now() }); if (SEEN.size > 5000) SEEN.delete(SEEN.keys().next().value); return ok ? Object.assign({}, t, { ef }) : null; };
+const hasImage = b => (b.contents || []).some(c => (c.parts || []).some(p => { const d = p.inline_data || p.inlineData || p.file_data || p.fileData; return d && !/^audio\//i.test(d.mime_type || d.mimeType || ''); }));
 const perDay = (uid, max = POR_DIA, tag = '') => { const d = new Date().toISOString().slice(0, 10), k = tag + uid + '|' + d, n = (DAY.get(k) || 0) + 1; DAY.set(k, n); if (DAY.size > 20000) DAY.delete(DAY.keys().next().value); return n > max; };
 /* ---------- o ouvido: áudio (WAV 16 kHz em base64) → texto ---------- */
 const stt = async (b64, lang) => { const buf = Buffer.from(String(b64 || ''), 'base64'); if (buf.length < 2000 || buf.length > 6e6) throw Object.assign(new Error('Áudio vazio ou grande demais.'), { status: 400 });
@@ -65,16 +67,19 @@ module.exports = N.handler(async (req, res) => {
   const q = req.query || {}, p = String(q.p || '');
   if (p === 'estado') return N.send(res, 200, { ok: true, google: !!gkey(), claude: !!akey(), stt: sttName(), modelo: env('NAUTILO_CLAUDE_MODEL') || '' });
   const t = await okSession(req); if (!t) return gErr(res, 401, 'A sessão terminou. Entra outra vez na conta.');
+  const ef = t.ef || { lvl: 3, ia: POR_DIA }; if (!ef.lvl) return gErr(res, 402, 'O teu teste grátis acabou: escolhe um plano em Planos para a IA voltar.');
+  const iaDia = Math.min(POR_DIA, ef.ia || POR_DIA);
   if (p === 'stt') { if (req.method !== 'POST') return gErr(res, 405, 'Só POST.'); if (!sttName()) return gErr(res, 501, 'Sem serviço de transcrição no servidor.');
     if (N.limit(req, 'stt|' + t.u, 40, 60e3) || perDay(t.u, +(process.env.NAUTILO_STT_DIA || 800), 's|')) return gErr(res, 429, 'Limite de transcrições por agora. Tenta daqui a pouco.');
     const b = await N.body(req); try { return N.send(res, 200, { ok: true, text: await stt(b.b64, b.lang), via: sttName() }); } catch (e) { return gErr(res, e.status && e.status < 600 ? e.status : 502, e.message || 'Não consegui transcrever.'); } }
   if (p === 'claude') { if (req.method !== 'POST') return gErr(res, 405, 'Só POST.');
+    if (ef.lvl < 3) return N.send(res, 402, { type: 'error', error: { type: 'permission_error', message: 'O Claude está no plano Completo. A IA do Google continua a responder.' } });
     if (!akey()) return N.send(res, 501, { type: 'error', error: { type: 'not_found_error', message: 'O Claude não está ligado neste servidor.' } });
     if (N.limit(req, 'cl|' + t.u, 20, 60e3) || perDay(t.u, CL_DIA, 'c|')) return N.send(res, 429, { type: 'error', error: { type: 'rate_limit_error', message: 'Chegaste ao limite de conversas com o Claude por hoje. A IA do Google continua a responder.' } });
     const o = await claude(req, await N.body(req)); res.statusCode = o.status; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.setHeader('Cache-Control', 'no-store'); return res.end(o.txt); }
   // v3.18: a IA de reserva pelo servidor (no aparelho a ligação direta podia falhar com "Failed to fetch"); formato OpenAI, como a app já usa
   if (p === 'livre') { if (req.method !== 'POST') return gErr(res, 405, 'Só POST.');
-    if (N.limit(req, 'ia|' + t.u, POR_MIN, 60e3) || perDay(t.u)) return gErr(res, 429, 'Limite de IA por minuto/dia atingido (quota per day). Tenta daqui a pouco.');
+    if (N.limit(req, 'ia|' + t.u, POR_MIN, 60e3) || perDay(t.u, iaDia)) return gErr(res, 429, 'Limite de IA por minuto/dia atingido (quota per day). ' + (ef.lvl < 3 ? 'Os planos acima têm mais pedidos por dia.' : 'Tenta daqui a pouco.'));
     const b = await N.body(req), msgs = Array.isArray(b.messages) ? b.messages.filter(m => m && typeof m === 'object').slice(-60) : [];
     if (!msgs.length) return gErr(res, 400, 'Sem mensagens.');
     const body = Object.assign({ model: 'openai', messages: msgs, temperature: typeof b.temperature === 'number' ? Math.max(0, Math.min(1.5, b.temperature)) : .3, private: true, referrer: 'nautilo' }, Array.isArray(b.tools) ? { tools: b.tools.slice(0, 64) } : {}, b.json ? { response_format: { type: 'json_object' } } : {});
@@ -86,12 +91,13 @@ module.exports = N.handler(async (req, res) => {
       catch (e) { last = e.name === 'AbortError' ? 'demorou demasiado' : 'sem resposta'; } finally { clearTimeout(to); } }
     return gErr(res, 502, 'A IA de reserva não respondeu (' + last + ').'); }
   if (!OKP.test(p)) return gErr(res, 400, 'Pedido de IA desconhecido.');
-  if (N.limit(req, 'ia|' + t.u, POR_MIN, 60e3) || perDay(t.u)) return gErr(res, 429, 'Limite de IA por minuto/dia atingido (quota per day). Tenta daqui a pouco.');
+  if (N.limit(req, 'ia|' + t.u, POR_MIN, 60e3) || perDay(t.u, iaDia)) return gErr(res, 429, 'Limite de IA por minuto/dia atingido (quota per day). ' + (ef.lvl < 3 ? 'Os planos acima têm mais pedidos por dia.' : 'Tenta daqui a pouco.'));
   const k = gkey();
   if (/^v1beta\/models(\?|$)/.test(p)) { if (!k) return N.send(res, 200, { models: [{ name: 'models/gemini-nautilo-livre', supportedGenerationMethods: ['generateContent'] }] });
     const r = await fetch(G + p + (p.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(k)); res.statusCode = r.status; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.setHeader('Cache-Control', 'no-store'); return res.end(await r.text()); }
   if (req.method !== 'POST') return gErr(res, 405, 'Só POST.');
   const b = await N.body(req);
+  if (ef.lvl < 2 && hasImage(b)) return gErr(res, 402, 'Ler fotos e PDFs com a IA está no plano Avançado. Vê os planos em Planos.');
   if (k) { const ac = new AbortController(), to = setTimeout(() => ac.abort(), 90e3); let r, txt;
     // modelo lento demais: responde como limite, para a app passar a outro modelo (v2.96, Vercel Pro: 90 s, para os modelos "pro" pensarem; antes 40 s)
     try { r = await fetch(G + p + '?key=' + encodeURIComponent(k), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b), signal: ac.signal }); txt = await r.text(); }
@@ -103,3 +109,5 @@ module.exports = N.handler(async (req, res) => {
   if (/countTokens$/.test(p)) return N.send(res, 200, { totalTokens: JSON.stringify(b).length / 4 | 0 });
   const o = await free(b); N.send(res, o.status, o.body);
 });
+// testes: esquecer as sessões e as contagens guardadas em memória
+module.exports._clear = () => { SEEN.clear(); DAY.clear(); };

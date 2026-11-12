@@ -109,7 +109,9 @@ module.exports = N.handler(async (req, res) => {
   if (N.limit(req, 'banco|' + t.u, 40, 60e3)) return N.send(res, 429, { ok: false, msg: 'Demasiados pedidos. Espera um pouco.' });
   const rec = await accOf(t, pid), adm = isAdmin(rec.email), pronto = { pg: !!(PG_ID() && PG_SEC()), eb: !!(EB_ID() && EB_KEY()) };
   // quem pode ligar bancos: o dono sempre; as outras contas só quando o plano de produção do fornecedor estiver ligado
-  const pode = { pg: pronto.pg && (adm || TODOS('PLUGGY_TODOS')), eb: pronto.eb && (adm || TODOS('ENABLEBANKING_TODOS')) };
+  // v3.21: nas outras contas, a ligação automática ao banco é do plano Completo
+  const c3 = adm || require('./_planos').efetivo(rec).lvl >= 3;
+  const pode = { pg: pronto.pg && (adm || (c3 && TODOS('PLUGGY_TODOS'))), eb: pronto.eb && (adm || (c3 && TODOS('ENABLEBANKING_TODOS'))) };
   if (op === 'estado') { const L = adm || pode.pg || pode.eb ? await readLink(t.u, pid) : { pg: [], eb: [] };
     return N.send(res, 200, { ok: true, adm, pronto, pode, todos: adm ? { pg: TODOS('PLUGGY_TODOS'), eb: TODOS('ENABLEBANKING_TODOS') } : {}, regresso: REDIR(), pg: (L.pg || []).map(x => ({ item: x.item, name: x.name || '', at: x.at })), eb: (L.eb || []).map(s => ({ sid: s.sid, bank: s.bank, c: s.c, until: s.until, n: (s.accounts || []).length, exp: !!s.exp || (s.until && Date.parse(s.until) < Date.now()) })) }); }
   const NO = N.send.bind(null, res, 403, { ok: false, code: 'admin', msg: 'A ligação automática ao banco ainda não está aberta a todas as contas. Por agora usa "Importar extrato".' });

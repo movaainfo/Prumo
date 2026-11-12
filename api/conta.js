@@ -2,7 +2,7 @@
 // Uma conta = e-mail + senha (guardada em scrypt, nunca em texto). Cada conta tem até 5 perfis; cada perfil tem os seus dados.
 // Sem serviço de e-mail: ao criar a conta mostramos um código de recuperação (só aparece uma vez) para repor a senha.
 'use strict';
-const N = require('./_nuvem');
+const N = require('./_nuvem'), P = require('./_planos');
 const MAXP = 5, COLORS = ['#F2C48D', '#7FA9DA', '#3FCF8E', '#E0896A', '#9A8CF5', '#F28CB1', '#5CC8E6', '#F2B544'];
 // administração: só as contas cujo e-mail está em NAUTILO_ADMIN (variável do projeto no Vercel) veem o separador
 const isAdmin = e => String(process.env.NAUTILO_ADMIN || '').toLowerCase().split(',').map(x => x.trim()).filter(Boolean).includes(String(e || '').toLowerCase());
@@ -11,7 +11,10 @@ const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/;
 const TV = /^\d{4}-\d{2}-\d{2}$/;
 const termsOf = b => { if (!TV.test(String(b.termos || '')) || b.saude !== true || b.idade !== true) throw N.err('termos', 'Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.', 400);
   return { v: b.termos, at: new Date().toISOString(), saude: true, idade: true }; };
-const pub = (r, eid) => ({ trocar: !!r.trocar, avisos: (r.avisos || []).slice(-5), email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', pin: p.pin ? 6 : 0, inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
+const planoPub = r => { const e = P.efetivo(r), o = { id: e.id, n: e.n, lvl: e.lvl, perfis: e.perfis, ia: e.ia, cobranca: P.cobranca() };
+  ['admin', 'oferta', 'pago', 'teste', 'cancelar', 'semCobranca', 'acabou', 'contaTeste'].forEach(k => { if (e[k]) o[k] = 1; }); ['ate', 'testeAcabou', 'ciclo', 'cur'].forEach(k => { if (e[k]) o[k] = e[k]; });
+  if (r.plano && r.plano.cus) o.cliente = 1; return o; };
+const pub = (r, eid) => ({ plano: planoPub(r), verificar: r.verif ? 1 : 0, trocar: !!r.trocar, avisos: (r.avisos || []).slice(-5), email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', pin: p.pin ? 6 : 0, inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
 const cleanName = (s, max) => String(s || '').replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
 const cleanProfile = (p, old) => { const o = Object.assign({}, old || {});
   if (p.nome != null) o.nome = cleanName(p.nome, 24);
@@ -38,6 +41,7 @@ const change = async (eid, fn) => { for (let i = 0; i < 5; i++) { const a = awai
   throw N.err('ocupado', 'A conta está a ser alterada noutro aparelho. Tenta outra vez.', 409); };
 const session = async req => { const t = await N.readToken(req); if (!t) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   const a = await readAcc(t.a); if (!a || a.rec.uid !== t.u || (a.rec.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
+  if (a.rec.verif && !VPEND.has(req._op)) throw N.err('verificar', 'Confirma primeiro o teu e-mail com o código que te enviámos.', 403);
   return { t, eid: t.a, rec: a.rec }; };
 const needPw = async (rec, pw) => { if (!(await N.checkPw(pw, rec.pw))) throw N.err('senha', 'A senha não está certa.', 403); };
 // senha temporária fácil de ditar: 3 grupos de 4 (sem letras que se confundem)
@@ -72,6 +76,37 @@ const spList = async () => { if (Date.now() - SPC.at < 20e3) return SPC.v; try {
 const spOk = async email => isAdmin(email) || (await spList()).includes(N.normEmail(email));
 const spCid = () => { const v = String(process.env.SPOTIFY_CLIENT_ID || '').trim(); return /^[a-f0-9]{32}$/i.test(v) ? v : ''; };
 
+/* ---------- verificação do e-mail no primeiro registo ----------
+   Com RESEND_API_KEY ou BREVO_API_KEY no Vercel (e NAUTILO_EMAIL_DE, o remetente), a conta nova recebe um código de 6 números por e-mail
+   e só fica ativa depois de o confirmar na app. Sem serviço de e-mail ligado, o passo não aparece (ninguém fica preso). */
+const mailOn = () => !!(process.env.RESEND_API_KEY || process.env.BREVO_API_KEY || process.env.NAUTILO_EMAIL_MOCK);
+const code6 = () => String(N.crypto.randomInt(0, 1e6)).padStart(6, '0');
+const sendCode = async (email, nome, code) => { const de = process.env.NAUTILO_EMAIL_DE || 'Prumo <onboarding@resend.dev>', sub = 'O teu código do Prumo: ' + code, cc = code.slice(0, 3) + ' ' + code.slice(3);
+  const txt = `Olá${nome ? ' ' + nome : ''},\n\nO teu código para confirmar o e-mail no Prumo é: ${cc}\nVale 30 minutos.\n\nSe não foste tu a criar a conta, ignora este e-mail.\n\nPrumo`;
+  const html = `<div style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;max-width:480px;margin:auto;padding:24px;color:#1b1b1b"><p>Olá${nome ? ' ' + nome.replace(/[<>&"]/g, '') : ''},</p><p>O teu código para confirmar o e-mail no <b>Prumo</b> é:</p><p style="font-size:32px;letter-spacing:6px;font-weight:700;margin:18px 0">${cc}</p><p>Vale 30 minutos.</p><p style="color:#666;font-size:13px">Se não foste tu a criar a conta, ignora este e-mail.</p></div>`;
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 15e3); let r;
+  try { if (process.env.NAUTILO_EMAIL_MOCK) r = await fetch(process.env.NAUTILO_EMAIL_MOCK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ to: email, subject: sub, text: txt }), signal: ac.signal });
+    else if (process.env.RESEND_API_KEY) r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'content-type': 'application/json' }, body: JSON.stringify({ from: de, to: [email], subject: sub, text: txt, html }), signal: ac.signal });
+    else { const m = de.match(/^\s*(.*?)\s*<([^>]+)>\s*$/); r = await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ sender: m ? { name: m[1] || 'Prumo', email: m[2] } : { name: 'Prumo', email: de }, to: [{ email }], subject: sub, textContent: txt, htmlContent: html }), signal: ac.signal }); }
+    return r.ok; } catch (e) { return false; } finally { clearTimeout(to); } };
+const VPEND = new Set(['eu', 'verificarEmail', 'reenviarCodigo', 'apagar', 'termos', 'planos']);
+
+/* ---------- planos: ajudas ---------- */
+const voltaDe = (req, v) => { const o = String(req.headers.origin || ''), h = /^https?:\/\/[^/]+$/.test(o) ? o : 'https://' + String(req.headers['x-forwarded-host'] || req.headers.host || 'prumo-vida.vercel.app').split(',')[0].trim();
+  const x = String(v || ''); return x && x.startsWith(h + '/') && x.length < 300 && !/[#?\s]/.test(x) ? x : h + '/'; };
+// um produto no Stripe para cada plano (criado na primeira vez e guardado), com o preço posto em cada pagamento
+const PROD = {};
+const produto = async id => { const kt = String(process.env.STRIPE_SECRET_KEY || '').trim().slice(-6), ck = kt + ':' + id; if (PROD[ck]) return PROD[ck];
+  const st = N.store(), key = await N.accKey(); let c = {}; try { const g = await st.get('cfg/stripe'); if (g) c = N.open(key, g.buf) || {}; } catch (e) { }
+  if (c[ck]) return (PROD[ck] = c[ck]);
+  const pr = await P.stripe('products', { name: 'Prumo · ' + P.byId(id).n, metadata: { plano: id } }); c[ck] = pr.id; await st.put('cfg/stripe', N.seal(key, c)); return (PROD[ck] = pr.id); };
+// a assinatura muda no Stripe (renovação, cartão recusado, cancelamento): a conta vai lá ver de 6 em 6 horas ou quando o período acaba
+const refreshPlano = async s => { const p = s.rec.plano; if (!P.cobranca() || !p || !p.sub) return null; if (Date.now() - (p.at || 0) < 6 * 36e5 && (p.ate || 0) > Date.now()) return null;
+  const sub = await P.stripe('subscriptions/' + p.sub, null, 'GET'), st = Object.assign(P.doStripe(sub), { id: (sub.metadata && sub.metadata.plano) || p.id, ciclo: (sub.metadata && sub.metadata.ciclo) || p.ciclo });
+  return change(s.eid, r => { r.plano = st; }); };
+const fimPlano = async (req, cancelar) => { const s = await session(req), p = s.rec.plano; if (!P.cobranca() || !p || !p.sub) throw N.err('sem', 'Ainda não tens assinatura.', 400);
+  const up = await P.stripe('subscriptions/' + p.sub, { cancel_at_period_end: cancelar ? 'true' : 'false' }); const st = Object.assign(P.doStripe(up), { id: p.id, ciclo: p.ciclo });
+  const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; };
 const OPS = {
   async registar(req, b) {
     if (N.limit(req, 'registar', 6, 3600e3)) throw N.err('limite', 'Muitas contas criadas a partir daqui. Tenta mais tarde.', 429);
@@ -81,8 +116,27 @@ const OPS = {
     if (senha.length > 200) throw N.err('senha', 'A senha é longa demais.', 400);
     const termos = termsOf(b), eid = await N.emailId(email), code = N.newCode();
     const rec = { v: 1, uid: N.crypto.randomBytes(12).toString('hex'), email, nome, criado: new Date().toISOString(), pw: await N.hashPw(senha), rc: await N.hashPw(N.normCode(code)), perfis: [], tv: 1, falhas: 0, bloq: 0, termos };
-    try { await writeAcc(eid, rec); } catch (e) { if (e.code === 'exists') throw N.err('existe', 'Já existe uma conta com este e-mail. Entra com a tua senha.', 409); throw e; }
-    return { token: await N.signToken(rec, eid), conta: pub(rec), recuperacao: code }; },
+    // v3.21: verificação do e-mail (só no primeiro registo; as contas de teste saltam)
+    const vc = mailOn() && !TESTE.test(email) ? code6() : ''; if (vc) rec.verif = { h: await N.hashPw(vc), exp: Date.now() + 30 * 60e3, n: 0, env: Date.now(), envs: 1 };
+    try { await writeAcc(eid, rec); } catch (e) { if (e.code !== 'exists') throw e;
+      // uma conta que nunca confirmou o e-mail (há mais de 30 min) não segura o endereço: dá lugar à nova
+      const old = await readAcc(eid); if (!(old && old.rec.verif && Date.now() - Date.parse(old.rec.criado || 0) > 30 * 60e3)) throw N.err('existe', 'Já existe uma conta com este e-mail. Entra com a tua senha.', 409);
+      await dropData(old.rec.uid); await N.store().put('a/' + eid, N.seal(await N.accKey(), rec)); }
+    if (vc && !(await sendCode(email, nome, vc))) { delete rec.verif; await N.store().put('a/' + eid, N.seal(await N.accKey(), rec)); }
+    return { token: await N.signToken(rec, eid), conta: pub(rec), recuperacao: code, verificar: rec.verif ? 1 : 0 }; },
+  // confirmar o e-mail com o código de 6 números
+  async verificarEmail(req, b) { const s = await session(req), v = s.rec.verif; if (!v) return { conta: pub(s.rec) };
+    if (v.n >= 6) throw N.err('tentativas', 'Muitas tentativas erradas: pede um código novo.', 429);
+    if (Date.now() > v.exp) throw N.err('expirou', 'O código expirou: pede um código novo.', 400);
+    const ok = /^\d{6}$/.test(String(b.codigo || '')) && await N.checkPw(String(b.codigo), v.h);
+    if (!ok) { await change(s.eid, r => { if (r.verif) r.verif.n = (r.verif.n || 0) + 1; }); throw N.err('codigo', 'Esse código não está certo.', 400); }
+    const rec = await change(s.eid, r => { delete r.verif; r.emailOk = new Date().toISOString(); }); return { conta: pub(rec) }; },
+  // enviar outra vez (no máximo um por minuto e 6 por hora)
+  async reenviarCodigo(req) { const s = await session(req), v = s.rec.verif; if (!v) return { conta: pub(s.rec) };
+    if (Date.now() - (v.env || 0) < 60e3) throw N.err('cedo', 'Espera um minuto antes de pedir outro código.', 429);
+    if ((v.envs || 0) >= 6 && Date.now() - (v.env || 0) < 3600e3) throw N.err('limite', 'Já pedimos muitos códigos. Tenta daqui a uma hora.', 429);
+    const vc = code6(); if (!(await sendCode(s.rec.email, s.rec.nome, vc))) throw N.err('envio', 'Não consegui enviar o e-mail agora. Tenta daqui a pouco.', 502);
+    const h = await N.hashPw(vc), rec = await change(s.eid, r => { r.verif = { h, exp: Date.now() + 30 * 60e3, n: 0, env: Date.now(), envs: ((r.verif && r.verif.envs) || 0) + 1 }; }); return { conta: pub(rec), enviado: 1 }; },
 
   async entrar(req, b) {
     if (N.limit(req, 'entrar', 30, 600e3)) throw N.err('limite', 'Muitas tentativas. Espera uns minutos.', 429);
@@ -95,7 +149,49 @@ const OPS = {
     const rec = await change(eid, r => { r.falhas = 0; r.bloq = 0; r.ult = Date.now(); r.logins = (r.logins || 0) + 1; }).catch(() => a.rec);
     return { token: await N.signToken(rec, eid), conta: pub(rec) }; },
 
-  async eu(req) { const s = await session(req), sp = await spOk(s.rec.email); return { conta: Object.assign(pub(s.rec), { sp, spc: sp ? spCid() : '' }) }; },
+  async eu(req) { const s = await session(req), sp = await spOk(s.rec.email); let rec = s.rec; try { rec = await refreshPlano(s) || rec; } catch (e) { } return { conta: Object.assign(pub(rec), { sp, spc: sp ? spCid() : '' }) }; },
+
+  /* ---------- planos e cobrança (Stripe) ---------- */
+  // os planos e os preços (público: a página Planos mostra-os mesmo antes de entrar)
+  async planos() { return { planos: P.planos().map(p => ({ id: p.id, n: p.n, lvl: p.lvl, ia: p.ia, perfis: p.perfis, precos: p.precos })), cobranca: P.cobranca(), testeDias: P.TESTE_DIAS() }; },
+  // assinar: abre o pagamento do Stripe (cartão, Apple Pay, Google Pay…) e volta ao Prumo
+  async checkout(req, b) { const s = await session(req); if (!P.cobranca()) throw N.err('cobranca', 'As assinaturas ainda não estão abertas.', 503);
+    const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : 'mes', cur = b.cur === 'BRL' ? 'BRL' : 'EUR'; if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
+    const e = P.efetivo(s.rec); if (e.pago) throw N.err('ja', 'Já tens uma assinatura: muda de plano na página Planos.', 409);
+    if (N.limit(req, 'checkout|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
+    const volta = voltaDe(req, b.volta), prod = await produto(pl.id), cus = s.rec.plano && s.rec.plano.cus;
+    const ses = await P.stripe('checkout/sessions', Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: cur === 'BRL' ? 'pt-BR' : 'pt',
+      line_items: { 0: { quantity: 1, price_data: { currency: cur.toLowerCase(), unit_amount: pl.precos[cur][ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: prod } } },
+      metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo } } }, cus ? { customer: cus } : { customer_email: s.rec.email }));
+    return { url: ses.url }; },
+  // de volta do Stripe: confirma no Stripe (não confia na app) e guarda a assinatura na conta
+  async confirmar(req, b) { const s = await session(req); if (!P.cobranca()) throw N.err('cobranca', 'As assinaturas ainda não estão abertas.', 503);
+    if (!/^cs_[A-Za-z0-9_]{6,200}$/.test(String(b.sid || ''))) throw N.err('sessao_pag', 'Pagamento desconhecido.', 400);
+    const ses = await P.stripe('checkout/sessions/' + b.sid, { expand: { 0: 'subscription' } }, 'GET');
+    if (ses.client_reference_id !== s.rec.uid) throw N.err('outra', 'Este pagamento não é desta conta.', 403);
+    if (ses.status !== 'complete' || !ses.subscription || typeof ses.subscription !== 'object') throw N.err('pendente', 'O pagamento ainda não foi concluído.', 409);
+    const st = P.doStripe(ses.subscription); st.id = st.id || (ses.metadata || {}).plano; st.ciclo = st.ciclo || (ses.metadata || {}).ciclo || 'mes';
+    const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; },
+  // mudar de plano ou de ciclo (com a diferença acertada pelo Stripe)
+  async mudarPlano(req, b) { const s = await session(req), p0 = s.rec.plano; if (!P.cobranca() || !p0 || !p0.sub) throw N.err('sem', 'Ainda não tens assinatura.', 400);
+    const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : b.ciclo === 'mes' ? 'mes' : p0.ciclo || 'mes', cur = p0.cur === 'BRL' ? 'BRL' : 'EUR'; if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
+    const sub = await P.stripe('subscriptions/' + p0.sub, null, 'GET'), item = ((sub.items || {}).data || [])[0]; if (!item) throw N.err('stripe', 'Assinatura sem itens.', 502);
+    const up = await P.stripe('subscriptions/' + p0.sub, { cancel_at_period_end: 'false', proration_behavior: 'create_prorations', metadata: { uid: s.rec.uid, plano: pl.id, ciclo },
+      items: { 0: { id: item.id, price_data: { currency: cur.toLowerCase(), unit_amount: pl.precos[cur][ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: await produto(pl.id) } } } });
+    const st = Object.assign(P.doStripe(up), { id: pl.id, ciclo }); const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; },
+  // cancelar: continua até ao fim do período já pago; retomar desfaz
+  async cancelarPlano(req, b) { return fimPlano(req, true); },
+  async retomarPlano(req, b) { return fimPlano(req, false); },
+  // gerir o cartão e ver as faturas (portal do Stripe; precisa de estar ativado no painel do Stripe)
+  async portal(req, b) { const s = await session(req), cus = s.rec.plano && s.rec.plano.cus; if (!P.cobranca() || !cus) throw N.err('sem', 'Ainda não tens assinatura.', 400);
+    try { const ps = await P.stripe('billing_portal/sessions', { customer: cus, return_url: voltaDe(req, b.volta) + '#planos' }); return { url: ps.url }; }
+    catch (e) { throw N.err('portal', 'A gestão de pagamentos ainda não está ativa. Fala com a administração.', 503); } },
+  // a administração dá um plano (oferta), por um tempo ou sem fim; vazio tira a oferta
+  async adminPlano(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+    const email = N.normEmail(b.email), eid = await N.emailId(email), a = await readAcc(eid); if (!a) throw N.err('conta', 'Essa conta não existe.', 404);
+    const pl = b.plano ? P.byId(b.plano) : null; if (b.plano && !pl) throw N.err('plano', 'Plano desconhecido.', 400); const dias = Math.max(0, Math.min(3650, +b.dias || 0));
+    await change(eid, r => { if (pl) r.planoAdm = { id: pl.id, ate: dias ? Date.now() + dias * P.DIA : 0, at: Date.now() }; else delete r.planoAdm; if (pl) aviso(r, { t: 'plano', p: pl.n, d: dias }); });
+    return { email, plano: pl ? pl.id : '', dias }; },
   // contas que já existiam (ou termos novos): aceitar uma vez
   async termos(req, b) { const s = await session(req), t = termsOf(b); const rec = await change(s.eid, r => { r.termos = t; }); return { conta: pub(rec) }; },
   // quem é o responsável e como contactar (para a Política de Privacidade); sem sessão
@@ -114,7 +210,8 @@ const OPS = {
   async perfil(req, b) { const s = await session(req), acao = b.acao; let made = null;
     if (acao === 'apagar') { await needPw(s.rec, b.senha); if (!(s.rec.perfis || []).some(p => p.id === b.id)) throw N.err('perfil', 'Esse perfil já não existe.', 404); }
     const rec = await change(s.eid, r => { r.perfis = r.perfis || [];
-      if (acao === 'criar') { if (r.perfis.length >= MAXP) throw N.err('maximo', `Cada conta pode ter até ${MAXP} perfis.`, 400);
+      if (acao === 'criar') { const ef = P.efetivo(r); if (!ef.lvl) throw N.err('plano', 'O teu teste grátis acabou: escolhe um plano em Planos para continuar.', 402);
+        if (r.perfis.length >= Math.min(MAXP, ef.perfis || MAXP)) throw N.err('maximo', ef.perfis < MAXP ? `O teu plano (${ef.n}) tem até ${ef.perfis} ${ef.perfis === 1 ? 'perfil' : 'perfis'}. Para mais, muda de plano em Planos.` : `Cada conta pode ter até ${MAXP} perfis.`, 402);
         const p = cleanProfile(b.perfil || {}, { id: N.crypto.randomBytes(6).toString('hex'), cor: COLORS[r.perfis.length % COLORS.length], criado: new Date().toISOString() });
         if (!p.nome) throw N.err('nome', 'Dá um nome ao perfil.', 400); if (!p.lk) throw N.err('codigo', 'Escolhe o código de bloqueio do perfil.', 400);
         r.perfis.push(p); made = p; return; }
@@ -194,7 +291,7 @@ const OPS = {
     const pool = async (L, f) => { let i = 0; await Promise.all(Array.from({ length: Math.min(16, L.length) }, async () => { while (i < L.length) { const x = L[i++]; try { await f(x); } catch (e) { } } })); };
     const uso = {}; await pool(Us, async x => { const g = await s.get(x.pathname); if (g) uso[x.pathname.slice(2)] = N.open(key, g.buf); });
     const contas = []; await pool(A, async x => { const g = await s.get(x.pathname); if (!g) return; const r = N.open(key, g.buf), u = uso[r.uid] || { dias: {} };
-      contas.push({ uid: r.uid, email: r.email, nome: r.nome || '', criado: r.criado, perfis: (r.perfis || []).map(p => p.nome), ultEntrada: Math.max(u.ab || 0, r.ult || 0), login: r.ult || 0, entradas: r.logins || 0, ultUso: u.ult || 0, online: online(u), tot: totOf(u), dias: u.dias || {}, admin: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '' }); });
+      contas.push({ uid: r.uid, email: r.email, nome: r.nome || '', criado: r.criado, perfis: (r.perfis || []).map(p => p.nome), pids: (r.perfis || []).map(p => p.id), plano: planoPub(r), ultEntrada: Math.max(u.ab || 0, r.ult || 0), login: r.ult || 0, entradas: r.logins || 0, ultUso: u.ult || 0, online: online(u), tot: totOf(u), dias: u.dias || {}, admin: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '' }); });
     // contas de teste (@nautilo.test, domínio reservado aos testes) com mais de 3 horas: apagam-se sozinhas
     const velhas = contas.filter(c => TESTE.test(c.email) && c.criado && Date.now() - new Date(c.criado).getTime() > 3 * 36e5);
     for (const c of velhas) { try { const eid = await N.emailId(c.email); await dropData(c.uid); await s.del([{ pathname: 'a/' + eid }, { pathname: 'u/' + c.uid }]); contas.splice(contas.indexOf(c), 1); RK.rows = null; } catch (e) { } }
@@ -203,6 +300,18 @@ const OPS = {
     pedidos.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     const sl = await spList(); contas.forEach(c => { c.sp = c.admin || sl.includes(N.normEmail(c.email)); });
     return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos, spotify: sl, spMax: SP_MAX, spConf: !!spCid() }; },
+
+  // v3.20: o administrador repõe o cofre de Senhas de uma conta (também a dele) quando a senha mestra se perdeu.
+  // O cofre está cifrado no aparelho com a senha mestra, que ninguém conhece: não dá para a mudar sem ela, por isso o cofre fica vazio
+  // e a pessoa cria uma senha mestra nova na próxima vez (as senhas que lá estavam perdem-se: era isso que as protegia).
+  async adminCofre(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+    const email = N.normEmail(b.email); if (!email) throw N.err('email', 'Falta o e-mail da conta.', 400);
+    const eid = await N.emailId(email), a = await readAcc(eid); if (!a) throw N.err('conta', 'Essa conta já não existe.', 404);
+    const L = (a.rec.perfis || []).filter(p => !b.pid || p.id === b.pid); if (!L.length) throw N.err('perfil', 'Esse perfil já não existe.', 404);
+    const st = N.store(), key = await N.userKey(a.rec.uid), now = Date.now();
+    for (const p of L) { await st.put('d/' + a.rec.uid + '/' + p.id + '/one~vault', N.seal(key, { t: now, data: { reset: now } })); await st.put('m/' + a.rec.uid + '/' + p.id, Buffer.from(String(now))); }
+    if (email !== N.normEmail(s0.rec.email)) await change(eid, r => { aviso(r, { t: 'cofre' }); });
+    return { email, perfis: L.map(p => p.nome) }; },
 
   // o administrador apaga a conta de outra pessoa (com a sua própria senha; não dá para apagar a própria conta por aqui nem outra conta de administrador)
   async adminApagar(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
@@ -285,7 +394,7 @@ const OPS = {
 
 module.exports = N.handler(async (req, res) => {
   if (req.method !== 'POST') return N.send(res, 405, { ok: false, msg: 'Só POST.' });
-  const b = await N.body(req), op = OPS[b.op];
+  const b = await N.body(req), op = OPS[b.op]; req._op = String(b.op || '');
   if (!op || !Object.prototype.hasOwnProperty.call(OPS, b.op)) return N.send(res, 400, { ok: false, msg: 'Pedido desconhecido.' });
   N.send(res, 200, Object.assign({ ok: true }, await op(req, b)));
 });
