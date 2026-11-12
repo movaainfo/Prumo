@@ -161,7 +161,7 @@ async function newPage(b, prof, init = {}) {
   return { ctx, p, errs };
 }
 const ACCSEEN = { acc: 0, all: 0 };
-const unlock = async p => { if (ACCMODE) { try { await p.waitForFunction(() => window.OS && OS.Acc, null, { timeout: 8000 }); const a = await p.evaluate(() => OS.Acc.on && !OS.Acc.pub); ACCSEEN.all++; if (a) ACCSEEN.acc++; } catch (e) { } } await p.waitForFunction(() => document.getElementById('lkCode') || (document.querySelector('#view') && document.querySelector('#view').innerText.trim().length > 30), null, { timeout: 8000 }); if (!(await p.$('#lkCode')) || !(await p.isVisible('#lkCode'))) return; await p.fill('#lkCode', CODE); await p.click('.lk-go'); await p.waitForFunction(() => document.querySelector('#view') && document.querySelector('#view').innerText.trim().length > 30, null, { timeout: 8000 }); };
+const unlock = async p => { if (ACCMODE) { try { await p.waitForFunction(() => window.OS && OS.Acc, null, { timeout: 8000 }); const a = await p.evaluate(() => OS.Acc.on && !OS.Acc.pub); ACCSEEN.all++; if (a) ACCSEEN.acc++; } catch (e) { } } await p.waitForFunction(() => document.getElementById('lkCode') || (document.querySelector('#view') && document.querySelector('#view').innerText.trim().length > 30), null, { timeout: 8000 }); if (!(await p.$('#lkCode')) || !(await p.isVisible('#lkCode'))) return; if (await p.$('#lkOld')) await p.click('#lkOld'); await p.fill('#lkCode', CODE); await p.click('.lk-go'); await p.waitForFunction(() => document.querySelector('#view') && document.querySelector('#view').innerText.trim().length > 30, null, { timeout: 8000 }); };
 const E = (p, f, a) => p.evaluate(f, a);
 
 async function profileTests(b, prof) {
@@ -3037,7 +3037,7 @@ async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis 
   const gateUp = p => p.waitForSelector('#acc .ac-in form, #acc .ac-who, #acc .ac-code', { timeout: 15000 });
   const lockUp = p => p.waitForSelector('#lkCode', { state: 'visible', timeout: 15000 });
   const app = p => p.waitForFunction(() => !document.getElementById('acc') && document.querySelector('#view') && document.querySelector('#view').innerText.trim().length > 30, null, { timeout: 15000 });
-  const code = async (p, c) => { await lockUp(p); await p.fill('#lkCode', c); if (!(await E(p, () => document.getElementById('lkCode').classList.contains('pin-in')))) await p.click('.lk-go'); await app(p); await E(p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); }); };
+  const code = async (p, c) => { await lockUp(p); if (!/^\d{6}$/.test(c) && await p.$('#lkOld')) await p.click('#lkOld'); await p.fill('#lkCode', c); if (!(await E(p, () => document.getElementById('lkCode').classList.contains('pin-in')))) await p.click('.lk-go'); await app(p); await E(p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); }); };
   const files = () => { const out = []; const walk = d => { for (const f of fs.readdirSync(d, { withFileTypes: true })) f.isDirectory() ? walk(path.join(d, f.name)) : out.push(path.join(d, f.name)); }; try { walk(ACCDIR); } catch (e) { } return out; };
   // aparelho A (iPhone): aparelho novo → criar conta
   const A = await fresh(PROFILES[0], () => { window.__useTick = 300; }); await gateUp(A);
@@ -3063,7 +3063,7 @@ async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis 
   ok('Perfis como na Netflix: "Quem está a usar", a bolinha do perfil e "Adicionar perfil"', g1.n === 1 && g1.name === 'Ana' && g1.av === '🌊' && g1.add && /Quem está a usar/.test(g1.title), JSON.stringify(g1));
   await A.click('#acc .ac-p[data-ac=escolher]'); await lockUp(A);
   ok('Escolher o perfil abre o mesmo ecrã de bloqueio, com o nome do perfil e "Trocar de perfil"', await E(A, () => /Ana\./.test(document.querySelector('.lk-hi').textContent) && !!document.getElementById('lkSw')));
-  ok('Ecrã do código numa conta geral: 6 casinhas, teclado numérico e sem botão (entra sozinho)', await E(A, () => { const i = document.getElementById('lkCode'); return i.classList.contains('pin-in') && i.inputMode === 'numeric' && document.querySelectorAll('.lk-pin .pin-bx i').length === 6 && !document.querySelector('.lk-go').offsetParent; }));
+  ok('Ecrã do código numa conta geral: 6 casinhas, teclado numérico e sem botão (entra sozinho)', await E(A, () => { const i = document.getElementById('lkCode'); return i.classList.contains('pin-in') && i.inputMode === 'numeric' && document.querySelectorAll('.lk-pin .pin-bx i').length === 6 && !document.querySelector('.lk-go').offsetParent && !document.getElementById('lkOld'); }));
   if (process.env.SHOTS) { await A.fill('#lkCode', '135'); await sleep(150); await A.screenshot({ path: process.env.SHOTS + '/pin-ecra.png' }); }
   await A.fill('#lkCode', '111111'); await sleep(500);
   ok('Código errado: entra sozinho ao 6.º número, diz "incorreto" e limpa as casas', await E(A, () => /incorreto/i.test(document.getElementById('lkMsg').textContent) && !!document.getElementById('lkCode').offsetParent && document.getElementById('lkCode').value === '' && !document.querySelector('.lk-pin .pin-bx i.on')));
@@ -3403,7 +3403,12 @@ async function onbTests(b) { cur = 'Boas-vindas'; console.log('\n=== Vamos conhe
   for (let i = 0; i < 6 && !(await E(p, () => !!document.querySelector('#onb [data-oc=obj]'))); i++) { await next(p); }
   ok('Rever as respostas: o corpo também (perder gordura, 3 dias, corrida e voleibol, 68 kg)', await E(p, () => !!document.querySelector('#onb [data-oc=obj][data-v=cut].on') && !!document.querySelector('#onb [data-oc=dias][data-v="3"].on') && !!document.querySelector('#onb [data-om=desp][data-v=voleibol].on') && document.querySelector('#onb [data-ok=peso]').value === '68'), await E(p, () => (document.querySelector('#onb h1') || {}).textContent));
   // código antigo (letras) numa conta geral: depois de entrar, pede o código novo de 6 números
-  { const k = await newPage(b, prof, await mkPub('Duda')); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; window.__pinAsk = 1; }); await k.p.goto(BASE); await unlock(k.p);
+  { const k = await newPage(b, prof, await mkPub('Duda')); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; window.__pinAsk = 1; }); await k.p.goto(BASE);
+    await k.p.waitForSelector('#lkCode', { state: 'visible', timeout: 15000 });
+    ok('Ecrã de entrada de uma conta geral com código antigo: já mostra as 6 casinhas, com "Tenho um código antigo, com letras"', await E(k.p, () => document.getElementById('lkCode').classList.contains('pin-in') && document.querySelectorAll('.lk-pin .pin-bx i').length === 6 && !!document.getElementById('lkOld')));
+    await k.p.click('#lkOld');
+    ok('"Tenho um código antigo": troca as casinhas pelo campo de texto (aceita letras)', await E(k.p, () => !document.getElementById('lkCode').classList.contains('pin-in') && !document.querySelector('.lk-pin') && !!document.querySelector('.lk-go').offsetParent));
+    await k.p.fill('#lkCode', CODE); await k.p.click('.lk-go'); await k.p.waitForFunction(() => document.getElementById('splash').hidden, null, { timeout: 8000 }).catch(() => { });
     await k.p.waitForSelector('#modal form[data-form=pinNew]', { timeout: 8000 }).catch(() => { });
     ok('Código antigo numa conta geral: depois de entrar, pede o código novo de 6 números (com casinhas)', await E(k.p, () => document.querySelectorAll('#modal .pin-bx').length === 2));
     await k.p.fill('#modal input[name=nw]', '246813'); await k.p.fill('#modal input[name=nw2]', '246813'); await k.p.click('#modal button.pri'); await sleep(1200);
@@ -3411,6 +3416,15 @@ async function onbTests(b) { cur = 'Boas-vindas'; console.log('\n=== Vamos conhe
     ok('Depois: o ecrã do código tem as 6 casinhas', await E(k.p, () => document.getElementById('lkCode').classList.contains('pin-in') && document.querySelectorAll('.lk-pin .pin-bx i').length === 6));
     await k.p.fill('#lkCode', '246813'); await k.p.waitForFunction(() => document.getElementById('splash').hidden, null, { timeout: 6000 }).catch(() => { });
     ok('O código novo de 6 números abre o Prumo sozinho (sem carregar em nada)', await E(k.p, () => document.getElementById('splash').hidden));
+    await k.ctx.close(); }
+  { const x = '10.' + [1, 2, 3].map(() => crypto.randomBytes(1)[0]).join('.'), call = (body, tok) => fetch(BASE + 'api/conta', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json', origin: 'http://localhost:' + PORT, 'x-forwarded-for': x }, tok ? { authorization: 'Bearer ' + tok } : {}), body: JSON.stringify(body) }).then(r => r.json());
+    const email = 'n' + crypto.randomBytes(6).toString('hex') + '@teste.pt', r = await call({ op: 'registar', email, senha: 'segredo123', termos: TERMOS_V, saude: true, idade: true }), q = await call({ op: 'perfil', acao: 'criar', perfil: { nome: 'Edu', lk: crypto.createHash('sha256').update('oceanum-v1|112233').digest('hex') } }, r.token);
+    const k = await newPage(b, prof, { 'nau:s': JSON.stringify({ t: r.token, e: email, n: '', perfis: q.conta.perfis }), 'nau:p': JSON.stringify(q.perfil.id), 'nau:pd': JSON.stringify(q.perfil.id), 'nau:owner': JSON.stringify(email) });
+    await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; window.__pinAsk = 1; }); await k.p.goto(BASE); await k.p.waitForSelector('#lkCode', { state: 'visible', timeout: 15000 });
+    await k.p.fill('#lkCode', '112233'); await k.p.waitForFunction(() => document.getElementById('splash').hidden, null, { timeout: 8000 }).catch(() => { }); await sleep(1500);
+    ok('Código antigo que já era de 6 números: entra pelas casinhas e passa a valer sem pedir código novo', await E(k.p, () => document.getElementById('splash').hidden && OS.one('security').pin === 6 && !document.querySelector('#modal:not([hidden]) form[data-form=pinNew]')));
+    await E(k.p, () => OS.Lock.lock()); await k.p.waitForSelector('#lkCode', { state: 'visible', timeout: 5000 }).catch(() => { });
+    ok('Depois disso já não mostra "Tenho um código antigo"', await E(k.p, () => document.getElementById('lkCode').classList.contains('pin-in') && !document.getElementById('lkOld')));
     await k.ctx.close(); }
   await A.ctx.close();
   // 2) saltar

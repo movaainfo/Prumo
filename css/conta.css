@@ -171,3 +171,4 @@ html.ac-open,html.ac-open body{overflow:hidden}
 .pin-chg{display:flex;flex-direction:column;gap:12px;max-width:360px}.pin-chg #pcCur{max-width:340px}
 .pin-new .pin{color:inherit}
 @media (max-width:380px){.pin-bx{gap:6px}.pin-bx i{height:48px;border-radius:10px}.lk-pin .pin-bx i{height:52px}}
+.lk-old{display:block;margin:10px auto 0;background:none;border:0;padding:6px 10px;font:italic 500 14px var(--serif);color:#B9B2A6;text-decoration:underline;text-decoration-color:rgba(185,178,166,.4);text-underline-offset:3px;cursor:pointer}

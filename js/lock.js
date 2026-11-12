@@ -65,7 +65,11 @@ L.verifyCode = async v => { const w = wait(); if (w) return `Muitas tentativas. 
   const f = U.ls.get('os2lkfails', 0) + 1; U.ls.set('os2lkfails', f); if (f >= 5) { U.ls.set('os2lkwait', Date.now() + 30000); U.ls.set('os2lkfails', 0); return 'Código errado 5 vezes. Espera 30 s.'; } return 'Código incorreto.'; };
 // contas gerais: o código é de 6 números (casinhas); o perfil pessoal do Ryan fica com a senha
 const pubAcc = () => !!(OS.Acc && OS.Acc.on && OS.Acc.pub);
-L.pinMode = () => pubAcc() && !!((OS.Acc.pin && OS.Acc.pin()) || OS.one('security').pin);
+// já tem o código de 6 números (perfil marcado no servidor ou neste perfil)
+L.pinSet = () => pubAcc() && !!((OS.Acc.pin && OS.Acc.pin()) || OS.one('security').pin);
+// no ecrã de entrada das contas gerais aparecem SEMPRE as 6 casinhas; quem ainda tem um código antigo com letras toca em "Tenho um código antigo"
+let lkOld = false;
+L.pinMode = () => pubAcc() && !lkOld;
 L.setCode = async (cur, nw) => { if (await sha(SALT + cur) !== hash()) return 'O código atual não está certo.'; const pin = pubAcc();
   if (pin ? !/^\d{6}$/.test(nw) : nw.length < 6) return pin ? 'O novo código tem de ter 6 números.' : 'O novo código precisa de pelo menos 6 caracteres.';
   OS.setOne('security', Object.assign({ hash: await sha(SALT + nw), changed: U.today() }, pin ? { pin: 6 } : {})); return null; };
@@ -78,7 +82,10 @@ const wait = () => { const w = U.ls.get('os2lkwait', 0); return w > Date.now() ?
 async function tryCode(v) {
   if (busy || L.unlocked()) return; const w = wait(); if (w) { msg(`Muitas tentativas. Espera ${w} s.`); return; }
   busy = true; const ok = (await sha(SALT + v)) === hash(); busy = false;
-  if (ok) { U.ls.del('os2lkfails'); open(); if (pubAcc() && !L.pinMode()) offerPin(v); return; }
+  if (ok) { U.ls.del('os2lkfails'); lkOld = false; open();
+    // código antigo que já era de 6 números: passa a valer nas casinhas sem perguntar nada; com letras, escolhe um novo
+    if (pubAcc() && !L.pinSet()) { if (/^\d{6}$/.test(v)) OS.setOne('security', { hash: hash(), pin: 6 }); else offerPin(v); }
+    return; }
   const f = U.ls.get('os2lkfails', 0) + 1; U.ls.set('os2lkfails', f);
   if (f >= 5) { U.ls.set('os2lkwait', Date.now() + 30000); U.ls.set('os2lkfails', 0); msg('Código errado 5 vezes. Espera 30 s.'); } else msg('Código incorreto.');
   const i = document.getElementById('lkCode'); if (i && i.classList.contains('pin-in') && OS.Pin) { OS.Pin.clear(i); i.focus(); }
@@ -86,7 +93,7 @@ async function tryCode(v) {
 }
 // quem ainda tem um código antigo (letras ou outro tamanho): depois de entrar, escolhe o código novo de 6 números
 let pinOld = '';
-const offerPin = old => { if (navigator.webdriver && !window.__pinAsk) return; pinOld = old; setTimeout(() => { if (!OS.UI || !OS.Pin || L.pinMode()) return; OS.UI.modal(`<form class="col gap10 pin-new" data-form="pinNew" style="padding:20px"><h3 style="margin:0">O teu código agora é de 6 números</h3>
+const offerPin = old => { if (navigator.webdriver && !window.__pinAsk) return; pinOld = old; setTimeout(() => { if (!OS.UI || !OS.Pin || L.pinSet()) return; OS.UI.modal(`<form class="col gap10 pin-new" data-form="pinNew" style="padding:20px"><h3 style="margin:0">O teu código agora é de 6 números</h3>
   <p class="mut" style="margin:0">Escolhe um código só com números. Ao abrir o Prumo aparecem 6 casinhas e o teclado numérico, e entra sozinho no último número.</p>
   ${OS.Pin.html('nw', 'Código novo (6 números)')}${OS.Pin.html('nw2', 'Repete o código')}<div class="row gap8"><button class="btn pri">Guardar o código</button><button type="button" class="btn ghost" data-act="pinLater">Agora não</button></div></form>`, 'pin-m'); }, 900); };
 OS.forms = OS.forms || {};
@@ -100,8 +107,10 @@ OS.act = OS.act || {};
 OS.act.bioLater = () => { U.ls.set('os2bioAsk', true); OS.UI.closeModal(); };
 function open() { const viaCode = !L.unlocked(); setUnlocked(true); setTimeout(() => OS.emit && OS.emit('unlock'), 0); if (viaCode) offerBio(); const s = el(); s.classList.add('out'); setTimeout(() => { s.hidden = true; s.classList.remove('out'); }, 520); const d = done; done = null; d && d(); setTimeout(() => OS.emit('unlock'), 600); }
 // campo do código: sem o gestor de palavras-passe do iOS (que desenhava bordas brancas e o ícone escuro ao lado)
-const codeInput = () => { if (L.pinMode() && OS.Pin) return OS.Pin.html('code', '', { id: 'lkCode', cls: 'lk-pin', auto: 1, aria: 'Código de acesso (6 números)', req: false });
-  const sec = (() => { try { return CSS.supports('-webkit-text-security', 'disc'); } catch (e) { return false; } })();
+const codeInput = () => { if (L.pinMode() && OS.Pin) return OS.Pin.html('code', '', { id: 'lkCode', cls: 'lk-pin', auto: 1, aria: 'Código de acesso (6 números)', req: false })
+    + (L.pinSet() ? '' : '<button type="button" class="lk-old" id="lkOld">Tenho um código antigo, com letras</button>');
+  return textInput(); };
+const textInput = () => { const sec = (() => { try { return CSS.supports('-webkit-text-security', 'disc'); } catch (e) { return false; } })();
   return `<input id="lkCode" class="${sec ? 'lk-sec' : ''}" type="${sec ? 'text' : 'password'}" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="Código de acesso" aria-label="Código de acesso">`; };
 // ecrã de entrada: o mar visto do forte, à hora real, com a tua frase do dia
 const hello = () => { const h = new Date().getHours(), g = h < 6 ? 'Boa madrugada' : h < 13 ? 'Bom dia' : h < 20 ? 'Boa tarde' : 'Boa noite'; return OS.Lang ? OS.Lang.t(g) : g; };
@@ -124,6 +133,7 @@ async function showLock() {
   clearInterval(lkTick); lkTick = setInterval(() => { const t = document.getElementById('lkTime'); if (!t || s.hidden) { clearInterval(lkTick); return; } t.textContent = hm(); }, 15000);
   if (!lkRes) { lkRes = 1; addEventListener('resize', () => { clearTimeout(lkRT); lkRT = setTimeout(() => { const sc = s.querySelector('.lk-scene'); if (sc && !s.hidden) sc.outerHTML = scene(); }, 250); }); }
   document.getElementById('lkForm').onsubmit = e => { e.preventDefault(); tryCode(document.getElementById('lkCode').value); };
+  const ob = document.getElementById('lkOld'); if (ob) ob.onclick = () => { lkOld = true; const f = document.getElementById('lkForm'); f.classList.remove('lk-pinf'); const pl = f.querySelector('.lk-pin'); if (pl) pl.outerHTML = textInput(); ob.remove(); msg(''); const i = document.getElementById('lkCode'); if (i) i.focus(); };
   const sw = document.getElementById('lkSw'); if (sw) sw.onclick = () => OS.Acc.switchProfile(); const bgb = document.getElementById('lkBg'); if (bgb) bgb.onclick = () => OS.Fundo.open();
   const bb = document.getElementById('lkBio');
   if (bb) { const go = async auto => { if (bb.disabled || !bb.isConnected || L.unlocked()) return; bb.disabled = true; try { if (await bioUnlock(auto)) open(); } finally { bb.disabled = false; } };
