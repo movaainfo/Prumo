@@ -47,7 +47,7 @@ const GM = { reset() { this.tokenCalls = []; this.queries = []; this.revoked = n
       return J(200, { items: [{ id: 'e5', summary: 'Escondido', start: { dateTime: at(0, 11) }, end: { dateTime: at(0, 12) } }] }); }
     J(404, { error: { code: 404, message: 'Not Found' } }); } }; GM.reset();
 // Finanças › Banco: Pluggy (Meu Pluggy) e Enable Banking simulados para api/banco
-const BKM = { reset() { this.auth = []; this.jwt = []; this.ebAuth = []; this.del = []; },
+const BKM = { reset() { this.auth = []; this.jwt = []; this.ebAuth = []; this.del = []; this.txp = []; },
   PG_ITEM: '0b7c2c3e-1111-4a2b-9c3d-123456789abc',
   handle(req, res, u, body) { const J = (st, o) => { res.writeHead(st, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); }, q = u.query, day = o => { const d = new Date(); d.setDate(d.getDate() + o); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }, jb = () => { try { return JSON.parse(body); } catch (e) { return {}; } };
     const p = u.pathname.slice(7);
@@ -56,8 +56,9 @@ const BKM = { reset() { this.auth = []; this.jwt = []; this.ebAuth = []; this.de
       if (req.headers['x-api-key'] !== 'PGKEY') return J(403, { message: 'forbidden' });
       if (p.startsWith('/items/')) return p.slice(7) === this.PG_ITEM ? J(200, { id: this.PG_ITEM, status: 'UPDATED', connector: { name: 'Nubank' }, lastUpdatedAt: new Date().toISOString() }) : J(404, { message: 'not found' });
       if (p === '/accounts') return J(200, { results: q.itemId === this.PG_ITEM ? [{ id: 'acc-chk', type: 'BANK', name: 'Conta corrente', number: '0001/12345-6', balance: 1520.35, currencyCode: 'BRL' }, { id: 'acc-cc', type: 'CREDIT', name: 'Nubank Mastercard', number: '5555', balance: 380.1, currencyCode: 'BRL' }] : [] });
-      if (p === '/transactions') { const chk = q.accountId === 'acc-chk', T = chk ? (q.page === '2' ? [{ id: 't3', date: day(-2) + 'T12:00:00.000Z', description: 'SALARIO EMPRESA X', amount: 3000, type: 'CREDIT', status: 'POSTED' }, { id: 't4', date: day(-1) + 'T09:00:00.000Z', description: 'UBER *TRIP', amount: 23.5, type: 'DEBIT', status: 'POSTED' }, { id: 't5', date: day(0) + 'T09:00:00.000Z', description: 'NETFLIX.COM', amount: -55.9, type: 'DEBIT', status: 'PENDING' }]
+      if (p === '/transactions' || p === '/v2/transactions') { this.txp.push(p); const v2 = p === '/v2/transactions', chk = q.accountId === 'acc-chk', T = chk ? ((v2 ? q.after === 'CUR2' : q.page === '2') ? [{ id: 't3', date: day(-2) + 'T12:00:00.000Z', description: 'SALARIO EMPRESA X', amount: 3000, type: 'CREDIT', status: 'POSTED' }, { id: 't4', date: day(-1) + 'T09:00:00.000Z', description: 'UBER *TRIP', amount: 23.5, type: 'DEBIT', status: 'POSTED' }, { id: 't5', date: day(0) + 'T09:00:00.000Z', description: 'NETFLIX.COM', amount: -55.9, type: 'DEBIT', status: 'PENDING' }]
           : [{ id: 't1', date: day(-4) + 'T10:00:00.000Z', description: 'Pix recebido Maria Souza', amount: 250, type: 'CREDIT', status: 'POSTED' }, { id: 't2', date: day(-3) + 'T20:00:00.000Z', description: 'IFOOD *RESTAURANTE BOM', amount: -45.9, type: 'DEBIT', status: 'POSTED', category: 'Food delivery' }]) : [{ id: 'c1', date: day(-2) + 'T10:00:00.000Z', description: 'Amazon Marketplace', amount: 120, type: 'DEBIT', status: 'POSTED' }];
+        if (v2) return J(200, { results: T, next: chk && q.after !== 'CUR2' ? '?accountId=acc-chk&after=CUR2' : null });
         return J(200, { total: T.length, totalPages: chk ? 2 : 1, page: +q.page || 1, results: T }); }
       return J(404, {}); }
     if (p === '/bank') { res.writeHead(302, { Location: q.r + '?code=EBC1&state=' + encodeURIComponent(q.state) }); return res.end(); }
@@ -2550,6 +2551,7 @@ async function bancoTests(b) { cur = 'Banco'; console.log('\n=== Finanças: banc
   await q.selectOption('#view select[data-bkmap="pg:acc-chk"]', '__new'); await sleep(800);
   const s2 = await E(q, () => { const B = OS.one('banklink'), pid = B.map['pg:acc-chk'], a = OS.get('accounts', pid), T = OS.all('transactions').filter(t => t.account === pid); return { a: a && { inst: a.inst, name: a.name, cur: a.currency }, bal: a && OS.Fin.accBal(a), T: T.map(t => [t.type, t.amount, t.desc, t.cat, t.sub, t.src]) }; });
   ok('"Criar conta no Prumo": Nubank · Conta corrente em reais com os 4 movimentos confirmados das 2 páginas (o pendente fica de fora)', s2.a && s2.a.inst === 'Nubank' && s2.a.cur === 'BRL' && s2.T.length === 4 && !s2.T.some(t => /NETFLIX/.test(t[2])) && s2.T.every(t => t[5] === 'banco') && s2.T.some(t => t[0] === 'Despesa' && t[1] === 23.5 && /UBER/.test(t[2])), JSON.stringify(s2).slice(0, 500));
+  ok('Pluggy: movimentos pelo GET /v2/transactions com cursor (o /transactions antigo sai depois de 31/12/2026)', BKM.txp.length >= 2 && BKM.txp.every(x => x === '/v2/transactions'), JSON.stringify(BKM.txp));
   ok('Categorias sozinhas: iFood → Delivery, salário → Salário, Uber → Uber/Bolt', s2.T.some(t => /IFOOD/.test(t[2]) && t[4] === 'Delivery') && s2.T.some(t => /SALARIO/.test(t[2]) && t[3] === 'Salário') && s2.T.some(t => /UBER/.test(t[2]) && t[4] === 'Uber/Bolt'));
   ok('A conta criada pelo banco fica com o saldo do banco (R$ 1 520,35)', s2.bal != null && Math.abs(s2.bal - 1520.35) < .01, String(s2.bal));
   await q.selectOption('#view select[data-bkmap="pg:acc-cc"]', '-'); await sleep(300);

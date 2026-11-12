@@ -1,1957 +1,277 @@
 [
  {
-  "p": "Geral",
-  "name": "os 85 formulários gravam",
+  "p": "Banco",
+  "name": "Banco: aba própria nas Finanças com a caixa para escolher o extrato",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Geral",
-  "name": "gasto rápido fica guardado depois de recarregar",
+  "p": "Banco",
+  "name": "Números de qualquer banco: 1.234,56 · 1,234.56 · (12.30) · 150,00 D · 12,30- · -9,90 € · R$ 1.200,00",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Geral",
-  "name": "exportar e importar devolve tudo",
+  "p": "Banco",
+  "name": "Datas: 05/11/2026 · 2026-11-05 14:22 · 20261105120000[-3:BRT] · 5 nov. 2026 · 5 de novembro de 2026 · Nov 5, 2026 · 05.11.26 · 11/25/2026 (EUA)",
   "pass": true,
-  "info": "2 movimentos"
- },
- {
-  "p": "Geral",
-  "name": "atalho: verificação da ligação",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "atalho: o Google falha à 1.ª e a app tenta de novo · \"18, uber\" → 18 € · Uber",
-  "pass": true,
-  "info": "1 encontrados"
- },
- {
-  "p": "Geral",
-  "name": "atalho de uma pergunta: \"99 pizza 2 pessoas\" → 99 € · Pizza 2 pessoas",
-  "pass": true,
-  "info": "[99]"
- },
- {
-  "p": "Geral",
-  "name": "atalho: gasto enviado entra nas Finanças com categoria",
-  "pass": true,
-  "info": "[[8.5,\"Uber para a faculdade\",\"Transporte\"],[99,\"Pizza 2 pessoas\",\"Alimentação\"],[18,\"Uber\",\"Transporte\"]]"
- },
- {
-  "p": "Geral",
-  "name": "atalho: não duplica",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "jogo: herói criado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "jogo: treinos que fazem avançar uma meta de corpo sobem o Corpo (e o herói) e mostram parabéns",
-  "pass": true,
-  "info": "herói 2 → 4 · Corpo 0 → 3 · SUBISTE DE NÍVEL\n4\nBRONZE\nRyan\nGLADIADOR"
- },
- {
-  "p": "Geral",
-  "name": "jogo: baú com 2 recompensas à escolha",
-  "pass": true,
-  "info": "2 opções"
- },
- {
-  "p": "Geral",
-  "name": "jogo: escolher recompensa guarda-a",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "jogo: marcos em 5 pilares (com o Espírito)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sem erros de JavaScript",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "abre sem internet",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "atualização: aparece \"A atualizar o Prumo…\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "atualização: depois mostra \"Atualizado\" e a versão nova",
-  "pass": true,
-  "info": "Atualizado · versão 9.9 · 11/11/2026 · Investimentos › Aprender a investir: um g"
- },
- {
-  "p": "Geral",
-  "name": "modo de segurança (?seguro) limpa a cache e liga o modo leve",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "iPhone: engrenagem das Definições visível no topo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "iPhone: tocar na engrenagem abre as Definições",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "iPhone: \"Definições\" no topo do menu ☰, visível sem rolar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "iPhone: tocar no menu abre as Definições",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sem erros de JavaScript",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "iPhone: depois do código aparece \"Ativar o Face ID?\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "iPhone: \"Ativar Face ID\" regista o rosto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "iPhone: ao bloquear aparece \"Desbloquear com Face ID\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "iPhone: em modo de teste o Face ID só abre pelo botão (o automático é testado à parte)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "iPhone: entrar com o Face ID abre a app",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sem erros de JavaScript",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "Tablet horiz: sem convite nem botão de Face ID",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "Tablet horiz: Definições dizem \"só no iPhone\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "Computador: sem convite nem botão de Face ID",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "Computador: Definições dizem \"só no iPhone\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sync: o tablet envia os seus dados para o Google",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "limpeza: \"18, uber\" passa a \"Uber\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sync: o iPhone liga-se com o código e recebe os dados do tablet",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "código de ligação aceite em qualquer formato (link, código, codificado, com espaços)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sync: a configuração do atalho também passa para o iPhone",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sync: o computador liga-se com o código e recebe os dados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sync: o que registas no computador aparece no tablet e no iPhone",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sem erros de JavaScript (computador)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sync: o que registas no iPhone aparece no tablet",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sync: apagar num aparelho apaga no outro",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sync: gasto do atalho entra uma só vez e aparece nos dois aparelhos",
-  "pass": true,
-  "info": "tablet 1 · iPhone 1"
- },
- {
-  "p": "Geral",
-  "name": "sem erros de JavaScript (2 aparelhos)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "Android: sem botão de biometria e registo antigo apagado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "Android: nenhum pedido biométrico ao abrir",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "\"Entrar direto\": abre sem pedir código",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "cadeado volta a pedir o código",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sem erros de JavaScript",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "biblioteca: mais de 500 exercícios com imagens e 60 alongamentos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "base de alimentos: mais de 700 alimentos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "exercícios antigos ligados às imagens",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "treino: abre a lista para escolher exercícios",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "treino: 2 exercícios no treino em curso",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "treino: série feita fica verde e o descanso começa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "treino: volume calculado ao vivo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "treino em curso sobrevive a fechar a app (botão flutuante)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "treino em curso retomado com as séries",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "tipo de série: aquecimento",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "terminar: treino guardado com as séries feitas",
-  "pass": true,
-  "info": "{\"n\":1,\"sets\":[{\"t\":\"N\",\"kg\":60,\"reps\":10},{\"t\":\"N\",\"kg\":62.5,\"reps\":8}],\"title\":\"Pernas\",\"dur\":1}"
- },
- {
-  "p": "Geral",
-  "name": "terminar: resumo com volume e dicas de dieta e alongamento",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "rotina criada a partir do treino",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "rotina: abre com as cargas da última vez",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "recorde detetado no treino seguinte",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "nova rotina guardada com exercícios",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ficha do exercício com animação 3D e como fazer",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "histórico em cartões",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "treino já não tem mapa nem peso (passaram para o Corpo)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "corpo: separadores visão, desafios, mapa e peso",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "altura guardada",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "formulário de bioimpedância com análise segmentar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "bioimpedância: faixas de referência e IMC",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "bioimpedância: aviso de diferença entre braços",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "metabolismo medido usado nas metas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "dieta: procurar encontra o alimento certo primeiro",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "dieta: 200 g de frango = macros certas",
-  "pass": true,
-  "info": "{\"date\":\"2026-11-11\",\"meal\":\"Jantar\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"m4n2hhknawr\",\"_c\":1794428918523,\"_u\":1794428918523,\"_s\":0}"
- },
- {
-  "p": "Geral",
-  "name": "dieta: porção típica (unidade)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "dieta: refeições com fotos dos alimentos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "refeição fixa criada com 2 alimentos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "refeição fixa adicionada com um toque",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "foto: sem IA mostra só o botão para Definições → Spyke (sem passos nem chave aqui)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "foto: a IA identifica os alimentos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "foto: corrigir gramas reescala as calorias e regista",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "marcas: produtos reais com marca e foto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "marcas: refeição guarda a foto do produto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "país: botão na página inicial",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "marcas: ao tocar no alimento escolhe-se a marca",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "marcas: regista o alimento com a marca escolhida",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "país: muda para Brasil",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "marcas: mudam conforme o país",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "marcas certas: nos ovos só aparecem ovos (nada de massa ou salsichas)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "marcas certas: na batata frita não aparece batata palha nem chips",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fast food conforme o país",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "refeições já guardadas com marca de outro país ficam iguais",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fast food de outro país não aparece",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "alimentos sem emojis: todos com foto real",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "alimentos agrupados: cada alimento uma vez, com as variantes lá dentro",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "cada alimento tem a sua foto (sem repetir)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "cada alimento tem descrição",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ao tocar no arroz aparecem as opções (cozido / cru) e as marcas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "regista com a opção e a marca escolhidas",
-  "pass": true,
-  "info": "{\"date\":\"2026-11-11\",\"meal\":\"Jantar\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"ukcdudknrjq\",\"_c\":1794428940086,\"_u\":1794428940086,\"_s\":0}"
- },
- {
-  "p": "Geral",
-  "name": "biblioteca de alimentos com fotos e descrições",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "exame IA: passo das fotos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "exame IA: resultado completo (gordura, magra, metabolismo, visceral)",
-  "pass": true,
-  "info": "{\"bf\":17.1,\"lean\":67.1,\"bmr\":1820,\"vis\":8,\"look\":true,\"ai\":true}"
- },
- {
-  "p": "Geral",
-  "name": "exame IA: análise com onde melhorar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "exame IA: estimativa sem fotos também funciona",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "vídeos escolhidos para os exercícios",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "treino: vídeo da execução toca dentro da app",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ficha: vários vídeos bons para escolher",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ficha: alterna entre vídeo e animação 3D",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ficha: animação 3D (ou recurso) aparece",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ficha: modo fotos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fechar a ficha para o vídeo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ficha: abre na animação 3D com botão do vídeo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "animação certa: extensão de pernas na cadeira extensora (não agachamento)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "simuladores: em Portugal usa € e 28% de imposto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ao vivo: inflação de Portugal vem do Eurostat e entra no simulador",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ao vivo: crédito ao consumo do BCE como taxa do empréstimo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "simuladores: empréstimo em Portugal mostra TAN e TAEG com Imposto do Selo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "simuladores: no Brasil usa R$, juros ao mês e CET com IOF",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "simuladores: custo efetivo de um crédito sem juros é 0%",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ao vivo: no Brasil a taxa do crédito pessoal vem do BCB, ao mês",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "simuladores: comparar taxas com produtos do Brasil (poupança isenta, CDI)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ao vivo: CDI e LCI/LCA (90% do CDI) atualizados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "simuladores: cada país guarda os seus valores",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "IA nos simuladores: painel do assistente com sugestões",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "IA nos simuladores: sem chave mostra o cartão único do Spyke (IA)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "IA nos simuladores: responde com veredicto, riscos e passos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "IA nos simuladores: a IA recebe a simulação, as regras do país e as finanças",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "IA nos simuladores: \"Testar\" aplica o cenário (e ignora campos inventados)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ao vivo: sem ligação usa os valores de referência e avisa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "investimentos: cotação ao vivo do script (Yahoo) na carteira",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "investimentos: variação do dia calculada ao vivo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "investimentos: renda fixa rende sozinha (3% ao ano)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "investimentos: rentabilidade com histórico (TWR, TIR, volatilidade, Sharpe)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "investimentos: risco (nota 1–7, VaR, CVaR, stress, correlação)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "investimentos: pesquisar ativo no mercado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "investimentos: página do ativo com gráfico, estatísticas e notícias",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "investimentos: importar CSV da corretora",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "todos os tipos: venda a descoberto (ganha quando o preço cai, perde quando sobe)",
-  "pass": true,
-  "info": "{\"qty\":-10,\"avg\":10,\"cost\":-100,\"value\":-120,\"pl\":-20,\"ret\":-0.2,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":-20,\"exposure\":120,\"short\":true,\"lev\":null,\"price\":12,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-10-12\"}"
- },
- {
-  "p": "Geral",
-  "name": "todos os tipos: opções com multiplicador e CFD alavancado (margem + resultado)",
-  "pass": true,
-  "info": "[{\"qty\":2,\"avg\":3,\"cost\":600,\"value\":800,\"pl\":200,\"ret\":0.3333333333333333,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":200,\"exposure\":800,\"short\":false,\"lev\":null,\"price\":4,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-11-01\"},{\"qty\":10,\"avg\":100,\"cost\":100,\"value\":200,\"pl\":100,\"ret\":1,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":100,\"exposure\":1100,\"short\":false,\"lev\":11,\"price\":110,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-11-01\"}]"
- },
- {
-  "p": "Geral",
-  "name": "todos os tipos: caixa em dólares convertida ao câmbio",
-  "pass": false,
-  "info": "100.65606183158084"
- },
- {
-  "p": "Geral",
-  "name": "todos os tipos: desdobramento, bonificação, transferências, amortização e JCP líquido",
-  "pass": true,
-  "info": "{\"qty\":200,\"avg\":4.76,\"cost\":952,\"value\":1000,\"pl\":48,\"ret\":0.05042016806722689,\"realized\":0,\"divs\":85,\"gross\":100,\"taxW\":15,\"fees\":0,\"total\":133,\"exposure\":1000,\"short\":false,\"lev\":null,\"price\":5,\"stale\":false,\"hasPrice\":true,\"first\":\"2025-10-07\"}"
- },
- {
-  "p": "Geral",
-  "name": "todos os tipos: formulário com os novos movimentos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "alertas: dispara quando o preço passa o alvo (e só esse)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "alertas: painel no Mercado com estado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "comparar: gráfico e tabela de rentabilidade, volatilidade e correlação",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "impostos BR: day trade detetado (20%) e prejuízo acumulado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "investimentos: impostos (mais-valias PT a 28%)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "IA investimentos: questionário de perfil (adequação)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "IA investimentos: resposta com mestres, divergência e verificação em 2 passos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "IA investimentos: condicionada pelo regulamento, mestres, perfil, risco e factos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "empresas: perfil, o que faz (traduzido), donos, gestão e analistas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "empresas: demonstrações financeiras e múltiplos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "empresas: preço justo de Graham (12,00) e preço-teto de Bazin (11,67)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "empresas: relatório da IA com pesquisa web, fontes e a carteira",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "tarefas: barra de projetos filtra pelo projeto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "tarefas: captura rápida dentro do projeto e com #projeto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "tarefas: vista por projeto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "eu: retrato com idade, origem e aniversário próximo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "eu: linha do tempo por anos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "eu: entrevista com mais de 200 perguntas, uma de cada vez (as respostas antigas mantêm-se)",
-  "pass": true,
-  "info": "{\"n\":537,\"q\":\"Quem eram os teus avós do lado da mãe? O que sabes da vida deles?\"}"
- },
- {
-  "p": "Geral",
-  "name": "eu: depois de responder, a IA faz perguntas de seguimento sobre essa história",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "eu: \"Saltar\" passa à pergunta seguinte",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "eu: o livro é escrito capítulo a capítulo, só com as partes que têm material",
-  "pass": true,
-  "info": "{\"book\":1,\"ch\":[\"Raízes\",\"Os primeiros anos\",\"Uma nova vida em Portugal\"],\"todo\":0,\"stats\":\"3 capítulos408 palavras≈ 1 página\"}"
- },
- {
-  "p": "Geral",
-  "name": "eu: cada capítulo recebe só o seu material e a regra de não inventar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "eu: atualizar reescreve só o capítulo que mudou e respeita o que escrevi",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "leituras: pesquisar livro e marcar já li / tenho na estante",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "leituras: resenha e desafio literário que conta o livro lido",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "cursos e certificações",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "floresta: página abre com temporizador e 34 espécies",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "floresta: árvore cresce até ao fim, dá moedas e regista estudo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "floresta: sair do Prumo mata a árvore",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "floresta: a minha floresta e catálogo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "universidade: calculadora diz quanto precisas no exame",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "universidade: plano até ao exame vai para as tarefas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "universidade: flashcards da IA e repetição espaçada",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "universidade: simulado da IA corrigido (20/20)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "universidade: visão com contagem decrescente e mapa de estudo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "universidade: banco de questões, desempenho e recomendações",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "desporto: adicionar padel e registar jogo com estatísticas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "desporto: treinos específicos e auxílios",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "desporto: corrida preenche-se sozinha com a aba Corrida",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "visão geral: frase forte e verdade do dia",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "hábitos: só se marca o dia de hoje",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "trabalho: horário e folgas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "bloco de foco: pendências por prioridade",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "bloco de foco: no fim do tempo pergunta se terminaste",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "bloco de foco: \"ainda não\" acrescenta tempo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "bloco de foco: sair sem código certo não deixa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "bloco de foco: código certo sai e grava o histórico",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "spyke: \"anota…\" cria tarefa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "spyke: abre páginas por voz",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "spyke: resumo do dia",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "e-mail: separa urgente e promoções (sem IA)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "e-mail: urgente aparece no Control Room",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "google script completo é JavaScript válido",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "script em 7 partes: 1 e 2 = núcleo, 3 a 7 = ficheiros das novidades; cada parte é JavaScript válido e juntas dão o código completo",
-  "pass": true,
-  "info": "{\"n\":7,\"ok\":[true,true,true,true,true,true,true],\"len\":[13275,12303,10110,10652,3903,2798,3325],\"same\":true,\"key1\":true,\"core\":25503,\"addon\":true}"
- },
- {
-  "p": "Geral",
-  "name": "script em 7 partes: cada parte tem menos de 15 mil caracteres (não é cortada ao colar no telemóvel)",
-  "pass": true,
-  "info": "13275 + 12303 + 10110 + 10652 + 3903 + 2798 + 3325"
- },
- {
-  "p": "Geral",
-  "name": "script: a Parte 4 (Outlook) liga-se às outras e responde",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "script: só com as partes 1 e 2 responde versão 10; com a Parte 3 num ficheiro novo responde versão 12 (sem apagar nada)",
-  "pass": true,
-  "info": "{\"ok\":true,\"v\":10} → {\"ok\":true,\"v\":12} | {\"ok\":true,\"v\":12} | {\"ok\":false,\"msg\":\"Chave errada\"} | function | function | function | function"
- },
- {
-  "p": "Geral",
-  "name": "script: novidades futuras entram num ficheiro novo (function op_nome) sem mexer na Parte 3",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "nome Náutilo no Google: a Parte 3 renomeia o ficheiro de dados, as cópias, a folha, a pasta e os calendários (uma só vez, pelo código interno)",
-  "pass": true,
-  "info": "Náutilo · dados.json|Náutilo · Ficheiros|Náutilo · Gastos do atalho|Náutilo|Náutilo · Trabalho|Náutilo · cópia 2026-10-16|Náutilo · cópia 2026-10-17"
- },
- {
-  "p": "Geral",
-  "name": "spyke: memória guarda o que lhe dizes",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "spyke: rotina de voz corre os passos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "spyke: balanço da noite",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "modo Comando abre com os painéis",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "modo Comando: o X fecha e o botão fica no canto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "e-mail: eventos dos e-mails no calendário",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ligações: apagar projeto deixa as tarefas sem projeto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ligações: data da avaliação move o plano de estudo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ligações: turno e folga no mesmo dia não coexistem",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "ligações: oportunidade submetida cria candidatura",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: aba no menu, versículo do dia com o texto da Bíblia",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: versículo do dia com explicação e aplicação para hoje",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: Bíblia completa (66 livros, 31 102 versículos)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: palavra para hoje sem IA, escolhida pelo estado de alma",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: palavra da IA usa o dia real (avaliações, alertas) e o texto vem da Bíblia instalada",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: ir para uma passagem escrita por extenso (Romanos 8:28)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: destacar versículo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: leitor diminui a letra (A−) até 12px, barra sempre visível",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: modo grifar (versículo inteiro e só palavras selecionadas)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: nota escrita dentro do texto e guardada",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: pesquisa de palavras em toda a Bíblia",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: devocional guarda sozinho e mostra a passagem",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: reflexão da IA sobre a leitura",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: pedidos de oração e respondidas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: plano de leitura com o dia de hoje e progresso",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: sinais de crise mostram contactos de ajuda",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "fé: versículo do dia na página Hoje",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "jornal: notícias do mundo com fontes e hora",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "jornal: \"O essencial agora\" feito pela IA só com as manchetes",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "jornal: temas (economia)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "jornal: tema próprio por pesquisa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "jornal: \"+ País\" cria um separador com as notícias desse país, traduzidas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "jornal: notícias novas aparecem marcadas ao atualizar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "relógio: o atalho abre a corrida já preenchida",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "relógio: corrida guardada com ritmo 5:58 /km",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "relógio: não regista a mesma corrida duas vezes",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "relógio: a Corrida só mostra as corridas (o guia do relógio saiu)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "relógio: instruções em Definições → Atalhos do iPhone",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "alongamentos com fotos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "rotina guiada de alongamentos registada",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "meta de calorias sobe nos dias de treino",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "corpo: calendário de disciplina na visão",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "corpo: o calendário de disciplina é automático (sem marcar dias à mão, o passado não se muda)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "corpo: registar um treino marca o dia sozinho",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "desafio: começa e marca o dia",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "desafio automático conta os dias em que foste",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "meta do corpo com progresso e ritmo semanal",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "visão do corpo: treino, dieta, corrida e recomendações",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "sem erros de JavaScript (corpo)",
-  "pass": false,
-  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8781' has been blocked by CORS policy: No 'Access-Control-Allow"
- },
- {
-  "p": "Geral",
-  "name": "manifesto sem orientação forçada",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Geral",
-  "name": "todos os ficheiros da cache offline existem",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: a Cozinha no menu Eu e a lista (#mercado leva lá) começa com \"Fazer a lista do mês\"",
-  "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: a lista do mês sai da Dieta (média dos dias registados × dias do mês)",
+  "p": "Banco",
+  "name": "QIF: lê data (formato dos EUA), valor e beneficiário",
   "pass": true,
-  "info": "{\"n\":5,\"days\":10,\"a\":4500,\"dm\":30,\"b\":30}"
- },
- {
-  "p": "Compras",
-  "name": "Compras: ovos em unidades, leite em ml, e cada coisa na sua secção do supermercado",
-  "pass": true,
-  "info": "[\"un\",66,\"ml\",\"Mercearia\",\"Talho e peixaria\",\"Laticínios e ovos\"]"
- },
- {
-  "p": "Compras",
-  "name": "Compras: com a embalagem e o preço calcula as embalagens e o custo do mês (arroz + detergente)",
-  "pass": true,
-  "info": "{\"packs\":5,\"cost\":6,\"kpi\":\"Custo do mês€ 8,502 de 6 com preçoItens6Comprados0/6Por semana€ 1,98\",\"manual\":true}"
- },
- {
-  "p": "Compras",
-  "name": "Compras: a vista da semana mostra só uma semana de quantidades",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: marcar como comprado risca o item e conta nos comprados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Compras",
-  "name": "Compras: atualizar com a dieta junta o que é novo e guarda o que fizeste à mão (item, preço, comprado)",
-  "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: no telemóvel nada sai do ecrã",
+  "p": "Banco",
+  "name": "Extrato CSV: encontra a tabela por baixo do cabeçalho do banco e mostra a pré-visualização",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Compras",
-  "name": "Compras: numa conta de outra pessoa a página não aparece",
+  "p": "Banco",
+  "name": "Acentos certos (Windows-1252), débitos negativos, créditos positivos e \"Saldo final\" fora",
   "pass": true,
-  "info": ""
+  "info": "{\"t\":\"extrato-cgd.csv\\nCSV · 03/11/2026 a 07/11/2026 · 5 movimentos\\nConta no Prumo\\nEscolhe a conta…\\nCaixa Geral de Depósitos · Ordem T\\nRevolut · Conta T\\nNubank · Cartão T (BRL)\\nMillennium BCP · Ordenado T\\n+ Criar conta nova\\nColunas do ficheiro (o Prumo escolheu sozinho; muda se algo estiver trocado)\\nInverter sinais (faturas de cartão em que as compras vêm positivas)\\nAcertar o saldo da conta para € 2453,28 (saldo do extrato a 07/11/2026; o Prumo diz −€ 12,50)\\n4 novos\\n1 já existia (ign"
  },
  {
-  "p": "Compras",
-  "name": "Compras: sem erros na consola",
+  "p": "Banco",
+  "name": "O café que já tinhas escrito à mão é reconhecido (4 novos, 1 já existia)",
   "pass": true,
-  "info": ""
+  "info": "4 novos\n1 já existia (ignorado)\n1 linha sem movimento\n+€ 1250,00\n−€ 284,22"
  },
  {
-  "p": "Cozinha",
-  "name": "Cozinha no menu Eu, com Despensa, Lista de compras e Receitas",
+  "p": "Banco",
+  "name": "Categorias propostas: Continente → Supermercado, vencimento → Salário, EDP → Luz",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "Despensa por lugar (Despensa, Frigorífico) com quanto tens e o estado (acabou, a acabar)",
+  "p": "Banco",
+  "name": "Importar: 4 movimentos entram na conta (marcados como importados) e o saldo fica o do extrato (2 453,28 €)",
   "pass": true,
-  "info": ""
+  "info": "[{\"type\":\"Despesa\",\"amount\":12.5,\"date\":\"2026-11-03\",\"desc\":\"Café com a Ana\",\"cat\":\"Alimentação\",\"sub\":\"Café & snacks\"},{\"type\":\"Despesa\",\"amount\":45.32,\"date\":\"2026-11-04\",\"desc\":\"COMPRA CONTINENTE AVEIRO\",\"cat\":\"Alimentação\",\"sub\":\"Supermercado\",\"method\":\"Débito\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":200,\"date\":\"2026-11-05\",\"desc\":\"TRF P/ REVOLUT\",\"cat\":\"Outros\",\"sub\":\"Diversos\",\"method\":\""
  },
  {
-  "p": "Cozinha",
-  "name": "+ e − mudam a quantidade (o arroz em kg sobe meio quilo)",
+  "p": "Banco",
+  "name": "Revolut: escolhe a moeda (EUR 3 · USD 1), tira os anulados e soma a taxa ao câmbio (−50,50)",
   "pass": true,
-  "info": ""
+  "info": "{\"t\":\"revolut-statement.csv\\nCSV · 05/11/2026 a 08/11/2026 · 3 movimentos\\nConta no Prumo\\nEscolhe a conta…\\nCaixa Geral de Depósitos · Ordem T\\nRevolut · Conta T\\nNubank · Cartão T (BRL)\\nMillennium BCP · Ordenado T\\n+ Criar conta nova\\nMoeda\\nEUR (3)\\nUSD (1)\\nColunas do ficheiro (o Prumo escolheu sozinho; muda se algo estiver trocado)\\nInverter sinais (faturas de cartão em que as compras vêm positivas)\\nAcertar o saldo da conta para € 44,75 (saldo do extrato a 08/11/2026; o Prumo diz € 0,00)\\"
  },
  {
-  "p": "Cozinha",
-  "name": "Na lista de compras aparece o que acabou ou está a acabar na despensa, com quanto comprar",
+  "p": "Banco",
+  "name": "O top-up é a outra metade da transferência da CGD (fica uma Transferência, não uma receita)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "\"Comprei\" repõe na despensa até à quantidade ideal",
+  "p": "Banco",
+  "name": "Transferência CGD → Revolut de 200 € num só movimento; Uber Eats → Delivery",
   "pass": true,
-  "info": ""
+  "info": "[{\"type\":\"Transferência\",\"amount\":200,\"date\":\"2026-11-05\",\"desc\":\"TRF P/ REVOLUT\",\"cat\":\"\",\"sub\":\"\",\"method\":\"Transferência\",\"to\":\"ktnts5t1x7u\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":18.4,\"date\":\"2026-11-06\",\"desc\":\"Uber Eats\",\"cat\":\"Alimentação\",\"sub\":\"Delivery\",\"method\":\"Débito\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":50.5,\"date\":\"2026-11-08\",\"desc\":\"Exchanged to USD\",\"cat\":\"Outros\",\"su"
  },
  {
-  "p": "Cozinha",
-  "name": "O que já tens em casa sai da lista do mês (3 pacotes de massa − 1 que tens = 2)",
+  "p": "Banco",
+  "name": "Importar o mesmo extrato outra vez: nada se repete (0 novos, botão desligado)",
   "pass": true,
-  "info": ""
+  "info": "0 novos\n5 já existiam (ignorados)\n1 linha sem movimento\n+€ 0,00\n−€ 0,00"
  },
  {
-  "p": "Cozinha",
-  "name": "Marcar como comprado na lista põe na despensa",
+  "p": "Banco",
+  "name": "OFX: reconhece o Nubank, propõe conta nova em reais e o saldo do extrato (R$ 2 378,10)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "Desmarcar tira da despensa outra vez",
+  "p": "Banco",
+  "name": "Conta Nubank criada com 3 movimentos, Drogasil → Farmácia, posto → Combustível, \"&\" certo e saldo R$ 2 378,10",
   "pass": true,
-  "info": ""
+  "info": "[{\"type\":\"Despesa\",\"amount\":89.9,\"date\":\"2026-11-02\",\"desc\":\"Compra no débito - Drogasil\",\"cat\":\"Saúde\",\"sub\":\"Farmácia\",\"method\":\"Débito\",\"src\":\"extrato\"},{\"type\":\"Receita\",\"amount\":1500,\"date\":\"2026-11-03\",\"desc\":\"Transferência recebida pelo Pix - JOAO SILVA\",\"cat\":\"Outros\",\"sub\":\"Diversos\",\"method\":\"Transferência\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":32,\"date\":\"2026-11-04\",\"desc\":\"Compra"
  },
  {
-  "p": "Cozinha",
-  "name": "Receitas que dá para fazer já com o que tens (massa com atum: massa, atum, tomate pelado, cebola)",
+  "p": "Banco",
+  "name": "Fatura de cartão com compras positivas: \"Inverter sinais\" liga-se sozinho",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "Com a cebola reposta, a massa com atum passa para \"Dá para fazer já\"",
+  "p": "Banco",
+  "name": "Cartão: 3 despesas no crédito (Outback → Restaurantes, Uber → Uber/Bolt, Pão de Açúcar → Supermercado) e o pagamento como entrada",
   "pass": true,
-  "info": ""
+  "info": "[{\"type\":\"Despesa\",\"amount\":152.3,\"date\":\"2026-11-01\",\"desc\":\"Outback Steakhouse\",\"cat\":\"Alimentação\",\"sub\":\"Restaurantes\",\"method\":\"Crédito\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":27.9,\"date\":\"2026-11-03\",\"desc\":\"Uber *Trip\",\"cat\":\"Transporte\",\"sub\":\"Uber/Bolt\",\"method\":\"Crédito\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":210.45,\"date\":\"2026-11-04\",\"desc\":\"Pao de Acucar\",\"cat\":\"Alimentação\""
  },
  {
-  "p": "Cozinha",
-  "name": "\"Juntar o que falta à lista\" põe os ingredientes na lista de compras",
+  "p": "Banco",
+  "name": "Excel: lê a folha, usa a coluna Tipo (D/C) para o sinal e propõe acertar pelo saldo da última linha",
   "pass": true,
-  "info": ""
+  "info": "[[\"03/11/2026\",\"COMPRA PINGO DOCE\",\"Alimentação · Supermercado\",\"−€ 31,15\",\"novo\"],[\"02/11/2026\",\"TRF DE JOAO\",\"Outros · Diversos\",\"+€ 100,00\",\"novo\"],[\"01/11/2026\",\"PAGAMENTO SERVICOS AGUAS DE AVEIRO\",\"Casa · Água\",\"−€ 23,40\",\"novo\"]]"
  },
  {
-  "p": "Cozinha",
-  "name": "\"Fiz esta receita\" tira da despensa o que usaste (massa, atum, tomate, cebola)",
+  "p": "Banco",
+  "name": "Excel importado: 3 movimentos na conta do Millennium",
   "pass": true,
   "info": ""
- },
- {
-  "p": "Cozinha",
-  "name": "A IA sugere receitas com o que está na despensa (e o que falta)",
-  "pass": true,
-  "info": "{\"model\":\"openai\",\"messages\":[{\"role\":\"system\",\"content\":\"Respondes APENAS com J"
  },
  {
-  "p": "Cozinha",
-  "name": "Cozinha no telemóvel: nada sai do ecrã",
+  "p": "Banco",
+  "name": "Aprende com o que corriges: \"LOJA DO MANEL\" posto em Lazer › Hobbies faz o próximo vir já assim",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "Cozinha: numa conta de outra pessoa não aparece",
+  "p": "Banco",
+  "name": "PDF: explica que não dá e pede OFX, CSV ou Excel",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Cozinha",
-  "name": "Cozinha: sem erros de JavaScript",
+  "p": "Banco",
+  "name": "No telemóvel a pré-visualização cabe no ecrã",
   "pass": true,
   "info": ""
- },
- {
-  "p": "ADM",
-  "name": "ADM: só a administração pode repor senhas",
-  "pass": true,
-  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"Sem acesso.\",\"code\":\"admin\"}"
  },
  {
-  "p": "ADM",
-  "name": "ADM: repor a senha pede a senha do administrador",
+  "p": "Banco",
+  "name": "Banco (extratos): sem erros de JavaScript",
   "pass": true,
-  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"A senha não está certa.\",\"code\":\"senha\"}"
- },
- {
-  "p": "ADM",
-  "name": "ADM: a própria senha não se repõe por aqui",
-  "pass": true,
-  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"A tua própria senha muda-se em Definições › Conta.\",\"code\":\"propria\"}"
- },
- {
-  "p": "ADM",
-  "name": "ADM: repor a senha dá uma senha temporária fácil de ditar",
-  "pass": true,
-  "info": "{\"_st\":200,\"ok\":true,\"email\":\"bia68e96265@teste.pt\",\"temporaria\":\"g22e-uztk-cw9g\",\"gerada\":true}"
- },
- {
-  "p": "ADM",
-  "name": "ADM: as sessões da pessoa terminam",
-  "pass": true,
   "info": ""
  },
  {
-  "p": "ADM",
-  "name": "ADM: a senha antiga deixa de entrar",
+  "p": "Banco",
+  "name": "Conta do dono: ligação automática com Brasil (Open Finance pela Pluggy) e Europa (PSD2 pelo Enable Banking) prontos",
   "pass": true,
   "info": ""
- },
- {
-  "p": "ADM",
-  "name": "ADM: com a temporária entra, mas tem de escolher uma senha nova (e vê o aviso)",
-  "pass": true,
-  "info": "{\"trocar\":true,\"avisos\":[{\"at\":\"2026-11-11T20:31:08.614Z\",\"t\":\"senha\"}],\"email\":\"bia68e96265@teste.pt\",\"nome\":\"Bia\",\"criado\":\"2026-11-11T20:31:08.317Z\",\"adm\":fa"
  },
  {
-  "p": "ADM",
-  "name": "ADM: os dados ficaram todos (perfil e documentos)",
+  "p": "Banco",
+  "name": "ID errado: explica o formato e não liga nada",
   "pass": true,
   "info": ""
  },
  {
-  "p": "ADM",
-  "name": "Troca obrigatória: a pessoa escolhe a sua senha e entra normalmente",
+  "p": "Banco",
+  "name": "Pluggy: liga o item e traz a conta corrente e o cartão com os saldos, sem importar antes de associares",
   "pass": true,
-  "info": ""
+  "info": "{\"accs\":{\"pg:acc-chk\":{\"bank\":\"Nubank\",\"name\":\"Conta corrente\",\"num\":\"/12345-6\",\"cur\":\"BRL\",\"bal\":1520.35,\"kind\":\"bank\",\"at\":\"2026-11-12T00:24:08.394Z\"},\"pg:acc-cc\":{\"bank\":\"Nubank\",\"name\":\"Nubank Mastercard\",\"num\":\"5555\",\"cur\":\"BRL\",\"bal\":-380.1,\"kind\":\"card\",\"at\":\"2026-11-12T00:24:08.394Z\"}},\"t\":\"Ligação automática\\nsó na tua conta\\nÚltima atualização: agora mesmo\\nAtualizar agora\\nAtualizar soz"
  },
  {
-  "p": "ADM",
-  "name": "Troca obrigatória: depois disso, \"senhaTroca\" já não serve (a senha muda-se em Definições)",
+  "p": "Banco",
+  "name": "Pluggy: o servidor entra com o Client ID e o Secret das variáveis (a app nunca os vê)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "ADM",
-  "name": "ADM: não dá para passar uma conta para o e-mail do administrador",
+  "p": "Banco",
+  "name": "\"Criar conta no Prumo\": Nubank · Conta corrente em reais com os 4 movimentos confirmados das 2 páginas (o pendente fica de fora)",
   "pass": true,
-  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"Esse e-mail é de administrador.\",\"code\":\"admin\"}"
+  "info": "{\"a\":{\"inst\":\"Nubank\",\"name\":\"Conta corrente\",\"cur\":\"BRL\"},\"bal\":1520.35,\"T\":[[\"Receita\",250,\"Pix recebido Maria Souza\",\"Outros\",\"Diversos\",\"banco\"],[\"Despesa\",45.9,\"IFOOD *RESTAURANTE BOM\",\"Alimentação\",\"Delivery\",\"banco\"],[\"Receita\",3000,\"SALARIO EMPRESA X\",\"Salário\",\"Salário\",\"banco\"],[\"Despesa\",23.5,\"UBER *TRIP\",\"Transporte\",\"Uber/Bolt\",\"banco\"]]}"
  },
  {
-  "p": "ADM",
-  "name": "ADM: muda o e-mail da conta",
+  "p": "Banco",
+  "name": "Pluggy: movimentos pelo GET /v2/transactions com cursor (o /transactions antigo sai depois de 31/12/2026)",
   "pass": true,
-  "info": "{\"_st\":200,\"ok\":true,\"email\":\"bia.nova825201b5@teste.pt\",\"de\":\"bia68e96265@teste.pt\"}"
+  "info": "[\"/v2/transactions\",\"/v2/transactions\",\"/v2/transactions\"]"
  },
  {
-  "p": "ADM",
-  "name": "ADM: o e-mail antigo deixa de entrar",
+  "p": "Banco",
+  "name": "Categorias sozinhas: iFood → Delivery, salário → Salário, Uber → Uber/Bolt",
   "pass": true,
   "info": ""
- },
- {
-  "p": "ADM",
-  "name": "ADM: o novo e-mail entra com a mesma senha e tem os mesmos perfis e dados (nada se perde)",
-  "pass": true,
-  "info": "{\"trocar\":false,\"avisos\":[{\"at\":\"2026-11-11T20:31:08.614Z\",\"t\":\"senha\"},{\"at\":\"2026-11-11T20:31:08.874Z\",\"t\":\"email\",\"de\":\"bia68e96265@teste.pt\"}],\"email\":\"bia."
  },
  {
-  "p": "ADM",
-  "name": "ADM: o atalho do iPhone feito antes da mudança continua a funcionar",
+  "p": "Banco",
+  "name": "A conta criada pelo banco fica com o saldo do banco (R$ 1 520,35)",
   "pass": true,
-  "info": "estado 200"
+  "info": "1520.35"
  },
  {
-  "p": "ADM",
-  "name": "ADM: não dá para mudar para um e-mail que já tem conta",
+  "p": "Banco",
+  "name": "\"Não importar\" deixa o cartão de fora",
   "pass": true,
-  "info": "{\"_st\":409,\"ok\":false,\"msg\":\"Já existe uma conta com esse e-mail.\",\"code\":\"existe\"}"
- },
- {
-  "p": "ADM",
-  "name": "No aparelho: depois de entrar com a temporária aparece \"Escolhe uma senha nova\"",
-  "pass": true,
-  "info": "\n  \n    \n    \n    \n    \n    \n  \n  \n  \n  \n  \n    \n    \n  O sistema operativo da tua vida: dinheiro, estudos, treino, metas e o teu jogo, num só sítio.Escolhe uma senha novaA administração do Prumo repôs a senha da tua conta e entraste com uma senha temporária. Escolhe agora uma senha só tua para cont"
- },
- {
-  "p": "ADM",
-  "name": "No aparelho: guardada a senha nova, segue para os perfis",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "ADM",
-  "name": "ADM: sem erros na consola",
-  "pass": true,
   "info": ""
  },
  {
-  "p": "ADM",
-  "name": "ADM: a aba mostra o cofre (mudar a senha mestra do próprio cofre)",
+  "p": "Banco",
+  "name": "Atualizar outra vez não duplica nada",
   "pass": true,
   "info": ""
  },
  {
-  "p": "ADM",
-  "name": "ADM: a ficha da conta tem \"Repor a senha de login\" e \"Mudar o e-mail da conta\"",
+  "p": "Banco",
+  "name": "O que apagas de propósito não volta na sincronização seguinte",
   "pass": true,
   "info": ""
  },
  {
-  "p": "ADM",
-  "name": "ADM: repor no ecrã mostra a senha temporária para copiar",
+  "p": "Banco",
+  "name": "A ligação fica cifrada no servidor (b/<conta>/<perfil>), sem o ID do item à vista",
   "pass": true,
-  "info": ""
+  "info": "1"
  },
  {
-  "p": "ADM",
-  "name": "ADM: o botão do cofre leva às Senhas",
+  "p": "Banco",
+  "name": "Enable Banking: lista os bancos de Portugal (só os de particulares), com pedidos assinados (JWT RS256 com o id da aplicação)",
   "pass": true,
-  "info": ""
+  "info": "[{\"okJ\":true,\"H\":{\"typ\":\"JWT\",\"alg\":\"RS256\",\"kid\":\"aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee\"},\"P\":{\"iss\":\"enablebanking.com\",\"aud\":\"api.enablebanking.com\",\"iat\":1794443051,\"exp\":1794446651}}]"
  },
  {
-  "p": "Google",
-  "name": "Conta sem script: Definições › E-mail mostra \"Ligar a minha conta Google\" com os passos (aviso de app não verificada)",
+  "p": "Banco",
+  "name": "Ligar no banco: abre o banco, volta a api/banco e mostra \"Banco ligado\" com o número de contas e o botão para o Prumo",
   "pass": true,
-  "info": "{\"has\":true,\"href\":\"http://localhost:8781/gmock/auth?client_id=298711842985-i89rgem2i0gq35lse2fvsc0pmmai5cr8.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8781%2FOceanum%2Fapi%2Fgoogle&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly+https%3A%2F%2F"
+  "info": "{\"ok\":true,\"t\":\"Banco ligado\\n\\nBanco Teste: 1 conta. Os movimentos aparecem no Prumo em Finanças › Banco.\\n\\nJá podes fechar esta janela e voltar ao Prumo.\\n\\nAbrir o Prumo\",\"back\":\"http://localhost:8781/Oceanum/#financas.banco\"}"
  },
  {
-  "p": "Google",
-  "name": "O link vai ao Google com o ID de cliente, só leitura do Gmail e da agenda, offline e state assinado",
+  "p": "Banco",
+  "name": "Pedido ao banco: particular, regresso a api/banco, até 90 dias e state assinado",
   "pass": true,
-  "info": "http://localhost:8781/gmock/auth?client_id=298711842985-i89rgem2i0gq35lse2fvsc0pmmai5cr8.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8781%2FOceanum%2Fapi%2Fgoogle&response_type=co"
+  "info": "{\"access\":{\"valid_until\":\"2027-02-10T00:23:11.255Z\"},\"aspsp\":{\"name\":\"Banco Teste\",\"country\":\"PT\"},\"state\":\"eyJ1IjoiNWQzYmQ1N2E1MTE4N2RjNGUyZTk3MGQxIiwiYSI6ImRiNjQ0YzZlZjhhYjhlMGI3ZTdiNTdkMWQ2ZTE1OTc3NjYyYTIyMDYiLCJ2IjoxLCJwIjoiNWMxM2FkNWFkMDQyIiwieCI6MTc5NDQ0NDI1MSwibiI6InFUVzkxeC1MIiwiYmFuayI6IkJh"
  },
  {
-  "p": "Google",
-  "name": "Página E-mail (sem nada ligado): mostra o mesmo cartão para ligar a conta Google",
+  "p": "Banco",
+  "name": "De volta ao Prumo: o banco aparece ligado e a conta dele fica à espera de ser associada",
   "pass": true,
   "info": ""
- },
- {
-  "p": "Google",
-  "name": "Regresso do Google: \"Conta Google ligada\" com o e-mail e um botão para voltar ao Prumo",
-  "pass": true,
-  "info": "{\"ok\":true,\"t\":\"Conta Google ligada\\n\\njoana@gmail.com: o Prumo já pode ler o teu Gmail e a tua agenda.\\n\\nJá podes fechar esta janela (no iPhone: OK ou Concluído, em cima) e voltar ao Prumo.\\n\\nAbrir o Prumo\",\"back\":\"http://localhost:8781/Oceanum/#definicoes.email\"}"
- },
- {
-  "p": "Google",
-  "name": "A autorização fica guardada cifrada no perfil (g/<conta>/<perfil>), sem o token à vista",
-  "pass": true,
-  "info": "{\"n\":1,\"calls\":[\"authorization_code\"]}"
- },
- {
-  "p": "Google",
-  "name": "De volta à app: fica ligada sozinha (✓ ligada, joana@gmail.com, Gmail ✓ e Agenda ✓) e liga a agenda no Calendário",
-  "pass": true,
-  "info": "{\"toast\":\"Conta Google ligada: joana@gmail.com\",\"st\":{\"pronto\":true,\"ligado\":true,\"email\":\"joana@gmail.com\",\"gmail\":true,\"agenda\":true,\"at\":1794429074972},\"t\":\"Conta Google\\n✓ ligada\\n\\njoana@gmail.com\\n\\nGmail ✓ · Agenda ✓ · só leitura: o Prumo nunca envia, apaga nem muda nada no Google.\\n\\nDesliga"
  },
  {
-  "p": "Google",
-  "name": "E-mail: lê os e-mails pela conta Google (assunto, remetente, início do texto sem &amp;) e mostra-os na Caixa",
+  "p": "Banco",
+  "name": "Enable Banking: importa os 3 movimentos marcados (com a 2.ª página) e deixa o pendente; MB WAY reconhecido",
   "pass": true,
-  "info": "{\"L\":[{\"id\":\"t2bbbbbb\",\"s\":\"50% de desconto só hoje\",\"f\":\"Loja <promo@loja.pt>\",\"sn\":\"Black Friday antecipada. Cancelar subscrição.\",\"u\":false},{\"id\":\"t1aaaaaa\",\"s\":\"Entrega do trabalho de Estatística\",\"f\":\"Prof. Silva <silva@ua.pt>\",\"sn\":\"Olá Joana, o prazo do trabalho é amanhã & não há prorrogação.\",\"u\":true}],\"arch\":0,\"rows\":2,\"err\":\"\"}"
+  "info": "{\"T\":[[\"Despesa\",12.4,\"COMPRA CONTINENTE AVEIRO\",\"Alimentação\",\"Supermercado\",\"Débito\"],[\"Receita\",950,\"VENCIMENTO OUTUBRO\",\"Salário\",\"Salário\",\"Débito\"],[\"Despesa\",30,\"MB WAY PARA JOAO\",\"Outros\",\"Diversos\",\"MB WAY\"]],\"diff\":true}"
  },
  {
-  "p": "Google",
-  "name": "Só leitura: sem \"Arquivar\" nem \"Spam\" nas linhas",
+  "p": "Banco",
+  "name": "Saldo diferente do banco: botão \"Acertar pelo banco\"",
   "pass": true,
   "info": ""
- },
- {
-  "p": "Google",
-  "name": "A pesquisa do Gmail das Definições vai para o Google",
-  "pass": true,
-  "info": "[\"in:inbox newer_than:3d\",\"in:inbox newer_than:3d\"]"
- },
- {
-  "p": "Google",
-  "name": "Ler o e-mail inteiro dentro da app: texto completo, anexo, \"Ver formatado\" e link para o Gmail certo (authuser)",
-  "pass": true,
-  "info": "{\"t\":\"Entrega do trabalho de Estatística\\nProf. Silva\\nsilva@ua.pt · 11/11, 19:31\\npara joana@gmail.com\\nCorpo completo do e-mail de teste: o prazo é amanhã às 18h.\\nVer formatado\\nenunciado.pdf\\nResponder\\nTarefa\\nGmail\",\"fmt\":true,\"arch\":false,\"gm\":\"https://mail.google.com/mail/?authuser=joana%40g"
- },
- {
-  "p": "Google",
-  "name": "Responder: \"Copiar e abrir no Gmail\" (a ligação é só de leitura), sem \"Guardar rascunho\"",
-  "pass": true,
-  "info": "{\"cp\":\"https://mail.google.com/mail/?authuser=joana%40gmail.com#all/t1aaaaaa\",\"save\":false,\"t\":\"Responder a Prof. Silva\\nEntrega do trabalho de Estatística\\nOlá Joana, o prazo do trabalho é amanhã & não há prorrogação.\\nEscrever com IA\\nDitar\\nCopiar e abrir no Gmail\\nA resposta é copiada e o e-mail"
- },
- {
-  "p": "Google",
-  "name": "Agenda: os eventos do Google aparecem no Calendário (com hora, dia inteiro e outras agendas), sem as agendas escondidas",
-  "pass": true,
-  "info": "{\"L\":[[\"hoje\",\"15:00\",\"16:00\",\"Dentista\"],[\"amanha\",\"\",\"\",\"Aniversário da Rita\"],[\"2026-11-13\",\"10:00\",\"11:00\",\"Reunião de equipa\"]],\"st\":\"3 eventos entre 28 out e 9 fev · atualizado às 20:31\"}"
  },
  {
-  "p": "Google",
-  "name": "Definições › Ligações: Agenda Google ligada \"pela tua conta Google ligada\"",
+  "p": "Banco",
+  "name": "Acertar pelo banco: a conta fica com 842,10 € e diz \"saldo igual ao do banco\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Google",
-  "name": "Token caducado: o servidor renova-o sozinho e os e-mails continuam a chegar",
+  "p": "Banco",
+  "name": "Regresso com state falso: recusa (\"O pedido expirou\") e não liga nada",
   "pass": true,
   "info": ""
- },
- {
-  "p": "Google",
-  "name": "Verificação da chave secreta (sem a mostrar): o Google aceita o cliente e a chave",
-  "pass": true,
-  "info": "{\"ok\":true,\"pronto\":true,\"chave\":\"ok\",\"erro\":\"invalid_grant\"}"
  },
  {
-  "p": "Google",
-  "name": "Sem sessão → 401; de outro site → 403; perfil de outra conta → 404",
+  "p": "Banco",
+  "name": "Desligar o banco cancela a autorização no Enable Banking",
   "pass": true,
-  "info": "401,403,404"
- },
- {
-  "p": "Google",
-  "name": "Regresso falsificado (state mudado) é recusado; \"Cancelar\" no Google não liga nada",
-  "pass": true,
   "info": ""
- },
- {
-  "p": "Google",
-  "name": "Desligar: revoga no Google, apaga a autorização no servidor e limpa os e-mails e a agenda deste aparelho",
-  "pass": true,
-  "info": "{\"st\":{\"pronto\":true,\"ligado\":false,\"email\":\"\",\"gmail\":false,\"agenda\":false,\"at\":1794429074972},\"link\":true,\"items\":0,\"gcal\":0}"
- },
- {
-  "p": "Google",
-  "name": "O Google retirou o acesso: a app avisa e volta a mostrar \"Ligar a minha conta Google\"",
-  "pass": true,
-  "info": "{\"st\":{\"pronto\":true,\"ligado\":false,\"email\":\"\",\"gmail\":false,\"agenda\":false,\"at\":1794429079639},\"err\":\"O Google retirou o acesso (autorização cancelada ou expirada). Liga a conta Google outra vez.\",\"card\":true}"
- },
- {
-  "p": "Google",
-  "name": "Conta com script Google (a do Ryan): fica tudo igual, pelo script, sem o cartão do Google",
-  "pass": true,
-  "info": "{\"card\":false,\"mail\":false}"
  },
  {
-  "p": "Google",
-  "name": "Modo pessoal (sem conta): sem cartão do Google",
+  "p": "Banco",
+  "name": "Outras contas: não veem a ligação automática e ligar um banco é recusado (403); usam \"Importar extrato\"",
   "pass": true,
-  "info": ""
+  "info": "[{\"_st\":200,\"ok\":true,\"adm\":false,\"pronto\":{\"pg\":true,\"eb\":true},\"regresso\":\"http://localhost:8781/Oceanum/api/banco\",\"pg\":[],\"eb\":[]},{\"_st\":403,\"ok\":false,\"code\":\"admin\",\"msg\":\"A ligação automática ao banco é só para a conta do dono do Prumo (os planos gratuitos só leem as contas do próprio). Usa "
  },
  {
-  "p": "Google",
-  "name": "sem erros de JavaScript",
+  "p": "Banco",
+  "name": "Banco (ligação automática): sem erros de JavaScript",
   "pass": true,
   "info": ""
  }

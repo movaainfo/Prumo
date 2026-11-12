@@ -39,16 +39,20 @@ const pgKey = async () => { if (PGK.k && PGK.x > Date.now()) return PGK.k;
   if (!r.ok || !j.apiKey) throw N.err('pluggy', 'A Pluggy não aceitou as chaves (confere PLUGGY_CLIENT_ID e PLUGGY_CLIENT_SECRET no Vercel).', 502); PGK = { k: j.apiKey, x: Date.now() + 100 * 60e3 }; return j.apiKey; };
 const pg = async p => { for (let i = 0; i < 3; i++) { const r = await fetch(PGA() + p, { headers: { 'X-API-KEY': await pgKey(), accept: 'application/json' } }), j = await r.json().catch(() => ({}));
     if (r.ok) return j; if (r.status === 401 || r.status === 403) { PGK = { k: '', x: 0 }; if (i === 0) continue; throw N.err('pluggy', 'A Pluggy recusou o acesso a este item (é teu e está ligado no Meu Pluggy?).', 403); }
-    if (r.status === 404) throw N.err('pg404', 'Não encontrei esse item na Pluggy. Confere o ID.', 404); if (r.status === 429 || r.status >= 500) { await N.sleep(700 * (i + 1)); continue; }
+    if (r.status === 404) throw N.err('pg404', 'Não encontrei esse item na Pluggy. Confere o ID.', 404); if (r.status === 410) throw N.err('pg410', 'A Pluggy já não aceita este pedido.', 502); if (r.status === 429 || r.status >= 500) { await N.sleep(700 * (i + 1)); continue; }
     throw N.err('pluggy', 'A Pluggy não respondeu (' + r.status + ').', 502); } throw N.err('pluggy', 'A Pluggy pediu para esperar um pouco.', 429); };
 const pgSync = async (items, from) => { const acc = [], mov = [], err = [];
   for (const it of items) { try { const item = await pg('/items/' + it.item), bank = (item.connector && item.connector.name) || it.name || 'Pluggy';
       const A = (await pg('/accounts?itemId=' + it.item)).results || [];
       for (const a of A.slice(0, 12)) { const card = a.type === 'CREDIT';
         acc.push({ id: 'pg:' + a.id, prov: 'pg', bank, name: a.marketingName || a.name || (card ? 'Cartão' : 'Conta'), num: String(a.number || '').slice(-8), cur: a.currencyCode || 'BRL', bal: card ? -Math.abs(+a.balance || 0) : +a.balance || 0, kind: card ? 'card' : 'bank', at: item.lastUpdatedAt || '' });
-        for (let page = 1, tp = 1; page <= tp && page <= 12; page++) { const T = await pg('/transactions?accountId=' + a.id + '&from=' + from + '&pageSize=500&page=' + page); tp = +T.totalPages || 1;
-          (T.results || []).forEach(t => { const v = Math.abs(+t.amount || 0); if (!v) return; const dir = t.type === 'CREDIT' ? 1 : t.type === 'DEBIT' ? -1 : (+t.amount >= 0 ? 1 : -1);
-            mov.push({ ext: 'pg:' + t.id, acc: 'pg:' + a.id, date: String(t.date || '').slice(0, 10), amount: +(dir * v).toFixed(2), desc: String(t.description || t.descriptionRaw || (t.merchant && t.merchant.name) || '').slice(0, 140), cat: String(t.category || '').slice(0, 60), pend: t.status === 'PENDING' ? 1 : 0 }); }); } } }
+        const add = t => { const v = Math.abs(+t.amount || 0); if (!v) return; const dir = t.type === 'CREDIT' ? 1 : t.type === 'DEBIT' ? -1 : (+t.amount >= 0 ? 1 : -1);
+          mov.push({ ext: 'pg:' + t.id, acc: 'pg:' + a.id, date: String(t.date || '').slice(0, 10), amount: +(dir * v).toFixed(2), desc: String(t.description || t.descriptionRaw || (t.merchant && t.merchant.name) || '').slice(0, 140), cat: String(t.category || '').slice(0, 60), pend: t.status === 'PENDING' ? 1 : 0 }); };
+        // GET /v2/transactions com cursor (o /transactions antigo sai depois de 31/12/2026); se a v2 não existir para este item, usa a antiga
+        try { let after = ''; for (let k = 0; k < 40; k++) { const T = await pg('/v2/transactions?accountId=' + a.id + '&dateFrom=' + from + (after ? '&after=' + encodeURIComponent(after) : '')); (T.results || []).forEach(add);
+            after = T.next ? (new URLSearchParams(String(T.next).replace(/^[^?]*\?/, '')).get('after') || '') : ''; if (!after) break; } }
+        catch (e) { if (e.code !== 'pg404' && e.code !== 'pg410') throw e;
+          for (let page = 1, tp = 1; page <= tp && page <= 12; page++) { const T = await pg('/transactions?accountId=' + a.id + '&from=' + from + '&pageSize=500&page=' + page); tp = +T.totalPages || 1; (T.results || []).forEach(add); } } } }
     catch (e) { err.push((it.name || it.item) + ': ' + e.message); } }
   return { acc, mov, err }; };
 
