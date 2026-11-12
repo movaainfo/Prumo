@@ -1,6 +1,6 @@
 {
- "n": 219,
- "hash": "08be5fc033a1",
+ "n": 220,
+ "hash": "bdf83281de81",
  "notes": [
   "IA de reserva: a grátis (Pollinations) passou a dar só 1 resposta a cada 45 segundos por ligação à internet, e quando passava do limite o aparelho mostrava \"Failed to fetch\". Agora a reserva tenta primeiro do teu aparelho e, se falhar, pelo servidor do Prumo; e como o Prumo usa primeiro o modelo do Google que está a responder bem, quase nunca precisa dela.",
   "IA mais firme: o Google desligou alguns modelos e os mais novos andam sobrecarregados (demoravam até meio minuto só para falhar). Agora o Prumo lembra-se do modelo que respondeu bem e usa-o primeiro, põe de lado durante 10 minutos o que está sobrecarregado e passa logo ao seguinte. A IA de reserva passa pelo servidor do Prumo (antes ligava direto do aparelho e podia falhar com \"Failed to fetch\"), e a voz da IA usa os modelos novos do Google. Quando a IA não consegue mesmo responder, a mensagem diz porquê numa frase simples.",

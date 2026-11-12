@@ -103,7 +103,7 @@ const srv = http.createServer((req, res) => {
   // e-mails simulados (código de confirmação)
   if (u.pathname === '/emailmock') { let body = ''; req.on('data', c => body += c); req.on('end', () => { try { MAILS.push(JSON.parse(body)); } catch (e) { } res.writeHead(200, { 'Content-Type': 'application/json' }); res.end('{"id":"m1"}'); }); return; }
   // Stripe simulado (planos e cobrança): produtos, pagamento, assinaturas e portal
-  if (u.pathname.startsWith('/stripemock/v1/')) { let body = ''; req.on('data', c => body += c); req.on('end', () => { const P = u.pathname.slice('/stripemock/v1/'.length), f = Object.fromEntries(new URLSearchParams(req.method === 'GET' ? u.search.slice(1) : body)), J = (o, st = 200) => { res.writeHead(st, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); };
+  if (u.pathname.startsWith('/stripemock/v1/')) { let body = ''; req.on('data', c => body += c); req.on('end', () => { const P = u.pathname.slice('/stripemock/v1/'.length), f = Object.fromEntries(new URLSearchParams(req.method === 'GET' ? String(u.search || '').slice(1) : body)), J = (o, st = 200) => { res.writeHead(st, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); };
     STRIPE.calls.push({ m: req.method, p: P, f, auth: req.headers.authorization || '' }); const rid = n => n + '_' + crypto.randomBytes(6).toString('hex'), end = () => Math.floor(Date.now() / 1000) + 30 * 86400;
     const subOf = (meta, cur, amount) => { const id = rid('sub'), x = { id, object: 'subscription', customer: 'cus_' + (meta.uid || 'x').slice(0, 10), status: 'active', cancel_at_period_end: false, metadata: meta, currency: cur, items: { data: [{ id: rid('si'), current_period_end: end(), price: { currency: cur, unit_amount: amount } }] } }; STRIPE.subs[id] = x; return x; };
     if (P === 'products' && req.method === 'POST') return J({ id: rid('prod'), name: f.name });
@@ -3636,7 +3636,7 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
   const ENV = ['STRIPE_SECRET_KEY', 'NAUTILO_STRIPE_API', 'NAUTILO_TESTE_DIAS', 'NAUTILO_PLANOS_DESDE'], old = Object.fromEntries(ENV.map(k => [k, process.env[k]])), reset = () => ENV.forEach(k => { if (old[k] == null) delete process.env[k]; else process.env[k] = old[k]; });
   try {
     // 1) conta nova: 14 dias grátis do Completo; os preços
-    delete process.env.STRIPE_SECRET_KEY; const a = await mk('Teo'); const pl0 = a.conta.plano || {};
+    delete process.env.STRIPE_SECRET_KEY; const a = await mk('Teo'), z = await mk('Zé'); const pl0 = a.conta.plano || {};
     ok('Conta nova: 14 dias grátis do plano Completo, sem cartão', pl0.id === 'completo' && pl0.lvl === 3 && pl0.teste === 1 && pl0.ate > Date.now() + 13 * 864e5, JSON.stringify(pl0));
     const pp = await call({ op: 'planos' });
     ok('Os três planos com os preços em euros e reais (mensal e anual)', pp.planos && pp.planos.map(p => p.id).join() === 'essencial,avancado,completo' && pp.planos[0].precos.EUR.mes === 399 && pp.planos[2].precos.BRL.ano === 49900 && pp.testeDias === 14 && pp.cobranca === false, JSON.stringify(pp).slice(0, 200));
@@ -3678,18 +3678,20 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
     const k = await newPage(b, PROFILES[0], init(a)); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k.p.goto(BASE); await unlock(k.p); await sleep(1800); await E(k.p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); OS.UI.closeModal && OS.UI.closeModal(); });
     await E(k.p, () => { location.hash = 'planos'; }); await k.p.waitForFunction(() => document.querySelectorAll('#view .pl-c').length === 3, null, { timeout: 8000 }).catch(() => { });
     const pg = await E(k.p, () => ({ n: document.querySelectorAll('#view .pl-c').length, t: document.getElementById('view').innerText, mine: !!document.querySelector('#view .pl-c.mine'), up: !!document.querySelector('#view [data-act=plMudar][data-id=completo]') }));
-    ok('Página Planos: o teu plano (Avançado), os 3 planos com preço e "Subir para o Completo"', pg.n === 3 && /Avançado/.test(pg.t) && /79,90/.test(pg.t) && pg.mine && pg.up, pg.t.slice(0, 200));
+    ok('Página Planos: o teu plano (Avançado), os 3 planos com preço (7,99 € por mês) e "Subir para o Completo"', pg.n === 3 && /Avançado/.test(pg.t) && /7,99/.test(pg.t) && pg.mine && pg.up, pg.t.replace(/\s+/g, ' ').slice(0, 300));
+    await E(k.p, () => document.querySelector('#view [data-act=plCiclo][data-v=ano]').click()); await sleep(300);
+    ok('Página Planos: no anual mostra o preço do ano (79,90 €) e quanto dá por mês', await E(k.p, () => /79,90/.test(document.getElementById('view').innerText) && /por mês/.test(document.getElementById('view').innerText)));
     await E(k.p, () => { location.hash = 'relatorios'; }); await sleep(500);
     ok('Avançado: os Relatórios (impostos) têm cadeado e levam aos planos', await E(k.p, () => !!document.querySelector('#view .pl-lock a[href="#planos"]') && /Completo/.test(document.querySelector('#view .pl-lock').innerText)));
     await E(k.p, () => { location.hash = 'universidade'; }); await sleep(500);
     ok('Avançado: a Universidade abre (sem cadeado)', await E(k.p, () => !document.querySelector('#view .pl-lock')));
     await k.ctx.close();
     // sem plano: só o ecrã de escolher plano (e as Definições)
-    const z = await mk('Zé'); const k2 = await newPage(b, PROFILES[0], init(z)); await k2.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k2.p.goto(BASE); await unlock(k2.p); await sleep(1800);
-    await E(k2.p, () => { OS.UI.closeModal && OS.UI.closeModal(); location.hash = 'tarefas'; }); await k2.p.waitForFunction(() => /Escolhe o teu plano/.test(document.getElementById('view').innerText), null, { timeout: 8000 }).catch(() => { });
-    ok('Teste acabado e sem plano: as páginas mostram "Escolhe o teu plano" com os planos (os dados ficam)', await E(k2.p, () => /Escolhe o teu plano/.test(document.getElementById('view').innerText) && document.querySelectorAll('#view .pl-c').length === 3 && !!document.querySelector('#view [data-act=plAssinar]')));
+    const k2 = await newPage(b, PROFILES[0], init(z)); await k2.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k2.p.goto(BASE); await unlock(k2.p); await sleep(1800);
+    await E(k2.p, () => { OS.UI.closeModal && OS.UI.closeModal(); location.hash = 'tarefas'; }); await k2.p.waitForFunction(() => /Escolhe o teu plano/i.test(document.getElementById('view').innerText), null, { timeout: 8000 }).catch(() => { });
+    ok('Teste acabado e sem plano: as páginas mostram "Escolhe o teu plano" com os planos (os dados ficam)', await E(k2.p, () => /Escolhe o teu plano/i.test(document.getElementById('view').innerText) && document.querySelectorAll('#view .pl-c').length === 3 && !!document.querySelector('#view [data-act=plAssinar]')));
     await E(k2.p, () => { location.hash = 'definicoes'; }); await sleep(600);
-    ok('Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)', await E(k2.p, () => !/Escolhe o teu plano/.test(document.getElementById('view').innerText) && !!document.getElementById('plSet')));
+    ok('Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)', await E(k2.p, () => !/Escolhe o teu plano/i.test(document.getElementById('view').innerText) && !!document.getElementById('plSet')));
     await k2.ctx.close();
   } finally { reset(); SEENRESET(); } }
 async function emailTests(b) { cur = 'E-mail'; console.log('\n=== Confirmar o e-mail com um código no primeiro registo ===');

@@ -1,491 +1,5 @@
 [
  {
-  "p": "Novidades",
-  "name": "Face ID: ao abrir a app o Face ID começa sozinho e entra",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Face ID: não pergunta \"Ativar o Face ID?\" outra vez",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Face ID: se cancelares fica o botão e uma mensagem calma (sem repetir sozinho)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Face ID: não fica a pedir em ciclo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Face ID: tocar no botão entra",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "sem erros de JavaScript (Face ID)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: começa a ouvir sozinho ao entrar (ponto no microfone do topo)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: sem dizer o nome dele não responde (só \"Spyke, …\")",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: com o nome responde logo",
-  "pass": true,
-  "info": "São 16:39."
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: conversa seguida (depois de responder volta a ouvir sozinho)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: \"Spike, bom dia\" dá o resumo do dia (escrito \"Spike\", como o iPhone ouve)",
-  "pass": true,
-  "info": "Boa tarde, Ryan. Hoje é quinta-feira, 12 de novembro. A agenda está livre de com"
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: \"Bom dia, Spike\" (nome no fim) também dá o resumo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: só \"Spike\" não fala nada (som e fica à espera do pedido)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: o pedido logo a seguir ao nome (sem repetir o nome) é executado",
-  "pass": true,
-  "info": "São 16:39."
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: com uma pausa depois do nome (\"Spike… que dia é hoje\") faz o pedido",
-  "pass": true,
-  "info": "Hoje é quinta-feira, 12 de novembro."
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: depois de responder, sem o nome volta a ignorar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: fora da conversa ignora o que não é para ele",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: \"Spyke, …\" funciona sempre",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: frase sem \"fim\" é apanhada pela pausa (iPhone)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: o eco da própria voz não conta como pedido",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: o iPhone fecha o microfone e ele reabre sozinho",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: \"para de ouvir\" desliga e não reabre",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: tocar no microfone volta a ouvir",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: enquanto fala o microfone descansa (não ouve a própria voz nem corta o som)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: acabou de falar e volta a ouvir sozinho",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: com \"Interromper por voz\" ligado, dizer \"Spyke\" enquanto fala interrompe e ouve",
-  "pass": true,
-  "info": "Sim?"
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: ao sair da app o microfone desliga e ao voltar liga sozinho",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "palmas: duas palmas chamam o Spyke",
-  "pass": true,
-  "info": "{\"two\":1,\"one\":0,\"voice\":0,\"far\":0,\"soft9\":1,\"soft1\":0}"
- },
- {
-  "p": "Novidades",
-  "name": "palmas: uma palma sozinha não chama",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "palmas: voz ou música contínua não chamam",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "palmas: palmas muito afastadas não contam",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "palmas: a sensibilidade muda o que conta (máxima ouve palmas fracas, mínima não)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "Spyke: página explica o limite do iPhone com a app fechada e como não pedir o microfone",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "sem erros de JavaScript (Spyke a ouvir)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "floresta: quando o iPhone apaga o 3D, ele refaz-se sozinho",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "floresta: se o 3D falhar mostra \"A abrir o 3D…\" (não fica preso no erro)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "floresta: tenta outra vez sozinha e volta a mostrar a árvore 3D",
-  "pass": true,
-  "info": "{\"ok\":true,\"fail\":false,\"why\":\"\"}"
- },
- {
-  "p": "Novidades",
-  "name": "sem erros de JavaScript (Floresta)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "decisões: o Spyke analisa (prós, contras, riscos, perguntas, para onde apontam os dados)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "decisões: \"Preencher a matriz\" estima só o que está vazio",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "decisões: perguntas ao Spyke ficam guardadas na decisão",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "decisões: próximo passo vira tarefa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "jornal: mostra os segundos enquanto espera",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "jornal: sem resposta desiste, explica e oferece \"Tentar outra vez\" (sem ficar em ciclo)",
-  "pass": true,
-  "info": "Visão geral\nJORNAL\n\nAs notícias mais importantes do mundo e de cada país, em tempo real. Atualiza sozinho ao longo do di"
- },
- {
-  "p": "Novidades",
-  "name": "sem erros de JavaScript (decisões e jornal)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "script antigo: o Jornal explica que o script é antigo e leva a Definições → Script Google",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "estado do Spyke: mostra o que falta (script, notícias, e-mail) e leva a Definições → Script Google (sem partes para copiar no Spyke)",
-  "pass": true,
-  "info": "{\"bad\":4,\"guide\":true,\"noCopy\":true}"
- },
- {
-  "p": "Novidades",
-  "name": "estado do Spyke: depois de atualizar o script fica tudo verde (IA, script, notícias)",
-  "pass": true,
-  "info": "{\"ok\":[\"Cérebro (IA)\",\"Script Google\",\"Notícias\"],\"guide\":false}"
- },
- {
-  "p": "Novidades",
-  "name": "script atualizado: o Jornal mostra as notícias",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "sem erros de JavaScript (estado do Spyke)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "script v10: Definições → Script Google pede a Parte 3, num ficheiro novo (sem apagar as partes 1 e 2)",
-  "pass": true,
-  "info": "[\"p3\"]"
- },
- {
-  "p": "Novidades",
-  "name": "script v10: o botão copia a Parte 3 (com o doGet novo e sem repetir a chave)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "sem erros de JavaScript (Parte 3)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "e-mail: abre o e-mail inteiro dentro da app (até ao fim, com anexos)",
-  "pass": true,
-  "info": "Proposta de estágio\nAna RH\nana@empresa.pt · 12/11, 16:40\npara ryan@x.pt\nOlá Ryan,\n\nSegue a proposta completa do estágio com todos os detalhes do contrato e a pa"
- },
- {
-  "p": "Novidades",
-  "name": "e-mail: nada abre fora da app",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "e-mail formatado: num quadro isolado, sem scripts (o código malicioso de um e-mail não corre)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "LinkedIn: nenhum botão leva ao Gmail",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "LinkedIn: \"Abrir\" abre o e-mail dentro da app (sem Responder nem Gmail)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "LinkedIn: tocar na própria notificação também abre o leitor",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "jornal: a notícia abre dentro da app com o texto completo do jornal",
-  "pass": true,
-  "info": "Jornal de Notícias · agora Notícia aberta pelo jornal TEXTO DE JORNAL DE NOTÍCIAS Primeiro parágrafo da notícia completa, com os factos principais do que aconteceu hoje em Aveiro e no resto do país. Segundo parágrafo com as declarações dos envolvidos e o contexto do que levou a esta situação inesper"
- },
- {
-  "p": "Novidades",
-  "name": "jornal: texto do jornal entra só como texto (sem código a correr)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "jornal: se o script não devolve uma secção, a app não fica a pedir tudo sem parar",
-  "pass": true,
-  "info": "1 pedidos"
- },
- {
-  "p": "Novidades",
-  "name": "jornal: jornal que bloqueia → o Spyke escreve a notícia completa com as fontes, dentro da app",
-  "pass": true,
-  "info": "Público · há 1 min Notícia de jornal fechado NOTÍCIA COMPLETA ESCRITA PELO SPYKE A PARTIR DE PESQUISA NA INTERNET O Spyke escreveu o primeiro parágrafo. Segundo parágrafo escrito. Terceiro parágrafo escrito. Fontes consultadas: publico.pt · rtp.pt Spyke, lê-me Se mesmo assim quiseres, abrir no site "
- },
- {
-  "p": "Novidades",
-  "name": "agenda Google pelo script: os eventos aparecem no Calendário",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "agenda Google: o Spyke consegue marcar eventos na agenda Google",
-  "pass": true,
-  "info": "{\"k\":\"k\",\"op\":\"ce\",\"t\":\"Dentista\",\"d\":\"2026-11-17\",\"h\":\"10:00\"}"
- },
- {
-  "p": "Novidades",
-  "name": "sem erros de JavaScript (leitores)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Novidades",
-  "name": "nome da app: Prumo no ecrã principal, no título e no manifesto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "IA",
-  "name": "IA: descobre sozinha os modelos que o Google tem hoje (sem voz, imagem nem embeddings)",
-  "pass": true,
-  "info": "gemini-3.5-flash, gemini-3.5-flash-lite, gemini-2.0-flash-lite, gemma-3-27b-it"
- },
- {
-  "p": "IA",
-  "name": "IA: cota de um modelo esgotada → passa logo ao seguinte, sem esperar",
-  "pass": true,
-  "info": "google · gemini-3.5-flash > gemini-3.5-flash-lite"
- },
- {
-  "p": "IA",
-  "name": "IA: modelo desligado pelo Google (como o gemini-2.0) fica de lado e usa outro",
-  "pass": true,
-  "info": "google · gemini-3.5-flash-lite > gemini-2.0-flash-lite > gemma-3-27b-it"
- },
- {
-  "p": "IA",
-  "name": "IA: com toda a cota do Google esgotada responde a IA grátis de reserva (sem esperar)",
-  "pass": true,
-  "info": "reserva"
- },
- {
-  "p": "IA",
-  "name": "IA: texto (resumos) também passa à reserva",
-  "pass": true,
-  "info": "Primeiro parágrafo do resumo da reserva.\n\nSegundo parágrafo "
- },
- {
-  "p": "IA",
-  "name": "IA: o Spyke continua a pensar e a agir com a reserva (criou a tarefa)",
-  "pass": true,
-  "info": "Criei a tarefa, chefe. | Tarefa: Tarefa criada pela reserva"
- },
- {
-  "p": "IA",
-  "name": "IA: notícia bloqueada e Google sem cota → o Spyke faz o resumo com o que os jornais publicaram (não mostra erro em inglês)",
-  "pass": true,
-  "info": "Estadão · agora Notícia bloqueada RESUMO FEITO PELO SPYKE COM O QUE 2 JORNAIS PUBLICARAM Primeiro parágrafo do resumo da reserva. Segundo parágrafo do resumo. Fontes consultadas: Estadão · O Globo Spy"
- },
- {
-  "p": "IA",
-  "name": "IA: se desligares a reserva, nada vai para fora do Google",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "IA",
-  "name": "sem erros de JavaScript (IA)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Voz",
-  "name": "Voz Gemini: o pedido leva só o texto do resumo (nenhuma instrução para ler em voz alta)",
-  "pass": true,
-  "info": "[\"Boa tarde, Ryan. Hoje é quinta-feira, 12 de novembro.\",\"A agenda está livre de compromissos com hora. Treino de hoje\"]"
- },
- {
-  "p": "Voz",
-  "name": "Voz Gemini: a língua vai na configuração da voz (pt-BR) e a voz é a mesma",
-  "pass": true,
-  "info": "{\"at\":45,\"text\":\"Boa tarde, Ryan. Hoje é quinta-feira, 12 de novembro.\",\"lang\":\"pt-BR\",\"voice\":{\"voiceName\":\"Charon\"}}"
- },
- {
-  "p": "Voz",
-  "name": "Resumo: o 1.º pedaço é só a saudação (começa a falar em segundos) e o resto é pedido logo a seguir, em paralelo",
-  "pass": true,
-  "info": "[[45,53],[46,224]]"
- },
- {
-  "p": "Voz",
-  "name": "Resumo: nada do texto se perde ao dividir em pedaços",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Voz",
-  "name": "sem erros de JavaScript (voz)",
-  "pass": true,
-  "info": ""
- },
- {
   "p": "Contas",
   "name": "Aparelho novo: abre o ecrã da conta (criar conta ou entrar) e não o código pessoal",
   "pass": true,
@@ -501,7 +15,7 @@
   "p": "Contas",
   "name": "Criar conta: mostra o código de recuperação (só uma vez)",
   "pass": true,
-  "info": "UYP9-9WA6-B2ZW-7J7D"
+  "info": "8ZVJ-A6ZP-F7E6-WR5V"
  },
  {
   "p": "Contas",
@@ -645,13 +159,13 @@
   "p": "Contas",
   "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
   "pass": true,
-  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"554d0b5bac8369046ef2ec64\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-12T16:41:04.542Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"3b2126f84bcb382ac8e37281\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-12T17:46:02.300Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
  },
  {
   "p": "Contas",
   "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
   "pass": true,
-  "info": "{\"ult\":1794501683429,\"ent\":1,\"dias\":{\"2026-11-12\":50}}"
+  "info": "{\"ult\":1794505579648,\"ent\":1,\"dias\":{\"2026-11-12\":45}}"
  },
  {
   "p": "Contas",
@@ -819,7 +333,7 @@
   "p": "Contas",
   "name": "Aceitar fica guardado na conta (versão e data) e segue para os perfis",
   "pass": true,
-  "info": "{\"still\":true,\"t\":\"2026-11-12\"}"
+  "info": "{\"still\":true,\"t\":\"2026-11-13\"}"
  },
  {
   "p": "Contas",
@@ -837,13 +351,13 @@
   "p": "Contas",
   "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
   "pass": true,
-  "info": "20261112164154-a0290c"
+  "info": "20261112174651-74d3c7"
  },
  {
   "p": "Contas",
   "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
   "pass": true,
-  "info": "{\"id\":\"20261112164154-a0290c\",\"uid\":\"1ef7714eea61f2dab7211fe8\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+  "info": "{\"id\":\"20261112174651-74d3c7\",\"uid\":\"5f511282ec8fc1e8e472fede\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
  },
  {
   "p": "Contas",
@@ -860,6 +374,690 @@
  {
   "p": "Contas",
   "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: entra como perfil de uma pessoa qualquer (não o pessoal)",
+  "pass": true,
+  "info": "{\"on\":true,\"pub\":true,\"name\":\"Marta\"}"
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: a Cozinha (despensa, lista de compras e receitas) aparece no menu",
+  "pass": true,
+  "info": "cozinha,cozinha,cozinha"
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: 178 páginas e separadores abrem com conteúdo e sem \"undefined/NaN\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: nada sai para o lado no telemóvel",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: nenhuma página mostra coisas do Ryan (nome, ISCA, Aveiro)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: nenhuma página fala do script Google (as contas não precisam dele)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: 608 botões carregados sem erros de JavaScript",
+  "pass": true,
+  "info": " :: "
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: todos os formulários de registo abrem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: sem erros na consola no fim",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Ligações (conta geral): \"A tua agenda no Calendário do iPhone e no Google\", sem falar do script",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Ligar a agenda: links para subscrever no iPhone (tudo ou um por cor) e \"Abrir no Google Calendar\"",
+  "pass": true,
+  "info": "{\"w\":[\"webcal://localhost:8781/Oceanum/api/atalho?op=ics&c=eyJhIjoiOGZjZjQ2YTNjZWViNGRjYWYxNDAyZjQ4NWE3YTE5YTlhNjA1YTllMCIsInAiOiJiMzY4ODQxMTQ0YTQiLCJuIjoiNjI0YjQ4ZmE0NTZiIn0.78biVKK2kBtn-5nfSCov0EPF\",\"webcal://localhost:8781/Oceanum/api/atalho?op=ics&c=eyJhIjoiOGZjZjQ2YTNjZWViNGRjYWYxNDAyZjQ4NWE3YT"
+ },
+ {
+  "p": "Contas públicas",
+  "name": "O link da agenda devolve um calendário (.ics) com os eventos da app e as cores",
+  "pass": true,
+  "info": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Prumo//Agenda//PT\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-WR-CALNAME:Prumo\r\nX-WR-CALDESC:A tua agenda do Prumo. Para mudar\\, altera na app.\r\nX-APPLE-CALENDAR-COLOR:#A9C8F0\r\nREFRESH-INTERVAL;VALUE=DURATION:PT1H\r\nX-PUBLISHED-TTL:PT1H\r\nBEGIN:VEVENT\r\nUID:07368780ed"
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Um calendário por cor: o de Trabalho tem a sua cor e não traz os compromissos",
+  "pass": true,
+  "info": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Prumo//Agenda//PT\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-WR-CALNAME:Prumo · Trabalho\r\nX-WR-CALDESC:A tua agenda do Prumo. Para mudar\\, altera na app.\r\nX-APPLE-C"
+ },
+ {
+  "p": "Contas públicas",
+  "name": "A chave do atalho de gastos não serve como link da agenda (e o link da agenda não regista gastos)",
+  "pass": true,
+  "info": "403"
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Spyke (conta geral): a Siri sem script, com o link do perfil (op=resumo) e sem a parte das perguntas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Resumo para a Siri: a app guarda-o no servidor e o link devolve o resumo de hoje em texto",
+  "pass": true,
+  "info": "Boa tarde, Marta. Hoje é quinta-feira, 12 de novembro. Hoje é dia de folga no trabalho. Na agenda tens 12 compromissos: "
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Escudo (conta geral): em Senhas não se copia nem seleciona o texto, e ao sair do app o ecrã fica tapado (destapa ao voltar); no Hoje não",
+  "pass": true,
+  "info": "{\"sens\":true,\"tapa\":true,\"destapa\":true,\"copia\":true,\"sel\":\"none\",\"hoje\":false}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: só a administração pode repor senhas",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"Sem acesso.\",\"code\":\"admin\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor a senha pede a senha do administrador",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"A senha não está certa.\",\"code\":\"senha\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: a própria senha não se repõe por aqui",
+  "pass": true,
+  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"A tua própria senha muda-se em Definições › Conta.\",\"code\":\"propria\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor a senha dá uma senha temporária fácil de ditar",
+  "pass": true,
+  "info": "{\"_st\":200,\"ok\":true,\"email\":\"bia697f5c08@teste.pt\",\"temporaria\":\"eyg6-37r3-pyzn\",\"gerada\":true}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: as sessões da pessoa terminam",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: a senha antiga deixa de entrar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: com a temporária entra, mas tem de escolher uma senha nova (e vê o aviso)",
+  "pass": true,
+  "info": "{\"plano\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1795737600000},\"verificar\":0,\"trocar\":true,\"avisos\":[{\"at\""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: os dados ficaram todos (perfil e documentos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "Troca obrigatória: a pessoa escolhe a sua senha e entra normalmente",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "Troca obrigatória: depois disso, \"senhaTroca\" já não serve (a senha muda-se em Definições)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: só a administração pode repor um cofre",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"Sem acesso.\",\"code\":\"admin\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor o cofre deixa-o vazio (para a pessoa criar uma senha mestra nova) e ela vê o aviso",
+  "pass": true,
+  "info": "{\"cf\":{\"_st\":200,\"ok\":true,\"email\":\"bia697f5c08@teste.pt\",\"perfis\":[\"Bia\"]},\"vv\":{\"reset\":1794505735174}}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: também dá para repor o próprio cofre",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: não dá para passar uma conta para o e-mail do administrador",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"Esse e-mail é de administrador.\",\"code\":\"admin\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: muda o e-mail da conta",
+  "pass": true,
+  "info": "{\"_st\":200,\"ok\":true,\"email\":\"bia.nova84f13616@teste.pt\",\"de\":\"bia697f5c08@teste.pt\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o e-mail antigo deixa de entrar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o novo e-mail entra com a mesma senha e tem os mesmos perfis e dados (nada se perde)",
+  "pass": true,
+  "info": "{\"plano\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1795737600000},\"verificar\":0,\"trocar\":false,\"avisos\":[{\"at"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o atalho do iPhone feito antes da mudança continua a funcionar",
+  "pass": true,
+  "info": "estado 200"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: não dá para mudar para um e-mail que já tem conta",
+  "pass": true,
+  "info": "{\"_st\":409,\"ok\":false,\"msg\":\"Já existe uma conta com esse e-mail.\",\"code\":\"existe\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "No aparelho: depois de entrar com a temporária aparece \"Escolhe uma senha nova\"",
+  "pass": true,
+  "info": "\n  \n    \n    \n    \n    \n    \n  \n  \n  \n  \n  \n    \n    \n  O sistema operativo da tua vida: dinheiro, estudos, treino, metas e o teu jogo, num só sítio.Escolhe uma senha novaA administração do Prumo repôs a senha da tua conta e entraste com uma senha temporária. Escolhe agora uma senha só tua para cont"
+ },
+ {
+  "p": "ADM",
+  "name": "No aparelho: guardada a senha nova, segue para os perfis",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: sem erros na consola",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: a aba mostra o cofre (mudar a senha mestra do próprio cofre)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: a ficha da conta tem \"Repor a senha de login\" e \"Mudar o e-mail da conta\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor no ecrã mostra a senha temporária para copiar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o botão do cofre leva às Senhas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Primeira vez numa conta: abre \"Vamos fazer o Prumo à tua medida\" (com Saltar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Abas: todas escolhidas de início, o Painel não se pode tirar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Estudos: \"Sugerir as disciplinas com IA\" preenche as disciplinas do curso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Sem a área Carreira, salta a pergunta do trabalho (e, por ser do Brasil, já em português do Brasil)",
+  "pass": true,
+  "info": "pt-BR Seu corpo"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Rotina: sem a Fé, não sugere o hábito de oração",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Fim: resume o que vai criar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Perfil: nome, país (Brasil), cidade, curso e horário",
+  "pass": true,
+  "info": "{\"name\":\"Beatriz\",\"short\":\"Bia\",\"city\":\"Belo Horizonte\",\"uni\":\"UFMG\",\"course\":\"Administração\",\"year\":\"\",\"semester\":\"1.º Semestre 26/27\",\"semStart\":\"\",\"semEnd\":\"\",\"ectsTotal\":180,\"employer\":\"\",\"jobRole"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "País: feriados do Brasil (Consciência Negra, sem o 25 de Abril), moeda BRL e voz brasileira",
+  "pass": true,
+  "info": "Consciência Negra||BRL|BR"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "IA chamada \"Luna\" (no feminino)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Universidade: as disciplinas do curso dela",
+  "pass": true,
+  "info": "5"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Treino: 3 dias (seg, qua, sex), corrida ao sábado, rotinas com os exercícios e 3×12 para perder gordura",
+  "pass": true,
+  "info": "[[\"Corpo inteiro A\",5,3,12],[\"Corpo inteiro B\",5,3,12],[\"Corpo inteiro C\",5,3,12]]"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Desportos: corrida e voleibol",
+  "pass": true,
+  "info": "corrida,voleibol"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Dieta: meta de calorias e proteína para ela (a perder gordura)",
+  "pass": true,
+  "info": "{\"k\":1840,\"p\":150}"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Hábitos: os escolhidos ativos (sem duplicar os que a conta já tinha), os outros desligados",
+  "pass": true,
+  "info": "2 blocos de foco (100 min)|Acordar à hora, sem snooze|Beber 2 litros de água|Treino ou corrida"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Metas: as 2 que escreveu",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Marcos do Dominus feitos para ela (curso, reserva, peso) e sem os de oração",
+  "pass": true,
+  "info": "{\"int\":[\"Passar a todas as cadeiras do 1.º ano\",\"Fechar o 1.º ano de Administração sem nenhuma cadeira em atraso\",\"Média do semestre igual ou acima de 7\"],\"for\":[\"Juntar 3000 reais de reserva\",\"Juntar um fundo de emergência com 3 meses de despesas\",\"Juntar 1500 até ao verão\"],\"cor\":[\"Perder 5 kg com"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Menu: sem Fé nem Carreira (escondidas), com o resto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Definições › Geral: \"O teu Prumo\" abre só as abas do menu",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Pôr a Fé de volta no menu",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Explorar: \"Pôr no menu\" devolve uma aba escondida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Responder outra vez não duplica disciplinas, rotinas, metas nem hábitos",
+  "pass": true,
+  "info": "5,3,2,4 → 5,3,2,4"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Depois de respondido, não volta a abrir sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Definições › IA: o nome dado nas perguntas aparece como resposta (sem formulário aberto), com \"Mudar o nome\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Definições › O teu Prumo: \"Rever as respostas\" (não \"Responder outra vez\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Rever as respostas: vêm preenchidas (nome, cidade e a IA \"Luna\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Rever as respostas: o corpo também (perder gordura, 3 dias, corrida e voleibol, 68 kg)",
+  "pass": true,
+  "info": "Seu corpo"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Ecrã de entrada de uma conta geral com código antigo: já mostra as 6 casinhas, com \"Tenho um código antigo, com letras\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "\"Tenho um código antigo\": troca as casinhas pelo campo de texto (aceita letras)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Código antigo numa conta geral: depois de entrar, pede o código novo de 6 números (com casinhas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Depois: o ecrã do código tem as 6 casinhas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "O código novo de 6 números abre o Prumo sozinho (sem carregar em nada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Código antigo que já era de 6 números: entra pelas casinhas e passa a valer sem pedir código novo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Depois disso já não mostra \"Tenho um código antigo\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Saltar: fecha, guarda que saltou e não muda nada",
+  "pass": true,
+  "info": "{\"d\":\"skip\",\"open\":false,\"hide\":0}"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Perfil do Ryan (ps): sem questionário",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Conta nova: 14 dias grátis do plano Completo, sem cartão",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1795737600000}"
+ },
+ {
+  "p": "Planos",
+  "name": "Os três planos com os preços em euros e reais (mensal e anual)",
+  "pass": true,
+  "info": "{\"ok\":true,\"planos\":[{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"ia\":20,\"perfis\":1,\"precos\":{\"EUR\":{\"mes\":399,\"ano\":3990},\"BRL\":{\"mes\":1490,\"ano\":14900}}},{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"ia\":1"
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado, mas sem o Stripe ligado: continua com tudo (não há como pagar ainda)",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"semCobranca\":1,\"testeAcabou\":1794505767372}"
+ },
+ {
+  "p": "Planos",
+  "name": "Com o Stripe ligado e o teste acabado: fica sem plano (a app pede para escolher)",
+  "pass": true,
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1794505767372}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: não cria perfis (402)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O teu teste grátis acabou: escolhe um plano em Planos para continuar.\",\"code\":\"plano\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: a IA do servidor responde 402 com a mensagem para escolher um plano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar: abre o pagamento do Stripe com o preço do Essencial (3,99 € por mês), a conta e o regresso ao Prumo",
+  "pass": true,
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"99d9e358ad0590fce0f8edca\",\"success_url\":\"http://localhost:8781/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8781/Oceanum/#planos\",\"allow_promotion_codes\":\"true\",\"locale\":\"pt\",\"line_items[0][quantity]\":\"1\",\"line_items[0][price_"
+ },
+ {
+  "p": "Planos",
+  "name": "Antes de pagar, \"confirmar\" não dá o plano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Ninguém usa o pagamento de outra conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Depois de pagar: plano Essencial (mensal), com a data da renovação",
+  "pass": true,
+  "info": "{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"perfis\":1,\"ia\":20,\"cobranca\":true,\"pago\":1,\"ate\":1797097767000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Essencial: só 1 perfil (o segundo pede outro plano)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O teu plano (Essencial) tem até 1 perfil. Para mais, muda de plano em Planos.\",\"code\":\"maximo\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Essencial: ler fotos com a IA pede o plano Avançado (402)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Com assinatura, não abre outra: muda-se de plano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Mudar para o Avançado anual: o Stripe recebe o novo preço (79,90 €/ano) e a conta passa a Avançado",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797097767000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Cancelar: continua até ao fim do período pago (sem renovar)",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"cancelar\":1,\"ate\":1797097767000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Retomar a assinatura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Gerir pagamento e faturas: abre o portal do Stripe",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Administração: tem sempre tudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Administração oferece o Completo por 30 dias (a pessoa vê o aviso)",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797097767890}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: a lista de contas mostra o plano de cada uma",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797097767890}"
+ },
+ {
+  "p": "Planos",
+  "name": "Página Planos: o teu plano (Avançado), os 3 planos com preço (7,99 € por mês) e \"Subir para o Completo\"",
+  "pass": true,
+  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano Avançado Plano Avançado (anual). Renova a 12 de dezembro de 2026. Gerir pagamento e faturas Cancelar a assinatura Mensal Anual · 2 meses grátis € euro R$ real Essencial 3,99 € /mês Tarefas, hábitos, rotina po"
+ },
+ {
+  "p": "Planos",
+  "name": "Página Planos: no anual mostra o preço do ano (79,90 €) e quanto dá por mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: os Relatórios (impostos) têm cadeado e levam aos planos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: a Universidade abre (sem cadeado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado e sem plano: as páginas mostram \"Escolhe o teu plano\" com os planos (os dados ficam)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "E-mail",
+  "name": "Registo: envia um código de 6 números para o e-mail e a conta fica por confirmar",
+  "pass": true,
+  "info": "{\"v\":1,\"c1\":\"348053\"}"
+ },
+ {
+  "p": "E-mail",
+  "name": "Por confirmar: não cria perfis nem usa o resto (403)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Confirma primeiro o teu e-mail com o código que te enviámos.\",\"code\":\"verificar\",\"_st\":403}"
+ },
+ {
+  "p": "E-mail",
+  "name": "Enviar outro código: só depois de um minuto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "E-mail",
+  "name": "Código errado: recusado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "E-mail",
+  "name": "Código certo: conta confirmada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "E-mail",
+  "name": "Depois de confirmar: cria o perfil normalmente",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "E-mail",
+  "name": "Contas de teste (@nautilo.test) não precisam de confirmar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "E-mail",
+  "name": "App: depois de criar a conta aparece \"Confirma o teu e-mail\" com as 6 casinhas e o e-mail certo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "E-mail",
+  "name": "App: com o código certo (entra sozinho ao 6.º número) segue para o código de recuperação",
   "pass": true,
   "info": ""
  }
