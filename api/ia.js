@@ -72,6 +72,19 @@ module.exports = N.handler(async (req, res) => {
     if (!akey()) return N.send(res, 501, { type: 'error', error: { type: 'not_found_error', message: 'O Claude não está ligado neste servidor.' } });
     if (N.limit(req, 'cl|' + t.u, 20, 60e3) || perDay(t.u, CL_DIA, 'c|')) return N.send(res, 429, { type: 'error', error: { type: 'rate_limit_error', message: 'Chegaste ao limite de conversas com o Claude por hoje. A IA do Google continua a responder.' } });
     const o = await claude(req, await N.body(req)); res.statusCode = o.status; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.setHeader('Cache-Control', 'no-store'); return res.end(o.txt); }
+  // v3.18: a IA de reserva pelo servidor (no aparelho a ligação direta podia falhar com "Failed to fetch"); formato OpenAI, como a app já usa
+  if (p === 'livre') { if (req.method !== 'POST') return gErr(res, 405, 'Só POST.');
+    if (N.limit(req, 'ia|' + t.u, POR_MIN, 60e3) || perDay(t.u)) return gErr(res, 429, 'Limite de IA por minuto/dia atingido (quota per day). Tenta daqui a pouco.');
+    const b = await N.body(req), msgs = Array.isArray(b.messages) ? b.messages.filter(m => m && typeof m === 'object').slice(-60) : [];
+    if (!msgs.length) return gErr(res, 400, 'Sem mensagens.');
+    const body = Object.assign({ model: 'openai', messages: msgs, temperature: typeof b.temperature === 'number' ? Math.max(0, Math.min(1.5, b.temperature)) : .3, private: true, referrer: 'nautilo' }, Array.isArray(b.tools) ? { tools: b.tools.slice(0, 64) } : {}, b.json ? { response_format: { type: 'json_object' } } : {});
+    const raw = JSON.stringify(body); if (raw.length > 2e6) return gErr(res, 413, 'Pedido grande demais para a IA de reserva.');
+    let last = ''; for (let i = 0; i < 2; i++) { const ac = new AbortController(), to = setTimeout(() => ac.abort(), 85e3);
+      try { const r = await fetch(FREE(), { method: 'POST', headers: { 'content-type': 'application/json' }, body: raw, signal: ac.signal }); const txt = await r.text();
+        if (r.ok && /"choices"/.test(txt)) { res.statusCode = 200; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.setHeader('Cache-Control', 'no-store'); return res.end(txt); }
+        last = 'erro ' + r.status; if (r.status < 500 && r.status !== 429) break; }
+      catch (e) { last = e.name === 'AbortError' ? 'demorou demasiado' : 'sem resposta'; } finally { clearTimeout(to); } }
+    return gErr(res, 502, 'A IA de reserva não respondeu (' + last + ').'); }
   if (!OKP.test(p)) return gErr(res, 400, 'Pedido de IA desconhecido.');
   if (N.limit(req, 'ia|' + t.u, POR_MIN, 60e3) || perDay(t.u)) return gErr(res, 429, 'Limite de IA por minuto/dia atingido (quota per day). Tenta daqui a pouco.');
   const k = gkey();
