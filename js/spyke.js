@@ -127,7 +127,7 @@ const unlock = () => { if (unlocked) return; unlocked = true; outSession();
   try { const c = ac(); c && c.state !== 'running' && c.resume().catch(() => { }); } catch (e) { } };
 ['touchend', 'click', 'keydown'].forEach(ev => document.addEventListener(ev, unlock, { capture: true, passive: true }));
 /* ---------- motores de voz: ElevenLabs (mais humana) → Gemini (IA, grátis com a tua chave) → voz do aparelho ---------- */
-const TTS = ['gemini-2.5-flash-preview-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-flash-tts', 'gemini-2.5-pro-preview-tts'];
+const TTS = ['gemini-3.8-flash-tts', 'gemini-3.1-flash-tts-preview', 'gemini-3.8-flash-lite-tts', 'gemini-2.5-flash-preview-tts', 'gemini-2.5-flash-tts', 'gemini-2.5-pro-preview-tts'];
 const cache = new Map(); const remember = (k, v) => { cache.set(k, v); if (cache.size > 24) { const [ok, ov] = cache.entries().next().value; cache.delete(ok); try { URL.revokeObjectURL(ov.url); } catch (e) { } } return v; };
 // envelope de volume (para a esfera mexer ao ritmo da voz)
 const envPCM = (bin, rate) => { const step = Math.round(rate * .04), n = bin.length >> 1, out = []; let mx = 1e-6;

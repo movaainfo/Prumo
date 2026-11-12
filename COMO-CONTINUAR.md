@@ -268,3 +268,10 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 ### 3.17: casinhas sempre no ecrã de entrada (contas gerais)
 - `OS.Lock.pinMode()` = conta geral (sempre as casinhas, salvo `lkOld`); `OS.Lock.pinSet()` = já tem o código de 6 números. Sem `pinSet`, aparece `#lkOld` ("Tenho um código antigo") que troca pelo campo de texto; depois de entrar com letras, `offerPin`. Um código antigo de 6 números passa a `security.pin = 6` sozinho.
 - Testes: `boasvindas` (código antigo → casinhas, `#lkOld`, código antigo numérico) e o `unlock()` dos testes toca em `#lkOld` quando o código não é numérico.
+
+### 3.18: IA mais firme (modelos do Google mudaram)
+- Teste real (12/11/2026, chave do projeto): 2.5-* desligados (404); `gemini-flash-latest`, 3.8 e 3.7-flash sobrecarregados (503 depois de 6–27 s); pro, 4-argon/carbon e omni sem cota no plano grátis; funcionam 3.5-flash, 3-flash-preview, flash-lite-latest, 3.1-flash-lite. Voz: 3.8-flash-tts e 3.1-flash-tts-preview.
+- `js/bioai.js`: `AI.good(m)` (o `fetch` regista cada modelo que respondeu 200) e `AI.models()` põe à frente os que responderam nas últimas 24 h; `AI.markLimit` com sobrecarga/lento = 10 min; 503/504 diretos também bloqueiam (AI.json, AI.text, brain `gemCall`).
+- Reserva: numa conta, `AI.free` vai primeiro a `api/ia?p=livre` (formato OpenAI, limites por pessoa) e só depois direto à Pollinations.
+- Mensagem final: só mostra o erro técnico se disser o que fazer (ex.: fotos sem a IA do Google); o resto é "A IA está ocupada agora…".
+- Testes: `contas` (reserva pelo servidor, ordem dos modelos), `ia`, `voz`.

@@ -19,11 +19,12 @@ AI.gkey = () => AI.own() || (AI.srv() && AI.srvGoogle() ? SRV : '');
 AI.viaSrv = () => !AI.own() && AI.srv();
 { const of = window.fetch && window.fetch.bind(window);
   if (of) window.fetch = (u, o) => { const s = typeof u === 'string' ? u : (u && u.url) || '';
+    const mm = s.startsWith(GURL) && s.match(/models\/([A-Za-z0-9._-]+):generateContent/), track = p => mm ? p.then(r => { if (r && r.ok) AI.good(mm[1]); return r; }) : p;
     if (s.startsWith(GURL) && s.includes('key=' + SRV)) { const path = s.slice(GURL.length).replace(/([?&])key=[^&]*&?/, '$1').replace(/[?&]$/, ''), h = Object.assign({}, (o && o.headers) || {}, { authorization: 'Bearer ' + OS.Acc.token() });
-      return of(new URL('api/ia?p=' + encodeURIComponent(path), document.baseURI).href, Object.assign({}, o || {}, { headers: h }, o && typeof o.body === 'string' && OS.aiN ? { body: OS.aiN(o.body) } : {})); }
+      return track(of(new URL('api/ia?p=' + encodeURIComponent(path), document.baseURI).href, Object.assign({}, o || {}, { headers: h }, o && typeof o.body === 'string' && OS.aiN ? { body: OS.aiN(o.body) } : {}))); }
     // os pedidos à IA levam o nome que a pessoa deu à sua IA
     if (o && typeof o.body === 'string' && OS.aiN && /generativelanguage|pollinations|anthropic|api\/ia/.test(s)) o = Object.assign({}, o, { body: OS.aiN(o.body) });
-    return of(u, o); }; }
+    return track(of(u, o)); }; }
 OS.on('ready', () => { if (!AI.srv()) return; const c = U.ls.get('os2iaSrv', null); if (c && 'cl' in c && Date.now() - c.at < 2 * 36e5) return;
   fetch(new URL('api/ia?p=estado', document.baseURI).href).then(r => r.json()).then(j => { U.ls.set('os2iaSrv', { g: !!j.google, cl: !!j.claude, stt: j.stt || '', mod: j.modelo || '', at: Date.now() }); }).catch(() => { }); });
 AI.srvClaude = () => AI.srv() && !!(U.ls.get('os2iaSrv', {}) || {}).cl;
@@ -82,11 +83,15 @@ AI.discover = async force => { const k = AI.key(); if (!k) return MODELS; const 
     if (names.length) { MODELS = [...new Set(names)].sort((x, y) => rank(x) - rank(y)).slice(0, 16); U.ls.set(MK, { k: k.slice(-6), at: Date.now(), m: MODELS }); } } catch (e) { }
   return MODELS; };
 AI.blocked = m => { const q = U.ls.get(QK, {}) || {}, x = q[m]; return !!x && (x.dead ? x.dead > Date.now() : x.d ? x.d === ptDay() : x.until > Date.now()); };
-AI.markLimit = (m, msg) => { const q = U.ls.get(QK, {}) || {}; q[m] = /per ?day|perday|daily|diári|billing/i.test(msg || '') ? { d: ptDay() } : { until: Date.now() + 65000 }; U.ls.set(QK, q); };
+AI.markLimit = (m, msg) => { const q = U.ls.get(QK, {}) || {}; q[m] = /per ?day|perday|daily|diári|billing/i.test(msg || '') ? { d: ptDay() } : { until: Date.now() + (/sobrecarregad|overload|unavailable|demasiado lento|high demand/i.test(msg || '') ? 10 * 6e4 : 65000) }; U.ls.set(QK, q); };
+// v3.18: o modelo que respondeu bem fica à frente (os mais novos do Google às vezes estão sobrecarregados e demoram a falhar)
+const GK = 'os2aiGood';
+AI.good = m => { if (!m) return; const g = U.ls.get(GK, {}) || {}; g[m] = Date.now(); U.ls.set(GK, g); };
 // modelo desligado pelo Google ("no longer available", "not found"): fica de lado 7 dias e a lista é pedida outra vez
 AI.markDead = m => { const q = U.ls.get(QK, {}) || {}; q[m] = { dead: Date.now() + 7 * 864e5 }; U.ls.set(QK, q); U.ls.del(MK); };
 AI.isDead = (status, msg) => status === 404 || (status === 400 && /no longer available|is not found|not supported for generateContent|deprecated|has been shut ?down/i.test(msg || ''));
-AI.models = list => (list || MODELS).filter(m => !AI.blocked(m));
+AI.models = list => { const L = (list || MODELS).filter(m => !AI.blocked(m)), g = U.ls.get(GK, {}) || {}, ok = m => (g[m] || 0) > Date.now() - 24 * 36e5;
+  return L.filter(ok).sort((a, b) => g[b] - g[a]).concat(L.filter(m => !ok(m))); };
 AI.gemini = () => AI.models(MODELS).filter(m => !/^gemma/.test(m));
 // v2.96: análises a fundo (planos, currículo, mentor…) tentam primeiro os modelos "pro" do Google (pensam mais; o Vercel Pro dá-lhes tempo). Se a cota "pro" acabar, seguem os rápidos como sempre.
 AI.order = (list, deep) => { if (!deep) return list; const pro = list.filter(m => /pro/.test(m) && !/^gemma/.test(m)).slice(0, 2); return pro.concat(list.filter(m => !pro.includes(m))); };
@@ -94,8 +99,15 @@ AI.deep = q => { const s = String(q || ''); return s.length > 260 || /analis|an�
 AI.limitMsg = 'A cota grátis dos modelos do Google acabou por hoje e a IA de reserva não respondeu. Tenta daqui a um minuto.';
 // IA grátis de reserva: sem chave e sem limite diário (modelo aberto GPT-OSS na Pollinations). Desliga-se em Definições da IA (freeAI = false).
 AI.freeOn = () => OS.one('diet').freeAI !== false;
+const freeSrv = async (messages, o) => { const ac = window.AbortController ? new AbortController() : null, to = ac && setTimeout(() => ac.abort(), 95000);
+  try { const r = await fetch(new URL('api/ia?p=livre', document.baseURI).href, { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + OS.Acc.token() }, signal: ac ? ac.signal : undefined,
+      body: JSON.stringify(Object.assign({ messages, temperature: o.temp == null ? .3 : o.temp }, o.tools ? { tools: o.tools } : {}, o.json ? { json: 1 } : {})) });
+    const j = await r.json().catch(() => ({})); if (r.ok && j.choices && j.choices[0]) { AI.lastEngine = 'reserva'; return j.choices[0].message || {}; }
+    throw new Error((j.error && (j.error.message || j.error)) || 'erro ' + r.status); }
+  catch (e) { throw new Error(e.name === 'AbortError' ? 'demorou demasiado' : e.message || 'sem rede'); } finally { to && clearTimeout(to); } };
 AI.free = async (messages, o = {}) => { if (!AI.freeOn()) throw new Error('A IA de reserva está desligada.');
-  let last = ''; for (let i = 0; i < 3; i++) { const ac = window.AbortController ? new AbortController() : null, to = ac && setTimeout(() => ac.abort(), 45000);
+  let last = ''; if (AI.srv()) { try { return await freeSrv(messages, o); } catch (e) { last = e.message; } }
+  for (let i = 0; i < 3; i++) { const ac = window.AbortController ? new AbortController() : null, to = ac && setTimeout(() => ac.abort(), 45000);
     try { const r = await fetch('https://text.pollinations.ai/openai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ac ? ac.signal : undefined, credentials: 'omit', referrerPolicy: 'no-referrer',
         body: JSON.stringify(Object.assign({ model: 'openai', messages, temperature: o.temp == null ? .3 : o.temp, private: true, referrer: 'nautilo' }, o.tools ? { tools: o.tools } : {}, o.json ? { response_format: { type: 'json_object' } } : {})) });
       const j = await r.json().catch(() => ({})); if (r.ok && j.choices && j.choices[0]) { AI.lastEngine = 'reserva'; return j.choices[0].message || {}; }
@@ -110,17 +122,20 @@ AI.json = async (parts, temp = .2, o = {}) => { const key = AI.key(); if (!key) 
   for (const m of list) { const gemma = /^gemma/.test(m); try { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: gemma ? parts.concat([{ text: '\nResponde APENAS com o JSON pedido, sem texto à volta.' }]) : parts }], generationConfig: gemma ? { temperature: temp } : { responseMimeType: 'application/json', temperature: temp } }) });
       const j = await r.json().catch(() => ({})), msg = (j.error && j.error.message) || '';
       if (!r.ok) { if (/API key not valid|API_KEY_INVALID/i.test(msg)) throw Object.assign(new Error('A chave da IA não é válida. Volta a copiá-la em aistudio.google.com/apikey.'), { fatal: 1 });
-        if (r.status === 429) { AI.markLimit(m, msg); limited++; last = 'limite'; continue; } if (AI.isDead(r.status, msg)) { AI.markDead(m); last = 'modelo desligado'; continue; } last = msg || 'erro ' + r.status; continue; }
+        if (r.status === 429) { AI.markLimit(m, msg); limited++; last = 'limite'; continue; } if (r.status === 503 || r.status === 504) { AI.markLimit(m, 'overloaded'); last = 'sobrecarregado'; continue; } if (AI.isDead(r.status, msg)) { AI.markDead(m); last = 'modelo desligado'; continue; } last = msg || 'erro ' + r.status; continue; }
       const txt = ((((j.candidates || [])[0] || {}).content || {}).parts || []).map(p => p.text || '').join('').replace(/```(?:json)?/g, '').trim();
       try { AI.lastEngine = m; return JSON.parse(txt); } catch (e) { const mm = txt.match(/[\[{][\s\S]*[\]}]/); if (mm) return JSON.parse(mm[0]); throw e; } }
     catch (e) { if (e.fatal) throw e; last = e.message; } }
   // o Google não deu: IA grátis de reserva (só texto; fotos e PDFs precisam do Google)
   if (AI.freeOn() && !parts.some(p => p.inline_data)) { try { return await freeJSON(parts, temp); } catch (e) { last = e.message; } }
   if (limited && !AI.models().length) throw Object.assign(new Error(AI.limitMsg), { fatal: 1 });
-  throw new Error('A IA não respondeu (' + last + '). Verifica a internet e tenta de novo.'); };
+  if (!navigator.onLine) throw new Error('Sem internet: a IA volta quando houver ligação.');
+  // erro que diz o que fazer (ex.: fotos sem a IA do Google): mostra-o; o resto (limites, sobrecarga, rede) fica numa frase simples
+  if (last && !/^(limite|sobrecarregado|modelo desligado)$|IA de reserva|failed to fetch|load failed|networkerror|sem rede|demorou|erro 5\d\d|overload|unavailable/i.test(last)) throw new Error('A IA não respondeu (' + last + ').');
+  throw new Error('A IA está ocupada agora (os modelos do Google estão sobrecarregados e a reserva não respondeu). Tenta daqui a um minuto.'); };
 // texto simples (resumos, explicações): Google primeiro, reserva grátis depois
 AI.text = async (prompt, o = {}) => { const key = AI.key(); if (key) { await AI.discover(); for (const m of AI.order(AI.models(), o.deep)) { try { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: (o.system ? o.system + '\n\n' : '') + prompt }] }], generationConfig: { temperature: o.temp == null ? .4 : o.temp } }) });
-      const j = await r.json().catch(() => ({})), msg = (j.error && j.error.message) || ''; if (!r.ok) { if (r.status === 429) AI.markLimit(m, msg); else if (AI.isDead(r.status, msg)) AI.markDead(m); continue; }
+      const j = await r.json().catch(() => ({})), msg = (j.error && j.error.message) || ''; if (!r.ok) { if (r.status === 429) AI.markLimit(m, msg); else if (r.status === 503 || r.status === 504) AI.markLimit(m, 'overloaded'); else if (AI.isDead(r.status, msg)) AI.markDead(m); continue; }
       const t = ((((j.candidates || [])[0] || {}).content || {}).parts || []).map(p => p.text || '').join('').trim(); if (t) { AI.lastEngine = m; return t; } } catch (e) { } } }
   const m = await AI.free([o.system ? { role: 'system', content: o.system } : null, { role: 'user', content: prompt }].filter(Boolean), { temp: o.temp }); return String(m.content || '').trim(); };
 OS.on('ready', () => { if (AI.key()) setTimeout(() => AI.discover(), 5000); });
