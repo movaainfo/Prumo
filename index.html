@@ -3556,6 +3556,76 @@ svg.ig-ch .i{fill:var(--accent);opacity:.55}svg.ig-ch .g{fill:var(--pos,#4ade80)
 .ig-foot{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
 .ig-disc{font-size:12.5px;line-height:1.5}
 @media (max-width:760px){.ig-hero{grid-template-columns:minmax(0,1fr)}.ig-simf{grid-template-columns:repeat(2,minmax(0,1fr))}.ig-simr{grid-template-columns:repeat(2,minmax(0,1fr))}.ig-emg{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.ig-tri{grid-template-columns:minmax(0,1fr)}.ig-al div{grid-template-columns:130px minmax(0,1fr) 40px}}
+/* v3.12 · Calculadora flutuante (js/calc.js): básica, financeira RPN (como a HP 12C) e gráfica */
+#calcFab{position:fixed;right:22px;bottom:calc(136px + env(safe-area-inset-bottom,0px));z-index:61;width:42px;height:42px;border-radius:50%;border:1px solid var(--line2);background:var(--pn,#111A26);color:var(--accent2);box-shadow:0 8px 20px rgba(0,0,0,.4);cursor:pointer;display:grid;place-items:center}
+#calcFab .ic{width:20px;height:20px}#calcFab:hover{border-color:var(--accent)}#calcFab[hidden],html.jv-open #calcFab,html.cl-open #calcFab{display:none}
+#calc{position:fixed;right:20px;bottom:20px;z-index:80;width:392px;max-width:calc(100vw - 24px);max-height:calc(100vh - 40px);overflow:auto;border-radius:16px;border:1px solid var(--line2);background:var(--bg2,#0B121B);box-shadow:0 24px 60px rgba(0,0,0,.55);color:var(--tx);overscroll-behavior:contain}
+#calc[hidden]{display:none}
+.cl-h{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:10px 10px 8px 14px;background:var(--bg2,#0B121B);border-bottom:1px solid var(--line);cursor:move;user-select:none}
+.cl-h>b{display:flex;align-items:center;gap:6px;font-size:14px}.cl-h>b .ic{width:16px;height:16px;color:var(--accent)}
+.cl-tabs{display:flex;gap:2px;margin-left:auto;background:rgba(255,255,255,.04);border-radius:9px;padding:2px}.cl-tabs button{border:0;background:none;color:var(--mut);font:inherit;font-size:12.5px;padding:5px 9px;border-radius:7px;cursor:pointer}.cl-tabs button.on{background:var(--accent);color:var(--ink,#04131B)}
+.cl-body{padding:12px}
+.cl-disp{border-radius:12px;background:linear-gradient(180deg,#1C2A22,#14201A);border:1px solid rgba(160,200,170,.18);padding:10px 12px;margin-bottom:10px;color:#D8EAD8}
+.cl-stk{display:flex;justify-content:flex-end;gap:12px;font:12px var(--mono);color:rgba(216,234,216,.55)}.cl-stk b{color:rgba(216,234,216,.8);font-weight:500}
+.cl-x{font-size:34px;text-align:right;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.02em}
+.cl-st{display:flex;flex-wrap:wrap;gap:8px;min-height:18px;font:11px var(--mono);color:rgba(216,234,216,.6)}.cl-st .on{color:#F2B544}.cl-st .t{color:#9EE6B8}.cl-st .neg{color:#FCA5A5;font-family:inherit}
+.cl-regs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:10px}.cl-regs span{display:flex;flex-direction:column;align-items:center;padding:4px 2px;border-radius:8px;background:rgba(255,255,255,.03);min-width:0}.cl-regs small{font-size:10.5px;color:var(--mut)}.cl-regs b{font-size:11.5px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-keys{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.cl-k{height:44px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--tx);font:600 14.5px/1 inherit;font-family:inherit;cursor:pointer;touch-action:manipulation}
+.cl-k:active{transform:translateY(1px);filter:brightness(1.2)}
+.cl-k.d{background:rgba(255,255,255,.09);font-size:18px}.cl-k.op{background:var(--accentBg);color:var(--accent2)}.cl-k.tvm{background:rgba(242,181,68,.14);color:#F5CD7E;border-color:rgba(242,181,68,.3)}.cl-k.f{font-size:12.5px;color:#9FD3F5}
+.cl-k.ent{background:var(--accent);color:var(--ink,#04131B);font-size:12.5px}.cl-k.eq{background:var(--accent);color:var(--ink,#04131B);font-size:20px}
+.cl-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 0}.cl-row small{font-size:11.5px}
+.cl-disp.b{background:rgba(255,255,255,.03);border-color:var(--line);color:var(--tx)}
+.cl-hist{display:flex;flex-direction:column;gap:2px;margin-bottom:4px}.cl-hist button{display:flex;justify-content:space-between;gap:8px;border:0;background:none;color:var(--mut);font:12.5px var(--mono);cursor:pointer;padding:1px 0;text-align:left}.cl-hist button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-in{width:100%;border:0;background:none;color:var(--tx);font:500 24px var(--mono);text-align:right;outline:none;padding:2px 0}
+.cl-res{text-align:right;font:15px var(--mono);color:var(--accent2);min-height:20px}.cl-res .neg{color:#FCA5A5;font-family:inherit;font-size:13px}
+.cl-help{margin-top:10px;font-size:13px;line-height:1.5;border-top:1px solid var(--line);padding-top:8px}.cl-help p{margin:0 0 6px}
+.cl-am{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}.cl-amf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.cl-amf label{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--mut)}.cl-amf label:last-child{grid-column:1/-1}
+.cl-am p{font-size:12.5px;margin:8px 0}.cl-amt{max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:10px}.cl-amt table{width:100%;border-collapse:collapse;font:11.5px var(--mono)}.cl-amt th,.cl-amt td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line)}.cl-amt th{position:sticky;top:0;background:var(--bg2,#0B121B);font-family:inherit;color:var(--mut);font-weight:500}
+.cl-fns{display:flex;flex-direction:column;gap:6px}.cl-fns label{display:grid;grid-template-columns:52px minmax(0,1fr);gap:6px;align-items:center}.cl-fns span{font:600 13px var(--mono);color:var(--c)}.cl-fns .field{border-left:3px solid var(--c)}
+.cl-gw{position:relative;margin-top:10px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}#clCv{display:block;width:100%;height:270px;touch-action:none;cursor:crosshair}
+.cl-gz{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:4px}.cl-gz button{width:32px;height:32px;border-radius:9px;border:1px solid var(--line2);background:rgba(8,20,32,.85);color:var(--tx);font:600 16px var(--mono);cursor:pointer}
+.cl-tr{font:12.5px var(--mono);margin-top:8px;min-height:18px}.cl-gn{font-size:11.5px;margin:6px 0 0}
+@media (max-width:700px){#calc{left:0;right:0;bottom:0;width:100%;max-width:none;max-height:90vh;border-radius:18px 18px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}.cl-h{cursor:default}.cl-k{height:48px}.cl-x{font-size:30px}}
+
+/* ---------- v3.12 · Finanças › Banco (importar extrato e ligação automática) ---------- */
+.bnk-lead{margin:0 0 12px;font-size:13.5px;color:var(--tx2);max-width:72ch;line-height:1.55}
+.bnk-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:112px;border:1.5px dashed var(--line3);border-radius:12px;cursor:pointer;text-align:center;padding:16px;transition:border-color .15s,background-color .15s}
+.bnk-drop .ic{width:26px;height:26px;color:var(--accent)}.bnk-drop b{font-size:14.5px;color:var(--tx)}.bnk-drop small{font-size:12px}
+.bnk-drop:hover,.bnk-drop.on,.bnk-drop:focus-visible{border-color:var(--accent);background-color:var(--pn2);outline:none}
+.bnk-prev{margin-top:14px;border:1px solid var(--line2);border-radius:12px;padding:14px;background-color:var(--pn2)}
+.bnk-ph{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}.bnk-ph b{display:block;font-size:14px;word-break:break-all}.bnk-ph small{font-size:12px}
+.bnk-prev .bnk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 10px}
+.bnk-col{display:flex;flex-direction:column;gap:4px;min-width:0}.bnk-col.wide{grid-column:span 2}.bnk-col span{font-size:11.5px;color:var(--mut)}
+.bnk-col select,.bnk-col input,.bnk-add select{width:100%;background-color:var(--bg);border:1px solid var(--line2);border-radius:8px;padding:8px 28px 8px 10px;font-size:13.5px;min-width:0;color:var(--tx)}
+.bnk-new{padding:10px;border-radius:10px;border:1px dashed var(--line2)}
+.bnk-map{margin:0 0 10px}.bnk-map summary{cursor:pointer;font-size:13px;color:var(--tx2);padding:4px 0}.bnk-map summary .mut{font-size:12px}.bnk-map .bnk-grid{margin-top:8px}
+.bnk-opts{display:flex;flex-direction:column;gap:6px;margin:4px 0 10px}
+.bnk-chk{display:flex;align-items:center;gap:9px;background:none;border:0;padding:4px 0;color:var(--tx2);font-size:13px;text-align:left;cursor:pointer;line-height:1.4}
+.bnk-chk i{flex:0 0 auto;width:32px;height:18px;border-radius:10px;background-color:var(--line2);position:relative;transition:background-color .15s}
+.bnk-chk i::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background-color:var(--tx);transition:transform .15s}
+.bnk-chk.on i{background-color:var(--accent)}.bnk-chk.on i::after{transform:translateX(14px);background-color:var(--ink,#0B1522)}
+.bnk-chk>span{flex:1;min-width:0}.bnk-chk small{font-size:12px}.bnk-m{display:none}
+.bnk-sum{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--tx2);margin:6px 0 10px}.bnk-sum b{color:var(--tx)}.bnk-sum span{font-variant-numeric:tabular-nums}
+.bnk-tbl{max-height:320px;overflow:auto}.bnk-tbl td{vertical-align:top}.bnk-tbl td:nth-child(2){min-width:180px;white-space:normal;overflow-wrap:anywhere}
+.bnk-dim td{opacity:.55}
+.bnk-ok{display:flex;gap:10px;align-items:flex-start;margin-top:14px;border-left-color:var(--pos)}.bnk-ok .ic{color:var(--pos);flex:0 0 auto;width:18px;height:18px}.bnk-ok span{flex:1}
+.bnk-err{margin-top:14px;border-left-color:var(--neg)}
+.bnk-tips{margin:0;padding-left:18px;font-size:13px;line-height:1.55;color:var(--tx2)}.bnk-tips li{margin:3px 0}
+.bnk-st{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;color:var(--tx2);margin-bottom:10px}
+.bnk-provs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px}
+.bnk-prov{border:1px solid var(--line2);border-radius:12px;padding:12px 14px;background-color:var(--pn2);min-width:0}
+.bnk-provh{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}.bnk-provh b{font-size:14px}.bnk-provh small{font-size:12px}
+.bnk-steps{font-size:12.5px}.bnk-steps code,.bnk-prov code{font-family:var(--mono);font-size:11.5px;background-color:var(--bg);padding:1px 5px;border-radius:5px;word-break:break-all}
+.bnk-add{margin:8px 0 4px;flex-wrap:nowrap}.bnk-add .field,.bnk-add select{flex:1;min-width:0}.bnk-add .btn{flex:0 0 auto}
+.bnk-hint{font-size:12px;margin:6px 0 0;line-height:1.5}
+.bnk-accs h4{margin:4px 0 8px;font-size:13px;color:var(--tx2);font-weight:600}
+.bnk-acc{display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,240px);gap:6px 12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.bnk-acct b{display:block;font-size:13.5px}.bnk-acct small{font-size:12px}
+.bnk-acc select{width:100%;background-color:var(--bg);border:1px solid var(--line2);border-radius:8px;padding:7px 28px 7px 10px;font-size:13px;color:var(--tx)}
+.bnk-diff{grid-column:1/-1;display:flex;gap:10px;align-items:center;font-size:12.5px}
+@media (max-width:640px){.bnk-c3,.bnk-c5{display:none}.bnk-m{display:block;font-size:11.5px;color:var(--mut);margin-top:2px}.bnk-tbl td,.bnk-tbl th{padding-left:8px;padding-right:8px}.bnk-tbl td:nth-child(2){min-width:0}.bnk-tbl td.mono{white-space:nowrap;font-size:12px}.bnk-col.wide{grid-column:auto}.bnk-acc{grid-template-columns:1fr}.bnk-prev{padding:12px 10px}.bnk-add{flex-wrap:wrap}}
 
 </style>
 <style>
@@ -5303,7 +5373,7 @@ html.intro-after #splash .sp-foot{animation:inFade .8s ease-out .35s both}
 
 </style>
 <style>[hidden]{display:none!important}</style>
-<script>window.OCEANUM_VERSION={"v": "3.11", "date": "11/11/2026", "notes": ["Investimentos › Aprender a investir: um guia completo para quem nunca investiu, em 11 capítulos (a base e o fundo de emergência, inflação e juros compostos, risco e liquidez, todos os produtos um a um, diversificar, custos, impostos, proteções, passo a passo, erros comuns e glossário). Tem simulador de juros compostos, o fundo de emergência calculado com as tuas despesas reais e um teste de perfil de risco. As regras de Portugal e do Brasil estão separadas e foram confirmadas em novembro de 2026.", "Eu › Cozinha: a despensa, a lista de compras e as receitas num só lugar. Na despensa marcas o que tens em casa (onde está, quanto, o mínimo e a validade). O que acaba ou está a acabar entra sozinho na lista de compras, o que compras entra na despensa e o que já tens sai da lista do mês. Nas receitas vês as que dá para fazer já com o que tens (e as que só falta 1 ou 2 coisas, que juntas à lista num toque), e a IA inventa outras com a tua despensa.", "Mundo: as cidades, estados e lugares dentro de cada país e ilha. Toca num país › \"Cidades, estados e lugares\": abre a página do país com os estados, províncias ou regiões para marcar (✓ conheço, ♥ quero conhecer), um mini-mapa onde eles se acendem e as cidades, vilas, praias e outros lugares, com sugestões das cidades desse país enquanto escreves. Marcar uma cidade marca também o estado dela. Na página Mundo há um resumo por país, e cada lugar conhecido dá XP de Mente no Dominus.", "Dominus com cara de jogo: cada separador é um ecrã. A ficha do herói com brasão do nível e atributos em anéis; a batalha contra o monstro do dia em cena grande, com corações de vida e as missões em cartas; a arena do chefe com barra de vida de jogo de luta; as masmorras como portas, com a que exploras em grande; a sala dos troféus com medalhas de bronze, prata, ouro, platina e diamante; a sala do tesouro com o baú em pixel art e o inventário; a estrada dos marcos; e a crónica do diário. No telemóvel, um menu de jogo (o ecrã atual com setas e ícones) no lugar da grelha de botões.", "Entrevista (Eu): cada resposta volta todos os anos. A partir de 1 de janeiro, o teu eu desse ano relê o que respondeste e confirma (\"Ainda faz sentido\") ou escreve a resposta nova; as dos anos anteriores ficam guardadas para veres como mudaste. A primeira revisão abre a 1 de janeiro de 2027, com aviso na Visão Geral até estar feita.", "Futebol: a IA diz como acha que o jogo vai acabar. O placar previsto aparece em grande na análise (ex.: Flamengo 2 × 0 Palmeiras), no placar do jogo e nos cartões dos próximos jogos. Ao vivo, o palpite nunca fica abaixo do resultado atual; se a IA não der um placar, o Prumo calcula o mais provável com as probabilidades dela.", "Futebol: fotos dos jogadores no plantel, nas escalações e nos jogadores-chave (da ESPN e da Wikipédia; sem foto fica o número). Corrigido: o jogo não abria quando havia uma análise da IA guardada pela versão anterior. A análise do jogo já não falha quando a cota grátis da IA acaba: tenta a IA do Google com pesquisa, depois sem pesquisa ou a IA de reserva, e, se nenhuma responder, o Prumo faz a análise com os números (odds ou tabela, forma, confronto direto, escalações), com palpite de resultado.", "Futebol mais completo: em cada jogo, as escalações num mini-campo (titulares, esquema, suplentes, quem entrou e o treinador), oficiais quando saem e, antes disso, as prováveis pelos titulares dos últimos jogos. Toca numa equipa para veres o plantel inteiro por posições, com números, idade, golos e lesionados, e pede à IA o treinador, os lesionados e os castigados. A análise da IA pesquisa as notícias do jogo e dá o palpite de resultado, os jogadores-chave e as escalações prováveis, com as fontes. Nas tabelas, cada zona tem a sua cor (Libertadores ou Champions, Sul-Americana ou Liga Europa, rebaixamento), também no Brasileirão.", "Futebol, na Visão Geral: segue qualquer equipa, seleção ou campeonato do mundo (escreves o nome e aparece, com o escudo). Jogos ao vivo com o minuto, os golos e quem marcou; quem tem mais probabilidade de ganhar, antes e durante o jogo, e a análise da IA a dizer quem deve ganhar e porquê; em cada jogo, os lances, as estatísticas ao vivo, a forma das equipas e o confronto direto. Próximos jogos e resultados em cartões, a página de cada equipa nas cores do clube com os números da época, as tabelas com pódio e a tua equipa destacada, e avisos de começo, golo, intervalo e fim.", "Gráficos em rosca no sítio: no iPhone, o anel colorido (por exemplo em Universidade › Sessões, \"Horas por disciplina\") saía para baixo do quadro durante a animação de entrada. Agora fica sempre por cima do anel cinzento, em todas as roscas do app. O centro mostra as horas com décimas (0,4 h em vez de 0 h) e a coluna Tipo das sessões já não mostra \"undefined\".", "Revisão de todas as contas: abrimos as 170 páginas e separadores e mais de 550 botões numa conta nova, sem erros. Corrigido o Jornal, que podia ficar a pedir as notícias sem parar quando uma secção não chegava, e um exemplo das Oportunidades que só fazia sentido no perfil pessoal. O anel do botão do Spyke só roda enquanto ele te ouve (poupa bateria no iPhone). No telemóvel, a Carteira dos Investimentos já não sai para o lado, e a página Eu e os Troféus ganham espaço entre os blocos.", "Fundos novos: o Farol fica e chegam lugares do mundo, desenhados e animados: o Rio de Janeiro (o bondinho do Pão de Açúcar e o Cristo iluminado), Lisboa (os carros na ponte 25 de Abril), Paris (a Torre Eiffel a cintilar e o farol a girar), a aurora boreal nas Lofoten, o Monte Fuji com pétalas de cerejeira a cair, as pirâmides de Gizé com uma caravana e Nova Iorque com o ferry. O céu segue a hora e as cores seguem a paleta do app.", "Universidade arrumada: os 18 separadores passam a 4 grupos (Visão geral, O curso, Avaliações, Estudar), cada um com os seus separadores por baixo e a lembrar-se do último que abriste. A Visão geral fica por blocos (O teu dia, Avaliações, O semestre, Histórico). Não saiu nenhuma opção.", "Lista de compras (Eu, no teu perfil): ligada à Dieta, a lista do mês faz-se sozinha a partir do que comes (média por dia × dias do mês), com a foto de cada alimento, arrumada pelas secções do supermercado, com embalagens e custo (o preço fica guardado). Juntas coisas à mão, editas tudo, pões foto, marcas o que já tens e o que compraste, e vês a lista da semana.", "Troféus e medalhas em Eu › Quem sou eu: a tua vitrine de conquistas reais (troféus, medalhas, placas, certificados e distinções desenhados no metal que ganhaste), com a peça de honra, o quadro de ouro, prata e bronze, a linha do tempo, a história e a foto de cada uma, e as medalhas ganhas no Prumo. Nas Leituras, o Top 10 da vida: pódio, tier list (S, A, B, C) e a lista do 1.º ao 10.º, com livros da estante ou escritos à mão.", "Administração: repor a senha de login de uma conta (a pessoa entra com uma senha temporária e escolhe logo outra) e passar uma conta para outro e-mail sem perder nada (perfis, dados, ranking, Google e atalhos). A pessoa vê um aviso ao entrar. O cofre de Senhas continua só de quem o criou.", "O Spyke ganha as cores do tema (dourado e vinho no Selo, prateado no Grafite) e mais vida: radar, partículas em órbita, ondas ao ritmo da tua voz e números a contar ao abrir o Modo Comando. No Mundo: frases e a rota de A Volta ao Mundo em 80 Dias (Júlio Verne) e da Odisseia (Homero), com o relógio dos 80 dias e o mapa do Mediterrâneo de Odisseu; o mapa do mundo fica sempre com o mar azul e o aviso ao marcar um país diz o XP certo.", "IA mais inteligente: as perguntas difíceis (planos, análises, decisões, comparações) usam os modelos que pensam mais e têm até 5 minutos para responder. O mentor, o plano de vida, o currículo, a biografia, os planos de treino e dieta, as decisões e a evolução tentam primeiro o modelo \"pro\" do Google. O que mudas num aparelho aparece nos outros 3 vezes mais depressa.", "Música na intro do princípio ao fim, com um som para cada momento (o prumo, o pêndulo, o 0°, a gota, o carimbo, o selo a abrir, o nome e o remate), feita para se ouvir no altifalante do telemóvel e a tocar como um vídeo no iPhone. Abre em \"Toca para começar\"; dá para tirar o som nas Definições.", "Intro ao abrir: o fio de prumo cai e fica a prumo, a gota de cera, o carimbo com impacto e faíscas, o selo e \"Prumo\" letra a letra; depois entra o ecrã de carregamento. Um toque salta. Definições › Aplicação › Intro ao abrir (sempre, uma vez por dia ou nunca).", "Cores do app (Definições › Aplicação): escolhe a paleta que predomina. Por omissão, a do logo (Selo: vinho, creme e dourado); também Mar, Floresta, Ametista, Café e Grafite. As cenas do fundo acompanham.", "Logo novo: o selo de cera vermelho com o P e os louros, no ícone do app, na abertura, no ecrã do código e no topo.", "Dominus ligado às tuas metas: as missões do dia, da semana e do mês saem das tuas metas (as atrasadas e as mais importantes primeiro); o chefe da semana guarda uma meta tua e o colosso só cai com avanço real.", "Projeto de Vida no Dominus: os teus objetivos de vida em 10 eixos, cada um com a sua dificuldade; num toque vira meta, e o que os teus registos já provam conta sozinho.", "Rotina por horas em Hábitos e rotina: o dia numa linha de horas (das tantas às tantas), adicionar rápido, copiar dias, modelos, avisos na hora e tudo no Calendário e no Google Calendar.", "Metas honestas: \"No ritmo\" só com avanço real; \"Por começar\" quando ainda não houve avanço; cada meta mostra o que fizeste por ela na semana e no mês e a tua visão da Estrela-guia.", "Capital profissional ligado aos teus objetivos: competências até ao nível alvo, certificações, rede, projetos, eventos, mercado e metas de carreira.", "Jornal em tempo real (destaques de cada país, mais recentes primeiro, \"Última hora\") e cada tema do resumo abre a fundo com a avaliação da IA.", "A IA faz o que pedes dentro do app: cria, muda e apaga registos (apagar pede sempre confirmação).", "Admin em tempo real (online agora, última entrada e último acesso) e tempo de uso no ranking.", "Investimentos arrumados em 4 blocos, com todas as funções. Mais animações e transições suaves, também em Android."]};</script>
+<script>window.OCEANUM_VERSION={"v": "3.12", "date": "12/11/2026", "notes": ["Finanças › Banco: os movimentos do banco entram sozinhos. Em \"Importar extrato\" escolhes o ficheiro que o banco ou outra app de finanças exporta (OFX, QIF, CSV ou Excel); o Prumo lê as colunas sozinho, mostra tudo antes de importar, ignora o que já tens (mesmo o que escreveste à mão), propõe as categorias (e aprende com as que corriges), junta numa só transferência o dinheiro que passa entre contas tuas e pode acertar o saldo pelo do extrato. Na conta do dono, a ligação automática por Open Finance (Brasil, pela Pluggy) e PSD2 (Europa, pelo Enable Banking) traz contas, saldos e movimentos a cada 12 horas. Só leitura: o Prumo nunca faz pagamentos.", "Calculadora flutuante em todo o app (o botão por cima do Spyke): básica com histórico, financeira ao estilo da HP 12C (RPN, n, i, PV, PMT, FV, BEG, fluxos de caixa com VPL e TIR, percentagens e tabela de amortização com prestações iguais ou SAC) e gráfica (até 3 funções, arrastar, ampliar e tocar para ver os valores).", "Investimentos › Aprender a investir: um guia completo para quem nunca investiu, em 11 capítulos (a base e o fundo de emergência, inflação e juros compostos, risco e liquidez, todos os produtos um a um, diversificar, custos, impostos, proteções, passo a passo, erros comuns e glossário). Tem simulador de juros compostos, o fundo de emergência calculado com as tuas despesas reais e um teste de perfil de risco. As regras de Portugal e do Brasil estão separadas e foram confirmadas em novembro de 2026.", "Eu › Cozinha: a despensa, a lista de compras e as receitas num só lugar. Na despensa marcas o que tens em casa (onde está, quanto, o mínimo e a validade). O que acaba ou está a acabar entra sozinho na lista de compras, o que compras entra na despensa e o que já tens sai da lista do mês. Nas receitas vês as que dá para fazer já com o que tens (e as que só falta 1 ou 2 coisas, que juntas à lista num toque), e a IA inventa outras com a tua despensa.", "Mundo: as cidades, estados e lugares dentro de cada país e ilha. Toca num país › \"Cidades, estados e lugares\": abre a página do país com os estados, províncias ou regiões para marcar (✓ conheço, ♥ quero conhecer), um mini-mapa onde eles se acendem e as cidades, vilas, praias e outros lugares, com sugestões das cidades desse país enquanto escreves. Marcar uma cidade marca também o estado dela. Na página Mundo há um resumo por país, e cada lugar conhecido dá XP de Mente no Dominus.", "Dominus com cara de jogo: cada separador é um ecrã. A ficha do herói com brasão do nível e atributos em anéis; a batalha contra o monstro do dia em cena grande, com corações de vida e as missões em cartas; a arena do chefe com barra de vida de jogo de luta; as masmorras como portas, com a que exploras em grande; a sala dos troféus com medalhas de bronze, prata, ouro, platina e diamante; a sala do tesouro com o baú em pixel art e o inventário; a estrada dos marcos; e a crónica do diário. No telemóvel, um menu de jogo (o ecrã atual com setas e ícones) no lugar da grelha de botões.", "Entrevista (Eu): cada resposta volta todos os anos. A partir de 1 de janeiro, o teu eu desse ano relê o que respondeste e confirma (\"Ainda faz sentido\") ou escreve a resposta nova; as dos anos anteriores ficam guardadas para veres como mudaste. A primeira revisão abre a 1 de janeiro de 2027, com aviso na Visão Geral até estar feita.", "Futebol: a IA diz como acha que o jogo vai acabar. O placar previsto aparece em grande na análise (ex.: Flamengo 2 × 0 Palmeiras), no placar do jogo e nos cartões dos próximos jogos. Ao vivo, o palpite nunca fica abaixo do resultado atual; se a IA não der um placar, o Prumo calcula o mais provável com as probabilidades dela.", "Futebol: fotos dos jogadores no plantel, nas escalações e nos jogadores-chave (da ESPN e da Wikipédia; sem foto fica o número). Corrigido: o jogo não abria quando havia uma análise da IA guardada pela versão anterior. A análise do jogo já não falha quando a cota grátis da IA acaba: tenta a IA do Google com pesquisa, depois sem pesquisa ou a IA de reserva, e, se nenhuma responder, o Prumo faz a análise com os números (odds ou tabela, forma, confronto direto, escalações), com palpite de resultado.", "Futebol mais completo: em cada jogo, as escalações num mini-campo (titulares, esquema, suplentes, quem entrou e o treinador), oficiais quando saem e, antes disso, as prováveis pelos titulares dos últimos jogos. Toca numa equipa para veres o plantel inteiro por posições, com números, idade, golos e lesionados, e pede à IA o treinador, os lesionados e os castigados. A análise da IA pesquisa as notícias do jogo e dá o palpite de resultado, os jogadores-chave e as escalações prováveis, com as fontes. Nas tabelas, cada zona tem a sua cor (Libertadores ou Champions, Sul-Americana ou Liga Europa, rebaixamento), também no Brasileirão.", "Futebol, na Visão Geral: segue qualquer equipa, seleção ou campeonato do mundo (escreves o nome e aparece, com o escudo). Jogos ao vivo com o minuto, os golos e quem marcou; quem tem mais probabilidade de ganhar, antes e durante o jogo, e a análise da IA a dizer quem deve ganhar e porquê; em cada jogo, os lances, as estatísticas ao vivo, a forma das equipas e o confronto direto. Próximos jogos e resultados em cartões, a página de cada equipa nas cores do clube com os números da época, as tabelas com pódio e a tua equipa destacada, e avisos de começo, golo, intervalo e fim.", "Gráficos em rosca no sítio: no iPhone, o anel colorido (por exemplo em Universidade › Sessões, \"Horas por disciplina\") saía para baixo do quadro durante a animação de entrada. Agora fica sempre por cima do anel cinzento, em todas as roscas do app. O centro mostra as horas com décimas (0,4 h em vez de 0 h) e a coluna Tipo das sessões já não mostra \"undefined\".", "Revisão de todas as contas: abrimos as 170 páginas e separadores e mais de 550 botões numa conta nova, sem erros. Corrigido o Jornal, que podia ficar a pedir as notícias sem parar quando uma secção não chegava, e um exemplo das Oportunidades que só fazia sentido no perfil pessoal. O anel do botão do Spyke só roda enquanto ele te ouve (poupa bateria no iPhone). No telemóvel, a Carteira dos Investimentos já não sai para o lado, e a página Eu e os Troféus ganham espaço entre os blocos.", "Fundos novos: o Farol fica e chegam lugares do mundo, desenhados e animados: o Rio de Janeiro (o bondinho do Pão de Açúcar e o Cristo iluminado), Lisboa (os carros na ponte 25 de Abril), Paris (a Torre Eiffel a cintilar e o farol a girar), a aurora boreal nas Lofoten, o Monte Fuji com pétalas de cerejeira a cair, as pirâmides de Gizé com uma caravana e Nova Iorque com o ferry. O céu segue a hora e as cores seguem a paleta do app.", "Universidade arrumada: os 18 separadores passam a 4 grupos (Visão geral, O curso, Avaliações, Estudar), cada um com os seus separadores por baixo e a lembrar-se do último que abriste. A Visão geral fica por blocos (O teu dia, Avaliações, O semestre, Histórico). Não saiu nenhuma opção.", "Lista de compras (Eu, no teu perfil): ligada à Dieta, a lista do mês faz-se sozinha a partir do que comes (média por dia × dias do mês), com a foto de cada alimento, arrumada pelas secções do supermercado, com embalagens e custo (o preço fica guardado). Juntas coisas à mão, editas tudo, pões foto, marcas o que já tens e o que compraste, e vês a lista da semana.", "Troféus e medalhas em Eu › Quem sou eu: a tua vitrine de conquistas reais (troféus, medalhas, placas, certificados e distinções desenhados no metal que ganhaste), com a peça de honra, o quadro de ouro, prata e bronze, a linha do tempo, a história e a foto de cada uma, e as medalhas ganhas no Prumo. Nas Leituras, o Top 10 da vida: pódio, tier list (S, A, B, C) e a lista do 1.º ao 10.º, com livros da estante ou escritos à mão.", "Administração: repor a senha de login de uma conta (a pessoa entra com uma senha temporária e escolhe logo outra) e passar uma conta para outro e-mail sem perder nada (perfis, dados, ranking, Google e atalhos). A pessoa vê um aviso ao entrar. O cofre de Senhas continua só de quem o criou.", "O Spyke ganha as cores do tema (dourado e vinho no Selo, prateado no Grafite) e mais vida: radar, partículas em órbita, ondas ao ritmo da tua voz e números a contar ao abrir o Modo Comando. No Mundo: frases e a rota de A Volta ao Mundo em 80 Dias (Júlio Verne) e da Odisseia (Homero), com o relógio dos 80 dias e o mapa do Mediterrâneo de Odisseu; o mapa do mundo fica sempre com o mar azul e o aviso ao marcar um país diz o XP certo.", "IA mais inteligente: as perguntas difíceis (planos, análises, decisões, comparações) usam os modelos que pensam mais e têm até 5 minutos para responder. O mentor, o plano de vida, o currículo, a biografia, os planos de treino e dieta, as decisões e a evolução tentam primeiro o modelo \"pro\" do Google. O que mudas num aparelho aparece nos outros 3 vezes mais depressa.", "Música na intro do princípio ao fim, com um som para cada momento (o prumo, o pêndulo, o 0°, a gota, o carimbo, o selo a abrir, o nome e o remate), feita para se ouvir no altifalante do telemóvel e a tocar como um vídeo no iPhone. Abre em \"Toca para começar\"; dá para tirar o som nas Definições.", "Intro ao abrir: o fio de prumo cai e fica a prumo, a gota de cera, o carimbo com impacto e faíscas, o selo e \"Prumo\" letra a letra; depois entra o ecrã de carregamento. Um toque salta. Definições › Aplicação › Intro ao abrir (sempre, uma vez por dia ou nunca).", "Cores do app (Definições › Aplicação): escolhe a paleta que predomina. Por omissão, a do logo (Selo: vinho, creme e dourado); também Mar, Floresta, Ametista, Café e Grafite. As cenas do fundo acompanham.", "Logo novo: o selo de cera vermelho com o P e os louros, no ícone do app, na abertura, no ecrã do código e no topo.", "Dominus ligado às tuas metas: as missões do dia, da semana e do mês saem das tuas metas (as atrasadas e as mais importantes primeiro); o chefe da semana guarda uma meta tua e o colosso só cai com avanço real.", "Projeto de Vida no Dominus: os teus objetivos de vida em 10 eixos, cada um com a sua dificuldade; num toque vira meta, e o que os teus registos já provam conta sozinho.", "Rotina por horas em Hábitos e rotina: o dia numa linha de horas (das tantas às tantas), adicionar rápido, copiar dias, modelos, avisos na hora e tudo no Calendário e no Google Calendar.", "Metas honestas: \"No ritmo\" só com avanço real; \"Por começar\" quando ainda não houve avanço; cada meta mostra o que fizeste por ela na semana e no mês e a tua visão da Estrela-guia.", "Capital profissional ligado aos teus objetivos: competências até ao nível alvo, certificações, rede, projetos, eventos, mercado e metas de carreira.", "Jornal em tempo real (destaques de cada país, mais recentes primeiro, \"Última hora\") e cada tema do resumo abre a fundo com a avaliação da IA.", "A IA faz o que pedes dentro do app: cria, muda e apaga registos (apagar pede sempre confirmação).", "Admin em tempo real (online agora, última entrada e último acesso) e tempo de uso no ranking.", "Investimentos arrumados em 4 blocos, com todas as funções. Mais animações e transições suaves, também em Android."]};</script>
 <script>(function(){try{var n=navigator,ua=n.userAgent||"",low=(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||/Android/i.test(ua)||matchMedia("(prefers-reduced-motion: reduce)").matches;var f=localStorage.getItem("os2lite"),rm=matchMedia("(prefers-reduced-motion: reduce)").matches,R=document.documentElement;if(f==="1"||(f!=="0"&&low))R.classList.add("lite");if(f==="1"||(f!=="0"&&rm))R.classList.add("lite-x")}catch(e){}})();</script>
 <script>
 /* PRUMO — paletas de cores (Definições › Aplicação › Cores do app).
@@ -9222,17 +9292,18 @@ const selBar = (c, rows, extra = '') => { LAST[c] = rows.map(x => x.id); const o
 const selTable = (c, o) => { const on = selOn(c), S = selIds(c); return UI.table(Object.assign({}, o, { coll: on ? '' : c, rowAttr: on ? (x => `data-act="selPick" data-c="${c}" data-id="${x.id}" tabindex="0" role="checkbox" aria-checked="${S.has(x.id)}"`) : null,
   rowCls: x => (o.rowCls ? o.rowCls(x) : '') + (on ? ' tx-pick' + (S.has(x.id) ? ' on' : '') : ''), cols: (on ? [{ l: '', v: x => `<span class="tx-ck ${S.has(x.id) ? 'on' : ''}" aria-hidden="true">${S.has(x.id) ? '✓' : ''}</span>` }] : []).concat(o.cols) })); };
 OS.SelUI = { bar: selBar, table: selTable };
-const TABS = [['', 'Visão'], ['transacoes', 'Transações'], ['contas', 'Contas'], ['orcamento', 'Orçamento'], ['recorrentes', 'Recorrentes'], ['dividas', 'Dívidas'], ['inteligencia', 'Inteligência'], ['categorias', 'Categorias']];
+const TABS = [['', 'Visão'], ['transacoes', 'Transações'], ['contas', 'Contas'], ['orcamento', 'Orçamento'], ['recorrentes', 'Recorrentes'], ['dividas', 'Dívidas'], ['inteligencia', 'Inteligência'], ['categorias', 'Categorias'], ['banco', 'Banco']];
 const periodRange = p => { const t = U.today(), ym = U.ym(t); switch (p) { case 'mesant': { const m = U.addMonths(ym, -1); return [m + '-01', m + '-' + U.dim(m)]; } case '3m': return [U.addMonths(ym, -2) + '-01', t]; case '12m': return [U.addMonths(ym, -11) + '-01', t]; case 'ano': return [t.slice(0, 4) + '-01-01', t]; case 'tudo': return ['0000-01-01', '9999-12-31']; case 'custom': return [OS.ui.txFrom || ym + '-01', OS.ui.txTo || t]; default: return [ym + '-01', ym + '-' + U.dim(ym)]; } };
 const PERIODS = [['mes', 'Este mês'], ['mesant', 'Mês anterior'], ['3m', '3 meses'], ['12m', '12 meses'], ['ano', 'Este ano'], ['tudo', 'Tudo'], ['custom', 'Personalizado']];
 
 /* ================= FINANÇAS ================= */
 V.financas = sub => {
   const head = UI.head('Finanças', 'Receitas, despesas, contas, cartões, parcelamentos, dívidas, orçamentos e reservas. Tudo o que registas alimenta metas, alertas e o patrimônio.', `${UI.addBtn('transactions', 'Movimento')}`, 'Dinheiro') + UI.tabs('financas', TABS, sub);
-  if (!OS.all('accounts').length && sub !== 'contas') return head + UI.empty('Começa por criar as tuas contas (conta à ordem, reserva, cartão, corretora).', UI.addBtn('accounts', 'Criar conta'));
+  if (!OS.all('accounts').length && sub !== 'contas' && sub !== 'banco') return head + UI.empty('Começa por criar as tuas contas (conta à ordem, reserva, cartão, corretora).', UI.addBtn('accounts', 'Criar conta'));
   return head + (FIN[sub || 'visao'] || FIN.visao)();
 };
 const FIN = {};
+FIN.banco = () => OS.Banco ? OS.Banco.view() : '';
 FIN.visao = () => {
   const t = U.today(), ym = U.ym(t), p = OS.one('profile'), m = Fin.month(ym), pm = Fin.month(U.addMonths(ym, -1));
   const months = Fin.months(12), md = months.map(Fin.month);
@@ -11823,6 +11894,413 @@ B3.panel = () => { if (!ST) return ''; const R = ST.fresh || [], P = ST.pos && S
     <p class="mut" style="font-size:12px;margin-top:8px">JCP: a B3 mostra o valor líquido; guardo o bruto e os 15% retidos (para os impostos). Compras e vendas usam a data do negócio quando juntas o extrato de Negociação. Todos os movimentos ficam com a nota "Importado da B3" e podes editá-los.</p>` : ''}
   ${P.length ? `<div class="pn-h" style="margin-top:12px"><h3>Conferência com a posição da B3</h3><span class="${P.every(p => p.ok) ? 'pos' : 'warn'}" style="font-size:12.5px">${P.filter(p => p.ok).length} de ${P.length} batem${ST.fresh && ST.fresh.length ? ' (antes de importar)' : ''}</span></div>
     <div class="tblw"><table class="tbl"><thead><tr><th>Ativo</th><th class="r">B3</th><th class="r">Na app</th><th></th></tr></thead><tbody>${P.map(p => `<tr><td><b>${esc(p.tk || p.prod)}</b>${p.val ? `<div class="mut" style="font-size:11.5px">${IX && IX.Mc ? IX.Mc(p.val, 'BRL') : U.nf(p.val, 2)}</div>` : ''}</td><td class="r mono">${U.nf(p.q, p.q % 1 ? 4 : 0)}</td><td class="r mono">${p.a ? U.nf(p.mine, p.mine % 1 ? 4 : 0) : '—'}</td><td>${p.ok ? '<span class="pos">✓</span>' : `<span class="warn">${p.a ? 'diferente' : 'não existe na app'}</span>`}</td></tr>`).join('')}</tbody></table></div>` : ''}</div>`; };
+})();
+
+</script>
+<script>
+/* PRUMO — Banco: os movimentos das contas bancárias entram nas Finanças sem os escrever à mão.
+   1) Importar extrato (todas as contas): o ficheiro que o banco ou outra app de finanças exporta — OFX, QIF, CSV ou Excel.
+      Lê o formato sozinho (colunas, separador, datas, vírgula ou ponto) e mostra tudo antes de importar.
+   2) Ligação automática (só a conta do dono do Prumo, porque as chaves são dele): Open Finance no Brasil pela Pluggy (Meu Pluggy)
+      e PSD2 na Europa pelo Enable Banking, através de api/banco. Só leitura: o Prumo nunca faz pagamentos.
+   Em ambos: nada se duplica (nem o que já escreveste à mão), as categorias saem do que já classificaste e de regras de lojas
+   portuguesas e brasileiras, e o dinheiro que passa de uma conta tua para outra fica numa só Transferência. */
+(() => {
+'use strict';
+const U = OS.U, UI = OS.UI, A = OS.act, L = OS.L, esc = U.esc;
+const Acc = () => OS.Acc || {};
+const on = () => !!(Acc().on && Acc().token && Acc().token() && Acc().pid && Acc().pid());
+OS.ONE_DEF.banklink = { map: {}, accs: {}, last: '', auto: true, gone: [] };
+const BK = OS.Banco = {};
+const norm = s => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
+const r2 = v => Math.round(v * 100) / 100;
+const XLSX_URL = 'vendor/xlsx.full.min.js';
+
+/* ================= números e datas (de qualquer banco) ================= */
+// separador decimal de uma coluna inteira: "12,30" → vírgula; "12.30" → ponto
+const decOf = vals => { let c = 0, d = 0; vals.forEach(v => { if (typeof v === 'number') return; const s = String(v == null ? '' : v).trim(); if (/,\d{1,2}(\s*[A-Za-z€$-]*)?\)?$/.test(s)) c++; if (/\.\d{1,2}(\s*[A-Za-z€$-]*)?\)?$/.test(s)) d++; }); return c > d ? ',' : d > c ? '.' : ''; };
+const num = (v, dec) => { if (typeof v === 'number') return isFinite(v) ? v : NaN;
+  let s = String(v == null ? '' : v).replace(/[−–]/g, '-').replace(/ /g, ' ').trim(); if (!s || !/\d/.test(s)) return NaN;
+  let sg = 1; if (/^\(.*\)$/.test(s)) { sg = -1; s = s.slice(1, -1).trim(); }
+  if (/(^|[\s\d])D$/i.test(s)) { sg = -sg; s = s.replace(/\s*D$/i, ''); } else s = s.replace(/\s*C$/i, '');
+  if (/-\s*$/.test(s)) { sg = -sg; s = s.replace(/-\s*$/, ''); } else if (/^[^\d]*-/.test(s)) sg = -sg;
+  s = s.replace(/[^\d,.]/g, ''); if (!/\d/.test(s)) return NaN;
+  if (!dec) { const lc = s.lastIndexOf(','), ld = s.lastIndexOf('.'); dec = lc >= 0 && ld >= 0 ? (lc > ld ? ',' : '.') : lc >= 0 ? ((s.match(/,/g).length > 1 || /,\d{3}$/.test(s)) ? '.' : ',') : ld >= 0 ? (s.match(/\./g).length > 1 ? ',' : '.') : '.'; }
+  s = dec === ',' ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+  const r = parseFloat(s); return isNaN(r) ? NaN : sg * r; };
+const MON = { jan: 1, fev: 2, feb: 2, mar: 3, abr: 4, apr: 4, mai: 5, may: 5, jun: 6, jul: 7, ago: 8, aug: 8, set: 9, sep: 9, out: 10, oct: 10, nov: 11, dez: 12, dec: 12 };
+const okD = (y, m, d) => (m >= 1 && m <= 12 && d >= 1 && d <= 31 && y > 1990 && y < 2100) ? `${y}-${U.pad(m)}-${U.pad(d)}` : '';
+// dia/mês ou mês/dia? decide-se pela coluna inteira (um 13 ou mais diz qual é o dia)
+const dOrder = vals => { let a = 0, b = 0; vals.forEach(v => { const m = String(v == null ? '' : v).trim().match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})/); if (m) { if (+m[1] > 12) a++; if (+m[2] > 12) b++; } }); return b > a ? 'mdy' : 'dmy'; };
+const date = (v, ord = 'dmy') => {
+  if (v instanceof Date && !isNaN(v)) return U.iso(v);
+  if (typeof v === 'number') { if (v > 20000 && v < 80000) { const X = window.XLSX; if (X && X.SSF) { const d = X.SSF.parse_date_code(v); if (d) return okD(d.y, d.m, d.d); } return new Date(Math.round((v - 25569) * 864e5)).toISOString().slice(0, 10); } return ''; }
+  const s = String(v == null ? '' : v).trim().replace(/'/g, '/'); if (!s) return ''; let m;
+  if ((m = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/))) return okD(+m[1], +m[2], +m[3]);
+  if ((m = s.match(/^((?:19|20)\d{2})(\d{2})(\d{2})/))) return okD(+m[1], +m[2], +m[3]);
+  if ((m = s.match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})\b/))) { const y = m[3].length === 2 ? 2000 + +m[3] : +m[3]; return ord === 'mdy' ? okD(y, +m[1], +m[2]) : okD(y, +m[2], +m[1]); }
+  const n = norm(s);
+  if ((m = n.match(/^(\d{1,2})(?: de)?[ \-/.]+([a-z]{3})[a-z]*\.?(?: de)?[ \-/.,]+(\d{2,4})/)) && MON[m[2]]) return okD(m[3].length === 2 ? 2000 + +m[3] : +m[3], MON[m[2]], +m[1]);
+  if ((m = n.match(/^([a-z]{3})[a-z]*\.? (\d{1,2}),? (\d{4})/)) && MON[m[1]]) return okD(+m[3], MON[m[1]], +m[2]);
+  // só dia/mês (faturas de cartão): o ano é o mais recente que não fique no futuro
+  if ((m = s.match(/^(\d{1,2})[/.\-](\d{1,2})$/)) || ((m = n.match(/^(\d{1,2})[ \-/]([a-z]{3})$/)) && MON[m[2]] && (m = [m[0], m[1], MON[m[2]]]))) { const t = U.today(), y = +t.slice(0, 4); let d = okD(y, +m[2], +m[1]); if (d && d > U.addDays(t, 3)) d = okD(y - 1, +m[2], +m[1]); return d; }
+  return ''; };
+
+/* ================= leitura dos ficheiros ================= */
+let xlsxP = null;
+const loadX = () => window.XLSX ? Promise.resolve(window.XLSX) : (xlsxP = xlsxP || new Promise((res, rej) => { const s = document.createElement('script'); s.src = XLSX_URL; s.async = true; s.onload = () => window.XLSX ? res(window.XLSX) : rej(new Error('Leitor de Excel indisponível.')); s.onerror = () => { xlsxP = null; rej(new Error('Sem internet para abrir o Excel. Tenta de novo com ligação, ou exporta em CSV.')); }; document.head.appendChild(s); }));
+const decode = buf => { try { return new TextDecoder('utf-8', { fatal: true }).decode(buf); } catch (e) { try { return new TextDecoder('windows-1252').decode(buf); } catch (e2) { return new TextDecoder().decode(buf); } } };
+const sepOf = txt => { const lines = txt.split(/\r?\n/).filter(l => l.trim()).slice(0, 40); let best = [',', -1];
+  [';', '\t', ',', '|'].forEach(c => { const f = {}; lines.forEach(l => { let k = 0, q = false; for (const ch of l) { if (ch === '"') q = !q; else if (ch === c && !q) k++; } if (k) f[k] = (f[k] || 0) + 1; });
+    const top = Object.entries(f).sort((a, b) => b[1] - a[1] || b[0] - a[0])[0], sc = top ? top[1] * 10 + Math.min(+top[0], 9) : 0; if (sc > best[1]) best = [c, sc]; }); return best[0]; };
+const csvRows = txt => { const sep = sepOf(txt), out = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < txt.length; i++) { const ch = txt[i];
+    if (q) { if (ch === '"') { if (txt[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; continue; }
+    if (ch === '"' && !cur.trim()) { q = true; cur = ''; } else if (ch === sep) { row.push(cur.trim()); cur = ''; }
+    else if (ch === '\n' || ch === '\r') { if (ch === '\r' && txt[i + 1] === '\n') i++; row.push(cur.trim()); if (row.some(x => x)) out.push(row); row = []; cur = ''; } else cur += ch; }
+  row.push(cur.trim()); if (row.some(x => x)) out.push(row); return out; };
+const unent = s => String(s || '').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/&quot;/gi, '"').replace(/&apos;|&#39;/gi, "'").replace(/\s+/g, ' ').trim();
+
+// OFX (o formato mais completo: traz o id de cada movimento, a conta e o saldo)
+const ofx = (txt, name) => { const tag = (b, t) => { const m = b.match(new RegExp('<' + t + '>\\s*([^<\\r\\n]*)', 'i')); return m ? m[1].trim() : ''; };
+  const rows = [], seen = {};
+  (txt.match(/<STMTTRN>[\s\S]*?(?=<\/STMTTRN>|<STMTTRN>|<\/BANKTRANLIST>)/gi) || []).forEach(b => { const raw = tag(b, 'TRNAMT'), d = date(tag(b, 'DTPOSTED') || tag(b, 'DTUSER')), a = num(raw, raw.includes(',') && !raw.includes('.') ? ',' : '.'); if (!d || isNaN(a) || !a) return;
+    const nm = unent(tag(b, 'NAME')), memo = unent(tag(b, 'MEMO')), desc = (nm && memo && !norm(memo).includes(norm(nm)) && !norm(nm).includes(norm(memo)) ? nm + ' · ' + memo : memo.length > nm.length ? memo : nm) || tag(b, 'TRNTYPE');
+    let id = tag(b, 'FITID'); if (id) { if (seen[id]) id += '#' + (++seen[id]); else seen[id] = 1; }
+    rows.push({ date: d, desc, amount: a, ext: id ? 'fit:' + id : '' }); });
+  const lb = (txt.match(/<LEDGERBAL>[\s\S]{0,300}/i) || [''])[0], bal = num(tag(lb, 'BALAMT'), '.');
+  return { name, fmt: 'OFX', rows, acct: { num: tag(txt, 'ACCTID').slice(-8), cur: tag(txt, 'CURDEF').toUpperCase(), bank: unent(tag(txt, 'ORG')), card: /<CCSTMTRS>/i.test(txt), bal: isNaN(bal) ? null : bal, balD: date(tag(lb, 'DTASOF')) || (rows.length ? rows.map(r => r.date).sort().pop() : '') } }; };
+
+// QIF (exportado por apps antigas de finanças)
+const qif = (txt, name) => { const recs = [];
+  txt.split(/^\^\s*$/m).forEach(r => { const o = {}; r.split(/\r?\n/).forEach(l => { const k = l[0], v = l.slice(1).trim(); if (!k || k === '!') return; if (k === 'D') o.d = v; else if ((k === 'T' || k === 'U') && !o.t) o.t = v; else if (k === 'P') o.p = v; else if (k === 'M') o.m = v; else if (k === 'L') o.l = v; else if (k === 'N') o.n = v; }); if (o.d && o.t) recs.push(o); });
+  const ord = dOrder(recs.map(o => o.d.replace(/'/g, '/'))), dec = decOf(recs.map(o => o.t));
+  return { name, fmt: 'QIF', rows: recs.map(o => ({ date: date(o.d, ord), desc: unent(o.p || o.m || ''), amount: num(o.t, dec), cat: (o.l || '').replace(/^\[.*\]$/, ''), ext: '' })).filter(r => r.date && !isNaN(r.amount) && r.amount), acct: {} }; };
+
+// tabelas (CSV e Excel): procura a linha dos títulos e o papel de cada coluna
+const HD = {
+  date: /^(data|date|fecha|dt|dia)\b|data (do |de )?(mov|lanc|oper|trans|compra)|^(started|completed|booking|transaction|posting|posted) date|^posted/,
+  dval: /data (de |do )?valor|value date|^completed date/,
+  desc: /descri|histor|^title$|titulo|memo|narrat|detalhe|payee|benefici|estabelec|merchant|^name$|^nome$|^lancamento$|^movimento$|^concept|^details?$|^description$|^referencia$|^informac/,
+  amt: /^(valor|montante|amount|quantia|importe|value|total|movimento)( \(?(eur|brl|usd|gbp|r\$|€|\$)\)?)?$|^valor (em |do |da )?(r\$|eur|euros|reais|lancamento|operacao|transacao|movimento)|^montante|^amount/,
+  deb: /debito|debit|^saida|withdraw|paid out|^out$|^despesa|^levantamento/,
+  cred: /credito|credit|^entrada|deposit|paid in|^in$|^receita/,
+  cur: /^(moeda|currency|divisa|curr)$/,
+  bal: /saldo|balance/,
+  id: /^(id|identificador|transaction id|transferwise id|referencia unica|n\.? ?(do )?(doc|documento)|documento|fitid)$/,
+  state: /^(state|estado|status|situacao)$/,
+  fee: /^(fee|fees|taxa|comissao)$/,
+  cat: /^(categoria|category)$/,
+  dc: /^(tipo|type|d\/c|dc|natureza|sinal|debito\/credito|credito\/debito|cr\/db|db\/cr)$/
+};
+const DCV = /^(d|c|db|cr|dr|debito|credito|debit|credit|saida|entrada|despesa|receita)$/, DEBV = /^(d|db|dr|debito|debit|saida|despesa)$/;
+const ROLES = ['date', 'desc', 'amt', 'deb', 'cred', 'cur', 'bal', 'id', 'state', 'fee', 'cat', 'dc'];
+const mapOf = hdr => { const h = hdr.map(norm), M = {}; ROLES.forEach(k => { M[k] = -1; });
+  const pick = (k, not = []) => { const j = h.findIndex((x, i) => x && HD[k].test(x) && !not.includes(i) && !(k !== 'bal' && HD.bal.test(x) && !HD[k].test(x.replace(/saldo|balance/, '')))); return j; };
+  const dv = h.findIndex(x => HD.dval.test(x)); M.date = h.findIndex((x, i) => HD.date.test(x) && i !== dv); if (M.date < 0) M.date = dv;
+  M.amt = h.findIndex(x => HD.amt.test(x) && !HD.bal.test(x)); M.deb = h.findIndex(x => HD.deb.test(x) && !HD.bal.test(x)); M.cred = h.findIndex(x => HD.cred.test(x) && !HD.bal.test(x));
+  if (M.deb >= 0 && M.cred >= 0 && M.amt >= 0 && /movimento/.test(h[M.amt])) M.amt = -1;
+  M.desc = h.findIndex((x, i) => HD.desc.test(x) && i !== M.date && i !== M.amt); M.bal = h.findIndex(x => HD.bal.test(x));
+  ['cur', 'id', 'state', 'fee', 'cat', 'dc'].forEach(k => { M[k] = pick(k, [M.date, M.desc, M.amt]); });
+  return M; };
+const filled = v => String(v == null ? '' : v).trim() !== '';
+// sem títulos reconhecíveis: decide pelo conteúdo (a coluna com datas, a com números, a com mais texto)
+const guessMap = data => { const n = Math.max(0, ...data.slice(0, 60).map(r => r.length)), M = {}; ROLES.forEach(k => { M[k] = -1; });
+  const col = j => data.slice(0, 80).map(r => r[j]).filter(filled), fr = (c, f) => c.length ? c.filter(f).length / c.length : 0;
+  const isD = v => !!date(v), isN = v => !isNaN(num(v)) && !isD(v) && !/[a-z]{3}/i.test(String(v).replace(/[DC]$/i, '').replace(/eur|brl|usd|r\$/i, ''));
+  for (let j = 0; j < n; j++) { const c = col(j); if (M.date < 0 && fr(c, isD) > .7) { M.date = j; continue; } if (M.amt < 0 && fr(c, isN) > .8) { M.amt = j; continue; } }
+  let best = -1, bl = 0; for (let j = 0; j < n; j++) { if (j === M.date || j === M.amt) continue; const c = col(j), avg = c.length ? c.reduce((s, v) => s + String(v).length, 0) / c.length : 0; if (fr(c, v => !isN(v) && !isD(v)) > .6 && avg > bl) { bl = avg; best = j; } } M.desc = best;
+  return M; };
+const table = (rows, name) => { if (!rows || rows.length < 1) return null; let hi = -1, sc = 0;
+  for (let i = 0; i < Math.min(rows.length, 30); i++) { const M = mapOf(rows[i] || []); const s = (M.date >= 0 ? 2 : 0) + (M.amt >= 0 || (M.deb >= 0 && M.cred >= 0) ? 2 : (M.deb >= 0 || M.cred >= 0 ? 1 : 0)) + (M.desc >= 0 ? 1 : 0); if (s >= 4 && s > sc) { sc = s; hi = i; } }
+  const hdr = hi >= 0 ? rows[hi].map(x => String(x == null ? '' : x).trim()) : [], data = rows.slice(hi + 1).filter(r => r && r.some(filled));
+  const M = hi >= 0 ? mapOf(hdr) : guessMap(data); if (M.date < 0) return null;
+  if (M.dc >= 0) { const v = data.slice(0, 40).map(r => norm(r[M.dc])).filter(Boolean); if (!v.length || v.filter(x => DCV.test(x)).length / v.length < .8) M.dc = -1; }
+  const width = Math.max(hdr.length, ...data.slice(0, 50).map(r => r.length));
+  return { name, fmt: /\.xlsx?$|\.ods$/i.test(name) ? 'Excel' : 'CSV', hdr: Array.from({ length: width }, (_, j) => hdr[j] || 'Coluna ' + (j + 1)), data, M, acct: {} }; };
+const SKIPD = /^(saldo|total|s ?a ?l ?d ?o|saldo anterior|saldo inicial|saldo final|saldo do dia|saldo disponivel|resumo|subtotal)\b/;
+const BADST = /revert|declin|fail|cancel|rejeit|recusad|rjct|anulad/;
+// linhas → movimentos, com o mapa de colunas escolhido
+const fromTable = (T, inv) => { const M = T.M, out = [], skip = {}, sk = k => { skip[k] = (skip[k] || 0) + 1; };
+  const ord = dOrder(T.data.map(r => r[M.date])), cols = [M.amt, M.deb, M.cred, M.fee, M.bal].filter(j => j >= 0), dec = decOf([].concat(...T.data.slice(0, 300).map(r => cols.map(j => r[j]))));
+  T.data.forEach(r => { const d = date(r[M.date], ord), desc = M.desc >= 0 ? unent(r[M.desc]) : '';
+    if (!d) return sk(filled(r[M.date]) ? 'data que não percebi' : 'linhas sem data'); if (SKIPD.test(norm(desc))) return sk('saldos e totais');
+    if (M.state >= 0 && BADST.test(norm(r[M.state]))) return sk('recusados ou anulados');
+    let a; if (M.amt >= 0) a = num(r[M.amt], dec); else { const db = M.deb >= 0 ? num(r[M.deb], dec) : NaN, cr = M.cred >= 0 ? num(r[M.cred], dec) : NaN; a = isNaN(db) && isNaN(cr) ? NaN : (isNaN(cr) ? 0 : Math.abs(cr)) - (isNaN(db) ? 0 : Math.abs(db)); }
+    if (isNaN(a) || !a) return sk('valor vazio ou zero');
+    if (M.dc >= 0 && M.amt >= 0) { const t = norm(r[M.dc]); if (DCV.test(t)) a = DEBV.test(t) ? -Math.abs(a) : Math.abs(a); }
+    if (M.fee >= 0) { const f = num(r[M.fee], dec); if (!isNaN(f) && f) a -= Math.abs(f); }
+    out.push({ date: d, desc, amount: r2(inv ? -a : a), cur: M.cur >= 0 ? String(r[M.cur] || '').trim().toUpperCase().slice(0, 3) : '', cat: M.cat >= 0 ? String(r[M.cat] || '').trim() : '', ext: M.id >= 0 && filled(r[M.id]) ? 'id:' + String(r[M.id]).trim() : '', bal: M.bal >= 0 ? num(r[M.bal], dec) : NaN }); });
+  return { rows: out, skip }; };
+const readFile = async f => { const name = f.name || 'extrato';
+  if (/\.(xlsx|xls|ods)$/i.test(name)) { const X = await loadX(), wb = X.read(new Uint8Array(await f.arrayBuffer()), { type: 'array' });
+    const T = wb.SheetNames.map(sn => table(X.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: true, defval: '' }), name)).filter(Boolean).sort((a, b) => b.data.length - a.data.length)[0];
+    if (!T) throw new Error(`Não encontrei movimentos em "${name}". Confirma que é o extrato (com datas e valores).`); return T; }
+  if (/\.pdf$/i.test(name)) throw new Error('PDF não dá para ler com segurança. No banco ou na app, escolhe exportar em OFX, CSV ou Excel.');
+  const txt = decode(new Uint8Array(await f.arrayBuffer())).replace(/^﻿/, '');
+  if (/<OFX>|OFXHEADER|<STMTTRN>/i.test(txt)) return ofx(txt, name);
+  if (/^!Type:/im.test(txt)) return qif(txt, name);
+  const T = table(csvRows(txt), name); if (!T) throw new Error(`Não encontrei movimentos em "${name}". Confirma que é o extrato (com datas e valores).`); return T; };
+
+/* ================= categorias, forma de pagamento, transferências ================= */
+// [palavras, tipo, categoria, subcategoria] — lojas e serviços de Portugal e do Brasil
+const RULES = [
+  [/\b(uber ?eats|glovo|bolt ?food|ifood|rappi|just ?eat|deliveroo|ze delivery)/, 'Despesa', 'Alimentação', 'Delivery'],
+  [/\b(continente|pingo doce|lidl|aldi\b|minipreco|intermarche|auchan|mercadona|e\.? ?leclerc|spar\b|meu super|froiz|apolonia|celeiro|carrefour|pao de acucar|assai\b|atacadao|supermerc|hipermerc|hortifruti|sams club|makro|oxxo|minimercado|mercearia|talho|acougue)/, 'Despesa', 'Alimentação', 'Supermercado'],
+  [/\b(starbucks|nespresso|delta cafe|cafetaria|cafeteria|pastelaria|padaria|confeitaria|panificadora|cafe\b)/, 'Despesa', 'Alimentação', 'Café & snacks'],
+  [/\b(restaurant|mcdonald|burger king|kfc\b|telepizza|pizza hut|domino|h3\b|vitaminas|nandos|subway|tasca|churrasc|sushi|marisqueira|cervejaria|outback|madero|habib|giraffas|spoleto|bobs\b|lanchonete|snack ?bar)/, 'Despesa', 'Alimentação', 'Restaurantes'],
+  [/\b(galp(?! energia)|repsol|cepsa|prio\b|bp\b|shell\b|ipiranga|petrobras|br mania|posto|combust|gasolin|alves bandeira)/, 'Despesa', 'Transporte', 'Combustível'],
+  [/\b(uber|bolt\b|99 ?app|99 ?pop|cabify|free ?now|taxi)/, 'Despesa', 'Transporte', 'Uber/Bolt'],
+  [/\b(comboios|cp\b|metro\b|metropolitano|carris|stcp|transtejo|fertagus|flixbus|rede expressos|andante|navegante|viva viagem|bilhete unico|sptrans|riocard|onibus|autocarro|portagem|via verde|sem parar|conectcar|estacionamento|emel\b)/, 'Despesa', 'Transporte', 'Transportes públicos'],
+  [/\b(ryanair|tap air|easyjet|vueling|latam|gol linhas|voegol|azul linhas|voeazul|booking\.com|airbnb|hotel|hostel|pousada|expedia|decolar)/, 'Despesa', 'Lazer', 'Viagens'],
+  [/\b(netflix|spotify|disney|hbo\b|max\.com|prime video|primevideo|youtube premium|crunchyroll|globoplay|deezer|apple music|paramount|dazn|sport ?tv)/, 'Despesa', 'Subscrições', 'Streaming'],
+  [/\b(google|apple\.com|icloud|microsoft|adobe|openai|chatgpt|anthropic|claude\.ai|notion|github|dropbox|canva\b|figma|duolingo|1password|proton)/, 'Despesa', 'Subscrições', 'Software'],
+  [/\b(meo\b|nos comunic|vodafone|nowo\b|digi\b|uzo\b|woo\b|vivo\b|claro\b|tim brasil|tim s\.?a|oi movel)/, 'Despesa', 'Subscrições', 'Telemóvel'],
+  [/\b(edp\b|endesa|iberdrola|goldenergy|galp energia|enel\b|light s\.?a|cemig|copel|coelba|celpe|neoenergia|energia)/, 'Despesa', 'Casa', 'Luz'],
+  [/\b(smas\b|aguas d|agua d|epal\b|sabesp|cedae|copasa|sanepar|indaqua)/, 'Despesa', 'Casa', 'Água'],
+  [/\b(renda\b|rendas\b|aluguel|aluguer|arrendamento|condominio)/, 'Despesa', 'Casa', 'Renda'],
+  [/\b(farmacia|wells\b|drogasil|droga raia|drogaria|pague menos|panvel|pharma)/, 'Despesa', 'Saúde', 'Farmácia'],
+  [/\b(fitness|gym\b|ginasio|solinca|holmes place|smart ?fit|basic-?fit|go fit|academia|bluefit|bodytech)/, 'Despesa', 'Saúde', 'Ginásio'],
+  [/\b(clinica|hospital|cuf\b|luz saude|lusiadas|medic|dentist|consulta|laborat|unimed|hapvida|amil\b)/, 'Despesa', 'Saúde', 'Consultas'],
+  [/\b(zara\b|h ?& ?m\b|primark|pull ?& ?bear|bershka|stradivarius|massimo dutti|mango\b|decathlon|renner|c ?& ?a\b|riachuelo|shein|nike\b|adidas|centauro|netshoes|lefties|sportzone|jd sports)/, 'Despesa', 'Pessoal', 'Roupa'],
+  [/\b(worten|fnac|media ?markt|radio popular|pc ?diga|kabum|magazine luiza|magalu|casas bahia|fast shop|apple store)/, 'Despesa', 'Pessoal', 'Eletrónica'],
+  [/\b(barbearia|barbeiro|cabeleireiro|salao|perfumaria|sephora|boticario|natura\b|kiko\b)/, 'Despesa', 'Pessoal', 'Cuidados pessoais'],
+  [/\b(cinema|cinemark|uci\b|steam|playstation|xbox|nintendo|epic games|bilheteira|ticketline|bol\.pt|sympla|ingresso|blueticket|eventim)/, 'Despesa', 'Lazer', 'Saídas'],
+  [/\b(bertrand|almedina|wook\b|livraria|leya\b|saraiva|kindle)/, 'Despesa', 'Universidade', 'Livros'],
+  [/\b(propina|universidade|sasup|faculdade|mensalidade escolar|udemy|coursera|alura)/, 'Despesa', 'Universidade', 'Propinas'],
+  [/\b(dizimo|igreja|oferta missionaria|paroquia)/, 'Despesa', 'Fé & Doações', 'Dízimo'],
+  [/\b(doacao|donativo|unicef|cruz vermelha|caritas)/, 'Despesa', 'Fé & Doações', 'Doações'],
+  [/\b(comissao|manutencao de conta|manutencao conta|imposto do selo|iof\b|tarifa|anuidade|cesta de servicos|despesas de manutencao)/, 'Despesa', 'Impostos & Taxas', 'Taxas bancárias'],
+  [/\b(autoridade tributaria|portal das financas|at\b|iuc\b|irs\b|imi\b|darf\b|das mei|gps inss|receita federal|ipva\b|iptu\b|seg social|seguranca social)/, 'Despesa', 'Impostos & Taxas', 'Impostos'],
+  [/\b(multa|coima)/, 'Despesa', 'Impostos & Taxas', 'Multas'],
+  [/\b(juros devedores|juros de mora|juros rotativo|juros cartao|encargos)/, 'Despesa', 'Dívidas', 'Juros'],
+  [/\b(prestacao|credito habitacao|emprestimo|financiamento)/, 'Despesa', 'Dívidas', 'Prestação'],
+  [/\b(salario|vencimento|ordenado|remuneracao|payroll|folha de pagamento|pro-?labore)/, 'Receita', 'Salário', 'Salário'],
+  [/\b(subsidio de ferias|subsidio de natal|13o\b|decimo terceiro)/, 'Receita', 'Salário', 'Subsídios'],
+  [/\b(dividendo|jcp\b|juros sobre capital|rendimento|juros credores|interest|cashback)/, 'Receita', 'Investimentos', 'Juros'],
+  [/\b(reembolso|estorno|devolucao|refund|chargeback)/, 'Receita', 'Outros', 'Reembolsos'],
+  [/\b(bolsa de estudo|dges\b|bolsa sas)/, 'Receita', 'Bolsas', 'Bolsa de estudo']
+];
+// categorias que o agregador já traz (em inglês, na Pluggy)
+const PROV = [[/grocer|supermarket/, 'Alimentação', 'Supermercado'], [/restaurant|eating out|food and drinks/, 'Alimentação', 'Restaurantes'], [/delivery/, 'Alimentação', 'Delivery'], [/taxi|ride/, 'Transporte', 'Uber/Bolt'], [/gas station|fuel/, 'Transporte', 'Combustível'], [/public transport|transport/, 'Transporte', 'Transportes públicos'], [/streaming|video|music/, 'Subscrições', 'Streaming'], [/telecom|mobile|internet/, 'Subscrições', 'Telemóvel'], [/pharmac|drug/, 'Saúde', 'Farmácia'], [/health|medical|dentist/, 'Saúde', 'Consultas'], [/gym|fitness|sport/, 'Saúde', 'Ginásio'], [/cloth|apparel|fashion/, 'Pessoal', 'Roupa'], [/electronic/, 'Pessoal', 'Eletrónica'], [/travel|airline|hotel|lodging/, 'Lazer', 'Viagens'], [/leisure|entertainment|cinema|gaming/, 'Lazer', 'Saídas'], [/education|book/, 'Universidade', 'Cursos'], [/tax|fee|bank fee/, 'Impostos & Taxas', 'Taxas bancárias'], [/rent|housing/, 'Casa', 'Renda'], [/electric|utilities|energy/, 'Casa', 'Luz'], [/water/, 'Casa', 'Água'], [/donation|charity/, 'Fé & Doações', 'Doações']];
+const SUP = new Set(['Delivery', 'Restaurantes', 'Café & snacks', 'Saídas', 'Jogos', 'Streaming', 'Hobbies']);
+const TRW = /transf|\btrf\b|\btrsf\b|\bpix\b|\bted\b|\bdoc\b|mb ?way|\bsepa\b|top.?up|carregamento|pagamento (de |da )?fatura|pagto fatura|pag(amento)? (do )?cart|fatura (do )?cart|aplicacao|aplic\.|resgate|poupanc|savings|vault|cofre|caixinha|exchanged? to|exchange from|conversao|cambio|wise|revolut|nubank|deposito|to eur|to brl|to usd/;
+const key = d => norm(d).replace(/\d+/g, ' ').replace(/\b(compra|compras|pagamento|pag|pgto|pagto|cartao|card|debito|credito|visa|mastercard|maestro|mc|pos|tpa|mb|ref|nr|n|de|da|do|dos|das|em|com|para|purchase|payment|to|from|via|apple pay|google pay|contactless|pix|enviado|recebido|transferencia|trf|ted|sepa|lda|sa|ltda|eireli|me|unipessoal|pt|br|lisboa|porto|aveiro|sao paulo|rio de janeiro)\b/g, ' ').replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter(w => w.length > 1).slice(0, 3).join(' ');
+let LEARN = null, LEARNn = -1;
+const learned = () => { const T = OS.all('transactions'); if (LEARN && LEARNn === T.length) return LEARN; const m = {};
+  T.forEach(t => { if (!t.cat || t.type === 'Transferência') return; const k = key(t.desc); if (!k) return; const o = m[k] || (m[k] = {}), c = t.type + '|' + t.cat + '|' + (t.sub || ''); o[c] = (o[c] || 0) + (t.ext ? 1 : 3); });
+  LEARN = m; LEARNn = T.length; return m; };
+const hasCat = (type, cat, sub) => { const C = (OS.Fin && OS.Fin.cats(type)) || {}; if (!C[cat]) return null; return (C[cat] || []).includes(sub) ? sub : ''; };
+const catOf = (r, type) => { const k = key(r.desc), m = learned()[k];
+  if (m) { const best = Object.entries(m).filter(([c]) => c.startsWith(type + '|')).sort((a, b) => b[1] - a[1])[0]; if (best) { const [, cat, sub] = best[0].split('|'); return { cat, sub, by: 'hist' }; } }
+  const n = norm(r.desc + ' ' + (r.cat || ''));
+  for (const [re, ty, cat, sub] of RULES) if (ty === type && re.test(n)) { const s = hasCat(type, cat, sub); if (s !== null) return { cat, sub: s, by: 'regra' }; }
+  if (r.cat) { const pc = norm(r.cat); for (const [re, cat, sub] of PROV) if (type === 'Despesa' && re.test(pc)) { const s = hasCat(type, cat, sub); if (s !== null) return { cat, sub: s, by: 'regra' }; }
+    const C = (OS.Fin && OS.Fin.cats(type)) || {}, own = Object.keys(C).find(c => norm(c) === pc); if (own) return { cat: own, sub: '', by: 'regra' }; }
+  const C = (OS.Fin && OS.Fin.cats(type)) || {}; return C.Outros ? { cat: 'Outros', sub: (C.Outros || []).includes('Diversos') ? 'Diversos' : '', by: '' } : { cat: '', sub: '', by: '' }; };
+const methodOf = (r, acc) => { const n = norm(r.desc); if (acc && acc.type === 'Cartão de crédito') return 'Crédito'; if (/mb ?way/.test(n)) return 'MB WAY'; if (/multibanco|levantamento|\batm\b|saque/.test(n)) return 'Multibanco'; if (/debito direto|\bdd\b|debito automatico/.test(n)) return 'Débito direto'; if (/paypal/.test(n)) return 'PayPal'; if (/transf|\bpix\b|\bted\b|\bsepa\b|\btrf\b/.test(n)) return 'Transferência'; return 'Débito'; };
+const cleanDesc = s => String(s || '').replace(/\s+/g, ' ').replace(/^(compra|pagamento|pag\.?|pgto) (com )?(cartao|cartão|card)( de debito| de crédito| de credito)?\s*[-:·]?\s*/i, '').trim().slice(0, 120) || 'Movimento do banco';
+
+/* ================= revisão: o que é novo, o que já existe, o que é transferência ================= */
+const sgnOf = (t, acc) => { const v = U.num(t.amount); if (t.type === 'Receita' && t.account === acc) return v; if (t.type === 'Despesa' && t.account === acc) return -v; if (t.type === 'Transferência') { if (t.account === acc) return -v; if (t.toAccount === acc) return U.num(t.toAmount) || v; } return null; };
+const strong = e => /^(pg|eb|fit|id):/.test(e || ''), pref = e => String(e || '').split(':')[0];
+// lote: [{ acc, date, desc, amount, ext, cat, pend }] → cada um fica com st: 'novo' | 'existe' | 'par' (a outra metade de uma transferência)
+const review = batch => { const T = OS.all('transactions'), accs = [...new Set(batch.map(r => r.acc))], pool = {};
+  accs.forEach(a => { pool[a] = T.map(t => ({ t, v: sgnOf(t, a), ext: t.account === a ? t.ext : t.toAccount === a ? t.ext2 : '' })).filter(p => p.v != null); });
+  const k = {}; batch.forEach(r => { r.st = ''; r.dup = null; r.pair = null; if (!r.ext) { const h = r.date + '|' + r.amount + '|' + norm(r.desc); k[h] = (k[h] || 0) + 1; r.ext = 'h:' + U.hash(h + '|' + k[h]).toString(36); } });
+  // 1.º o mesmo id do banco
+  batch.forEach(r => { const p = pool[r.acc].find(p => !p.used && p.ext && p.ext === r.ext); if (p) { p.used = 1; r.st = 'existe'; r.dup = p.t.id; } });
+  // 2.º o mesmo valor na mesma conta, até 3 dias de diferença (o que escreveste à mão ou veio de outro ficheiro)
+  batch.forEach(r => { if (r.st) return; let best = null, bd = 9;
+    pool[r.acc].forEach(p => { if (p.used || Math.abs(p.v - r.amount) > .005) return; if (p.ext && strong(p.ext) && strong(r.ext) && pref(p.ext) === pref(r.ext)) return; const dd = Math.abs(U.diff(p.t.date, r.date)); const lim = p.ext && pref(p.ext) === 'h' && pref(r.ext) === 'h' ? 0 : 3; if (dd <= lim && dd < bd) { best = p; bd = dd; } });
+    if (best) { best.used = 1; r.st = 'existe'; r.dup = best.t.id; } });
+  // 3.º transferências entre contas tuas: sai de uma, entra noutra com o mesmo valor, até 3 dias, e uma das descrições parece transferência
+  const cur = a => OS.Fin.curOf(a), fresh = batch.filter(r => !r.st);
+  fresh.filter(r => r.amount < 0).forEach(o => { if (o.pair) return; const i = fresh.filter(x => x.amount > 0 && !x.pair && x !== o && x.acc !== o.acc && cur(x.acc) === cur(o.acc) && Math.abs(x.amount + o.amount) < .005 && Math.abs(U.diff(x.date, o.date)) <= 3 && (TRW.test(norm(x.desc)) || TRW.test(norm(o.desc)))).sort((a, b) => Math.abs(U.diff(a.date, o.date)) - Math.abs(U.diff(b.date, o.date)))[0];
+    if (i) { o.pair = i; i.pair = o; i.st = 'par'; } });
+  // e contra movimentos importados antes noutra conta tua (o outro lado já tinha entrado como despesa ou receita)
+  fresh.forEach(r => { if (r.st || r.pair || !TRW.test(norm(r.desc))) return; const t = T.find(t => t.ext && t.account !== r.acc && (t.type === (r.amount > 0 ? 'Despesa' : 'Receita')) && Math.abs(U.num(t.amount) - Math.abs(r.amount)) < .005 && Math.abs(U.diff(t.date, r.date)) <= 3 && cur(t.account) === cur(r.acc) && !batch.some(b => b.join === t.id));
+    if (t) { r.join = t.id; } });
+  batch.forEach(r => { if (!r.st) r.st = 'novo'; });
+  return batch; };
+const txOf = (r, src, note) => { const acc = OS.get('accounts', r.acc);
+  if (r.pair && r.amount < 0) { const i = r.pair; return { type: 'Transferência', amount: r2(Math.abs(r.amount)), date: r.date, desc: cleanDesc(r.desc), account: r.acc, toAccount: i.acc, method: 'Transferência', tags: [], ext: r.ext, ext2: i.ext, src, note }; }
+  const type = r.amount > 0 ? 'Receita' : 'Despesa', c = catOf(r, type);
+  return Object.assign({ type, amount: r2(Math.abs(r.amount)), date: r.date, desc: cleanDesc(r.desc), account: r.acc, cat: c.cat, sub: c.sub, method: methodOf(r, acc), tags: [], ext: r.ext, src, note }, type === 'Despesa' ? { ess: SUP.has(c.sub) || c.cat === 'Lazer' ? 'Supérfluo' : 'Essencial' } : {}); };
+// grava o lote revisto; devolve quantos entraram
+const commit = (batch, src, note) => { let n = 0, tr = 0;
+  batch.forEach(r => { if (r.st !== 'novo' || r.pend) return;
+    if (r.join) { const t = OS.get('transactions', r.join); if (t) { const out = t.type === 'Despesa'; OS.upd('transactions', t.id, out ? { type: 'Transferência', toAccount: r.acc, ext2: r.ext, cat: '', sub: '', method: 'Transferência' } : { type: 'Transferência', account: r.acc, toAccount: t.account, ext: r.ext, ext2: t.ext, cat: '', sub: '', method: 'Transferência' }, { silent: true }); tr++; return; } }
+    if (r.amount > 0 && r.pair) return; const o = txOf(r, src, note); OS.add('transactions', o, { silent: true }); n++; if (o.type === 'Transferência') tr++; });
+  if (n || tr) { LEARN = null; OS.emit('change', 'transactions'); OS.request(); }
+  return { n, tr }; };
+// acerta o saldo da conta pelo do banco num dia (o que entrou ou saiu nesse dia fica por cima, como em "Saldo de hoje")
+const setBal = (accId, bal, day) => { const a = OS.get('accounts', accId); if (!a || bal == null || isNaN(bal)) return; const d = day || U.today();
+  const base = OS.Fin.accBal(Object.assign({}, a, { opening: 0, openDate: d, openSet: true }), d); OS.upd('accounts', a.id, { opening: r2(bal - base), openDate: d, openSet: true }); };
+
+/* ================= importar extrato (ecrã) ================= */
+let ST = null; // { file, src, inv, acc, cur, newAcc:{inst,name,type,cur}, balOk, err, busy, done }
+const accOpts = () => OS.Fin.accounts();
+const rowsOf = () => { if (!ST || !ST.src) return { rows: [], skip: {} }; const s = ST.src; let R = s.hdr ? fromTable(s, ST.inv) : { rows: s.rows.map(r => Object.assign({}, r, { amount: ST.inv ? -r.amount : r.amount })), skip: {} };
+  return R; };
+const curs = R => { const c = {}; R.forEach(r => { if (r.cur) c[r.cur] = (c[r.cur] || 0) + 1; }); return Object.entries(c).sort((a, b) => b[1] - a[1]); };
+const guessBank = s => { const n = norm((s.acct && s.acct.bank) + ' ' + s.name); const b = L.BANKS.find(b => { const k = norm(b[0]).split(' ')[0]; return k.length > 2 && n.includes(k); }); return b || null; };
+const prep = () => { const R = rowsOf(), C = curs(R.rows); if (ST.cur == null || (C.length && !C.some(c => c[0] === ST.cur))) ST.cur = C.length ? C[0][0] : '';
+  const rows = R.rows.filter(r => !C.length || !r.cur || r.cur === ST.cur); const acc = ST.acc && ST.acc !== '__new' ? ST.acc : '__new';
+  const batch = review(rows.map(r => Object.assign({}, r, { acc }))); return { R, C, batch }; };
+const autoInv = (src, accId) => { const a = accId && OS.get('accounts', accId), card = (a && a.type === 'Cartão de crédito') || (src.acct && src.acct.card); if (!card || src.fmt === 'OFX') return false;
+  const R = src.hdr ? fromTable(src, false).rows : src.rows; return R.length > 2 && R.filter(r => r.amount > 0).length / R.length > .7; };
+BK.read = async files => { const f = files && files[0]; if (!f) return; ST = { busy: true, file: f.name }; OS.request();
+  try { const src = await readFile(f); const b = guessBank(src), accs = accOpts();
+    const match = accs.find(a => src.acct && src.acct.num && String(a.name + ' ' + (a.num || '')).includes(src.acct.num)) || (b && accs.find(a => L.bank(a.inst) && L.bank(a.inst)[0] === b[0] && ((src.acct && src.acct.card) ? a.type === 'Cartão de crédito' : a.type !== 'Cartão de crédito')));
+    ST = { file: f.name, src, acc: match ? match.id : (accs.length ? '' : '__new'), cur: null, inv: false, balOk: !match,
+      newAcc: { inst: b ? b[0] : (src.acct && src.acct.bank) || '', name: src.acct && src.acct.card ? 'Cartão' : 'Conta à ordem', type: src.acct && src.acct.card ? 'Cartão de crédito' : 'Conta à ordem', cur: (src.acct && src.acct.cur) || (b && b[2]) || 'EUR' } };
+    ST.inv = autoInv(src, ST.acc); }
+  catch (e) { ST = { err: e.message || String(e), file: f.name }; }
+  OS.request(); setTimeout(() => { const el = document.getElementById('bkPrev'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); };
+A.bkPick = () => { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.ofx,.qfx,.qif,.csv,.txt,.xlsx,.xls,.ods,.pdf'; inp.style.display = 'none'; inp.onchange = () => { BK.read([...(inp.files || [])]); inp.remove(); }; document.body.appendChild(inp); inp.click(); };
+A.bkCancel = () => { ST = null; OS.request(); };
+A.bkInv = () => { if (ST) { ST.inv = !ST.inv; OS.request(); } };
+A.bkBal = () => { if (ST) { ST.balOk = !ST.balOk; OS.request(); } };
+document.addEventListener('change', e => { const el = e.target; if (!el || !el.dataset || !el.dataset.bk || !ST) return; const k = el.dataset.bk;
+  if (k === 'acc') { ST.acc = el.value; ST.inv = autoInv(ST.src, ST.acc); ST.balOk = ST.acc === '__new'; }
+  else if (k === 'cur') ST.cur = el.value;
+  else if (k.startsWith('col.')) { ST.src.M = Object.assign({}, ST.src.M, { [k.slice(4)]: +el.value }); if (k === 'col.amt' && +el.value >= 0) { ST.src.M.deb = -1; ST.src.M.cred = -1; } if ((k === 'col.deb' || k === 'col.cred') && +el.value >= 0) ST.src.M.amt = -1; }
+  else if (k.startsWith('new.')) { ST.newAcc[k.slice(4)] = el.value; return; }
+  OS.request(); });
+// saldo que o próprio extrato diz (OFX ou coluna de saldo), para acertar a conta
+const balOf = (src, R) => { if (src.acct && src.acct.bal != null) return { v: ST.inv ? -src.acct.bal : src.acct.bal, d: src.acct.balD };
+  const B = R.filter(r => !isNaN(r.bal)); if (!B.length) return null; const desc = R.length > 1 && R[0].date > R[R.length - 1].date, last = desc ? B[0] : B[B.length - 1]; return { v: last.bal, d: last.date }; };
+A.bkGo = () => { if (!ST || !ST.src) return; let accId = ST.acc;
+  if (!accId) return UI.toast('Escolhe a conta do Prumo para onde vão os movimentos.', 'warn');
+  const { R, batch } = prep(); const nw = batch.filter(r => r.st === 'novo').length; if (!nw) return UI.toast('Não há movimentos novos neste ficheiro.', 'warn');
+  if (accId === '__new') { const N = ST.newAcc, dmin = batch.map(r => r.date).sort()[0] || U.today(); const a = OS.add('accounts', { inst: (N.inst || '').trim(), name: (N.name || '').trim() || 'Conta', type: N.type || 'Conta à ordem', currency: L.CUR.includes(ST.cur) ? ST.cur : (N.cur || 'EUR'), opening: 0, openDate: dmin }); accId = a.id; batch.forEach(r => { r.acc = accId; }); review(batch); }
+  const res = commit(batch, 'extrato', 'Importado do extrato ' + ST.file.slice(0, 60));
+  const b = balOf(ST.src, R.rows); if (ST.balOk && b) setBal(accId, b.v, b.d);
+  ST = { done: res, file: ST.file, acc: accId }; UI.toast(`${res.n} movimento${res.n === 1 ? '' : 's'} importado${res.n === 1 ? '' : 's'}${res.tr ? ` · ${res.tr} transferência${res.tr === 1 ? '' : 's'} entre contas` : ''}`, 'pos'); OS.request(); };
+const STC = { novo: ['novo', 'pos'], existe: ['já existe', ''], par: ['transferência', 'acc'] };
+const colSel = (k, lbl, s) => `<label class="bnk-col"><span>${lbl}</span><select data-bk="col.${k}" aria-label="${esc(lbl)}"><option value="-1">—</option>${s.hdr.map((h, j) => `<option value="${j}"${s.M[k] === j ? ' selected' : ''}>${esc(h).slice(0, 40)}</option>`).join('')}</select></label>`;
+const preview = () => { if (!ST) return ''; if (ST.busy) return `<div class="note" id="bkPrev">A ler ${esc(ST.file || '')}…</div>`;
+  if (ST.err) return `<div class="note bnk-err" id="bkPrev"><b>${esc(ST.file || '')}</b>: ${esc(ST.err)} <button class="btn xs ghost" data-act="bkCancel">Fechar</button></div>`;
+  if (ST.done) { const a = OS.get('accounts', ST.acc); return `<div class="note bnk-ok" id="bkPrev">${UI.ic('check')}<span><b>${ST.done.n}</b> movimento${ST.done.n === 1 ? '' : 's'} de ${esc(ST.file)} entraram em <b>${esc(a ? L.accLabel(a) : '')}</b>${ST.done.tr ? ` (${ST.done.tr} como transferência entre contas)` : ''}. Revê as categorias em <a class="acc" href="#financas.transacoes">Transações</a>; da próxima vez o Prumo usa o que corrigires.</span><button class="btn xs ghost" data-act="bkCancel">Fechar</button></div>`; }
+  const s = ST.src, { R, C, batch } = prep(), nw = batch.filter(r => r.st === 'novo'), ex = batch.filter(r => r.st === 'existe').length, d0 = batch.map(r => r.date).sort(), b = balOf(s, R.rows);
+  const accs = accOpts(), a = ST.acc && ST.acc !== '__new' ? OS.get('accounts', ST.acc) : null, sk = U.sum(Object.values(R.skip), x => x);
+  const inc = U.sum(nw.filter(r => r.amount > 0), r => r.amount), out = U.sum(nw.filter(r => r.amount < 0), r => -r.amount), cur = (a && a.currency) || ST.cur || ST.newAcc.cur || 'EUR';
+  return `<div class="bnk-prev" id="bkPrev">
+    <div class="bnk-ph"><div><b>${esc(ST.file)}</b><small class="mut">${s.fmt}${s.acct && s.acct.bank ? ' · ' + esc(s.acct.bank) : ''}${d0.length ? ' · ' + U.fmtD(d0[0]) + ' a ' + U.fmtD(d0[d0.length - 1]) : ''} · ${batch.length} movimento${batch.length === 1 ? '' : 's'}</small></div><button class="icon-btn" data-act="bkCancel" aria-label="Fechar">${UI.ic('x')}</button></div>
+    <div class="bnk-grid">
+      <label class="bnk-col wide"><span>Conta no Prumo</span><select data-bk="acc" aria-label="Conta no Prumo"><option value=""${!ST.acc ? ' selected' : ''}>Escolhe a conta…</option>${accs.map(x => `<option value="${x.id}"${ST.acc === x.id ? ' selected' : ''}>${esc(L.accLabel(x))}${x.currency && x.currency !== 'EUR' ? ' (' + x.currency + ')' : ''}</option>`).join('')}<option value="__new"${ST.acc === '__new' ? ' selected' : ''}>+ Criar conta nova</option></select></label>
+      ${C.length > 1 ? `<label class="bnk-col"><span>Moeda</span><select data-bk="cur">${C.map(([c, n]) => `<option value="${esc(c)}"${ST.cur === c ? ' selected' : ''}>${esc(c)} (${n})</option>`).join('')}</select></label>` : ''}
+    </div>
+    ${ST.acc === '__new' ? `<div class="bnk-grid bnk-new"><label class="bnk-col"><span>Banco</span><input class="field" data-bk="new.inst" value="${esc(ST.newAcc.inst)}" placeholder="Ex.: Nubank, Revolut"></label><label class="bnk-col"><span>Nome</span><input class="field" data-bk="new.name" value="${esc(ST.newAcc.name)}"></label><label class="bnk-col"><span>Tipo</span><select data-bk="new.type">${L.ACCT.map(t => `<option${ST.newAcc.type === t ? ' selected' : ''}>${t}</option>`).join('')}</select></label>${C.length ? '' : `<label class="bnk-col"><span>Moeda</span><select data-bk="new.cur">${L.CUR.map(c => `<option${ST.newAcc.cur === c ? ' selected' : ''}>${c}</option>`).join('')}</select></label>`}</div>` : ''}
+    ${s.hdr ? `<details class="bnk-map"${s.M.amt < 0 && (s.M.deb < 0 || s.M.cred < 0) ? ' open' : ''}><summary>Colunas do ficheiro <span class="mut">(o Prumo escolheu sozinho; muda se algo estiver trocado)</span></summary><div class="bnk-grid">${colSel('date', 'Data', s)}${colSel('desc', 'Descrição', s)}${colSel('amt', 'Valor (com sinal)', s)}${colSel('deb', 'ou Débito / saídas', s)}${colSel('cred', 'e Crédito / entradas', s)}${colSel('bal', 'Saldo (opcional)', s)}</div></details>` : ''}
+    <div class="bnk-opts"><button class="bnk-chk ${ST.inv ? 'on' : ''}" data-act="bkInv" role="switch" aria-checked="${ST.inv}"><i aria-hidden="true"></i><span>Inverter sinais <small class="mut">(faturas de cartão em que as compras vêm positivas)</small></span></button>
+      ${b && !isNaN(b.v) ? `<button class="bnk-chk ${ST.balOk ? 'on' : ''}" data-act="bkBal" role="switch" aria-checked="${ST.balOk}"><i aria-hidden="true"></i><span>Acertar o saldo da conta para ${U.money(b.v, cur)} <small class="mut">(saldo do extrato a ${U.fmtD(b.d)}${a ? '; o Prumo diz ' + U.money(OS.Fin.accBal(a, b.d), cur) : ''})</small></span></button>` : ''}</div>
+    <div class="bnk-sum"><span><b>${nw.length}</b> novo${nw.length === 1 ? '' : 's'}</span>${ex ? `<span>${ex} já existia${ex === 1 ? '' : 'm'} (ignorado${ex === 1 ? '' : 's'})</span>` : ''}${sk ? `<span title="${esc(Object.entries(R.skip).map(([k, v]) => k + ': ' + v).join(' · '))}">${sk} linha${sk === 1 ? '' : 's'} sem movimento</span>` : ''}<span class="pos">+${U.money(inc, cur)}</span><span>−${U.money(out, cur)}</span></div>
+    ${batch.length ? `<div class="tblw bnk-tbl"><table class="tbl"><thead><tr><th>Data</th><th>Descrição</th><th class="bnk-c3">Categoria</th><th class="r">Valor</th><th class="bnk-c5"></th></tr></thead><tbody>${U.sortBy(batch, r => r.date, -1).slice(0, 150).map(r => { const c = r.st === 'novo' && !r.pair && !r.join ? catOf(r, r.amount > 0 ? 'Receita' : 'Despesa') : null;
+      const ct = r.join ? '<span class="mut">transferência (junta-se ao outro lado)</span>' : c ? esc(c.cat + (c.sub ? ' · ' + c.sub : '')) || '<span class="mut">—</span>' : '';
+      return `<tr class="${r.st === 'novo' ? '' : 'bnk-dim'}"><td class="mono">${U.fmtD(r.date)}</td><td>${esc(cleanDesc(r.desc))}<small class="bnk-m">${ct ? ct + ' · ' : ''}${STC[r.st][0]}</small></td><td class="bnk-c3">${ct}</td><td class="r mono ${r.amount > 0 ? 'pos' : ''}">${U.money(r.amount, cur, { sign: true })}</td><td class="bnk-c5">${UI.badge(STC[r.st][0], STC[r.st][1])}</td></tr>`; }).join('')}</tbody></table>${batch.length > 150 ? `<p class="mut" style="font-size:12px">Mostro os 150 mais recentes; entram todos.</p>` : ''}</div>` : `<p class="mut">Não encontrei movimentos com estas colunas. Abre "Colunas do ficheiro" e escolhe a data e o valor.</p>`}
+    <div class="row gap8" style="flex-wrap:wrap;margin-top:10px"><button class="btn pri" data-act="bkGo" ${nw.length && ST.acc ? '' : 'disabled'}>Importar ${nw.length} movimento${nw.length === 1 ? '' : 's'}</button><button class="btn ghost" data-act="bkCancel">Cancelar</button></div>
+  </div>`; };
+
+/* ================= ligação automática (api/banco) ================= */
+let stK = '', est = null;
+const cur0 = () => { const k = 'os2banco:' + (Acc().pid ? Acc().pid() : ''); if (k !== stK) { stK = k; est = U.ls.get(k, null); } return est || {}; };
+const setEst = o => { cur0(); est = Object.assign({}, est || {}, o); U.ls.set(stK, est); };
+const call = async (op, body = {}) => { let r;
+  try { r = await fetch('api/banco', { method: 'POST', cache: 'no-store', credentials: 'omit', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + Acc().token() }, body: JSON.stringify(Object.assign({ op, p: Acc().pid() }, body)) }); }
+  catch (e) { throw new Error('Sem ligação à internet.'); }
+  let j = null; try { j = await r.json(); } catch (e) { }
+  if (j && j.ok) return j; const e = new Error((j && j.msg) || (r.status === 404 ? 'O servidor do Prumo não respondeu.' : 'Erro ' + r.status)); e.code = j && j.code; throw e; };
+let busy = '', SY = null, estAt = 0, banks = { c: '', list: null };
+const refresh = async () => { if (!on() || busy === 'estado') return; busy = 'estado'; try { const j = await call('estado'); setEst({ adm: j.adm, pronto: j.pronto, regresso: j.regresso, pg: j.pg, eb: j.eb, at: Date.now() }); } catch (e) { setEst({ err: e.message }); } busy = ''; estAt = Date.now(); OS.request(); };
+const links = () => { const s = cur0(); return (s.pg || []).length + (s.eb || []).filter(x => !x.exp).length; };
+// sincroniza: traz contas e movimentos; importa sozinho os das contas já associadas
+const sync = async (quiet) => { if (!on() || busy) return; busy = 'sync'; OS.request(); const B = OS.one('banklink');
+  try { const last = B.last ? U.addDays(B.last.slice(0, 10), -5) : U.addDays(U.today(), -90); const j = await call('sync', { from: last });
+    const accs = Object.assign({}, B.accs); j.contas.forEach(c => { accs[c.id] = { bank: c.bank, name: c.name, num: c.num, cur: c.cur, bal: c.bal, kind: c.kind, at: new Date().toISOString() }; });
+    SY = { mov: j.mov, erros: j.erros || [], at: Date.now() }; const res = importMapped(accs);
+    OS.setOne('banklink', { accs, last: new Date().toISOString() });
+    if (!quiet || res.n) UI.toast(res.n ? `${res.n} movimento${res.n === 1 ? '' : 's'} novo${res.n === 1 ? '' : 's'} do banco` : 'Banco atualizado: nada de novo', 'pos');
+    if (SY.erros.length && !quiet) UI.toast(SY.erros[0], 'warn'); }
+  catch (e) { if (!quiet) UI.toast(e.message, 'warn'); SY = Object.assign(SY || {}, { err: e.message }); }
+  busy = ''; OS.request(); };
+const importMapped = accs => { const B = OS.one('banklink'), map = B.map || {}; if (!SY || !SY.mov) return { n: 0, tr: 0 };
+  const batch = SY.mov.filter(m => map[m.acc] && map[m.acc] !== '-' && OS.get('accounts', map[m.acc]) && !m.pend).map(m => ({ acc: map[m.acc], src: m.acc, date: m.date, desc: m.desc, amount: m.amount, ext: m.ext, cat: m.cat }));
+  if (!batch.length) return { n: 0, tr: 0 }; review(batch); const G = new Set(B.gone || []); batch.forEach(r => { if (r.st === 'novo' && G.has(r.ext)) r.st = 'existe'; }); const res = commit(batch, 'banco', 'Importado do banco');
+  // contas novas no Prumo: o saldo fica igual ao do banco
+  Object.entries(map).forEach(([bid, pid]) => { const ba = (accs || B.accs)[bid], pa = OS.get('accounts', pid); if (ba && pa && pa.bankAuto && ba.bal != null) setBal(pid, ba.bal); });
+  return res; };
+BK.sync = sync;
+// o que apagares de propósito não volta na sincronização seguinte
+OS.on('del:transactions', t => { if (!t || t.src !== 'banco' || !t.ext) return; const B = OS.one('banklink'); OS.setOne('banklink', { gone: (B.gone || []).concat([t.ext, t.ext2].filter(Boolean)).slice(-3000) }); });
+A.bkSync = () => sync(false);
+A.bkAuto = () => { const B = OS.one('banklink'); OS.setOne('banklink', { auto: !B.auto }); OS.request(); };
+const mapTo = (bid, v) => { const B = OS.one('banklink'), ba = (B.accs || {})[bid]; let pid = v;
+  if (v === '__new' && ba) { const bk = L.bank(ba.bank); const a = OS.add('accounts', { inst: bk ? bk[0] : ba.bank, name: ba.name || 'Conta', type: ba.kind === 'card' ? 'Cartão de crédito' : 'Conta à ordem', currency: L.CUR.includes(ba.cur) ? ba.cur : 'EUR', opening: 0, openDate: U.addDays(U.today(), -90), bankAuto: true }); pid = a.id; }
+  OS.setOne('banklink', { map: Object.assign({}, B.map, { [bid]: pid }) });
+  if (pid && pid !== '-' && SY && SY.mov) { const res = importMapped(); UI.toast(`${res.n} movimento${res.n === 1 ? '' : 's'} importado${res.n === 1 ? '' : 's'}`, 'pos'); }
+  else if (pid && pid !== '-') sync(false); OS.request(); };
+document.addEventListener('change', e => { const el = e.target; if (el && el.dataset && el.dataset.bkmap) mapTo(el.dataset.bkmap, el.value); });
+A.bkSetBal = b => { const B = OS.one('banklink'), ba = (B.accs || {})[b.dataset.id], pid = (B.map || {})[b.dataset.id]; if (!ba || !pid) return; const pa = OS.get('accounts', pid);
+  UI.ask('Acertar o saldo pelo do banco?', `${L.accLabel(pa)} fica com ${U.money(ba.bal, pa.currency)} hoje. O histórico não muda: só o ponto de partida do saldo.`, 'Acertar', () => { setBal(pid, ba.bal); UI.toast('Saldo acertado', 'pos'); OS.request(); }); };
+A.bkPgAdd = async () => { const el = document.getElementById('bkPgId'), id = el ? el.value.trim() : ''; if (!id) return UI.toast('Cola o ID do item da Pluggy.', 'warn'); busy = 'pg'; OS.request();
+  try { const j = await call('pg.add', { item: id }); UI.toast('Ligado: ' + j.name, 'pos'); busy = ''; await refresh(); sync(false); } catch (e) { busy = ''; UI.toast(e.message, 'warn'); OS.request(); } };
+A.bkPgDel = b => UI.ask('Desligar este banco?', 'Deixam de chegar movimentos novos dele. O que já entrou nas Finanças fica.', 'Desligar', async () => { try { await call('pg.del', { item: b.dataset.id }); await refresh(); } catch (e) { UI.toast(e.message, 'warn'); } });
+A.bkEbDel = b => UI.ask('Desligar este banco?', 'A autorização é cancelada no Enable Banking. O que já entrou nas Finanças fica.', 'Desligar', async () => { try { await call('eb.del', { sid: b.dataset.id }); await refresh(); } catch (e) { UI.toast(e.message, 'warn'); } });
+A.bkEbCountry = async b => { const sel = document.getElementById('bkEbC'), c = sel ? sel.value : 'PT'; banks = { c, list: null, busy: true }; OS.request();
+  try { const j = await call('eb.bancos', { c }); banks = { c, list: j.bancos }; } catch (e) { banks = { c, list: [], err: e.message }; } OS.request(); };
+A.bkEbGo = async () => { const sel = document.getElementById('bkEbB'); if (!sel || !sel.value) return UI.toast('Escolhe o banco.', 'warn'); const bk = (banks.list || []).find(x => x.name === sel.value);
+  const w = window.open('', '_blank'); busy = 'eb'; OS.request();
+  try { const j = await call('eb.inicio', { bank: sel.value, c: banks.c, max: bk ? bk.max : 0 }); if (w) w.location.href = j.url; else location.href = j.url; setEst({ waitEb: Date.now() }); }
+  catch (e) { if (w) w.close(); UI.toast(e.message, 'warn'); } busy = ''; OS.request(); };
+// ao voltar do banco (a janela fecha-se e o Prumo volta a ter o foco), atualiza o estado
+window.addEventListener('focus', () => { const s = cur0(); if (s.waitEb && Date.now() - s.waitEb < 20 * 60e3) { setEst({ waitEb: 0 }); refresh().then(() => sync(true)); } });
+// arranque: a cada 12 horas, se a ligação automática estiver ativa
+OS.on('ready', () => { if (navigator.webdriver && !window.__bkTest) return; setTimeout(() => { if (!on()) return; const s = cur0(), B = OS.one('banklink');
+  if (!s.adm) return;
+  if (B.auto && links() && Object.values(B.map || {}).some(v => v && v !== '-') && (!B.last || Date.now() - Date.parse(B.last) > 12 * 36e5)) refresh().then(() => sync(true)); }, 6000); });
+
+const ago = iso => { if (!iso) return 'nunca'; const m = Math.round((Date.now() - Date.parse(iso)) / 6e4); return m < 2 ? 'agora mesmo' : m < 60 ? `há ${m} min` : m < 48 * 60 ? `há ${Math.round(m / 60)} h` : `há ${Math.round(m / 1440)} dias`; };
+const COUNTRIES = [['PT', 'Portugal'], ['ES', 'Espanha'], ['FR', 'França'], ['DE', 'Alemanha'], ['IT', 'Itália'], ['NL', 'Países Baixos'], ['BE', 'Bélgica'], ['IE', 'Irlanda'], ['LU', 'Luxemburgo'], ['AT', 'Áustria'], ['FI', 'Finlândia'], ['LT', 'Lituânia'], ['GB', 'Reino Unido']];
+const steps = (list) => `<ol class="ai-steps bnk-steps">${list.map(x => `<li>${x}</li>`).join('')}</ol>`;
+const ligacao = () => { if (!on()) return ''; const s = cur0(); if (!busy && Date.now() - estAt > 60e3 && (!s.at || Date.now() - s.at > 10 * 6e4)) { estAt = Date.now(); setTimeout(refresh, 0); } if (!s.at) return '';
+  if (!s.adm) return ''; const B = OS.one('banklink'), P = s.pronto || {}, accs = Object.entries(B.accs || {}), pend = SY && SY.mov ? SY.mov.filter(m => !(B.map || {})[m.acc]).length : 0;
+  const pgBox = `<div class="bnk-prov"><div class="bnk-provh"><b>Brasil · Open Finance</b><small class="mut">pela Pluggy, com o Meu Pluggy (grátis para uso pessoal)</small></div>
+    ${!P.pg ? steps(['Cria conta em <b>meu.pluggy.ai</b> e liga lá os teus bancos pelo Open Finance (autorizas na app de cada banco).', 'Em <b>dashboard.pluggy.ai</b> cria uma aplicação e ativa o conector Meu Pluggy; copia o <b>Client ID</b> e o <b>Client Secret</b>.', 'No Vercel, projeto prumo → Settings → Environment Variables, cria <code>PLUGGY_CLIENT_ID</code> e <code>PLUGGY_CLIENT_SECRET</code> (Production) e faz Redeploy. Não as coles em mais lado nenhum.', 'Volta aqui: aparece um campo para colares o ID de cada item (cada banco ligado no Meu Pluggy).'])
+    : `${(s.pg || []).length ? `<div class="list">${s.pg.map(x => `<div class="li"><div class="li-t"><b>${esc(x.name || 'Banco')}</b><small class="mono">${esc(x.item.slice(0, 8))}…</small></div><button class="btn xs ghost" data-act="bkPgDel" data-id="${esc(x.item)}">Desligar</button></div>`).join('')}</div>` : ''}
+      <div class="row gap8 bnk-add"><input class="field" id="bkPgId" placeholder="ID do item (8-4-4-4-12)" autocomplete="off" spellcheck="false" aria-label="ID do item da Pluggy"><button class="btn" data-act="bkPgAdd" ${busy === 'pg' ? 'disabled' : ''}>${busy === 'pg' ? 'A ligar…' : 'Ligar'}</button></div>
+      <p class="mut bnk-hint">O ID está no Pluggy Dashboard, em Demo/Items, depois de ligares o banco no Meu Pluggy. A Pluggy atualiza os movimentos uma vez por dia.</p>`}</div>`;
+  const ebBox = `<div class="bnk-prov"><div class="bnk-provh"><b>Europa · PSD2</b><small class="mut">pelo Enable Banking (grátis para as tuas próprias contas)</small></div>
+    ${!P.eb ? steps(['Cria conta em <b>enablebanking.com</b> (Control Panel) e regista uma aplicação; ao criá-la, descarrega a chave privada (.pem).', `Como endereço de regresso (redirect URL) põe <code>${esc(s.regresso || 'https://prumo-vida.vercel.app/api/banco')}</code>.`, 'Ativa a aplicação ligando as tuas contas (modo restrito: só lê as contas do próprio).', 'No Vercel, projeto prumo → Settings → Environment Variables, cria <code>ENABLEBANKING_APP_ID</code> (o id da aplicação) e <code>ENABLEBANKING_KEY</code> (o conteúdo do .pem) e faz Redeploy. A chave fica só lá.'])
+    : `${(s.eb || []).length ? `<div class="list">${s.eb.map(x => `<div class="li"><div class="li-t"><b>${esc(x.bank)}</b><small class="${x.exp ? 'neg' : 'mut'}">${x.exp ? 'autorização expirada: liga outra vez' : `${x.n} conta${x.n === 1 ? '' : 's'} · autorizado até ${U.fmtD((x.until || '').slice(0, 10))}`}</small></div><button class="btn xs ghost" data-act="bkEbDel" data-id="${esc(x.sid)}">Desligar</button></div>`).join('')}</div>` : ''}
+      <div class="row gap8 bnk-add"><select id="bkEbC" aria-label="País do banco">${COUNTRIES.map(([c, n]) => `<option value="${c}"${(banks.c || 'PT') === c ? ' selected' : ''}>${n}</option>`).join('')}</select><button class="btn" data-act="bkEbCountry">${banks.busy ? 'A procurar…' : 'Ver bancos'}</button></div>
+      ${banks.list ? (banks.list.length ? `<div class="row gap8 bnk-add"><select id="bkEbB" aria-label="Banco">${banks.list.map(x => `<option>${esc(x.name)}</option>`).join('')}</select><button class="btn pri" data-act="bkEbGo" ${busy === 'eb' ? 'disabled' : ''}>Ligar no banco</button></div>` : `<p class="mut bnk-hint">${esc(banks.err || 'Sem bancos para este país.')}</p>`) : ''}
+      <p class="mut bnk-hint">Abre o site do teu banco para autorizares (até 90 a 180 dias, conforme o banco). Depois voltas aqui e os movimentos chegam sozinhos.</p>`}</div>`;
+  const accBox = accs.length ? `<div class="bnk-accs"><h4>Contas do banco</h4>${accs.map(([id, a]) => { const pid = (B.map || {})[id], pa = pid && pid !== '-' ? OS.get('accounts', pid) : null, pb = pa ? OS.Fin.accBal(pa) : null, diff = pa && a.bal != null ? r2(a.bal - pb) : 0;
+      return `<div class="bnk-acc"><div class="bnk-acct"><b>${esc(a.bank)} · ${esc(a.name)}</b><small class="mut">${a.num ? '…' + esc(a.num.slice(-4)) + ' · ' : ''}${a.bal != null ? 'saldo no banco ' + U.money(a.bal, a.cur) : ''}</small></div>
+        <select data-bkmap="${esc(id)}" aria-label="Conta do Prumo para ${esc(a.name)}"><option value=""${!pid ? ' selected' : ''}>Associar a…</option>${accOpts().map(x => `<option value="${x.id}"${pid === x.id ? ' selected' : ''}>${esc(L.accLabel(x))}</option>`).join('')}<option value="__new">+ Criar conta no Prumo</option><option value="-"${pid === '-' ? ' selected' : ''}>Não importar</option></select>
+        ${pa && Math.abs(diff) >= .01 ? `<div class="bnk-diff"><span class="warn">O Prumo diz ${U.money(pb, pa.currency)}</span><button class="btn xs" data-act="bkSetBal" data-id="${esc(id)}">Acertar pelo banco</button></div>` : pa ? '<div class="bnk-diff"><span class="pos">saldo igual ao do banco</span></div>' : ''}</div>`; }).join('')}</div>` : '';
+  return `<div class="pn bnk-auto"><div class="pn-h"><h3>${UI.ic('sync')}Ligação automática</h3><span class="mut" style="font-size:12px">só na tua conta</span></div>
+    <div class="bnk-st"><span>Última atualização: <b>${ago(B.last)}</b></span>${links() ? `<button class="btn xs" data-act="bkSync" ${busy ? 'disabled' : ''}>${busy === 'sync' ? 'A atualizar…' : 'Atualizar agora'}</button>` : ''}<button class="bnk-chk ${B.auto ? 'on' : ''}" data-act="bkAuto" role="switch" aria-checked="${!!B.auto}"><i aria-hidden="true"></i><span>Atualizar sozinho a cada 12 h</span></button></div>
+    ${pend ? `<div class="note">${pend} movimento${pend === 1 ? '' : 's'} à espera: associa cada conta do banco a uma conta do Prumo.</div>` : ''}${SY && SY.err ? `<p class="neg">${esc(SY.err)}</p>` : ''}${SY && SY.erros && SY.erros.length ? `<p class="warn" style="font-size:12.5px">${SY.erros.map(esc).join('<br>')}</p>` : ''}
+    ${accBox}<div class="bnk-provs">${pgBox}${ebBox}</div>
+    <p class="mut bnk-hint">Só leitura: o Prumo vê contas, saldos e movimentos; nunca faz pagamentos. As chaves ficam nas variáveis do Vercel e as ligações cifradas no servidor.</p></div>`; };
+
+/* ================= a aba ================= */
+BK.view = () => `<div class="pn bnk-imp"><div class="pn-h"><h3>${UI.ic('arrowUp')}Importar extrato</h3><span class="mut" style="font-size:12px">OFX · QIF · CSV · Excel</span></div>
+  <p class="bnk-lead">Descarrega o extrato no site ou na app do banco (ou noutra app de finanças) e escolhe o ficheiro. O Prumo lê as colunas sozinho, ignora o que já tens e propõe as categorias.</p>
+  <div class="bnk-drop" data-act="bkPick" role="button" tabindex="0" aria-label="Escolher ficheiro do extrato">${UI.ic('folder')}<b>Escolher ficheiro</b><small class="mut">ou arrasta-o para aqui</small></div>
+  ${preview()}
+  ${UI.toggle('Onde descarrego o extrato?', `<ul class="bnk-tips"><li><b>Prefere OFX</b> quando o banco oferece: traz o id de cada movimento e o saldo, e nada se repete mesmo que importes o mesmo mês duas vezes.</li><li>Procura por "Extrato", "Exportar" ou "Descarregar movimentos", escolhe o período e o formato OFX, CSV ou Excel.</li><li>Apps de finanças (Mobills, Organizze, Minhas Economias, Money Manager, YNAB…) exportam CSV ou OFX: também servem.</li><li>Faturas de cartão: escolhe a conta do cartão. Se as compras aparecerem como entradas, liga "Inverter sinais".</li><li>PDF não serve: não dá para ler com segurança.</li></ul>`, 'bktips', 'info')}
+</div>${ligacao()}`;
+// arrastar o ficheiro para a caixa
+document.addEventListener('dragover', e => { const z = e.target && e.target.closest && e.target.closest('.bnk-drop'); if (z) { e.preventDefault(); z.classList.add('on'); } });
+document.addEventListener('dragleave', e => { const z = e.target && e.target.closest && e.target.closest('.bnk-drop'); if (z) z.classList.remove('on'); });
+document.addEventListener('drop', e => { const z = e.target && e.target.closest && e.target.closest('.bnk-drop'); if (!z) return; e.preventDefault(); z.classList.remove('on'); BK.read([...((e.dataTransfer && e.dataTransfer.files) || [])]); });
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.classList && e.target.classList.contains('bnk-drop')) { e.preventDefault(); A.bkPick(); } });
+
+Object.assign(BK, { num, date, dOrder, decOf, csvRows, ofx, qif, table, fromTable, review, commit, catOf, key, readFile, setBal, state: () => ST, est: cur0, refresh, sy: () => SY, _sy: o => { SY = o; }, mapTo, importMapped });
 })();
 
 </script>
@@ -19129,6 +19607,215 @@ document.addEventListener('click', e => { const g = e.target.closest('[data-jvgo
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && J.isOpen() && !(document.getElementById('spy') && !document.getElementById('spy').hidden)) J.close(); });
 document.addEventListener('visibilitychange', () => { if (!document.hidden && J.isOpen()) render(); });
 OS.on('ready', () => { mkFab(); if (cfg().jarvisStart && !navigator.webdriver && !(OS.FocusBlock && OS.FocusBlock.state()) && !/^#(spyke|foco)/.test(location.hash)) setTimeout(() => J.open(false), 400); });
+})();
+
+</script>
+<script>
+/* PRUMO — Calculadora flutuante (v3.12): um botão sempre à mão, em todo o app, que abre uma calculadora com três modos.
+   · Básica e científica: escreves a conta como no papel (parênteses, potências, raízes, trigonometria, ln, log, π, e), com histórico.
+   · Financeira (RPN, como a HP 12C): pilha X Y Z T com ENTER, n · i · PV · PMT · FV (guardar ao introduzir um número, calcular ao tocar
+     sem número novo), BEG/END, 12× e 12÷, %, Δ%, yˣ, 1/x, √x, x↔y, R↓, CHS, LSTx, fluxos de caixa (CF0, CFj, Nj) com NPV e IRR,
+     e uma tabela de amortização (prestações iguais e amortização constante).
+   · Gráfica: até 3 funções de x no mesmo gráfico, com zoom, arrastar para mover e tocar para ler os valores.
+   O estado fica guardado neste aparelho. Atalhos de teclado quando a calculadora está aberta. */
+(() => {
+'use strict';
+const U = OS.U, UI = OS.UI, esc = U.esc;
+const LS = 'oc_calc';
+const load = () => { try { return JSON.parse(localStorage.getItem(LS) || '{}') || {}; } catch (e) { return {}; } };
+const S = Object.assign({ mode: 'fin', expr: '', hist: [], deg: true, ans: 0, st: [0, 0, 0, 0], ent: false, lift: true, lastx: 0, reg: { n: 0, i: 0, PV: 0, PMT: 0, FV: 0 }, beg: false, cf: [], fn: ['sin(x)', 'x^2/4-2', ''], view: null, pos: null }, load());
+let saveT = 0; const save = () => { clearTimeout(saveT); saveT = setTimeout(() => { try { const o = Object.assign({}, S); delete o.err; localStorage.setItem(LS, JSON.stringify(o)); } catch (e) { } }, 250); };
+const fmt = (v, dp) => { if (!isFinite(v)) return 'Erro'; const a = Math.abs(v); if (a !== 0 && (a >= 1e12 || a < 1e-9)) return v.toExponential(6).replace('.', ','); const d = dp != null ? dp : Math.min(10, Math.max(0, 10 - String(Math.floor(a)).length)); let s = (+v.toFixed(d)).toLocaleString('pt-PT', { maximumFractionDigits: d }); return s === '-0' ? '0' : s; };
+
+/* ================= expressões (sem eval): números, x, constantes, funções, ^, %, multiplicação implícita ================= */
+const FN = { sin: 1, cos: 1, tan: 1, asin: 1, acos: 1, atan: 1, sqrt: 1, '√': 1, ln: 1, log: 1, abs: 1, exp: 1 };
+const tok = s => { const T = [], src = String(s).replace(/\s+/g, '').replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/π/g, 'pi'); let i = 0;
+  while (i < src.length) { const c = src[i];
+    if (/[0-9.,]/.test(c)) { let j = i; while (j < src.length && /[0-9.,]/.test(src[j])) j++; let num = src.slice(i, j).replace(',', '.'); if (/e[+-]?\d/i.test(src.slice(j, j + 3)) && /^\d/.test(num.slice(-1))) { const m = src.slice(j).match(/^e[+-]?\d+/i); if (m) { num += m[0]; j += m[0].length; } } if (isNaN(+num)) throw new Error('Número inválido'); T.push({ t: 'n', v: +num }); i = j; continue; }
+    if (/[a-z√]/i.test(c)) { let j = i; if (c === '√') j++; else while (j < src.length && /[a-z]/i.test(src[j])) j++; const w = src.slice(i, j).toLowerCase();
+      if (w === 'pi') T.push({ t: 'n', v: Math.PI }); else if (w === 'e') T.push({ t: 'n', v: Math.E }); else if (w === 'x') T.push({ t: 'x' }); else if (w === 'ans') T.push({ t: 'n', v: S.ans }); else if (FN[w]) T.push({ t: 'f', v: w === '√' ? 'sqrt' : w });
+      else { // "xsin" ou "2x": parte letra a letra
+        if (/^x/.test(w) && w.length > 1) { T.push({ t: 'x' }); i += 1; continue; } throw new Error('Não conheço "' + w + '"'); }
+      i = j; continue; }
+    if ('+-*/^()%!'.includes(c)) { T.push({ t: 'o', v: c }); i++; continue; }
+    throw new Error('Símbolo inválido: ' + c); }
+  // multiplicação implícita: 2x, 2(…), )(, x(…), 2sin(…), )x
+  const O = []; T.forEach((t, k) => { const p = O[O.length - 1]; if (p && (p.t === 'n' || p.t === 'x' || (p.t === 'o' && (p.v === ')' || p.v === '%' || p.v === '!'))) && (t.t === 'n' || t.t === 'x' || t.t === 'f' || (t.t === 'o' && t.v === '('))) O.push({ t: 'o', v: '*' }); O.push(t); }); return O; };
+const PREC = { '+': 1, '-': 1, '*': 2, '/': 2, '^': 4, 'u': 3 };
+const compile = s => { const T = tok(s), out = [], ops = []; let prev = null;
+  T.forEach(t => {
+    if (t.t === 'n' || t.t === 'x') out.push(t);
+    else if (t.t === 'f') ops.push(t);
+    else if (t.v === '(') ops.push(t);
+    else if (t.v === ')') { while (ops.length && ops[ops.length - 1].v !== '(') out.push(ops.pop()); if (!ops.length) throw new Error('Parênteses a mais'); ops.pop(); if (ops.length && ops[ops.length - 1].t === 'f') out.push(ops.pop()); }
+    else if (t.v === '%' || t.v === '!') out.push({ t: 'p', v: t.v });
+    else { let v = t.v; if ((v === '-' || v === '+') && (!prev || (prev.t === 'o' && !(prev.v === ')' || prev.v === '%' || prev.v === '!')) || prev.t === 'f')) { if (v === '+') { prev = t; return; } v = 'u'; }
+      if (v !== 'u') while (ops.length) { const o = ops[ops.length - 1]; if (o.t === 'f') { out.push(ops.pop()); continue; } if (o.v === '(') break; const p1 = PREC[v], p2 = PREC[o.v]; if (p2 > p1 || (p2 === p1 && v !== '^')) out.push(ops.pop()); else break; }
+      ops.push({ t: 'o', v }); }
+    prev = t; });
+  while (ops.length) { const o = ops.pop(); if (o.v === '(') throw new Error('Falta fechar um parêntese'); out.push(o); }
+  return (x, deg) => { const st = []; const k = deg ? Math.PI / 180 : 1;
+    for (const t of out) { if (t.t === 'n') st.push(t.v); else if (t.t === 'x') st.push(x); else if (t.t === 'p') { const a = st.pop(); if (a === undefined) throw new Error('Conta incompleta'); st.push(t.v === '%' ? a / 100 : fact(a)); }
+      else if (t.t === 'f') { const a = st.pop(); if (a === undefined) throw new Error('Conta incompleta'); st.push({ sin: Math.sin(a * k), cos: Math.cos(a * k), tan: Math.tan(a * k), asin: Math.asin(a) / k, acos: Math.acos(a) / k, atan: Math.atan(a) / k, sqrt: Math.sqrt(a), ln: Math.log(a), log: Math.log10(a), abs: Math.abs(a), exp: Math.exp(a) }[t.v]); }
+      else if (t.v === 'u') { const a = st.pop(); if (a === undefined) throw new Error('Conta incompleta'); st.push(-a); }
+      else { const b = st.pop(), a = st.pop(); if (a === undefined || b === undefined) throw new Error('Conta incompleta'); st.push(t.v === '+' ? a + b : t.v === '-' ? a - b : t.v === '*' ? a * b : t.v === '/' ? a / b : Math.pow(a, b)); } }
+    if (st.length !== 1) throw new Error('Conta incompleta'); return st[0]; }; };
+const fact = n => { if (n < 0 || n !== Math.floor(n) || n > 170) return NaN; let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; };
+const evalExpr = (s, deg = S.deg) => compile(s)(0, deg);
+
+/* ================= financeira (RPN, como a HP 12C) ================= */
+const X = () => S.st[0];
+const setX = v => { S.st[0] = v; };
+const push = v => { S.st = [v, S.st[0], S.st[1], S.st[2]]; };
+let buf = null; // número a ser escrito
+const endEntry = () => { if (buf != null) { setX(parseNum(buf)); buf = null; } };
+const parseNum = b => { const v = +String(b).replace(',', '.'); return isFinite(v) ? v : 0; };
+const digit = d => { if (buf == null) { if (S.lift) push(0); S.lift = true; buf = ''; } if (d === ',' && buf.includes(',')) return; if (buf.replace(/[-,]/g, '').length >= 12) return; buf = (buf === '' && d === ',') ? '0,' : buf + d; setX(parseNum(buf)); S.lastTVM = false; };
+const binop = f => { endEntry(); const x = X(), y = S.st[1]; S.lastx = x; S.st = [f(y, x), S.st[2], S.st[3], S.st[3]]; S.lift = true; S.lastTVM = false; };
+const unop = (f, keepY) => { endEntry(); S.lastx = X(); setX(f(X(), S.st[1])); S.lift = true; S.lastTVM = false; };
+// TVM: PV·(1+r)^n + PMT·(1+r·b)·((1+r)^n − 1)/r + FV = 0
+const tvm = (k, R) => { const n = R.n, r = R.i / 100, pv = R.PV, pmt = R.PMT, fv = R.FV, b = S.beg ? 1 : 0;
+  const f = rr => { if (Math.abs(rr) < 1e-12) return pv + pmt * n + fv; const q = Math.pow(1 + rr, n); return pv * q + pmt * (1 + rr * b) * (q - 1) / rr + fv; };
+  if (k === 'FV') { if (Math.abs(r) < 1e-12) return -(pv + pmt * n); const q = Math.pow(1 + r, n); return -(pv * q + pmt * (1 + r * b) * (q - 1) / r); }
+  if (k === 'PV') { if (Math.abs(r) < 1e-12) return -(fv + pmt * n); const q = Math.pow(1 + r, n); return -(fv + pmt * (1 + r * b) * (q - 1) / r) / q; }
+  if (k === 'PMT') { if (Math.abs(r) < 1e-12) return n ? -(pv + fv) / n : NaN; const q = Math.pow(1 + r, n); return -(pv * q + fv) * r / ((1 + r * b) * (q - 1)); }
+  if (k === 'n') { if (Math.abs(r) < 1e-12) return pmt ? -(pv + fv) / pmt : NaN; const a = pmt * (1 + r * b), v = Math.log((a - fv * r) / (a + pv * r)) / Math.log(1 + r); return isFinite(v) ? Math.ceil(v - 1e-9) : NaN; }
+  if (k === 'i') { // procura numérica (Newton com recurso à bissecção)
+    let lo = -0.9999, flo = f(lo), hi = [.05, .2, .5, 1, 3, 10].find(h => { const v = f(h); return isFinite(v) && isFinite(flo) && v * flo <= 0; }) || 10, fhi = f(hi); if (!isFinite(flo) || !isFinite(fhi) || flo * fhi > 0) { let x = .01; for (let it = 0; it < 100; it++) { const fx = f(x), d = (f(x + 1e-7) - fx) / 1e-7; if (!d) break; const nx = x - fx / d; if (!isFinite(nx)) break; if (Math.abs(nx - x) < 1e-12) return nx * 100; x = nx; } return NaN; }
+    for (let it = 0; it < 200; it++) { const m = (lo + hi) / 2, fm = f(m); if (Math.abs(fm) < 1e-10 || hi - lo < 1e-13) return m * 100; if (flo * fm < 0) { hi = m; fhi = fm; } else { lo = m; flo = fm; } } return (lo + hi) / 2 * 100; }
+  return NaN; };
+const npv = (cf, i) => { const r = i / 100; let t = 0, k = 0; cf.forEach(([v, nj]) => { for (let j = 0; j < (nj || 1); j++) { t += v / Math.pow(1 + r, k); k++; } }); return t; };
+const irr = cf => { const f = r => npv(cf, r * 100); let lo = -0.99, hi = 10, flo = f(lo), fhi = f(hi); if (!isFinite(flo) || !isFinite(fhi) || flo * fhi > 0) return NaN; for (let it = 0; it < 300; it++) { const m = (lo + hi) / 2, fm = f(m); if (Math.abs(fm) < 1e-9 || hi - lo < 1e-14) return m * 100; if (flo * fm < 0) { hi = m; } else { lo = m; flo = fm; } } return (lo + hi) / 2 * 100; };
+const finKey = k => { S.err = '';
+  if (/^[0-9,]$/.test(k)) return digit(k);
+  if (k === 'back') { if (buf != null) { buf = buf.slice(0, -1); if (buf === '' || buf === '-') { buf = null; setX(0); S.lift = false; } else setX(parseNum(buf)); } else { setX(0); S.lift = false; } return; }
+  if (k === 'chs') { if (buf != null) { buf = buf.startsWith('-') ? buf.slice(1) : '-' + buf; setX(parseNum(buf)); } else setX(-X()); return; }
+  if (k === 'enter') { endEntry(); push(X()); S.lift = false; S.lastTVM = false; return; }
+  if (k === 'clx') { buf = null; setX(0); S.lift = false; S.lastTVM = false; return; }
+  if (k === 'clfin') { S.reg = { n: 0, i: 0, PV: 0, PMT: 0, FV: 0 }; S.cf = []; S.lastTVM = false; toast('Registos financeiros limpos'); return; }
+  if (k === 'clall') { buf = null; S.st = [0, 0, 0, 0]; S.reg = { n: 0, i: 0, PV: 0, PMT: 0, FV: 0 }; S.cf = []; S.lastTVM = false; S.lift = false; return; }
+  if (k === 'swap') { endEntry(); S.st = [S.st[1], S.st[0], S.st[2], S.st[3]]; S.lift = true; S.lastTVM = false; return; }
+  if (k === 'rdn') { endEntry(); S.st = [S.st[1], S.st[2], S.st[3], S.st[0]]; S.lift = true; S.lastTVM = false; return; }
+  if (k === 'lstx') { endEntry(); push(S.lastx); S.lift = true; return; }
+  if (k === '+') return binop((y, x) => y + x); if (k === '-') return binop((y, x) => y - x); if (k === '*') return binop((y, x) => y * x); if (k === '/') return binop((y, x) => y / x);
+  if (k === 'pow') return binop((y, x) => Math.pow(y, x));
+  if (k === 'pct') { endEntry(); S.lastx = X(); setX(S.st[1] * X() / 100); S.lift = true; S.lastTVM = false; return; } // % de Y (Y fica)
+  if (k === 'dpct') { endEntry(); S.lastx = X(); setX((X() - S.st[1]) / S.st[1] * 100); S.lift = true; S.lastTVM = false; return; } // Δ% de Y para X
+  if (k === 'inv') return unop(x => 1 / x); if (k === 'sqrt') return unop(x => Math.sqrt(x)); if (k === 'ln') return unop(x => Math.log(x)); if (k === 'ex') return unop(x => Math.exp(x));
+  if (k === '12x') { endEntry(); S.reg.n = X() * 12; setX(S.reg.n); S.lift = true; S.lastTVM = true; toast('n = ' + fmt(S.reg.n)); return; }
+  if (k === '12d') { endEntry(); S.reg.i = X() / 12; setX(S.reg.i); S.lift = true; S.lastTVM = true; toast('i = ' + fmt(S.reg.i) + '% por mês'); return; }
+  if (k === 'beg') { S.beg = !S.beg; toast(S.beg ? 'BEG: pagamentos no início de cada período' : 'END: pagamentos no fim de cada período'); return; }
+  if (['n', 'i', 'PV', 'PMT', 'FV'].includes(k)) { const typed = buf != null; endEntry();
+    if (typed || !S.lastTVM) { S.reg[k] = X(); S.lift = true; S.lastTVM = true; return; }
+    const v = tvm(k, S.reg); if (!isFinite(v)) { S.err = 'Sem solução com estes valores (vê os sinais: o dinheiro que sai é negativo)'; S.lastTVM = true; return; } S.reg[k] = v; push(v); S.lift = true; S.lastTVM = true; return; }
+  if (k === 'cf0') { endEntry(); S.cf = [[X(), 1]]; S.lift = true; S.lastTVM = false; toast('CF0 = ' + fmt(X())); return; }
+  if (k === 'cfj') { endEntry(); if (!S.cf.length) S.cf = [[0, 1]]; S.cf.push([X(), 1]); S.lift = true; S.lastTVM = false; toast('CF' + (S.cf.length - 1) + ' = ' + fmt(X())); return; }
+  if (k === 'nj') { endEntry(); if (S.cf.length > 1) { S.cf[S.cf.length - 1][1] = Math.max(1, Math.round(X())); toast('Repete ' + S.cf[S.cf.length - 1][1] + ' vezes'); } S.lift = true; return; }
+  if (k === 'npv') { endEntry(); if (!S.cf.length) { S.err = 'Primeiro os fluxos: CF0, CFj (e Nj)'; return; } const v = npv(S.cf, S.reg.i); push(v); S.lift = true; S.lastTVM = false; return; }
+  if (k === 'irr') { endEntry(); if (S.cf.length < 2) { S.err = 'Primeiro os fluxos: CF0, CFj (e Nj)'; return; } const v = irr(S.cf); if (!isFinite(v)) { S.err = 'Sem TIR com estes fluxos'; return; } S.reg.i = v; push(v); S.lift = true; S.lastTVM = false; return; } };
+let toastT = 0, TOAST = '';
+const toast = t => { TOAST = t; clearTimeout(toastT); toastT = setTimeout(() => { TOAST = ''; paint(); }, 2200); };
+
+/* ================= tabela de amortização ================= */
+const amort = (P, ia, n, kind) => { const r = ia / 100 / 12, rows = []; let bal = P; const pmt = kind === 'sac' ? null : (r ? P * r / (1 - Math.pow(1 + r, -n)) : P / n);
+  for (let k = 1; k <= n && bal > 1e-9; k++) { const j = bal * r, am = kind === 'sac' ? P / n : pmt - j, p = kind === 'sac' ? am + j : pmt; bal = Math.max(0, bal - am); rows.push([k, p, j, am, bal]); } return rows; };
+
+/* ================= gráfica ================= */
+const COL = ['#38BDF8', '#F2B544', '#F472B6'];
+let G = null;
+const gview = () => S.view || (S.view = { cx: 0, cy: 0, sc: 30 });
+const drawGraph = () => { const cv = document.getElementById('clCv'); if (!cv) return; const r = cv.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = r.width, H = r.height, v = gview(), toPx = (x, y) => [W / 2 + (x - v.cx) * v.sc, H / 2 - (y - v.cy) * v.sc], x0 = v.cx - W / 2 / v.sc, x1 = v.cx + W / 2 / v.sc;
+  c.fillStyle = '#081420'; c.fillRect(0, 0, W, H);
+  const step = (() => { const raw = 60 / v.sc, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 2 ? 1 : m < 5 ? 2 : 5) * p; })();
+  c.lineWidth = 1; c.strokeStyle = 'rgba(140,190,230,.10)'; c.fillStyle = 'rgba(180,210,235,.55)'; c.font = '10px ui-monospace,monospace';
+  for (let gx = Math.ceil(x0 / step) * step; gx <= x1; gx += step) { const [px] = toPx(gx, 0); c.beginPath(); c.moveTo(px, 0); c.lineTo(px, H); c.stroke(); if (Math.abs(gx) > step / 2) c.fillText(+gx.toPrecision(6) + '', px + 2, Math.min(H - 4, Math.max(10, toPx(0, 0)[1] + 12))); }
+  const y0 = v.cy - H / 2 / v.sc, y1 = v.cy + H / 2 / v.sc; for (let gy = Math.ceil(y0 / step) * step; gy <= y1; gy += step) { const [, py] = toPx(0, gy); c.beginPath(); c.moveTo(0, py); c.lineTo(W, py); c.stroke(); if (Math.abs(gy) > step / 2) c.fillText(+gy.toPrecision(6) + '', Math.min(W - 30, Math.max(2, toPx(0, 0)[0] + 4)), py - 2); }
+  c.strokeStyle = 'rgba(200,225,245,.55)'; c.lineWidth = 1.2; const [ax, ay] = toPx(0, 0); c.beginPath(); c.moveTo(0, ay); c.lineTo(W, ay); c.moveTo(ax, 0); c.lineTo(ax, H); c.stroke();
+  G = { fns: [], toPx, v, W, H };
+  S.fn.forEach((s, k) => { if (!s || !s.trim()) return; let f; try { f = compile(s); f(1, false); } catch (e) { return; } G.fns.push([k, f]); c.strokeStyle = COL[k]; c.lineWidth = 2; c.beginPath(); let pen = false, py0 = null;
+    for (let px = 0; px <= W; px += 1) { const x = v.cx + (px - W / 2) / v.sc; let y; try { y = f(x, false); } catch (e) { y = NaN; } const py = H / 2 - (y - v.cy) * v.sc;
+      if (!isFinite(py) || Math.abs(py) > H * 20 || (py0 != null && Math.abs(py - py0) > H * 2)) { pen = false; py0 = isFinite(py) ? py : null; continue; } if (!pen) { c.moveTo(px, py); pen = true; } else c.lineTo(px, py); py0 = py; }
+    c.stroke(); });
+  if (S.tr != null) { const x = S.tr, [px] = toPx(x, 0); c.strokeStyle = 'rgba(255,255,255,.35)'; c.setLineDash([4, 4]); c.beginPath(); c.moveTo(px, 0); c.lineTo(px, H); c.stroke(); c.setLineDash([]);
+    G.fns.forEach(([k, f]) => { let y; try { y = f(x, false); } catch (e) { y = NaN; } if (!isFinite(y)) return; const [, py] = toPx(x, y); c.fillStyle = COL[k]; c.beginPath(); c.arc(px, py, 4, 0, 7); c.fill(); }); }
+  const out = document.getElementById('clTr'); if (out) out.innerHTML = S.tr == null ? '<span class="mut">Toca no gráfico para leres os valores.</span>' : `x = <b>${fmt(S.tr, 4)}</b>` + G.fns.map(([k, f]) => { let y; try { y = f(S.tr, false); } catch (e) { y = NaN; } return ` · <span style="color:${COL[k]}">${'fgh'[k]}(x) = <b>${isFinite(y) ? fmt(y, 4) : '—'}</b></span>`; }).join(''); };
+
+/* ================= interface ================= */
+let el = null, fab = null;
+const KB = [[['(', '('], [')', ')'], ['%', '%'], ['⌫', 'back', 'op'], ['C', 'clear', 'op']], [['sin', 'sin('], ['cos', 'cos('], ['tan', 'tan('], ['π', 'π'], ['e', 'e']], [['ln', 'ln('], ['log', 'log('], ['√', '√('], ['x²', '^2'], ['xʸ', '^']],
+  [['7', '7'], ['8', '8'], ['9', '9'], ['÷', '÷', 'op'], ['n!', '!']], [['4', '4'], ['5', '5'], ['6', '6'], ['×', '×', 'op'], ['ANS', 'ans']], [['1', '1'], ['2', '2'], ['3', '3'], ['−', '-', 'op'], ['1/x', '1/(']], [['0', '0'], [',', ','], ['=', 'eq', 'eq'], ['+', '+', 'op'], ['±', '(-']]];
+const KF = [[['n', 'n', 'tvm'], ['i', 'i', 'tvm'], ['PV', 'PV', 'tvm'], ['PMT', 'PMT', 'tvm'], ['FV', 'FV', 'tvm']], [['12×', '12x', 'f'], ['12÷', '12d', 'f'], ['BEG/END', 'beg', 'f'], ['CF₀', 'cf0', 'f'], ['CFⱼ', 'cfj', 'f']],
+  [['Nⱼ', 'nj', 'f'], ['NPV', 'npv', 'f'], ['IRR', 'irr', 'f'], ['%', 'pct'], ['Δ%', 'dpct']], [['yˣ', 'pow'], ['1/x', 'inv'], ['√x', 'sqrt'], ['x↔y', 'swap'], ['R↓', 'rdn']], [['7', '7', 'd'], ['8', '8', 'd'], ['9', '9', 'd'], ['÷', '/', 'op'], ['⌫', 'back', 'op']],
+  [['4', '4', 'd'], ['5', '5', 'd'], ['6', '6', 'd'], ['×', '*', 'op'], ['CHS', 'chs']], [['1', '1', 'd'], ['2', '2', 'd'], ['3', '3', 'd'], ['−', '-', 'op'], ['CLx', 'clx']], [['0', '0', 'd'], [',', ',', 'd'], ['ENTER', 'enter', 'ent'], ['+', '+', 'op'], ['LSTx', 'lstx']]];
+const keys = (L, act) => `<div class="cl-keys">${L.map(r => r.map(([l, k, c]) => `<button type="button" class="cl-k ${c || ''}" data-act="${act}" data-k="${esc(k)}">${esc(l)}</button>`).join('')).join('')}</div>`;
+const basic = () => { let res = ''; if (S.expr.trim()) { try { const v = evalExpr(S.expr); res = '= ' + fmt(v); } catch (e) { res = ''; } }
+  return `<div class="cl-disp b"><div class="cl-hist">${S.hist.slice(-3).map(h => `<button type="button" data-act="clHist" data-v="${esc(h[0])}"><span>${esc(h[0])}</span><b>= ${esc(fmt(h[1]))}</b></button>`).join('')}</div>
+    <input class="cl-in" id="clIn" value="${esc(S.expr)}" placeholder="0" inputmode="none" autocomplete="off" aria-label="Conta"><div class="cl-res">${S.err ? `<span class="neg">${esc(S.err)}</span>` : esc(res)}</div></div>
+    <div class="cl-row"><button type="button" class="chip ${S.deg ? 'on' : ''}" data-act="clDeg">${S.deg ? 'Graus' : 'Radianos'}</button><small class="mut">Escreve ou toca. Ex.: 2(3+4)^2, √(16)+sin(30)</small></div>${keys(KB, 'clB')}`; };
+const fin = () => { const R = S.reg, xs = buf != null ? (buf || '0') : fmt(X());
+  return `<div class="cl-disp f"><div class="cl-stk"><span>T <b>${fmt(S.st[3])}</b></span><span>Z <b>${fmt(S.st[2])}</b></span><span>Y <b>${fmt(S.st[1])}</b></span></div><div class="cl-x mono" aria-live="polite">${esc(xs)}</div>
+      <div class="cl-st"><span class="${S.beg ? 'on' : ''}">${S.beg ? 'BEG' : 'END'}</span>${S.cf.length ? `<span>${S.cf.length} fluxos</span>` : ''}${TOAST ? `<span class="t">${esc(TOAST)}</span>` : ''}${S.err ? `<span class="neg">${esc(S.err)}</span>` : ''}</div></div>
+    <div class="cl-regs">${['n', 'i', 'PV', 'PMT', 'FV'].map(k => `<span><small>${k}</small><b class="mono">${fmt(R[k], k === 'i' ? 4 : 2)}</b></span>`).join('')}</div>
+    ${keys(KF, 'clF')}
+    <div class="cl-row"><button type="button" class="chip" data-act="clF" data-k="clfin">Limpar fin.</button><button type="button" class="chip" data-act="clF" data-k="clall">Limpar tudo</button><button type="button" class="chip" data-act="clAm">Tabela de amortização</button><button type="button" class="chip" data-act="clHelp">Como usar</button></div>
+    ${S.help ? `<div class="cl-help"><p><b>RPN:</b> escreve o primeiro número, <b>ENTER</b>, o segundo e a operação (ex.: 5 ENTER 3 + = 8).</p><p><b>Juros compostos e prestações:</b> introduz 4 dos 5 valores (escreve o número e toca na tecla: n, i, PV, PMT, FV) e toca na tecla que falta, sem escrever nada, para a calcular. O dinheiro que sai do teu bolso é negativo (CHS).</p>
+      <p><b>Exemplo:</b> empréstimo de 10 000 a 5% ao ano em 48 meses: 10000 PV · 5 12÷ · 48 n · 0 FV · <b>PMT</b> = −230,29 por mês.</p><p><b>Fluxos:</b> −1000 CF₀ · 300 CFⱼ · 4 Nⱼ · 10 i · <b>NPV</b>; ou <b>IRR</b> para a taxa interna de rentabilidade.</p></div>` : ''}
+    ${S.am ? amBox() : ''}`; };
+const amBox = () => { const a = S.amv || { p: S.reg.PV ? Math.abs(S.reg.PV) : 10000, i: S.reg.i ? S.reg.i * (S.reg.n > 60 || S.reg.i < 2 ? 12 : 1) : 5, n: S.reg.n || 48, k: 'price' }, rows = amort(+a.p, +a.i, Math.min(600, Math.max(1, Math.round(+a.n))), a.k), tj = rows.reduce((s, r) => s + r[2], 0);
+  return `<div class="cl-am"><div class="cl-amf"><label>Valor<input class="field" type="number" value="${a.p}" data-am="p"></label><label>Juro anual %<input class="field" type="number" step="0.01" value="${a.i}" data-am="i"></label><label>Meses<input class="field" type="number" value="${a.n}" data-am="n"></label><label>Sistema<select class="field" data-am="k"><option value="price"${a.k === 'price' ? ' selected' : ''}>Prestações iguais (Price/francês)</option><option value="sac"${a.k === 'sac' ? ' selected' : ''}>Amortização constante (SAC)</option></select></label></div>
+    <p class="mut">${rows.length ? `1.ª prestação ${fmt(rows[0][1], 2)} · total de juros ${fmt(tj, 2)} · total pago ${fmt(+a.p + tj, 2)}` : ''}</p>
+    <div class="cl-amt"><table><thead><tr><th>Mês</th><th>Prestação</th><th>Juros</th><th>Amortização</th><th>Em dívida</th></tr></thead><tbody>${rows.slice(0, 360).map(r => `<tr><td>${r[0]}</td><td>${fmt(r[1], 2)}</td><td>${fmt(r[2], 2)}</td><td>${fmt(r[3], 2)}</td><td>${fmt(r[4], 2)}</td></tr>`).join('')}</tbody></table></div></div>`; };
+const graph = () => `<div class="cl-fns">${[0, 1, 2].map(k => `<label style="--c:${COL[k]}"><span>${'fgh'[k]}(x) =</span><input class="field cl-fn" data-k="${k}" value="${esc(S.fn[k] || '')}" placeholder="${['ex.: sin(x)', 'ex.: x^2-4', 'ex.: 2x+1'][k]}" autocomplete="off" spellcheck="false"></label>`).join('')}</div>
+  <div class="cl-gw"><canvas id="clCv" aria-label="Gráfico das funções"></canvas><div class="cl-gz"><button type="button" data-act="clZ" data-v="1.5" aria-label="Aproximar">+</button><button type="button" data-act="clZ" data-v="0.667" aria-label="Afastar">−</button><button type="button" data-act="clZ" data-v="0" aria-label="Repor">⟲</button></div></div>
+  <div class="cl-tr" id="clTr"></div><p class="mut cl-gn">Usa x como variável: sin, cos, tan (em radianos), sqrt, ln, log, abs, exp, ^, π, e. Arrasta para mover; + e − para o zoom.</p>`;
+const paint = () => { if (!el || el.hidden) return; const b = el.querySelector('.cl-body'); if (!b) return;
+  const fo = document.activeElement && el.contains(document.activeElement) ? { id: document.activeElement.id, k: document.activeElement.dataset && document.activeElement.dataset.k, s: document.activeElement.selectionStart } : null;
+  if (S.mode === 'gra' && b.dataset.m === 'gra') { drawGraph(); return; }
+  b.dataset.m = S.mode; b.innerHTML = S.mode === 'bas' ? basic() : S.mode === 'gra' ? graph() : fin();
+  el.querySelectorAll('.cl-tabs button').forEach(x => x.classList.toggle('on', x.dataset.m === S.mode));
+  if (S.mode === 'gra') requestAnimationFrame(drawGraph);
+  if (fo) { const t = fo.id ? el.querySelector('#' + fo.id) : fo.k != null ? el.querySelector(`.cl-fn[data-k="${fo.k}"]`) : null; if (t) { t.focus(); try { t.setSelectionRange(fo.s, fo.s); } catch (e) { } } }
+  save(); };
+const open = () => { if (!el) build(); el.hidden = false; document.documentElement.classList.add('cl-open'); if (fab) fab.hidden = true; paint(); };
+const close = () => { if (!el) return; el.hidden = true; document.documentElement.classList.remove('cl-open'); if (fab) fab.hidden = false; save(); };
+const build = () => { el = document.createElement('div'); el.id = 'calc'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Calculadora'); el.hidden = true;
+  el.innerHTML = `<div class="cl-h" id="clDrag"><b>${UI.ic('calc')}Calculadora</b><div class="cl-tabs" role="tablist">${[['bas', 'Básica'], ['fin', 'Financeira'], ['gra', 'Gráfica']].map(([m, l]) => `<button type="button" role="tab" data-m="${m}">${l}</button>`).join('')}</div><button type="button" class="icon-btn" data-cl="x" aria-label="Fechar a calculadora">${UI.ic('x')}</button></div><div class="cl-body"></div>`;
+  document.body.appendChild(el);
+  if (S.pos && innerWidth > 700) { el.style.left = Math.min(innerWidth - 300, Math.max(0, S.pos[0])) + 'px'; el.style.top = Math.min(innerHeight - 200, Math.max(0, S.pos[1])) + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto'; }
+  el.addEventListener('click', e => { const t = e.target.closest('button'); if (!t || !el.contains(t)) return;
+    if (t.dataset.cl === 'x') return close(); if (t.dataset.m) { S.mode = t.dataset.m; S.err = ''; return paint(); }
+    const a = t.dataset.act, k = t.dataset.k; if (!a) return; e.stopPropagation();
+    if (a === 'clF') { finKey(k); return paint(); }
+    if (a === 'clB') { bKey(k); return paint(); }
+    if (a === 'clHist') { S.expr = t.dataset.v; return paint(); }
+    if (a === 'clDeg') { S.deg = !S.deg; return paint(); }
+    if (a === 'clAm') { S.am = !S.am; return paint(); }
+    if (a === 'clHelp') { S.help = !S.help; return paint(); }
+    if (a === 'clZ') { const v = gview(), z = +t.dataset.v; if (!z) S.view = { cx: 0, cy: 0, sc: 30 }; else v.sc = Math.min(4000, Math.max(.5, v.sc * z)); drawGraph(); save(); } });
+  el.addEventListener('input', e => { const t = e.target; if (t.id === 'clIn') { S.expr = t.value; S.err = ''; const r = el.querySelector('.cl-res'); if (r) { let res = ''; try { res = S.expr.trim() ? '= ' + fmt(evalExpr(S.expr)) : ''; } catch (er) { } r.textContent = res; } save(); }
+    else if (t.classList.contains('cl-fn')) { S.fn[+t.dataset.k] = t.value; drawGraph(); save(); }
+    else if (t.dataset.am) { S.amv = Object.assign(S.amv || { p: 10000, i: 5, n: 48, k: 'price' }, { [t.dataset.am]: t.value }); clearTimeout(S._amt); S._amt = setTimeout(() => { const am = el.querySelector('.cl-am'); if (am) { am.outerHTML = amBox(); } save(); }, 300); } });
+  el.addEventListener('change', e => { const t = e.target; if (t.dataset && t.dataset.am === 'k') { S.amv = Object.assign(S.amv || { p: 10000, i: 5, n: 48 }, { k: t.value }); const am = el.querySelector('.cl-am'); if (am) am.outerHTML = amBox(); save(); } });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'clIn') { e.preventDefault(); bKey('eq'); paint(); } });
+  // arrastar a janela (no computador) e mover o gráfico
+  let drag = null; el.addEventListener('pointerdown', e => { const h = e.target.closest('#clDrag'); if (h && !e.target.closest('button') && innerWidth > 700) { const r = el.getBoundingClientRect(); drag = { dx: e.clientX - r.left, dy: e.clientY - r.top, w: 1 }; el.setPointerCapture(e.pointerId); return; }
+    const cv = e.target.closest('#clCv'); if (cv) { const v = gview(); drag = { gx: e.clientX, gy: e.clientY, cx: v.cx, cy: v.cy, moved: false }; cv.setPointerCapture(e.pointerId); } });
+  el.addEventListener('pointermove', e => { if (!drag) return; if (drag.w) { const x = Math.min(innerWidth - 120, Math.max(0, e.clientX - drag.dx)), y = Math.min(innerHeight - 60, Math.max(0, e.clientY - drag.dy)); Object.assign(el.style, { left: x + 'px', top: y + 'px', right: 'auto', bottom: 'auto' }); S.pos = [x, y]; return; }
+    const v = gview(), dx = e.clientX - drag.gx, dy = e.clientY - drag.gy; if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true; v.cx = drag.cx - dx / v.sc; v.cy = drag.cy + dy / v.sc; drawGraph(); });
+  el.addEventListener('pointerup', e => { if (drag && drag.gx != null && !drag.moved && G) { const r = e.target.getBoundingClientRect(); S.tr = G.v.cx + (e.clientX - r.left - G.W / 2) / G.v.sc; drawGraph(); } if (drag) save(); drag = null; });
+  el.addEventListener('wheel', e => { if (!e.target.closest('#clCv')) return; e.preventDefault(); const v = gview(); v.sc = Math.min(4000, Math.max(.5, v.sc * (e.deltaY < 0 ? 1.15 : 1 / 1.15))); drawGraph(); }, { passive: false }); };
+const bKey = k => { S.err = '';
+  if (k === 'back') { S.expr = S.expr.slice(0, -1); return; } if (k === 'clear') { S.expr = ''; return; }
+  if (k === 'eq') { if (!S.expr.trim()) return; try { const v = evalExpr(S.expr); if (!isFinite(v)) throw new Error('Resultado indefinido'); S.hist.push([S.expr, v]); S.hist = S.hist.slice(-20); S.ans = v; S.expr = fmt(v).replace(/\s/g, '').replace(/ /g, ''); } catch (e) { S.err = e.message || 'Conta inválida'; } return; }
+  S.expr += k; };
+// teclado do computador quando a calculadora está aberta
+document.addEventListener('keydown', e => { if (!el || el.hidden) return; if (e.key === 'Escape') { close(); return; } const t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return; if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (S.mode === 'fin') { const m = { Enter: 'enter', Backspace: 'back', '+': '+', '-': '-', '*': '*', '/': '/', ',': ',', '.': ',', '%': 'pct' }[e.key] || (/^[0-9]$/.test(e.key) ? e.key : null); if (m) { e.preventDefault(); finKey(m); paint(); } }
+  else if (S.mode === 'bas') { const i = el.querySelector('#clIn'); if (i && e.key.length === 1) { i.focus(); } } });
+const mkFab = () => { if (fab) return; fab = document.createElement('button'); fab.type = 'button'; fab.id = 'calcFab'; fab.setAttribute('aria-label', 'Abrir a calculadora'); fab.title = 'Calculadora (financeira, como a HP 12C, e gráfica)'; fab.innerHTML = UI.ic('calc'); fab.onclick = open; document.body.appendChild(fab); };
+OS.on('ready', mkFab); OS.on('unlock', mkFab);
+OS.Calc = { open, close, evalExpr, compile, tvm: (k, R, beg) => { const b0 = S.beg; S.beg = !!beg; const v = tvm(k, R); S.beg = b0; return v; }, npv, irr, amort, key: k => { finKey(k); paint(); }, state: () => S, X: () => (buf != null ? parseNum(buf) : X()) };
 })();
 
 </script>
