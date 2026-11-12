@@ -248,3 +248,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Privacidade (`js/legal.js`): ligação ao banco, Pluggy e Enable Banking; versão `2026-11-12` (todas as contas aceitam outra vez).
 - Testes: `banco` (52) e `futebol` (40).
 
+### 3.15: Calculadora › Cálculo (derivadas, integrais, matrizes, sucessões)
+- `js/calcx.js` (`OS.CalcX`), carregado antes de `js/calc.js`; separador `cal` na calculadora, estado em `S.cx` (guardado com o resto em `oc_calc`). Sem `eval` nem bibliotecas: `parse` (implícita 2x, x^2, √, |x|, n!, sen/tg em português) → árvore; `simplify` (soma de termos semelhantes, produto com expoentes, potências, funções com valores inteiros); `deriv` pelas regras; `primitive` = regras (polinómios, ax+b, sin²/cos², eᵘ·sin/cos, k/(a+bx²), k/√(a−bx²)), substituição (`bySub`) e partes (`byParts`), **sempre verificada** derivando e comparando em 10 pontos (se não bate, diz que não encontrou). Definidos: F(b) − F(a) quando a primitiva existe e não há buracos; senão Simpson adaptativo ou tanh-sinh (pontas singulares e ±∞ por mudança de variável; se não converge, "diverge"). `nice` reconhece frações, π, e, √2, √π, ln 2…
+- Matrizes: frações exatas com BigInt (`QF`), ou decimais (`FF`) se houver números irracionais; `rref`, `det`, `inv`, `mPow`, `solve` (única, impossível ou indeterminada com variáveis livres), `charPoly` (Faddeev–LeVerrier) e `croots` (Durand–Kerner). Sucessões: `polyLim` exato para quocientes de polinómios; `seqLim` numérico (n até 10⁹, oscilação com n e n+1); recorrência iterada até 200 000 termos.
+- Testes: grupo `calc` (36).
+

@@ -1,4 +1,4 @@
-/* PRUMO — Calculadora flutuante (v3.12): um botão sempre à mão, em todo o app, que abre uma calculadora com três modos.
+/* PRUMO — Calculadora flutuante (v3.12): um botão sempre à mão, em todo o app, que abre uma calculadora com quatro modos (o Cálculo vem de js/calcx.js, v3.15).
    · Básica e científica: escreves a conta como no papel (parênteses, potências, raízes, trigonometria, ln, log, π, e), com histórico.
    · Financeira (RPN, como a HP 12C): pilha X Y Z T com ENTER, n · i · PV · PMT · FV (guardar ao introduzir um número, calcular ao tocar
      sem número novo), BEG/END, 12× e 12÷, %, Δ%, yˣ, 1/x, √x, x↔y, R↓, CHS, LSTx, fluxos de caixa (CF0, CFj, Nj) com NPV e IRR,
@@ -157,22 +157,25 @@ const graph = () => `<div class="cl-fns">${[0, 1, 2].map(k => `<label style="--c
   <div class="cl-gw"><canvas id="clCv" aria-label="Gráfico das funções"></canvas><div class="cl-gz"><button type="button" data-act="clZ" data-v="1.5" aria-label="Aproximar">+</button><button type="button" data-act="clZ" data-v="0.667" aria-label="Afastar">−</button><button type="button" data-act="clZ" data-v="0" aria-label="Repor">⟲</button></div></div>
   <div class="cl-tr" id="clTr"></div><p class="mut cl-gn">Usa x como variável: sin, cos, tan (em radianos), sqrt, ln, log, abs, exp, ^, π, e. Arrasta para mover; + e − para o zoom.</p>`;
 const paint = () => { if (!el || el.hidden) return; const b = el.querySelector('.cl-body'); if (!b) return;
-  const fo = document.activeElement && el.contains(document.activeElement) ? { id: document.activeElement.id, k: document.activeElement.dataset && document.activeElement.dataset.k, s: document.activeElement.selectionStart } : null;
+  const fo = document.activeElement && el.contains(document.activeElement) ? { id: document.activeElement.id, k: document.activeElement.dataset && document.activeElement.dataset.k, cx: document.activeElement.dataset && document.activeElement.dataset.cx, s: document.activeElement.selectionStart } : null;
   if (S.mode === 'gra' && b.dataset.m === 'gra') { drawGraph(); return; }
-  b.dataset.m = S.mode; b.innerHTML = S.mode === 'bas' ? basic() : S.mode === 'gra' ? graph() : fin();
+  if (S.mode === 'cal' && !OS.CalcX) S.mode = 'bas';
+  b.dataset.m = S.mode; b.innerHTML = S.mode === 'bas' ? basic() : S.mode === 'gra' ? graph() : S.mode === 'cal' ? OS.CalcX.view(S) : fin();
   el.querySelectorAll('.cl-tabs button').forEach(x => x.classList.toggle('on', x.dataset.m === S.mode));
   if (S.mode === 'gra') requestAnimationFrame(drawGraph);
-  if (fo) { const t = fo.id ? el.querySelector('#' + fo.id) : fo.k != null ? el.querySelector(`.cl-fn[data-k="${fo.k}"]`) : null; if (t) { t.focus(); try { t.setSelectionRange(fo.s, fo.s); } catch (e) { } } }
+  if (fo && fo.cx) { const t = el.querySelector(`[data-cx="${fo.cx}"]`); if (t) { t.focus(); try { t.setSelectionRange(fo.s, fo.s); } catch (e) { } } }
+  else if (fo) { const t = fo.id ? el.querySelector('#' + fo.id) : fo.k != null ? el.querySelector(`.cl-fn[data-k="${fo.k}"]`) : null; if (t) { t.focus(); try { t.setSelectionRange(fo.s, fo.s); } catch (e) { } } }
   save(); };
 const open = () => { if (!el) build(); el.hidden = false; document.documentElement.classList.add('cl-open'); if (fab) fab.hidden = true; paint(); };
 const close = () => { if (!el) return; el.hidden = true; document.documentElement.classList.remove('cl-open'); if (fab) fab.hidden = false; save(); };
 const build = () => { el = document.createElement('div'); el.id = 'calc'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Calculadora'); el.hidden = true;
-  el.innerHTML = `<div class="cl-h" id="clDrag"><b>${UI.ic('calc')}Calculadora</b><div class="cl-tabs" role="tablist">${[['bas', 'Básica'], ['fin', 'Financeira'], ['gra', 'Gráfica']].map(([m, l]) => `<button type="button" role="tab" data-m="${m}">${l}</button>`).join('')}</div><button type="button" class="icon-btn" data-cl="x" aria-label="Fechar a calculadora">${UI.ic('x')}</button></div><div class="cl-body"></div>`;
+  el.innerHTML = `<div class="cl-h" id="clDrag"><b>${UI.ic('calc')}Calculadora</b><div class="cl-tabs" role="tablist">${[['bas', 'Básica'], ['fin', 'Financeira'], ['gra', 'Gráfica'], ['cal', 'Cálculo']].map(([m, l]) => `<button type="button" role="tab" data-m="${m}">${l}</button>`).join('')}</div><button type="button" class="icon-btn" data-cl="x" aria-label="Fechar a calculadora">${UI.ic('x')}</button></div><div class="cl-body"></div>`;
   document.body.appendChild(el);
   if (S.pos && innerWidth > 700) { el.style.left = Math.min(innerWidth - 300, Math.max(0, S.pos[0])) + 'px'; el.style.top = Math.min(innerHeight - 200, Math.max(0, S.pos[1])) + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto'; }
   el.addEventListener('click', e => { const t = e.target.closest('button'); if (!t || !el.contains(t)) return;
     if (t.dataset.cl === 'x') return close(); if (t.dataset.m) { S.mode = t.dataset.m; S.err = ''; return paint(); }
     const a = t.dataset.act, k = t.dataset.k; if (!a) return; e.stopPropagation();
+    if (/^cx/.test(a) && OS.CalcX) return OS.CalcX.act(t, S, { paint, save, graph: fns => { S.fn = fns; S.mode = 'gra'; S.view = { cx: 0, cy: 0, sc: 30 }; paint(); } });
     if (a === 'clF') { finKey(k); return paint(); }
     if (a === 'clB') { bKey(k); return paint(); }
     if (a === 'clHist') { S.expr = t.dataset.v; return paint(); }
@@ -180,7 +183,7 @@ const build = () => { el = document.createElement('div'); el.id = 'calc'; el.set
     if (a === 'clAm') { S.am = !S.am; return paint(); }
     if (a === 'clHelp') { S.help = !S.help; return paint(); }
     if (a === 'clZ') { const v = gview(), z = +t.dataset.v; if (!z) S.view = { cx: 0, cy: 0, sc: 30 }; else v.sc = Math.min(4000, Math.max(.5, v.sc * z)); drawGraph(); save(); } });
-  el.addEventListener('input', e => { const t = e.target; if (t.id === 'clIn') { S.expr = t.value; S.err = ''; const r = el.querySelector('.cl-res'); if (r) { let res = ''; try { res = S.expr.trim() ? '= ' + fmt(evalExpr(S.expr)) : ''; } catch (er) { } r.textContent = res; } save(); }
+  el.addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.cx != null && OS.CalcX) { OS.CalcX.input(t, S, save); return; } if (t.id === 'clIn') { S.expr = t.value; S.err = ''; const r = el.querySelector('.cl-res'); if (r) { let res = ''; try { res = S.expr.trim() ? '= ' + fmt(evalExpr(S.expr)) : ''; } catch (er) { } r.textContent = res; } save(); }
     else if (t.classList.contains('cl-fn')) { S.fn[+t.dataset.k] = t.value; drawGraph(); save(); }
     else if (t.dataset.am) { S.amv = Object.assign(S.amv || { p: 10000, i: 5, n: 48, k: 'price' }, { [t.dataset.am]: t.value }); clearTimeout(S._amt); S._amt = setTimeout(() => { const am = el.querySelector('.cl-am'); if (am) { am.outerHTML = amBox(); } save(); }, 300); } });
   el.addEventListener('change', e => { const t = e.target; if (t.dataset && t.dataset.am === 'k') { S.amv = Object.assign(S.amv || { p: 10000, i: 5, n: 48 }, { k: t.value }); const am = el.querySelector('.cl-am'); if (am) am.outerHTML = amBox(); save(); } });
@@ -200,7 +203,7 @@ const bKey = k => { S.err = '';
 document.addEventListener('keydown', e => { if (!el || el.hidden) return; if (e.key === 'Escape') { close(); return; } const t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return; if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (S.mode === 'fin') { const m = { Enter: 'enter', Backspace: 'back', '+': '+', '-': '-', '*': '*', '/': '/', ',': ',', '.': ',', '%': 'pct' }[e.key] || (/^[0-9]$/.test(e.key) ? e.key : null); if (m) { e.preventDefault(); finKey(m); paint(); } }
   else if (S.mode === 'bas') { const i = el.querySelector('#clIn'); if (i && e.key.length === 1) { i.focus(); } } });
-const mkFab = () => { if (fab) return; fab = document.createElement('button'); fab.type = 'button'; fab.id = 'calcFab'; fab.setAttribute('aria-label', 'Abrir a calculadora'); fab.title = 'Calculadora (financeira, como a HP 12C, e gráfica)'; fab.innerHTML = UI.ic('calc'); fab.onclick = open; document.body.appendChild(fab); };
+const mkFab = () => { if (fab) return; fab = document.createElement('button'); fab.type = 'button'; fab.id = 'calcFab'; fab.setAttribute('aria-label', 'Abrir a calculadora'); fab.title = 'Calculadora (financeira como a HP 12C, gráfica e de cálculo: derivadas, integrais, matrizes e sucessões)'; fab.innerHTML = UI.ic('calc'); fab.onclick = open; document.body.appendChild(fab); };
 OS.on('ready', mkFab); OS.on('unlock', mkFab);
 OS.Calc = { open, close, evalExpr, compile, tvm: (k, R, beg) => { const b0 = S.beg; S.beg = !!beg; const v = tvm(k, R); S.beg = b0; return v; }, npv, irr, amort, key: k => { finKey(k); paint(); }, state: () => S, X: () => (buf != null ? parseNum(buf) : X()) };
 })();

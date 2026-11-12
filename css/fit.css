@@ -1505,3 +1505,30 @@ svg.ig-ch .i{fill:var(--accent);opacity:.55}svg.ig-ch .g{fill:var(--pos,#4ade80)
 .bnk-acc select{width:100%;background-color:var(--bg);border:1px solid var(--line2);border-radius:8px;padding:7px 28px 7px 10px;font-size:13px;color:var(--tx)}
 .bnk-diff{grid-column:1/-1;display:flex;gap:10px;align-items:center;font-size:12.5px}
 @media (max-width:640px){.bnk-c3,.bnk-c5{display:none}.bnk-m{display:block;font-size:11.5px;color:var(--mut);margin-top:2px}.bnk-tbl td,.bnk-tbl th{padding-left:8px;padding-right:8px}.bnk-tbl td:nth-child(2){min-width:0}.bnk-tbl td.mono{white-space:nowrap;font-size:12px}.bnk-col.wide{grid-column:auto}.bnk-acc{grid-template-columns:1fr}.bnk-prev{padding:12px 10px}.bnk-add{flex-wrap:wrap}}
+
+/* ---------- v3.15 · calculadora › Cálculo (derivadas, integrais, matrizes, sucessões) ---------- */
+.cl-h>b{font-size:0;gap:0}.cl-tabs button{padding:5px 8px}
+.cx{display:flex;flex-direction:column;gap:9px}
+.cx-seg{display:flex;gap:2px;background:rgba(255,255,255,.04);border-radius:10px;padding:2px}.cx-seg button{flex:1;border:0;background:none;color:var(--mut);font:inherit;font-size:12.5px;padding:7px 4px;border-radius:8px;cursor:pointer;min-width:0}
+.cx-seg button.on{background-color:var(--accentBg);color:var(--accent2);font-weight:600}.cx-seg.sm button{font-size:12px;padding:5px 4px}
+.cx-f{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center}.cx-f span{font:600 13px var(--mono);color:var(--tx2);white-space:nowrap}.cx-f .field{font-family:var(--mono);font-size:14px}
+.cx-f.sm span{font:12px var(--sans,inherit);color:var(--mut)}
+.cx-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.cx-sym{display:flex;flex-wrap:wrap;gap:4px}.cx-sym button{min-width:34px;height:30px;padding:0 8px;border-radius:8px;border:1px solid var(--line);background-color:rgba(255,255,255,.05);color:var(--tx);font:13px var(--mono);cursor:pointer}
+.cx-sym button:active{filter:brightness(1.3)}
+.cx-res{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background-color:rgba(255,255,255,.03)}
+.cx-r{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}.cx-r>span{font-size:12px;color:var(--mut);min-width:64px}.cx-r>b{font:500 14px/1.45 var(--mono);color:var(--tx);overflow-wrap:anywhere}
+.cx-r.big>b{font-size:16px;color:var(--accent2)}.cx-eq{color:var(--accent);font-weight:600}
+.cx-n{font-size:12px;margin:0;line-height:1.45}.cx-err{margin:0;font-size:13px;color:var(--neg)}
+.cx-sub{font-size:13px}.cx-sub>b{font-size:12.5px}.cx-ul{margin:6px 0 0;padding-left:18px;font-size:13px;line-height:1.55}
+.cx-acts{display:flex;flex-wrap:wrap;gap:6px}
+.cx-mats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cx-mats label{display:flex;flex-direction:column;gap:3px}.cx-mats span{font:600 12.5px var(--mono);color:var(--tx2)}
+.cx-mats textarea{font:14px/1.5 var(--mono);resize:vertical;min-height:74px}
+.cx-ops{display:flex;flex-wrap:wrap;gap:5px}.cx-ops .chip{font-family:var(--mono);font-size:12px}
+.cx-mres{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background-color:rgba(255,255,255,.03)}.cx-mres>span{font-size:12px;color:var(--mut)}
+.cx-big{font:600 20px var(--mono);color:var(--accent2)}
+.cx-mt{border-collapse:separate;border-spacing:10px 3px;font:14px var(--mono);position:relative;margin:0 4px;align-self:flex-start;border-left:2px solid var(--tx2);border-right:2px solid var(--tx2);border-radius:6px;padding:2px 0}
+.cx-mt td{text-align:right;padding:1px 2px;white-space:nowrap}
+.cx-terms{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.cx-terms span{display:flex;flex-direction:column;align-items:center;padding:5px 2px;border-radius:8px;background-color:rgba(255,255,255,.04)}
+.cx-terms small{font-size:10.5px;color:var(--mut)}.cx-terms b{font:500 12.5px var(--mono);overflow-wrap:anywhere;text-align:center}
+@media (max-width:700px){.cx-f .field,.cx-mats textarea{font-size:16px}.cx-terms{grid-template-columns:repeat(5,minmax(0,1fr))}.cx-mats{grid-template-columns:1fr 1fr}}
