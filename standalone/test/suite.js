@@ -1979,6 +1979,7 @@ async function checkupTests(b, prof = PROFILES[4]) { cur = 'Check-up ' + prof.id
 /* ---------- a Direção sabe tudo o que acontece na app; Finanças: apagar movimentos, saldo inicial e moedas ---------- */
 async function direcaoTests(b) { cur = 'Direção'; console.log('\n=== Direção ligada à app inteira + Finanças ===');
   const { ctx, p, errs } = await newPage(b, PROFILES[4]); await ctx.route(/script\.google\.com|generativelanguage/, rt => rt.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true,"items":[],"docs":{}}' }));
+  await ctx.route(/frankfurter|query[12]\.finance|finance\.yahoo|\/api\/q\?/, rt => rt.abort());   // câmbio fixo do perfil (sem a taxa real do dia, que muda)
   await p.goto(BASE); await unlock(p); await E(p, () => { OS.Jarvis && OS.Jarvis.close(); });
   const view = () => E(p, () => document.getElementById('view').innerText), go = async (h, ms = 700) => { await E(p, h => location.hash = h, h); await sleep(ms); return view(); };
   const W = await E(p, () => { const U = OS.U, T = U.today(), wk = U.monday(U.addDays(T, -7)), d1 = U.addDays(wk, 2);
