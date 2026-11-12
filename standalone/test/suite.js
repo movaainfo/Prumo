@@ -1677,7 +1677,7 @@ async function extrasTests(b) { cur = 'Extras'; console.log('\n=== Importador B3
   await p.click('#view .f-act [data-act=fOpen]'); await sleep(200); ok('Ficheiros: "Abrir" abre o ficheiro no Google Drive', await E(p, () => /drive\.google\.com\/file\/d\/F1/.test(window.__opened || '')));
   v = await go('cursos', 600); ok('Ficheiros: cada curso tem "Guardar PDFs / ficheiros"', /Guardar PDFs \/ ficheiros/.test(v));
   await go('universidade.materiais', 500); await p.click('[data-act=fSync]'); await sleep(700); ok('Ficheiros: "Atualizar lista" recupera do Drive o que foi guardado noutro aparelho (na disciplina certa)', await E(p, () => OS.all('files').some(f => f.fid === 'FX' && f.area === 'uni' && OS.get('subjects', f.ref) && OS.get('subjects', f.ref).name === 'Contabilidade ZZ')));
-  await E(p, () => { OS.UI.ask = (t, d, l, fn) => fn(); }); const fid = await E(p, () => OS.all('files').find(f => f.fid === 'F1').id); await p.click(`[data-act="fDel"][data-id="${fid}"]`); await sleep(500);
+  await E(p, () => { OS.UI.ask = (t, d, l, fn) => fn(); }); const fid = await E(p, () => OS.all('files').find(f => f.fid === 'F1').id); await p.$eval(`[data-act="fDel"][data-id="${fid}"]`, b => b.click()); await sleep(500);   // os botões flutuantes (calculadora, Dominus) podem tapar o canto no tablet
   ok('Ficheiros: apagar tira da lista e manda para o lixo do Drive', await E(p, () => !OS.all('files').some(f => f.fid === 'F1')) && !drive.F1);
   v = await go('definicoes.script', 700); ok('Definições → Script Google lista a Parte 5 (ficheiros na nuvem)', /Parte 5 · ficheiro Parte5/.test(v));
   const code5 = await E(p, () => OS.Inbox.parts('k')[4]); let syn = ''; try { new Function(code5); } catch (e) { syn = e.message; }
