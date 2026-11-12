@@ -1,5 +1,1535 @@
 [
  {
+  "p": "Geral",
+  "name": "os 85 formulários gravam",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "gasto rápido fica guardado depois de recarregar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exportar e importar devolve tudo",
+  "pass": true,
+  "info": "2 movimentos"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: verificação da ligação",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: o Google falha à 1.ª e a app tenta de novo · \"18, uber\" → 18 € · Uber",
+  "pass": true,
+  "info": "1 encontrados"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho de uma pergunta: \"99 pizza 2 pessoas\" → 99 € · Pizza 2 pessoas",
+  "pass": true,
+  "info": "[99]"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: gasto enviado entra nas Finanças com categoria",
+  "pass": true,
+  "info": "[[8.5,\"Uber para a faculdade\",\"Transporte\"],[99,\"Pizza 2 pessoas\",\"Alimentação\"],[18,\"Uber\",\"Transporte\"]]"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: não duplica",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: herói criado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: treinos que fazem avançar uma meta de corpo sobem o Corpo (e o herói) e mostram parabéns",
+  "pass": true,
+  "info": "herói 2 → 4 · Corpo 0 → 3 · SUBISTE DE NÍVEL\n4\nBRONZE\nRyan\nGLADIADOR"
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: baú com 2 recompensas à escolha",
+  "pass": true,
+  "info": "2 opções"
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: escolher recompensa guarda-a",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: marcos em 5 pilares (com o Espírito)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "abre sem internet",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "atualização: aparece \"A atualizar o Prumo…\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "atualização: depois mostra \"Atualizado\" e a versão nova",
+  "pass": true,
+  "info": "Atualizado · versão 9.9 · 11/11/2026 · Investimentos › Aprender a investir: um g"
+ },
+ {
+  "p": "Geral",
+  "name": "modo de segurança (?seguro) limpa a cache e liga o modo leve",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: engrenagem das Definições visível no topo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: tocar na engrenagem abre as Definições",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: \"Definições\" no topo do menu ☰, visível sem rolar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: tocar no menu abre as Definições",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: depois do código aparece \"Ativar o Face ID?\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: \"Ativar Face ID\" regista o rosto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: ao bloquear aparece \"Desbloquear com Face ID\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: em modo de teste o Face ID só abre pelo botão (o automático é testado à parte)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: entrar com o Face ID abre a app",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Tablet horiz: sem convite nem botão de Face ID",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Tablet horiz: Definições dizem \"só no iPhone\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Computador: sem convite nem botão de Face ID",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Computador: Definições dizem \"só no iPhone\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o tablet envia os seus dados para o Google",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "limpeza: \"18, uber\" passa a \"Uber\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o iPhone liga-se com o código e recebe os dados do tablet",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "código de ligação aceite em qualquer formato (link, código, codificado, com espaços)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: a configuração do atalho também passa para o iPhone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o computador liga-se com o código e recebe os dados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o que registas no computador aparece no tablet e no iPhone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (computador)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o que registas no iPhone aparece no tablet",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: apagar num aparelho apaga no outro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: gasto do atalho entra uma só vez e aparece nos dois aparelhos",
+  "pass": true,
+  "info": "tablet 1 · iPhone 1"
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (2 aparelhos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Android: sem botão de biometria e registo antigo apagado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Android: nenhum pedido biométrico ao abrir",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "\"Entrar direto\": abre sem pedir código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cadeado volta a pedir o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "biblioteca: mais de 500 exercícios com imagens e 60 alongamentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "base de alimentos: mais de 700 alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exercícios antigos ligados às imagens",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: abre a lista para escolher exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: 2 exercícios no treino em curso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: série feita fica verde e o descanso começa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: volume calculado ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino em curso sobrevive a fechar a app (botão flutuante)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino em curso retomado com as séries",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tipo de série: aquecimento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "terminar: treino guardado com as séries feitas",
+  "pass": true,
+  "info": "{\"n\":1,\"sets\":[{\"t\":\"N\",\"kg\":60,\"reps\":10},{\"t\":\"N\",\"kg\":62.5,\"reps\":8}],\"title\":\"Pernas\",\"dur\":1}"
+ },
+ {
+  "p": "Geral",
+  "name": "terminar: resumo com volume e dicas de dieta e alongamento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina criada a partir do treino",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina: abre com as cargas da última vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "recorde detetado no treino seguinte",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "nova rotina guardada com exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha do exercício com animação 3D e como fazer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "histórico em cartões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino já não tem mapa nem peso (passaram para o Corpo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: separadores visão, desafios, mapa e peso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "altura guardada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "formulário de bioimpedância com análise segmentar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bioimpedância: faixas de referência e IMC",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bioimpedância: aviso de diferença entre braços",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "metabolismo medido usado nas metas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: procurar encontra o alimento certo primeiro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: 200 g de frango = macros certas",
+  "pass": true,
+  "info": "{\"date\":\"2026-11-11\",\"meal\":\"Jantar\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"m4n2hhknawr\",\"_c\":1794428918523,\"_u\":1794428918523,\"_s\":0}"
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: porção típica (unidade)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: refeições com fotos dos alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeição fixa criada com 2 alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeição fixa adicionada com um toque",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: sem IA mostra só o botão para Definições → Spyke (sem passos nem chave aqui)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: a IA identifica os alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: corrigir gramas reescala as calorias e regista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: produtos reais com marca e foto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: refeição guarda a foto do produto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "país: botão na página inicial",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: ao tocar no alimento escolhe-se a marca",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: regista o alimento com a marca escolhida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "país: muda para Brasil",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: mudam conforme o país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas certas: nos ovos só aparecem ovos (nada de massa ou salsichas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas certas: na batata frita não aparece batata palha nem chips",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fast food conforme o país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeições já guardadas com marca de outro país ficam iguais",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fast food de outro país não aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alimentos sem emojis: todos com foto real",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alimentos agrupados: cada alimento uma vez, com as variantes lá dentro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cada alimento tem a sua foto (sem repetir)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cada alimento tem descrição",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao tocar no arroz aparecem as opções (cozido / cru) e as marcas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "regista com a opção e a marca escolhidas",
+  "pass": true,
+  "info": "{\"date\":\"2026-11-11\",\"meal\":\"Jantar\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"ukcdudknrjq\",\"_c\":1794428940086,\"_u\":1794428940086,\"_s\":0}"
+ },
+ {
+  "p": "Geral",
+  "name": "biblioteca de alimentos com fotos e descrições",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: passo das fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: resultado completo (gordura, magra, metabolismo, visceral)",
+  "pass": true,
+  "info": "{\"bf\":17.1,\"lean\":67.1,\"bmr\":1820,\"vis\":8,\"look\":true,\"ai\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: análise com onde melhorar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: estimativa sem fotos também funciona",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "vídeos escolhidos para os exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: vídeo da execução toca dentro da app",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: vários vídeos bons para escolher",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: alterna entre vídeo e animação 3D",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: animação 3D (ou recurso) aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: modo fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fechar a ficha para o vídeo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: abre na animação 3D com botão do vídeo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "animação certa: extensão de pernas na cadeira extensora (não agachamento)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: em Portugal usa € e 28% de imposto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: inflação de Portugal vem do Eurostat e entra no simulador",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: crédito ao consumo do BCE como taxa do empréstimo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: empréstimo em Portugal mostra TAN e TAEG com Imposto do Selo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: no Brasil usa R$, juros ao mês e CET com IOF",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: custo efetivo de um crédito sem juros é 0%",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: no Brasil a taxa do crédito pessoal vem do BCB, ao mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: comparar taxas com produtos do Brasil (poupança isenta, CDI)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: CDI e LCI/LCA (90% do CDI) atualizados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: cada país guarda os seus valores",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: painel do assistente com sugestões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: sem chave mostra o cartão único do Spyke (IA)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: responde com veredicto, riscos e passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: a IA recebe a simulação, as regras do país e as finanças",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: \"Testar\" aplica o cenário (e ignora campos inventados)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: sem ligação usa os valores de referência e avisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: cotação ao vivo do script (Yahoo) na carteira",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: variação do dia calculada ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: renda fixa rende sozinha (3% ao ano)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: rentabilidade com histórico (TWR, TIR, volatilidade, Sharpe)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: risco (nota 1–7, VaR, CVaR, stress, correlação)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: pesquisar ativo no mercado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: página do ativo com gráfico, estatísticas e notícias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: importar CSV da corretora",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: venda a descoberto (ganha quando o preço cai, perde quando sobe)",
+  "pass": true,
+  "info": "{\"qty\":-10,\"avg\":10,\"cost\":-100,\"value\":-120,\"pl\":-20,\"ret\":-0.2,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":-20,\"exposure\":120,\"short\":true,\"lev\":null,\"price\":12,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-10-12\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: opções com multiplicador e CFD alavancado (margem + resultado)",
+  "pass": true,
+  "info": "[{\"qty\":2,\"avg\":3,\"cost\":600,\"value\":800,\"pl\":200,\"ret\":0.3333333333333333,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":200,\"exposure\":800,\"short\":false,\"lev\":null,\"price\":4,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-11-01\"},{\"qty\":10,\"avg\":100,\"cost\":100,\"value\":200,\"pl\":100,\"ret\":1,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":100,\"exposure\":1100,\"short\":false,\"lev\":11,\"price\":110,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-11-01\"}]"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: caixa em dólares convertida ao câmbio",
+  "pass": false,
+  "info": "100.65606183158084"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: desdobramento, bonificação, transferências, amortização e JCP líquido",
+  "pass": true,
+  "info": "{\"qty\":200,\"avg\":4.76,\"cost\":952,\"value\":1000,\"pl\":48,\"ret\":0.05042016806722689,\"realized\":0,\"divs\":85,\"gross\":100,\"taxW\":15,\"fees\":0,\"total\":133,\"exposure\":1000,\"short\":false,\"lev\":null,\"price\":5,\"stale\":false,\"hasPrice\":true,\"first\":\"2025-10-07\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: formulário com os novos movimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alertas: dispara quando o preço passa o alvo (e só esse)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alertas: painel no Mercado com estado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "comparar: gráfico e tabela de rentabilidade, volatilidade e correlação",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "impostos BR: day trade detetado (20%) e prejuízo acumulado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: impostos (mais-valias PT a 28%)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA investimentos: questionário de perfil (adequação)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA investimentos: resposta com mestres, divergência e verificação em 2 passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA investimentos: condicionada pelo regulamento, mestres, perfil, risco e factos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: perfil, o que faz (traduzido), donos, gestão e analistas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: demonstrações financeiras e múltiplos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: preço justo de Graham (12,00) e preço-teto de Bazin (11,67)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: relatório da IA com pesquisa web, fontes e a carteira",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tarefas: barra de projetos filtra pelo projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tarefas: captura rápida dentro do projeto e com #projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tarefas: vista por projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: retrato com idade, origem e aniversário próximo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: linha do tempo por anos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: entrevista com mais de 200 perguntas, uma de cada vez (as respostas antigas mantêm-se)",
+  "pass": true,
+  "info": "{\"n\":537,\"q\":\"Quem eram os teus avós do lado da mãe? O que sabes da vida deles?\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "eu: depois de responder, a IA faz perguntas de seguimento sobre essa história",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: \"Saltar\" passa à pergunta seguinte",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: o livro é escrito capítulo a capítulo, só com as partes que têm material",
+  "pass": true,
+  "info": "{\"book\":1,\"ch\":[\"Raízes\",\"Os primeiros anos\",\"Uma nova vida em Portugal\"],\"todo\":0,\"stats\":\"3 capítulos408 palavras≈ 1 página\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "eu: cada capítulo recebe só o seu material e a regra de não inventar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: atualizar reescreve só o capítulo que mudou e respeita o que escrevi",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "leituras: pesquisar livro e marcar já li / tenho na estante",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "leituras: resenha e desafio literário que conta o livro lido",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cursos e certificações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: página abre com temporizador e 34 espécies",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: árvore cresce até ao fim, dá moedas e regista estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: sair do Prumo mata a árvore",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: a minha floresta e catálogo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: calculadora diz quanto precisas no exame",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: plano até ao exame vai para as tarefas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: flashcards da IA e repetição espaçada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: simulado da IA corrigido (20/20)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: visão com contagem decrescente e mapa de estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: banco de questões, desempenho e recomendações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: adicionar padel e registar jogo com estatísticas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: treinos específicos e auxílios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: corrida preenche-se sozinha com a aba Corrida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "visão geral: frase forte e verdade do dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "hábitos: só se marca o dia de hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "trabalho: horário e folgas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: pendências por prioridade",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: no fim do tempo pergunta se terminaste",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: \"ainda não\" acrescenta tempo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: sair sem código certo não deixa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: código certo sai e grava o histórico",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: \"anota…\" cria tarefa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: abre páginas por voz",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: resumo do dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: separa urgente e promoções (sem IA)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: urgente aparece no Control Room",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "google script completo é JavaScript válido",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "script em 7 partes: 1 e 2 = núcleo, 3 a 7 = ficheiros das novidades; cada parte é JavaScript válido e juntas dão o código completo",
+  "pass": true,
+  "info": "{\"n\":7,\"ok\":[true,true,true,true,true,true,true],\"len\":[13275,12303,10110,10652,3903,2798,3325],\"same\":true,\"key1\":true,\"core\":25503,\"addon\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "script em 7 partes: cada parte tem menos de 15 mil caracteres (não é cortada ao colar no telemóvel)",
+  "pass": true,
+  "info": "13275 + 12303 + 10110 + 10652 + 3903 + 2798 + 3325"
+ },
+ {
+  "p": "Geral",
+  "name": "script: a Parte 4 (Outlook) liga-se às outras e responde",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "script: só com as partes 1 e 2 responde versão 10; com a Parte 3 num ficheiro novo responde versão 12 (sem apagar nada)",
+  "pass": true,
+  "info": "{\"ok\":true,\"v\":10} → {\"ok\":true,\"v\":12} | {\"ok\":true,\"v\":12} | {\"ok\":false,\"msg\":\"Chave errada\"} | function | function | function | function"
+ },
+ {
+  "p": "Geral",
+  "name": "script: novidades futuras entram num ficheiro novo (function op_nome) sem mexer na Parte 3",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "nome Náutilo no Google: a Parte 3 renomeia o ficheiro de dados, as cópias, a folha, a pasta e os calendários (uma só vez, pelo código interno)",
+  "pass": true,
+  "info": "Náutilo · dados.json|Náutilo · Ficheiros|Náutilo · Gastos do atalho|Náutilo|Náutilo · Trabalho|Náutilo · cópia 2026-10-16|Náutilo · cópia 2026-10-17"
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: memória guarda o que lhe dizes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: rotina de voz corre os passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: balanço da noite",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "modo Comando abre com os painéis",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "modo Comando: o X fecha e o botão fica no canto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: eventos dos e-mails no calendário",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: apagar projeto deixa as tarefas sem projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: data da avaliação move o plano de estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: turno e folga no mesmo dia não coexistem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: oportunidade submetida cria candidatura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: aba no menu, versículo do dia com o texto da Bíblia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: versículo do dia com explicação e aplicação para hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: Bíblia completa (66 livros, 31 102 versículos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: palavra para hoje sem IA, escolhida pelo estado de alma",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: palavra da IA usa o dia real (avaliações, alertas) e o texto vem da Bíblia instalada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: ir para uma passagem escrita por extenso (Romanos 8:28)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: destacar versículo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: leitor diminui a letra (A−) até 12px, barra sempre visível",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: modo grifar (versículo inteiro e só palavras selecionadas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: nota escrita dentro do texto e guardada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: pesquisa de palavras em toda a Bíblia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: devocional guarda sozinho e mostra a passagem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: reflexão da IA sobre a leitura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: pedidos de oração e respondidas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: plano de leitura com o dia de hoje e progresso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: sinais de crise mostram contactos de ajuda",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: versículo do dia na página Hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: notícias do mundo com fontes e hora",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: \"O essencial agora\" feito pela IA só com as manchetes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: temas (economia)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: tema próprio por pesquisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: \"+ País\" cria um separador com as notícias desse país, traduzidas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: notícias novas aparecem marcadas ao atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: o atalho abre a corrida já preenchida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: corrida guardada com ritmo 5:58 /km",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: não regista a mesma corrida duas vezes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: a Corrida só mostra as corridas (o guia do relógio saiu)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: instruções em Definições → Atalhos do iPhone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alongamentos com fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina guiada de alongamentos registada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "meta de calorias sobe nos dias de treino",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: calendário de disciplina na visão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: o calendário de disciplina é automático (sem marcar dias à mão, o passado não se muda)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: registar um treino marca o dia sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desafio: começa e marca o dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desafio automático conta os dias em que foste",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "meta do corpo com progresso e ritmo semanal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "visão do corpo: treino, dieta, corrida e recomendações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (corpo)",
+  "pass": false,
+  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8781' has been blocked by CORS policy: No 'Access-Control-Allow"
+ },
+ {
+  "p": "Geral",
+  "name": "manifesto sem orientação forçada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "todos os ficheiros da cache offline existem",
+  "pass": true,
+  "info": ""
+ },
+ {
   "p": "Compras",
   "name": "Compras: a Cozinha no menu Eu e a lista (#mercado leva lá) começa com \"Fazer a lista do mês\"",
   "pass": true,
@@ -56,90 +1586,6 @@
  {
   "p": "Compras",
   "name": "Compras: sem erros na consola",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Página do país (#mundo.BRA): os 27 estados do Brasil, com nomes em português, mini-mapa e formulário de cidades",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "✓ num estado: fica conhecido (registo de estado, com coordenadas) e acende no mapa",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Ao escrever aparecem sugestões das cidades do país",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Cidade conhecida com coordenadas e o estado dela fica marcado também",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Cidade com o mesmo nome do estado (Rio de Janeiro) fica separada: a cidade e o estado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Quero conhecer: a cidade vai para a coluna \"Quero conhecer\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Tocar outra vez no ♥ tira o lugar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Países grandes por regiões (França: departamentos agrupados pelas regiões)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Ilhas também têm página (Madeira): cidades e lugares, sem os distritos do continente",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Na página Mundo: resumo dos lugares por país, com o Brasil (estados e cidades)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "No cartão do país há o botão para as cidades, estados e lugares",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "O botão abre a página do país",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Cada lugar conhecido dá XP de Mente no Dominus",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Mundo › lugares",
-  "name": "Mundo › lugares: sem erros de JavaScript",
   "pass": true,
   "info": ""
  },
@@ -240,62 +1686,272 @@
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "Aprender a investir: bloco próprio nos Investimentos, com 11 capítulos e índice",
+  "p": "ADM",
+  "name": "ADM: só a administração pode repor senhas",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"Sem acesso.\",\"code\":\"admin\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor a senha pede a senha do administrador",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"A senha não está certa.\",\"code\":\"senha\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: a própria senha não se repõe por aqui",
+  "pass": true,
+  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"A tua própria senha muda-se em Definições › Conta.\",\"code\":\"propria\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor a senha dá uma senha temporária fácil de ditar",
+  "pass": true,
+  "info": "{\"_st\":200,\"ok\":true,\"email\":\"bia68e96265@teste.pt\",\"temporaria\":\"g22e-uztk-cw9g\",\"gerada\":true}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: as sessões da pessoa terminam",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "Juros compostos certos (1000 + 150/mês a 6% durante 20 anos ≈ 72 616)",
+  "p": "ADM",
+  "name": "ADM: a senha antiga deixa de entrar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "Portugal: Certificados de Aforro, FGD de 100 000 €, 28% nas mais-valias, PPR e cripto isenta depois de 365 dias",
+  "p": "ADM",
+  "name": "ADM: com a temporária entra, mas tem de escolher uma senha nova (e vê o aviso)",
+  "pass": true,
+  "info": "{\"trocar\":true,\"avisos\":[{\"at\":\"2026-11-11T20:31:08.614Z\",\"t\":\"senha\"}],\"email\":\"bia68e96265@teste.pt\",\"nome\":\"Bia\",\"criado\":\"2026-11-11T20:31:08.317Z\",\"adm\":fa"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: os dados ficaram todos (perfil e documentos)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "Brasil: Tesouro Direto, FGC de R$ 250 mil, IR regressivo, isenção dos R$ 20 mil nas ações e LCI/LCA isentas",
+  "p": "ADM",
+  "name": "Troca obrigatória: a pessoa escolhe a sua senha e entra normalmente",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "Teste de perfil: 5 perguntas dão o perfil (moderado) com um exemplo de divisão",
+  "p": "ADM",
+  "name": "Troca obrigatória: depois disso, \"senhaTroca\" já não serve (a senha muda-se em Definições)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "Perfil fica conservador se o dinheiro for para menos de 3 anos",
+  "p": "ADM",
+  "name": "ADM: não dá para passar uma conta para o e-mail do administrador",
+  "pass": true,
+  "info": "{\"_st\":403,\"ok\":false,\"msg\":\"Esse e-mail é de administrador.\",\"code\":\"admin\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: muda o e-mail da conta",
+  "pass": true,
+  "info": "{\"_st\":200,\"ok\":true,\"email\":\"bia.nova825201b5@teste.pt\",\"de\":\"bia68e96265@teste.pt\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o e-mail antigo deixa de entrar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "Marcar um capítulo como lido conta no progresso",
+  "p": "ADM",
+  "name": "ADM: o novo e-mail entra com a mesma senha e tem os mesmos perfis e dados (nada se perde)",
+  "pass": true,
+  "info": "{\"trocar\":false,\"avisos\":[{\"at\":\"2026-11-11T20:31:08.614Z\",\"t\":\"senha\"},{\"at\":\"2026-11-11T20:31:08.874Z\",\"t\":\"email\",\"de\":\"bia68e96265@teste.pt\"}],\"email\":\"bia."
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o atalho do iPhone feito antes da mudança continua a funcionar",
+  "pass": true,
+  "info": "estado 200"
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: não dá para mudar para um e-mail que já tem conta",
+  "pass": true,
+  "info": "{\"_st\":409,\"ok\":false,\"msg\":\"Já existe uma conta com esse e-mail.\",\"code\":\"existe\"}"
+ },
+ {
+  "p": "ADM",
+  "name": "No aparelho: depois de entrar com a temporária aparece \"Escolhe uma senha nova\"",
+  "pass": true,
+  "info": "\n  \n    \n    \n    \n    \n    \n  \n  \n  \n  \n  \n    \n    \n  O sistema operativo da tua vida: dinheiro, estudos, treino, metas e o teu jogo, num só sítio.Escolhe uma senha novaA administração do Prumo repôs a senha da tua conta e entraste com uma senha temporária. Escolhe agora uma senha só tua para cont"
+ },
+ {
+  "p": "ADM",
+  "name": "No aparelho: guardada a senha nova, segue para os perfis",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "Fundo de emergência calculado com as despesas reais das Finanças",
+  "p": "ADM",
+  "name": "ADM: sem erros na consola",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "No telemóvel nada sai do ecrã",
+  "p": "ADM",
+  "name": "ADM: a aba mostra o cofre (mudar a senha mestra do próprio cofre)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Aprender a investir",
-  "name": "Aprender a investir: sem erros de JavaScript",
+  "p": "ADM",
+  "name": "ADM: a ficha da conta tem \"Repor a senha de login\" e \"Mudar o e-mail da conta\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: repor no ecrã mostra a senha temporária para copiar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "ADM",
+  "name": "ADM: o botão do cofre leva às Senhas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Google",
+  "name": "Conta sem script: Definições › E-mail mostra \"Ligar a minha conta Google\" com os passos (aviso de app não verificada)",
+  "pass": true,
+  "info": "{\"has\":true,\"href\":\"http://localhost:8781/gmock/auth?client_id=298711842985-i89rgem2i0gq35lse2fvsc0pmmai5cr8.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8781%2FOceanum%2Fapi%2Fgoogle&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly+https%3A%2F%2F"
+ },
+ {
+  "p": "Google",
+  "name": "O link vai ao Google com o ID de cliente, só leitura do Gmail e da agenda, offline e state assinado",
+  "pass": true,
+  "info": "http://localhost:8781/gmock/auth?client_id=298711842985-i89rgem2i0gq35lse2fvsc0pmmai5cr8.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8781%2FOceanum%2Fapi%2Fgoogle&response_type=co"
+ },
+ {
+  "p": "Google",
+  "name": "Página E-mail (sem nada ligado): mostra o mesmo cartão para ligar a conta Google",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Google",
+  "name": "Regresso do Google: \"Conta Google ligada\" com o e-mail e um botão para voltar ao Prumo",
+  "pass": true,
+  "info": "{\"ok\":true,\"t\":\"Conta Google ligada\\n\\njoana@gmail.com: o Prumo já pode ler o teu Gmail e a tua agenda.\\n\\nJá podes fechar esta janela (no iPhone: OK ou Concluído, em cima) e voltar ao Prumo.\\n\\nAbrir o Prumo\",\"back\":\"http://localhost:8781/Oceanum/#definicoes.email\"}"
+ },
+ {
+  "p": "Google",
+  "name": "A autorização fica guardada cifrada no perfil (g/<conta>/<perfil>), sem o token à vista",
+  "pass": true,
+  "info": "{\"n\":1,\"calls\":[\"authorization_code\"]}"
+ },
+ {
+  "p": "Google",
+  "name": "De volta à app: fica ligada sozinha (✓ ligada, joana@gmail.com, Gmail ✓ e Agenda ✓) e liga a agenda no Calendário",
+  "pass": true,
+  "info": "{\"toast\":\"Conta Google ligada: joana@gmail.com\",\"st\":{\"pronto\":true,\"ligado\":true,\"email\":\"joana@gmail.com\",\"gmail\":true,\"agenda\":true,\"at\":1794429074972},\"t\":\"Conta Google\\n✓ ligada\\n\\njoana@gmail.com\\n\\nGmail ✓ · Agenda ✓ · só leitura: o Prumo nunca envia, apaga nem muda nada no Google.\\n\\nDesliga"
+ },
+ {
+  "p": "Google",
+  "name": "E-mail: lê os e-mails pela conta Google (assunto, remetente, início do texto sem &amp;) e mostra-os na Caixa",
+  "pass": true,
+  "info": "{\"L\":[{\"id\":\"t2bbbbbb\",\"s\":\"50% de desconto só hoje\",\"f\":\"Loja <promo@loja.pt>\",\"sn\":\"Black Friday antecipada. Cancelar subscrição.\",\"u\":false},{\"id\":\"t1aaaaaa\",\"s\":\"Entrega do trabalho de Estatística\",\"f\":\"Prof. Silva <silva@ua.pt>\",\"sn\":\"Olá Joana, o prazo do trabalho é amanhã & não há prorrogação.\",\"u\":true}],\"arch\":0,\"rows\":2,\"err\":\"\"}"
+ },
+ {
+  "p": "Google",
+  "name": "Só leitura: sem \"Arquivar\" nem \"Spam\" nas linhas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Google",
+  "name": "A pesquisa do Gmail das Definições vai para o Google",
+  "pass": true,
+  "info": "[\"in:inbox newer_than:3d\",\"in:inbox newer_than:3d\"]"
+ },
+ {
+  "p": "Google",
+  "name": "Ler o e-mail inteiro dentro da app: texto completo, anexo, \"Ver formatado\" e link para o Gmail certo (authuser)",
+  "pass": true,
+  "info": "{\"t\":\"Entrega do trabalho de Estatística\\nProf. Silva\\nsilva@ua.pt · 11/11, 19:31\\npara joana@gmail.com\\nCorpo completo do e-mail de teste: o prazo é amanhã às 18h.\\nVer formatado\\nenunciado.pdf\\nResponder\\nTarefa\\nGmail\",\"fmt\":true,\"arch\":false,\"gm\":\"https://mail.google.com/mail/?authuser=joana%40g"
+ },
+ {
+  "p": "Google",
+  "name": "Responder: \"Copiar e abrir no Gmail\" (a ligação é só de leitura), sem \"Guardar rascunho\"",
+  "pass": true,
+  "info": "{\"cp\":\"https://mail.google.com/mail/?authuser=joana%40gmail.com#all/t1aaaaaa\",\"save\":false,\"t\":\"Responder a Prof. Silva\\nEntrega do trabalho de Estatística\\nOlá Joana, o prazo do trabalho é amanhã & não há prorrogação.\\nEscrever com IA\\nDitar\\nCopiar e abrir no Gmail\\nA resposta é copiada e o e-mail"
+ },
+ {
+  "p": "Google",
+  "name": "Agenda: os eventos do Google aparecem no Calendário (com hora, dia inteiro e outras agendas), sem as agendas escondidas",
+  "pass": true,
+  "info": "{\"L\":[[\"hoje\",\"15:00\",\"16:00\",\"Dentista\"],[\"amanha\",\"\",\"\",\"Aniversário da Rita\"],[\"2026-11-13\",\"10:00\",\"11:00\",\"Reunião de equipa\"]],\"st\":\"3 eventos entre 28 out e 9 fev · atualizado às 20:31\"}"
+ },
+ {
+  "p": "Google",
+  "name": "Definições › Ligações: Agenda Google ligada \"pela tua conta Google ligada\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Google",
+  "name": "Token caducado: o servidor renova-o sozinho e os e-mails continuam a chegar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Google",
+  "name": "Verificação da chave secreta (sem a mostrar): o Google aceita o cliente e a chave",
+  "pass": true,
+  "info": "{\"ok\":true,\"pronto\":true,\"chave\":\"ok\",\"erro\":\"invalid_grant\"}"
+ },
+ {
+  "p": "Google",
+  "name": "Sem sessão → 401; de outro site → 403; perfil de outra conta → 404",
+  "pass": true,
+  "info": "401,403,404"
+ },
+ {
+  "p": "Google",
+  "name": "Regresso falsificado (state mudado) é recusado; \"Cancelar\" no Google não liga nada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Google",
+  "name": "Desligar: revoga no Google, apaga a autorização no servidor e limpa os e-mails e a agenda deste aparelho",
+  "pass": true,
+  "info": "{\"st\":{\"pronto\":true,\"ligado\":false,\"email\":\"\",\"gmail\":false,\"agenda\":false,\"at\":1794429074972},\"link\":true,\"items\":0,\"gcal\":0}"
+ },
+ {
+  "p": "Google",
+  "name": "O Google retirou o acesso: a app avisa e volta a mostrar \"Ligar a minha conta Google\"",
+  "pass": true,
+  "info": "{\"st\":{\"pronto\":true,\"ligado\":false,\"email\":\"\",\"gmail\":false,\"agenda\":false,\"at\":1794429079639},\"err\":\"O Google retirou o acesso (autorização cancelada ou expirada). Liga a conta Google outra vez.\",\"card\":true}"
+ },
+ {
+  "p": "Google",
+  "name": "Conta com script Google (a do Ryan): fica tudo igual, pelo script, sem o cartão do Google",
+  "pass": true,
+  "info": "{\"card\":false,\"mail\":false}"
+ },
+ {
+  "p": "Google",
+  "name": "Modo pessoal (sem conta): sem cartão do Google",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Google",
+  "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
  }

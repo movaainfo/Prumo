@@ -67,6 +67,9 @@
     },
     "api/lingua.js": {
       "maxDuration": 300
+    },
+    "api/banco.js": {
+      "maxDuration": 120
     }
   },
   "cleanUrls": true

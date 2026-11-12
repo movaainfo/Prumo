@@ -33,17 +33,18 @@ const selBar = (c, rows, extra = '') => { LAST[c] = rows.map(x => x.id); const o
 const selTable = (c, o) => { const on = selOn(c), S = selIds(c); return UI.table(Object.assign({}, o, { coll: on ? '' : c, rowAttr: on ? (x => `data-act="selPick" data-c="${c}" data-id="${x.id}" tabindex="0" role="checkbox" aria-checked="${S.has(x.id)}"`) : null,
   rowCls: x => (o.rowCls ? o.rowCls(x) : '') + (on ? ' tx-pick' + (S.has(x.id) ? ' on' : '') : ''), cols: (on ? [{ l: '', v: x => `<span class="tx-ck ${S.has(x.id) ? 'on' : ''}" aria-hidden="true">${S.has(x.id) ? '✓' : ''}</span>` }] : []).concat(o.cols) })); };
 OS.SelUI = { bar: selBar, table: selTable };
-const TABS = [['', 'Visão'], ['transacoes', 'Transações'], ['contas', 'Contas'], ['orcamento', 'Orçamento'], ['recorrentes', 'Recorrentes'], ['dividas', 'Dívidas'], ['inteligencia', 'Inteligência'], ['categorias', 'Categorias']];
+const TABS = [['', 'Visão'], ['transacoes', 'Transações'], ['contas', 'Contas'], ['orcamento', 'Orçamento'], ['recorrentes', 'Recorrentes'], ['dividas', 'Dívidas'], ['inteligencia', 'Inteligência'], ['categorias', 'Categorias'], ['banco', 'Banco']];
 const periodRange = p => { const t = U.today(), ym = U.ym(t); switch (p) { case 'mesant': { const m = U.addMonths(ym, -1); return [m + '-01', m + '-' + U.dim(m)]; } case '3m': return [U.addMonths(ym, -2) + '-01', t]; case '12m': return [U.addMonths(ym, -11) + '-01', t]; case 'ano': return [t.slice(0, 4) + '-01-01', t]; case 'tudo': return ['0000-01-01', '9999-12-31']; case 'custom': return [OS.ui.txFrom || ym + '-01', OS.ui.txTo || t]; default: return [ym + '-01', ym + '-' + U.dim(ym)]; } };
 const PERIODS = [['mes', 'Este mês'], ['mesant', 'Mês anterior'], ['3m', '3 meses'], ['12m', '12 meses'], ['ano', 'Este ano'], ['tudo', 'Tudo'], ['custom', 'Personalizado']];
 
 /* ================= FINANÇAS ================= */
 V.financas = sub => {
   const head = UI.head('Finanças', 'Receitas, despesas, contas, cartões, parcelamentos, dívidas, orçamentos e reservas. Tudo o que registas alimenta metas, alertas e o patrimônio.', `${UI.addBtn('transactions', 'Movimento')}`, 'Dinheiro') + UI.tabs('financas', TABS, sub);
-  if (!OS.all('accounts').length && sub !== 'contas') return head + UI.empty('Começa por criar as tuas contas (conta à ordem, reserva, cartão, corretora).', UI.addBtn('accounts', 'Criar conta'));
+  if (!OS.all('accounts').length && sub !== 'contas' && sub !== 'banco') return head + UI.empty('Começa por criar as tuas contas (conta à ordem, reserva, cartão, corretora).', UI.addBtn('accounts', 'Criar conta'));
   return head + (FIN[sub || 'visao'] || FIN.visao)();
 };
 const FIN = {};
+FIN.banco = () => OS.Banco ? OS.Banco.view() : '';
 FIN.visao = () => {
   const t = U.today(), ym = U.ym(t), p = OS.one('profile'), m = Fin.month(ym), pm = Fin.month(U.addMonths(ym, -1));
   const months = Fin.months(12), md = months.map(Fin.month);
