@@ -16,6 +16,13 @@ module.exports = async (req, res) => {
   if (recent.length > 120) { res.statusCode = 429; return res.end('{"ok":false,"msg":"demasiados pedidos"}'); }
   if (origin) { res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Vary', 'Origin'); }
   res.setHeader('Cache-Control', 'public, s-maxage=30, max-age=0');
+  // pesquisa de ações, ETFs, fundos e notícias (o mesmo que o script Google fazia), para as contas sem script
+  const q0 = String((req.query && req.query.search) || '').trim().slice(0, 60);
+  if (q0) { const n = Math.min(10, Math.max(0, +((req.query || {}).n) || 0)), ck = 's:' + q0.toLowerCase() + ':' + n, c = CACHE.get(ck); if (c && Date.now() - c.t < 600000) return res.end(JSON.stringify(c.v));
+    for (const host of ['query2', 'query1']) { try { const r = await fetch(`https://${host}.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q0)}&quotesCount=10&newsCount=${n}&lang=pt-PT`, { headers: { 'User-Agent': 'Mozilla/5.0 (NAUTILO)' } }); if (!r.ok) continue; const j = await r.json();
+      const v = { ok: true, q: (j.quotes || []).filter(x => x.symbol).map(x => ({ s: x.symbol, n: x.longname || x.shortname || x.symbol, t: x.quoteType, ty: x.typeDisp, ex: x.exchDisp || x.exchange })), news: (j.news || []).map(x => ({ ti: x.title, l: x.link, pub: x.publisher, t: x.providerPublishTime })) };
+      CACHE.set(ck, { t: Date.now(), v }); if (CACHE.size > 500) CACHE.delete(CACHE.keys().next().value); return res.end(JSON.stringify(v)); } catch (e) { } }
+    return res.end('{"ok":false,"msg":"a pesquisa não respondeu agora"}'); }
   const syms = String((req.query && req.query.s) || '').split(',').map(x => x.trim()).filter(x => /^[A-Za-z0-9.^=\-]{1,24}$/.test(x)).slice(0, 30);
   if (!syms.length) return res.end('{"ok":false,"msg":"sem símbolos"}');
   const out = {};

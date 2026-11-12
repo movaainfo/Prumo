@@ -39,7 +39,7 @@ IX.scriptQuotes = async syms => { syms = [...new Set(syms.filter(Boolean))]; if 
   IX.st.script = 'ok'; IX.st.scriptAt = Date.now(); return got; };
 IX.fund = async s => { const k = 'oc_f1_' + s, c = U.ls.get(k, null); if (c && Date.now() - c.at < 12 * 36e5) return c.f; const j = await sget('&op=f&s=' + encodeURIComponent(s), 40000); if (!j.f) { IX.st.script = 'old'; throw new Error('script antigo'); } try { U.ls.set(k, { at: Date.now(), f: j.f }); } catch (e) { } return j.f; };
 IX.agenda = async syms => { const j = await sget('&op=c&s=' + encodeURIComponent(syms.slice(0, 25).join(',')), 40000); if (!j.c) { IX.st.script = 'old'; throw new Error('script antigo'); } return j.c; };
-IX.search = async (q, news = 0) => { const j = await sget('&op=s&q=' + encodeURIComponent(q) + '&n=' + news); if (!j.q) { IX.st.script = 'old'; throw new Error('script antigo'); } return j; };
+IX.search = async (q, news = 0) => { if (!scr()) { const r = await fetch(new URL('api/q?search=' + encodeURIComponent(q) + '&n=' + news, document.baseURI).href, { credentials: 'omit' }); const j = await r.json().catch(() => null); if (!j || !j.ok) throw new Error((j && j.msg) || 'a pesquisa não respondeu'); return j; } const j = await sget('&op=s&q=' + encodeURIComponent(q) + '&n=' + news); if (!j.q) { IX.st.script = 'old'; throw new Error('script antigo'); } return j; };
 /* histórico de um símbolo (guardado 12 h no aparelho) */
 const HK = (s, r, i) => 'oc_h1_' + s + '_' + r + '_' + i;
 IX.hist = async (s, r = '1y', i = '1d') => { const k = HK(s, r, i), c = U.ls.get(k, null); if (c && Date.now() - c.at < 12 * 36e5) return c.h;
@@ -216,7 +216,7 @@ IX.tick = async (force) => { if (busy) { if (force) IX._again = true; return; } 
   wsStart(all); fhStart(all); IX.loadFx();
   try { if (scr() && (IX.st.script !== 'old' || Date.now() - (IX.st.oldAt || 0) > 120000)) await IX.scriptQuotes(all.filter(s => !(isCrypto(s) && IX.age(s) < 15000 && PX[s].src === 'Binance (tempo real)'))); }
   catch (e) { IX.st.script = IX.st.script === 'old' ? 'old' : 'erro'; IX.st.scriptErr = e.message; }
-  try { await IX.apiQuotes(all.filter(s => !isCrypto(s) && !/=X$/.test(s) && (!PX[s] || IX.age(s) > 10 * 6e4))); } catch (e) { }
+  try { await IX.apiQuotes(all.filter(s => !isCrypto(s) && !/=X$/.test(s) && (!PX[s] || IX.age(s) > (scr() ? 10 * 6e4 : 55e3)))); } catch (e) { }
   try { await IX.cgQuotes(all.filter(s => isCrypto(s) && (!scr() || IX.st.script !== 'ok'))); } catch (e) { }
   if (scr() && OS.all('assets').some(a => IX.tdSym(a))) { try { await IX.loadTD(); } catch (e) { } }
   const need = IX.needSeries(); for (const [k, d] of Object.entries(need)) { try { await IX.loadSeries(k, d); } catch (e) { } }

@@ -37,12 +37,17 @@ const SPORTS = [['corrida', 'Corrida'], ['futebol', 'Futebol'], ['futsal', 'Futs
 const HABITS = [['acordar', 'Acordar à hora, sem snooze', 'Manhã', 1], ['treino', 'Treino ou corrida', 'Dia', 1, 'workout'], ['estudo', '2 blocos de foco (100 min)', 'Dia', 1, 'study100'], ['ler', '20 páginas de leitura', 'Noite', 0],
   ['agua', 'Beber 2 litros de água', 'Dia', 0], ['gastos', 'Registar gastos do dia', 'Noite', 0, 'cash'], ['tele', 'Telemóvel fora do quarto', 'Noite', 0], ['meditar', 'Meditar 10 minutos', 'Manhã', 0],
   ['fe', 'Oração e leitura da Bíblia', 'Manhã', 0], ['diario', 'Escrever no diário', 'Noite', 0], ['deitar', 'Deitar à hora', 'Noite', 0]];
-const defaults = () => { const p = OS.one('profile'), d = OS.one('diet'), sp = OS.one('spyke'), cc = p.country || (OS.Lang && OS.Lang.code() === 'pt-BR' ? 'BR' : 'PT'), nm = (OS.Acc && OS.Acc.profile && OS.Acc.profile() || {}).nome || '';
+const defaults0 = () => { const p = OS.one('profile'), d = OS.one('diet'), sp = OS.one('spyke'), cc = p.country || (OS.Lang && OS.Lang.code() === 'pt-BR' ? 'BR' : 'PT'), nm = (OS.Acc && OS.Acc.profile && OS.Acc.profile() || {}).nome || '';
   return { short: p.short || nm, country: cc, lang: p.lang || (OS.Lang ? OS.Lang.code() : 'pt-PT'), city: p.city || '', ia: sp.nome || 'Spyke', hide: [...hiddenSet()],
     est: p.uni ? 'uni' : '', inst: p.uni || '', curso: p.course || '', ano: p.curYear || '', subs: '',
     trab: p.jobRole ? 'emp' : '', cargo: p.jobRole || '', empresa: p.employer || '', horas: p.workHours || '',
     obj: '', nivel: 'Iniciante', dias: '', onde: '', desp: [], peso: '', altura: d.h || '', idade: d.age || '', sexo: d.sex || '',
     rel: (OS.one('faith') || {}).rel || '', moeda: p.cur || CUR[cc] || 'EUR', dinh: [], poup: '20', acordar: p.wakeTime || '', deitar: p.sleepTime || '', hab: [], metas: ['', '', ''] }; };
+// v3.16: o que já respondeste volta preenchido (o que mudaste depois nas Definições ganha); nada se pergunta duas vezes
+const isBlank = v => v == null || v === '' || (Array.isArray(v) && (!v.length || v.every(x => x === '')));
+const defaults = () => { const b = defaults0(), sv = (OS.one('onb') || {}).ans; if (!sv || typeof sv !== 'object') return b;
+  Object.keys(sv).forEach(k => { if (k === 'hide' || k === 'ia') return; if (isBlank(b[k]) || (k === 'nivel' && b[k] === 'Iniciante') || (k === 'poup' && b[k] === '20')) { if (!isBlank(sv[k])) b[k] = Array.isArray(sv[k]) ? sv[k].slice() : sv[k]; } });
+  return b; };
 
 const habits = a => HABITS.map(h => h[0] === 'fe' && OS.Rel ? [h[0], OS.Rel.habit(a.rel || 'evangelica')].concat(h.slice(2)) : h);
 /* ---------- os passos ---------- */
@@ -269,6 +274,6 @@ OS.on('ready', () => { setTimeout(tryOpen, 900); });
 OS.on('unlock', () => setTimeout(tryOpen, 600));
 setInterval(() => { if (!W && due()) tryOpen(); }, 2500);
 OS.on('ready', () => { const o = OS.views.definicoes; if (!o || o._onb) return; OS.views.definicoes = sub => o(sub) + (String(sub || '') === '' && pub() ? `<div class="pn" id="onbSet"><div class="pn-h"><h3>${UI.ic('star')}O teu Prumo</h3></div>
-  <p class="mut" style="margin:0 0 10px">${OS.one('onb').done === 'ok' ? 'Já personalizaste o Prumo. Podes responder outra vez às perguntas (o que já existe fica, e junta-se o que for novo) ou ligar e desligar funcionalidades (o que desligas sai do app inteiro: menu, Painel, Hoje, frases e IA; volta quando a ligares).' : 'Responde a umas perguntas rápidas e o Prumo fica feito para ti: abas, disciplinas, treino, dieta, hábitos, metas e marcos do jogo.'}</p>
-  <div class="row gap8" style="flex-wrap:wrap"><button class="btn sm pri" data-act="onbOpen">${OS.one('onb').done === 'ok' ? 'Responder outra vez' : 'Personalizar agora'}</button><button class="btn sm" data-act="onbAreas">Ligar e desligar funcionalidades${hiddenSet().size ? ' · ' + hiddenSet().size + ' escondida' + (hiddenSet().size > 1 ? 's' : '') : ''}</button></div></div>` : ''); OS.views.definicoes._onb = 1; });
+  <p class="mut" style="margin:0 0 10px">${OS.one('onb').done === 'ok' ? 'Já personalizaste o Prumo e as tuas respostas ficam guardadas. Podes revê-las (vêm preenchidas; o que já existe fica, e junta-se o que for novo) ou ligar e desligar funcionalidades (o que desligas sai do app inteiro: menu, Painel, Hoje, frases e IA; volta quando a ligares).' : 'Responde a umas perguntas rápidas e o Prumo fica feito para ti: abas, disciplinas, treino, dieta, hábitos, metas e marcos do jogo.'}</p>
+  <div class="row gap8" style="flex-wrap:wrap"><button class="btn sm pri" data-act="onbOpen">${OS.one('onb').done === 'ok' ? 'Rever as respostas' : 'Personalizar agora'}</button><button class="btn sm" data-act="onbAreas">Ligar e desligar funcionalidades${hiddenSet().size ? ' · ' + hiddenSet().size + ' escondida' + (hiddenSet().size > 1 ? 's' : '') : ''}</button></div></div>` : ''); OS.views.definicoes._onb = 1; });
 })();

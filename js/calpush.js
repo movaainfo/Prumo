@@ -195,4 +195,53 @@ CP.panel = () => { const c = cfg(), T = c.types || {}, ok = ready(), P = c.on &&
     <div class="row gap8" style="margin-top:10px;flex-wrap:wrap">${c.on ? `<button class="btn sm" data-act="cpNow">${UI.ic('sync')}Atualizar agora</button><button class="btn sm" data-act="cpDup">${UI.ic('trash')}Apagar repetidos</button><button class="btn sm ghost" data-act="cpOff">Desligar</button>` : `<button class="btn sm pri" data-act="cpOn">${UI.ic('cal')}Pôr a minha agenda no Google Calendar</button>`}</div>
     ${c.on ? `<p class="mut" style="font-size:12.5px;margin:8px 0 0">${c.n || 0} evento(s) no calendário Náutilo${c.at ? ' · última atualização ' + new Date(c.at).toLocaleString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}${P && (P.up.length || P.del.length) ? ` · ${P.up.length + P.del.length} por enviar` : ''}${c.err ? `<br><span class="warn">${esc(c.err)}</span>` : ''}</p>` : ''}
     <details class="tog" style="margin-top:10px"><summary><span>Ver no iPhone</span>${UI.ic('down', 'chev')}</summary><div class="tog-b"><ol class="ai-steps"><li>No iPhone: <b>Ajustes → Apps → Calendário → Contas</b> (ou Ajustes → Calendário → Contas).</li><li>Se a tua conta Google não estiver lá: <b>Adicionar conta → Google</b>. Se estiver, abre-a e liga <b>Calendários</b>.</li><li>Abre a app Calendário → <b>Calendários</b> (em baixo) e confirma que o <b>Prumo</b> está marcado.</li></ol><p class="mut" style="font-size:12.5px">Também aparece no Google Calendar no telemóvel e no computador. As alterações chegam em poucos minutos.</p></div></details></div>`; };
+
+/* ---------- contas gerais: a agenda num link de calendário (sem script Google) ----------
+   A app envia os eventos para o servidor do Prumo (api/atalho, op=cal); o Calendário do iPhone e o Google Calendar subscrevem um link
+   só de leitura (op=ics) e atualizam sozinhos. Um calendário por cor, como na app, ou tudo num só. */
+const pub = () => !!(OS.pubAcc && OS.pubAcc());
+const FCATS = [['trabalho', 'Trabalho', '#A9C8F0'], ['folgas', 'Folgas', '#B8E6C9'], ['tarefas', 'Tarefas', '#FBE7A1'], ['estudos', 'Estudos', '#D6C8F2'], ['compromissos', 'Compromissos', '#F7C3D6'], ['treino', 'Treino e rotina', '#FFD1B3'], ['outros', 'Outros (metas, contas, aniversários)', '#E3DCCF']];
+const FH = 'os2icsH';
+let fBusy = false, fTimer = 0;
+const feedUrl = (cat, web) => { const c = cfg(); if (!c.ick) return ''; const u = new URL('api/atalho', document.baseURI); u.searchParams.set('op', 'ics'); u.searchParams.set('c', c.ick); if (cat) u.searchParams.set('cat', cat);
+  return web ? u.href : u.href.replace(/^https?:/, 'webcal:'); };
+CP.feedUrl = feedUrl;
+CP.feedPush = async force => { const c = cfg(), a = OS.Acc && OS.Acc.atalho && OS.Acc.atalho(); if (!pub() || !c.feed || !a || fBusy) return false;
+  const L = CP.items(), h = U.hash ? U.hash(JSON.stringify(L)).toString(36) : String(L.length), last = U.ls.get(FH, null) || {};
+  if (!force && c.ick && last.h === h && Date.now() - (last.at || 0) < 6 * 36e5) return false;
+  fBusy = true; try { let tzn = ''; try { tzn = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { }
+    const r = await fetch(a.url, { method: 'POST', body: new URLSearchParams({ k: a.key, op: 'cal', ev: JSON.stringify(L), tzn }) }); const j = await r.json().catch(() => null);
+    if (!r.ok || !j || !j.ok) throw new Error((j && j.msg) || 'o servidor não respondeu');
+    U.ls.set(FH, { h, at: Date.now() }); const up = { fn: j.n, fat: Date.now(), ferr: '' }; if (j.c && j.c !== c.ick) up.ick = j.c; OS.setOne('calx', up); return true; }
+  catch (e) { OS.setOne('calx', { ferr: e.message || String(e) }); return false; } finally { fBusy = false; } };
+const fSoon = (ms = 8000) => { if (!pub() || !cfg().feed) return; clearTimeout(fTimer); fTimer = setTimeout(() => CP.feedPush(false), ms); };
+OS.on('ready', () => { setTimeout(() => CP.feedPush(false), 7000); setInterval(() => { if (!document.hidden) CP.feedPush(false); }, 10 * 6e4); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) CP.feedPush(false); });
+const _soon = CP.soon; CP.soon = ms => { if (pub()) return fSoon(ms); return _soon(ms); };
+A.cfOn = async () => { if (!(OS.Acc && OS.Acc.atalho && OS.Acc.atalho())) return UI.toast('Ainda a preparar o teu link. Tenta daqui a uns segundos.', 'warn');
+  OS.setOne('calx', { feed: 1, ferr: '' }); OS.request(); UI.toast('A preparar a tua agenda…'); const ok = await CP.feedPush(true); OS.request();
+  UI.toast(ok ? 'Agenda pronta: agora escolhe onde a queres ver.' : 'Não consegui enviar a agenda: ' + (cfg().ferr || 'tenta outra vez'), ok ? 'pos' : 'warn'); };
+A.cfNow = async () => { const ok = await CP.feedPush(true); OS.request(); UI.toast(ok ? 'Agenda atualizada. O iPhone vai buscá-la de hora a hora; o Google, algumas vezes por dia.' : 'Não consegui atualizar: ' + (cfg().ferr || 'tenta outra vez'), ok ? 'pos' : 'warn'); };
+A.cfOff = () => UI.ask('Deixar de publicar a agenda?', 'O link fica vazio: os calendários que subscreveste no iPhone ou no Google ficam sem eventos (podes apagá-los lá).', 'Desligar', async () => {
+  const a = OS.Acc && OS.Acc.atalho && OS.Acc.atalho(); try { if (a) await fetch(a.url, { method: 'POST', body: new URLSearchParams({ k: a.key, op: 'cal', ev: '[]' }) }); } catch (e) { }
+  U.ls.set(FH, null); OS.setOne('calx', { feed: 0, fn: 0 }); OS.request(); UI.toast('A agenda deixou de ser publicada.', 'pos'); });
+A.cfCopy = async b => { const u = feedUrl(b.dataset.cat || '', true); try { await navigator.clipboard.writeText(u); UI.toast('Link copiado', 'pos'); } catch (e) { UI.toast('Toca no link, seleciona e copia', 'warn'); } };
+A.cfType = b => { const t = Object.assign({}, cfg().types || {}); t[b.dataset.k] = t[b.dataset.k] ? 0 : 1; OS.setOne('calx', { types: t }); fSoon(1500); OS.request(); };
+CP.feedPanel = () => { const c = cfg(), T = c.types || {}, on = !!c.feed && !!c.ick, gUrl = cat => 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(feedUrl(cat));
+  const when = c.fat ? new Date(c.fat).toLocaleString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+  return `<div class="pn" id="cpSet"><div class="pn-h"><h3>${UI.ic('cal')}A tua agenda no Calendário do iPhone e no Google</h3>${c.feed ? `<span class="bdg ${c.ferr ? 'warn' : 'pos'}">${c.ferr ? 'com erro' : 'ligado'}</span>` : ''}</div>
+    <p class="mut" style="margin:0 0 10px">Tudo o que está no Calendário do Prumo (trabalho e folgas, compromissos, aulas, provas, tarefas com data, rotina, treinos…) fica num <b>link privado</b> que o Calendário do iPhone e o Google Calendar subscrevem. Atualizam sozinhos quando mudas alguma coisa na app. Não precisas de configurar nada fora do Prumo.</p>
+    <div class="cp-types">${TYPES.map(([k, l]) => `<button class="chip ${T[k] ? 'on' : ''}" data-act="cfType" data-k="${k}" aria-pressed="${T[k] ? 'true' : 'false'}">${T[k] ? '✓ ' : ''}${l}</button>`).join('')}</div>
+    ${!on ? `<div class="row gap8" style="margin-top:12px"><button class="btn pri" data-act="cfOn">${UI.ic('cal')}Ligar a minha agenda</button></div>` : `
+    <div class="cf-w">
+      <div class="cf-b"><b>No iPhone</b><p class="mut">Toca num calendário e confirma <b>Subscrever</b>. Cada cor fica como um calendário à parte; podes juntar só os que quiseres.</p>
+        <div class="cf-l"><a class="btn sm pri" href="${esc(feedUrl(''))}">${UI.ic('cal')}Tudo num só calendário</a>${FCATS.map(f => `<a class="cf-c" href="${esc(feedUrl(f[0]))}"><i style="background:${f[2]}"></i>${esc(f[1])}</a>`).join('')}</div>
+        <details class="tog"><summary><span>Se o toque não abrir o Calendário</span>${UI.ic('down', 'chev')}</summary><div class="tog-b"><ol class="ai-steps"><li>Copia o link (abaixo).</li><li>Ajustes → Apps → <b>Calendário</b> → Contas → <b>Adicionar conta</b> → Outra → <b>Adicionar calendário subscrito</b>.</li><li>Cola o link → Seguinte → Guardar.</li></ol></div></details></div>
+      <div class="cf-b"><b>No Google Calendar</b><p class="mut">Abre o link no computador (no telemóvel, a app do Google não deixa juntar calendários por link) e confirma <b>Adicionar</b>. Aparece também no Calendário do iPhone se lá tiveres a conta Google.</p>
+        <div class="cf-l"><a class="btn sm" href="${esc(gUrl(''))}" target="_blank" rel="noopener">Abrir no Google Calendar</a><button class="btn sm ghost" data-act="cfCopy" data-cat="">Copiar o link</button></div>
+        <details class="tog"><summary><span>Um calendário por cor no Google</span>${UI.ic('down', 'chev')}</summary><div class="tog-b"><div class="cf-l">${FCATS.map(f => `<span class="cf-c"><i style="background:${f[2]}"></i>${esc(f[1])}<a class="acc" href="${esc(gUrl(f[0]))}" target="_blank" rel="noopener">Abrir</a><button class="btn sm ghost" data-act="cfCopy" data-cat="${f[0]}">Copiar</button></span>`).join('')}</div>
+          <p class="mut" style="font-size:12.5px">Ou em calendar.google.com → Outros calendários → <b>+</b> → <b>A partir do URL</b> → cola o link.</p></div></details></div></div>
+    <div class="row gap8" style="margin-top:10px;flex-wrap:wrap"><button class="btn sm" data-act="cfNow">${UI.ic('sync')}Atualizar agora</button><button class="btn sm ghost" data-act="cfOff">Desligar</button></div>
+    <p class="mut" style="font-size:12.5px;margin:8px 0 0">${c.fn || 0} evento(s) publicado(s)${when ? ' · última atualização ' + when : ''}. O iPhone vai buscar as mudanças de hora a hora; o Google, algumas vezes por dia.${c.ferr ? `<br><span class="warn">${esc(c.ferr)}</span>` : ''}</p>
+    <p class="mut" style="font-size:12.5px;margin:4px 0 0">O link só mostra a agenda (não deixa mudar nada) e é só deste perfil: não o partilhes. Se criares um link novo no atalho de gastos, este também muda.</p>`}</div>`; };
 })();

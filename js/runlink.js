@@ -1,4 +1,4 @@
-/* PRUMO — corridas do relógio (Aurea Fit → app Saúde → Atalho do iPhone → Prumo).
+/* PRUMO — corridas do relógio (qualquer relógio ou app que grave no app Saúde → Atalho do iPhone → Prumo).
    O atalho lê a última corrida no Saúde e abre este endereço:
    …/Oceanum/#corrida-add?km=5,2&seg=1860&bpm=152&bpmmax=178&kcal=410&data=2026-10-04
    (aceita também tempo=31:00, min=31, metros=5200). Abre o registo de corrida já preenchido para confirmar. */
@@ -13,7 +13,7 @@ RL.parse = q => { const p = new URLSearchParams(q), g = k => p.get(k), out = {};
   let d = g('data') || ''; const m = d.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/); if (m) d = `${m[3]}-${U.pad(+m[2])}-${U.pad(+m[1])}`; if (!/^\d{4}-\d{2}-\d{2}/.test(d)) d = U.today(); d = d.slice(0, 10);
   if (km) out.km = U.r2(km); if (sec) out.time = Math.round(sec); if (n(g('bpm'))) out.hr = Math.round(n(g('bpm'))); if (n(g('bpmmax'))) out.hrMax = Math.round(n(g('bpmmax')));
   out.date = d; out.type = g('tipo') || 'Rodagem'; out.kcal = Math.round(n(g('kcal'))) || ''; out.src = 'relogio';
-  out.notes = 'Importada do relógio (Aurea Fit → Saúde)' + (out.kcal ? ` · ${out.kcal} kcal` : '');
+  out.notes = 'Importada do relógio (pelo app Saúde)' + (out.kcal ? ` · ${out.kcal} kcal` : '');
   return out; };
 RL.pace = r => r.km && r.time ? U.mmss(r.time / r.km) + ' /km' : '';
 const pending = () => { const h = location.hash; if (!/^#corrida-add/.test(h)) return null; const i = h.indexOf('?'); return RL.parse(i < 0 ? '' : h.slice(i + 1)); };
@@ -32,8 +32,8 @@ if (/^#corrida-add/.test(location.hash)) { todo = pending(); }
 /* ---------- Definições → Atalhos do iPhone: ligar o relógio ---------- */
 const step = (i, t, b) => `<div class="ib-s"><i>${i}</i><div><b>${t}</b>${b}</div></div>`;
 RL.panel = () => { const ex = BASE() + '#corrida-add?km=5,2&seg=1860&bpm=152&kcal=410';
-  return UI.toggle('Ligar o relógio (Aurea Fit → Saúde → Prumo)', `<div class="ib-steps">
-    ${step(1, 'Confirma que o relógio envia a corrida para o Saúde', '<p>App <b>Aurea Fit</b> → definições → <b>Apple Saúde</b> → ativa <b>Treinos</b>, <b>Distância</b>, <b>Frequência cardíaca</b> e <b>Energia ativa</b>. Depois de uma corrida, abre <b>Saúde → Explorar → Atividade → Treinos</b> e vê se aparece a distância.</p>')}
+  return UI.toggle('Ligar o relógio (o teu relógio → Saúde → Prumo)', `<div class="ib-steps">
+    ${step(1, 'Confirma que o relógio envia a corrida para o Saúde', '<p>Serve qualquer relógio ou pulseira que grave no app <b>Saúde</b> do iPhone. O <b>Apple Watch</b> já grava sozinho. Nos outros, abre a app do relógio (por exemplo <b>Garmin Connect</b>, <b>Zepp</b> (Amazfit), <b>Mi Fitness</b> ou <b>Zepp Life</b> (Xiaomi), <b>Huawei Health</b>, <b>Polar Flow</b>, <b>Coros</b>, <b>Suunto</b>, <b>Aurea Fit</b>…) → definições → <b>Apple Saúde</b> (ou Saúde) → ativa <b>Treinos</b>, <b>Distância</b>, <b>Frequência cardíaca</b>, <b>Energia ativa</b> e <b>Sono</b>.</p><p>Depois de uma corrida, abre <b>Saúde → Explorar → Atividade → Treinos</b> e vê se aparece a distância. Se o teu relógio não grava no Saúde (como alguns Fitbit e Samsung), há apps de ponte na App Store que copiam os dados para lá.</p>')}
     ${step(2, 'Cria o atalho "Corrida → Prumo"', `<p>App <b>Atalhos</b> → <b>+</b>. Junta estas ações por ordem:</p><ol class="rl-ol">
       <li><b>Encontrar amostras de saúde</b> → Tipo: <b>Treinos</b> · Ordenar por <b>Data de início</b>, <b>Mais recente primeiro</b> · Limite <b>1</b>.</li>
       <li><b>Obter detalhes de amostras de saúde</b> → <b>Duração</b> (o atalho dá-a em segundos; se aparecer em minutos usa <code>min=</code> em vez de <code>seg=</code>).</li>

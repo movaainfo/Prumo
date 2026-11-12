@@ -11,13 +11,14 @@ const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/;
 const TV = /^\d{4}-\d{2}-\d{2}$/;
 const termsOf = b => { if (!TV.test(String(b.termos || '')) || b.saude !== true || b.idade !== true) throw N.err('termos', 'Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.', 400);
   return { v: b.termos, at: new Date().toISOString(), saude: true, idade: true }; };
-const pub = (r, eid) => ({ trocar: !!r.trocar, avisos: (r.avisos || []).slice(-5), email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
+const pub = (r, eid) => ({ trocar: !!r.trocar, avisos: (r.avisos || []).slice(-5), email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', pin: p.pin ? 6 : 0, inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
 const cleanName = (s, max) => String(s || '').replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
 const cleanProfile = (p, old) => { const o = Object.assign({}, old || {});
   if (p.nome != null) o.nome = cleanName(p.nome, 24);
   if (p.cor != null && /^#[0-9A-Fa-f]{6}$/.test(p.cor)) o.cor = p.cor;
   if (p.av != null) o.av = [...String(p.av)].slice(0, 2).join('').replace(/[<>&"']/g, '');
   if (p.lk != null && /^([a-f0-9]{64})?$/.test(p.lk)) o.lk = p.lk;
+  if (p.pin != null) o.pin = +p.pin === 6 ? 6 : 0;   // código de 6 números (casinhas no ecrã do código)
   if (p.inf != null) o.inf = !!p.inf;
   if (p.ps != null) o.ps = !!p.ps;
   // imagem do perfil (foto ou personagem do Dominus), pequena: até ~45 kB
@@ -42,7 +43,7 @@ const needPw = async (rec, pw) => { if (!(await N.checkPw(pw, rec.pw))) throw N.
 // senha temporária fácil de ditar: 3 grupos de 4 (sem letras que se confundem)
 const tempPw = () => { const C = 'abcdefghjkmnpqrstuvwxyz23456789', b = N.crypto.randomBytes(12); let o = ''; for (let i = 0; i < 12; i++) { o += C[b[i] % C.length]; if (i === 3 || i === 7) o += '-'; } return o; };
 const aviso = (r, a) => { r.avisos = (r.avisos || []).concat([Object.assign({ at: new Date().toISOString() }, a)]).slice(-10); };
-const dropData = async (uid, pid) => { const s = N.store(), sub = pid ? pid + '/' : ''; const L = (await s.list('d/' + uid + '/' + sub)).concat(await s.list('i/' + uid + '/' + sub), pid ? await s.list('m/' + uid + '/' + pid) : await s.list('m/' + uid + '/'), await s.list('g/' + uid + '/' + (pid || '')), await s.list('r/' + uid + '/' + (pid || ''))); if (L.length) await s.del(L); RK.rows = null; };
+const dropData = async (uid, pid) => { const s = N.store(), sub = pid ? pid + '/' : ''; const L = (await s.list('d/' + uid + '/' + sub)).concat(await s.list('i/' + uid + '/' + sub), pid ? await s.list('m/' + uid + '/' + pid) : await s.list('m/' + uid + '/'), await s.list('g/' + uid + '/' + (pid || '')), await s.list('r/' + uid + '/' + (pid || '')), await s.list('k/' + uid + '/' + sub)); if (L.length) await s.del(L); RK.rows = null; };
 
 /* ---------- ranking: a disciplina de cada perfil (0–100 por dia) e os dias de foco seguidos ---------- */
 // r/<conta>/<perfil>: { d: { dia: pontos }, n: nome, c: cor, av, im (foto pequena), anon, at, t (conta de teste) }. Só se vê a lista: sem perfis, sem mensagens.
@@ -127,7 +128,7 @@ const OPS = {
   // esqueci o código de bloqueio do perfil: com a senha da conta escolhes outro
   async codigo(req, b) { const s = await session(req); await needPw(s.rec, b.senha);
     if (!/^[a-f0-9]{64}$/.test(b.lk || '')) throw N.err('codigo', 'Código inválido.', 400);
-    const rec = await change(s.eid, r => { const p = (r.perfis || []).find(x => x.id === b.id); if (!p) throw N.err('perfil', 'Esse perfil já não existe.', 404); p.lk = b.lk; });
+    const rec = await change(s.eid, r => { const p = (r.perfis || []).find(x => x.id === b.id); if (!p) throw N.err('perfil', 'Esse perfil já não existe.', 404); p.lk = b.lk; p.pin = +b.pin === 6 ? 6 : 0; });
     return { conta: pub(rec) }; },
 
   async senha(req, b) { const s = await session(req); await needPw(s.rec, b.atual); const nova = String(b.nova || '');
@@ -263,8 +264,8 @@ const OPS = {
 
   // o ranking de todos os perfis de todas as contas (as contas de teste não aparecem); só leitura
   async ranking(req, b) { const s = await session(req), mine = 'r/' + s.rec.uid + '/' + String(b.id || ''), today = isoDay(Date.now());
-    // quem está a zero não aparece (tu vens sempre, para saberes onde estás)
-    const lista = (await rankRows()).filter(r => !r.t || r.path === mine).map(r => rowOut(r, today, r.path === mine)).filter(x => x.me || x.pa > 0);
+    // v3.16: aparecem todos os perfis (quem ainda está a zero fica no fim da lista, na app)
+    const lista = (await rankRows()).filter(r => !r.t || r.path === mine).map(r => rowOut(r, today, r.path === mine));
     return { lista, foco: FOCO, hoje: today }; },
 
   // o administrador escolhe quem pode usar o Spotify (ele e mais até SP_MAX contas): o Spotify só deixa 5 contas por app

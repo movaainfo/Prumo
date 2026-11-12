@@ -152,3 +152,22 @@ html.ac-open,html.ac-open body{overflow:hidden}
 .adm-r.is-on{background:linear-gradient(90deg,rgba(63,207,142,.07),transparent 40%)}
 .adm-kon b{color:var(--pos)}
 @media (prefers-reduced-motion:reduce){.adm-on{animation:none}}
+/* código de 6 números com casinhas (contas gerais): um campo numérico invisível por cima das 6 casas */
+.pin{display:flex;flex-direction:column;gap:8px;min-width:0}
+.pin-l{font-size:13px;color:var(--muted,#9AA4B2)}
+.pin-w{position:relative;display:block;width:min(100%,340px)}
+.pin .pin-w input.pin-in{position:absolute;inset:0;width:100%;height:100%;min-height:0;opacity:0;font-size:16px;color:transparent;-webkit-text-fill-color:transparent;caret-color:transparent;background:transparent;border:0;outline:none;z-index:2;padding:0;margin:0;cursor:text;letter-spacing:0;box-shadow:none}
+.pin-bx{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.pin-bx i{display:grid;place-items:center;height:54px;border-radius:12px;border:1.5px solid color-mix(in srgb,currentColor 30%,transparent);background:color-mix(in srgb,currentColor 6%,transparent);transition:border-color .15s,box-shadow .15s}
+.pin-bx i::after{content:'';width:12px;height:12px;border-radius:50%;background:currentColor;transform:scale(0);transition:transform .14s ease-out}
+.pin-bx i.on::after{transform:scale(1)}
+.pin-bx i.cur{border-color:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent)}
+.pin-w.shake{animation:pinShake .38s}
+@keyframes pinShake{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.pin-bx i,.pin-bx i::after{transition:none}.pin-w.shake{animation:none}}
+.lk-pin{color:#F1F4F8;align-items:center;width:100%}.lk-pin .pin-w{margin:0 auto}.lk-pin .pin-bx i{height:58px;background:rgba(10,16,26,.28)}
+.lk-pinf .lk-go{display:none}
+.ac-pin{gap:16px}.ac-pin .pin{color:#F1F4F8}.ac-pin .pin-l{font:italic 500 15px/1.2 var(--serif);color:#B9B2A6}
+.pin-chg{display:flex;flex-direction:column;gap:12px;max-width:360px}.pin-chg #pcCur{max-width:340px}
+.pin-new .pin{color:inherit}
+@media (max-width:380px){.pin-bx{gap:6px}.pin-bx i{height:48px;border-radius:10px}.lk-pin .pin-bx i{height:52px}}

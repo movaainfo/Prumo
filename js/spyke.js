@@ -386,10 +386,14 @@ S.memAdd = memAdd;
 { const say1 = S.say; S.say = (t, o) => say1(XLang() && typeof t === 'string' ? t.split(/(?<=[.!?…])\s+/).map(x => OS.Lang.t(x)).join(' ') : t, o); }
 /* ---------- o nome da tua IA ---------- */
 const NAMES = ['Spyke', 'Orion', 'Atlas', 'Nova', 'Luna', 'Aurora', 'Max', 'Íris'];
-S.namePanel = () => { const c = cfg(), n = c.nome || '';
+// já respondido (nas perguntas iniciais ou aqui): mostra a resposta; o formulário só abre em "Mudar"
+const named = () => !!(cfg().nomeAt || cfg().nome || (OS.one('onb') || {}).done === 'ok');
+S.namePanel = () => { const c = cfg(), n = c.nome || '', ed = OS.ui.aiNameEd || !named();
   return `<div class="pn" id="aiName"><div class="pn-h"><h3>Nome da tua IA</h3><span class="mut" style="font-size:12px">${esc(OS.aiName())}</span></div>
-    <p class="mut" style="margin:0 0 10px;font-size:13px">É assim que a chamas por voz ("${esc(OS.aiName())}, como está o meu dia?") e como ela aparece em toda a app.</p>
-    <form class="col gap8" data-form="aiNameSave">${nameFields(n, c.art)}<div><button class="btn pri sm">Guardar o nome</button></div></form></div>`; };
+    ${ed ? `<p class="mut" style="margin:0 0 10px;font-size:13px">É assim que a chamas por voz ("${esc(OS.aiName())}, como está o meu dia?") e como ela aparece em toda a app.</p>
+    <form class="col gap8" data-form="aiNameSave">${nameFields(n || (OS.ui.aiNameEd ? OS.aiName() : ''), c.art)}<div class="row gap8"><button class="btn pri sm">Guardar o nome</button>${named() ? '<button type="button" class="btn ghost sm" data-act="aiNameEd">Cancelar</button>' : ''}</div></form>`
+    : `<div class="row between" style="align-items:center;gap:10px;flex-wrap:wrap"><p style="margin:0">A tua IA chama-se <b>${esc(OS.aiName())}</b> (${c.art === 'a' ? 'é ela' : 'é ele'}). Chamas por ela assim: "${esc(OS.aiName())}, como está o meu dia?"</p><button type="button" class="btn sm" data-act="aiNameEd">Mudar o nome</button></div>`}</div>`; };
+A.aiNameEd = () => { OS.ui.aiNameEd = !OS.ui.aiNameEd; OS.request(); };
 const nameFields = (n, art) => `<input class="field" name="nome" maxlength="24" placeholder="ex.: Nova" value="${esc(n)}" aria-label="Nome da IA" autocomplete="off">
   <div class="row gap6" style="flex-wrap:wrap">${NAMES.map(x => `<button type="button" class="chip" data-act="aiNamePick" data-n="${esc(x)}">${esc(x)}</button>`).join('')}</div>
   <div class="seg" role="radiogroup" aria-label="Tratar por"><label><input type="radio" name="art" value="o" ${art !== 'a' ? 'checked' : ''}> é ele</label><label><input type="radio" name="art" value="a" ${art === 'a' ? 'checked' : ''}> é ela</label></div>`;
@@ -397,10 +401,10 @@ A.aiNamePick = b => { const f = b.closest('form'), i = f && f.elements.nome; if 
 OS.forms = OS.forms || {};
 OS.forms.aiNameSave = f => { const v = String(f.elements.nome.value || '').trim(), art = ([...f.querySelectorAll('input[name=art]')].find(r => r.checked) || {}).value || 'o';
   if (!OS.aiNameOk(v)) { UI.toast('Escolhe um nome com letras (até 24).', 'warn'); return; }
-  OS.setOne('spyke', { nome: v === 'Spyke' ? '' : v, art, nomeAt: U.today() }); S.setWakeName(); UI.closeModal(); UI.toast('A tua IA chama-se ' + v, 'pos'); OS.request(); };
+  OS.setOne('spyke', { nome: v === 'Spyke' ? '' : v, art, nomeAt: U.today() }); OS.ui.aiNameEd = false; S.setWakeName(); UI.closeModal(); UI.toast('A tua IA chama-se ' + v, 'pos'); OS.request(); };
 // numa conta nova: perguntar o nome uma vez (depois de aceitar os termos)
 const asked = () => { try { return !!sessionStorage.getItem('os2aiNameAsk'); } catch (e) { return false; } };
-const askName = () => { if (!(OS.Acc && OS.Acc.pub) || window.__noAsk || cfg().nomeAt || asked() || (OS.Onb && (OS.Onb.isOpen() || (!OS.one('onb').done && !window.__noOnb))) || document.getElementById('modal') && !document.getElementById('modal').hidden || (OS.Legal && OS.Legal.pending && OS.Legal.pending())) return false;
+const askName = () => { if (!(OS.Acc && OS.Acc.pub) || window.__noAsk || named() || asked() || (OS.Onb && (OS.Onb.isOpen() || (!OS.one('onb').done && !window.__noOnb))) || document.getElementById('modal') && !document.getElementById('modal').hidden || (OS.Legal && OS.Legal.pending && OS.Legal.pending())) return false;
   try { sessionStorage.setItem('os2aiNameAsk', '1'); } catch (e) { }
   UI.modal(`<form style="padding:20px" class="col gap10" data-form="aiNameSave"><h3 style="margin:0">Dá um nome à tua IA</h3>
     <p class="mut" style="margin:0">A tua assistente pessoal conversa contigo, organiza o dia, resume e-mails e notícias e ajuda-te a decidir. Já está ligada: só falta o nome. Chamas por ela pelo nome.</p>
@@ -521,12 +525,19 @@ const askAI = async raw => { if (!OS.Brain || !OS.Brain.which()) return S.say('P
   return S.say(r.text.slice(0, 900)); };
 /* ================= Siri: enviar o resumo e o contexto ao teu script (a Siri lê-os com a app fechada) ================= */
 const ib = () => OS.one('inbox');
-const siriReady = () => !!(ib().url && ib().key && +(ib().ver || 0) >= 9 && cfg().siri);
-S.push = async force => { if (!siriReady() || !OS.Inbox || !OS.Inbox.post) return false; const last = U.ls.get('os2spPush', 0); if (!force && Date.now() - last < 10 * 60e3) return false;
+// contas gerais: o resumo vai para o servidor do Prumo (o mesmo link do atalho de gastos), sem script Google
+const pubA = () => !!(OS.pubAcc && OS.pubAcc()), akA = () => OS.Acc && OS.Acc.atalho && OS.Acc.atalho();
+const siriReady = () => pubA() ? !!(akA() && cfg().siri) : !!(ib().url && ib().key && +(ib().ver || 0) >= 9 && cfg().siri);
+const pushPub = async () => { const a = akA(), t = U.today(), t2 = U.addDays(t, 1);
+  const r = await fetch(a.url, { method: 'POST', body: new URLSearchParams({ k: a.key, op: 'br', tz: String(new Date().getTimezoneOffset()), j: JSON.stringify({ d: t, t: S.brief(t), d2: t2, t2: S.brief(t2), at: Date.now() }) }) });
+  const j = await r.json().catch(() => null); return !!(r.ok && j && j.ok); };
+S.push = async force => { if (!siriReady()) return false; const last = U.ls.get('os2spPush', 0); if (!force && Date.now() - last < 10 * 60e3) return false;
+  if (pubA()) { try { if (await pushPub()) { U.ls.set('os2spPush', Date.now()); return true; } } catch (e) { } return false; }
+  if (!OS.Inbox || !OS.Inbox.post) return false;
   const t = U.today(), t2 = U.addDays(t, 1), o = { op: 'br', j: JSON.stringify({ d: t, t: S.brief(t), d2: t2, t2: S.brief(t2), at: Date.now() }), cx: S.ctx() };
   if (cfg().siriAsk && OS.AI && OS.AI.own()) o.gk = OS.AI.own(); else o.nogk = '1';
   try { const j = await OS.Inbox.post(o); if (j && j.ok) { U.ls.set('os2spPush', Date.now()); return true; } } catch (e) { } return false; };
-OS.on('ready', () => setTimeout(() => S.push(), 9000)); setInterval(() => { if (!document.hidden) S.push(); }, 15 * 60e3);
+OS.on('ready', () => setTimeout(() => S.push(), 9000)); OS.on('one:spyke', () => setTimeout(() => S.push(), 800)); setInterval(() => { if (!document.hidden) S.push(); }, 15 * 60e3);
 document.addEventListener('visibilitychange', () => { if (document.hidden && Date.now() - U.ls.get('os2spPush', 0) > 3 * 60e3) S.push(true); });
 
 /* ================= painel (conversa) ================= */
@@ -642,13 +653,13 @@ A.spyBrainTest = async () => { UI.toast('A testar…'); const r = await OS.Brain
 const SCRV = 11; let chkBusy = false;
 const statePanel = () => { const c = ib(), v = +(c.ver || 0), hasScr = !!(c.url && c.key), ai = !!(OS.AI && OS.AI.key()), aiSt = U.ls.get('os2aiOk', null), mail = OS.Mail && OS.Mail.counts ? OS.Mail.counts() : {};
   const row = (ok, t, d) => `<div class="spy-chk ${ok === true ? 'ok' : ok === false ? 'bad' : 'wait'}"><i>${ok === true ? '✓' : ok === false ? '✗' : '!'}</i><div><b>${t}</b><small>${d}</small></div></div>`;
-  const oldScr = hasScr && v < SCRV;
+  const oldScr = hasScr && v < SCRV && !pubA();
   return `<div class="pn" id="spyState"><div class="pn-h"><h3>Estado do Spyke</h3><button class="btn sm" data-act="spyCheckAll" ${chkBusy ? 'disabled' : ''}>${UI.ic('sync')}${chkBusy ? 'A verificar…' : 'Verificar tudo'}</button></div>
     <div class="spy-chks">
     ${row(ai ? (aiSt && aiSt.ok === false ? false : true) : false, 'Cérebro (IA)', ai ? (aiSt && aiSt.ok === false ? esc(aiSt.msg || 'a chave não funciona') : 'ligado: conversa, decisões, resumos, e-mails, fotos') : 'desligado: cola a chave em "Cérebro do Spyke", aqui em baixo')}
     ${row(SR || silent() ? (ear ? true : null) : false, 'Microfone', !SR && !silent() ? 'este navegador não reconhece voz' : ear ? 'a ouvir agora' + (ear === OS.Ear ? ' (silencioso · ' + OS.Ear.engine() + ')' : '') : earStopped ? 'desligado por ti: toca no microfone ou diz "volta a ouvir"' : cfg().always ? 'parado: toca no microfone para começar' : '"Ouvir sempre" está desligado')}
-    ${row(hasScr ? (v >= SCRV ? true : false) : false, 'Script Google', !hasScr ? 'não está ligado neste aparelho: Definições → Sincronizar aparelhos → Recuperar os meus dados' : v >= SCRV ? 'versão ' + v + ': notícias, e-mail, Siri e sincronização' : 'versão ' + (v || 'antiga') + ': falta atualizar para a versão ' + SCRV + ' (passo a passo abaixo)')}
-    ${row(hasScr && v >= SCRV ? (OS.News && OS.News.old ? false : true) : false, 'Notícias', hasScr && v >= SCRV ? 'prontas no Jornal e no resumo do dia' : 'precisam do script Google atualizado')}
+    ${OS.pubAcc && OS.pubAcc() ? row(true, 'Notícias', 'chegam sozinhas pelo servidor do Prumo, no Jornal e no resumo do dia') : row(hasScr ? (v >= SCRV ? true : false) : false, 'Script Google', !hasScr ? 'não está ligado neste aparelho: Definições → Sincronizar aparelhos → Recuperar os meus dados' : v >= SCRV ? 'versão ' + v + ': notícias, e-mail, Siri e sincronização' : 'versão ' + (v || 'antiga') + ': falta atualizar para a versão ' + SCRV + ' (passo a passo abaixo)')}
+    ${OS.pubAcc && OS.pubAcc() ? '' : row(hasScr && v >= SCRV ? (OS.News && OS.News.old ? false : true) : false, 'Notícias', hasScr && v >= SCRV ? 'prontas no Jornal e no resumo do dia' : 'precisam do script Google atualizado')}
     ${OS.Goog && OS.Goog.cal() ? row(true, 'Agenda Google', 'ligada pela tua conta Google: os teus eventos aparecem no Calendário') : row(hasScr && v >= SCRV ? (OS.one('integ').gcal ? true : null) : false, 'Agenda Google', hasScr && v >= SCRV ? (OS.one('integ').gcal ? 'ligada: os teus eventos aparecem no Calendário' : 'pronta: liga-a no Calendário') : OS.Goog && OS.Goog.on() ? 'liga a tua conta Google em Definições → E-mail' : 'precisa do script Google atualizado')}
     ${OS.Goog && OS.Goog.mail() ? row(mail.at ? true : null, 'E-mail', mail.at ? 'ligado pela tua conta Google (só leitura)' : 'conta Google ligada: página E-mail → Atualizar') : row(hasScr && v >= SCRV ? (mail.at ? true : null) : false, 'E-mail', hasScr && v >= SCRV ? (mail.at ? 'ligado' : 'falta ligar o Gmail: página E-mail → Atualizar') : OS.Goog && OS.Goog.on() ? 'liga a tua conta Google em Definições → E-mail' : 'precisa do script Google atualizado')}
     </div>
@@ -657,8 +668,21 @@ A.spyCheckAll = async () => { if (chkBusy) return; chkBusy = true; OS.request();
   try { if (OS.AI && OS.AI.key() && OS.AI.test) await OS.AI.test(); if (OS.Inbox && OS.Inbox.check && ib().url) await OS.Inbox.check(); if (OS.UniMail && OS.UniMail.check && ib().url) await OS.UniMail.check();
     if (OS.News && +(ib().ver || 0) >= SCRV) { OS.News.old = false; try { await OS.News.headlines(3); } catch (e) { } } } catch (e) { }
   chkBusy = false; OS.request(); const c = ib(), v = +(c.ver || 0), aiSt = U.ls.get('os2aiOk', null);
+  if (pubA()) return UI.toast(aiSt && aiSt.ok === false ? 'A chave da IA não funciona: confirma-a no separador Spyke.' : 'Tudo verificado.', aiSt && aiSt.ok === false ? 'warn' : 'pos');
   UI.toast(!c.url ? 'O script Google não está ligado neste aparelho.' : v < SCRV ? 'Falta atualizar o script Google (versão ' + (v || 'antiga') + ').' : aiSt && aiSt.ok === false ? 'O script está bem, mas a chave da IA não funciona.' : 'Tudo verificado.', v >= SCRV && !(aiSt && aiSt.ok === false) ? 'pos' : 'warn'); };
 
+/* ================= Siri nas contas gerais: o resumo vem do servidor do Prumo ================= */
+const siriPub = c => { const a = akA(), l = a ? a.url + '?k=' + encodeURIComponent(a.key) + '&op=resumo' : '';
+  return `<div class="pn fb-guide"><h3>Com a app fechada: Siri e "Atalhos vocais"</h3>
+    <p class="mut" style="margin:0 0 8px">O Prumo guarda o resumo de hoje e de amanhã no teu perfil e a Siri lê-o com a app fechada. Não precisas de configurar nada fora do Prumo: só criar o atalho.</p>
+    <label class="switch"><input type="checkbox" data-bind="spyke.siri" ${c.siri ? 'checked' : ''}><span></span>Guardar o resumo do dia para a Siri (atualiza sozinho quando abres o Prumo)</label>
+    <ol><li><b>Atalho "Bom dia Spyke":</b> app Atalhos → + → <b>Obter conteúdo do URL</b> com o link abaixo → <b>Falar texto</b> (Conteúdo do URL; toca ▸ → Voz: escolhe uma voz em português) → opcional: <b>Abrir URL</b> <code>${esc(location.origin + location.pathname)}#spyke.bomdia</code>.</li>
+      <li><b>Resumo de amanhã:</b> o mesmo atalho com <code>&amp;dia=amanha</code> no fim do link.</li>
+      <li><b>Sem dizer "E aí Siri":</b> Ajustes → Acessibilidade → <b>Atalhos vocais</b> → Configurar → escolhe o atalho → frase <b>"Bom dia Spyke"</b> (repete 3 vezes).</li>
+      <li><b>Com um toque:</b> Ajustes → Acessibilidade → Toque → <b>Tocar atrás</b> → Toque duplo → o atalho. Ou o botão de Ação (iPhone 15 Pro ou mais recente).</li></ol>
+    ${l ? `<div class="ib-link"><code>${esc(l)}</code><button class="btn sm" data-act="spyCopyPub">Copiar</button></div><button class="btn sm ghost" data-act="spyPush" ${siriReady() ? '' : 'disabled'}>${UI.ic('sync')}Atualizar o resumo agora</button>` : `<p class="mut">A preparar o teu link…</p>`}
+    <p class="mut" style="font-size:12.5px">O link usa a mesma chave do atalho de gastos (Definições › Atalhos do iPhone): não o partilhes. Para conversar com o Spyke, abre o Prumo.</p></div>`; };
+A.spyCopyPub = async () => { const a = akA(); if (!a) return; const l = a.url + '?k=' + encodeURIComponent(a.key) + '&op=resumo'; try { await navigator.clipboard.writeText(l); UI.toast('Link copiado', 'pos'); } catch (e) { UI.toast('Toca no link, seleciona e copia', 'warn'); } };
 /* ================= página do Spyke ================= */
 V.spyke = sub => { const c = cfg(), ibc = ib(), link = op => ibc.url && ibc.key ? ibc.url.trim() + (ibc.url.includes('?') ? '&' : '?') + 'k=' + encodeURIComponent(ibc.key) + '&op=' + op : '';
   if (sub === 'bomdia') { try { history.replaceState(null, '', '#definicoes.spyke'); } catch (e) { } setTimeout(() => { open(); S.say(S.brief()); }, 300); }
@@ -715,7 +739,7 @@ V.spyke = sub => { const c = cfg(), ibc = ib(), link = op => ibc.url && ibc.key 
     <div class="spy-cmds">${[['"Bom dia"', 'clima, agenda, prioridades, hábitos, e-mails, contas, provas, treino, notícias e a verdade do dia'], ['"Boa noite"', 'o balanço do dia, o que ficou por fazer e o plano de amanhã'], ['"Modo estudo"', 'próxima prova, revisões e cartões; abre o Bloco de foco da universidade'], ['"Modo treino"', 'o treino de hoje e abre o Treino'], ['"Modo trabalho"', 'o próximo turno e as tarefas dos projetos de trabalho'], ['"Modo Comando"', 'abre o painel']].map(([a, b]) => `<div><b>${a}</b><small>${b}</small></div>`).join('')}
     ${OS.all('spyroutines').map(r => `<div class="click" data-edit="spyroutines:${r.id}"><b>"${esc(r.phrase)}"</b><small>${esc(String(r.steps || '').split('\n').filter(Boolean).join(' · ').slice(0, 120))}</small></div>`).join('')}</div>
     <small class="mut">Numa rotina tua, cada linha é um comando como dirias ao Spyke: "abre a Floresta", "clima", "notícias", "o que faço agora".</small></div>
-  <div class="pn fb-guide"><h3>Com a app fechada: Siri e "Atalhos vocais"</h3>${siriReady() ? '' : `<p class="neg" style="margin:0 0 6px">Precisa do script Google na versão 9 (o mesmo do e-mail). <a class="acc" href="#definicoes.email">Ver passos</a></p>`}
+  ${pubA() ? siriPub(c) : `<div class="pn fb-guide"><h3>Com a app fechada: Siri e "Atalhos vocais"</h3>${siriReady() ? '' : `<p class="neg" style="margin:0 0 6px">Precisa do script Google na versão 9 (o mesmo do e-mail). <a class="acc" href="#definicoes.email">Ver passos</a></p>`}
     <label class="switch"><input type="checkbox" data-bind="spyke.siri" ${c.siri ? 'checked' : ''}><span></span>Enviar o resumo do dia para o teu script (a Siri lê-o com a app fechada)</label>
     <label class="switch" style="margin-top:6px"><input type="checkbox" data-bind="spyke.siriAsk" ${c.siriAsk ? 'checked' : ''}><span></span>Deixar a Siri fazer perguntas ao Spyke (guarda a tua chave Gemini no teu script Google)</label>
     <ol><li><b>Atalho "Bom dia Spyke":</b> app Atalhos → + → <b>Obter conteúdo do URL</b> com o link 1 → <b>Falar texto</b> (Conteúdo do URL; toca ▸ → Voz: escolhe uma voz masculina em português, ex.: Felipe) → opcional: <b>Abrir URL</b> <code>${esc(location.origin + location.pathname)}#spyke.bomdia</code>.</li>
@@ -723,7 +747,7 @@ V.spyke = sub => { const c = cfg(), ibc = ib(), link = op => ibc.url && ibc.key 
       <li><b>Sem dizer "E aí Siri":</b> Ajustes → Acessibilidade → <b>Atalhos vocais</b> → Configurar → escolhe o atalho "Spyke" → frase <b>"Spyke"</b> (repete 3 vezes). Funciona até com o iPhone bloqueado.</li>
       <li><b>Em vez de palmas:</b> Ajustes → Acessibilidade → Toque → <b>Tocar atrás</b> → Toque duplo → "Spyke". Ou o botão de Ação (iPhone 15 Pro ou mais recente).</li></ol>
     ${link('brief') ? `<div class="ib-link"><code>1 · ${esc(link('brief'))}</code><button class="btn sm" data-act="spyCopy" data-op="brief">Copiar</button></div><div class="ib-link"><code>2 · ${esc(link('ask'))}</code><button class="btn sm" data-act="spyCopy" data-op="ask">Copiar</button></div><button class="btn sm ghost" data-act="spyPush" ${siriReady() ? '' : 'disabled'}>${UI.ic('sync')}Enviar o resumo agora</button>` : ''}
-    <p class="mut" style="font-size:12.5px">Os links têm a tua chave: não os partilhes.</p></div>
+    <p class="mut" style="font-size:12.5px">Os links têm a tua chave: não os partilhes.</p></div>`}
   <div class="pn"><div class="pn-h"><h3>O que podes dizer</h3></div><div class="spy-cmds">${[['"Bom dia" / "Resumo"', 'agenda, prioridades, hábitos, e-mails, contas, provas, treino e a verdade do dia'], ['"O que faço agora?"', 'a próxima ação pela prioridade da app'], ['"Agenda de amanhã"', 'o dia seguinte'], ['"Anota estudar Estatística amanhã !1"', 'cria tarefa (datas, @contexto e !prioridade)'], ['"Gastei 12 euros no almoço"', 'regista a despesa com a categoria certa'], ['"Quanto gastei este mês?" / "Saldo"', 'finanças'], ['"Os meus e-mails" / "LinkedIn"', 'resumo do que precisa de atenção'], ['"Abre a Floresta"', 'abre qualquer página'], ['"Quero focar"', 'abre o Bloco de foco'], ['"Versículo" / "Dá-me uma frase"', 'Fé e motivação'], ['Qualquer outra pergunta', 'responde com a IA, com os teus dados']].map(([a, b]) => `<div><b>${esc(a)}</b><small>${esc(b)}</small></div>`).join('')}</div></div></div>`; };
 A.spyMemDel = b => OS.del('spymem', b.dataset.id);
 OS.forms.spyMem = f => { const t = f.elements.t.value.trim(); if (t && !memAdd(t, 'manual')) UI.toast('Isso já está na memória'); };
@@ -736,7 +760,7 @@ A.spyElLoad = async () => { const c = cfg(); if (!c.elKey) return; UI.toast('A c
     if (!L.length) throw new Error('não há vozes masculinas na conta'); S.elVoices = L; const deep = L.find(x => /daniel|adam|brian|deep|grave/i.test(x[1])) || L[0];
     OS.setOne('spyke', { elList: L.slice(0, 80), elVoice: L.some(x => x[0] === c.elVoice) ? c.elVoice : deep[0], eng: c.eng === 'device' ? 'auto' : c.eng }); UI.toast(L.length + ' vozes masculinas carregadas', 'pos'); }
   catch (e) { UI.toast('ElevenLabs: ' + (e.message || 'erro'), 'neg'); } };
-A.spyPush = async () => { UI.toast('A enviar…'); UI.toast(await S.push(true) ? 'Resumo enviado: a Siri já o pode ler.' : 'Não consegui enviar. Confirma o script (versão 9).', 'pos'); };
+A.spyPush = async () => { UI.toast('A enviar…'); const ok = await S.push(true); UI.toast(ok ? 'Resumo enviado: a Siri já o pode ler.' : pubA() ? 'Não consegui enviar. Confirma a ligação à internet e tenta outra vez.' : 'Não consegui enviar. Confirma o script (versão 9).', ok ? 'pos' : 'warn'); };
 A.spyCopy = async b => { const c = ib(), u = c.url.trim() + (c.url.includes('?') ? '&' : '?') + 'k=' + encodeURIComponent(c.key) + '&op=' + b.dataset.op; try { await navigator.clipboard.writeText(u); UI.toast('Link copiado', 'pos'); } catch (e) { UI.modal(`<div style="padding:18px"><b>Copia o link</b><textarea readonly style="width:100%;height:110px;font:12px var(--mono);margin-top:8px" onfocus="this.select()">${esc(u)}</textarea><div style="text-align:right;margin-top:10px"><button class="btn" data-mclose>Fechar</button></div></div>`); } };
 
 /* resumo da manhã: primeira abertura do dia entre as 5h e as 12h */

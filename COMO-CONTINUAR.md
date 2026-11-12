@@ -253,3 +253,14 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Matrizes: frações exatas com BigInt (`QF`), ou decimais (`FF`) se houver números irracionais; `rref`, `det`, `inv`, `mPow`, `solve` (única, impossível ou indeterminada com variáveis livres), `charPoly` (Faddeev–LeVerrier) e `croots` (Durand–Kerner). Sucessões: `polyLim` exato para quocientes de polinómios; `seqLim` numérico (n até 10⁹, oscilação com n e n+1); recorrência iterada até 200 000 termos.
 - Testes: grupo `calc` (36).
 
+### 3.16: contas gerais sem script, agenda por link (.ics), código de 6 números, Umbanda, ranking com todos
+- `OS.pubAcc()` (app.js) = conta geral. Nessas contas não há separador `script` nas Definições nem textos sobre o script (teste `publico` › "nenhuma página fala do script Google").
+- `api/atalho.js` (chave do perfil `k`): `op=br` (POST, resumo de hoje/amanhã + `tz`) e `op=resumo` (texto para a Siri, `&dia=amanha`); `op=cal` (POST, eventos de `CalPush.items()`) devolve `c` = chave só de leitura (`agenda:` HMAC); `op=ics&c=…&cat=trabalho|folgas|…` devolve text/calendar (REFRESH-INTERVAL 1 h, cores por calendário). Tudo em `k/<uid>/<pid>/` (apagado com o perfil em `dropData`).
+- `js/calpush.js`: `CP.feedPanel()` (Ligações nas contas gerais), `CP.feedPush()` a cada 10 min / ao mudar / ao sair (só envia se o hash mudou ou 6 h); `calx.feed`, `calx.ick`. A conta do Ryan continua com a Parte 6/7 do script.
+- `js/spyke.js`: nas contas gerais `siriPub()` e `S.push` vão para `api/atalho` (sem perguntas à Siri).
+- Código de 6 números: `OS.Pin` (conta.js, um só campo numérico por baixo das 6 casas), perfil com `pin: 6` (servidor `cleanProfile`/`codigo`), `OS.Lock.pinMode()`; código antigo → `offerPin` depois de entrar (desligado em testes salvo `window.__pinAsk`). Perfil `ps` (Ryan) fica com a senha.
+- Perguntas iniciais: `defaults()` junta `onb.ans` (o que mudaste depois ganha); `S.namePanel` mostra o nome como resposta (`aiNameEd` para mudar); `askName` não pergunta se já houve resposta.
+- Ranking: o servidor devolve todos (sem o filtro `pa > 0`); na app quem está a zero fica no fim (`z`, `.rk-zh`).
+- Umbanda: `REL.umbanda` (fam `umbanda`, Bíblia de `LIBS.evangelica`), `PRAYERS.umbanda` (Cáritas, `SAUD`), prática `prece`, painel `UMB_DIA`.
+- Banco: `autoSync` de 6 em 6 h (ao abrir e ao voltar ao app).
+- Testes: `contas` (casinhas), `boasvindas` (respostas preenchidas, código antigo → 6 números), `ranking`, `religiao`, `publico` (agenda .ics e Siri).

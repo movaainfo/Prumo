@@ -1,6 +1,6 @@
 /* PRUMO — religiões. Cada pessoa escolhe a sua (Definições › Tu › Fé e religião, ou no questionário inicial) e a aba Fé muda toda:
    o livro sagrado (na tradução da língua dela, sem internet), o texto do dia, as orações, a prática guiada, os planos de leitura e a IA.
-   Só as principais: Católica · Evangélica · Islâmica · Judaica · Hindu · Budista · Nenhuma (a aba Fé sai do menu). Sem escolha, fica como sempre foi (cristã, Bíblia de 66 livros). */
+   Só as principais: Católica · Evangélica · Islâmica · Judaica · Hindu · Budista · Umbanda · Nenhuma (a aba Fé sai do menu). Sem escolha, fica como sempre foi (cristã, Bíblia de 66 livros). */
 (() => {
 'use strict';
 const U = OS.U, UI = OS.UI, A = OS.act, esc = U.esc;
@@ -27,6 +27,8 @@ const LIBS = {
   islamica: { pt: [v('nasr', 'Alcorão · Helmi Nasr', ['quran-pt']), QAR], en: [v('pick', 'The Quran · Pickthall', ['quran-en']), QAR], es: [v('cortes', 'El Corán · Julio Cortés', ['quran-es']), QAR], fr: [v('ham', 'Le Coran · Hamidullah', ['quran-fr']), QAR], de: [v('bub', 'Der Koran · Bubenheim & Elyas', ['quran-de']), QAR], it: [v('pic', 'Il Corano · Piccardo', ['quran-it']), QAR] },
   hindu: { '*': [v('gita', 'Bhagavad Gita', ['gita-XX|gita-en']), v('sa', 'Bhagavad Gita em sânscrito', ['gita-sa'], { pre: 1 })] },
   budista: { '*': [v('dhp', 'Dhammapada', ['dhammapada-XX|dhammapada-en'])] } };
+// Umbanda: não tem um livro único; muitas casas leem o Evangelho e os Salmos (Oxalá sincretizado com Jesus), por isso fica a Bíblia
+LIBS.umbanda = LIBS.evangelica;
 
 /* ---------- as religiões ---------- */
 const REL = {
@@ -36,15 +38,16 @@ const REL = {
   judaica: { n: 'Judaica', s: '✡', fam: 'judaica', book: 'Torá', daily: 'Versículo do dia', hoje: 'Hoje', sub: 'O teu tempo com HaShem: a Torá, as orações e o Shabat.', req: 'Pedidos (tefilá)', hab: 'Shemá e leitura da Torá', who: 'judeu', marcos: ['Ler a Torá toda (os cinco livros)', 'Guardar o Shabat 8 semanas seguidas'] },
   hindu: { n: 'Hindu', s: 'ॐ', fam: 'hindu', book: 'Gita', daily: 'Verso do dia', hoje: 'Hoje', sub: 'Um tempo para o sagrado: a Bhagavad Gita, os mantras e a meditação.', req: 'Intenções', hab: 'Mantra e leitura da Gita', who: 'hindu', marcos: ['Ler a Bhagavad Gita toda', 'Japa (108 repetições) todos os dias durante 30 dias'] },
   budista: { n: 'Budista', s: '☸', fam: 'budista', book: 'Dhammapada', daily: 'Verso do dia', hoje: 'Hoje', sub: 'Um tempo para a mente: o Dhamma, a meditação e a compaixão.', req: 'Intenções', hab: 'Meditação e leitura do Dhamma', who: 'budista', marcos: ['Ler o Dhammapada todo', 'Meditar todos os dias durante 30 dias'] },
+  umbanda: { n: 'Umbanda', s: '✶', fam: 'umbanda', book: 'Bíblia', daily: 'Palavra do dia', hoje: 'Hoje', sub: 'Um tempo para a tua fé: a prece, os Orixás e os guias, a caridade e o equilíbrio.', req: 'Pedidos e agradecimentos', hab: 'Prece do dia', who: 'umbandista', marcos: ['Fazer a prece todos os dias durante 30 dias', 'Praticar a caridade todas as semanas durante 2 meses'] },
   nenhuma: { n: 'Nenhuma (tirar a aba Fé do menu)', s: '·', fam: 'nenhuma' } };
-const ORD = ['catolica', 'evangelica', 'islamica', 'judaica', 'hindu', 'budista', 'nenhuma'];
+const ORD = ['catolica', 'evangelica', 'islamica', 'judaica', 'hindu', 'budista', 'umbanda', 'nenhuma'];
 const cfg = () => OS.one('faith');
 const id = () => { const r = cfg().rel; return REL[r] ? r : 'evangelica'; };
 const lang = () => { const c = OS.Lang ? OS.Lang.code() : 'pt-PT'; return /^pt/.test(c) ? 'pt' : ['en', 'es', 'fr', 'de', 'it'].includes(c) ? c : 'en'; };
 const R = OS.Rel = {
   ORD, REL, ORDER_P, ORDER_C, ORDER_T, HEB, NT,
   id, meta: (r = id()) => REL[r] || REL.evangelica, name: (r = id()) => (REL[r] || REL.evangelica).n,
-  christian: (r = id()) => (REL[r] || {}).fam === 'crista', bibleFam: (r = id()) => ['crista', 'judaica'].includes((REL[r] || {}).fam),
+  christian: (r = id()) => (REL[r] || {}).fam === 'crista', bibleFam: (r = id()) => ['crista', 'judaica', 'umbanda'].includes((REL[r] || {}).fam),
   chosen: () => !!REL[cfg().rel], lang,
   versions: (r = id()) => { const L = LIBS[r]; if (!L) return []; const l = lang(), list = L[l] || L['*'] || L.pt || L.en; return (list || []).map(x => Object.assign({}, x, { f: x.f.map(f => f.replace(/XX/g, l)) })); },
   habit: (r = id()) => (REL[r] || REL.evangelica).hab || 'Oração', marcos: (r = id()) => (REL[r] || {}).marcos || [] };
@@ -68,6 +71,7 @@ const GV = ['2:13', '2:14', '2:20', '2:22', '2:38', '2:47', '2:48', '2:50', '2:5
 R.daily = (B, FD, d = U.today()) => { const r = id(), h = hashDay(d + 'oc'), fam = (REL[r] || {}).fam;
   if (fam === 'crista') return FD.vod[h % FD.vod.length];
   if (fam === 'judaica') { const L2 = FD.vod.filter(x => ORDER_T.includes(x.split(' ')[0])); return L2[h % L2.length]; }
+  if (fam === 'umbanda') { const L2 = FD.vod.filter(x => ['PSA', 'PRO', 'MAT', 'MRK', 'LUK', 'JHN'].includes(x.split(' ')[0])); return (L2.length ? L2 : FD.vod)[h % (L2.length || FD.vod.length)]; }
   if (fam === 'islam') return QV[h % QV.length];
   if (fam === 'hindu') return GV[h % GV.length];
   if (!B) return null;
@@ -90,6 +94,9 @@ R.plans = B => { const r = id(), fam = (REL[r] || {}).fam, nt = B.b.findIndex(b 
     tanakh: ['O Tanakh em 1 ano', 'Torá, Profetas e Escritos', () => split(chs(B, all(B)), 365)], tehilim: ['Tehilim (Salmos) em 30 dias', 'Como é costume ler os Salmos num mês', () => split(chs(B, ['PSA']), 30)], mishlei: ['Mishlei (Provérbios) em 31 dias', 'Um capítulo por dia', () => each(B, ['PRO'])] };
   if (fam === 'islam') return { q30: ['O Alcorão em 30 dias', 'Mais ou menos um juz por dia (como no Ramadão)', () => split(chs(B, ['QUR']), 30)], q60: ['O Alcorão em 60 dias', 'Meio juz por dia', () => split(chs(B, ['QUR']), 60)], q365: ['O Alcorão em 1 ano', 'Uns minutos por dia', () => split(chs(B, ['QUR']), 365)] };
   if (fam === 'hindu') return { g18: ['A Gita em 18 dias', 'Um capítulo por dia', () => each(B, ['BG'])], g40: ['A Gita em 40 dias', 'Com calma, uns versos por dia', () => split(chs(B, ['BG']), 40)] };
+  if (fam === 'umbanda') return { evang: ['Evangelhos em 30 dias', 'A vida e os ensinamentos de Jesus (Oxalá): Mateus, Marcos, Lucas e João', () => split(chs(B, ['MAT', 'MRK', 'LUK', 'JHN']), 30)],
+    sl: ['Salmos em 30 dias', 'Os Salmos que tantas casas usam na prece', () => split(chs(B, ['PSA']), 30)],
+    nt90: ['Novo Testamento em 90 dias', 'Os Evangelhos, Atos, as cartas e o Apocalipse', () => split(chs(B, all(B).slice(nt > 0 ? nt : 0)), 90)] };
   if (fam === 'budista') return { d26: ['O Dhammapada em 26 dias', 'Um capítulo por dia', () => each(B, ['DHP'])] };
   return {}; };
 
@@ -121,6 +128,13 @@ const PRAYERS = {
   budista: [P('Três Refúgios', 'Buddhaṃ saraṇaṃ gacchāmi. Dhammaṃ saraṇaṃ gacchāmi. Saṅghaṃ saraṇaṃ gacchāmi.\nTomo refúgio no Buda. Tomo refúgio no Dhamma. Tomo refúgio na Sangha.'),
     P('Cinco Preceitos', 'Comprometo-me a não tirar a vida.\nComprometo-me a não tomar o que não me é dado.\nComprometo-me a não ter conduta sexual imprópria.\nComprometo-me a não mentir nem falar com dureza.\nComprometo-me a não tomar substâncias que turvam a mente.'),
     P('Metta (amor bondoso)', METTA), P('Os versos gémeos', '', 'DHP 1:1-2'), P('O ódio não acaba com o ódio', '', 'DHP 1:5')] };
+// Umbanda: a Prece de Cáritas (1873, usada em muitos terreiros), as orações cristãs que tantas casas rezam, os Salmos e as saudações
+const CARITAS = 'Deus, nosso Pai, que tendes poder e bondade, dai força àquele que passa pela provação, dai luz àquele que procura a verdade, ponde no coração do homem a compaixão e a caridade.\nDeus, dai ao viajante a estrela guia, ao aflito a consolação, ao doente o repouso.\nPai, dai ao culpado o arrependimento, ao espírito a verdade, à criança o guia, ao órfão o pai.\nSenhor, que a vossa bondade se estenda sobre tudo o que criastes. Piedade, Senhor, para aqueles que vos não conhecem, esperança para aqueles que sofrem. Que a vossa bondade permita aos espíritos consoladores derramarem por toda a parte a paz, a esperança e a fé.\nDeus, um raio, uma faísca do vosso amor pode abrasar a Terra; deixai-nos beber nas fontes dessa bondade fecunda e infinita, e todas as lágrimas secarão, todas as dores acalmar-se-ão. Um só coração, um só pensamento subirá até vós, como um grito de reconhecimento e de amor.\nComo Moisés sobre a montanha, nós vos esperamos com os braços abertos, ó Poder, ó Bondade, ó Beleza, ó Perfeição, e queremos de alguma sorte merecer a vossa misericórdia.\nDeus, dai-nos a força de ajudar o progresso a fim de subirmos até vós; dai-nos a caridade pura, dai-nos a fé e a razão; dai-nos a simplicidade que fará de nossas almas o espelho onde deve refletir a vossa imagem.';
+const SAUD = [['Oxalá', 'Epa Babá!'], ['Ogum', 'Ogunhê! (ou Patacori, Ogum!)'], ['Oxóssi', 'Okê Arô!'], ['Xangô', 'Kaô Kabecilê!'], ['Iemanjá', 'Odoyá!'], ['Oxum', 'Ora yê yê ô!'], ['Iansã', 'Eparrei!'], ['Nanã', 'Saluba, Nanã!'],
+  ['Obaluaê / Omulu', 'Atotô!'], ['Ibeji (Erês)', 'Salve as crianças!'], ['Pretos-velhos', 'Adorei as almas!'], ['Caboclos', 'Okê, Caboclo!'], ['Exu', 'Laroyê!']];
+PRAYERS.umbanda = [P('Prece de Cáritas', CARITAS), P('Pai-Nosso', PAI), P('Ave-Maria', AVE), P('Salmo 91', '', 'PSA 91:1-16'), P('Salmo 23', '', 'PSA 23:1-6'),
+  P('Saudações aos Orixás e às linhas', SAUD.map(([a, b]) => a + ' — ' + b).join('\n') + '\nSaravá! (a saudação de todos)')];
+R.SAUD = SAUD;
 R.prayers = (r = id()) => PRAYERS[r] || PRAYERS.evangelica;
 
 /* ---------- práticas guiadas ---------- */
@@ -139,7 +153,8 @@ R.practices = (r = id()) => ({
   islamica: [['tasbih', 'Tasbih depois da oração (33 × 3)'], ['med', 'Momento de dhikr (silêncio)']],
   judaica: [['shema', 'Shemá guiado'], ['med', 'Hitbodedut (momento a sós)']],
   hindu: [['japa', 'Japa (mala de 108)'], ['med', 'Meditação']],
-  budista: [['med', 'Meditação (respiração)'], ['metta', 'Metta guiada (amor bondoso)']] }[r] || [['acts', 'Oração guiada (10 min)']]);
+  budista: [['med', 'Meditação (respiração)'], ['metta', 'Metta guiada (amor bondoso)']],
+  umbanda: [['prece', 'Momento de prece guiado (8 min)'], ['med', 'Meditação (firmar o pensamento)']] }[r] || [['acts', 'Oração guiada (10 min)']]);
 
 /* modais de prática: contas (terço, tasbih, japa), passos com tempo e meditação com sino */
 let PR = null;
@@ -176,7 +191,7 @@ A.rlStart = () => { if (!PR) return; PR.on = true; PR.started = true; bell(528, 
 A.rlPause = () => { if (!PR) return; PR.on = !PR.on; draw(); };
 A.rlStepNext = () => { if (!PR) return; if (PR.i < PR.steps.length - 1) { PR.i++; PR.left = PR.steps[PR.i].dur || 0; bell(660, 1.2); draw(); } else { finish(); PR = null; UI.closeModal(); UI.toast('Que a paz esteja contigo.', 'pos'); } };
 A.rlStop = () => { clearInterval(TT); PR = null; UI.closeModal(); OS.request && OS.request(); };
-const CUES = { budista: ['Sente o ar a entrar e a sair', 'Se a mente fugir, volta com gentileza à respiração', 'Nota o corpo, sem julgar', 'Só este momento'], islamica: ['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'Lembra-te de Allah no silêncio'], hindu: ['Om', 'Respira com o mantra', 'Observa sem te prenderes', 'Paz'], '*': ['Respira devagar', 'Entrega o que te pesa', 'Fica em silêncio', 'Agradece'] };
+const CUES = { umbanda: ['Respira e firma o pensamento', 'Deixa ir o que pesa; fica com o que é bom', 'Pensa em quem precisa de luz hoje', 'Só este momento'], budista: ['Sente o ar a entrar e a sair', 'Se a mente fugir, volta com gentileza à respiração', 'Nota o corpo, sem julgar', 'Só este momento'], islamica: ['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'Lembra-te de Allah no silêncio'], hindu: ['Om', 'Respira com o mantra', 'Observa sem te prenderes', 'Paz'], '*': ['Respira devagar', 'Entrega o que te pesa', 'Fica em silêncio', 'Agradece'] };
 R.start = (k, done) => { const r = id();
   if (k === 'terco') { const t = terco(); return beads(t.name, t.steps, done); }
   if (k === 'tasbih') { const seq = [{ t: 'Subhanallah', x: 'Glorificado seja Allah', n: 33 }, { t: 'Alhamdulillah', x: 'Louvado seja Allah', n: 33 }, { t: 'Allahu Akbar', x: 'Allah é o Maior', n: 34 }]; PR = { kind: 'count', name: 'Tasbih', seq, si: 0, cur: seq[0], n: 33, k: 0, done }; return draw(); }
@@ -184,6 +199,10 @@ R.start = (k, done) => { const r = id();
   if (k === 'med') { PR = { kind: 'timer', name: 'Meditação', tot: 600, left: 600, on: false, cues: CUES[r] || CUES['*'], tip: 'Senta-te direito, olhos fechados ou baixos. Quando ouvires o sino, começa.', done }; PR.cue = PR.cues[0]; return draw(); }
   const steps = { metta: [{ t: 'Para ti', x: 'Que eu esteja bem. Que eu esteja em paz. Que eu seja feliz.', dur: 90 }, { t: 'Para alguém querido', x: 'Pensa numa pessoa que amas. Que estejas bem. Que estejas em paz. Que sejas feliz.', dur: 90 }, { t: 'Para alguém neutro', x: 'Alguém que vês sem conhecer. Que estejas bem, em paz, feliz.', dur: 90 }, { t: 'Para alguém difícil', x: 'Alguém com quem tens conflito. Com sinceridade: que estejas bem, em paz, feliz.', dur: 90 }, { t: 'Para todos os seres', x: 'Que todos os seres estejam bem, em paz, livres de sofrimento e felizes.', dur: 90 }],
     shema: [{ t: 'Prepara-te', x: 'Cobre os olhos com a mão direita e concentra-te.', dur: 15 }, { t: 'Shemá Israel', x: 'Shemá Israel, Adonai Eloheinu, Adonai Echad. — Ouve, Israel: o Senhor é nosso Deus, o Senhor é Um.', dur: 30 }, { t: 'Baruch Shem', x: 'Baruch shem kevod malchutó le’olam va’ed. — Bendito seja o nome da glória do Seu reino para todo o sempre. (em voz baixa)', dur: 20 }, { t: 'Veahavtá', x: 'Amarás o Senhor teu Deus com todo o teu coração, com toda a tua alma e com todas as tuas forças. (Devarim 6:5-9)', dur: 90 }],
+    prece: [{ t: 'Prepara-te', x: 'Um lugar calmo. Se for costume na tua casa, acende uma vela branca e põe um copo de água ao lado.', dur: 20 }, { t: 'Firma o pensamento', x: 'Respira devagar. Deixa as preocupações à porta e pensa no que é bom.', dur: 60 },
+      { t: 'Saravá', x: 'Saúda Oxalá (Epa Babá!), os Orixás, os teus guias e protetores, como se faz na tua casa.', dur: 30 }, { t: 'Prece de Cáritas', x: CARITAS, dur: 120 },
+      { t: 'Pedidos e agradecimentos', x: 'Agradece o dia. Pede pelos teus, por quem sofre e pelo teu caminho.', dur: 90 }, { t: 'Pai-Nosso', x: PAI, dur: 40 },
+      { t: 'Para fechar', x: 'Que a paz e a luz fiquem contigo. Leva a caridade para o resto do dia. Saravá!', dur: 15 }],
     acts: [] }[k];
   if (steps && steps.length) { PR = { kind: 'steps', name: (R.practices(r).find(x => x[0] === k) || [])[1] || '', steps, i: 0, left: steps[0].dur || 0, done }; bell(528, 2); tick(); return draw(); }
   return false; };
@@ -209,7 +228,15 @@ const nextPhase = (target) => { let d = U.today(); for (let i = 0; i < 31; i++) 
 const hm = s => { if (!s) return ''; const x = new Date(s); return isNaN(x) ? '' : x.toLocaleTimeString(OS.loc ? OS.loc() : 'pt-PT', { hour: '2-digit', minute: '2-digit' }); };
 const dayN = s => { if (!s) return ''; const x = new Date(s); return isNaN(x) ? '' : x.toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long' }); };
 const calDate = cal => { try { return new Intl.DateTimeFormat((OS.loc ? OS.loc() : 'pt-PT') + '-u-ca-' + cal, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()); } catch (e) { return ''; } };
+// os dias da semana na Umbanda, como em muitas casas (cada terreiro tem os seus costumes); domingo = 0
+const UMB_DIA = [[['Ibeji (Erês)', '#F4A7C6']], [['Exu', '#B23A3A'], ['Obaluaê / Omulu', '#6B5B4D'], ['Pretos-velhos (almas)', '#8A8A8A']], [['Ogum', '#C8463C']], [['Xangô', '#8B5A2B'], ['Iansã', '#E3A33B']],
+  [['Oxóssi', '#3E8E5A'], ['Caboclos', '#3E8E5A']], [['Oxalá', '#E9E4D6']], [['Iemanjá', '#7FB2E5'], ['Oxum', '#E5C04A'], ['Nanã', '#8E6FB0']]];
+const SAUD_OF = n => { const k = n.split(' ')[0]; const x = SAUD.find(s => s[0].split(' ')[0] === k || s[0] === n); return x ? x[1] : ''; };
 R.panel = () => { const r = id(), fam = (REL[r] || {}).fam;
+  if (fam === 'umbanda') { const wd = new Date().getDay(), L = UMB_DIA[wd], dn = new Date().toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long' });
+    return `<div class="pn rl-pn"><div class="pn-h"><h3>${UI.ic('star')}Hoje, ${esc(dn)}</h3><span class="mut" style="font-size:12px">Orixás e linhas do dia</span></div>
+      <div class="rl-umb">${L.map(([n, c]) => `<div><i style="background:${c}"></i><b>${esc(n)}</b>${SAUD_OF(n) ? `<small>${esc(SAUD_OF(n))}</small>` : ''}</div>`).join('')}</div>
+      <small class="mut" style="display:block;margin-top:6px">Como em muitas casas; cada terreiro tem os seus dias, cores e costumes. Segue sempre o que aprendes na tua casa.</small></div>`; }
   if (fam === 'islam') { const s = U.ls.get('os2salah', null); salah(); const now = new Date().toTimeString().slice(0, 5);
     if (!s || s.d !== U.today()) return `<div class="pn rl-pn"><div class="pn-h"><h3>${UI.ic('clock')}Horários de oração</h3></div><p class="mut">A calcular os horários para a tua cidade…</p></div>`;
     const nx = Object.keys(SAL).filter(k => k !== 'Sunrise').find(k => s.t[k] > now);

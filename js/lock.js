@@ -63,7 +63,12 @@ const bioUnlock = async auto => {
 L.verifyBio = async () => { const b = L.bioId(); if (!b) return false; try { await navigator.credentials.get({ publicKey: { challenge: rand(32), allowCredentials: [{ type: 'public-key', id: unb64u(b.id) }], userVerification: 'required', timeout: 45000 } }); return true; } catch (e) { OS.UI.toast(bioErr(e), 'warn'); return false; } };
 L.verifyCode = async v => { const w = wait(); if (w) return `Muitas tentativas. Espera ${w} s.`; if ((await sha(SALT + (v || ''))) === hash()) { U.ls.del('os2lkfails'); return null; }
   const f = U.ls.get('os2lkfails', 0) + 1; U.ls.set('os2lkfails', f); if (f >= 5) { U.ls.set('os2lkwait', Date.now() + 30000); U.ls.set('os2lkfails', 0); return 'Código errado 5 vezes. Espera 30 s.'; } return 'Código incorreto.'; };
-L.setCode = async (cur, nw) => { if (await sha(SALT + cur) !== hash()) return 'O código atual não está certo.'; if (nw.length < 6) return 'O novo código precisa de pelo menos 6 caracteres.'; OS.setOne('security', { hash: await sha(SALT + nw), changed: U.today() }); return null; };
+// contas gerais: o código é de 6 números (casinhas); o perfil pessoal do Ryan fica com a senha
+const pubAcc = () => !!(OS.Acc && OS.Acc.on && OS.Acc.pub);
+L.pinMode = () => pubAcc() && !!((OS.Acc.pin && OS.Acc.pin()) || OS.one('security').pin);
+L.setCode = async (cur, nw) => { if (await sha(SALT + cur) !== hash()) return 'O código atual não está certo.'; const pin = pubAcc();
+  if (pin ? !/^\d{6}$/.test(nw) : nw.length < 6) return pin ? 'O novo código tem de ter 6 números.' : 'O novo código precisa de pelo menos 6 caracteres.';
+  OS.setOne('security', Object.assign({ hash: await sha(SALT + nw), changed: U.today() }, pin ? { pin: 6 } : {})); return null; };
 
 /* ---------- ecrã ---------- */
 let done = null, busy = false;
@@ -71,20 +76,32 @@ const el = () => document.getElementById('splash');
 const msg = t => { const m = document.getElementById('lkMsg'); if (m) m.textContent = t || ''; };
 const wait = () => { const w = U.ls.get('os2lkwait', 0); return w > Date.now() ? Math.ceil((w - Date.now()) / 1000) : 0; };
 async function tryCode(v) {
-  if (busy) return; const w = wait(); if (w) { msg(`Muitas tentativas. Espera ${w} s.`); return; }
+  if (busy || L.unlocked()) return; const w = wait(); if (w) { msg(`Muitas tentativas. Espera ${w} s.`); return; }
   busy = true; const ok = (await sha(SALT + v)) === hash(); busy = false;
-  if (ok) { U.ls.del('os2lkfails'); open(); return; }
+  if (ok) { U.ls.del('os2lkfails'); open(); if (pubAcc() && !L.pinMode()) offerPin(v); return; }
   const f = U.ls.get('os2lkfails', 0) + 1; U.ls.set('os2lkfails', f);
   if (f >= 5) { U.ls.set('os2lkwait', Date.now() + 30000); U.ls.set('os2lkfails', 0); msg('Código errado 5 vezes. Espera 30 s.'); } else msg('Código incorreto.');
-  const i = document.getElementById('lkCode'); if (i) { i.value = ''; i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake'); i.focus(); }
+  const i = document.getElementById('lkCode'); if (i && i.classList.contains('pin-in') && OS.Pin) { OS.Pin.clear(i); i.focus(); }
+  else if (i) { i.value = ''; i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake'); i.focus(); }
 }
+// quem ainda tem um código antigo (letras ou outro tamanho): depois de entrar, escolhe o código novo de 6 números
+let pinOld = '';
+const offerPin = old => { if (navigator.webdriver && !window.__pinAsk) return; pinOld = old; setTimeout(() => { if (!OS.UI || !OS.Pin || L.pinMode()) return; OS.UI.modal(`<form class="col gap10 pin-new" data-form="pinNew" style="padding:20px"><h3 style="margin:0">O teu código agora é de 6 números</h3>
+  <p class="mut" style="margin:0">Escolhe um código só com números. Ao abrir o Prumo aparecem 6 casinhas e o teclado numérico, e entra sozinho no último número.</p>
+  ${OS.Pin.html('nw', 'Código novo (6 números)')}${OS.Pin.html('nw2', 'Repete o código')}<div class="row gap8"><button class="btn pri">Guardar o código</button><button type="button" class="btn ghost" data-act="pinLater">Agora não</button></div></form>`, 'pin-m'); }, 900); };
+OS.forms = OS.forms || {};
+OS.forms.pinNew = async f => { const a = f.elements.nw.value, b = f.elements.nw2.value; if (!/^\d{6}$/.test(a)) { OS.UI.toast('O código tem de ter 6 números.', 'warn'); return; }
+  if (a !== b) { OS.Pin.clear(f.elements.nw2); OS.UI.toast('Os dois códigos não são iguais.', 'warn'); return; }
+  const err = await L.setCode(pinOld, a); if (err) { OS.UI.toast(err, 'neg'); return; } pinOld = ''; OS.UI.closeModal(); OS.UI.toast('Código novo guardado. Vale em todos os teus aparelhos.', 'pos'); };
+OS.act = OS.act || {}; OS.act.pinLater = () => { pinOld = ''; OS.UI.closeModal(); };
 const offerBio = async () => { if (!IPHONE || L.bioId() || U.ls.get('os2bioAsk', false) || !(await L.bioAvailable())) return;
   setTimeout(() => { OS.UI.modal(`<div style="padding:20px;text-align:center"><div style="display:grid;place-items:center;color:#9be7ff">${OS.UI.ic('lock')}</div><h3 style="margin:8px 0 6px">Ativar o Face ID?</h3><p class="mut" style="margin:0 0 16px">Da próxima vez entras só com a cara, sem escrever o código.</p><div class="col gap8"><button class="btn pri" data-act="bioRegister">Ativar Face ID</button><button class="btn ghost" data-act="bioLater">Agora não</button></div></div>`); }, 700); };
 OS.act = OS.act || {};
 OS.act.bioLater = () => { U.ls.set('os2bioAsk', true); OS.UI.closeModal(); };
 function open() { const viaCode = !L.unlocked(); setUnlocked(true); setTimeout(() => OS.emit && OS.emit('unlock'), 0); if (viaCode) offerBio(); const s = el(); s.classList.add('out'); setTimeout(() => { s.hidden = true; s.classList.remove('out'); }, 520); const d = done; done = null; d && d(); setTimeout(() => OS.emit('unlock'), 600); }
 // campo do código: sem o gestor de palavras-passe do iOS (que desenhava bordas brancas e o ícone escuro ao lado)
-const codeInput = () => { const sec = (() => { try { return CSS.supports('-webkit-text-security', 'disc'); } catch (e) { return false; } })();
+const codeInput = () => { if (L.pinMode() && OS.Pin) return OS.Pin.html('code', '', { id: 'lkCode', cls: 'lk-pin', auto: 1, aria: 'Código de acesso (6 números)', req: false });
+  const sec = (() => { try { return CSS.supports('-webkit-text-security', 'disc'); } catch (e) { return false; } })();
   return `<input id="lkCode" class="${sec ? 'lk-sec' : ''}" type="${sec ? 'text' : 'password'}" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="Código de acesso" aria-label="Código de acesso">`; };
 // ecrã de entrada: o mar visto do forte, à hora real, com a tua frase do dia
 const hello = () => { const h = new Date().getHours(), g = h < 6 ? 'Boa madrugada' : h < 13 ? 'Bom dia' : h < 20 ? 'Boa tarde' : 'Boa noite'; return OS.Lang ? OS.Lang.t(g) : g; };
@@ -99,7 +116,7 @@ async function showLock() {
   s.innerHTML = `${scene()}${OS.Fundo ? '<button type="button" class="lk-bgb" id="lkBg" aria-label="Mudar o fundo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg>Fundo</button>' : ''}<div class="lk-top"><div class="lk-time" id="lkTime">${hm()}</div><div class="lk-date">${OS.U ? OS.U.esc(OS.U.longDate(OS.U.today())) : ''}</div></div>
     <div class="lk-mid"><p class="lk-hi">${hello()}, ${OS.U ? OS.U.esc(name) : 'Ryan'}.</p>${q ? `<p class="lk-q ${qs}">${OS.U.esc(q)}</p>` : ''}</div>
     <div class="sp-in lk-bot"><div class="lk-brand">${L.logo(34)}${L.word(20)}</div>
-    <form class="lk" id="lkForm" autocomplete="off">
+    <form class="lk${L.pinMode() && OS.Pin ? ' lk-pinf' : ''}" id="lkForm" autocomplete="off">
       ${can ? `<button type="button" class="lk-bio" id="lkBio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3H5a2 2 0 0 0-2 2v2M17 3h2a2 2 0 0 1 2 2v2M7 21H5a2 2 0 0 1-2-2v-2M17 21h2a2 2 0 0 0 2-2v-2M9 9v1M15 9v1M12 9v4h-1M9 16c1.5 1 4.5 1 6 0"/></svg>Desbloquear com Face ID</button><div class="lk-or">ou código</div>` : ''}
       ${codeInput()}
       <button class="lk-go" type="submit" aria-label="Entrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -114,7 +131,7 @@ async function showLock() {
     // iPhone: o Face ID abre sozinho ao entrar (no Android a biometria está desligada: lá mostrava um ecrã preto do sistema)
     if (IPHONE && (!navigator.webdriver || window.__bioAuto)) { const auto = () => { if (document.hidden) return; document.removeEventListener('visibilitychange', auto); setTimeout(() => go(true), 250); };
       document.hidden ? document.addEventListener('visibilitychange', auto) : auto(); } }
-  else if (matchMedia('(pointer:fine)').matches) setTimeout(() => { const i = document.getElementById('lkCode'); i && i.focus(); }, 300);
+  else if (matchMedia('(pointer:fine)').matches || L.pinMode()) setTimeout(() => { const i = document.getElementById('lkCode'); i && i.focus(); }, 300);
 }
 L._autoBio = IPHONE;
 L.gate = fn => { done = fn; if (L.unlocked()) { const s = el(); s.classList.add('out'); setTimeout(() => { s.hidden = true; s.classList.remove('out'); }, 520); done = null; fn(); setTimeout(() => OS.emit('unlock'), 600); } else showLock(); };

@@ -368,10 +368,13 @@ A.bkEbGo = async () => { const sel = document.getElementById('bkEbB'); if (!sel 
   catch (e) { if (w) w.close(); UI.toast(e.message, 'warn'); } busy = ''; OS.request(); };
 // ao voltar do banco (a janela fecha-se e o Prumo volta a ter o foco), atualiza o estado
 window.addEventListener('focus', () => { const s = cur0(); if (s.waitEb && Date.now() - s.waitEb < 20 * 60e3) { setEst({ waitEb: 0 }); refresh().then(() => sync(true)); } });
-// arranque: a cada 12 horas, se a ligação automática estiver ativa
-OS.on('ready', () => { if (navigator.webdriver && !window.__bkTest) return; setTimeout(() => { if (!on()) return; const s = cur0(), B = OS.one('banklink');
+// ao abrir e ao voltar ao app: a cada 6 horas, se a ligação automática estiver ativa (o PSD2 deixa até 4 leituras por dia sem a pessoa)
+let autoAt = 0;
+const autoSync = () => { if (navigator.webdriver && !window.__bkTest) return; if (!on() || Date.now() - autoAt < 30 * 6e4) return; const s = cur0(), B = OS.one('banklink');
   if (!s.adm && !(s.pode && (s.pode.pg || s.pode.eb))) return;
-  if (B.auto && links() && Object.values(B.map || {}).some(v => v && v !== '-') && (!B.last || Date.now() - Date.parse(B.last) > 12 * 36e5)) refresh().then(() => sync(true)); }, 6000); });
+  if (B.auto && links() && Object.values(B.map || {}).some(v => v && v !== '-') && (!B.last || Date.now() - Date.parse(B.last) > 6 * 36e5)) { autoAt = Date.now(); refresh().then(() => sync(true)); } };
+OS.on('ready', () => setTimeout(autoSync, 6000));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(autoSync, 2500); });
 
 const ago = iso => { if (!iso) return 'nunca'; const m = Math.round((Date.now() - Date.parse(iso)) / 6e4); return m < 2 ? 'agora mesmo' : m < 60 ? `há ${m} min` : m < 48 * 60 ? `há ${Math.round(m / 60)} h` : `há ${Math.round(m / 1440)} dias`; };
 const COUNTRIES = [['PT', 'Portugal'], ['ES', 'Espanha'], ['FR', 'França'], ['DE', 'Alemanha'], ['IT', 'Itália'], ['NL', 'Países Baixos'], ['BE', 'Bélgica'], ['IE', 'Irlanda'], ['LU', 'Luxemburgo'], ['AT', 'Áustria'], ['FI', 'Finlândia'], ['LT', 'Lituânia'], ['GB', 'Reino Unido']];

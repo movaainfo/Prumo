@@ -10,6 +10,21 @@ const LS = { get: (k, d) => { try { const v = localStorage.getItem(k); return v 
   set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }, del: k => { try { localStorage.removeItem(k); } catch (e) { } },
   keys: () => { try { return Object.keys(localStorage); } catch (e) { return []; } } };
 const K = { s: 'nau:s', p: 'nau:p', data: 'nau:pd', owner: 'nau:owner', pers: 'nau:pessoal', reset: 'nau:lkreset' };
+/* ---------- código de 6 números com casinhas (contas gerais): um só campo numérico por baixo das 6 casas ----------
+   Só aceita números e abre o teclado numérico; cada número acende a casa seguinte. No ecrã do código entra sozinho ao 6.º número. */
+const PinC = OS.Pin = {
+  html: (name, label, o = {}) => `<label class="pin${o.cls ? ' ' + o.cls : ''}">${label ? `<span class="pin-l">${label}</span>` : ''}<span class="pin-w"><input class="pin-in" ${o.id ? `id="${o.id}"` : ''} name="${name}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" minlength="6" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" data-1p-ignore aria-label="${esc(o.aria || label || 'Código de 6 números')}"${o.auto ? ' data-pin-auto="1"' : ''}${o.req === false ? '' : ' required'}><span class="pin-bx" aria-hidden="true">${'<i></i>'.repeat(6)}</span></span></label>`,
+  paint: i => { const w = i && i.closest('.pin-w'); if (!w) return; const n = i.value.length, f = document.activeElement === i; w.querySelectorAll('.pin-bx i').forEach((b, k) => { b.classList.toggle('on', k < n); b.classList.toggle('cur', f && (k === n || (n === 6 && k === 5))); }); },
+  clear: i => { if (!i) return; i.value = ''; PinC.paint(i); const w = i.closest('.pin-w'); if (w) { w.classList.remove('shake'); void w.offsetWidth; w.classList.add('shake'); } },
+  ok: v => /^\d{6}$/.test(String(v || '')) };
+document.addEventListener('input', e => { const i = e.target; if (!i || !i.classList || !i.classList.contains('pin-in')) return;
+  const v = i.value.replace(/\D/g, '').slice(0, 6); if (v !== i.value) i.value = v; PinC.paint(i);
+  if (v.length === 6) { if (i.dataset.pinAuto) { const f = i.form; if (f) { if (f.requestSubmit) f.requestSubmit(); else f.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); } }
+    else { const L = i.form ? [...i.form.querySelectorAll('.pin-in')] : [], nx = L[L.indexOf(i) + 1]; if (nx && !nx.value) nx.focus(); } } }, true);
+document.addEventListener('focusin', e => { if (e.target && e.target.classList && e.target.classList.contains('pin-in')) PinC.paint(e.target); });
+document.addEventListener('focusout', e => { if (e.target && e.target.classList && e.target.classList.contains('pin-in')) setTimeout(() => PinC.paint(e.target), 0); });
+// as setas e o apagar dentro do campo não mexem no cursor: o número entra sempre na casa seguinte
+document.addEventListener('keydown', e => { const i = e.target; if (i && i.classList && i.classList.contains('pin-in') && /^Arrow(Left|Right|Up|Down)$/.test(e.key)) e.preventDefault(); }, true);
 const SALT = 'oceanum-v1|';
 const sha = async s => { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); };
 
@@ -90,7 +105,7 @@ const profiles = () => (S && S.perfis) || [];
 const cur = () => profiles().find(p => p.id === pid()) || null;
 const first = n => String(n || '').trim().split(/\s+/)[0] || '';
 // pub: perfil de uma pessoa qualquer (textos e valores neutros); o perfil pessoal (ps) é o Prumo do Ryan passado para a conta: fica como era
-Object.assign(Acc, { sess: () => S, profiles, profile: cur, email: () => (S && S.e) || '', lk: () => (cur() || {}).lk || '', pub: !(cur() && cur().ps) });
+Object.assign(Acc, { sess: () => S, profiles, profile: cur, email: () => (S && S.e) || '', lk: () => (cur() || {}).lk || '', pin: () => !!(cur() && cur().pin), pub: !(cur() && cur().ps) });
 
 // numa conta nova nada do Ryan: o perfil começa com o nome de quem o criou (o resto preenche em Definições)
 if (Acc.pub) { try { delete OS.ONE_DEF.fin.cats.Receita.Mova; } catch (e) { } Object.assign(OS.ONE_DEF.profile, { name: '', short: '', city: '', uni: '', course: '', year: '', semester: '', semStart: '', semEnd: '' }); if (OS.ONE_DEF.mova) OS.ONE_DEF.mova.name = 'O meu negócio'; }
@@ -173,7 +188,10 @@ const scene = () => OS.Scene ? `<div class="lk-scene${OS.Fundo && OS.Fundo.get()
 const okImg = s => typeof s === 'string' && s.length <= 60000 && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(s);
 const avatar = (p, big) => `<span class="ac-av${big ? ' big' : ''}${okImg(p.img) ? ' im' : ''}" style="--c:${esc(p.cor || PCOL[0])}">${okImg(p.img) ? `<img src="${p.img}" alt="">` : esc(p.av || first(p.nome).slice(0, 1).toUpperCase() || '?')}</span>`;
 const field = (n, label, type = 'text', extra = '') => `<label class="ac-f"><span>${label}</span><input name="${n}" type="${type}" ${extra}></label>`;
-const lockFields = () => `${field('c1', 'Código de bloqueio do perfil', 'password', 'minlength="6" autocomplete="new-password" required placeholder="pelo menos 6 caracteres"')}${field('c2', 'Repete o código', 'password', 'minlength="6" autocomplete="new-password" required')}`;
+const lockFields = pin => pin ? `<div class="ac-f ac-pin">${PinC.html('c1', 'Código de acesso (6 números)')}${PinC.html('c2', 'Repete o código')}</div>`
+  : `${field('c1', 'Código de bloqueio do perfil', 'password', 'minlength="6" autocomplete="new-password" required placeholder="pelo menos 6 caracteres"')}${field('c2', 'Repete o código', 'password', 'minlength="6" autocomplete="new-password" required')}`;
+// o perfil pessoal do Ryan (ps) fica com a senha; os outros perfis usam o código de 6 números
+const pinFor = p => !(p && p.ps);
 const swatches = sel => `<div class="ac-sw" role="radiogroup" aria-label="Cor">${PCOL.map(c => `<label><input type="radio" name="cor" value="${c}" ${c === sel ? 'checked' : ''}><i style="--c:${c}"></i></label>`).join('')}</div>`;
 const avPick = sel => `<div class="ac-avs" role="radiogroup" aria-label="Avatar">${AVS.map(a => `<label><input type="radio" name="av" value="${a}" ${a === (sel || '') ? 'checked' : ''}><i>${a || 'Aa'}</i></label>`).join('')}</div>`;
 /* avatar do perfil: emoji, uma foto (cortada em quadrado, ~10 KB) ou um personagem do Dominus em pixel art */
@@ -237,13 +255,13 @@ const view = () => {
       <p class="ac-sub">${m === 'novo' ? 'Cada perfil tem os seus próprios dados, metas, finanças e jogo. O código de bloqueio é pedido ao abrir o Prumo com este perfil.' : 'Muda o nome, a cor ou o avatar (emoji, uma foto tua ou um personagem do Dominus). O código e os dados ficam como estão.'}</p>
       ${field('nome', 'Nome', 'text', `maxlength="24" required autocomplete="off" value="${esc(p.nome || '')}"`)}
       ${avEditor(p)}<div class="ac-f"><span>Cor</span>${swatches(p.cor)}</div>
-      ${m === 'novo' ? lockFields() : ''}${msg}
+      ${m === 'novo' ? lockFields(true) : ''}${msg}
       <div class="ac-row"><button class="ac-btn" type="submit" ${gBusy ? 'disabled' : ''}>${m === 'novo' ? 'Criar perfil' : 'Guardar'}</button><button class="ac-btn ghost" type="button" data-ac="voltar">Cancelar</button></div>
       ${m === 'editar' ? `<div class="ac-more"><button class="ac-link" type="button" data-ac="codigo">Esqueci o código deste perfil</button><button class="ac-link neg" type="button" data-ac="apagarp">Apagar este perfil</button></div>` : ''}</form>`; }
   if (m === 'codigo' || m === 'apagarp') { const p = profiles().find(x => x.id === gEdit) || {};
     return `<form class="ac-card" data-acf="${m}"><h2>${m === 'codigo' ? 'Novo código para ' + esc(p.nome || '') : 'Apagar ' + esc(p.nome || '')}</h2>
       <p class="ac-sub">${m === 'codigo' ? 'Confirma com a senha da conta e escolhe o código novo. Vale em todos os aparelhos.' : 'Apaga o perfil e todos os dados dele, em todos os aparelhos. Não dá para desfazer.'}</p>
-      ${field('senha', 'Senha da conta', 'password', 'required autocomplete="current-password"')}${m === 'codigo' ? lockFields() : ''}${msg}
+      ${field('senha', 'Senha da conta', 'password', 'required autocomplete="current-password"')}${m === 'codigo' ? lockFields(pinFor(p)) : ''}${msg}
       <div class="ac-row"><button class="ac-btn${m === 'apagarp' ? ' neg' : ''}" type="submit" ${gBusy ? 'disabled' : ''}>${m === 'codigo' ? 'Mudar o código' : 'Apagar para sempre'}</button><button class="ac-btn ghost" type="button" data-ac="voltar">Cancelar</button></div></form>`; }
   if (m === 'codigo-rec') return `<div class="ac-card"><h2>Guarda o teu código de recuperação</h2>
       <p class="ac-sub">Se te esqueceres da senha, é com este código que a recuperas. Aparece só agora: tira uma fotografia, guarda-o nas notas ou no gestor de senhas.</p>
@@ -302,7 +320,8 @@ const avisos = () => { try { if (!S || !Array.isArray(S.avisos) || !S.avisos.len
 async function onSubmit(e) { const f = e.target.closest('form[data-acf]'); if (!f) return; e.preventDefault(); if (gBusy) return;
   const v = n => (f.elements[n] ? f.elements[n].value : ''), kind = f.dataset.acf, val = n => { const r = [...f.querySelectorAll(`input[name=${n}]`)].find(x => x.checked); return r ? r.value : ''; };
   const fail = err => { gBusy = false; gMsg = err.net ? 'Sem ligação à internet. Tenta outra vez.' : err.message; paint(); };
-  const code = async () => { if (v('c1').length < 6) throw new Error('O código precisa de pelo menos 6 caracteres.'); if (v('c1') !== v('c2')) throw new Error('Os dois códigos não são iguais.'); return sha(SALT + v('c1')); };
+  const isPin = !!f.querySelector('.pin-in[name=c1]');
+  const code = async () => { if (isPin ? !PinC.ok(v('c1')) : v('c1').length < 6) throw new Error(isPin ? 'O código tem de ter 6 números.' : 'O código precisa de pelo menos 6 caracteres.'); if (v('c1') !== v('c2')) { if (isPin) { PinC.clear(f.elements.c2); } throw new Error('Os dois códigos não são iguais.'); } return sha(SALT + v('c1')); };
   gBusy = true; paint();
   try {
     if (kind === 'entrar') { const email = v('email').trim().toLowerCase(), j = await conta('entrar', { email, senha: v('senha') }); afterLogin(j, email); set(S.trocar ? 'trocar' : needTerms() ? 'termos' : 'perfis'); return; }
@@ -313,9 +332,9 @@ async function onSubmit(e) { const f = e.target.closest('form[data-acf]'); if (!
     if (kind === 'criar') { const t = OS.Legal ? OS.Legal.read(f) : {}; if (!t) throw new Error('Para criar a conta, marca as três caixas: termos e privacidade, dados de saúde e de fé, e idade.');
       const email = v('email').trim().toLowerCase(), j = await conta('registar', Object.assign({ email, senha: v('senha'), nome: v('nome') }, t)); afterLogin(j, email); gRec = j.recuperacao; S.novo = v('nome'); saveS(); set('codigo-rec'); return; }
     if (kind === 'recuperar') { const email = v('email').trim().toLowerCase(), j = await conta('recuperar', { email, codigo: v('codigo'), nova: v('nova') }); afterLogin(j, email); gRec = j.recuperacao; set('codigo-rec'); return; }
-    if (kind === 'novo') { const lk = await code(), j = await conta('perfil', { acao: 'criar', perfil: { nome: v('nome'), cor: val('cor'), av: val('av'), img: v('img'), lk } }); takeConta(j); set('perfis'); return; }
+    if (kind === 'novo') { const lk = await code(), j = await conta('perfil', { acao: 'criar', perfil: { nome: v('nome'), cor: val('cor'), av: val('av'), img: v('img'), lk, pin: isPin ? 6 : 0 } }); takeConta(j); set('perfis'); return; }
     if (kind === 'editar') { const j = await conta('perfil', { acao: 'editar', id: gEdit, perfil: { nome: v('nome'), cor: val('cor'), av: val('av'), img: v('img') } }); takeConta(j); set('perfis'); return; }
-    if (kind === 'codigo') { const lk = await code(), j = await conta('codigo', { id: gEdit, senha: v('senha'), lk }); takeConta(j); const r = LS.get(K.reset, {}); r[gEdit] = lk; LS.set(K.reset, r); set('perfis', 'Código mudado. Usa o novo ao abrir este perfil.'); return; }
+    if (kind === 'codigo') { const lk = await code(), j = await conta('codigo', { id: gEdit, senha: v('senha'), lk, pin: isPin ? 6 : 0 }); takeConta(j); const r = LS.get(K.reset, {}); r[gEdit] = lk; LS.set(K.reset, r); set('perfis', 'Código mudado. Usa o novo ao abrir este perfil.'); return; }
     if (kind === 'apagarp') { const j = await conta('perfil', { acao: 'apagar', id: gEdit, senha: v('senha') }); takeConta(j); LS.del('nau:k:' + gEdit); LS.del('nau:pend:' + gEdit); const here = LS.get(K.data, '') === gEdit; if (here) wipeLocal(); if (pid() === gEdit) LS.del(K.p); if (here && OS.dbRef) { location.reload(); return; } set('perfis', 'Perfil apagado.'); return; }
   } catch (err) { fail(err); } }
 async function onClick(e) { const b = e.target.closest('[data-ac]'); if (!b || gBusy) return; const a = b.dataset.ac;
@@ -485,7 +504,7 @@ OS.on('ready', () => { const p = cur(); if (!p) return;
   if (r[p.id]) { OS.setOne('security', { hash: r[p.id], changed: U.today() }); delete r[p.id]; LS.set(K.reset, r); }
   else if (!sec.hash && p.lk) OS.setOne('security', { hash: p.lk, changed: U.today() });
   // o código mudado em Definições passa também para a conta (para o "Esqueci o código" e os outros aparelhos)
-  OS.on('one:security', () => { const h = OS.one('security').hash, q = cur(); if (h && q && h !== q.lk) conta('perfil', { acao: 'editar', id: q.id, perfil: { lk: h } }).then(takeConta).catch(() => { }); });
+  OS.on('one:security', () => { const sc = OS.one('security'), h = sc.hash, q = cur(); if (h && q && (h !== q.lk || (sc.pin ? 6 : 0) !== (q.pin || 0))) conta('perfil', { acao: 'editar', id: q.id, perfil: { lk: h, pin: sc.pin ? 6 : 0 } }).then(takeConta).catch(() => { }); });
   // Definições › Conta e perfis
   if (OS.SETT && !OS.SETT.some(t => t[0] === 'conta')) OS.SETT.splice(1, 0, ['conta', 'Conta e perfis']);
   const sv = OS.settingsView; if (sv && !sv.__acc) { OS.settingsView = s => String(s || '') === 'conta' ? settings() : sv(s); OS.settingsView.__acc = 1; }
