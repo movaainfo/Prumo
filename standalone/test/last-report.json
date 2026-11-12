@@ -1,194 +1,218 @@
 [
  {
-  "p": "Direção",
-  "name": "Revisão semanal: hábitos, horas trabalhadas, desporto e foco; o jogo e o livro terminado aparecem nos acontecimentos",
-  "pass": true,
-  "info": "Direção\nREVISÕES\n\nSemanal (domingo, 20 minutos) e mensal (auditoria completa). O sistema prepara os números; tu respondes às perguntas.\n\nSemanal\nMensal\nHistórico\nSemana de 2 nov a 8 nov\nTarefas feitas\n0\nFicaram por fazer\n0\nAtrasadas agora\n0\nEstudo\n0,0 h\nTreinos · corrida\n0 · 0,0 km\nFinanças da seman"
- },
- {
-  "p": "Direção",
-  "name": "Revisão mensal: \"Equilíbrio da vida\" (desporto, foco, dieta, Fé, leitura) e investimentos do mês",
+  "p": "Boas-vindas",
+  "name": "Primeira vez numa conta: abre \"Vamos fazer o Prumo à tua medida\" (com Saltar)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Direção",
-  "name": "Estrela-guia: \"onde foi o teu tempo\" inclui desporto e foco (Floresta)",
+  "p": "Boas-vindas",
+  "name": "Abas: todas escolhidas de início, o Painel não se pode tirar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Direção",
-  "name": "Painel › A tua evolução (endereço antigo #evolucao): também Fé, desporto, foco, dieta, leitura e horas trabalhadas",
+  "p": "Boas-vindas",
+  "name": "Estudos: \"Sugerir as disciplinas com IA\" preenche as disciplinas do curso",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Direção",
-  "name": "Próximos passos: devocional, leitura e proteína do dia entram nos passos",
+  "p": "Boas-vindas",
+  "name": "Sem a área Carreira, salta a pergunta do trabalho (e, por ser do Brasil, já em português do Brasil)",
+  "pass": true,
+  "info": "pt-BR Seu corpo"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Rotina: sem a Fé, não sugere o hábito de oração",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Direção",
-  "name": "Spyke e Centro de decisões sabem tudo: património, investimentos, estudo, projetos, desporto, dieta, Fé, leitura, tendências e aniversários certos",
-  "pass": true,
-  "info": "Agora: quinta-feira, 12 de novembro às 06:38 (Portugal)\nUtilizador: Ryan da Silva Magalhães, Aveiro\nAgenda hoje e amanhã: hoje Ombros & Core; amanhã Full Body\nAlertas: Treino: 8 dias sem treinar (Últi"
- },
- {
-  "p": "Direção",
-  "name": "Contas: painel \"Saldo inicial · o que já tens\" com a moeda de cada conta",
+  "p": "Boas-vindas",
+  "name": "Fim: resume o que vai criar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Direção",
-  "name": "Saldo inicial: € 1500 (os testes antigos não contam), R$ 5000 e US$ 200; total disponível em euros ao câmbio",
+  "p": "Boas-vindas",
+  "name": "Perfil: nome, país (Brasil), cidade, curso e horário",
   "pass": true,
-  "info": "{\"e\":1500,\"r\":5000,\"rc\":\"BRL\",\"w\":200,\"wc\":\"USD\",\"liq\":2480}"
+  "info": "{\"name\":\"Beatriz\",\"short\":\"Bia\",\"city\":\"Belo Horizonte\",\"uni\":\"UFMG\",\"course\":\"Administração\",\"year\":\"\",\"semester\":\"1.º Semestre 26/27\",\"semStart\":\"\",\"semEnd\":\"\",\"ectsTotal\":180,\"employer\":\"\",\"jobRole"
  },
  {
-  "p": "Direção",
-  "name": "Contas: saldo de cada conta na sua moeda (R$ 5.000,00 ≈ € 800,00)",
+  "p": "Boas-vindas",
+  "name": "País: feriados do Brasil (Consciência Negra, sem o 25 de Abril), moeda BRL e voz brasileira",
   "pass": true,
-  "info": "R$ real"
+  "info": "Consciência Negra||BRL|BR"
  },
  {
-  "p": "Direção",
-  "name": "Movimento numa conta em reais: tira R$ 100 do saldo em reais e conta € 16 nas despesas do mês",
-  "pass": true,
-  "info": "{\"bal\":4900,\"exp\":16}"
- },
- {
-  "p": "Direção",
-  "name": "Movimentos: o gasto em reais aparece em R$ com o equivalente em euros",
+  "p": "Boas-vindas",
+  "name": "IA chamada \"Luna\" (no feminino)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Direção",
-  "name": "Formulário: o valor mostra R$ quando a conta é em reais",
+  "p": "Boas-vindas",
+  "name": "Universidade: as disciplinas do curso dela",
+  "pass": true,
+  "info": "5"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Treino: 3 dias (seg, qua, sex), corrida ao sábado, rotinas com os exercícios e 3×12 para perder gordura",
+  "pass": true,
+  "info": "[[\"Corpo inteiro A\",5,3,12],[\"Corpo inteiro B\",5,3,12],[\"Corpo inteiro C\",5,3,12]]"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Desportos: corrida e voleibol",
+  "pass": true,
+  "info": "corrida,voleibol"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Dieta: meta de calorias e proteína para ela (a perder gordura)",
+  "pass": true,
+  "info": "{\"k\":1840,\"p\":150}"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Hábitos: os escolhidos ativos (sem duplicar os que a conta já tinha), os outros desligados",
+  "pass": true,
+  "info": "2 blocos de foco (100 min)|Acordar à hora, sem snooze|Beber 2 litros de água|Treino ou corrida"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Metas: as 2 que escreveu",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Direção",
-  "name": "Movimentos: \"Selecionar para apagar\" → selecionar todos → apagar (com confirmação)",
+  "p": "Boas-vindas",
+  "name": "Marcos do Dominus feitos para ela (curso, reserva, peso) e sem os de oração",
   "pass": true,
-  "info": "{\"n0\":6,\"n1\":0}"
+  "info": "{\"int\":[\"Passar a todas as cadeiras do 1.º ano\",\"Fechar o 1.º ano de Administração sem nenhuma cadeira em atraso\",\"Média do semestre igual ou acima de 7\"],\"for\":[\"Juntar 3000 reais de reserva\",\"Juntar um fundo de emergência com 3 meses de despesas\",\"Juntar 1500 até ao verão\"],\"cor\":[\"Perder 5 kg com"
  },
  {
-  "p": "Direção",
-  "name": "Movimentos: \"Repor\" traz de volta os que apagaste",
+  "p": "Boas-vindas",
+  "name": "Menu: sem Fé nem Carreira (escondidas), com o resto",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Direção",
-  "name": "Movimentos: tocar numa linha seleciona-a (em vez de abrir)",
+  "p": "Boas-vindas",
+  "name": "Definições › Geral: \"O teu Prumo\" abre só as abas do menu",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Direção",
-  "name": "sem erros de JavaScript (Direção e Finanças)",
+  "p": "Boas-vindas",
+  "name": "Pôr a Fé de volta no menu",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: entra como perfil de uma pessoa qualquer (não o pessoal)",
-  "pass": true,
-  "info": "{\"on\":true,\"pub\":true,\"name\":\"Marta\"}"
- },
- {
-  "p": "Contas públicas",
-  "name": "Conta pública: a Cozinha (despensa, lista de compras e receitas) aparece no menu",
-  "pass": true,
-  "info": "cozinha,cozinha,cozinha"
- },
- {
-  "p": "Contas públicas",
-  "name": "Conta pública: 177 páginas e separadores abrem com conteúdo e sem \"undefined/NaN\"",
+  "p": "Boas-vindas",
+  "name": "Explorar: \"Pôr no menu\" devolve uma aba escondida",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: nada sai para o lado no telemóvel",
+  "p": "Boas-vindas",
+  "name": "Responder outra vez não duplica disciplinas, rotinas, metas nem hábitos",
+  "pass": true,
+  "info": "5,3,2,4 → 5,3,2,4"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Depois de respondido, não volta a abrir sozinho",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: nenhuma página mostra coisas do Ryan (nome, ISCA, Aveiro)",
+  "p": "Boas-vindas",
+  "name": "Definições › IA: o nome dado nas perguntas aparece como resposta (sem formulário aberto), com \"Mudar o nome\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: nenhuma página fala do script Google (as contas não precisam dele)",
+  "p": "Boas-vindas",
+  "name": "Definições › O teu Prumo: \"Rever as respostas\" (não \"Responder outra vez\")",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: 604 botões carregados sem erros de JavaScript",
-  "pass": true,
-  "info": " :: "
- },
- {
-  "p": "Contas públicas",
-  "name": "Conta pública: todos os formulários de registo abrem",
+  "p": "Boas-vindas",
+  "name": "Rever as respostas: vêm preenchidas (nome, cidade e a IA \"Luna\")",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Conta pública: sem erros na consola no fim",
+  "p": "Boas-vindas",
+  "name": "Rever as respostas: o corpo também (perder gordura, 3 dias, corrida e voleibol, 68 kg)",
+  "pass": true,
+  "info": "Seu corpo"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Ecrã de entrada de uma conta geral com código antigo: já mostra as 6 casinhas, com \"Tenho um código antigo, com letras\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Ligações (conta geral): \"A tua agenda no Calendário do iPhone e no Google\", sem falar do script",
+  "p": "Boas-vindas",
+  "name": "\"Tenho um código antigo\": troca as casinhas pelo campo de texto (aceita letras)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Ligar a agenda: links para subscrever no iPhone (tudo ou um por cor) e \"Abrir no Google Calendar\"",
-  "pass": true,
-  "info": "{\"w\":[\"webcal://localhost:8781/Oceanum/api/atalho?op=ics&c=eyJhIjoiYmUzNmE5NThiY2Q3ODdlODZlOThkZDkxZDg1MTY5ZDA3M2VhOTBlYiIsInAiOiI1YTVlZjUwNzAwMGEiLCJuIjoiY2ZkZjRjM2JlZWUyIn0.dWjxKWaIHZhl5CILYoOB7M11\",\"webcal://localhost:8781/Oceanum/api/atalho?op=ics&c=eyJhIjoiYmUzNmE5NThiY2Q3ODdlODZlOThkZDkxZDg1MT"
- },
- {
-  "p": "Contas públicas",
-  "name": "O link da agenda devolve um calendário (.ics) com os eventos da app e as cores",
-  "pass": true,
-  "info": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Prumo//Agenda//PT\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-WR-CALNAME:Prumo\r\nX-WR-CALDESC:A tua agenda do Prumo. Para mudar\\, altera na app.\r\nX-APPLE-CALENDAR-COLOR:#A9C8F0\r\nREFRESH-INTERVAL;VALUE=DURATION:PT1H\r\nX-PUBLISHED-TTL:PT1H\r\nBEGIN:VEVENT\r\nUID:f9959903b3"
- },
- {
-  "p": "Contas públicas",
-  "name": "Um calendário por cor: o de Trabalho tem a sua cor e não traz os compromissos",
-  "pass": true,
-  "info": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Prumo//Agenda//PT\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-WR-CALNAME:Prumo · Trabalho\r\nX-WR-CALDESC:A tua agenda do Prumo. Para mudar\\, altera na app.\r\nX-APPLE-C"
- },
- {
-  "p": "Contas públicas",
-  "name": "A chave do atalho de gastos não serve como link da agenda (e o link da agenda não regista gastos)",
-  "pass": true,
-  "info": "403"
- },
- {
-  "p": "Contas públicas",
-  "name": "Spyke (conta geral): a Siri sem script, com o link do perfil (op=resumo) e sem a parte das perguntas",
+  "p": "Boas-vindas",
+  "name": "Código antigo numa conta geral: depois de entrar, pede o código novo de 6 números (com casinhas)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Contas públicas",
-  "name": "Resumo para a Siri: a app guarda-o no servidor e o link devolve o resumo de hoje em texto",
+  "p": "Boas-vindas",
+  "name": "Depois: o ecrã do código tem as 6 casinhas",
   "pass": true,
-  "info": "Bom dia, Marta. Hoje é quinta-feira, 12 de novembro. Hoje é dia de folga no trabalho. Na agenda tens 12 compromissos: Ac"
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "O código novo de 6 números abre o Prumo sozinho (sem carregar em nada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Código antigo que já era de 6 números: entra pelas casinhas e passa a valer sem pedir código novo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Depois disso já não mostra \"Tenho um código antigo\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Saltar: fecha, guarda que saltou e não muda nada",
+  "pass": true,
+  "info": "{\"d\":\"skip\",\"open\":false,\"hide\":0}"
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "Perfil do Ryan (ps): sem questionário",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Boas-vindas",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
  }
 ]

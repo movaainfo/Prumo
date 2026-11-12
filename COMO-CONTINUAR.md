@@ -264,3 +264,7 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Umbanda: `REL.umbanda` (fam `umbanda`, Bíblia de `LIBS.evangelica`), `PRAYERS.umbanda` (Cáritas, `SAUD`), prática `prece`, painel `UMB_DIA`.
 - Banco: `autoSync` de 6 em 6 h (ao abrir e ao voltar ao app).
 - Testes: `contas` (casinhas), `boasvindas` (respostas preenchidas, código antigo → 6 números), `ranking`, `religiao`, `publico` (agenda .ics e Siri).
+
+### 3.17: casinhas sempre no ecrã de entrada (contas gerais)
+- `OS.Lock.pinMode()` = conta geral (sempre as casinhas, salvo `lkOld`); `OS.Lock.pinSet()` = já tem o código de 6 números. Sem `pinSet`, aparece `#lkOld` ("Tenho um código antigo") que troca pelo campo de texto; depois de entrar com letras, `offerPin`. Um código antigo de 6 números passa a `security.pin = 6` sozinho.
+- Testes: `boasvindas` (código antigo → casinhas, `#lkOld`, código antigo numérico) e o `unlock()` dos testes toca em `#lkOld` quando o código não é numérico.
