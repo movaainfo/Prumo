@@ -418,3 +418,18 @@ html.lite-x .fb-live i,html.lite-x .fb-ball .ic{animation:none}
 .fb-mcai .ic{width:14px;height:14px;color:var(--accent)}
 .fb-mcai b{color:var(--tx);font-weight:600}
 @media (max-width:640px){.fb-aisn em{min-width:38px;height:46px;font-size:28px}.fb-aist b{font-size:12.5px}.fb-aist .fb-cr{width:28px;height:28px}}
+
+/* ---------- v3.14 · ver o jogo (transmissão oficial grátis no YouTube) e onde passa ---------- */
+#fbYtSlot:empty{display:none}
+.fb-ytp{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background-color:#000;margin:10px 0 4px;box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.fb-ytp iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.fb-yt{border-radius:16px;padding:12px 14px;border:1px solid var(--line2);background-color:var(--pn2);margin:12px 0}
+.fb-yth{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.fb-yth .ic{width:18px;height:18px;color:var(--accent)}.fb-yth b{font-size:14.5px}.fb-yth small{font-size:12px;color:var(--mut)}
+.fb-ytb{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}.fb-ytb .btn .ic{width:16px;height:16px}
+.fb-ytl{font-size:12.5px;color:var(--accent)}
+.fb-ytt{margin:6px 0 0;font-size:12px;color:var(--mut);line-height:1.4}
+.fb-tv{margin-top:10px;display:flex;flex-direction:column;gap:6px}.fb-tvh{font-size:12.5px;color:var(--tx2);font-weight:600}
+.fb-tvs{display:flex;flex-wrap:wrap;gap:6px}
+.fb-tvc{display:inline-flex;align-items:baseline;gap:6px;padding:6px 10px;border-radius:10px;border:1px solid var(--line2);background-color:var(--bg);font-size:13px;color:var(--tx);text-decoration:none}
+a.fb-tvc:hover{border-color:var(--accent)}.fb-tvc small{font-size:11px;color:var(--mut)}
+.fb-tv>small{font-size:11.5px}

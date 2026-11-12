@@ -241,3 +241,10 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 
 ### 3.13: Cozinha em todas as contas
 - `PERSONAL` em `onboard.js` ficou vazio (a Cozinha e `#mercado` aparecem em todas as contas) e saiu a trava `ON()` de `cozinha.js` e `compras.js`. Testes `cozinha`, `mercado` e `publico` atualizados (a conta pública vê a Cozinha no menu).
+
+### 3.14: Ver o jogo (CazéTV no app) e banco para todas as contas
+- Futebol (`js/futebol.js`, bloco "ver o jogo"; CSS no fim de `css/futebol.css`): `api/futebol?yt=1` lê só o feed público dos canais da lista `YT` (CazéTV `UCZiYbVptd3PVPf4f6eR6UaQ`; `YT_FEED` muda o endereço nos testes). `ytOf` procura o vídeo com as duas equipas no título (ao vivo, ou "jogo completo" depois; nunca melhores momentos). O vídeo (`youtube-nocookie.com/embed`) vai para `#fbYtSlot`, fora de `#fbMd`, para não recomeçar quando o jogo se redesenha. "Onde passa": campo `onde_ver` da análise da IA, guardado só quando houve pesquisa (`eng === 'web'`), país do perfil (`OS.Country.code()`), links oficiais em `TVL`. Para juntar outro canal oficial, acrescenta-o a `YT` em `api/futebol.js`.
+- Banco para todas as contas (`api/banco.js`, `js/banco.js`): `pode = { pg, eb }` = dono sempre, outras contas com `PLUGGY_TODOS=1` / `ENABLEBANKING_TODOS=1` no Vercel (planos de produção com contrato). Pluggy Connect: `pg.token` (connect token com `clientUserId` opaco `prumo-<hmac>`, `avoidDuplicates`), widget `cdn.pluggy.ai/pluggy-connect/v2.10.0` (`window.PluggyConnect`, `onSuccess({ item })`), `pg.add` só aceita itens com o mesmo `clientUserId` (o dono também cola IDs do Meu Pluggy), `pg.del` apaga o item na Pluggy quando veio do widget (`w: 1`). CSP: `cdn.pluggy.ai` (script) e `connect.pluggy.ai` (frame). As contas do banco guardam `src` (item ou sessão) e saem da lista ao desligar.
+- Privacidade (`js/legal.js`): ligação ao banco, Pluggy e Enable Banking; versão `2026-11-12` (todas as contas aceitam outra vez).
+- Testes: `banco` (52) e `futebol` (40).
+
