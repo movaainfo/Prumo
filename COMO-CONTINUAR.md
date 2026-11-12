@@ -275,3 +275,6 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Reserva: numa conta, `AI.free` vai primeiro a `api/ia?p=livre` (formato OpenAI, limites por pessoa) e só depois direto à Pollinations.
 - Mensagem final: só mostra o erro técnico se disser o que fazer (ex.: fotos sem a IA do Google); o resto é "A IA está ocupada agora…".
 - Testes: `contas` (reserva pelo servidor, ordem dos modelos), `ia`, `voz`.
+
+### 3.19: reserva da IA
+- A Pollinations anónima dá 1 resposta a cada 45 s por IP (402 FREE_LIMIT, sem CORS → "Failed to fetch" no navegador). `AI.free`: primeiro direto do aparelho (IP de cada pessoa), uma tentativa; depois `api/ia?p=livre` (IP do servidor, partilhado). Mensagem: "limite da IA grátis por agora".

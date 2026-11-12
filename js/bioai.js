@@ -106,14 +106,15 @@ const freeSrv = async (messages, o) => { const ac = window.AbortController ? new
     throw new Error((j.error && (j.error.message || j.error)) || 'erro ' + r.status); }
   catch (e) { throw new Error(e.name === 'AbortError' ? 'demorou demasiado' : e.message || 'sem rede'); } finally { to && clearTimeout(to); } };
 AI.free = async (messages, o = {}) => { if (!AI.freeOn()) throw new Error('A IA de reserva está desligada.');
-  let last = ''; if (AI.srv()) { try { return await freeSrv(messages, o); } catch (e) { last = e.message; } }
-  for (let i = 0; i < 3; i++) { const ac = window.AbortController ? new AbortController() : null, to = ac && setTimeout(() => ac.abort(), 45000);
+  // a Pollinations grátis só dá 1 resposta a cada 45 s por endereço: primeiro do aparelho (cada pessoa tem o seu), depois pelo servidor do Prumo
+  let last = ''; for (let i = 0; i < 3; i++) { const ac = window.AbortController ? new AbortController() : null, to = ac && setTimeout(() => ac.abort(), 45000);
     try { const r = await fetch('https://text.pollinations.ai/openai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ac ? ac.signal : undefined, credentials: 'omit', referrerPolicy: 'no-referrer',
         body: JSON.stringify(Object.assign({ model: 'openai', messages, temperature: o.temp == null ? .3 : o.temp, private: true, referrer: 'nautilo' }, o.tools ? { tools: o.tools } : {}, o.json ? { response_format: { type: 'json_object' } } : {})) });
       const j = await r.json().catch(() => ({})); if (r.ok && j.choices && j.choices[0]) { AI.lastEngine = 'reserva'; return j.choices[0].message || {}; }
       last = (j.error && (j.error.message || j.error)) || 'erro ' + r.status; if (r.status === 429) await new Promise(res => setTimeout(res, 1500 * (i + 1))); else if (r.status < 500) break; }
-    catch (e) { last = e.name === 'AbortError' ? 'demorou demasiado' : (e.message || 'sem rede'); } finally { to && clearTimeout(to); } }
-  throw new Error('IA de reserva: ' + last); };
+    catch (e) { last = e.name === 'AbortError' ? 'demorou demasiado' : (e.message || 'sem rede'); break; } finally { to && clearTimeout(to); } }
+  if (AI.srv()) { try { return await freeSrv(messages, o); } catch (e) { last = e.message; } }
+  throw new Error('IA de reserva: ' + (/402|free limit|failed to fetch|load failed/i.test(last) ? 'limite da IA grátis por agora' : last)); };
 const freeJSON = async (parts, temp) => { const txt = parts.filter(p => p.text).map(p => p.text).join('\n'); if (!txt || parts.some(p => p.inline_data)) throw new Error('sem texto');
   const m = await AI.free([{ role: 'system', content: 'Respondes APENAS com JSON válido, sem texto à volta.' }, { role: 'user', content: txt }], { temp, json: true }), t = String(m.content || '').replace(/```(?:json)?/g, '').trim();
   try { return JSON.parse(t); } catch (e) { const mm = t.match(/[\[{][\s\S]*[\]}]/); if (mm) return JSON.parse(mm[0]); throw e; } };

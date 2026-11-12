@@ -51,7 +51,7 @@
   "p": "Novidades",
   "name": "Spyke: com o nome responde logo",
   "pass": true,
-  "info": "São 16:35."
+  "info": "São 16:39."
  },
  {
   "p": "Novidades",
@@ -81,7 +81,7 @@
   "p": "Novidades",
   "name": "Spyke: o pedido logo a seguir ao nome (sem repetir o nome) é executado",
   "pass": true,
-  "info": "São 16:35."
+  "info": "São 16:39."
  },
  {
   "p": "Novidades",
@@ -321,7 +321,7 @@
   "p": "Novidades",
   "name": "e-mail: abre o e-mail inteiro dentro da app (até ao fim, com anexos)",
   "pass": true,
-  "info": "Proposta de estágio\nAna RH\nana@empresa.pt · 12/11, 16:36\npara ryan@x.pt\nOlá Ryan,\n\nSegue a proposta completa do estágio com todos os detalhes do contrato e a pa"
+  "info": "Proposta de estágio\nAna RH\nana@empresa.pt · 12/11, 16:40\npara ryan@x.pt\nOlá Ryan,\n\nSegue a proposta completa do estágio com todos os detalhes do contrato e a pa"
  },
  {
   "p": "Novidades",
@@ -465,13 +465,13 @@
   "p": "Voz",
   "name": "Voz Gemini: a língua vai na configuração da voz (pt-BR) e a voz é a mesma",
   "pass": true,
-  "info": "{\"at\":41,\"text\":\"Boa tarde, Ryan. Hoje é quinta-feira, 12 de novembro.\",\"lang\":\"pt-BR\",\"voice\":{\"voiceName\":\"Charon\"}}"
+  "info": "{\"at\":45,\"text\":\"Boa tarde, Ryan. Hoje é quinta-feira, 12 de novembro.\",\"lang\":\"pt-BR\",\"voice\":{\"voiceName\":\"Charon\"}}"
  },
  {
   "p": "Voz",
   "name": "Resumo: o 1.º pedaço é só a saudação (começa a falar em segundos) e o resto é pedido logo a seguir, em paralelo",
   "pass": true,
-  "info": "[[41,53],[42,224]]"
+  "info": "[[45,53],[46,224]]"
  },
  {
   "p": "Voz",
@@ -501,7 +501,7 @@
   "p": "Contas",
   "name": "Criar conta: mostra o código de recuperação (só uma vez)",
   "pass": true,
-  "info": "5ZST-LJZF-MH7B-U76H"
+  "info": "UYP9-9WA6-B2ZW-7J7D"
  },
  {
   "p": "Contas",
@@ -645,13 +645,13 @@
   "p": "Contas",
   "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
   "pass": true,
-  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"aa548bc209257b49267f7aaf\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-12T16:36:26.146Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"554d0b5bac8369046ef2ec64\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-12T16:41:04.542Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
  },
  {
   "p": "Contas",
   "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
   "pass": true,
-  "info": "{\"ult\":1794501405054,\"ent\":1,\"dias\":{\"2026-11-12\":50}}"
+  "info": "{\"ult\":1794501683429,\"ent\":1,\"dias\":{\"2026-11-12\":50}}"
  },
  {
   "p": "Contas",
@@ -739,9 +739,9 @@
  },
  {
   "p": "Contas",
-  "name": "IA de reserva numa conta: vai pelo servidor do Prumo (api/ia?p=livre), sem ligar do aparelho à Pollinations",
+  "name": "IA de reserva numa conta: se a ligação do aparelho falhar (\"Failed to fetch\", limite da grátis), responde pelo servidor do Prumo (api/ia?p=livre)",
   "pass": true,
-  "info": "{\"t\":\"Olá! Aqui é a tua IA.\",\"direct\":0,\"eng\":\"reserva\"}"
+  "info": "{\"t\":\"Olá! Aqui é a tua IA.\",\"direct\":1,\"eng\":\"reserva\"}"
  },
  {
   "p": "Contas",
@@ -837,13 +837,13 @@
   "p": "Contas",
   "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
   "pass": true,
-  "info": "20261112163713-e5f1ba"
+  "info": "20261112164154-a0290c"
  },
  {
   "p": "Contas",
   "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
   "pass": true,
-  "info": "{\"id\":\"20261112163713-e5f1ba\",\"uid\":\"8607d3fe6bcd9881559eefd0\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+  "info": "{\"id\":\"20261112164154-a0290c\",\"uid\":\"1ef7714eea61f2dab7211fe8\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
  },
  {
   "p": "Contas",
