@@ -190,8 +190,8 @@ const avatar = (p, big) => `<span class="ac-av${big ? ' big' : ''}${okImg(p.img)
 const field = (n, label, type = 'text', extra = '') => `<label class="ac-f"><span>${label}</span><input name="${n}" type="${type}" ${extra}></label>`;
 const lockFields = pin => pin ? `<div class="ac-f ac-pin">${PinC.html('c1', 'Código de acesso (6 números)')}${PinC.html('c2', 'Repete o código')}</div>`
   : `${field('c1', 'Código de bloqueio do perfil', 'password', 'minlength="6" autocomplete="new-password" required placeholder="pelo menos 6 caracteres"')}${field('c2', 'Repete o código', 'password', 'minlength="6" autocomplete="new-password" required')}`;
-// o perfil pessoal do Ryan (ps) fica com a senha; os outros perfis usam o código de 6 números
-const pinFor = p => !(p && p.ps);
+// v3.20: todos os perfis usam o código de 6 números (também o perfil pessoal do Ryan)
+const pinFor = () => true;
 const swatches = sel => `<div class="ac-sw" role="radiogroup" aria-label="Cor">${PCOL.map(c => `<label><input type="radio" name="cor" value="${c}" ${c === sel ? 'checked' : ''}><i style="--c:${c}"></i></label>`).join('')}</div>`;
 const avPick = sel => `<div class="ac-avs" role="radiogroup" aria-label="Avatar">${AVS.map(a => `<label><input type="radio" name="av" value="${a}" ${a === (sel || '') ? 'checked' : ''}><i>${a || 'Aa'}</i></label>`).join('')}</div>`;
 /* avatar do perfil: emoji, uma foto (cortada em quadrado, ~10 KB) ou um personagem do Dominus em pixel art */
@@ -314,7 +314,7 @@ const afterLogin = (j, email) => { if (LS.get(K.owner, '') && LS.get(K.owner, ''
 // v2.97: avisos da administração (senha reposta, e-mail mudado), uma vez em cada aparelho
 const avisos = () => { try { if (!S || !Array.isArray(S.avisos) || !S.avisos.length) return; const k = 'nau:avisos:' + (S.e || ''), seen = LS.get(k, ''), novos = S.avisos.filter(a => String(a.at || '') > seen); if (!novos.length) return;
   LS.set(k, String(novos[novos.length - 1].at || '')); const dt = a => { try { return new Date(a.at).toLocaleString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
-  const txt = a => a.t === 'senha' ? `A administração repôs a senha da tua conta (${dt(a)}). Se não pediste isto, fala com a administração.` : a.t === 'email' ? `O e-mail da tua conta passou de ${a.de || 'o anterior'} para ${S.e} (${dt(a)}). Os teus dados vieram todos. A partir de agora entras com este e-mail.` : '';
+  const txt = a => a.t === 'senha' ? `A administração repôs a senha da tua conta (${dt(a)}). Se não pediste isto, fala com a administração.` : a.t === 'cofre' ? `A administração repôs o teu cofre de Senhas (${dt(a)}), como pediste: abre Eu › Senhas e cria uma senha mestra nova. Se não pediste isto, fala com a administração.` : a.t === 'email' ? `O e-mail da tua conta passou de ${a.de || 'o anterior'} para ${S.e} (${dt(a)}). Os teus dados vieram todos. A partir de agora entras com este e-mail.` : '';
   setTimeout(() => { if (OS.UI && OS.UI.modal) OS.UI.modal(`<div style="padding:20px"><h3 style="margin:0 0 10px">Aviso da administração</h3>${novos.map(a => `<p style="margin:0 0 10px;line-height:1.5">${esc(txt(a))}</p>`).join('')}<button class="btn pri" data-mclose>Percebi</button></div>`); }, 1200); } catch (e) { } };
 
 async function onSubmit(e) { const f = e.target.closest('form[data-acf]'); if (!f) return; e.preventDefault(); if (gBusy) return;
@@ -468,6 +468,8 @@ A.admOne = b => { const c = ADM && ADM.contas[+b.dataset.i]; if (!c) return; con
       <form data-form="admPw" data-i="${+b.dataset.i}" class="adm-f"><input type="text" name="nova" autocomplete="off" placeholder="Senha temporária (vazio = gerar uma)" minlength="8"><input type="password" name="senha" autocomplete="current-password" placeholder="A tua senha (administrador)" required><button class="btn" type="submit">Repor a senha</button></form><div class="adm-out" id="admPwOut" hidden></div>
       <h4 style="margin:18px 0 6px">Mudar o e-mail da conta</h4><p class="mut" style="margin:0 0 10px">A conta passa inteira para o novo e-mail: perfis, dados, ranking, Google e atalhos. Nada se perde. A pessoa entra com o novo e-mail e a mesma senha.</p>
       <form data-form="admEmail" data-i="${+b.dataset.i}" class="adm-f"><input type="email" name="novo" autocomplete="off" placeholder="Novo e-mail" required><input type="password" name="senha" autocomplete="current-password" placeholder="A tua senha (administrador)" required><button class="btn" type="submit">Mudar o e-mail</button></form></div>`}
+    <div class="adm-acc"><h4 style="margin:18px 0 6px">Repor o cofre de Senhas</h4><p class="mut" style="margin:0 0 10px">Para quando a senha mestra se perdeu. O cofre está cifrado com essa senha, que ninguém conhece (nem o Prumo, nem tu): por isso não dá para a mudar sem ela. Ao repor, o cofre fica vazio e ${c.email === Acc.email() ? 'crias' : 'a pessoa cria'} uma senha mestra nova ao abrir Senhas. <b>As senhas que lá estavam perdem-se.</b>${c.email === Acc.email() ? ' Se ainda sabes a tua senha mestra, muda-a em Eu › Senhas › Senha mestra e segurança, sem perder nada.' : ''}</p>
+      <form data-form="admCofre" data-i="${+b.dataset.i}" class="adm-f">${(c.perfis || []).length > 1 ? `<select name="pid" class="field" aria-label="Perfil"><option value="">Todos os perfis</option>${(c.pids || []).map((id, k) => `<option value="${esc(id)}">${esc((c.perfis || [])[k] || id)}</option>`).join('')}</select>` : ''}<input type="password" name="senha" autocomplete="current-password" placeholder="A tua senha (administrador)" required><button class="btn danger" type="submit">Repor o cofre</button></form></div>
     ${c.admin || c.email === Acc.email() ? '' : `<div class="adm-del"><h4 style="margin:18px 0 6px">Apagar esta conta</h4><p class="mut" style="margin:0 0 10px">Apaga a conta, todos os perfis e os dados dela (também do ranking). Não se pode desfazer.</p>
       <form data-form="admDel" data-i="${+b.dataset.i}" class="row gap8" style="flex-wrap:wrap"><input type="password" name="senha" autocomplete="current-password" placeholder="A tua senha (administrador)" required style="flex:1;min-width:180px"><button class="btn danger" type="submit">Apagar a conta</button></form></div>`}</div>`); };
 // v2.97: repor a senha de login e mudar o e-mail de uma conta (pedem a senha do administrador)
@@ -484,6 +486,11 @@ OS.forms.admEmail = async (f, v) => { const c = ADM && ADM.contas[+f.dataset.i];
   try { const j = await conta('adminEmail', { email: c.email, novo, senha: v('senha') }); c.email = j.email; OS.UI.closeModal(); OS.UI.toast(`E-mail mudado: ${j.de} → ${j.email}`, 'pos'); OS.request(); }
   catch (e) { bt.disabled = false; OS.UI.toast(e.message || 'Não consegui mudar o e-mail.', 'neg'); } };
 // o administrador apaga a conta de outra pessoa: pede a senha do administrador e confirma o e-mail
+OS.forms.admCofre = async (f, v) => { const c = ADM && ADM.contas[+f.dataset.i]; if (!c) return; const me = c.email === Acc.email();
+  if (!confirm(`Repor o cofre de Senhas de ${me ? 'ti próprio' : c.email}? O cofre fica vazio e as senhas que lá estavam perdem-se para sempre (ninguém as consegue abrir). ${me ? 'Crias' : 'A pessoa cria'} uma senha mestra nova ao abrir Senhas.`)) return;
+  const bt = f.querySelector('button'); bt.disabled = true;
+  try { const j = await conta('adminCofre', { email: c.email, pid: v('pid') || '', senha: v('senha') }); f.reset(); OS.UI.toast(`Cofre reposto (${(j.perfis || []).join(', ')}). ${me ? 'Abre Senhas para criares' : 'Ao abrir Senhas, a pessoa cria'} uma senha mestra nova.`, 'pos'); }
+  catch (e) { OS.UI.toast(e.message || 'Não consegui repor o cofre.', 'neg'); } finally { bt.disabled = false; } };
 OS.forms.admDel = async (f, v) => { const c = ADM && ADM.contas[+f.dataset.i]; if (!c) return;
   if (!confirm(`Apagar a conta ${c.email} e todos os dados dela? Não se pode desfazer.`)) return;
   const bt = f.querySelector('button'); bt.disabled = true; bt.textContent = 'A apagar…';

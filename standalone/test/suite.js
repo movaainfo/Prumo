@@ -172,11 +172,11 @@ async function profileTests(b, prof) {
   ok('abre o ecrã do código', true, tl + ' ms');
   ok('versão visível no ecrã do código', await E(p, () => /v\d+\.\d+/.test(document.querySelector('.sp-foot').textContent)), await E(p, () => document.querySelector('.sp-foot').textContent));
   await sleep(1500); ok('sem pedido biométrico em modo de teste', (await E(p, () => window.__cred)) === 0);
-  const inp = await E(p, () => { const i = document.getElementById('lkCode'), cs = getComputedStyle(i); return { t: i.type, sec: cs.webkitTextSecurity, bg: cs.backgroundColor, ac: i.autocomplete }; });
-  ok('campo do código sem gestor de palavras-passe', inp.t === 'text' && inp.sec === 'disc' && inp.ac === 'off', JSON.stringify(inp));
+  const inp = await E(p, () => { const i = document.getElementById('lkCode'); return { t: i.type, pin: i.classList.contains('pin-in'), im: i.inputMode, bx: document.querySelectorAll('.lk-pin .pin-bx i').length, ac: i.autocomplete, old: !!document.getElementById('lkOld') }; });
+  ok('v3.20: também no perfil pessoal, o código são 6 casinhas com teclado numérico (sem gestor de palavras-passe) e a opção do código antigo', inp.t === 'text' && inp.pin && inp.im === 'numeric' && inp.bx === 6 && inp.ac === 'off' && inp.old, JSON.stringify(inp));
   const android = /Android/.test(prof.o.userAgent || '');
   ok('modo leve ' + (android ? 'ligado (Android)' : 'conforme o aparelho'), android ? await E(p, () => document.documentElement.classList.contains('lite')) : true);
-  await p.fill('#lkCode', 'errado'); await p.click('.lk-go'); await sleep(400); ok('código errado é recusado', /incorreto/i.test(await E(p, () => document.getElementById('lkMsg').textContent)));
+  await p.fill('#lkCode', '000000'); await sleep(500); ok('código errado é recusado', /incorreto/i.test(await E(p, () => document.getElementById('lkMsg').textContent)));
   await unlock(p); ok('código certo abre a Visão Geral', await E(p, () => !!document.querySelector('.dash')));
   // P · leveza
   const heavy = await E(p, () => { let inf = 0, bf = 0; const who = []; document.querySelectorAll('*').forEach(el => { const cs = getComputedStyle(el); if (cs.animationName !== 'none' && cs.animationIterationCount === 'infinite' && !el.closest('.fd-live')) { inf++; if (who.length < 4) who.push(el.tagName.toLowerCase() + '.' + String(el.className && el.className.baseVal !== undefined ? el.className.baseVal : el.className).trim().split(/\s+/).join('.') + ' (' + cs.animationName + ')'); } if (cs.backdropFilter && cs.backdropFilter !== 'none') bf++; }); return { inf, bf, fixedBg: getComputedStyle(document.body).backgroundAttachment, who }; });
@@ -1008,11 +1008,12 @@ async function areaTests(b) {
   const al = await E(p, () => { const A = OS.Decide.alpha, all = v => ({ q0: v[0], q1: v[1], q2: v[2], q3: v[3], q4: v[4] }); return [A({}, 0)[0], A(all(['Sim', 'Sim', 'Sim', 'Sim', 'Sim']), 10)[0], A(all(['Não', 'Sim', 'Sim', 'Sim', 'Sim']), 200)[0], A(all(['Não', 'Sim', 'Não', 'Sim', 'Sim']), 200)[0], A(all(['Não', 'Sim', 'Sim', 'Sim', 'Sim']), 10)[0]]; });
   ok('decisões: filtro Alpha (24 h, 3 dias, passado)', al[0] === 'Responde às 5 perguntas' && al[1] === 'Esperar 24 h' && al[2] === 'Filtro passado' && al[3] === 'Esperar 3 dias' && al[4] === 'Filtro passado', JSON.stringify(al));
   // ---------- SEGURANÇA ----------
-  const sec = await E(p, async () => { const L = OS.Lock; const r = []; r.push(await L.setCode('errado', 'novo123456')); r.push(await L.setCode('teste1234', '123')); r.push(await L.setCode('teste1234', 'novo123456'));
-    r.push(await L.verifyCode('novo123456')); r.push(await L.verifyCode('teste1234')); r.push(await L.setCode('novo123456', 'teste1234')); return r; });
-  ok('segurança: mudar o código pede o atual e 6+ caracteres', /atual/.test(sec[0]) && /6 caracteres/.test(sec[1]) && sec[2] === null, JSON.stringify(sec));
-  ok('segurança: depois de mudar, o novo código entra e o antigo não', sec[3] === null && /incorreto/i.test(sec[4]) && sec[5] === null);
-  ok('segurança: o código nunca fica guardado em texto', await E(p, () => !JSON.stringify(localStorage).includes('teste1234') && !JSON.stringify(localStorage).includes('novo123456')));
+  const sec = await E(p, async H => { const L = OS.Lock; const r = []; r.push(await L.setCode('errado', '246810')); r.push(await L.setCode('teste1234', 'abc123')); r.push(await L.setCode('teste1234', '246810'));
+    r.push(await L.verifyCode('246810')); r.push(await L.verifyCode('teste1234')); r.push(OS.one('security').pin); OS.setOne('security', { hash: H, pin: 0 }); r.push(await L.verifyCode('teste1234')); return r; }, HASH);
+  ok('segurança: mudar o código pede o atual e 6 números (só números, também no perfil pessoal)', /atual/.test(sec[0]) && /6 números/.test(sec[1]) && sec[2] === null && sec[5] === 6, JSON.stringify(sec));
+  ok('segurança: depois de mudar, o novo código entra e o antigo não', sec[3] === null && /incorreto/i.test(sec[4]) && sec[6] === null);
+  ok('segurança: o código nunca fica guardado em texto', await E(p, () => !JSON.stringify(localStorage).includes('teste1234') && !JSON.stringify(localStorage).includes('"246810"')));
+  ok('v3.20: na conta do dono não há escudo (pode tirar prints e copiar em Senhas)', await E(p, async () => { location.hash = 'senhas'; await new Promise(r => setTimeout(r, 400)); const o = !document.documentElement.classList.contains('esc-sens'); location.hash = 'hoje'; return o; }));
   const lk = await E(p, async () => { const L = OS.Lock; OS.U.ls.del('os2lkfails'); OS.U.ls.del('os2lkwait'); let m = ''; for (let i = 0; i < 5; i++) m = await L.verifyCode('x' + i); const w = await L.verifyCode('teste1234'); localStorage.removeItem('os2lkwait'); OS.U.ls.del('os2lkwait'); return [m, w]; });
   ok('segurança: 5 códigos errados bloqueiam 30 s (mesmo com o certo)', /5 vezes/.test(lk[0]) && /Espera/.test(lk[1]), JSON.stringify(lk));
   // ---------- CLIMA ----------
@@ -2249,6 +2250,15 @@ async function admSenhaTests(b) { cur = 'ADM'; console.log('\n=== ADM: repor sen
   const tr = await call({ op: 'senhaTroca', nova: 'bia-nova-123' }, t1.token);
   ok('Troca obrigatória: a pessoa escolhe a sua senha e entra normalmente', !!tr.token && !tr.conta.trocar && !!(await call({ op: 'entrar', email: em, senha: 'bia-nova-123' })).token);
   ok('Troca obrigatória: depois disso, "senhaTroca" já não serve (a senha muda-se em Definições)', (await call({ op: 'senhaTroca', nova: 'outra-coisa-1' }, tr.token))._st === 400);
+  // v3.20: repor o cofre de Senhas (a senha mestra perdeu-se; ninguém a conhece, por isso o cofre fica vazio)
+  await call({ op: 'gravar', p: pid, docs: { 'one~vault': { t: Date.now(), data: { salt: 'AAAA', box: { iv: 'x', ct: 'y' }, n: 3 } } } }, tr.token, 'dados');
+  const cfNo = await call({ op: 'adminCofre', email: em, senha: 'bia-nova-123' }, tr.token);
+  ok('ADM: só a administração pode repor um cofre', cfNo._st === 403, JSON.stringify(cfNo).slice(0, 100));
+  const cf = await call({ op: 'adminCofre', email: em, senha: 'segredo123' }, A), vd = await call({ op: 'ler', p: pid, ids: ['one~vault'] }, tr.token, 'dados');
+  const vv = ((vd.docs || {})['one~vault'] || {}).data || {};
+  ok('ADM: repor o cofre deixa-o vazio (para a pessoa criar uma senha mestra nova) e ela vê o aviso', cf._st === 200 && !!vv.reset && !vv.box && !vv.salt && ((await call({ op: 'eu' }, tr.token)).conta.avisos || []).some(a => a.t === 'cofre'), JSON.stringify({ cf, vv }).slice(0, 200));
+  await call({ op: 'perfil', acao: 'criar', perfil: { nome: 'Ana', lk: HASH } }, A);
+  ok('ADM: também dá para repor o próprio cofre', (await call({ op: 'adminCofre', email: AE, senha: 'segredo123' }, A))._st === 200);
   // mudar o e-mail
   const ex = await call({ op: 'adminEmail', email: em, novo: AE, senha: 'segredo123' }, A);
   ok('ADM: não dá para passar uma conta para o e-mail do administrador', ex._st === 403, JSON.stringify(ex).slice(0, 100));
@@ -3028,6 +3038,14 @@ async function publicoTests(b) { cur = 'Contas públicas'; console.log('\n=== Au
   await E(p, () => OS.setOne('spyke', { siri: true })); const pushed = await E(p, () => OS.Spyke.push(true)); const ak = await E(p, () => OS.Acc.atalho());
   const br = ak ? await fetch(ak.url + '?k=' + encodeURIComponent(ak.key) + '&op=resumo').then(r => r.text()) : '', mine = await E(p, () => OS.Spyke.brief(OS.U.today()));
   ok('Resumo para a Siri: a app guarda-o no servidor e o link devolve o resumo de hoje em texto', pushed === true && br.length > 20 && br === mine, br.slice(0, 120));
+  // v3.20: escudo nas partes sensíveis (contas das outras pessoas)
+  await E(p, () => { location.hash = 'senhas'; }); await sleep(500);
+  const es = await E(p, async () => { const R = document.documentElement, o = { sens: R.classList.contains('esc-sens') };
+    Object.defineProperty(document, 'hidden', { get: () => true, configurable: true }); document.dispatchEvent(new Event('visibilitychange')); o.tapa = R.classList.contains('esc-on');
+    Object.defineProperty(document, 'hidden', { get: () => false, configurable: true }); document.dispatchEvent(new Event('visibilitychange')); await new Promise(r => setTimeout(r, 300)); o.destapa = !R.classList.contains('esc-on');
+    const el = document.querySelector('#view h1, #view h2, #view p'), ev = new Event('copy', { bubbles: true, cancelable: true }); el.dispatchEvent(ev); o.copia = ev.defaultPrevented;
+    o.sel = getComputedStyle(document.getElementById('view')).userSelect; location.hash = 'hoje'; await new Promise(r => setTimeout(r, 400)); o.hoje = R.classList.contains('esc-sens'); return o; });
+  ok('Escudo (conta geral): em Senhas não se copia nem seleciona o texto, e ao sair do app o ecrã fica tapado (destapa ao voltar); no Hoje não', es.sens && es.tapa && es.destapa && es.copia && es.sel === 'none' && !es.hoje, JSON.stringify(es));
   await ctx.close(); }
 async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis (versão pública) ===');
   const errs = [], ctxs = [];

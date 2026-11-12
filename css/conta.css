@@ -172,3 +172,8 @@ html.ac-open,html.ac-open body{overflow:hidden}
 .pin-new .pin{color:inherit}
 @media (max-width:380px){.pin-bx{gap:6px}.pin-bx i{height:48px;border-radius:10px}.lk-pin .pin-bx i{height:52px}}
 .lk-old{display:block;margin:10px auto 0;background:none;border:0;padding:6px 10px;font:italic 500 14px var(--serif);color:#B9B2A6;text-decoration:underline;text-decoration-color:rgba(185,178,166,.4);text-underline-offset:3px;cursor:pointer}
+/* escudo nas partes sensíveis (js/escudo.js): sem selecionar/copiar/imprimir; ao sair do app o ecrã fica tapado */
+html.esc-sens #view{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+html.esc-sens #view input,html.esc-sens #view textarea,html.esc-sens #view select,html.esc-sens #view [contenteditable="true"]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+html.esc-on body::after{content:'';position:fixed;inset:0;z-index:2147483646;pointer-events:none;background:var(--bg,#0b0f14) url(selo-96.png) center/88px no-repeat}
+@media print{html.esc-sens #view,html.esc-sens #modal,html.esc-sens #drawer{display:none!important}html.esc-sens body::before{content:'Esta página tem dados sensíveis e não pode ser impressa.';display:block;padding:40px;font:16px sans-serif;color:#000}}

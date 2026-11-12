@@ -63,10 +63,10 @@ const bioUnlock = async auto => {
 L.verifyBio = async () => { const b = L.bioId(); if (!b) return false; try { await navigator.credentials.get({ publicKey: { challenge: rand(32), allowCredentials: [{ type: 'public-key', id: unb64u(b.id) }], userVerification: 'required', timeout: 45000 } }); return true; } catch (e) { OS.UI.toast(bioErr(e), 'warn'); return false; } };
 L.verifyCode = async v => { const w = wait(); if (w) return `Muitas tentativas. Espera ${w} s.`; if ((await sha(SALT + (v || ''))) === hash()) { U.ls.del('os2lkfails'); return null; }
   const f = U.ls.get('os2lkfails', 0) + 1; U.ls.set('os2lkfails', f); if (f >= 5) { U.ls.set('os2lkwait', Date.now() + 30000); U.ls.set('os2lkfails', 0); return 'Código errado 5 vezes. Espera 30 s.'; } return 'Código incorreto.'; };
-// contas gerais: o código é de 6 números (casinhas); o perfil pessoal do Ryan fica com a senha
-const pubAcc = () => !!(OS.Acc && OS.Acc.on && OS.Acc.pub);
+// v3.20: o código é sempre de 6 números (casinhas), em todas as contas e também no perfil pessoal do Ryan
+const pubAcc = () => true;
 // já tem o código de 6 números (perfil marcado no servidor ou neste perfil)
-L.pinSet = () => pubAcc() && !!((OS.Acc.pin && OS.Acc.pin()) || OS.one('security').pin);
+L.pinSet = () => !!((OS.Acc && OS.Acc.on && OS.Acc.pin && OS.Acc.pin()) || OS.one('security').pin);
 // no ecrã de entrada das contas gerais aparecem SEMPRE as 6 casinhas; quem ainda tem um código antigo com letras toca em "Tenho um código antigo"
 let lkOld = false;
 L.pinMode = () => pubAcc() && !lkOld;

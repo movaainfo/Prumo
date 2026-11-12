@@ -36,7 +36,7 @@ const copy = async (t, what) => { try { await navigator.clipboard.writeText(t); 
 
 /* ---------- página ---------- */
 const hostOf = u => { try { return new URL(/^https?:/.test(u) ? u : 'https://' + u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
-const setup = () => `<section class="pn vlt-gate"><div class="vlt-ic">${UI.ic('key')}</div><h2>Criar o teu cofre</h2>
+const setup = () => `<section class="pn vlt-gate"><div class="vlt-ic">${UI.ic('key')}</div><h2>Criar o teu cofre</h2>${(OS.one('vault') || {}).reset ? `<p class="note" style="margin:0 0 10px">O teu cofre foi reposto pela administração em ${U.fmtD(new Date(OS.one('vault').reset).toISOString().slice(0, 10))}: está vazio. Escolhe uma senha mestra nova.</p>` : ''}
   <p class="mut">Escolhe uma senha mestra: é a única que vais ter de decorar. Tudo o que guardares aqui é cifrado no teu aparelho com ela, antes de ir para a sincronização. Ninguém a vê: nem o Prumo, nem o Google, nem eu.</p>
   <form data-form="vltNew" class="vlt-f" autocomplete="off"><label>Senha mestra (12 caracteres ou mais)<input class="field" type="password" name="p1" minlength="12" required autocomplete="new-password"></label><label>Repete a senha mestra<input class="field" type="password" name="p2" minlength="12" required autocomplete="new-password"></label>
   <label class="vlt-ck"><input type="checkbox" name="ok" required> Percebi: se eu esquecer a senha mestra, o cofre não pode ser aberto por ninguém.</label><button class="btn pri">${UI.ic('lock')}Criar cofre</button></form></section>`;
