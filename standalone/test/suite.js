@@ -47,15 +47,22 @@ const GM = { reset() { this.tokenCalls = []; this.queries = []; this.revoked = n
       return J(200, { items: [{ id: 'e5', summary: 'Escondido', start: { dateTime: at(0, 11) }, end: { dateTime: at(0, 12) } }] }); }
     J(404, { error: { code: 404, message: 'Not Found' } }); } }; GM.reset();
 // Finanças › Banco: Pluggy (Meu Pluggy) e Enable Banking simulados para api/banco
-const BKM = { reset() { this.auth = []; this.jwt = []; this.ebAuth = []; this.del = []; this.txp = []; },
+const BKM = { reset() { this.auth = []; this.jwt = []; this.ebAuth = []; this.del = []; this.txp = []; this.ct = []; this.pgDel = []; this.cuid = ''; },
+  W_ITEM: 'aaaaaaaa-2222-4b2b-9c3d-123456789abc', X_ITEM: 'bbbbbbbb-3333-4b2b-9c3d-123456789abc',
   PG_ITEM: '0b7c2c3e-1111-4a2b-9c3d-123456789abc',
   handle(req, res, u, body) { const J = (st, o) => { res.writeHead(st, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); }, q = u.query, day = o => { const d = new Date(); d.setDate(d.getDate() + o); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }, jb = () => { try { return JSON.parse(body); } catch (e) { return {}; } };
     const p = u.pathname.slice(7);
     if (u.pathname.startsWith('/pgmock/')) {
       if (p === '/auth') { const b = jb(); this.auth.push(b); return b.clientId === 'pg-id' && b.clientSecret === 'pg-segredo' ? J(200, { apiKey: 'PGKEY' }) : J(401, { message: 'invalid' }); }
       if (req.headers['x-api-key'] !== 'PGKEY') return J(403, { message: 'forbidden' });
+      if (p === '/connect_token' && req.method === 'POST') { const b = jb(); this.ct.push(b); this.cuid = (b.options || {}).clientUserId || ''; return J(200, { accessToken: 'CT-1' }); }
+      if (p.startsWith('/items/') && req.method === 'DELETE') { this.pgDel.push(p.slice(7)); return J(200, {}); }
+      if (p === '/items/' + this.W_ITEM) return J(200, { id: this.W_ITEM, status: 'UPDATED', connector: { name: 'Itaú' }, clientUserId: this.cuid });
+      if (p === '/items/' + this.X_ITEM) return J(200, { id: this.X_ITEM, status: 'UPDATED', connector: { name: 'Bradesco' }, clientUserId: 'prumo-de-outra-pessoa' });
       if (p.startsWith('/items/')) return p.slice(7) === this.PG_ITEM ? J(200, { id: this.PG_ITEM, status: 'UPDATED', connector: { name: 'Nubank' }, lastUpdatedAt: new Date().toISOString() }) : J(404, { message: 'not found' });
+      if (p === '/accounts' && q.itemId === this.W_ITEM) return J(200, { results: [{ id: 'acc-itau', type: 'BANK', name: 'Conta Itaú', number: '7777-1', balance: 88.5, currencyCode: 'BRL' }] });
       if (p === '/accounts') return J(200, { results: q.itemId === this.PG_ITEM ? [{ id: 'acc-chk', type: 'BANK', name: 'Conta corrente', number: '0001/12345-6', balance: 1520.35, currencyCode: 'BRL' }, { id: 'acc-cc', type: 'CREDIT', name: 'Nubank Mastercard', number: '5555', balance: 380.1, currencyCode: 'BRL' }] : [] });
+      if (p === '/v2/transactions' && q.accountId === 'acc-itau') return J(200, { results: [{ id: 'i1', date: day(-1) + 'T10:00:00.000Z', description: 'PADARIA REAL', amount: -12, type: 'DEBIT', status: 'POSTED' }], next: null });
       if (p === '/transactions' || p === '/v2/transactions') { this.txp.push(p); const v2 = p === '/v2/transactions', chk = q.accountId === 'acc-chk', T = chk ? ((v2 ? q.after === 'CUR2' : q.page === '2') ? [{ id: 't3', date: day(-2) + 'T12:00:00.000Z', description: 'SALARIO EMPRESA X', amount: 3000, type: 'CREDIT', status: 'POSTED' }, { id: 't4', date: day(-1) + 'T09:00:00.000Z', description: 'UBER *TRIP', amount: 23.5, type: 'DEBIT', status: 'POSTED' }, { id: 't5', date: day(0) + 'T09:00:00.000Z', description: 'NETFLIX.COM', amount: -55.9, type: 'DEBIT', status: 'PENDING' }]
           : [{ id: 't1', date: day(-4) + 'T10:00:00.000Z', description: 'Pix recebido Maria Souza', amount: 250, type: 'CREDIT', status: 'POSTED' }, { id: 't2', date: day(-3) + 'T20:00:00.000Z', description: 'IFOOD *RESTAURANTE BOM', amount: -45.9, type: 'DEBIT', status: 'POSTED', category: 'Food delivery' }]) : [{ id: 'c1', date: day(-2) + 'T10:00:00.000Z', description: 'Amazon Marketplace', amount: 120, type: 'DEBIT', status: 'POSTED' }];
         if (v2) return J(200, { results: T, next: chk && q.after !== 'CUR2' ? '?accountId=acc-chk&after=CUR2' : null });
@@ -2590,7 +2597,30 @@ async function bancoTests(b) { cur = 'Banco'; console.log('\n=== Finanças: banc
   const e2 = await call2('estado'), a2 = await call2('pg.add');
   ok('Outras contas: não veem a ligação automática e ligar um banco é recusado (403); usam "Importar extrato"', e2.ok && e2.adm === false && a2._st === 403 && a2.code === 'admin', JSON.stringify([e2, a2]).slice(0, 300));
   ok('Banco (ligação automática): sem erros de JavaScript', !g.errs.length, g.errs.slice(0, 2).join(' | '));
-  await g.ctx.close(); }
+  await g.ctx.close();
+  // com o plano de produção (PLUGGY_TODOS=1 e ENABLEBANKING_TODOS=1), outra conta liga o próprio banco no widget da Pluggy
+  process.env.PLUGGY_TODOS = '1'; process.env.ENABLEBANKING_TODOS = '1';
+  try { const h = await newPage(b, PROFILES[0], init2), w = h.p; await h.ctx.route(/script\.google\.com|generativelanguage/, rt => rt.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true,"items":[],"docs":{}}' }));
+    let pgcUrl = ''; await h.ctx.route(/cdn\.pluggy\.ai\/pluggy-connect\//, rt => { pgcUrl = rt.request().url(); rt.fulfill({ status: 200, contentType: 'application/javascript', body: `window.PluggyConnect = class { constructor(o) { this.o = o; window.__pgcOpts = { connectToken: o.connectToken, language: o.language }; } init() { setTimeout(() => this.o.onSuccess({ item: { id: '${BKM.W_ITEM}' } }), 50); setTimeout(() => this.o.onClose && this.o.onClose(), 80); } };` }); });
+    await w.setViewportSize({ width: 1200, height: 900 }); await w.goto(BASE); await unlock(w);
+    await E(w, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); location.hash = 'financas.banco'; }); await w.waitForSelector('#view .bnk-auto [data-act=bkPgConnect]', { timeout: 10000 }).catch(() => { });
+    const v0 = await E(w, () => { const el = document.querySelector('#view .bnk-auto'); return el ? { t: el.innerText, pid: !!document.getElementById('bkPgId') } : null; });
+    ok('Plano de produção ligado: outra conta vê "Ligar o meu banco" (Brasil e Europa), sem passos de configuração nem chaves', v0 && /Ligar o meu banco/.test(v0.t) && /Ligar banco/.test(v0.t) && /PSD2/.test(v0.t) && !v0.pid && !/PLUGGY_|ENABLEBANKING_|Vercel/.test(v0.t), JSON.stringify(v0).slice(0, 300));
+    await E(w, () => document.querySelector('#view [data-act=bkPgConnect]').click());
+    await w.waitForFunction(() => Object.keys(OS.one('banklink').accs || {}).includes('pg:acc-itau'), null, { timeout: 12000 }).catch(() => { }); await sleep(300);
+    const v1 = await E(w, () => ({ o: window.__pgcOpts, accs: Object.keys(OS.one('banklink').accs || {}), t: document.querySelector('#view .bnk-auto').innerText }));
+    ok('Widget da Pluggy: abre com o connect token do servidor e, no fim, o banco fica ligado (Itaú) e as contas aparecem para associar', /escolhe a conta do Prumo/.test(await E(w, () => [...document.querySelectorAll('.toast, #toasts *')].map(x => x.innerText).join(' | '))) && /cdn\.pluggy\.ai\/pluggy-connect\/v2\.10\.0\//.test(pgcUrl) && v1.o && v1.o.connectToken === 'CT-1' && v1.accs.includes('pg:acc-itau') && /Itaú/.test(v1.t), JSON.stringify({ pgcUrl, v1 }).slice(0, 300));
+    const ct = BKM.ct[0] || {}, cu = (ct.options || {}).clientUserId || '';
+    ok('A Pluggy recebe um código opaco da pessoa (sem e-mail nem nome) e o pedido evita ligações repetidas', /^prumo-[0-9a-f]{24}$/.test(cu) && !/@|Ryan/.test(JSON.stringify(ct)) && ct.options.avoidDuplicates === true, JSON.stringify(ct));
+    const call3 = (op, x = {}) => fetch(BASE + 'api/banco', { method: 'POST', headers: { 'content-type': 'application/json', origin: 'http://localhost:' + PORT, authorization: 'Bearer ' + tok2 }, body: JSON.stringify(Object.assign({ op, p: pid2 }, x)) }).then(async r => Object.assign({ _st: r.status }, await r.json().catch(() => ({}))));
+    const xa = await call3('pg.add', { item: BKM.X_ITEM }), pe = await call3('pg.add', { item: BKM.PG_ITEM });
+    ok('Ninguém consegue juntar a ligação de outra pessoa (o código do item tem de ser o seu): 403', xa._st === 403 && pe._st === 403, JSON.stringify([xa, pe]).slice(0, 200));
+    await E(w, () => document.querySelector('#view [data-act=bkPgDel]').click()); await sleep(200); await E(w, () => document.querySelector('#modal [data-mok]').click()); await sleep(700);
+    ok('Desligar apaga a ligação também na Pluggy (a autorização no banco termina) e as contas desse banco saem da lista', BKM.pgDel.includes(BKM.W_ITEM) && await E(w, () => !document.querySelector('#view [data-act=bkPgDel]') && !document.querySelector('#view select[data-bkmap="pg:acc-itau"]') && !OS.one('banklink').accs['pg:acc-itau']), JSON.stringify(BKM.pgDel));
+    if (SH) { await E(w, () => document.querySelector('#view .bnk-auto').scrollIntoView()); await w.screenshot({ path: SH + '/banco-todos.png', scale: 'css' }); }
+    ok('Banco (outra conta): sem erros de JavaScript', !h.errs.length, h.errs.slice(0, 2).join(' | '));
+    await h.ctx.close(); }
+  finally { delete process.env.PLUGGY_TODOS; delete process.env.ENABLEBANKING_TODOS; } }
 async function calcTests(b) { cur = 'Calculadora'; console.log('\n=== Calculadora flutuante ===');
   const { ctx, p, errs } = await newPage(b, PROFILES[0]); await ctx.route(/script\.google\.com|generativelanguage/, rt => rt.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true,"items":[],"docs":{}}' }));
   const SH = process.env.SHOTS || ''; await p.setViewportSize({ width: 1200, height: 900 }); await p.goto(BASE); await unlock(p); await E(p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); try { localStorage.removeItem('oc_calc'); } catch (e) { } }); await sleep(400);
