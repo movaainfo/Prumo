@@ -1,277 +1,205 @@
 [
  {
-  "p": "Banco",
-  "name": "Banco: aba própria nas Finanças com a caixa para escolher o extrato",
+  "p": "Contas públicas",
+  "name": "Conta pública: entra como perfil de uma pessoa qualquer (não o pessoal)",
+  "pass": true,
+  "info": "{\"on\":true,\"pub\":true,\"name\":\"Marta\"}"
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: a Cozinha (despensa, lista de compras e receitas) aparece no menu",
+  "pass": true,
+  "info": "cozinha,cozinha,cozinha"
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: 178 páginas e separadores abrem com conteúdo e sem \"undefined/NaN\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Números de qualquer banco: 1.234,56 · 1,234.56 · (12.30) · 150,00 D · 12,30- · -9,90 € · R$ 1.200,00",
+  "p": "Contas públicas",
+  "name": "Conta pública: nada sai para o lado no telemóvel",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Datas: 05/11/2026 · 2026-11-05 14:22 · 20261105120000[-3:BRT] · 5 nov. 2026 · 5 de novembro de 2026 · Nov 5, 2026 · 05.11.26 · 11/25/2026 (EUA)",
+  "p": "Contas públicas",
+  "name": "Conta pública: nenhuma página mostra coisas do Ryan (nome, ISCA, Aveiro)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "QIF: lê data (formato dos EUA), valor e beneficiário",
+  "p": "Contas públicas",
+  "name": "Conta pública: 606 botões carregados sem erros de JavaScript",
+  "pass": true,
+  "info": " :: "
+ },
+ {
+  "p": "Contas públicas",
+  "name": "Conta pública: todos os formulários de registo abrem",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Extrato CSV: encontra a tabela por baixo do cabeçalho do banco e mostra a pré-visualização",
+  "p": "Contas públicas",
+  "name": "Conta pública: sem erros na consola no fim",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Acentos certos (Windows-1252), débitos negativos, créditos positivos e \"Saldo final\" fora",
-  "pass": true,
-  "info": "{\"t\":\"extrato-cgd.csv\\nCSV · 03/11/2026 a 07/11/2026 · 5 movimentos\\nConta no Prumo\\nEscolhe a conta…\\nCaixa Geral de Depósitos · Ordem T\\nRevolut · Conta T\\nNubank · Cartão T (BRL)\\nMillennium BCP · Ordenado T\\n+ Criar conta nova\\nColunas do ficheiro (o Prumo escolheu sozinho; muda se algo estiver trocado)\\nInverter sinais (faturas de cartão em que as compras vêm positivas)\\nAcertar o saldo da conta para € 2453,28 (saldo do extrato a 07/11/2026; o Prumo diz −€ 12,50)\\n4 novos\\n1 já existia (ign"
- },
- {
-  "p": "Banco",
-  "name": "O café que já tinhas escrito à mão é reconhecido (4 novos, 1 já existia)",
-  "pass": true,
-  "info": "4 novos\n1 já existia (ignorado)\n1 linha sem movimento\n+€ 1250,00\n−€ 284,22"
- },
- {
-  "p": "Banco",
-  "name": "Categorias propostas: Continente → Supermercado, vencimento → Salário, EDP → Luz",
+  "p": "Compras",
+  "name": "Compras: a Cozinha no menu Eu e a lista (#mercado leva lá) começa com \"Fazer a lista do mês\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Importar: 4 movimentos entram na conta (marcados como importados) e o saldo fica o do extrato (2 453,28 €)",
+  "p": "Compras",
+  "name": "Compras: a lista do mês sai da Dieta (média dos dias registados × dias do mês)",
   "pass": true,
-  "info": "[{\"type\":\"Despesa\",\"amount\":12.5,\"date\":\"2026-11-03\",\"desc\":\"Café com a Ana\",\"cat\":\"Alimentação\",\"sub\":\"Café & snacks\"},{\"type\":\"Despesa\",\"amount\":45.32,\"date\":\"2026-11-04\",\"desc\":\"COMPRA CONTINENTE AVEIRO\",\"cat\":\"Alimentação\",\"sub\":\"Supermercado\",\"method\":\"Débito\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":200,\"date\":\"2026-11-05\",\"desc\":\"TRF P/ REVOLUT\",\"cat\":\"Outros\",\"sub\":\"Diversos\",\"method\":\""
+  "info": "{\"n\":5,\"days\":10,\"a\":4500,\"dm\":30,\"b\":30}"
  },
  {
-  "p": "Banco",
-  "name": "Revolut: escolhe a moeda (EUR 3 · USD 1), tira os anulados e soma a taxa ao câmbio (−50,50)",
+  "p": "Compras",
+  "name": "Compras: ovos em unidades, leite em ml, e cada coisa na sua secção do supermercado",
   "pass": true,
-  "info": "{\"t\":\"revolut-statement.csv\\nCSV · 05/11/2026 a 08/11/2026 · 3 movimentos\\nConta no Prumo\\nEscolhe a conta…\\nCaixa Geral de Depósitos · Ordem T\\nRevolut · Conta T\\nNubank · Cartão T (BRL)\\nMillennium BCP · Ordenado T\\n+ Criar conta nova\\nMoeda\\nEUR (3)\\nUSD (1)\\nColunas do ficheiro (o Prumo escolheu sozinho; muda se algo estiver trocado)\\nInverter sinais (faturas de cartão em que as compras vêm positivas)\\nAcertar o saldo da conta para € 44,75 (saldo do extrato a 08/11/2026; o Prumo diz € 0,00)\\"
+  "info": "[\"un\",66,\"ml\",\"Mercearia\",\"Talho e peixaria\",\"Laticínios e ovos\"]"
  },
  {
-  "p": "Banco",
-  "name": "O top-up é a outra metade da transferência da CGD (fica uma Transferência, não uma receita)",
+  "p": "Compras",
+  "name": "Compras: com a embalagem e o preço calcula as embalagens e o custo do mês (arroz + detergente)",
   "pass": true,
-  "info": ""
+  "info": "{\"packs\":5,\"cost\":6,\"kpi\":\"Custo do mês€ 8,502 de 6 com preçoItens6Comprados0/6Por semana€ 1,98\",\"manual\":true}"
  },
  {
-  "p": "Banco",
-  "name": "Transferência CGD → Revolut de 200 € num só movimento; Uber Eats → Delivery",
-  "pass": true,
-  "info": "[{\"type\":\"Transferência\",\"amount\":200,\"date\":\"2026-11-05\",\"desc\":\"TRF P/ REVOLUT\",\"cat\":\"\",\"sub\":\"\",\"method\":\"Transferência\",\"to\":\"ktnts5t1x7u\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":18.4,\"date\":\"2026-11-06\",\"desc\":\"Uber Eats\",\"cat\":\"Alimentação\",\"sub\":\"Delivery\",\"method\":\"Débito\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":50.5,\"date\":\"2026-11-08\",\"desc\":\"Exchanged to USD\",\"cat\":\"Outros\",\"su"
- },
- {
-  "p": "Banco",
-  "name": "Importar o mesmo extrato outra vez: nada se repete (0 novos, botão desligado)",
-  "pass": true,
-  "info": "0 novos\n5 já existiam (ignorados)\n1 linha sem movimento\n+€ 0,00\n−€ 0,00"
- },
- {
-  "p": "Banco",
-  "name": "OFX: reconhece o Nubank, propõe conta nova em reais e o saldo do extrato (R$ 2 378,10)",
+  "p": "Compras",
+  "name": "Compras: a vista da semana mostra só uma semana de quantidades",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Conta Nubank criada com 3 movimentos, Drogasil → Farmácia, posto → Combustível, \"&\" certo e saldo R$ 2 378,10",
-  "pass": true,
-  "info": "[{\"type\":\"Despesa\",\"amount\":89.9,\"date\":\"2026-11-02\",\"desc\":\"Compra no débito - Drogasil\",\"cat\":\"Saúde\",\"sub\":\"Farmácia\",\"method\":\"Débito\",\"src\":\"extrato\"},{\"type\":\"Receita\",\"amount\":1500,\"date\":\"2026-11-03\",\"desc\":\"Transferência recebida pelo Pix - JOAO SILVA\",\"cat\":\"Outros\",\"sub\":\"Diversos\",\"method\":\"Transferência\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":32,\"date\":\"2026-11-04\",\"desc\":\"Compra"
- },
- {
-  "p": "Banco",
-  "name": "Fatura de cartão com compras positivas: \"Inverter sinais\" liga-se sozinho",
+  "p": "Compras",
+  "name": "Compras: marcar como comprado risca o item e conta nos comprados",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Cartão: 3 despesas no crédito (Outback → Restaurantes, Uber → Uber/Bolt, Pão de Açúcar → Supermercado) e o pagamento como entrada",
-  "pass": true,
-  "info": "[{\"type\":\"Despesa\",\"amount\":152.3,\"date\":\"2026-11-01\",\"desc\":\"Outback Steakhouse\",\"cat\":\"Alimentação\",\"sub\":\"Restaurantes\",\"method\":\"Crédito\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":27.9,\"date\":\"2026-11-03\",\"desc\":\"Uber *Trip\",\"cat\":\"Transporte\",\"sub\":\"Uber/Bolt\",\"method\":\"Crédito\",\"src\":\"extrato\"},{\"type\":\"Despesa\",\"amount\":210.45,\"date\":\"2026-11-04\",\"desc\":\"Pao de Acucar\",\"cat\":\"Alimentação\""
- },
- {
-  "p": "Banco",
-  "name": "Excel: lê a folha, usa a coluna Tipo (D/C) para o sinal e propõe acertar pelo saldo da última linha",
-  "pass": true,
-  "info": "[[\"03/11/2026\",\"COMPRA PINGO DOCE\",\"Alimentação · Supermercado\",\"−€ 31,15\",\"novo\"],[\"02/11/2026\",\"TRF DE JOAO\",\"Outros · Diversos\",\"+€ 100,00\",\"novo\"],[\"01/11/2026\",\"PAGAMENTO SERVICOS AGUAS DE AVEIRO\",\"Casa · Água\",\"−€ 23,40\",\"novo\"]]"
- },
- {
-  "p": "Banco",
-  "name": "Excel importado: 3 movimentos na conta do Millennium",
+  "p": "Compras",
+  "name": "Compras: atualizar com a dieta junta o que é novo e guarda o que fizeste à mão (item, preço, comprado)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Aprende com o que corriges: \"LOJA DO MANEL\" posto em Lazer › Hobbies faz o próximo vir já assim",
+  "p": "Compras",
+  "name": "Compras: no telemóvel nada sai do ecrã",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "PDF: explica que não dá e pede OFX, CSV ou Excel",
+  "p": "Compras",
+  "name": "Compras: a lista também aparece nas contas das outras pessoas (desde a 3.12)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "No telemóvel a pré-visualização cabe no ecrã",
+  "p": "Compras",
+  "name": "Compras: sem erros na consola",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Banco (extratos): sem erros de JavaScript",
+  "p": "Cozinha",
+  "name": "Cozinha no menu Eu, com Despensa, Lista de compras e Receitas",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Conta do dono: ligação automática com Brasil (Open Finance pela Pluggy) e Europa (PSD2 pelo Enable Banking) prontos",
+  "p": "Cozinha",
+  "name": "Despensa por lugar (Despensa, Frigorífico) com quanto tens e o estado (acabou, a acabar)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "ID errado: explica o formato e não liga nada",
+  "p": "Cozinha",
+  "name": "+ e − mudam a quantidade (o arroz em kg sobe meio quilo)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Pluggy: liga o item e traz a conta corrente e o cartão com os saldos, sem importar antes de associares",
-  "pass": true,
-  "info": "{\"accs\":{\"pg:acc-chk\":{\"bank\":\"Nubank\",\"name\":\"Conta corrente\",\"num\":\"/12345-6\",\"cur\":\"BRL\",\"bal\":1520.35,\"kind\":\"bank\",\"at\":\"2026-11-12T00:24:08.394Z\"},\"pg:acc-cc\":{\"bank\":\"Nubank\",\"name\":\"Nubank Mastercard\",\"num\":\"5555\",\"cur\":\"BRL\",\"bal\":-380.1,\"kind\":\"card\",\"at\":\"2026-11-12T00:24:08.394Z\"}},\"t\":\"Ligação automática\\nsó na tua conta\\nÚltima atualização: agora mesmo\\nAtualizar agora\\nAtualizar soz"
- },
- {
-  "p": "Banco",
-  "name": "Pluggy: o servidor entra com o Client ID e o Secret das variáveis (a app nunca os vê)",
+  "p": "Cozinha",
+  "name": "Na lista de compras aparece o que acabou ou está a acabar na despensa, com quanto comprar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "\"Criar conta no Prumo\": Nubank · Conta corrente em reais com os 4 movimentos confirmados das 2 páginas (o pendente fica de fora)",
-  "pass": true,
-  "info": "{\"a\":{\"inst\":\"Nubank\",\"name\":\"Conta corrente\",\"cur\":\"BRL\"},\"bal\":1520.35,\"T\":[[\"Receita\",250,\"Pix recebido Maria Souza\",\"Outros\",\"Diversos\",\"banco\"],[\"Despesa\",45.9,\"IFOOD *RESTAURANTE BOM\",\"Alimentação\",\"Delivery\",\"banco\"],[\"Receita\",3000,\"SALARIO EMPRESA X\",\"Salário\",\"Salário\",\"banco\"],[\"Despesa\",23.5,\"UBER *TRIP\",\"Transporte\",\"Uber/Bolt\",\"banco\"]]}"
- },
- {
-  "p": "Banco",
-  "name": "Pluggy: movimentos pelo GET /v2/transactions com cursor (o /transactions antigo sai depois de 31/12/2026)",
-  "pass": true,
-  "info": "[\"/v2/transactions\",\"/v2/transactions\",\"/v2/transactions\"]"
- },
- {
-  "p": "Banco",
-  "name": "Categorias sozinhas: iFood → Delivery, salário → Salário, Uber → Uber/Bolt",
+  "p": "Cozinha",
+  "name": "\"Comprei\" repõe na despensa até à quantidade ideal",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "A conta criada pelo banco fica com o saldo do banco (R$ 1 520,35)",
-  "pass": true,
-  "info": "1520.35"
- },
- {
-  "p": "Banco",
-  "name": "\"Não importar\" deixa o cartão de fora",
+  "p": "Cozinha",
+  "name": "O que já tens em casa sai da lista do mês (3 pacotes de massa − 1 que tens = 2)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Atualizar outra vez não duplica nada",
+  "p": "Cozinha",
+  "name": "Marcar como comprado na lista põe na despensa",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "O que apagas de propósito não volta na sincronização seguinte",
+  "p": "Cozinha",
+  "name": "Desmarcar tira da despensa outra vez",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "A ligação fica cifrada no servidor (b/<conta>/<perfil>), sem o ID do item à vista",
-  "pass": true,
-  "info": "1"
- },
- {
-  "p": "Banco",
-  "name": "Enable Banking: lista os bancos de Portugal (só os de particulares), com pedidos assinados (JWT RS256 com o id da aplicação)",
-  "pass": true,
-  "info": "[{\"okJ\":true,\"H\":{\"typ\":\"JWT\",\"alg\":\"RS256\",\"kid\":\"aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee\"},\"P\":{\"iss\":\"enablebanking.com\",\"aud\":\"api.enablebanking.com\",\"iat\":1794443051,\"exp\":1794446651}}]"
- },
- {
-  "p": "Banco",
-  "name": "Ligar no banco: abre o banco, volta a api/banco e mostra \"Banco ligado\" com o número de contas e o botão para o Prumo",
-  "pass": true,
-  "info": "{\"ok\":true,\"t\":\"Banco ligado\\n\\nBanco Teste: 1 conta. Os movimentos aparecem no Prumo em Finanças › Banco.\\n\\nJá podes fechar esta janela e voltar ao Prumo.\\n\\nAbrir o Prumo\",\"back\":\"http://localhost:8781/Oceanum/#financas.banco\"}"
- },
- {
-  "p": "Banco",
-  "name": "Pedido ao banco: particular, regresso a api/banco, até 90 dias e state assinado",
-  "pass": true,
-  "info": "{\"access\":{\"valid_until\":\"2027-02-10T00:23:11.255Z\"},\"aspsp\":{\"name\":\"Banco Teste\",\"country\":\"PT\"},\"state\":\"eyJ1IjoiNWQzYmQ1N2E1MTE4N2RjNGUyZTk3MGQxIiwiYSI6ImRiNjQ0YzZlZjhhYjhlMGI3ZTdiNTdkMWQ2ZTE1OTc3NjYyYTIyMDYiLCJ2IjoxLCJwIjoiNWMxM2FkNWFkMDQyIiwieCI6MTc5NDQ0NDI1MSwibiI6InFUVzkxeC1MIiwiYmFuayI6IkJh"
- },
- {
-  "p": "Banco",
-  "name": "De volta ao Prumo: o banco aparece ligado e a conta dele fica à espera de ser associada",
+  "p": "Cozinha",
+  "name": "Receitas que dá para fazer já com o que tens (massa com atum: massa, atum, tomate pelado, cebola)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Enable Banking: importa os 3 movimentos marcados (com a 2.ª página) e deixa o pendente; MB WAY reconhecido",
-  "pass": true,
-  "info": "{\"T\":[[\"Despesa\",12.4,\"COMPRA CONTINENTE AVEIRO\",\"Alimentação\",\"Supermercado\",\"Débito\"],[\"Receita\",950,\"VENCIMENTO OUTUBRO\",\"Salário\",\"Salário\",\"Débito\"],[\"Despesa\",30,\"MB WAY PARA JOAO\",\"Outros\",\"Diversos\",\"MB WAY\"]],\"diff\":true}"
- },
- {
-  "p": "Banco",
-  "name": "Saldo diferente do banco: botão \"Acertar pelo banco\"",
+  "p": "Cozinha",
+  "name": "Com a cebola reposta, a massa com atum passa para \"Dá para fazer já\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Acertar pelo banco: a conta fica com 842,10 € e diz \"saldo igual ao do banco\"",
+  "p": "Cozinha",
+  "name": "\"Juntar o que falta à lista\" põe os ingredientes na lista de compras",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Regresso com state falso: recusa (\"O pedido expirou\") e não liga nada",
+  "p": "Cozinha",
+  "name": "\"Fiz esta receita\" tira da despensa o que usaste (massa, atum, tomate, cebola)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Desligar o banco cancela a autorização no Enable Banking",
+  "p": "Cozinha",
+  "name": "A IA sugere receitas com o que está na despensa (e o que falta)",
+  "pass": true,
+  "info": "{\"model\":\"openai\",\"messages\":[{\"role\":\"system\",\"content\":\"Respondes APENAS com J"
+ },
+ {
+  "p": "Cozinha",
+  "name": "Cozinha no telemóvel: nada sai do ecrã",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Outras contas: não veem a ligação automática e ligar um banco é recusado (403); usam \"Importar extrato\"",
+  "p": "Cozinha",
+  "name": "Cozinha: aparece também nas contas das outras pessoas (desde a 3.12)",
   "pass": true,
-  "info": "[{\"_st\":200,\"ok\":true,\"adm\":false,\"pronto\":{\"pg\":true,\"eb\":true},\"regresso\":\"http://localhost:8781/Oceanum/api/banco\",\"pg\":[],\"eb\":[]},{\"_st\":403,\"ok\":false,\"code\":\"admin\",\"msg\":\"A ligação automática ao banco é só para a conta do dono do Prumo (os planos gratuitos só leem as contas do próprio). Usa "
+  "info": ""
  },
  {
-  "p": "Banco",
-  "name": "Banco (ligação automática): sem erros de JavaScript",
+  "p": "Cozinha",
+  "name": "Cozinha: sem erros de JavaScript",
   "pass": true,
   "info": ""
  }
