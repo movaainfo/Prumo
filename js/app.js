@@ -13,7 +13,7 @@ const NAV = [
   ['Carreira', [['trabalho', 'Trabalho', 'briefcase'], ['carreira', 'Carreira e contactos', 'users'], ['capital', 'Capital Profissional', 'star'], ['oportunidades', 'Oportunidades', 'door']]],
   ['Direção', [['next', 'Plano de vida', 'compass'], ['decisoes', 'Centro de decisões', 'scale'], ['revisao', 'Revisões', 'rewind']]]];
 OS.NAV = NAV; // a conta de administração junta o separador Admin no fim
-const TITLES = { dominus: ['Dominus', 'Jogo'], definicoes: ['Definições', 'Sistema'], admin: ['Administração', 'Admin'] };
+const TITLES = { dominus: ['Dominus', 'Jogo'], definicoes: ['Definições', 'Sistema'], admin: ['Administração', 'Admin'], planos: ['Planos', 'Sistema'] };
 NAV.forEach(([g, items]) => items.forEach(([k, l]) => TITLES[k] = [l, g]));
 TITLES.control = ['Painel', 'Visão geral']; TITLES.painel = ['Painel', 'Visão geral'];
 TITLES.mova = [OS.one ? 'Mova' : 'Mova', 'Empresa'];

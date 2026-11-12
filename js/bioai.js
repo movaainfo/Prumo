@@ -94,7 +94,7 @@ AI.models = list => { const L = (list || MODELS).filter(m => !AI.blocked(m)), g 
   return L.filter(ok).sort((a, b) => g[b] - g[a]).concat(L.filter(m => !ok(m))); };
 AI.gemini = () => AI.models(MODELS).filter(m => !/^gemma/.test(m));
 // v2.96: análises a fundo (planos, currículo, mentor…) tentam primeiro os modelos "pro" do Google (pensam mais; o Vercel Pro dá-lhes tempo). Se a cota "pro" acabar, seguem os rápidos como sempre.
-AI.order = (list, deep) => { if (!deep) return list; const pro = list.filter(m => /pro/.test(m) && !/^gemma/.test(m)).slice(0, 2); return pro.concat(list.filter(m => !pro.includes(m))); };
+AI.order = (list, deep) => { if (!deep || (OS.Plano && !OS.Plano.can('deep'))) return list; const pro = list.filter(m => /pro/.test(m) && !/^gemma/.test(m)).slice(0, 2); return pro.concat(list.filter(m => !pro.includes(m))); };
 AI.deep = q => { const s = String(q || ''); return s.length > 260 || /analis|anális|plano|planej|planei|estratég|estrateg|compar|avalia|aconselh|devo |decid|prioriz|otimiz|diagn|projeç|projec|previs|simula/i.test(s); };
 AI.limitMsg = 'A cota grátis dos modelos do Google acabou por hoje e a IA de reserva não respondeu. Tenta daqui a um minuto.';
 // IA grátis de reserva: sem chave e sem limite diário (modelo aberto GPT-OSS na Pollinations). Desliga-se em Definições da IA (freeAI = false).
@@ -123,6 +123,7 @@ AI.json = async (parts, temp = .2, o = {}) => { const key = AI.key(); if (!key) 
   for (const m of list) { const gemma = /^gemma/.test(m); try { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: gemma ? parts.concat([{ text: '\nResponde APENAS com o JSON pedido, sem texto à volta.' }]) : parts }], generationConfig: gemma ? { temperature: temp } : { responseMimeType: 'application/json', temperature: temp } }) });
       const j = await r.json().catch(() => ({})), msg = (j.error && j.error.message) || '';
       if (!r.ok) { if (/API key not valid|API_KEY_INVALID/i.test(msg)) throw Object.assign(new Error('A chave da IA não é válida. Volta a copiá-la em aistudio.google.com/apikey.'), { fatal: 1 });
+        if (r.status === 402) throw Object.assign(new Error(msg || 'Esta função não está no teu plano.'), { fatal: 1 });
         if (r.status === 429) { AI.markLimit(m, msg); limited++; last = 'limite'; continue; } if (r.status === 503 || r.status === 504) { AI.markLimit(m, 'overloaded'); last = 'sobrecarregado'; continue; } if (AI.isDead(r.status, msg)) { AI.markDead(m); last = 'modelo desligado'; continue; } last = msg || 'erro ' + r.status; continue; }
       const txt = ((((j.candidates || [])[0] || {}).content || {}).parts || []).map(p => p.text || '').join('').replace(/```(?:json)?/g, '').trim();
       try { AI.lastEngine = m; return JSON.parse(txt); } catch (e) { const mm = txt.match(/[\[{][\s\S]*[\]}]/); if (mm) return JSON.parse(mm[0]); throw e; } }
@@ -136,8 +137,8 @@ AI.json = async (parts, temp = .2, o = {}) => { const key = AI.key(); if (!key) 
   throw new Error('A IA está ocupada agora (os modelos do Google estão sobrecarregados e a reserva não respondeu). Tenta daqui a um minuto.'); };
 // texto simples (resumos, explicações): Google primeiro, reserva grátis depois
 AI.text = async (prompt, o = {}) => { const key = AI.key(); if (key) { await AI.discover(); for (const m of AI.order(AI.models(), o.deep)) { try { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: (o.system ? o.system + '\n\n' : '') + prompt }] }], generationConfig: { temperature: o.temp == null ? .4 : o.temp } }) });
-      const j = await r.json().catch(() => ({})), msg = (j.error && j.error.message) || ''; if (!r.ok) { if (r.status === 429) AI.markLimit(m, msg); else if (r.status === 503 || r.status === 504) AI.markLimit(m, 'overloaded'); else if (AI.isDead(r.status, msg)) AI.markDead(m); continue; }
-      const t = ((((j.candidates || [])[0] || {}).content || {}).parts || []).map(p => p.text || '').join('').trim(); if (t) { AI.lastEngine = m; return t; } } catch (e) { } } }
+      const j = await r.json().catch(() => ({})), msg = (j.error && j.error.message) || ''; if (!r.ok) { if (r.status === 402) throw Object.assign(new Error(msg || 'Esta função não está no teu plano.'), { plano: 1 }); if (r.status === 429) AI.markLimit(m, msg); else if (r.status === 503 || r.status === 504) AI.markLimit(m, 'overloaded'); else if (AI.isDead(r.status, msg)) AI.markDead(m); continue; }
+      const t = ((((j.candidates || [])[0] || {}).content || {}).parts || []).map(p => p.text || '').join('').trim(); if (t) { AI.lastEngine = m; return t; } } catch (e) { if (e.plano) throw e; } } }
   const m = await AI.free([o.system ? { role: 'system', content: o.system } : null, { role: 'user', content: prompt }].filter(Boolean), { temp: o.temp }); return String(m.content || '').trim(); };
 OS.on('ready', () => { if (AI.key()) setTimeout(() => AI.discover(), 5000); });
 
