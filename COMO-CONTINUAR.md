@@ -311,3 +311,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - Pagou e não voltou: `checkout` guarda `rec.pend` {cs, at, modo}; `refreshPlano` (no `eu`) vai ver a sessão no máximo 1 vez por minuto durante 26 h e ativa o plano; `confirmar` apaga o `pend`.
 - `standalone/legalpages.js` gera também `/planos` (público: planos de `_planos.js`, textos `FEAT` de `js/planos.js`, cancelamento, reembolso, contacto). Ligação no ecrã de entrar.
 - Completo sem "voz humana", "modelos mais fortes" e "banco automático" (não funcionam em todas as contas); `CAPS.voz = 1` (voz com a chave da própria pessoa em qualquer plano). Admin › Por fazer: passos do Stripe sem o portal e sem o contabilista (o dono é contabilista); mudar o nome da conta para Prumo.
+
+### 3.24: planos ao entrar, um e-mail uma conta
+- `js/planos.js`: `introTry` (a cada 3 s e no `ready`) leva uma conta em teste grátis (com Stripe ligado, não admin, não paga) a `#planos` uma vez por conta neste aparelho (`os2plIntro:<email>`), depois das perguntas iniciais e com o código aberto; `OS.ui.plIntro` mostra `.pl-intro` com "Continuar com o teste grátis" (`plIntroOk` → `#visao`). O quadro do plano passou de `.pl-st` (choque com o Mundo) a `.pln-st`.
+- `api/conta.js`: `canon(email)` (Gmail/googlemail sem pontos e sem `+…`; Outlook, Hotmail, Live, MSN, iCloud, Proton sem `+…`), índice `c/<emailId(canon)>` → `{eid}`. `outraConta` recusa no registo e no `adminEmail` (409 "ou com uma variação dele"). As contas antigas entram no índice no primeiro `eu` (`rec.cx`). Apagar (a própria, admin, contas de teste) tira do índice.
+- Testes: `email` (variações recusadas e e-mail livre depois de apagar), `planos` (boas-vindas com os planos).

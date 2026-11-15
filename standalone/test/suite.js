@@ -3747,6 +3747,17 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
     ok('Admin › conta: "Automático" devolve a conta ao teste e à assinatura (aqui o teste já acabou: sem plano)', ev2.conta.plano.lvl === 0 && ev2.conta.plano.acabou === 1 && await E(k3.p, () => /Agora: Sem plano/.test(document.getElementById('modal').innerText)), JSON.stringify(ev2.conta.plano));
     try { await E(k3.p, em => { OS.UI.closeModal(); [...document.querySelectorAll('.adm-r[data-q]')].find(x => x.dataset.q.includes(em)).click(); }, a.email); await sleep(400); await k3.p.screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'admin-plano.png') }); } catch (e) { }
     ok('sem erros de JavaScript (Admin › planos)', !k3.errs.filter(e => !/Failed to load|net::|CORS|script\.google/.test(e)).length, k3.errs.slice(0, 3).join(' | ')); await k3.ctx.close();
+    // conta nova em teste grátis: ao entrar aparecem os planos (uma vez), com "Continuar com o teste grátis"
+    process.env.NAUTILO_TESTE_DIAS = '14'; process.env.NAUTILO_PLANOS_DESDE = '2000-01-01'; const nv = await mk('Rui');
+    const k4 = await newPage(b, PROFILES[0], init(nv)); await k4.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k4.p.goto(BASE); await unlock(k4.p);
+    await k4.p.waitForFunction(() => location.hash === '#planos' && !!document.querySelector('#view .pl-intro') && document.querySelectorAll('#view .pl-c').length === 3, null, { timeout: 12000 }).catch(() => { });
+    try { await k4.p.screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'planos-boasvindas.png') }); } catch (e) { }
+    const iv = await E(k4.p, () => ({ h: location.hash, t: ((document.querySelector('#view .pl-intro') || {}).innerText || ''), n: document.querySelectorAll('#view .pl-c').length }));
+    ok('Conta nova em teste grátis: ao entrar aparecem os planos, com os dias grátis e "Continuar com o teste grátis"', iv.h === '#planos' && /14 dias grátis do plano Completo/.test(iv.t) && /Continuar com o teste grátis/.test(iv.t) && iv.n === 3, JSON.stringify(iv).slice(0, 240));
+    await E(k4.p, () => document.querySelector('#view [data-act=plIntroOk]').click()); await sleep(500);
+    const h1 = await E(k4.p, () => location.hash); await k4.p.reload(); await unlock(k4.p); await sleep(4200);
+    ok('"Continuar com o teste grátis" vai para o Painel e os planos não voltam a abrir sozinhos', h1 === '#visao' && await E(k4.p, () => location.hash !== '#planos'), h1);
+    await k4.ctx.close();
   } finally { reset(); SEENRESET(); } }
 async function emailTests(b) { cur = 'E-mail'; console.log('\n=== Confirmar o e-mail com um código no primeiro registo ===');
   const ipx = '10.6.' + crypto.randomBytes(1)[0] + '.' + crypto.randomBytes(1)[0];
@@ -3762,6 +3773,11 @@ async function emailTests(b) { cur = 'E-mail'; console.log('\n=== Confirmar o e-
     const bad = await call({ op: 'verificarEmail', codigo: c1 === '000000' ? '111111' : '000000' }, r.token); ok('Código errado: recusado', bad._st === 400);
     const good = await call({ op: 'verificarEmail', codigo: c1 }, r.token); ok('Código certo: conta confirmada', good.conta && good.conta.verificar === 0);
     const pf = await call({ op: 'perfil', acao: 'criar', perfil: { nome: 'Eva', lk: HASH } }, r.token); ok('Depois de confirmar: cria o perfil normalmente', !!(pf.perfil && pf.perfil.id));
+    { const reg = em => fetch(BASE + 'api/conta', { method: 'POST', headers: { 'content-type': 'application/json', origin: 'http://localhost:' + PORT, 'x-forwarded-for': '10.7.' + crypto.randomBytes(1)[0] + '.' + crypto.randomBytes(1)[0] }, body: JSON.stringify({ op: 'registar', email: em, senha: 'segredo123', nome: 'Var', termos: TERMOS_V, saude: true, idade: true }) }).then(async r => Object.assign(await r.json(), { _st: r.status }));
+      const k = crypto.randomBytes(3).toString('hex'), r1 = await reg('ana.v' + k + '@gmail.com'), r2 = await reg('anav' + k + '+promo@gmail.com'), r3 = await reg('ANA.V' + k + '@googlemail.com'), r4 = await reg('ana.v' + k + '@gmail.com'), r5 = await reg('anav' + k + '@outlook.com');
+      ok('Um e-mail, uma conta: o mesmo e-mail ou variações dele (pontos, "+…", googlemail) não criam outra conta', !!r1.token && r2._st === 409 && r3._st === 409 && r4._st === 409 && !!r5.token && /variação/.test(r2.msg || ''), JSON.stringify([r2._st, r3._st, r4._st, !!r5.token]));
+      await fetch(BASE + 'api/conta', { method: 'POST', headers: { 'content-type': 'application/json', origin: 'http://localhost:' + PORT, authorization: 'Bearer ' + r1.token }, body: JSON.stringify({ op: 'apagar', senha: 'segredo123' }) });
+      const r6 = await reg('anav' + k + '+novo@gmail.com'); ok('Depois de apagar a conta, o e-mail fica livre outra vez', !!r6.token, JSON.stringify(r6).slice(0, 120)); }
     const tst = await call({ op: 'registar', email: 'auto' + crypto.randomBytes(4).toString('hex') + '@nautilo.test', senha: 'segredo123', nome: 'T', termos: TERMOS_V, saude: true, idade: true }); ok('Contas de teste (@nautilo.test) não precisam de confirmar', tst.verificar === 0);
     // na app: criar conta → "Confirma o teu e-mail" com as 6 casinhas → código de recuperação
     const ctx = await b.newContext(PROFILES[0].o), p = await ctx.newPage(); await p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await p.goto(BASE);

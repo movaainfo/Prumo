@@ -65,11 +65,22 @@ const cards = (c, P0) => { const cur = curOf(c), ci = OS.ui.plCiclo === 'ano' ? 
 const V0 = () => { const c = PL.cur(); loadPre(); const P0 = PRE;
   const adm = c.admin && P0 && !P0.cobranca ? `<div class="pn"><h3 style="margin:0 0 6px">Abrir as assinaturas (só tu vês isto)</h3><ol class="ai-steps"><li>Cria conta em <b>stripe.com</b> e completa os dados da tua atividade (o Stripe pede a identificação e o IBAN para receberes).</li><li>Em Developers → API keys, copia a <b>chave secreta</b> (começa por <code>sk_live_</code>; para experimentar, <code>sk_test_</code>).</li><li>No Vercel, projeto prumo → Settings → Environment Variables, cria <code>STRIPE_SECRET_KEY</code> com essa chave e faz Redeploy. Cola-a só no Vercel.</li><li>No Stripe, em Settings → Billing → <b>Customer portal</b>, carrega em Guardar (é onde cada pessoa muda o cartão e vê as faturas).</li></ol><p class="mut" style="margin:0">Os preços estão em <code>api/_planos.js</code> (ou na variável <code>NAUTILO_PRECOS</code>). Até ligares o Stripe ninguém fica bloqueado.</p></div>` : '';
   const man = c.pago ? `<div class="row gap8" style="flex-wrap:wrap;margin-top:12px"><button class="btn sm" data-act="plPortal">${UI.ic('card')}Gerir pagamento e faturas</button>${c.cancelar ? `<button class="btn sm" data-act="plRetomar">Retomar a assinatura</button>` : `<button class="btn sm ghost" data-act="plCancelar">Cancelar a assinatura</button>`}</div>` : '';
-  return UI.head('Planos', 'Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres.', '', 'Sistema') + `<div class="pl-page">
-    <div class="pn pl-st"><div class="pn-h"><h3>${UI.ic('star')}O teu plano</h3>${c.lvl ? `<span class="bdg ${c.teste ? 'warn' : 'pos'}">${esc(c.teste ? 'Teste do Completo' : c.n || NOME[c.lvl])}</span>` : '<span class="bdg neg">sem plano</span>'}</div><p style="margin:0">${status(c)}</p>${man}</div>
+  const intro = OS.ui.plIntro && c.teste ? `<div class="pn pl-intro"><h3>Bem-vindo ao Prumo</h3><p>Tens <b>${dias(c.ate)} dias grátis do plano Completo</b>, sem cartão. Escolhe já o teu plano aqui em baixo ou continua com o teste: avisamos-te antes de acabar e os teus dados ficam sempre guardados.</p><button type="button" class="btn pri" data-act="plIntroOk">Continuar com o teste grátis</button></div>` : '';
+  return UI.head('Planos', 'Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres.', '', 'Sistema') + `<div class="pl-page">${intro}
+    <div class="pn pln-st"><div class="pn-h"><h3>${UI.ic('star')}O teu plano</h3>${c.lvl ? `<span class="bdg ${c.teste ? 'warn' : 'pos'}">${esc(c.teste ? 'Teste do Completo' : c.n || NOME[c.lvl])}</span>` : '<span class="bdg neg">sem plano</span>'}</div><p style="margin:0">${status(c)}</p>${man}</div>
     ${adm}${P0 ? cards(c, P0) : '<div class="pn"><p class="mut" style="margin:0">A carregar os preços…</p></div>'}
     <p class="mut pl-legal">Os novos ganham ${(P0 && P0.testeDias) || 14} dias grátis do plano Completo, sem cartão. As assinaturas renovam sozinhas; cancelas quando quiseres e o plano continua até ao fim do período pago. Os pagamentos são feitos pelo Stripe: o Prumo nunca vê o teu cartão. Mais nos <a class="acc" href="termos.html" target="_blank" rel="noopener">Termos</a>.</p></div>`; };
 OS.views.planos = () => V0();
+
+/* ---------- v3.24: os planos aparecem sozinhos ao entrar (uma vez por conta neste aparelho), durante o teste grátis ---------- */
+const introKey = () => 'os2plIntro:' + ((OS.Acc && OS.Acc.email && OS.Acc.email()) || '');
+const introDue = () => { const c = PL.cur(); if (!(OS.Acc && OS.Acc.on && OS.Acc.email && OS.Acc.email()) || !c.teste || !c.cobranca || c.admin || c.pago || U.ls.get(introKey(), 0)) return false;
+  if (document.getElementById('acc') || (OS.Onb && OS.Onb.isOpen && OS.Onb.isOpen()) || !(window.__noOnb || (OS.one('onb') || {}).done)) return false;
+  if (OS.Legal && OS.Legal.pending && OS.Legal.pending()) return false; const m = document.getElementById('modal'); if (m && !m.hidden) return false;
+  return !(OS.Lock && OS.Lock.unlocked) || OS.Lock.unlocked(); };
+const introTry = () => { if (!introDue()) return; U.ls.set(introKey(), 1); OS.ui.plIntro = 1; if (location.hash === '#planos') OS.request(); else location.hash = 'planos'; };
+OS.on('ready', () => setTimeout(introTry, 1500)); setInterval(introTry, 3000);
+A.plIntroOk = () => { OS.ui.plIntro = 0; location.hash = 'visao'; };
 
 /* ---------- ações ---------- */
 const volta = () => location.origin + location.pathname;

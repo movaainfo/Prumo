@@ -1,7 +1,8 @@
 {
- "n": 223,
- "hash": "f69484f6b0de",
+ "n": 224,
+ "hash": "866df2ad46ab",
  "notes": [
+  "Planos à vista ao entrar: quem está no teste grátis vê os planos logo depois de entrar (uma vez), com quantos dias grátis faltam e o botão \"Continuar com o teste grátis\". Um e-mail, uma conta: o mesmo e-mail, ou variações que chegam à mesma caixa (no Gmail com pontos ou com \"+…\"), não criam outra conta. Corrigido o quadro \"O teu plano\", que ficava com o texto sobreposto.",
   "Pronto para vender: a página de pagamento mostra o nome, o selo e as cores do Prumo; o portal do cliente (mudar o cartão, ver as faturas com o NIF e cancelar no fim do período) configura-se sozinho; e há uma página pública com os planos, os preços nas três moedas, o cancelamento e o reembolso (no ecrã de entrar, \"Planos e preços\"). Se alguém pagar e fechar a página antes de voltar ao Prumo, o plano ativa sozinho quando abre a app. O plano Completo deixa de prometer o que ainda não funciona em todas as contas (voz humana, modelos mais fortes e banco automático); a voz humana continua a funcionar para quem puser a própria chave, em qualquer plano.",
   "Planos em euros, dólares ou reais: na página Planos escolhes a moeda (€ euro, $ dólar ou R$ real) e o pagamento é feito nessa moeda, sem conversões do Stripe. Quem usa o real vê reais, quem está na Europa vê euros e o resto do mundo vê dólares (Essencial 4,49 $, Avançado 8,99 $, Completo 14,49 $ por mês; o anual dá 2 meses grátis). Se o cartão for de outra moeda, é o banco de quem paga que converte. Depois de assinar, a assinatura fica na moeda escolhida.",
   "Admin › plano de cada conta: na ficha da pessoa escolhes Automático (o teste grátis e depois o plano que ela assinar) ou o Essencial, o Avançado ou o Completo grátis, para sempre ou por 7 dias, 30 dias, 3 meses, 6 meses ou 1 ano; no fim do prazo volta sozinho ao Automático. Se a pessoa pagar um plano maior, fica com o maior. A lista de contas mostra o plano de cada uma e Admin › Por fazer tem o passo a passo para ligar a cobrança (Stripe) e o e-mail do código (Brevo), que some quando estiver feito.",
