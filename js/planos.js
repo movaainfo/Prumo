@@ -11,7 +11,7 @@ const NOME = { 1: 'Essencial', 2: 'Avançado', 3: 'Completo' }, ID = { 1: 'essen
 PL.cur = () => { if (!(OS.Acc && OS.Acc.on)) return { id: 'completo', n: 'Completo', lvl: 3, local: 1 }; const s = OS.Acc.sess && OS.Acc.sess(); return (s && s.plano) || { id: 'completo', n: 'Completo', lvl: 3, porVer: 1 }; };
 PL.lvl = () => +(PL.cur().lvl || 0);
 // funções que dependem do plano (o resto é de todos os planos)
-const CAPS = { fotos: 2, calc: 2, paletas: 2, futebolIA: 2, masmorras: 2, deep: 3, voz: 3, banco: 3 };
+const CAPS = { fotos: 2, calc: 2, paletas: 2, futebolIA: 2, masmorras: 2, deep: 3, voz: 1, banco: 3 };   // voz: com a chave da própria pessoa, em qualquer plano
 PL.can = cap => PL.lvl() >= (CAPS[cap] || 1);
 // páginas que dependem do plano
 const ROUTES = { universidade: 2, cursos: 2, certificacoes: 2, aprendizagem: 2, conhecimento: 2, carreira: 2, capital: 2, oportunidades: 2, investimentos: 2, ativos: 2, cotacoes: 2, simuladores: 2, email: 2, decisoes: 2, coach: 2, relatorios: 3 };
@@ -21,7 +21,8 @@ PL.ROUTES = ROUTES; PL.CAPS = CAPS;
 const FEAT = {
   1: ['Tarefas, hábitos, rotina por horas e agenda', 'Finanças à mão e importar extratos do banco', 'Treino, dieta, corrida, sono e Cozinha', 'Diário, Fé, leituras e Mundo', 'Ranking, dias de foco e Dominus (missões e chefe)', 'Cofre de senhas, atalhos do iPhone e a agenda no Calendário', 'IA: 20 pedidos por dia', '1 perfil'],
   2: ['Tudo do Essencial', 'IA: 150 pedidos por dia, com fotos e PDFs (comida, exames, escala do trabalho)', 'E-mail e notícias com IA', 'Universidade, cursos, carreira e oportunidades', 'Investimentos ao vivo e simuladores', 'Calculadora financeira, gráfica e de cálculo', 'Futebol com a análise da IA e "Ver o jogo"', 'Dominus completo (masmorras), cores e fundos', 'Até 3 perfis'],
-  3: ['Tudo do Avançado', 'IA: 400 pedidos por dia e os modelos mais fortes nas análises a fundo', 'Voz humana do Spyke (Microsoft e ElevenLabs)', 'Relatórios e impostos', 'Banco ligado automaticamente (quando o Prumo abrir a ligação aos bancos)', 'Até 5 perfis'] };
+  3: ['Tudo do Avançado', 'IA: 400 pedidos por dia', 'Relatórios e impostos', 'Até 5 perfis'] };
+PL.FEAT = FEAT;
 const fmtD = ms => ms ? new Date(ms).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 const dias = ms => Math.max(0, Math.ceil((ms - Date.now()) / 864e5));
 const money = (c, cur) => (c / 100).toLocaleString(cur === 'BRL' ? 'pt-BR' : (OS.loc ? OS.loc() : 'pt-PT'), { style: 'currency', currency: cur, minimumFractionDigits: 2 });

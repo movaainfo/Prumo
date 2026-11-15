@@ -107,6 +107,7 @@ const srv = http.createServer((req, res) => {
     STRIPE.calls.push({ m: req.method, p: P, f, auth: req.headers.authorization || '' }); const rid = n => n + '_' + crypto.randomBytes(6).toString('hex'), end = () => Math.floor(Date.now() / 1000) + 30 * 86400;
     const subOf = (meta, cur, amount) => { const id = rid('sub'), x = { id, object: 'subscription', customer: 'cus_' + (meta.uid || 'x').slice(0, 10), livemode: false, status: 'active', cancel_at_period_end: false, metadata: meta, currency: cur, items: { data: [{ id: rid('si'), current_period_end: end(), price: { currency: cur, unit_amount: amount } }] } }; STRIPE.subs[id] = x; return x; };
     if (P === 'products' && req.method === 'POST') return J({ id: rid('prod'), name: f.name });
+    if (P === 'checkout/sessions' && req.method === 'POST' && STRIPE.semMarca && Object.keys(f).some(k => k.startsWith('branding_settings'))) return J({ error: { message: 'Received unknown parameter: branding_settings' } }, 400);
     if (P === 'checkout/sessions' && req.method === 'POST') { const id = rid('cs_test'); STRIPE.ses[id] = { id, f, status: 'open' }; return J({ id, url: 'https://checkout.stripe.test/c/' + id }); }
     let m = P.match(/^checkout\/sessions\/(cs_test_[a-f0-9]+)$/); if (m) { const x = STRIPE.ses[m[1]]; if (!x) return J({ error: { message: 'No such session' } }, 404);
       const meta = { uid: x.f['metadata[uid]'], plano: x.f['metadata[plano]'], ciclo: x.f['metadata[ciclo]'] }; if (STRIPE.paid.has(m[1]) && !x.sub) x.sub = subOf(meta, x.f['line_items[0][price_data][currency]'], +x.f['line_items[0][price_data][unit_amount]']);
@@ -114,6 +115,7 @@ const srv = http.createServer((req, res) => {
     m = P.match(/^subscriptions\/(sub_[a-f0-9]+)$/); if (m) { const x = STRIPE.subs[m[1]]; if (!x) return J({ error: { message: 'No such subscription' } }, 404);
       if (req.method === 'POST') { if ('cancel_at_period_end' in f) x.cancel_at_period_end = f.cancel_at_period_end === 'true'; ['uid', 'plano', 'ciclo'].forEach(k => { if (f['metadata[' + k + ']']) x.metadata[k] = f['metadata[' + k + ']']; }); if (f['items[0][price_data][unit_amount]']) x.items.data[0].price.unit_amount = +f['items[0][price_data][unit_amount]']; }
       return J(x); }
+    if (P === 'billing_portal/configurations' && req.method === 'POST') return J({ id: rid('bpc'), object: 'billing_portal.configuration' });
     if (P === 'billing_portal/sessions') return J({ id: rid('bps'), url: 'https://billing.stripe.test/p/x' });
     J({ error: { message: 'mock: ' + P } }, 404); }); return; }
   if (u.pathname === '/iamock') { let body = ''; req.on('data', c => body += c); req.on('end', () => { let j = {}; try { j = JSON.parse(body); } catch (e) { } IAMOCK.push(j); const json = j.response_format && j.response_format.type === 'json_object';
@@ -3638,6 +3640,8 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
     // 1) conta nova: 14 dias grátis do Completo; os preços
     delete process.env.STRIPE_SECRET_KEY; const a = await mk('Teo'), z = await mk('Zé'); const pl0 = a.conta.plano || {};
     ok('Conta nova: 14 dias grátis do plano Completo, sem cartão', pl0.id === 'completo' && pl0.lvl === 3 && pl0.teste === 1 && pl0.ate > Date.now() + 13 * 864e5, JSON.stringify(pl0));
+    const pub = await (await fetch(BASE + 'planos.html')).text();
+    ok('Página pública "Planos e preços" (para o Stripe): os 3 planos em euros, dólares e reais, cancelamento e reembolso', /Planos e preços/.test(pub) && /12,99\s?€/.test(pub) && /\$14\.49/.test(pub) && /R\$\s?49,90/.test(pub) && /Reembolso/.test(pub) && /Cancelas quando quiseres/.test(pub) && !/Voz humana|modelos mais fortes|Banco ligado/.test(pub), pub.length + '');
     const pp = await call({ op: 'planos' });
     ok('Os três planos com os preços em euros, dólares e reais (mensal e anual)', pp.planos && pp.planos.map(p => p.id).join() === 'essencial,avancado,completo' && pp.planos[0].precos.EUR.mes === 399 && pp.planos[1].precos.USD.mes === 899 && Object.keys(pp.planos[0].precos).join() === 'EUR,USD,BRL' && pp.planos[2].precos.BRL.ano === 49900 && pp.testeDias === 14 && pp.cobranca === false, JSON.stringify(pp).slice(0, 200));
     // 2) teste acabado sem o Stripe ligado: ninguém fica bloqueado
@@ -3652,6 +3656,9 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
     // 4) assinar o Essencial (mensal, euros)
     const co = await call({ op: 'checkout', plano: 'essencial', ciclo: 'mes', cur: 'EUR', volta: 'http://localhost:' + PORT + '/Oceanum/' }, a.tok); const cs = (co.url || '').split('/').pop(), cf = (STRIPE.ses[cs] || {}).f || {};
     ok('Assinar: abre o pagamento do Stripe com o preço do Essencial (3,99 € por mês), a conta e o regresso ao Prumo', /^https:\/\/checkout\.stripe\.test\//.test(co.url || '') && cf.mode === 'subscription' && cf['line_items[0][price_data][unit_amount]'] === '399' && cf['line_items[0][price_data][currency]'] === 'eur' && cf['line_items[0][price_data][recurring][interval]'] === 'month' && /^prod_/.test(cf['line_items[0][price_data][product]'] || '') && cf.success_url === 'http://localhost:' + PORT + '/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}' && cf['adaptive_pricing[enabled]'] === 'false' && STRIPE.calls.every(c => c.auth === 'Bearer sk_test_mock'), JSON.stringify(cf).slice(0, 300));
+    ok('A página de pagamento tem o nome e as cores do Prumo (mesmo que a conta do Stripe tenha outro nome)', cf['branding_settings[display_name]'] === 'Prumo' && /^#[0-9A-F]{6}$/i.test(cf['branding_settings[button_color]'] || ''), JSON.stringify(Object.fromEntries(Object.entries(cf).filter(([k]) => k.startsWith('branding')))));
+    STRIPE.semMarca = 1; const cOld = await call({ op: 'checkout', plano: 'essencial', ciclo: 'mes', cur: 'EUR' }, z.tok); STRIPE.semMarca = 0;
+    ok('Se o Stripe ainda não conhecer a marca na página de pagamento, abre o pagamento sem ela', /checkout\.stripe\.test/.test(cOld.url || ''), JSON.stringify(cOld).slice(0, 160));
     const cU = await call({ op: 'checkout', plano: 'avancado', ciclo: 'ano', cur: 'USD' }, z.tok), fU = (STRIPE.ses[(cU.url || '').split('/').pop()] || {}).f || {};
     const cG = await call({ op: 'checkout', plano: 'avancado', ciclo: 'mes', cur: 'GBP' }, z.tok), fG = (STRIPE.ses[(cG.url || '').split('/').pop()] || {}).f || {};
     ok('Só euros, dólares ou reais: em dólares cobra 89,90 $ por ano; outra moeda (libra) fica em euros', fU['line_items[0][price_data][currency]'] === 'usd' && fU['line_items[0][price_data][unit_amount]'] === '8990' && fU['adaptive_pricing[enabled]'] === 'false' && fG['line_items[0][price_data][currency]'] === 'eur' && fG['line_items[0][price_data][unit_amount]'] === '799', JSON.stringify({ u: fU['line_items[0][price_data][currency]'], g: fG['line_items[0][price_data][currency]'] }));
@@ -3669,6 +3676,11 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
     const ca = await call({ op: 'cancelarPlano' }, a.tok); ok('Cancelar: continua até ao fim do período pago (sem renovar)', ca.conta && ca.conta.plano.cancelar === 1 && ca.conta.plano.lvl === 2, JSON.stringify(ca.conta && ca.conta.plano));
     const re = await call({ op: 'retomarPlano' }, a.tok); ok('Retomar a assinatura', re.conta && !re.conta.plano.cancelar);
     const po = await call({ op: 'portal' }, a.tok); ok('Gerir pagamento e faturas: abre o portal do Stripe', /billing\.stripe\.test/.test(po.url || ''));
+    const po2 = await call({ op: 'portal' }, a.tok), cfgs = STRIPE.calls.filter(c => c.p === 'billing_portal/configurations'), pss = STRIPE.calls.filter(c => c.p === 'billing_portal/sessions');
+    ok('O Prumo configura sozinho o portal do cliente (uma vez): cartão, faturas com NIF e cancelar no fim do período', /billing\.stripe\.test/.test(po2.url || '') && cfgs.length === 1 && cfgs[0].f['features[subscription_cancel][mode]'] === 'at_period_end' && cfgs[0].f['features[customer_update][allowed_updates][3]'] === 'tax_id' && /termos$/.test(cfgs[0].f['business_profile[terms_of_service_url]'] || '') && pss.slice(-2).every(c => /^bpc_/.test(c.f.configuration || '')), JSON.stringify({ n: cfgs.length, conf: pss.map(c => c.f.configuration) }));
+    const w = await mk('Wil'), cw = await call({ op: 'checkout', plano: 'completo', ciclo: 'mes', cur: 'BRL', volta: 'http://localhost:' + PORT + '/Oceanum/' }, w.tok), csw = (cw.url || '').split('/').pop();
+    STRIPE.paid.add(csw); const w1 = await call({ op: 'eu' }, w.tok);
+    ok('Pagou e fechou a página antes de voltar ao Prumo: o plano ativa sozinho na próxima vez que abre a app', (w.conta.plano || {}).lvl === 0 && w1.conta.plano.id === 'completo' && w1.conta.plano.pago === 1 && w1.conta.plano.cur === 'BRL', JSON.stringify({ a: (w.conta.plano || {}).lvl, b: w1.conta.plano }));
     // 6) a administração oferece um plano
     const AE = 'adm' + crypto.randomBytes(4).toString('hex') + '@teste.pt'; process.env.NAUTILO_ADMIN = String(process.env.NAUTILO_ADMIN || '') + ',' + AE; const ad = await call({ op: 'registar', email: AE, senha: 'segredo123', nome: 'Adm', termos: TERMOS_V, saude: true, idade: true });
     ok('Administração: tem sempre tudo', ad.conta.plano.admin === 1 && ad.conta.plano.lvl === 3);

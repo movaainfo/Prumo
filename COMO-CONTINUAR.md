@@ -304,3 +304,10 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `checkout`: `cur = P.moeda(b.cur)`, `adaptive_pricing[enabled]=false` (o Stripe não converte para a moeda local de quem paga), `locale` pt-BR (BRL), pt (EUR), auto (USD). `mudarPlano` fica na moeda da assinatura.
 - `js/planos.js`: seletor € euro / $ dólar / R$ real; por omissão BRL para quem usa o real, EUR na Europa (`EUROPA`), USD no resto; com assinatura mostra "Pagas em …" (sem seletor). Termos › 9 diz as três moedas (esclarecimento, sem versão nova).
 - O dinheiro: a conta Stripe de Portugal deposita em euros (o que entra em dólares ou reais é convertido pelo Stripe); dá para ativar a liquidação em dólares com uma conta bancária em dólares (Definições › Liquidação).
+
+### 3.23: pronto para vender (Stripe configura-se sozinho)
+- `sCfg(ck, make)` guarda no blob `cfg/stripe` (por chave) os produtos e o portal. `portalCfg` cria `billing_portal/configurations` (email, nome, morada, NIF; faturas; cartão; cancelar `at_period_end`; sem mudar de plano no portal) e o `portal` passa `configuration` → não é preciso guardar o portal no painel.
+- `checkout` leva `branding_settings` (display_name Prumo, cores do selo, fonte lora, ícone e logo `icon-512.png` só em https). `sesCria` tenta outra vez sem `branding_settings`/`adaptive_pricing` se o Stripe recusar o parâmetro (versão antiga da API). O nome da conta do Stripe continua nos recibos: muda-se no painel.
+- Pagou e não voltou: `checkout` guarda `rec.pend` {cs, at, modo}; `refreshPlano` (no `eu`) vai ver a sessão no máximo 1 vez por minuto durante 26 h e ativa o plano; `confirmar` apaga o `pend`.
+- `standalone/legalpages.js` gera também `/planos` (público: planos de `_planos.js`, textos `FEAT` de `js/planos.js`, cancelamento, reembolso, contacto). Ligação no ecrã de entrar.
+- Completo sem "voz humana", "modelos mais fortes" e "banco automático" (não funcionam em todas as contas); `CAPS.voz = 1` (voz com a chave da própria pessoa em qualquer plano). Admin › Por fazer: passos do Stripe sem o portal e sem o contabilista (o dono é contabilista); mudar o nome da conta para Prumo.
