@@ -141,8 +141,16 @@ const fimPlano = async (req, cancelar) => { const s = await session(req), p = s.
   const up = await P.stripe('subscriptions/' + p.sub, { cancel_at_period_end: cancelar ? 'true' : 'false' }); const st = Object.assign(P.doStripe(up), { id: p.id, ciclo: p.ciclo });
   const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; };
 // cria o pagamento; se o Stripe da conta ainda não conhecer a marca ou a moeda fixa (versão antiga da API), cria sem elas
-const sesCria = async (params, x) => { try { return await P.stripe('checkout/sessions', params); }
-  catch (e) { if (!(x && e.stripe && e.status === 400 && /branding_settings|adaptive_pricing/.test(e.message || ''))) throw e; const q = Object.assign({}, params); delete q.branding_settings; if (/adaptive_pricing/.test(e.message)) delete q.adaptive_pricing; return P.stripe('checkout/sessions', q); } };
+//   v3.25: e se a conta do Stripe ainda não tiver métodos de pagamento ativos para a moeda, pede só "cartão" (inclui Apple Pay e Google Pay)
+const sesCria = async (params, x) => { let q = Object.assign({}, params);
+  for (let i = 0; i < 3; i++) { try { return await P.stripe('checkout/sessions', q); }
+    catch (e) { const m = String(e.message || ''); if (!(x && e.stripe && e.status === 400)) throw e;
+      if (/branding_settings|adaptive_pricing/.test(m) && (q.branding_settings || q.adaptive_pricing)) { q = Object.assign({}, q); delete q.branding_settings; if (/adaptive_pricing/.test(m)) delete q.adaptive_pricing; continue; }
+      if (/payment method types/i.test(m) && !q.payment_method_types) { q = Object.assign({}, q, { payment_method_types: { 0: 'card' } }); continue; }
+      throw e; } } };
+// um erro do Stripe vira uma mensagem clara para a pessoa (o pormenor fica no registo do servidor, sem chaves)
+const pagErr = (e, onde) => { if (!(e && e.stripe)) return e; console.error('nautilo stripe', onde, e.status || '', String(e.message || '').slice(0, 300));
+  return /payment method types|cannot currently make live charges|not activated|account.*(review|restricted)/i.test(e.message || '') ? N.err('pagamentos', 'Os pagamentos ainda estão a ser ativados. Tenta daqui a pouco; o teu teste grátis continua.', 503) : N.err('pagamentos', 'O pagamento não abriu agora. Tenta daqui a pouco.', 502); };
 const OPS = {
   async registar(req, b) {
     if (N.limit(req, 'registar', 6, 3600e3)) throw N.err('limite', 'Muitas contas criadas a partir daqui. Tenta mais tarde.', 429);
@@ -199,13 +207,13 @@ const OPS = {
     const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : 'mes', cur = P.moeda(b.cur); if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
     const e = P.efetivo(s.rec); if (e.pago) throw N.err('ja', 'Já tens uma assinatura: muda de plano na página Planos.', 409);
     if (N.limit(req, 'checkout|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
-    const volta = voltaDe(req, b.volta), prod = await produto(pl.id), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus;
+    const volta = voltaDe(req, b.volta), prod = await produto(pl.id).catch(e => { throw pagErr(e, 'produto'); }), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus;
     const ses = await sesCria(Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: cur === 'BRL' ? 'pt-BR' : cur === 'EUR' ? 'pt' : 'auto',
       // só euros, dólares ou reais: sem a conversão do Stripe para a moeda local (Adaptive Pricing); um cartão noutra moeda é convertido pelo banco de quem paga
       adaptive_pricing: { enabled: 'false' },
       line_items: { 0: { quantity: 1, price_data: { currency: cur.toLowerCase(), unit_amount: pl.precos[cur][ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: prod } } },
       branding_settings: marca(volta),
-      metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo, app: 'prumo' } } }, cus ? { customer: cus } : { customer_email: s.rec.email }), true);
+      metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo, app: 'prumo' } } }, cus ? { customer: cus } : { customer_email: s.rec.email }), true).catch(e => { throw pagErr(e, 'checkout'); });
     await change(s.eid, r => { r.pend = { cs: ses.id, at: Date.now(), modo: P.modo() }; });
     return { url: ses.url }; },
   // de volta do Stripe: confirma no Stripe (não confia na app) e guarda a assinatura na conta
