@@ -96,17 +96,41 @@ const voltaDe = (req, v) => { const o = String(req.headers.origin || ''), h = /^
   const x = String(v || ''); return x && x.startsWith(h + '/') && x.length < 300 && !/[#?\s]/.test(x) ? x : h + '/'; };
 // um produto no Stripe para cada plano (criado na primeira vez e guardado), com o preço posto em cada pagamento
 const PROD = {};
-const produto = async id => { const kt = String(process.env.STRIPE_SECRET_KEY || '').trim().slice(-6), ck = kt + ':' + id; if (PROD[ck]) return PROD[ck];
+// o que o Prumo cria no Stripe uma vez (por chave): os produtos dos planos e o portal do cliente
+const sCfg = async (ck, make) => { const kt = String(process.env.STRIPE_SECRET_KEY || '').trim().slice(-6); ck = kt + ':' + ck; if (PROD[ck]) return PROD[ck];
   const st = N.store(), key = await N.accKey(); let c = {}; try { const g = await st.get('cfg/stripe'); if (g) c = N.open(key, g.buf) || {}; } catch (e) { }
   if (c[ck]) return (PROD[ck] = c[ck]);
-  const pr = await P.stripe('products', { name: 'Prumo · ' + P.byId(id).n, metadata: { plano: id } }); c[ck] = pr.id; await st.put('cfg/stripe', N.seal(key, c)); return (PROD[ck] = pr.id); };
+  const id = await make(); c[ck] = id; await st.put('cfg/stripe', N.seal(key, c)); return (PROD[ck] = id); };
+const produto = id => sCfg(id, async () => (await P.stripe('products', { name: 'Prumo · ' + P.byId(id).n, metadata: { plano: id, app: 'prumo' } })).id);
+// v3.23: o portal do cliente (cartão, faturas com o NIF, cancelar no fim do período) configurado pelo Prumo: não é preciso guardá-lo no painel do Stripe
+const portalCfg = volta => sCfg('portal', async () => { const u = x => new URL(x, volta).href;
+  return (await P.stripe('billing_portal/configurations', { business_profile: { headline: 'Prumo: a tua assinatura', privacy_policy_url: u('privacidade'), terms_of_service_url: u('termos') }, default_return_url: u('#planos'),
+    features: { customer_update: { enabled: 'true', allowed_updates: { 0: 'email', 1: 'name', 2: 'address', 3: 'tax_id' } }, invoice_history: { enabled: 'true' }, payment_method_update: { enabled: 'true' },
+      subscription_cancel: { enabled: 'true', mode: 'at_period_end' }, subscription_update: { enabled: 'false' } }, metadata: { app: 'prumo' } })).id; });
+// v3.23: a página de pagamento com o nome, o selo e as cores do Prumo (mesmo que a conta do Stripe tenha outro nome)
+const marca = volta => { const u = new URL(volta), img = u.protocol === 'https:' ? { type: 'url', url: new URL('icon-512.png', u).href } : null;
+  return Object.assign({ display_name: 'Prumo', background_color: '#F6EFE4', button_color: '#8E1B2A', border_style: 'rounded', font_family: 'lora' }, img ? { icon: img, logo: img } : {}); };
 // a assinatura muda no Stripe (renovação, cartão recusado, cancelamento): a conta vai lá ver de 6 em 6 horas ou quando o período acaba
-const refreshPlano = async s => { const p = s.rec.plano; if (!P.cobranca() || !p || !p.sub || !P.mesmo(p)) return null; if (Date.now() - (p.at || 0) < 6 * 36e5 && (p.ate || 0) > Date.now()) return null;
+// o pagamento acabado no Stripe vira o plano da conta (confere que é desta conta)
+const planoDe = ses => { const st = P.doStripe(ses.subscription); st.id = st.id || (ses.metadata || {}).plano; st.ciclo = st.ciclo || (ses.metadata || {}).ciclo || 'mes'; return st; };
+const refreshPlano = async s => { if (!P.cobranca()) return null;
+  // v3.23: quem pagou e fechou a página antes de voltar ao Prumo: a conta guarda o último pagamento aberto e vai ao Stripe ver se ficou pago (no máximo 1 vez por minuto, durante 26 h)
+  const pd = s.rec.pend;
+  if (pd && pd.cs && (!pd.modo || pd.modo === P.modo()) && !P.efetivo(s.rec).pago && Date.now() - (pd.chk || 0) > 60e3) {
+    if (Date.now() - (pd.at || 0) > 26 * 36e5) return change(s.eid, r => { delete r.pend; });
+    let ses; try { ses = await P.stripe('checkout/sessions/' + pd.cs, { expand: { 0: 'subscription' } }, 'GET'); } catch (e) { if (e.status === 404) return change(s.eid, r => { delete r.pend; }); throw e; }
+    if (ses.client_reference_id === s.rec.uid && ses.status === 'complete' && ses.subscription && typeof ses.subscription === 'object') { const st = planoDe(ses); return change(s.eid, r => { r.plano = st; delete r.pend; }); }
+    if (ses.status === 'expired' || ses.client_reference_id !== s.rec.uid) return change(s.eid, r => { delete r.pend; });
+    return change(s.eid, r => { if (r.pend) r.pend.chk = Date.now(); }); }
+  const p = s.rec.plano; if (!p || !p.sub || !P.mesmo(p)) return null; if (Date.now() - (p.at || 0) < 6 * 36e5 && (p.ate || 0) > Date.now()) return null;
   const sub = await P.stripe('subscriptions/' + p.sub, null, 'GET'), st = Object.assign(P.doStripe(sub), { id: (sub.metadata && sub.metadata.plano) || p.id, ciclo: (sub.metadata && sub.metadata.ciclo) || p.ciclo });
   return change(s.eid, r => { r.plano = st; }); };
 const fimPlano = async (req, cancelar) => { const s = await session(req), p = s.rec.plano; if (!P.cobranca() || !p || !p.sub || !P.mesmo(p)) throw N.err('sem', 'Ainda não tens assinatura.', 400);
   const up = await P.stripe('subscriptions/' + p.sub, { cancel_at_period_end: cancelar ? 'true' : 'false' }); const st = Object.assign(P.doStripe(up), { id: p.id, ciclo: p.ciclo });
   const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; };
+// cria o pagamento; se o Stripe da conta ainda não conhecer a marca ou a moeda fixa (versão antiga da API), cria sem elas
+const sesCria = async (params, x) => { try { return await P.stripe('checkout/sessions', params); }
+  catch (e) { if (!(x && e.stripe && e.status === 400 && /branding_settings|adaptive_pricing/.test(e.message || ''))) throw e; const q = Object.assign({}, params); delete q.branding_settings; if (/adaptive_pricing/.test(e.message)) delete q.adaptive_pricing; return P.stripe('checkout/sessions', q); } };
 const OPS = {
   async registar(req, b) {
     if (N.limit(req, 'registar', 6, 3600e3)) throw N.err('limite', 'Muitas contas criadas a partir daqui. Tenta mais tarde.', 429);
@@ -160,11 +184,13 @@ const OPS = {
     const e = P.efetivo(s.rec); if (e.pago) throw N.err('ja', 'Já tens uma assinatura: muda de plano na página Planos.', 409);
     if (N.limit(req, 'checkout|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
     const volta = voltaDe(req, b.volta), prod = await produto(pl.id), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus;
-    const ses = await P.stripe('checkout/sessions', Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: cur === 'BRL' ? 'pt-BR' : cur === 'EUR' ? 'pt' : 'auto',
+    const ses = await sesCria(Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: cur === 'BRL' ? 'pt-BR' : cur === 'EUR' ? 'pt' : 'auto',
       // só euros, dólares ou reais: sem a conversão do Stripe para a moeda local (Adaptive Pricing); um cartão noutra moeda é convertido pelo banco de quem paga
       adaptive_pricing: { enabled: 'false' },
       line_items: { 0: { quantity: 1, price_data: { currency: cur.toLowerCase(), unit_amount: pl.precos[cur][ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: prod } } },
-      metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo } } }, cus ? { customer: cus } : { customer_email: s.rec.email }));
+      branding_settings: marca(volta),
+      metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo, app: 'prumo' } } }, cus ? { customer: cus } : { customer_email: s.rec.email }), true);
+    await change(s.eid, r => { r.pend = { cs: ses.id, at: Date.now(), modo: P.modo() }; });
     return { url: ses.url }; },
   // de volta do Stripe: confirma no Stripe (não confia na app) e guarda a assinatura na conta
   async confirmar(req, b) { const s = await session(req); if (!P.cobranca()) throw N.err('cobranca', 'As assinaturas ainda não estão abertas.', 503);
@@ -172,8 +198,7 @@ const OPS = {
     const ses = await P.stripe('checkout/sessions/' + b.sid, { expand: { 0: 'subscription' } }, 'GET');
     if (ses.client_reference_id !== s.rec.uid) throw N.err('outra', 'Este pagamento não é desta conta.', 403);
     if (ses.status !== 'complete' || !ses.subscription || typeof ses.subscription !== 'object') throw N.err('pendente', 'O pagamento ainda não foi concluído.', 409);
-    const st = P.doStripe(ses.subscription); st.id = st.id || (ses.metadata || {}).plano; st.ciclo = st.ciclo || (ses.metadata || {}).ciclo || 'mes';
-    const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; },
+    const st = planoDe(ses); const rec = await change(s.eid, r => { r.plano = st; if (r.pend && r.pend.cs === ses.id) delete r.pend; }); return { conta: pub(rec) }; },
   // mudar de plano ou de ciclo (com a diferença acertada pelo Stripe)
   async mudarPlano(req, b) { const s = await session(req), p0 = s.rec.plano; if (!P.cobranca() || !p0 || !p0.sub || !P.mesmo(p0)) throw N.err('sem', 'Ainda não tens assinatura.', 400);
     const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : b.ciclo === 'mes' ? 'mes' : p0.ciclo || 'mes', cur = P.moeda(p0.cur); if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
@@ -186,7 +211,8 @@ const OPS = {
   async retomarPlano(req, b) { return fimPlano(req, false); },
   // gerir o cartão e ver as faturas (portal do Stripe; precisa de estar ativado no painel do Stripe)
   async portal(req, b) { const s = await session(req), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus; if (!P.cobranca() || !cus) throw N.err('sem', 'Ainda não tens assinatura.', 400);
-    try { const ps = await P.stripe('billing_portal/sessions', { customer: cus, return_url: voltaDe(req, b.volta) + '#planos' }); return { url: ps.url }; }
+    try { const volta = voltaDe(req, b.volta), conf = await portalCfg(volta).catch(() => '');
+      const ps = await P.stripe('billing_portal/sessions', Object.assign({ customer: cus, return_url: volta + '#planos' }, conf ? { configuration: conf } : {})); return { url: ps.url }; }
     catch (e) { throw N.err('portal', 'A gestão de pagamentos ainda não está ativa. Fala com a administração.', 503); } },
   // a administração escolhe o plano da conta: um plano grátis (por uns dias ou sem fim) ou vazio = Automático (teste e depois o que a pessoa assinar)
   //   não pede a senha (como o Spotify): não apaga nada e desfaz-se com outro toque
