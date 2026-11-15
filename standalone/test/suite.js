@@ -105,7 +105,7 @@ const srv = http.createServer((req, res) => {
   // Stripe simulado (planos e cobrança): produtos, pagamento, assinaturas e portal
   if (u.pathname.startsWith('/stripemock/v1/')) { let body = ''; req.on('data', c => body += c); req.on('end', () => { const P = u.pathname.slice('/stripemock/v1/'.length), f = Object.fromEntries(new URLSearchParams(req.method === 'GET' ? String(u.search || '').slice(1) : body)), J = (o, st = 200) => { res.writeHead(st, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); };
     STRIPE.calls.push({ m: req.method, p: P, f, auth: req.headers.authorization || '' }); const rid = n => n + '_' + crypto.randomBytes(6).toString('hex'), end = () => Math.floor(Date.now() / 1000) + 30 * 86400;
-    const subOf = (meta, cur, amount) => { const id = rid('sub'), x = { id, object: 'subscription', customer: 'cus_' + (meta.uid || 'x').slice(0, 10), status: 'active', cancel_at_period_end: false, metadata: meta, currency: cur, items: { data: [{ id: rid('si'), current_period_end: end(), price: { currency: cur, unit_amount: amount } }] } }; STRIPE.subs[id] = x; return x; };
+    const subOf = (meta, cur, amount) => { const id = rid('sub'), x = { id, object: 'subscription', customer: 'cus_' + (meta.uid || 'x').slice(0, 10), livemode: false, status: 'active', cancel_at_period_end: false, metadata: meta, currency: cur, items: { data: [{ id: rid('si'), current_period_end: end(), price: { currency: cur, unit_amount: amount } }] } }; STRIPE.subs[id] = x; return x; };
     if (P === 'products' && req.method === 'POST') return J({ id: rid('prod'), name: f.name });
     if (P === 'checkout/sessions' && req.method === 'POST') { const id = rid('cs_test'); STRIPE.ses[id] = { id, f, status: 'open' }; return J({ id, url: 'https://checkout.stripe.test/c/' + id }); }
     let m = P.match(/^checkout\/sessions\/(cs_test_[a-f0-9]+)$/); if (m) { const x = STRIPE.ses[m[1]]; if (!x) return J({ error: { message: 'No such session' } }, 404);
@@ -3286,7 +3286,7 @@ async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis 
     try { await C.screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'conta-admin-pedidos.png'), fullPage: true }); } catch (e) { }
     await E(C, () => { const b = document.querySelector('#admPed [data-act=admPedido]'); b && b.click(); }); await sleep(1200);
     const adm2 = await api({ op: 'admin' }, await E(C, () => JSON.parse(localStorage.getItem('nau:s')).t));
-    ok('Administração: marcar o pedido como respondido; o que falta configurar (chave da IA) só para o administrador; o Gmail já não está pendente (chave do Google verificada)', ((adm2.pedidos || []).find(x => x.id === prot) || {}).estado === 'respondido' && await E(C, () => document.querySelectorAll('#admPend details').length === 1 && /GEMINI_API_KEY/.test(document.getElementById('admPend').innerText) && !/Gmail e agenda/.test(document.getElementById('admPend').innerText)) && !(await E(L, () => !!document.getElementById('admPend'))), '');
+    ok('Administração: marcar o pedido como respondido; o que falta configurar (chave da IA, Stripe e e-mail) só para o administrador; o Gmail já não está pendente (chave do Google verificada)', ((adm2.pedidos || []).find(x => x.id === prot) || {}).estado === 'respondido' && await E(C, () => document.querySelectorAll('#admPend details').length === 3 && /GEMINI_API_KEY/.test(document.getElementById('admPend').innerText) && /Cobrança das assinaturas \(Stripe\)/.test(document.getElementById('admPend').innerText) && /E-mail com o código de verificação/.test(document.getElementById('admPend').innerText) && !/Gmail e agenda/.test(document.getElementById('admPend').innerText)) && !(await E(L, () => !!document.getElementById('admPend'))), '');
     const pin = await E(L, () => { const h = OS.Diet && OS.Diet.img ? OS.Diet.img('Arroz branco tipo 1 (agulha)', 'Cereais') : ''; return { pub: OS.Acc.pub, pin: /pinimg/.test(h) }; });
     ok('Contas públicas mostram as mesmas fotos dos alimentos', pin.pub && pin.pin, JSON.stringify(pin));
   }
@@ -3669,10 +3669,24 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
     // 6) a administração oferece um plano
     const AE = 'adm' + crypto.randomBytes(4).toString('hex') + '@teste.pt'; process.env.NAUTILO_ADMIN = String(process.env.NAUTILO_ADMIN || '') + ',' + AE; const ad = await call({ op: 'registar', email: AE, senha: 'segredo123', nome: 'Adm', termos: TERMOS_V, saude: true, idade: true });
     ok('Administração: tem sempre tudo', ad.conta.plano.admin === 1 && ad.conta.plano.lvl === 3);
-    const of = await call({ op: 'adminPlano', email: b0.email, plano: 'completo', dias: 30, senha: 'segredo123' }, ad.token), eb = await call({ op: 'eu' }, b0.tok);
+    const of = await call({ op: 'adminPlano', email: b0.email, plano: 'completo', dias: 30 }, ad.token), eb = await call({ op: 'eu' }, b0.tok);
     ok('Administração oferece o Completo por 30 dias (a pessoa vê o aviso)', of._st === 200 && eb.conta.plano.oferta === 1 && eb.conta.plano.lvl === 3 && (eb.conta.avisos || []).some(x => x.t === 'plano'), JSON.stringify(eb.conta.plano));
     const lst = await call({ op: 'admin' }, ad.token); const row = ((lst.contas || []).find(c => c.email === b0.email) || {}).plano || {};
     ok('Admin: a lista de contas mostra o plano de cada uma', row.oferta === 1 && row.id === 'completo', JSON.stringify(row));
+    const lrow = (lst.contas || []).find(c => c.email === b0.email) || {};
+    ok('Admin: com uma oferta, mostra também o que seria no Automático (aqui, sem plano)', lrow.ofer && lrow.ofer.id === 'completo' && lrow.ofer.ate > Date.now() && lrow.auto && lrow.auto.acabou === 1, JSON.stringify({ o: lrow.ofer, a: lrow.auto }));
+    ok('Admin › Por fazer: sabe se o Stripe e o e-mail estão ligados (sem mostrar as chaves)', lst.cfg && lst.cfg.stripe === true && lst.cfg.stripeTeste === true && lst.cfg.mail === '' && !/sk_test_mock/.test(JSON.stringify(lst)), JSON.stringify(lst.cfg));
+    const ess = await call({ op: 'adminPlano', email: a.email, plano: 'essencial' }, ad.token), ea = await call({ op: 'eu' }, a.tok);
+    ok('Admin dá o Essencial grátis a quem paga o Avançado: fica com o maior (Avançado pago)', ess._st === 200 && ea.conta.plano.id === 'avancado' && ea.conta.plano.pago === 1, JSON.stringify(ea.conta.plano));
+    const au = await call({ op: 'adminPlano', email: a.email, plano: '' }, ad.token);
+    ok('Admin: "Automático" tira a escolha (volta ao teste e ao que a pessoa assinou)', au._st === 200 && !au.ofer && au.agora.id === 'avancado' && au.agora.pago === 1, JSON.stringify(au).slice(0, 200));
+    const naoAdm = await call({ op: 'adminPlano', email: b0.email, plano: 'completo' }, a.tok); ok('Só a administração escolhe planos', naoAdm._st === 403);
+    const adSelf = await call({ op: 'adminPlano', email: AE, plano: 'essencial' }, ad.token); ok('A conta de administração não muda de plano (tem sempre tudo)', adSelf._st === 400);
+    // trocar a chave de teste pela real: as assinaturas de teste deixam de contar e o pagamento novo não usa o cliente de teste
+    process.env.STRIPE_SECRET_KEY = 'sk_live_mock'; const el = await call({ op: 'eu' }, a.tok); const nCall = STRIPE.calls.length;
+    const coL = await call({ op: 'checkout', plano: 'completo', ciclo: 'mes', cur: 'EUR', volta: 'http://localhost:' + PORT + '/Oceanum/' }, a.tok), fL = ((STRIPE.calls.slice(nCall).find(c => c.p === 'checkout/sessions') || {}).f) || {};
+    ok('Chave real no lugar da de teste: a assinatura de teste deixa de contar e o novo pagamento não usa o cliente de teste', el.conta.plano.lvl === 0 && !el.conta.plano.pago && /checkout\.stripe\.test/.test(coL.url || '') && !fL.customer && fL.customer_email === a.email, JSON.stringify({ p: el.conta.plano, f: fL.customer || fL.customer_email }));
+    process.env.STRIPE_SECRET_KEY = 'sk_test_mock'; await call({ op: 'eu' }, a.tok);
     // 7) na app: página Planos, páginas com cadeado e o ecrã sem plano
     const init = t => ({ 'nau:s': JSON.stringify({ t: t.tok, e: t.email, n: '', perfis: t.perfis, termos: TERMOS_V }), 'nau:p': JSON.stringify(t.pid), 'nau:pd': JSON.stringify(t.pid), 'nau:owner': JSON.stringify(t.email) });
     const k = await newPage(b, PROFILES[0], init(a)); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k.p.goto(BASE); await unlock(k.p); await sleep(1800); await E(k.p, () => { OS.Jarvis && OS.Jarvis.close(); OS.Spyke && OS.Spyke.close(); OS.UI.closeModal && OS.UI.closeModal(); });
@@ -3693,6 +3707,27 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
     await E(k2.p, () => { location.hash = 'definicoes'; }); await sleep(600);
     ok('Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)', await E(k2.p, () => !/Escolhe o teu plano/i.test(document.getElementById('view').innerText) && !!document.getElementById('plSet')));
     await k2.ctx.close();
+    // Admin na app: escolher o plano de uma conta (Automático ou um plano grátis) e ver o que falta configurar
+    const adp = await call({ op: 'perfil', acao: 'criar', perfil: { nome: 'Adm', lk: HASH } }, ad.token);
+    const k3 = await newPage(b, PROFILES[0], init({ tok: ad.token, email: AE, pid: adp.perfil.id, perfis: adp.conta.perfis })); await k3.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); k3.p.on('dialog', d => d.accept());
+    await k3.p.goto(BASE); await unlock(k3.p); await sleep(1500); await E(k3.p, () => { OS.UI.closeModal && OS.UI.closeModal(); location.hash = 'admin'; }); await k3.p.waitForSelector('.adm-r[data-q]', { timeout: 12000 }).catch(() => { });
+    const lt = await E(k3.p, em => { const r = [...document.querySelectorAll('.adm-r[data-q]')].find(x => x.dataset.q.includes(em)); return r ? (r.querySelector('.adm-plt') || {}).textContent || '' : 'sem linha'; }, b0.email);
+    ok('Admin › Contas: cada conta mostra o plano (Completo grátis)', /Completo grátis/.test(lt), lt);
+    const pnd = await E(k3.p, () => (document.getElementById('admPend') || {}).innerText || '');
+    ok('Admin › Por fazer: os passos do Stripe em modo de teste e do e-mail (Brevo)', /modo de teste/.test(pnd) && /4242 4242 4242 4242/.test(pnd) && /BREVO_API_KEY/.test(pnd) && /NAUTILO_EMAIL_DE/.test(pnd) && !/Cobrança das assinaturas/.test(pnd), pnd.replace(/\s+/g, ' ').slice(0, 300));
+    await E(k3.p, em => [...document.querySelectorAll('.adm-r[data-q]')].find(x => x.dataset.q.includes(em)).click(), b0.email); await sleep(400);
+    const mo = await E(k3.p, () => { const m = document.getElementById('modal'), f = m.querySelector('form[data-form=admPlano]'); return { n: f ? f.querySelectorAll('input[type=radio][name=plano]').length : 0, chk: f ? (f.querySelector('input[name=plano]:checked') || {}).value : null, t: m.innerText, senha: f ? !!f.querySelector('input[type=password]') : true }; });
+    ok('Admin › conta: escolher o plano (Automático, Essencial, Avançado ou Completo grátis), com o atual marcado e sem pedir a senha', mo.n === 4 && mo.chk === 'completo' && /Automático/.test(mo.t) && /Avançado grátis/.test(mo.t) && /Agora: Completo grátis até/.test(mo.t) && !mo.senha, JSON.stringify({ n: mo.n, chk: mo.chk, senha: mo.senha }));
+    await E(k3.p, () => { const f = document.querySelector('#modal form[data-form=admPlano]'); f.querySelector('input[value=avancado]').click(); f.querySelector('select[name=dias]').value = '90'; f.querySelector('button[type=submit]').click(); });
+    await k3.p.waitForFunction(() => /Agora: Avançado grátis até/.test((document.getElementById('modal') || {}).innerText || ''), null, { timeout: 8000 }).catch(() => { });
+    const ev = await call({ op: 'eu' }, b0.tok);
+    ok('Admin › conta: "Avançado grátis" durante 3 meses fica na conta da pessoa', ev.conta.plano.id === 'avancado' && ev.conta.plano.oferta === 1 && ev.conta.plano.ate > Date.now() + 85 * 864e5 && await E(k3.p, () => /Agora: Avançado grátis até/.test(document.getElementById('modal').innerText)), JSON.stringify(ev.conta.plano));
+    await E(k3.p, () => { const f = document.querySelector('#modal form[data-form=admPlano]'); f.querySelector('input[value=""]').click(); f.querySelector('button[type=submit]').click(); });
+    await k3.p.waitForFunction(() => /Agora: Sem plano/.test((document.getElementById('modal') || {}).innerText || ''), null, { timeout: 8000 }).catch(() => { });
+    const ev2 = await call({ op: 'eu' }, b0.tok);
+    ok('Admin › conta: "Automático" devolve a conta ao teste e à assinatura (aqui o teste já acabou: sem plano)', ev2.conta.plano.lvl === 0 && ev2.conta.plano.acabou === 1 && await E(k3.p, () => /Agora: Sem plano/.test(document.getElementById('modal').innerText)), JSON.stringify(ev2.conta.plano));
+    try { await E(k3.p, em => { OS.UI.closeModal(); [...document.querySelectorAll('.adm-r[data-q]')].find(x => x.dataset.q.includes(em)).click(); }, a.email); await sleep(400); await k3.p.screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'admin-plano.png') }); } catch (e) { }
+    ok('sem erros de JavaScript (Admin › planos)', !k3.errs.filter(e => !/Failed to load|net::|CORS|script\.google/.test(e)).length, k3.errs.slice(0, 3).join(' | ')); await k3.ctx.close();
   } finally { reset(); SEENRESET(); } }
 async function emailTests(b) { cur = 'E-mail'; console.log('\n=== Confirmar o e-mail com um código no primeiro registo ===');
   const ipx = '10.6.' + crypto.randomBytes(1)[0] + '.' + crypto.randomBytes(1)[0];

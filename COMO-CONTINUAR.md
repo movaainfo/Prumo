@@ -290,3 +290,11 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `js/escudo.js`: páginas sensíveis (`SENS`) ganham `esc-sens`; ao esconder/perder foco o ecrã fica tapado (selo), PrintScreen, copiar/cortar/arrastar/menu bloqueados, impressão esconde. A conta do dono fica livre (`livre()`). Uma app web não consegue impedir nem detetar capturas ou gravações de ecrã; para isso só a app nativa (Android `FLAG_SECURE`, iOS esconder durante a captura).
 - Admin: `adminCofre` repõe o cofre (apaga, a pessoa cria senha nova; o cofre não se abre sem a senha) e `adminPlano` (oferta com dias, ou retirar). Termos e Privacidade novos (`V` 2026-11-13; secção 9 Planos, pagamentos e cancelamento; Stripe e Resend/Brevo como subcontratantes) → todos voltam a aceitar.
 - Testes: `planos` (mock do Stripe em `/stripemock/v1/`, teste a acabar, paywall, mensal/anual, mudar/cancelar/retomar, oferta do admin, limites de perfis e IA) e `email` (`/emailmock`, código, reenviar, só no registo).
+
+### 3.21: plano de cada conta no Admin e o que falta configurar
+- `adminPlano` (sem senha, como o Spotify): `plano` vazio = Automático (apaga `planoAdm`), senão plano grátis com `dias` (0 = sem fim). A conta de administração não muda. Devolve `agora`, `auto` e `ofer`; a lista `admin` traz `auto` e `ofer` por conta.
+- `efetivo`: a escolha do admin manda, salvo se a pessoa pagar um plano de nível maior (fica com o maior). `P.auto(r)` = o que seria sem a escolha.
+- Modo do Stripe: `doStripe` guarda `modo` (`livemode` → test/live); `P.modo()` pela chave (`sk_test_`/`rk_test_`), `P.mesmo(p)`. Assinaturas e clientes do outro modo não contam (refresh, checkout, mudar, cancelar, portal), para se poder testar com a chave de teste e trocar pela real.
+- `admin` devolve `cfg` {stripe, stripeTeste, mail: resend|brevo|'', mailDe} (nunca os valores). `pendPn` (Admin › Por fazer) mostra os passos do Stripe, o aviso do modo de teste, o Brevo e o remetente, e some quando está feito. Atenção: dentro de `admin()` o nome `P` é a lista dos pedidos (por isso `require('./_planos')` no `cfg`).
+- Admin › conta: `admPlanSec` (escolha em cartões com rádio, prazo, Guardar) logo a seguir aos números da conta; `plTag` na lista. CSS `.adm-pl*`, `.adm-steps`, `.adm-rb` em conta.css.
+- Testes: `planos` (oferta vs pago, Automático, só admin, chave real vs teste, Admin na app).

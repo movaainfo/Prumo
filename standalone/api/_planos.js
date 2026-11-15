@@ -18,17 +18,25 @@ const cobranca = () => !!String(process.env.STRIPE_SECRET_KEY || '').trim();
 const isAdmin = e => String(process.env.NAUTILO_ADMIN || '').toLowerCase().split(',').map(x => x.trim()).filter(Boolean).includes(String(e || '').toLowerCase());
 const TESTE_EMAIL = /@nautilo\.test$/i;
 const ACTIVE = /^(active|trialing|past_due)$/;
+// modo do Stripe pela chave: teste (sk_test_) ou real. Uma assinatura feita no outro modo não conta (ao trocar a chave de teste pela real, as de teste ficam de fora)
+const modo = () => /^(sk|rk)_test_/.test(String(process.env.STRIPE_SECRET_KEY || '').trim()) ? 'test' : 'live';
+const mesmo = p => !!p && (!p.modo || p.modo === modo());
 const testeAte = r => Math.max(Date.parse(r.criado || '') || 0, Date.parse(INICIO()) || 0) + TESTE_DIAS() * DIA;
 // o plano que vale agora para esta conta (o servidor decide; a app só mostra e bloqueia o ecrã)
 const efetivo = r => { const now = Date.now(), mk = (id, extra) => { const p = byId(id); return Object.assign({ id: p.id, n: p.n, lvl: p.lvl, ia: p.ia, perfis: p.perfis }, extra || {}); };
   if (!r) return { id: '', lvl: 0, ia: 0, perfis: 0 };
   if (isAdmin(r.email)) return mk('completo', { admin: 1 });
-  const o = r.planoAdm; if (o && byId(o.id) && (!o.ate || o.ate > now)) return mk(o.id, { oferta: 1, ate: o.ate || 0 });
-  const p = r.plano; if (p && byId(p.id) && ACTIVE.test(p.estado || '') && (p.ate || 0) + 3 * DIA > now) return mk(p.id, { pago: 1, ate: p.ate || 0, cancelar: !!p.cancelar, ciclo: p.ciclo || 'mes', cur: p.cur || 'EUR' });
+  // escolha da administração (plano grátis, por uns dias ou sem fim): manda, salvo se a pessoa pagar um plano maior (fica com o maior)
+  const o = r.planoAdm, of = o && byId(o.id) && (!o.ate || o.ate > now) ? o : null;
+  const p = r.plano, pg = p && byId(p.id) && mesmo(p) && ACTIVE.test(p.estado || '') && (p.ate || 0) + 3 * DIA > now ? p : null;
+  if (of && !(pg && byId(pg.id).lvl > byId(of.id).lvl)) return mk(of.id, { oferta: 1, ate: of.ate || 0 });
+  if (pg) return mk(pg.id, { pago: 1, ate: pg.ate || 0, cancelar: !!pg.cancelar, ciclo: pg.ciclo || 'mes', cur: pg.cur || 'EUR' });
   const t = testeAte(r); if (t > now) return mk('completo', { teste: 1, ate: t });
   if (TESTE_EMAIL.test(r.email || '')) return mk('completo', { contaTeste: 1 });
   if (!cobranca()) return mk('completo', { semCobranca: 1, testeAcabou: t });
   return { id: '', n: '', lvl: 0, ia: 0, perfis: 0, acabou: 1, testeAcabou: t }; };
+// o que a conta teria sem a escolha da administração ("Automático": o teste grátis e depois o que a pessoa assinar)
+const auto = r => efetivo(Object.assign({}, r, { planoAdm: null }));
 
 /* ---------- Stripe (só com a chave secreta no Vercel; sem bibliotecas) ---------- */
 const SAPI = () => process.env.NAUTILO_STRIPE_API || 'https://api.stripe.com';
@@ -42,6 +50,6 @@ const stripe = async (path, params, method = 'POST') => { const key = String(pro
 // o fim do período pago (nas versões novas da API está no item da assinatura)
 const fimDe = s => 1000 * (+s.current_period_end || +(((s.items || {}).data || [])[0] || {}).current_period_end || 0);
 const doStripe = s => ({ sub: s.id, cus: typeof s.customer === 'string' ? s.customer : (s.customer && s.customer.id) || '', estado: s.status || '', ate: fimDe(s), cancelar: !!s.cancel_at_period_end,
-  id: (s.metadata && s.metadata.plano) || '', ciclo: (s.metadata && s.metadata.ciclo) || '', cur: String(s.currency || ((((s.items || {}).data || [])[0] || {}).price || {}).currency || '').toUpperCase(), at: Date.now() });
+  id: (s.metadata && s.metadata.plano) || '', ciclo: (s.metadata && s.metadata.ciclo) || '', modo: s.livemode === true ? 'live' : s.livemode === false ? 'test' : '', cur: String(s.currency || ((((s.items || {}).data || [])[0] || {}).price || {}).currency || '').toUpperCase(), at: Date.now() });
 
-module.exports = { DIA, TESTE_DIAS, planos, byId, cobranca, efetivo, testeAte, isAdmin, stripe, doStripe, ACTIVE };
+module.exports = { DIA, TESTE_DIAS, planos, byId, cobranca, efetivo, auto, testeAte, isAdmin, stripe, doStripe, ACTIVE, modo, mesmo };
