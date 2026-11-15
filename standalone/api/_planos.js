@@ -2,17 +2,19 @@
 //   Essencial → organizar a vida · Avançado → IA e análises · Completo → tudo, sem limites.
 //   Teste grátis: 14 dias do Completo, a contar da criação da conta (as contas que já existiam contam a partir do lançamento dos planos).
 //   Sem STRIPE_SECRET_KEY no Vercel ninguém fica bloqueado (não haveria como pagar): o app funciona como Completo e a página Planos diz "em breve".
-//   Os preços mudam-se aqui ou com NAUTILO_PRECOS no Vercel (JSON: {"essencial":{"EUR":{"mes":399,"ano":3990},"BRL":{...}},…}, em cêntimos).
+//   Paga-se só em euros, dólares ou reais (as moedas que o dono quer receber). Um cartão noutra moeda é convertido pelo banco de quem paga.
+//   Os preços mudam-se aqui ou com NAUTILO_PRECOS no Vercel (JSON: {"essencial":{"EUR":{"mes":399,"ano":3990},"USD":{...},"BRL":{...}},…}, em cêntimos).
 'use strict';
 const DIA = 864e5, TESTE_DIAS = () => { const v = process.env.NAUTILO_TESTE_DIAS; return v != null && v !== '' && +v >= 0 ? +v : 14; };
 const INICIO = () => process.env.NAUTILO_PLANOS_DESDE || '2026-11-13';
 const BASE = [
-  { id: 'essencial', n: 'Essencial', lvl: 1, ia: 20, perfis: 1, precos: { EUR: { mes: 399, ano: 3990 }, BRL: { mes: 1490, ano: 14900 } } },
-  { id: 'avancado', n: 'Avançado', lvl: 2, ia: 150, perfis: 3, precos: { EUR: { mes: 799, ano: 7990 }, BRL: { mes: 2990, ano: 29900 } } },
-  { id: 'completo', n: 'Completo', lvl: 3, ia: 400, perfis: 5, precos: { EUR: { mes: 1299, ano: 12990 }, BRL: { mes: 4990, ano: 49900 } } }];
+  { id: 'essencial', n: 'Essencial', lvl: 1, ia: 20, perfis: 1, precos: { EUR: { mes: 399, ano: 3990 }, USD: { mes: 449, ano: 4490 }, BRL: { mes: 1490, ano: 14900 } } },
+  { id: 'avancado', n: 'Avançado', lvl: 2, ia: 150, perfis: 3, precos: { EUR: { mes: 799, ano: 7990 }, USD: { mes: 899, ano: 8990 }, BRL: { mes: 2990, ano: 29900 } } },
+  { id: 'completo', n: 'Completo', lvl: 3, ia: 400, perfis: 5, precos: { EUR: { mes: 1299, ano: 12990 }, USD: { mes: 1449, ano: 14490 }, BRL: { mes: 4990, ano: 49900 } } }];
+const MOEDAS = ['EUR', 'USD', 'BRL'], moeda = c => MOEDAS.includes(String(c || '').toUpperCase()) ? String(c).toUpperCase() : 'EUR';
 const planos = () => { let o = null; try { o = JSON.parse(process.env.NAUTILO_PRECOS || 'null'); } catch (e) { }
   return BASE.map(p => { const x = o && o[p.id]; if (!x) return p; const pr = JSON.parse(JSON.stringify(p.precos));
-    ['EUR', 'BRL'].forEach(c => ['mes', 'ano'].forEach(k => { const v = x[c] && +x[c][k]; if (v > 0 && v < 1e7) pr[c][k] = Math.round(v); })); return Object.assign({}, p, { precos: pr }); }); };
+    MOEDAS.forEach(c => ['mes', 'ano'].forEach(k => { const v = x[c] && +x[c][k]; if (v > 0 && v < 1e7) pr[c][k] = Math.round(v); })); return Object.assign({}, p, { precos: pr }); }); };
 const byId = id => planos().find(p => p.id === id);
 const cobranca = () => !!String(process.env.STRIPE_SECRET_KEY || '').trim();
 const isAdmin = e => String(process.env.NAUTILO_ADMIN || '').toLowerCase().split(',').map(x => x.trim()).filter(Boolean).includes(String(e || '').toLowerCase());
@@ -30,7 +32,7 @@ const efetivo = r => { const now = Date.now(), mk = (id, extra) => { const p = b
   const o = r.planoAdm, of = o && byId(o.id) && (!o.ate || o.ate > now) ? o : null;
   const p = r.plano, pg = p && byId(p.id) && mesmo(p) && ACTIVE.test(p.estado || '') && (p.ate || 0) + 3 * DIA > now ? p : null;
   if (of && !(pg && byId(pg.id).lvl > byId(of.id).lvl)) return mk(of.id, { oferta: 1, ate: of.ate || 0 });
-  if (pg) return mk(pg.id, { pago: 1, ate: pg.ate || 0, cancelar: !!pg.cancelar, ciclo: pg.ciclo || 'mes', cur: pg.cur || 'EUR' });
+  if (pg) return mk(pg.id, { pago: 1, ate: pg.ate || 0, cancelar: !!pg.cancelar, ciclo: pg.ciclo || 'mes', cur: moeda(pg.cur) });
   const t = testeAte(r); if (t > now) return mk('completo', { teste: 1, ate: t });
   if (TESTE_EMAIL.test(r.email || '')) return mk('completo', { contaTeste: 1 });
   if (!cobranca()) return mk('completo', { semCobranca: 1, testeAcabou: t });
@@ -52,4 +54,4 @@ const fimDe = s => 1000 * (+s.current_period_end || +(((s.items || {}).data || [
 const doStripe = s => ({ sub: s.id, cus: typeof s.customer === 'string' ? s.customer : (s.customer && s.customer.id) || '', estado: s.status || '', ate: fimDe(s), cancelar: !!s.cancel_at_period_end,
   id: (s.metadata && s.metadata.plano) || '', ciclo: (s.metadata && s.metadata.ciclo) || '', modo: s.livemode === true ? 'live' : s.livemode === false ? 'test' : '', cur: String(s.currency || ((((s.items || {}).data || [])[0] || {}).price || {}).currency || '').toUpperCase(), at: Date.now() });
 
-module.exports = { DIA, TESTE_DIAS, planos, byId, cobranca, efetivo, auto, testeAte, isAdmin, stripe, doStripe, ACTIVE, modo, mesmo };
+module.exports = { DIA, TESTE_DIAS, planos, byId, cobranca, efetivo, auto, testeAte, isAdmin, stripe, doStripe, ACTIVE, modo, mesmo, MOEDAS, moeda };

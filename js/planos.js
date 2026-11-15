@@ -25,6 +25,8 @@ const FEAT = {
 const fmtD = ms => ms ? new Date(ms).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 const dias = ms => Math.max(0, Math.ceil((ms - Date.now()) / 864e5));
 const money = (c, cur) => (c / 100).toLocaleString(cur === 'BRL' ? 'pt-BR' : (OS.loc ? OS.loc() : 'pt-PT'), { style: 'currency', currency: cur, minimumFractionDigits: 2 });
+// paga-se só em euros, dólares ou reais: quem usa o real paga em reais, quem está na Europa em euros e o resto do mundo em dólares
+const MOEDAS = [['EUR', '€ euro'], ['USD', '$ dólar'], ['BRL', 'R$ real']], EUROPA = /^(EUR|GBP|CHF|SEK|NOK|DKK|PLN|CZK|HUF|RON|BGN|ISK|RSD|BAM|MKD|ALL|MDL|UAH)$/;
 const titleOf = k => { for (const [, L] of (OS.NAV || [])) for (const it of L) if (it[0] === k) return it[1]; return k.charAt(0).toUpperCase() + k.slice(1); };
 const lock = (need, what) => `<div class="pn pl-lock"><div class="pl-li">${UI.ic('lock')}</div><div class="grow"><b>${esc(what || 'Esta parte')} está no plano ${NOME[need]}${need < 3 ? ' (e no Completo)' : ''}</b>
   <p class="mut">${PL.lvl() ? 'O teu plano é o ' + esc(NOME[PL.lvl()]) + '.' : 'O teu teste grátis acabou.'} Muda de plano para a desbloquear; os teus dados ficam todos.</p>
@@ -34,7 +36,8 @@ PL.lock = lock;
 /* ---------- os preços (do servidor) ---------- */
 let PRE = null, PREB = false;
 const loadPre = async () => { if (PRE || PREB || !(OS.Acc && OS.Acc.call)) return; PREB = true; try { PRE = await OS.Acc.call('planos', {}); } catch (e) { } PREB = false; OS.request(); };
-const curOf = () => { if (OS.ui.plCur) return OS.ui.plCur; const p = OS.one('profile') || {}; return p.country === 'BR' || p.cur === 'BRL' ? 'BRL' : 'EUR'; };
+const curOf = c => { if (c && c.pago && c.cur) return c.cur; if (OS.ui.plCur) return OS.ui.plCur; const p = OS.one('profile') || {}, k = String((OS.cur && OS.cur()) || p.cur || '').toUpperCase();
+  return p.country === 'BR' || k === 'BRL' ? 'BRL' : !k || EUROPA.test(k) ? 'EUR' : 'USD'; };
 
 /* ---------- a página Planos ---------- */
 const status = c => { if (c.local) return 'Modo pessoal: tens tudo.';
@@ -45,9 +48,10 @@ const status = c => { if (c.local) return 'Modo pessoal: tens tudo.';
   if (c.acabou) return 'O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados.';
   if (c.semCobranca) return 'As assinaturas abrem em breve: até lá tens tudo do Completo.';
   return ''; };
-const cards = (c, P0) => { const cur = curOf(), ci = OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', L = (P0 && P0.planos) || [], open = !!(P0 && P0.cobranca);
+const cards = (c, P0) => { const cur = curOf(c), ci = OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', L = (P0 && P0.planos) || [], open = !!(P0 && P0.cobranca);
   return `<div class="pl-ctl"><div class="seg" role="radiogroup" aria-label="Pagamento">${[['mes', 'Mensal'], ['ano', 'Anual · 2 meses grátis']].map(([k, l]) => `<button type="button" class="${ci === k ? 'on' : ''}" data-act="plCiclo" data-v="${k}" aria-pressed="${ci === k}">${l}</button>`).join('')}</div>
-    <div class="seg" role="radiogroup" aria-label="Moeda">${['EUR', 'BRL'].map(k => `<button type="button" class="${cur === k ? 'on' : ''}" data-act="plCur" data-v="${k}" aria-pressed="${cur === k}">${k === 'EUR' ? '€ euro' : 'R$ real'}</button>`).join('')}</div></div>
+    ${c.pago ? `<span class="mut pl-curx">Pagas em ${esc((MOEDAS.find(m => m[0] === cur) || [, cur])[1])}</span>` : `<div class="seg" role="radiogroup" aria-label="Moeda">${MOEDAS.map(([k, l]) => `<button type="button" class="${cur === k ? 'on' : ''}" data-act="plCur" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('')}</div>`}</div>
+  <p class="mut pl-curn">Paga-se em euros, dólares ou reais. Se o teu cartão for de outra moeda, o teu banco converte sozinho (pode cobrar uma pequena taxa de câmbio).</p>
   <div class="pl-g">${[1, 2, 3].map(l => { const p = L.find(x => x.lvl === l), pr = p && p.precos && p.precos[cur], val = pr ? pr[ci] : 0, mine = c.pago && c.lvl === l, top = l === 3;
     const btn = !open ? `<button class="btn" disabled>${c.admin ? 'Liga o Stripe para abrir' : 'Em breve'}</button>`
       : c.admin || c.local ? `<button class="btn" disabled>Tens tudo</button>`

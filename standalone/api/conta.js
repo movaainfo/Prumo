@@ -156,11 +156,13 @@ const OPS = {
   async planos() { return { planos: P.planos().map(p => ({ id: p.id, n: p.n, lvl: p.lvl, ia: p.ia, perfis: p.perfis, precos: p.precos })), cobranca: P.cobranca(), testeDias: P.TESTE_DIAS() }; },
   // assinar: abre o pagamento do Stripe (cartão, Apple Pay, Google Pay…) e volta ao Prumo
   async checkout(req, b) { const s = await session(req); if (!P.cobranca()) throw N.err('cobranca', 'As assinaturas ainda não estão abertas.', 503);
-    const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : 'mes', cur = b.cur === 'BRL' ? 'BRL' : 'EUR'; if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
+    const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : 'mes', cur = P.moeda(b.cur); if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
     const e = P.efetivo(s.rec); if (e.pago) throw N.err('ja', 'Já tens uma assinatura: muda de plano na página Planos.', 409);
     if (N.limit(req, 'checkout|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
     const volta = voltaDe(req, b.volta), prod = await produto(pl.id), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus;
-    const ses = await P.stripe('checkout/sessions', Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: cur === 'BRL' ? 'pt-BR' : 'pt',
+    const ses = await P.stripe('checkout/sessions', Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: cur === 'BRL' ? 'pt-BR' : cur === 'EUR' ? 'pt' : 'auto',
+      // só euros, dólares ou reais: sem a conversão do Stripe para a moeda local (Adaptive Pricing); um cartão noutra moeda é convertido pelo banco de quem paga
+      adaptive_pricing: { enabled: 'false' },
       line_items: { 0: { quantity: 1, price_data: { currency: cur.toLowerCase(), unit_amount: pl.precos[cur][ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: prod } } },
       metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo } } }, cus ? { customer: cus } : { customer_email: s.rec.email }));
     return { url: ses.url }; },
@@ -174,7 +176,7 @@ const OPS = {
     const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; },
   // mudar de plano ou de ciclo (com a diferença acertada pelo Stripe)
   async mudarPlano(req, b) { const s = await session(req), p0 = s.rec.plano; if (!P.cobranca() || !p0 || !p0.sub || !P.mesmo(p0)) throw N.err('sem', 'Ainda não tens assinatura.', 400);
-    const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : b.ciclo === 'mes' ? 'mes' : p0.ciclo || 'mes', cur = p0.cur === 'BRL' ? 'BRL' : 'EUR'; if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
+    const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : b.ciclo === 'mes' ? 'mes' : p0.ciclo || 'mes', cur = P.moeda(p0.cur); if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
     const sub = await P.stripe('subscriptions/' + p0.sub, null, 'GET'), item = ((sub.items || {}).data || [])[0]; if (!item) throw N.err('stripe', 'Assinatura sem itens.', 502);
     const up = await P.stripe('subscriptions/' + p0.sub, { cancel_at_period_end: 'false', proration_behavior: 'create_prorations', metadata: { uid: s.rec.uid, plano: pl.id, ciclo },
       items: { 0: { id: item.id, price_data: { currency: cur.toLowerCase(), unit_amount: pl.precos[cur][ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: await produto(pl.id) } } } });

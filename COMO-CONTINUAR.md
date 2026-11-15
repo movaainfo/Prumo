@@ -298,3 +298,9 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `admin` devolve `cfg` {stripe, stripeTeste, mail: resend|brevo|'', mailDe} (nunca os valores). `pendPn` (Admin › Por fazer) mostra os passos do Stripe, o aviso do modo de teste, o Brevo e o remetente, e some quando está feito. Atenção: dentro de `admin()` o nome `P` é a lista dos pedidos (por isso `require('./_planos')` no `cfg`).
 - Admin › conta: `admPlanSec` (escolha em cartões com rádio, prazo, Guardar) logo a seguir aos números da conta; `plTag` na lista. CSS `.adm-pl*`, `.adm-steps`, `.adm-rb` em conta.css.
 - Testes: `planos` (oferta vs pago, Automático, só admin, chave real vs teste, Admin na app).
+
+### 3.22: pagamentos só em euros, dólares ou reais
+- `_planos.js`: `MOEDAS = ['EUR','USD','BRL']`, `moeda(c)` (outra → EUR); preços USD 449/4490, 899/8990, 1449/14490 (também em `NAUTILO_PRECOS`).
+- `checkout`: `cur = P.moeda(b.cur)`, `adaptive_pricing[enabled]=false` (o Stripe não converte para a moeda local de quem paga), `locale` pt-BR (BRL), pt (EUR), auto (USD). `mudarPlano` fica na moeda da assinatura.
+- `js/planos.js`: seletor € euro / $ dólar / R$ real; por omissão BRL para quem usa o real, EUR na Europa (`EUROPA`), USD no resto; com assinatura mostra "Pagas em …" (sem seletor). Termos › 9 diz as três moedas (esclarecimento, sem versão nova).
+- O dinheiro: a conta Stripe de Portugal deposita em euros (o que entra em dólares ou reais é convertido pelo Stripe); dá para ativar a liquidação em dólares com uma conta bancária em dólares (Definições › Liquidação).

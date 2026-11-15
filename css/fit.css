@@ -1540,6 +1540,7 @@ svg.ig-ch .i{fill:var(--accent);opacity:.55}svg.ig-ch .g{fill:var(--pos,#4ade80)
 .pl-page{display:flex;flex-direction:column;gap:14px}
 .pl-st .bdg{white-space:nowrap}
 .pl-ctl{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
+.pl-curn{margin:8px 0 0;font-size:12.5px;line-height:1.45;max-width:72ch}.pl-curx{font-size:13px}
 .pl-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;align-items:stretch}
 .pl-c{display:flex;flex-direction:column;gap:8px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--card,transparent);min-width:0}
 .pl-c.top{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
