@@ -29,6 +29,18 @@ const cleanProfile = (p, old) => { const o = Object.assign({}, old || {});
   return o; };
 
 // ler e gravar a conta (cifrada); grava só se ninguém a mudou entretanto (etag), e volta a tentar
+// v3.24: um e-mail, uma conta. Variações que chegam à mesma caixa contam como o mesmo e-mail
+//   (Gmail ignora os pontos e o que vem depois de "+"; Outlook, Hotmail, iCloud e Proton ignoram o "+…")
+const PLUS = /^(gmail\.com|outlook\.com|outlook\.pt|hotmail\.com|hotmail\.pt|live\.com|msn\.com|icloud\.com|me\.com|mac\.com|protonmail\.com|proton\.me|pm\.me)$/;
+const canon = e => { e = N.normEmail(e); const i = e.lastIndexOf('@'); if (i < 1) return e; let u = e.slice(0, i), d = e.slice(i + 1); if (d === 'googlemail.com') d = 'gmail.com';
+  if (PLUS.test(d)) u = u.split('+')[0]; if (d === 'gmail.com') u = u.replace(/\./g, ''); return (u || e.slice(0, i)) + '@' + d; };
+const cKey = async e => 'c/' + (await N.emailId(canon(e)));
+const cGet = async e => { try { const g = await N.store().get(await cKey(e)); return g ? N.open(await N.accKey(), g.buf) : null; } catch (x) { return null; } };
+const cPut = async (e, eid) => N.store().put(await cKey(e), N.seal(await N.accKey(), { eid, at: Date.now() })).catch(() => { });
+const cDel = async (e, eid) => { const g = await cGet(e); if (g && (!eid || g.eid === eid)) await N.store().del([{ pathname: await cKey(e) }]).catch(() => { }); };
+// já há uma conta com este e-mail ou com uma variação dele? (a conta com o e-mail exato apanha-se ao gravar)
+const outraConta = async (email, eid) => { const ce = canon(email); if (ce !== email) { const e2 = await N.emailId(ce); if (e2 !== eid && await readAcc(e2)) return true; }
+  const g = await cGet(email); return !!(g && g.eid !== eid && await readAcc(g.eid)); };
 const readAcc = async eid => { const g = await N.store().get('a/' + eid); if (!g) return null; return { rec: N.open(await N.accKey(), g.buf), etag: g.etag }; };
 // para gravar: a etiqueta oficial (head, pela API) tem de ser a do conteúdo lido; se a leitura veio atrasada, lê outra vez
 const readFresh = async eid => { const s = N.store(); for (let i = 0; i < 4; i++) { const a = await readAcc(eid); if (!a) return null; const h = await s.head('a/' + eid).catch(() => null);
@@ -141,12 +153,15 @@ const OPS = {
     const termos = termsOf(b), eid = await N.emailId(email), code = N.newCode();
     const rec = { v: 1, uid: N.crypto.randomBytes(12).toString('hex'), email, nome, criado: new Date().toISOString(), pw: await N.hashPw(senha), rc: await N.hashPw(N.normCode(code)), perfis: [], tv: 1, falhas: 0, bloq: 0, termos };
     // v3.21: verificação do e-mail (só no primeiro registo; as contas de teste saltam)
+    if (await outraConta(email, eid)) throw N.err('existe', 'Já existe uma conta com este e-mail (ou com uma variação dele). Entra com a tua senha.', 409);
+    rec.cx = 1;
     const vc = mailOn() && !TESTE.test(email) ? code6() : ''; if (vc) rec.verif = { h: await N.hashPw(vc), exp: Date.now() + 30 * 60e3, n: 0, env: Date.now(), envs: 1 };
     try { await writeAcc(eid, rec); } catch (e) { if (e.code !== 'exists') throw e;
       // uma conta que nunca confirmou o e-mail (há mais de 30 min) não segura o endereço: dá lugar à nova
       const old = await readAcc(eid); if (!(old && old.rec.verif && Date.now() - Date.parse(old.rec.criado || 0) > 30 * 60e3)) throw N.err('existe', 'Já existe uma conta com este e-mail. Entra com a tua senha.', 409);
       await dropData(old.rec.uid); await N.store().put('a/' + eid, N.seal(await N.accKey(), rec)); }
     if (vc && !(await sendCode(email, nome, vc))) { delete rec.verif; await N.store().put('a/' + eid, N.seal(await N.accKey(), rec)); }
+    await cPut(email, eid);
     return { token: await N.signToken(rec, eid), conta: pub(rec), recuperacao: code, verificar: rec.verif ? 1 : 0 }; },
   // confirmar o e-mail com o código de 6 números
   async verificarEmail(req, b) { const s = await session(req), v = s.rec.verif; if (!v) return { conta: pub(s.rec) };
@@ -173,7 +188,8 @@ const OPS = {
     const rec = await change(eid, r => { r.falhas = 0; r.bloq = 0; r.ult = Date.now(); r.logins = (r.logins || 0) + 1; }).catch(() => a.rec);
     return { token: await N.signToken(rec, eid), conta: pub(rec) }; },
 
-  async eu(req) { const s = await session(req), sp = await spOk(s.rec.email); let rec = s.rec; try { rec = await refreshPlano(s) || rec; } catch (e) { } return { conta: Object.assign(pub(rec), { sp, spc: sp ? spCid() : '' }) }; },
+  async eu(req) { const s = await session(req), sp = await spOk(s.rec.email); let rec = s.rec; try { rec = await refreshPlano(s) || rec; } catch (e) { }
+    if (!rec.cx) { try { if (!(await cGet(rec.email))) await cPut(rec.email, s.eid); rec = await change(s.eid, r => { r.cx = 1; }); } catch (e) { } } return { conta: Object.assign(pub(rec), { sp, spc: sp ? spCid() : '' }) }; },
 
   /* ---------- planos e cobrança (Stripe) ---------- */
   // os planos e os preços (público: a página Planos mostra-os mesmo antes de entrar)
@@ -325,7 +341,7 @@ const OPS = {
       contas.push({ uid: r.uid, email: r.email, nome: r.nome || '', criado: r.criado, perfis: (r.perfis || []).map(p => p.nome), pids: (r.perfis || []).map(p => p.id), plano: planoPub(r), auto: r.planoAdm ? planoPub(Object.assign({}, r, { planoAdm: null })) : null, ofer: r.planoAdm ? { id: r.planoAdm.id, ate: r.planoAdm.ate || 0 } : null, ultEntrada: Math.max(u.ab || 0, r.ult || 0), login: r.ult || 0, entradas: r.logins || 0, ultUso: u.ult || 0, online: online(u), tot: totOf(u), dias: u.dias || {}, admin: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '' }); });
     // contas de teste (@nautilo.test, domínio reservado aos testes) com mais de 3 horas: apagam-se sozinhas
     const velhas = contas.filter(c => TESTE.test(c.email) && c.criado && Date.now() - new Date(c.criado).getTime() > 3 * 36e5);
-    for (const c of velhas) { try { const eid = await N.emailId(c.email); await dropData(c.uid); await s.del([{ pathname: 'a/' + eid }, { pathname: 'u/' + c.uid }]); contas.splice(contas.indexOf(c), 1); RK.rows = null; } catch (e) { } }
+    for (const c of velhas) { try { const eid = await N.emailId(c.email); await dropData(c.uid); await s.del([{ pathname: 'a/' + eid }, { pathname: 'u/' + c.uid }]); await cDel(c.email, eid); contas.splice(contas.indexOf(c), 1); RK.rows = null; } catch (e) { } }
     contas.sort((a, b) => Math.max(b.ultUso, b.ultEntrada) - Math.max(a.ultUso, a.ultEntrada));
     const P = await s.list('p/'), pedidos = []; await pool(P.slice(-300), async x => { const g = await s.get(x.pathname); if (g) pedidos.push(N.open(key, g.buf)); });
     pedidos.sort((a, b) => String(b.at).localeCompare(String(a.at)));
@@ -352,7 +368,7 @@ const OPS = {
     if (email === N.normEmail(s0.rec.email)) throw N.err('propria', 'A tua própria conta apaga-se em Definições › Conta.', 400);
     if (isAdmin(email)) throw N.err('admin', 'Não dá para apagar outra conta de administrador.', 403);
     const eid = await N.emailId(email), a = await readAcc(eid); if (!a) throw N.err('conta', 'Essa conta já não existe.', 404);
-    await dropData(a.rec.uid); await N.store().del([{ pathname: 'a/' + eid }, { pathname: 'u/' + a.rec.uid }]); RK.rows = null;
+    await dropData(a.rec.uid); await N.store().del([{ pathname: 'a/' + eid }, { pathname: 'u/' + a.rec.uid }]); await cDel(a.rec.email, eid); RK.rows = null;
     const sl = await spList(); if (sl.includes(email)) { await N.store().put(SPK, N.seal(await N.accKey(), { emails: sl.filter(x => x !== email), at: Date.now() })); SPC.at = 0; }
     return { apagada: true, email }; },
 
@@ -378,12 +394,13 @@ const OPS = {
     if (de === N.normEmail(s0.rec.email) || isAdmin(de)) throw N.err('admin', 'O e-mail de uma conta de administrador não se muda por aqui.', 403);
     if (isAdmin(para)) throw N.err('admin', 'Esse e-mail é de administrador.', 403);
     const e0 = await N.emailId(de), e1 = await N.emailId(para), a = await readFresh(e0); if (!a) throw N.err('conta', 'Essa conta já não existe.', 404);
+    if (await outraConta(para, e0)) throw N.err('existe', 'Já existe uma conta com esse e-mail (ou com uma variação dele).', 409);
     const rec = Object.assign({}, a.rec, { email: para, tv: (a.rec.tv || 1) + 1 }); aviso(rec, { t: 'email', de });
     try { await writeAcc(e1, rec); } catch (e) { if (e.code === 'exists') throw N.err('existe', 'Já existe uma conta com esse e-mail.', 409); throw e; }
     const s = N.store(), key = await N.accKey();
     // os atalhos do iPhone têm o id antigo dentro da chave: ficam a apontar para a conta nova
     await s.put('x/' + e0, N.seal(key, { to: e1, at: Date.now() })).catch(() => { });
-    await s.del([{ pathname: 'a/' + e0 }]);
+    await s.del([{ pathname: 'a/' + e0 }]); await cDel(de, e0); await cPut(para, e1);
     const sl = await spList(); if (sl.includes(de)) { await s.put(SPK, N.seal(key, { emails: sl.map(x => x === de ? para : x), at: Date.now() })); SPC.at = 0; }
     RK.rows = null; return { email: para, de }; },
 
@@ -420,7 +437,7 @@ const OPS = {
   async nome(req, b) { const s = await session(req); const rec = await change(s.eid, r => { r.nome = cleanName(b.nome, 40); }); return { conta: pub(rec) }; },
 
   async apagar(req, b) { const s = await session(req); await needPw(s.rec, b.senha);
-    await dropData(s.rec.uid); await N.store().del([{ pathname: 'a/' + s.eid }, { pathname: 'u/' + s.rec.uid }]);
+    await dropData(s.rec.uid); await N.store().del([{ pathname: 'a/' + s.eid }, { pathname: 'u/' + s.rec.uid }]); await cDel(s.rec.email, s.eid);
     const sl = await spList(), me = N.normEmail(s.rec.email); if (sl.includes(me)) { await N.store().put(SPK, N.seal(await N.accKey(), { emails: sl.filter(x => x !== me), at: Date.now() })); SPC.at = 0; }
     return { apagada: true }; }
 };
