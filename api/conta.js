@@ -13,7 +13,7 @@ const termsOf = b => { if (!TV.test(String(b.termos || '')) || b.saude !== true 
   return { v: b.termos, at: new Date().toISOString(), saude: true, idade: true }; };
 const planoPub = r => { const e = P.efetivo(r), o = { id: e.id, n: e.n, lvl: e.lvl, perfis: e.perfis, ia: e.ia, cobranca: P.cobranca() };
   ['admin', 'oferta', 'pago', 'teste', 'cancelar', 'semCobranca', 'acabou', 'contaTeste'].forEach(k => { if (e[k]) o[k] = 1; }); ['ate', 'testeAcabou', 'ciclo', 'cur'].forEach(k => { if (e[k]) o[k] = e[k]; });
-  if (r.plano && r.plano.cus) o.cliente = 1; return o; };
+  if (P.mesmo(r.plano) && r.plano.cus) o.cliente = 1; return o; };
 const pub = (r, eid) => ({ plano: planoPub(r), verificar: r.verif ? 1 : 0, trocar: !!r.trocar, avisos: (r.avisos || []).slice(-5), email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', pin: p.pin ? 6 : 0, inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
 const cleanName = (s, max) => String(s || '').replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
 const cleanProfile = (p, old) => { const o = Object.assign({}, old || {});
@@ -101,10 +101,10 @@ const produto = async id => { const kt = String(process.env.STRIPE_SECRET_KEY ||
   if (c[ck]) return (PROD[ck] = c[ck]);
   const pr = await P.stripe('products', { name: 'Prumo · ' + P.byId(id).n, metadata: { plano: id } }); c[ck] = pr.id; await st.put('cfg/stripe', N.seal(key, c)); return (PROD[ck] = pr.id); };
 // a assinatura muda no Stripe (renovação, cartão recusado, cancelamento): a conta vai lá ver de 6 em 6 horas ou quando o período acaba
-const refreshPlano = async s => { const p = s.rec.plano; if (!P.cobranca() || !p || !p.sub) return null; if (Date.now() - (p.at || 0) < 6 * 36e5 && (p.ate || 0) > Date.now()) return null;
+const refreshPlano = async s => { const p = s.rec.plano; if (!P.cobranca() || !p || !p.sub || !P.mesmo(p)) return null; if (Date.now() - (p.at || 0) < 6 * 36e5 && (p.ate || 0) > Date.now()) return null;
   const sub = await P.stripe('subscriptions/' + p.sub, null, 'GET'), st = Object.assign(P.doStripe(sub), { id: (sub.metadata && sub.metadata.plano) || p.id, ciclo: (sub.metadata && sub.metadata.ciclo) || p.ciclo });
   return change(s.eid, r => { r.plano = st; }); };
-const fimPlano = async (req, cancelar) => { const s = await session(req), p = s.rec.plano; if (!P.cobranca() || !p || !p.sub) throw N.err('sem', 'Ainda não tens assinatura.', 400);
+const fimPlano = async (req, cancelar) => { const s = await session(req), p = s.rec.plano; if (!P.cobranca() || !p || !p.sub || !P.mesmo(p)) throw N.err('sem', 'Ainda não tens assinatura.', 400);
   const up = await P.stripe('subscriptions/' + p.sub, { cancel_at_period_end: cancelar ? 'true' : 'false' }); const st = Object.assign(P.doStripe(up), { id: p.id, ciclo: p.ciclo });
   const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; };
 const OPS = {
@@ -159,7 +159,7 @@ const OPS = {
     const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : 'mes', cur = b.cur === 'BRL' ? 'BRL' : 'EUR'; if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
     const e = P.efetivo(s.rec); if (e.pago) throw N.err('ja', 'Já tens uma assinatura: muda de plano na página Planos.', 409);
     if (N.limit(req, 'checkout|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
-    const volta = voltaDe(req, b.volta), prod = await produto(pl.id), cus = s.rec.plano && s.rec.plano.cus;
+    const volta = voltaDe(req, b.volta), prod = await produto(pl.id), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus;
     const ses = await P.stripe('checkout/sessions', Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: cur === 'BRL' ? 'pt-BR' : 'pt',
       line_items: { 0: { quantity: 1, price_data: { currency: cur.toLowerCase(), unit_amount: pl.precos[cur][ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: prod } } },
       metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo } } }, cus ? { customer: cus } : { customer_email: s.rec.email }));
@@ -173,7 +173,7 @@ const OPS = {
     const st = P.doStripe(ses.subscription); st.id = st.id || (ses.metadata || {}).plano; st.ciclo = st.ciclo || (ses.metadata || {}).ciclo || 'mes';
     const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; },
   // mudar de plano ou de ciclo (com a diferença acertada pelo Stripe)
-  async mudarPlano(req, b) { const s = await session(req), p0 = s.rec.plano; if (!P.cobranca() || !p0 || !p0.sub) throw N.err('sem', 'Ainda não tens assinatura.', 400);
+  async mudarPlano(req, b) { const s = await session(req), p0 = s.rec.plano; if (!P.cobranca() || !p0 || !p0.sub || !P.mesmo(p0)) throw N.err('sem', 'Ainda não tens assinatura.', 400);
     const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : b.ciclo === 'mes' ? 'mes' : p0.ciclo || 'mes', cur = p0.cur === 'BRL' ? 'BRL' : 'EUR'; if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
     const sub = await P.stripe('subscriptions/' + p0.sub, null, 'GET'), item = ((sub.items || {}).data || [])[0]; if (!item) throw N.err('stripe', 'Assinatura sem itens.', 502);
     const up = await P.stripe('subscriptions/' + p0.sub, { cancel_at_period_end: 'false', proration_behavior: 'create_prorations', metadata: { uid: s.rec.uid, plano: pl.id, ciclo },
@@ -183,15 +183,18 @@ const OPS = {
   async cancelarPlano(req, b) { return fimPlano(req, true); },
   async retomarPlano(req, b) { return fimPlano(req, false); },
   // gerir o cartão e ver as faturas (portal do Stripe; precisa de estar ativado no painel do Stripe)
-  async portal(req, b) { const s = await session(req), cus = s.rec.plano && s.rec.plano.cus; if (!P.cobranca() || !cus) throw N.err('sem', 'Ainda não tens assinatura.', 400);
+  async portal(req, b) { const s = await session(req), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus; if (!P.cobranca() || !cus) throw N.err('sem', 'Ainda não tens assinatura.', 400);
     try { const ps = await P.stripe('billing_portal/sessions', { customer: cus, return_url: voltaDe(req, b.volta) + '#planos' }); return { url: ps.url }; }
     catch (e) { throw N.err('portal', 'A gestão de pagamentos ainda não está ativa. Fala com a administração.', 503); } },
-  // a administração dá um plano (oferta), por um tempo ou sem fim; vazio tira a oferta
-  async adminPlano(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+  // a administração escolhe o plano da conta: um plano grátis (por uns dias ou sem fim) ou vazio = Automático (teste e depois o que a pessoa assinar)
+  //   não pede a senha (como o Spotify): não apaga nada e desfaz-se com outro toque
+  async adminPlano(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
     const email = N.normEmail(b.email), eid = await N.emailId(email), a = await readAcc(eid); if (!a) throw N.err('conta', 'Essa conta não existe.', 404);
     const pl = b.plano ? P.byId(b.plano) : null; if (b.plano && !pl) throw N.err('plano', 'Plano desconhecido.', 400); const dias = Math.max(0, Math.min(3650, +b.dias || 0));
-    await change(eid, r => { if (pl) r.planoAdm = { id: pl.id, ate: dias ? Date.now() + dias * P.DIA : 0, at: Date.now() }; else delete r.planoAdm; if (pl) aviso(r, { t: 'plano', p: pl.n, d: dias }); });
-    return { email, plano: pl ? pl.id : '', dias }; },
+    if (isAdmin(email)) throw N.err('admin', 'A conta de administração tem sempre tudo.', 400);
+    const rec = await change(eid, r => { const antes = r.planoAdm && r.planoAdm.id; if (pl) r.planoAdm = { id: pl.id, ate: dias ? Date.now() + dias * P.DIA : 0, at: Date.now() }; else delete r.planoAdm;
+      if (pl && (antes !== pl.id || dias)) aviso(r, { t: 'plano', p: pl.n, d: dias }); });
+    return { email, plano: pl ? pl.id : '', dias, agora: planoPub(rec), auto: planoPub(Object.assign({}, rec, { planoAdm: null })), ofer: rec.planoAdm ? { id: rec.planoAdm.id, ate: rec.planoAdm.ate || 0 } : null }; },
   // contas que já existiam (ou termos novos): aceitar uma vez
   async termos(req, b) { const s = await session(req), t = termsOf(b); const rec = await change(s.eid, r => { r.termos = t; }); return { conta: pub(rec) }; },
   // quem é o responsável e como contactar (para a Política de Privacidade); sem sessão
@@ -291,7 +294,7 @@ const OPS = {
     const pool = async (L, f) => { let i = 0; await Promise.all(Array.from({ length: Math.min(16, L.length) }, async () => { while (i < L.length) { const x = L[i++]; try { await f(x); } catch (e) { } } })); };
     const uso = {}; await pool(Us, async x => { const g = await s.get(x.pathname); if (g) uso[x.pathname.slice(2)] = N.open(key, g.buf); });
     const contas = []; await pool(A, async x => { const g = await s.get(x.pathname); if (!g) return; const r = N.open(key, g.buf), u = uso[r.uid] || { dias: {} };
-      contas.push({ uid: r.uid, email: r.email, nome: r.nome || '', criado: r.criado, perfis: (r.perfis || []).map(p => p.nome), pids: (r.perfis || []).map(p => p.id), plano: planoPub(r), ultEntrada: Math.max(u.ab || 0, r.ult || 0), login: r.ult || 0, entradas: r.logins || 0, ultUso: u.ult || 0, online: online(u), tot: totOf(u), dias: u.dias || {}, admin: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '' }); });
+      contas.push({ uid: r.uid, email: r.email, nome: r.nome || '', criado: r.criado, perfis: (r.perfis || []).map(p => p.nome), pids: (r.perfis || []).map(p => p.id), plano: planoPub(r), auto: r.planoAdm ? planoPub(Object.assign({}, r, { planoAdm: null })) : null, ofer: r.planoAdm ? { id: r.planoAdm.id, ate: r.planoAdm.ate || 0 } : null, ultEntrada: Math.max(u.ab || 0, r.ult || 0), login: r.ult || 0, entradas: r.logins || 0, ultUso: u.ult || 0, online: online(u), tot: totOf(u), dias: u.dias || {}, admin: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '' }); });
     // contas de teste (@nautilo.test, domínio reservado aos testes) com mais de 3 horas: apagam-se sozinhas
     const velhas = contas.filter(c => TESTE.test(c.email) && c.criado && Date.now() - new Date(c.criado).getTime() > 3 * 36e5);
     for (const c of velhas) { try { const eid = await N.emailId(c.email); await dropData(c.uid); await s.del([{ pathname: 'a/' + eid }, { pathname: 'u/' + c.uid }]); contas.splice(contas.indexOf(c), 1); RK.rows = null; } catch (e) { } }
@@ -299,7 +302,9 @@ const OPS = {
     const P = await s.list('p/'), pedidos = []; await pool(P.slice(-300), async x => { const g = await s.get(x.pathname); if (g) pedidos.push(N.open(key, g.buf)); });
     pedidos.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     const sl = await spList(); contas.forEach(c => { c.sp = c.admin || sl.includes(N.normEmail(c.email)); });
-    return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos, spotify: sl, spMax: SP_MAX, spConf: !!spCid() }; },
+    return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos, spotify: sl, spMax: SP_MAX, spConf: !!spCid(),
+      // o que falta configurar no Vercel (só se diz se está ou não; os valores nunca saem do servidor)
+      cfg: { stripe: require('./_planos').cobranca(), stripeTeste: /^sk_test_/.test(String(process.env.STRIPE_SECRET_KEY || '').trim()), mail: process.env.RESEND_API_KEY ? 'resend' : process.env.BREVO_API_KEY ? 'brevo' : '', mailDe: !!String(process.env.NAUTILO_EMAIL_DE || '').trim() } }; },
 
   // v3.20: o administrador repõe o cofre de Senhas de uma conta (também a dele) quando a senha mestra se perdeu.
   // O cofre está cifrado no aparelho com a senha mestra, que ninguém conhece: não dá para a mudar sem ela, por isso o cofre fica vazio
