@@ -14,7 +14,11 @@ const LIST = [
   ['floresta', 'Floresta', 'Verde-escuro do pinhal e menta.', { dk: { h: 158, k: .6, m: .34 }, nt: { h: 110, k: .6, m: .2 }, lt: { h: 146, k: .75, m: .5 }, md: { h: 154, k: .95, m: .56 } }],
   ['ametista', 'Ametista', 'Roxo profundo e lilás.', { dk: { h: 268, k: .7, m: .4 }, nt: { h: 262, k: .7, m: .24 }, lt: { h: 266, k: .9, m: .7 }, md: { h: 266, k: 1, m: .6 } }],
   ['cafe', 'Café', 'Castanho torrado, cobre e mel.', { dk: { h: 24, k: .55, m: .3 }, nt: { h: 32, k: .7, m: .24 }, lt: { h: 34, k: .85, m: .7 }, md: { h: 20, k: 1, m: .62 } }],
-  ['grafite', 'Grafite', 'Preto e cinzentos, sem cor.', { dk: { h: 220, k: .05, m: .05 }, nt: { h: 220, k: .05, m: .05 }, lt: { h: 220, k: .06, m: .06 }, md: { h: 220, k: .06, m: .06 } }]];
+  ['grafite', 'Grafite', 'Preto e cinzentos, sem cor.', { dk: { h: 220, k: .05, m: .05 }, nt: { h: 220, k: .05, m: .05 }, lt: { h: 220, k: .06, m: .06 }, md: { h: 220, k: .06, m: .06 } }],
+  // v3.29: exclusivas do plano Completo (o 5.º campo é o nível do plano)
+  ['ouro', 'Ouro', 'Preto profundo e dourado.', { dk: { h: 40, k: .14, m: .08 }, nt: { h: 40, k: .4, m: .14 }, lt: { h: 45, k: .95, m: .78 }, md: { h: 41, k: 1, m: .66 } }, 3],
+  ['aurora', 'Aurora', 'Noite polar, verde-água e magenta.', { dk: { h: 245, k: .7, m: .38 }, nt: { h: 222, k: .6, m: .2 }, lt: { h: 164, k: .9, m: .62 }, md: { h: 296, k: .9, m: .55 } }, 3],
+  ['sakura', 'Sakura', 'Ameixa escura e rosa de cerejeira.', { dk: { h: 325, k: .55, m: .3 }, nt: { h: 330, k: .6, m: .2 }, lt: { h: 340, k: .9, m: .7 }, md: { h: 335, k: 1, m: .6 } }, 3]];
 const DEF = 'selo';
 
 const rgb2hsl = (r, g, b) => { r /= 255; g /= 255; b /= 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; let h = 0, s = 0;

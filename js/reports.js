@@ -158,6 +158,32 @@ RP.autogen = () => { if (!OS.all('transactions').length && !OS.all('invtx').leng
 OS.on('ready', () => setTimeout(() => { try { const k = RP.autogen(); if (k) { OS.request(); UI.toast(k === 1 ? 'Há um relatório novo em Dinheiro → Relatórios' : k + ' relatórios novos em Dinheiro → Relatórios', 'pos'); } } catch (e) { } }, 4000));
 RP.unseen = () => OS.all('reports').filter(r => r && r.per && !r.seen).length;
 
+/* ================= v3.29: o resumo do mês no e-mail (plano Completo, só se a pessoa ligar) ================= */
+OS.ONE_DEF.relmail = { on: false, last: '' };
+const T_ = x => (OS.Lang && OS.Lang.t ? OS.Lang.t(x) : x);
+const mailCan = () => !!(OS.Acc && OS.Acc.on && OS.Plano && OS.Plano.can('resumoMail'));
+const lastM = () => U.sortBy(OS.all('reports').filter(r => r && r.per === 'm' && r.ref), r => r.ref).pop() || null;
+RP.mailSend = async r => { const R = RP.range('m', r.ref); RP.setCtx(r.cty || RP.ctyFor(R)); const M = RP.money(R), I = RP.inv(R);
+  const lin = [[T_('Entrou'), E(M.inc)], [T_('Saiu'), E(M.exp)], [T_('Ficou (poupado)'), E(M.sav)], [T_('Taxa de poupança'), Math.round((M.rate || 0) * 100) + '%']];
+  if (I.buys) lin.push([T_('Investido'), E(I.buys)]); if (I.provNet) lin.push([T_('Rendimentos dos investimentos'), E(I.provNet)]);
+  const cats = (M.byCat || []).slice(0, 5).map(c => [T_(c.k), E(c.v)]);
+  return OS.Acc.call('resumoEmail', { ref: r.ref, label: T_(R.label || r.label || r.ref), lin, cats, titulo: T_('O teu mês no Prumo'), tCats: T_('Onde gastaste mais'), tAbrir: T_('Abrir o Prumo'),
+    rodape: T_('Recebes este resumo porque o ligaste em Relatórios. Para deixar de receber, desliga-o lá.'), volta: location.origin + location.pathname }); };
+// ao abrir: o mês que acabou de fechar vai sozinho (uma vez), se estiver ligado
+RP.mailTick = async () => { if (!mailCan() || !(OS.one('relmail') || {}).on) return; const r = lastM(); if (!r || r.mailed || (OS.one('relmail') || {}).last === r.ref) return;
+  if (U.diff(U.today(), RP.range('m', r.ref).to) > 40) return;   // só o mês que acabou de fechar, não os antigos
+  try { const j = await RP.mailSend(r); OS.upd('reports', r.id, { mailed: Date.now() }, { silent: true }); OS.setOne('relmail', Object.assign({}, OS.one('relmail'), { last: r.ref })); if (j && j.enviado) UI.toast(T_('Enviámos o resumo de ') + T_(r.label || r.ref) + T_(' para o teu e-mail'), 'pos'); } catch (e) { } };
+OS.on('ready', () => setTimeout(() => RP.mailTick(), 7000));
+const mailPanel = () => { if (!(OS.Acc && OS.Acc.on)) return ''; const on = !!(OS.one('relmail') || {}).on, can = mailCan(), r = lastM();
+  return `<div class="pn rp-mail"><div class="pn-h"><h3>${UI.ic('mail')}Resumo do mês no teu e-mail</h3>${can ? `<span class="bdg ${on ? 'pos' : ''}">${on ? 'ligado' : 'desligado'}</span>` : '<span class="bdg">plano Completo</span>'}</div>
+    <p class="mut" style="margin:0 0 10px">Quando um mês fecha, recebes no teu e-mail quanto entrou, quanto saiu, quanto poupaste, o que investiste e onde gastaste mais. Só se ligares, e podes desligar quando quiseres.</p>
+    ${can ? `<div class="row gap8" style="flex-wrap:wrap"><button class="btn sm ${on ? 'ghost' : 'pri'}" data-act="rpMail" data-on="${on ? '' : '1'}">${on ? 'Desligar o resumo' : 'Ligar o resumo por e-mail'}</button>${on && r ? `<button class="btn sm" data-act="rpMailNow">Enviar agora o de ${esc(r.label || r.ref)}</button>` : ''}</div>`
+      : `<a class="btn sm" href="#planos">${UI.ic('star')}Ver o plano Completo</a>`}</div>`; };
+A.rpMail = b => { const on = b.dataset.on === '1'; OS.setOne('relmail', Object.assign({}, OS.one('relmail'), { on })); UI.toast(on ? T_('Resumo do mês por e-mail ligado') : T_('Resumo do mês por e-mail desligado'), 'pos'); OS.request(); };
+A.rpMailNow = async b => { const r = lastM(); if (!r) return; b.disabled = true;
+  try { const j = await RP.mailSend(r); OS.upd('reports', r.id, { mailed: Date.now() }, { silent: true }); UI.toast(j && j.ja ? T_('O resumo deste mês já tinha sido enviado.') : T_('Enviado. Vê o teu e-mail (e o spam).'), 'pos'); }
+  catch (e) { UI.toast(e.message || T_('Não consegui enviar.'), 'neg'); } finally { b.disabled = false; } };
+
 /* ================= ecrã ================= */
 const TABS = [['', 'Relatórios'], ['completo', 'Completo (IRS)'], ['receitas', 'Receitas e despesas'], ['investimentos', 'Investimentos'], ['arquivo', 'Arquivo']];
 const PER = [['m', 'Mensal'], ['q', 'Trimestral'], ['a', 'Anual']];
@@ -281,4 +307,6 @@ RP.settings = () => { const c = tx(), k = RP.cty(), f = (k2, l, inp, h = '') => 
 /* ---------- campos fiscais nos movimentos (salários, serviços e rendas) ---------- */
 (() => { const fs = OS.S.transactions.fields; if (fs.some(f => f.k === 'gross')) return; const i = fs.findIndex(f => f.k === 'method'), fisc = r => r.type === 'Receita' && ['Salário', 'Serviços próprios', 'Rendas'].includes(r.cat);
   fs.splice(i < 0 ? fs.length : i, 0, { k: 'gross', l: 'Valor bruto (antes de impostos)', t: 'money', show: fisc, h: 'Para o IRS: o valor antes da retenção e da Segurança Social.' }, { k: 'wht', l: 'Retenção na fonte de IRS', t: 'money', show: fisc }, { k: 'ss', l: 'Segurança Social descontada', t: 'money', show: r => r.type === 'Receita' && r.cat === 'Salário' }, { k: 'payer', l: 'Entidade pagadora', t: 'text', show: fisc, h: 'Empresa ou cliente (aparece no anexo A ou B).' }); })();
+// o painel do resumo por e-mail no topo dos Relatórios (separador principal e arquivo)
+{ const V0 = V.relatorios; V.relatorios = sub => { const h = V0(sub); if (sub && sub !== 'arquivo') return h; const pn = mailPanel(); if (!pn) return h; const i = h.indexOf('<div class="pn'); return i > 0 ? h.slice(0, i) + pn + h.slice(i) : h + pn; }; }
 })();

@@ -5,5 +5,8 @@ for f in sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)
     d = json.load(open(f)); m = d['m']; n0 = len(m); l = d.get('l')
     ph = lambda s: sorted(re.findall(r'\{\d+\}', s))
     if l == 'pt-BR': m = {k: v for k, v in m.items() if k != v and ph(k) == ph(v)}
+    # as traduções pt-BR revistas à mão (standalone/i18n/manual-pt-BR.json) ganham sempre à da IA
+    man = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'manual-pt-BR.json')
+    if l == 'pt-BR' and os.path.exists(man): m.update(json.load(open(man)))
     d['m'] = m; json.dump(d, open(f, 'w'), ensure_ascii=False, separators=(',', ':'))
     print(l, n0, '→', len(m))

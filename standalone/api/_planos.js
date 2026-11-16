@@ -8,9 +8,9 @@
 const DIA = 864e5, TESTE_DIAS = () => { const v = process.env.NAUTILO_TESTE_DIAS; return v != null && v !== '' && +v >= 0 ? +v : 14; };
 const INICIO = () => process.env.NAUTILO_PLANOS_DESDE || '2026-11-13';
 const BASE = [
-  { id: 'essencial', n: 'Essencial', lvl: 1, ia: 20, perfis: 1, precos: { EUR: { mes: 399, ano: 3990 }, USD: { mes: 449, ano: 4490 }, BRL: { mes: 1490, ano: 14900 } } },
-  { id: 'avancado', n: 'Avançado', lvl: 2, ia: 150, perfis: 3, precos: { EUR: { mes: 799, ano: 7990 }, USD: { mes: 899, ano: 8990 }, BRL: { mes: 2990, ano: 29900 } } },
-  { id: 'completo', n: 'Completo', lvl: 3, ia: 400, perfis: 5, precos: { EUR: { mes: 1299, ano: 12990 }, USD: { mes: 1449, ano: 14490 }, BRL: { mes: 4990, ano: 49900 } } }];
+  { id: 'essencial', n: 'Essencial', lvl: 1, ia: 20, perfis: 1, precos: { EUR: { mes: 599, ano: 5990 }, USD: { mes: 699, ano: 6990 }, BRL: { mes: 1990, ano: 19900 } } },
+  { id: 'avancado', n: 'Avançado', lvl: 2, ia: 150, perfis: 3, precos: { EUR: { mes: 1199, ano: 11990 }, USD: { mes: 1299, ano: 12990 }, BRL: { mes: 3990, ano: 39900 } } },
+  { id: 'completo', n: 'Completo', lvl: 3, ia: 400, perfis: 5, precos: { EUR: { mes: 1999, ano: 19990 }, USD: { mes: 2199, ano: 21990 }, BRL: { mes: 6990, ano: 69900 } } }];
 const MOEDAS = ['EUR', 'USD', 'BRL'], moeda = c => MOEDAS.includes(String(c || '').toUpperCase()) ? String(c).toUpperCase() : 'EUR';
 const planos = () => { let o = null; try { o = JSON.parse(process.env.NAUTILO_PRECOS || 'null'); } catch (e) { }
   return BASE.map(p => { const x = o && o[p.id]; if (!x) return p; const pr = JSON.parse(JSON.stringify(p.precos));

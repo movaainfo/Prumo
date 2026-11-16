@@ -335,3 +335,11 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 ### 3.28: dicionários das línguas em dia
 - 16/11/2026: `packgen.js` para pt-BR, en, es, fr, it, de (23 270 textos cada, completos); `packfix.py` (pt-BR fica com 6 234: só o que muda do pt-PT); repostas as 83 traduções pt-BR feitas à mão na 3.27.
 - Teste `boasvindas`: em pt-BR o nome da IA aparece como "se chama Luna".
+
+### 3.29: preços novos e Completo com mais
+- Preços (cêntimos) em `_planos.js`: Essencial 599/5990 EUR, 699/6990 USD, 1990/19900 BRL; Avançado 1199/11990, 1299/12990, 3990/39900; Completo 1999/19990, 2199/21990, 6990/69900. As assinaturas já feitas ficam com o preço com que foram feitas (o preço vai em cada Checkout).
+- Completo (`FEAT[3]`, `CAPS.resumoMail`/`palPro` = 3):
+  - Resumo do mês por e-mail: `js/reports.js` (`RP.mailSend`, `RP.mailTick` 7 s depois de abrir, painel `.rp-mail` em Relatórios, `OS.one('relmail')` {on, last}); a app manda os números já calculados e traduzidos; `api/conta.js` op `resumoEmail` (Completo, um por mês em `rec.resumos`, 4 por dia, texto limpo e escapado, `mailRaw`). Privacidade: o Brevo também envia este resumo, só se a pessoa o ligar.
+  - Paletas exclusivas: `js/paleta.js` (5.º campo = nível) Ouro, Aurora, Sakura; `js/cores.js` (`pode`, selo "Completo", volta ao Selo sem o plano).
+  - Atendimento prioritário: o pedido guarda `prio` (Completo, não admin); o Admin ordena os prioritários primeiro com o selo "Completo · prioritário".
+- `standalone/i18n/manual-pt-BR.json`: as traduções pt-BR revistas à mão; o `packfix.py` aplica-as sempre por cima.
