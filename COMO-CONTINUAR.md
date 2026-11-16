@@ -330,4 +330,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `js/onboard.js`: `HELP` (texto por pergunta, com `<b>` para cada opção) e `AREA_HELP` (uma linha por aba). `Q(k)` põe o botão "?" (`.onb-q`, `data-onbq`), `QH(k)` a caixa (`.onb-help`, `data-onbh`). O clique abre/fecha sem redesenhar (estado em `W.help`). Passos com `q:` (abas, estudas, trabalhas) têm "O que é cada aba?" / "O que significa cada opção?" (`.onb-qs`). `NOQ`: campos óbvios sem "?".
 - `js/legal.js`: `LQ` + `lq(k)`: "O que é isto?" debaixo de cada caixa (`.lg-q`, `.lg-qa`), fora da label (não marca a caixa).
 - pt-BR: 83 traduções à mão em `standalone/i18n/packs/pt-BR.json` (explicações, boas-vindas, planos). `js/lingua.js`: com pontuação nas duas pontas (": … (fica sempre)"), tenta também com o ")" do fim.
-- Os dicionários (pt-BR, en, es, fr, it, de) foram gerados antes da 3.20: há ~4260 textos novos sem tradução nas outras línguas. Para os gerar: publicar e correr `node standalone/i18n/packgen.js` + `python3 standalone/i18n/packfix.py` (usa a IA do servidor).
+- Dicionários: depois de publicar textos novos, `node standalone/i18n/packgen.js` (traduz no servidor ao vivo o que falta, conta temporária @nautilo.test) + `python3 standalone/i18n/packfix.py`. As traduções pt-BR feitas à mão repõem-se por cima no fim (a IA reescreve-as).
+
+### 3.28: dicionários das línguas em dia
+- 16/11/2026: `packgen.js` para pt-BR, en, es, fr, it, de (23 270 textos cada, completos); `packfix.py` (pt-BR fica com 6 234: só o que muda do pt-PT); repostas as 83 traduções pt-BR feitas à mão na 3.27.
+- Teste `boasvindas`: em pt-BR o nome da IA aparece como "se chama Luna".

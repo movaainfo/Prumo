@@ -3450,7 +3450,7 @@ async function onbTests(b) { cur = 'Boas-vindas'; console.log('\n=== Vamos conhe
   ok('Depois de respondido, não volta a abrir sozinho', await E(p, () => !document.querySelector('#onb:not([hidden]) .onb-body')));
   // v3.16: o que já respondeste não se pergunta outra vez
   await E(p, () => { location.hash = 'definicoes.spyke'; }); await sleep(600);
-  ok('Definições › IA: o nome dado nas perguntas aparece como resposta (sem formulário aberto), com "Mudar o nome"', await E(p, () => { const pn = document.getElementById('aiName'); return !!pn && /chama-se Luna/.test(pn.innerText) && !pn.querySelector('form') && !!pn.querySelector('[data-act=aiNameEd]') && !document.querySelector('#modal:not([hidden]) form[data-form=aiNameSave]'); }));
+  ok('Definições › IA: o nome dado nas perguntas aparece como resposta (sem formulário aberto), com "Mudar o nome"', await E(p, () => { const pn = document.getElementById('aiName'); return !!pn && /(chama-se|se chama) Luna/.test(pn.innerText) && !pn.querySelector('form') && !!pn.querySelector('[data-act=aiNameEd]') && !document.querySelector('#modal:not([hidden]) form[data-form=aiNameSave]'); }));
   await E(p, () => { location.hash = 'definicoes'; }); await sleep(500);
   ok('Definições › O teu Prumo: "Rever as respostas" (não "Responder outra vez")', await E(p, () => /Rever as respostas/.test(document.querySelector('#onbSet').innerText)));
   await E(p, () => document.querySelector('#onbSet [data-act=onbOpen]').click()); await sleep(300);
