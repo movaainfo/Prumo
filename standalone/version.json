@@ -1,7 +1,8 @@
 {
- "n": 230,
- "hash": "9bf45683052b",
+ "n": 231,
+ "hash": "04f0cf512847",
  "notes": [
+  "Códigos de desconto: na página Planos há \"Tens um código de desconto?\". Escreves o código, vês logo o preço com desconto em cada plano e assinas com ele (o desconto aparece também nas faturas). A administração cria os códigos (percentagem, só no 1.º pagamento, durante uns meses ou para sempre, para que planos, limite de usos, validade e só para a primeira assinatura) e vê quantas vezes cada um foi usado.",
   "Planos com preços novos e o Completo com mais: Essencial 5,99 € por mês (59,90 € por ano), Avançado 11,99 € (119,90 €) e Completo 19,99 € (199,90 €); em dólares 6,99 $, 12,99 $ e 21,99 $; em reais R$ 19,90, R$ 39,90 e R$ 69,90 (o anual dá sempre 2 meses grátis). O Completo ganha o resumo do mês no teu e-mail (liga-se em Relatórios), as paletas exclusivas Ouro, Aurora e Sakura, atendimento prioritário (os teus pedidos chegam primeiro à administração) e até 5 perfis, um para cada pessoa da família.",
   "Línguas em dia: o app inteiro está traduzido outra vez para português do Brasil, inglês, espanhol, francês, italiano e alemão, incluindo tudo o que chegou desde os planos (planos e pagamentos, verificação do e-mail, explicações das perguntas, Admin). Antes, os textos mais novos apareciam em português de Portugal nas outras línguas.",
   "Perguntas explicadas: nas perguntas iniciais, cada pergunta tem um \"?\" que explica o que é e o que significa cada opção (a IA, a religião, o objetivo do treino, o nível, o fundo de emergência, quanto poupar…), e \"O que é cada aba?\" diz para que serve cada aba antes de a escolheres. Ao criar a conta, cada caixa a aceitar tem \"O que é isto?\" em linguagem simples. Em português do Brasil, as explicações, as boas-vindas e os planos aparecem em português do Brasil.",

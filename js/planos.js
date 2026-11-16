@@ -53,6 +53,7 @@ const cards = (c, P0) => { const cur = curOf(c), ci = OS.ui.plCiclo === 'ano' ? 
   return `<div class="pl-ctl"><div class="seg" role="radiogroup" aria-label="Pagamento">${[['mes', 'Mensal'], ['ano', 'Anual · 2 meses grátis']].map(([k, l]) => `<button type="button" class="${ci === k ? 'on' : ''}" data-act="plCiclo" data-v="${k}" aria-pressed="${ci === k}">${l}</button>`).join('')}</div>
     ${c.pago ? `<span class="mut pl-curx">Pagas em ${esc((MOEDAS.find(m => m[0] === cur) || [, cur])[1])}</span>` : `<div class="seg" role="radiogroup" aria-label="Moeda">${MOEDAS.map(([k, l]) => `<button type="button" class="${cur === k ? 'on' : ''}" data-act="plCur" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('')}</div>`}</div>
   <p class="mut pl-curn">Paga-se em euros, dólares ou reais. Se o teu cartão for de outra moeda, o teu banco converte sozinho (pode cobrar uma pequena taxa de câmbio).</p>
+  ${open && !c.pago && !c.local ? cupBox() : ''}
   <div class="pl-g">${[1, 2, 3].map(l => { const p = L.find(x => x.lvl === l), pr = p && p.precos && p.precos[cur], val = pr ? pr[ci] : 0, mine = c.pago && c.lvl === l, top = l === 3;
     const btn = !open ? `<button class="btn" disabled>${c.admin ? 'Liga o Stripe para abrir' : 'Em breve'}</button>`
       : c.admin || c.local ? `<button class="btn" disabled>Tens tudo</button>`
@@ -60,8 +61,20 @@ const cards = (c, P0) => { const cur = curOf(c), ci = OS.ui.plCiclo === 'ano' ? 
       : c.pago ? `<button class="btn ${top ? 'pri' : ''}" data-act="plMudar" data-id="${ID[l]}">${l > c.lvl ? 'Subir para o ' : 'Mudar para o '}${NOME[l]}</button>`
       : `<button class="btn ${top ? 'pri' : ''}" data-act="plAssinar" data-id="${ID[l]}">Assinar o ${NOME[l]}</button>`;
     return `<section class="pl-c${top ? ' top' : ''}${mine || (!c.pago && c.lvl === l && !c.teste) ? ' mine' : ''}"><div class="pl-ch"><b>${NOME[l]}</b>${top ? '<span class="bdg pos">o mais completo</span>' : ''}</div>
-      <div class="pl-p">${val ? `<b>${money(val, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small>` : '<b>—</b>'}</div>${val && ci === 'ano' ? `<small class="mut">${money(Math.round(val / 12), cur)} por mês</small>` : '<small class="mut">&nbsp;</small>'}
+      ${(() => { const cp = cupOk(ID[l]) && !c.pago ? OS.ui.plCupao : null, dv = cp ? Math.round(val * (100 - cp.pct)) / 100 : 0;
+        if (cp && val) return `<div class="pl-p"><s class="pl-old">${money(val, cur)}</s> <b>${money(dv, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small></div><small class="pl-cupn">−${cp.pct}% ${esc(cupDur(cp, ci))}</small>`;
+        return `<div class="pl-p">${val ? `<b>${money(val, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small>` : '<b>—</b>'}</div>${val && ci === 'ano' ? `<small class="mut">${money(Math.round(val / 12), cur)} por mês</small>` : '<small class="mut">&nbsp;</small>'}`; })()}
       <ul class="pl-f">${FEAT[l].map(f => `<li>${UI.ic('check')}<span>${esc(f)}</span></li>`).join('')}</ul>${btn}</section>`; }).join('')}</div>`; };
+/* ---------- v3.31: código de desconto (criado pela administração) ---------- */
+const cupOk = id => { const cp = OS.ui.plCupao; return !!cp && (!(cp.planos || []).length || cp.planos.includes(id)); };
+const cupDur = (cp, ci) => cp.dur === 'forever' ? 'sempre' : cp.dur === 'repeating' ? (ci === 'ano' ? 'no 1.º ano' : `durante ${cp.meses} ${cp.meses === 1 ? 'mês' : 'meses'}`) : (ci === 'ano' ? 'no 1.º ano' : 'no 1.º mês');
+const cupBox = () => { const cp = OS.ui.plCupao;
+  if (cp) return `<div class="pl-cup on"><span>${UI.ic('check')}Código <b>${esc(cp.code)}</b>: −${cp.pct}%${(cp.planos || []).length ? ' no ' + cp.planos.map(x => NOME[{ essencial: 1, avancado: 2, completo: 3 }[x]]).join(' e ') : ''}${cp.novos ? ' (só para a primeira assinatura)' : ''}</span><button type="button" class="btn xs ghost" data-act="plCupaoX">Tirar</button></div>`;
+  return `<form class="pl-cup" data-form="plCupao"><label for="plCupIn">Tens um código de desconto?</label><div class="row gap8"><input id="plCupIn" class="field" name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30" placeholder="Ex.: LANCAMENTO20"><button class="btn sm" type="submit">Aplicar</button></div></form>`; };
+OS.forms.plCupao = async (f, v) => { const code = String(v('code') || '').trim(); if (!code) return; const bt = f.querySelector('button'); bt.disabled = true;
+  try { const j = await OS.Acc.call('cupao', { code }); OS.ui.plCupao = j.cupao; UI.toast('Código ' + j.cupao.code + ' aplicado: −' + j.cupao.pct + '%', 'pos'); OS.request(); }
+  catch (e) { UI.toast(e.message || 'Esse código não é válido.', 'neg'); bt.disabled = false; } };
+A.plCupaoX = () => { OS.ui.plCupao = null; OS.request(); };
 const V0 = () => { const c = PL.cur(); loadPre(); const P0 = PRE;
   const adm = c.admin && P0 && !P0.cobranca ? `<div class="pn"><h3 style="margin:0 0 6px">Abrir as assinaturas (só tu vês isto)</h3><ol class="ai-steps"><li>Cria conta em <b>stripe.com</b> e completa os dados da tua atividade (o Stripe pede a identificação e o IBAN para receberes).</li><li>Em Developers → API keys, copia a <b>chave secreta</b> (começa por <code>sk_live_</code>; para experimentar, <code>sk_test_</code>).</li><li>No Vercel, projeto prumo → Settings → Environment Variables, cria <code>STRIPE_SECRET_KEY</code> com essa chave e faz Redeploy. Cola-a só no Vercel.</li><li>No Stripe, em Settings → Billing → <b>Customer portal</b>, carrega em Guardar (é onde cada pessoa muda o cartão e vê as faturas).</li></ol><p class="mut" style="margin:0">Os preços estão em <code>api/_planos.js</code> (ou na variável <code>NAUTILO_PRECOS</code>). Até ligares o Stripe ninguém fica bloqueado.</p></div>` : '';
   const man = c.pago ? `<div class="row gap8" style="flex-wrap:wrap;margin-top:12px"><button class="btn sm" data-act="plPortal">${UI.ic('card')}Gerir pagamento e faturas</button>${c.cancelar ? `<button class="btn sm" data-act="plRetomar">Retomar a assinatura</button>` : `<button class="btn sm ghost" data-act="plCancelar">Cancelar a assinatura</button>`}</div>` : '';
@@ -89,7 +102,7 @@ const free = b => { if (b) { b.disabled = false; if (b.dataset.l) b.innerHTML = 
 const take = j => { if (j && j.conta && OS.Acc.take) OS.Acc.take(j); OS.request(); };
 A.plCiclo = b => { OS.ui.plCiclo = b.dataset.v; OS.request(); };
 A.plCur = b => { OS.ui.plCur = b.dataset.v; OS.request(); };
-A.plAssinar = async b => { busy(b); try { const j = await OS.Acc.call('checkout', { plano: b.dataset.id, ciclo: OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', cur: curOf(), volta: volta() }); if (j.url) location.href = j.url; }
+A.plAssinar = async b => { busy(b); try { const j = await OS.Acc.call('checkout', Object.assign({ plano: b.dataset.id, ciclo: OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', cur: curOf(), volta: volta() }, OS.ui.plCupao && cupOk(b.dataset.id) ? { cupao: OS.ui.plCupao.code } : {})); if (j.url) location.href = j.url; }
   catch (e) { UI.toast(e.message || 'Não consegui abrir o pagamento.', 'neg'); free(b); } };
 A.plMudar = b => { const id = b.dataset.id, n = NOME[{ essencial: 1, avancado: 2, completo: 3 }[id]];
   UI.ask('Mudar para o ' + n + '?', 'A diferença de preço é acertada pelo Stripe na próxima fatura (proporcional aos dias que faltam).', 'Mudar de plano', async () => {

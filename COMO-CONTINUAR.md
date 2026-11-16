@@ -343,3 +343,8 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
   - Paletas exclusivas: `js/paleta.js` (5.º campo = nível) Ouro, Aurora, Sakura; `js/cores.js` (`pode`, selo "Completo", volta ao Selo sem o plano).
   - Atendimento prioritário: o pedido guarda `prio` (Completo, não admin); o Admin ordena os prioritários primeiro com o selo "Completo · prioritário".
 - `standalone/i18n/manual-pt-BR.json`: as traduções pt-BR revistas à mão; o `packfix.py` aplica-as sempre por cima.
+
+### 3.31: códigos de desconto
+- Cada código = cupão do Stripe (`coupons`: `percent_off`, `duration` once/repeating/forever, `duration_in_months`, `applies_to[products]` para planos escolhidos) + código promocional (`promotion_codes`: `promotion[type]=coupon`, `promotion[coupon]`, `code`, `max_redemptions`, `expires_at`, `restrictions[first_time_transaction]`; com a API antiga tenta `coupon=`). Lista do Prumo no blob `cfg/cupoes-<modo>` (pct, dur, meses, planos, max, expira, novos, promo, coupon).
+- Ops: `cupao` (pessoa: valida, maiúsculas indiferentes, ativo/prazo/usos), `adminCupoes` (lista com `times_redeemed` do Stripe), `adminCupaoCriar`, `adminCupaoFim` (`active=false`). `checkout` com `cupao` → `discounts[0][promotion_code]` (sem `allow_promotion_codes`, o Stripe não deixa juntar); sem código continua a dar para escrever um na página do Stripe.
+- App: `js/planos.js` (`cupBox`, `OS.ui.plCupao`, preço riscado e "−X% no 1.º mês / durante N meses / sempre"), `js/conta.js` (`cupPn` no Admin). Testes no grupo `planos` (simulador do Stripe com `coupons` e `promotion_codes`).

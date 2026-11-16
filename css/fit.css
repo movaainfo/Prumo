@@ -1542,6 +1542,9 @@ svg.ig-ch .i{fill:var(--accent);opacity:.55}svg.ig-ch .g{fill:var(--pos,#4ade80)
 .pl-ctl{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
 .pl-intro{border-color:var(--accent)}
 .pal-x{font-style:normal;font-size:11px;padding:1px 6px;border-radius:999px;border:1px solid var(--accent);color:var(--accent);margin-left:4px;vertical-align:middle}.pal-lk{opacity:.72}.pl-intro h3{margin:0 0 6px;font-size:18px}.pl-intro p{margin:0 0 12px;max-width:68ch;line-height:1.55}
+.pl-cup{display:flex;flex-direction:column;gap:6px;margin:12px 0 0;max-width:460px}.pl-cup label{font-size:13px;color:var(--tx2)}.pl-cup .field{flex:1;min-width:0;text-transform:uppercase;letter-spacing:.04em}
+.pl-cup.on{flex-direction:row;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;border:1px solid var(--pos);border-radius:12px;max-width:none}.pl-cup.on span{flex:1}.pl-cup.on span .ic{vertical-align:-3px;margin-right:6px}
+.pl-old{color:var(--tx3,var(--tx2));font-size:15px;font-weight:400;margin-right:4px}.pl-cupn{color:var(--pos);font-weight:600}
 .pl-curn{margin:8px 0 0;font-size:12.5px;line-height:1.45;max-width:72ch}.pl-curx{font-size:13px}
 .pl-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;align-items:stretch}
 .pl-c{display:flex;flex-direction:column;gap:8px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--card,transparent);min-width:0}
