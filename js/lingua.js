@@ -79,7 +79,9 @@ const lookup = (d, key, depth) => { const v = d.ex.get(key); if (v != null) retu
 // aspas, parênteses, símbolos e pontuação à volta: traduz o miolo e devolve-os ("“…”", "+ …", "…:")
 const EDGE = /^([^A-Za-zÀ-ÿ0-9]*)([\s\S]*?)([^A-Za-zÀ-ÿ0-9]*)$/;
 const core = (key, depth) => { let r = lookup(D, key, depth); if (r == null && FB) r = lookup(FB, key, depth);
-  if (r == null && depth < 2) { const m = key.match(EDGE); if (m && (m[1] || m[3]) && /[A-Za-zÀ-ÿ]{2}/.test(m[2])) { let c = lookup(D, m[2], depth); if (c == null && FB) c = lookup(FB, m[2], depth); if (c != null) r = m[1] + c + m[3]; } }
+  if (r == null && depth < 2) { const m = key.match(EDGE); if (m && (m[1] || m[3]) && /[A-Za-zÀ-ÿ]{2}/.test(m[2])) { let c = lookup(D, m[2], depth); if (c == null && FB) c = lookup(FB, m[2], depth); if (c != null) r = m[1] + c + m[3];
+      // v3.27: ": … (fica sempre)": o ")" do fim faz parte da frase; tira só o que está antes
+      else if (m[1] && m[3]) { const k2 = m[2] + m[3]; let c2 = lookup(D, k2, depth); if (c2 == null && FB) c2 = lookup(FB, k2, depth); if (c2 != null) r = m[1] + c2; } } }
   // uma contagem no fim: "Concluído (3)"
   if (r == null && depth < 2) { const m = key.match(/^(.*?[A-Za-zÀ-ÿ].*?)(\s*\(\s*[\d.,%/]+\s*\))$/); if (m) { let c = lookup(D, m[1], depth); if (c == null && FB) c = lookup(FB, m[1], depth); if (c != null) r = c + m[2]; } }
   return r; };

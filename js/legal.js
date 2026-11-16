@@ -107,10 +107,16 @@ document.addEventListener('click', e => { const a = e.target.closest && e.target
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && box && !box.hidden) { e.stopPropagation(); L.close(); } }, true);
 
 /* ---------- as caixas a aceitar (criar conta e primeira entrada) ---------- */
+// v3.27: cada caixa tem "O que é isto?" com a explicação em linguagem simples
+const LQ = { termos: 'São as regras de uso do Prumo e a forma como tratamos os teus dados. Em resumo: os dados são teus, não os vendemos nem os mostramos a ninguém, e podes exportá-los ou apagar a conta quando quiseres.',
+  saude: 'Sono, treino, alimentação, peso e a tua religião são "dados sensíveis" na lei (RGPD na Europa, LGPD no Brasil), por isso temos de te pedir autorização à parte. Servem só para o Prumo tos mostrar e fazer os teus planos; nunca são vendidos nem usados para publicidade. Podes retirar a autorização nas Definições.',
+  idade: 'O Prumo é para quem tem 16 anos ou mais. Se tens entre 16 e 18, os teus pais ou responsáveis têm de concordar que uses o app.' };
+const lq = k => `<button type="button" class="lg-q" data-lgq="${k}" aria-expanded="false">O que é isto?</button><p class="lg-qa" data-lgqa="${k}" hidden>${LQ[k]}</p>`;
 L.checks = () => `<div class="lg-ck">
-  <label><input type="checkbox" name="t_termos" required> <span>Li e aceito os <a href="#" data-lgl="termos">Termos de Serviço</a> e a <a href="#" data-lgl="privacidade">Política de Privacidade</a> (incluindo <a href="#" data-lgl="cookies">cookies</a>).</span></label>
-  <label><input type="checkbox" name="t_saude" required> <span>Consinto que o Prumo guarde os dados de <b>saúde</b> (sono, treino, alimentação, corpo) e de <b>fé</b> que eu decidir registar, só para mos mostrar. Posso retirar este consentimento quando quiser.</span></label>
-  <label><input type="checkbox" name="t_idade" required> <span>Tenho 16 anos ou mais (e, se tiver menos de 18, autorização dos meus pais ou responsáveis).</span></label></div>`;
+  <div class="lg-ci"><label><input type="checkbox" name="t_termos" required> <span>Li e aceito os <a href="#" data-lgl="termos">Termos de Serviço</a> e a <a href="#" data-lgl="privacidade">Política de Privacidade</a> (incluindo <a href="#" data-lgl="cookies">cookies</a>).</span></label>${lq('termos')}</div>
+  <div class="lg-ci"><label><input type="checkbox" name="t_saude" required> <span>Consinto que o Prumo guarde os dados de <b>saúde</b> (sono, treino, alimentação, corpo) e de <b>fé</b> que eu decidir registar, só para mos mostrar. Posso retirar este consentimento quando quiser.</span></label>${lq('saude')}</div>
+  <div class="lg-ci"><label><input type="checkbox" name="t_idade" required> <span>Tenho 16 anos ou mais (e, se tiver menos de 18, autorização dos meus pais ou responsáveis).</span></label>${lq('idade')}</div></div>`;
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-lgq]'); if (!b) return; e.preventDefault(); const p = b.parentElement && b.parentElement.querySelector(`[data-lgqa="${b.dataset.lgq}"]`); if (!p) return; p.hidden = !p.hidden; b.setAttribute('aria-expanded', String(!p.hidden)); b.textContent = p.hidden ? 'O que é isto?' : 'Fechar a explicação'; });
 L.read = f => { const c = n => !!(f.querySelector(`input[name=${n}]`) || {}).checked; if (!c('t_termos') || !c('t_saude') || !c('t_idade')) return null; return { termos: L.V, saude: true, idade: true }; };
 
 /* ---------- Definições › Privacidade e termos ---------- */

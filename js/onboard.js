@@ -50,44 +50,83 @@ const defaults = () => { const b = defaults0(), sv = (OS.one('onb') || {}).ans; 
   return b; };
 
 const habits = a => HABITS.map(h => h[0] === 'fe' && OS.Rel ? [h[0], OS.Rel.habit(a.rel || 'evangelica')].concat(h.slice(2)) : h);
+/* ---------- v3.27: "?" em cada pergunta: o que significa e o que é cada opção ---------- */
+const HELP = {
+  short: 'O nome pelo qual o Prumo e a tua IA te tratam. Pode ser só o primeiro nome.',
+  country: 'Serve para a moeda, os feriados, as notícias do teu país e as regras de impostos e investimentos de lá.',
+  lang: 'A língua dos menus e dos textos do app. A tua IA também te responde nesta língua.',
+  rel: 'Muda a aba Fé: o livro sagrado (Bíblia, Alcorão…), as orações e as práticas da tua religião. Se escolheres "Nenhuma", a aba Fé sai do menu.',
+  ia: 'O Prumo tem um assistente com inteligência artificial, como uma Siri: respondes-lhe por escrito ou por voz, ele responde a perguntas e faz coisas por ti no app (ex.: "quanto gastei esta semana?", "marca o treino de hoje"). Escolhe o nome dele: é o que dizes para o chamar por voz.',
+  voz: 'A voz com que a tua IA fala contigo. Toca numa para ouvir; podes mudar depois.',
+  areas: 'Cada botão é uma aba do menu. Toca para ligar (fica destacado) ou desligar. O que desligas só sai do menu: podes voltar a ligar em Definições.',
+  est: '<b>Universidade</b>: faculdade ou politécnico (licenciatura, mestrado…). <b>Ensino secundário</b>: 10.º ao 12.º ano (no Brasil, ensino médio). <b>Curso ou formação</b>: curso técnico, profissional ou online. Com isto o Prumo monta a tua página de estudos.',
+  subs: 'As cadeiras ou matérias que tens agora. Cada uma ganha o seu lugar para faltas, notas, provas e trabalhos.',
+  trab: '<b>Por conta de outrem</b>: trabalhas para uma empresa ou patrão (com contrato ou recibo). <b>Por conta própria</b>: és independente, freelancer ou tens o teu negócio. <b>Não trabalho</b>: o Prumo esconde o que é de trabalho.',
+  obj: '<b>Perder gordura</b>: comer um pouco abaixo do que gastas. <b>Ganhar massa muscular</b>: comer um pouco acima, com mais proteína, e treinar força. <b>Manter e ter saúde</b>: comer o que gastas. <b>Render mais num desporto</b>: treino e alimentação a pensar no teu desporto. O Prumo faz a meta de calorias e o plano com isto.',
+  dias: 'Quantos dias por semana queres treinar. O plano de treino é feito com esse número de dias (ex.: 3 dias = corpo dividido em 3 treinos). "Nenhum" se não queres plano de treino.',
+  onde: '<b>Ginásio</b>: com máquinas e pesos. <b>Em casa</b>: com o peso do corpo ou pouco material. <b>Ao ar livre</b>: corrida, parque, calistenia.',
+  nivel: '<b>Iniciante</b>: nunca treinaste ou paraste há muito tempo. <b>Intermédio</b>: treinas com regularidade há alguns meses. <b>Avançado</b>: treinas há anos e conheces bem os exercícios.',
+  desp: 'Os desportos que praticas. Cada um ganha o seu registo de treinos e entra no teu plano da semana.',
+  peso: 'Peso, altura e idade servem só para calcular quantas calorias gastas por dia e a meta da tua dieta. Ficam guardados só na tua conta.',
+  sexo: 'Só para a fórmula das calorias: homens e mulheres gastam energia de forma diferente.',
+  moeda: 'A moeda em que vês os teus valores no app. Podes ter contas noutras moedas.',
+  dinh: '<b>Saber para onde vai o dinheiro</b>: registar os gastos e ver por categoria. <b>Sair das dívidas</b>: um plano para pagar o que deves. <b>Fundo de emergência</b>: uma reserva para imprevistos (o normal é 3 a 6 meses das tuas despesas). <b>Poupar para um objetivo</b>: juntar para algo (viagem, carro…). <b>Começar a investir</b>: pôr o dinheiro a render.',
+  poup: 'A parte do que ganhas que queres guardar todos os meses. Ex.: ganhas 1000 e escolhes 20% → a meta é guardar 200 por mês. É comum recomendar pelo menos 10% a 20%.',
+  acordar: 'A hora a que acordas e te deitas. Servem para montar a tua rotina por horas e saber quantas horas dormes.',
+  hab: 'Hábitos são coisas que queres fazer todos os dias (ou quase), como ler ou beber água. Ficam no teu quadro de hábitos e dão pontos quando os cumpres.',
+  metas: 'Coisas grandes que queres conseguir este ano. Entram na página Metas e no Dominus, o jogo do Prumo: as missões do dia saem delas. Podes deixar em branco.' };
+// o que é cada aba (passo "O que queres no teu Prumo?")
+const AREA_HELP = { visao: 'o resumo do teu dia e da tua vida num só ecrã (fica sempre)', hoje: 'o que tens para fazer hoje: tarefas, hábitos, aulas e treino', ranking: 'compara a tua pontuação com as outras pessoas do Prumo',
+  jornal: 'as notícias do teu país e do mundo, com resumo da IA', futebol: 'as tuas equipas e campeonatos, jogos ao vivo e tabelas', email: 'liga o teu Gmail ou Outlook e a IA resume e organiza os e-mails', calendario: 'a tua agenda, ligada ao Google Calendar e ao iPhone',
+  tarefas: 'a lista de coisas por fazer, com datas e prioridades', habitos: 'os hábitos que queres manter e o teu dia por horas', foco: 'um cronómetro para estudar ou trabalhar sem distrações, que dá pontos', projetos: 'projetos maiores divididos em passos', metas: 'os teus objetivos, com o progresso medido pelo que fazes',
+  eu: 'o teu perfil, os teus valores e troféus, e a IA a conhecer-te', mundo: 'o mapa dos países e cidades que visitaste e queres visitar', senhas: 'um cofre cifrado para as tuas senhas (só tu o abres)', cozinha: 'a despensa, a lista de compras e receitas com o que tens em casa',
+  fe: 'o livro sagrado, orações e práticas da tua religião', gasto: 'registar uma despesa em dois toques', financas: 'contas, receitas, despesas, orçamento e extratos do banco', investimentos: 'a tua carteira, cotações e um guia para começar a investir', relatorios: 'resumos do mês e do ano e ajuda nos impostos', compras: 'a lista do que queres comprar, para pensares antes de gastar', simuladores: 'contas de juros, empréstimos, poupança e reforma',
+  universidade: 'disciplinas, horário, faltas, notas, provas e um tutor com IA', cursos: 'os cursos online que fazes e o progresso', certificacoes: 'certificados que tens ou queres tirar', leituras: 'os livros que lês e queres ler', aprendizagem: 'o que queres aprender, passo a passo', conhecimento: 'as tuas notas e resumos para consultar depois',
+  corpo: 'peso, medidas, sono e saúde num só sítio', treino: 'o teu plano de treino, com o registo das séries', dieta: 'calorias, refeições e proteína', corrida: 'as tuas corridas e a evolução (também do relógio)', desporto: 'os desportos que praticas',
+  trabalho: 'horários, turnos, horas e o que ganhas', carreira: 'o currículo e a tua rede de contactos', capital: 'as tuas competências e projetos, a pensar na carreira que queres', oportunidades: 'vagas, bolsas e eventos ligados aos teus objetivos',
+  next: 'o caminho para os teus grandes objetivos, ano a ano', decisoes: 'ajuda para pensar decisões importantes, com a IA', revisao: 'a revisão da semana, do mês e do ano' };
+const helpOpen = k => !!(W && W.help && W.help.has(k));
+const Q = k => HELP[k] ? `<button type="button" class="onb-q" data-onbq="${k}" aria-expanded="${helpOpen(k)}" aria-label="O que significa isto?" title="O que significa isto?">?</button>` : '';
+const QH = k => HELP[k] ? `<div class="onb-help" data-onbh="${k}"${helpOpen(k) ? '' : ' hidden'}>${HELP[k]}${k === 'areas' ? `<ul class="onb-al">${groups().flatMap(([, it]) => it).filter(([x]) => AREA_HELP[x]).map(([x, l]) => `<li><b>${esc(l)}</b>: ${esc(AREA_HELP[x])}</li>`).join('')}</ul>` : ''}</div>` : '';
 /* ---------- os passos ---------- */
 const on = (a, ...ks) => ks.some(k => !new Set(a.hide).has(k));
 const chips = (a, k, opts, multi) => `<div class="onb-chips">${opts.map(([v, l]) => { const sel = multi ? (a[k] || []).includes(v) : String(a[k]) === String(v); return `<button type="button" class="chip onb-c ${sel ? 'on' : ''}" data-o${multi ? 'm' : 'c'}="${k}" data-v="${esc(v)}" aria-pressed="${sel}">${esc(l)}</button>`; }).join('')}</div>`;
-const inp = (a, k, l, o = {}) => `<label class="onb-f"><span>${esc(l)}</span><input class="field" data-ok="${k}" type="${o.t || 'text'}" value="${esc(a[k] == null ? '' : a[k])}"${o.ph ? ` placeholder="${esc(o.ph)}"` : ''}${o.min != null ? ` min="${o.min}"` : ''}${o.max != null ? ` max="${o.max}"` : ''}${o.t === 'number' ? ' inputmode="decimal"' : ''} autocomplete="off"></label>`;
+const NOQ = new Set(['altura', 'idade', 'deitar', 'cargo', 'empresa', 'inst', 'curso', 'city', 'horas']);
+const inp = (a, k, l, o = {}) => `<div class="onb-f"><span>${esc(l)}${NOQ.has(k) ? '' : Q(k)}</span>${NOQ.has(k) ? '' : QH(k)}<input class="field" aria-label="${esc(l)}" data-ok="${k}" type="${o.t || 'text'}" value="${esc(a[k] == null ? '' : a[k])}"${o.ph ? ` placeholder="${esc(o.ph)}"` : ''}${o.min != null ? ` min="${o.min}"` : ''}${o.max != null ? ` max="${o.max}"` : ''}${o.t === 'number' ? ' inputmode="decimal"' : ''} autocomplete="off"></div>`;
 const STEPS = [
   { id: 'tu', t: 'Vamos fazer o Prumo à tua medida', s: 'São dois minutos. Tudo fica editável depois, e podes saltar quando quiseres.',
-    b: a => `${inp(a, 'short', 'Como te chamas?', { ph: 'O teu nome' })}<div class="onb-2">${`<label class="onb-f"><span>País onde vives</span><select class="field" data-ok="country">${(OS.Pais ? OS.Pais.list() : [['PT', 'Portugal'], ['BR', 'Brasil']]).map(c => `<option value="${c[0]}"${c[0] === a.country ? ' selected' : ''}>${OS.Pais ? OS.Pais.flag(c[0]) + ' ' : ''}${esc(c[1])}</option>`).join('')}</select></label>`}${inp(a, 'city', 'Cidade', { ph: 'ex.: Lisboa, São Paulo' })}</div>
-      ${OS.Lang ? `<label class="onb-f"><span>Língua do app</span><select class="field" data-ok="lang" data-notr>${OS.Lang.list().map(c => `<option value="${c}"${c === a.lang ? ' selected' : ''}>${esc(OS.Lang.name(c))}</option>`).join('')}</select></label>` : ''}
-      ${OS.Rel ? `<label class="onb-f"><span>Religião (a aba Fé muda conforme a tua: livro sagrado, orações e práticas)</span>${OS.Rel.select(a.rel || '', 'data-ok="rel"')}</label>` : ''}
-      <div class="onb-f"><span>Como queres chamar a tua IA? (é por este nome que a chamas por voz)</span>${chips(a, 'ia', NAMES.map(n => [n, n]))}<input class="field" data-ok="ia" value="${esc(NAMES.includes(a.ia) ? '' : a.ia)}" placeholder="Ou escreve outro nome"></div>
-      <div class="onb-f"><span>E a voz? (toca para ouvir)</span>${chips(a, 'voz', VOZ)}</div>` },
-  { id: 'areas', t: 'O que queres no teu Prumo?', s: 'Toca para escolher as abas que vais usar. As outras ficam escondidas do menu e podes ligá-las quando quiseres em Definições.',
+    b: a => `${inp(a, 'short', 'Como te chamas?', { ph: 'O teu nome' })}<div class="onb-2">${`<label class="onb-f"><span>País onde vives${Q('country')}</span>${QH('country')}<select class="field" data-ok="country">${(OS.Pais ? OS.Pais.list() : [['PT', 'Portugal'], ['BR', 'Brasil']]).map(c => `<option value="${c[0]}"${c[0] === a.country ? ' selected' : ''}>${OS.Pais ? OS.Pais.flag(c[0]) + ' ' : ''}${esc(c[1])}</option>`).join('')}</select></label>`}${inp(a, 'city', 'Cidade', { ph: 'ex.: Lisboa, São Paulo' })}</div>
+      ${OS.Lang ? `<label class="onb-f"><span>Língua do app${Q('lang')}</span>${QH('lang')}<select class="field" data-ok="lang" data-notr>${OS.Lang.list().map(c => `<option value="${c}"${c === a.lang ? ' selected' : ''}>${esc(OS.Lang.name(c))}</option>`).join('')}</select></label>` : ''}
+      ${OS.Rel ? `<label class="onb-f"><span>Religião (a aba Fé muda conforme a tua: livro sagrado, orações e práticas)${Q('rel')}</span>${QH('rel')}${OS.Rel.select(a.rel || '', 'data-ok="rel"')}</label>` : ''}
+      <div class="onb-f"><span>Como queres chamar a tua IA? (é por este nome que a chamas por voz)${Q('ia')}</span>${QH('ia')}${chips(a, 'ia', NAMES.map(n => [n, n]))}<input class="field" data-ok="ia" value="${esc(NAMES.includes(a.ia) ? '' : a.ia)}" placeholder="Ou escreve outro nome"></div>
+      <div class="onb-f"><span>E a voz? (toca para ouvir)${Q('voz')}</span>${QH('voz')}${chips(a, 'voz', VOZ)}</div>` },
+  { id: 'areas', q: 'areas', t: 'O que queres no teu Prumo?', s: 'Toca para escolher as abas que vais usar. As outras ficam escondidas do menu e podes ligá-las quando quiseres em Definições.',
     b: a => areaChips(new Set(a.hide), 'data-oa') },
-  { id: 'estudos', show: a => on(a, 'universidade', 'cursos'), t: 'Estudas?', s: 'Com isto monto a tua Universidade: disciplinas, faltas, notas e o tutor.',
+  { id: 'estudos', q: 'est', show: a => on(a, 'universidade', 'cursos'), t: 'Estudas?', s: 'Com isto monto a tua Universidade: disciplinas, faltas, notas e o tutor.',
     b: a => `${chips(a, 'est', [['uni', 'Universidade'], ['sec', 'Ensino secundário'], ['curso', 'Curso ou formação'], ['nao', 'Não estou a estudar']])}
       ${a.est === 'uni' ? `<div class="onb-2">${inp(a, 'inst', 'Universidade ou faculdade', { ph: 'ex.: Universidade de Lisboa' })}${inp(a, 'curso', 'Curso', { ph: 'ex.: Gestão' })}</div><div class="onb-f"><span>Ano</span>${chips(a, 'ano', [1, 2, 3, 4, 5, 6].map(n => [n, n + '.º']))}</div>` : ''}
       ${a.est === 'sec' ? `<div class="onb-f"><span>Ano</span>${chips(a, 'ano', [10, 11, 12].map(n => [n, n + '.º']))}</div>` : ''}
       ${a.est === 'curso' ? inp(a, 'curso', 'Que curso?', { ph: 'ex.: Programação web' }) : ''}
-      ${a.est === 'uni' || a.est === 'sec' ? `<label class="onb-f"><span>Disciplinas deste semestre (uma por linha)</span><textarea class="field" rows="5" data-ok="subs" placeholder="ex.:&#10;Matemática&#10;Contabilidade">${esc(a.subs)}</textarea></label>
+      ${a.est === 'uni' || a.est === 'sec' ? `<label class="onb-f"><span>Disciplinas deste semestre (uma por linha)${Q('subs')}</span>${QH('subs')}<textarea class="field" rows="5" data-ok="subs" placeholder="ex.:&#10;Matemática&#10;Contabilidade">${esc(a.subs)}</textarea></label>
         <button type="button" class="btn sm" data-act="onbSug" ${a.curso || a.est === 'sec' ? '' : 'disabled'}>${UI.ic('star')}${W && W.sug ? 'A pensar…' : 'Sugerir as disciplinas com IA'}</button>${W && W.sugErr ? `<small class="onb-err">${esc(W.sugErr)}</small>` : ''}` : ''}` },
-  { id: 'trabalho', show: a => on(a, 'trabalho', 'carreira'), t: 'Trabalhas?', s: 'Serve para a tua página de Trabalho, as horas e as oportunidades.',
+  { id: 'trabalho', q: 'trab', show: a => on(a, 'trabalho', 'carreira'), t: 'Trabalhas?', s: 'Serve para a tua página de Trabalho, as horas e as oportunidades.',
     b: a => `${chips(a, 'trab', [['emp', 'Por conta de outrem'], ['proprio', 'Por conta própria'], ['nao', 'Não trabalho']])}
       ${a.trab && a.trab !== 'nao' ? `<div class="onb-2">${inp(a, 'cargo', 'O que fazes', { ph: 'ex.: Rececionista, Designer' })}${inp(a, 'empresa', a.trab === 'proprio' ? 'O teu negócio (opcional)' : 'Empresa (opcional)')}</div>${inp(a, 'horas', 'Horas por semana', { t: 'number', min: 1, max: 80, ph: 'ex.: 20' })}` : ''}` },
   { id: 'corpo', show: a => on(a, 'treino', 'dieta', 'corrida', 'desporto', 'corpo'), t: 'O teu corpo', s: 'Com isto faço o teu plano de treino, a meta de calorias e os teus desportos.',
-    b: a => `<div class="onb-f"><span>Objetivo</span>${chips(a, 'obj', [['cut', 'Perder gordura'], ['bulk', 'Ganhar massa muscular'], ['keep', 'Manter e ter saúde'], ['sport', 'Render mais num desporto']])}</div>
-      <div class="onb-f"><span>Quantos dias por semana queres treinar?</span>${chips(a, 'dias', [[0, 'Nenhum'], [2, '2'], [3, '3'], [4, '4'], [5, '5'], [6, '6']])}</div>
-      ${+a.dias ? `<div class="onb-f"><span>Onde?</span>${chips(a, 'onde', [['gym', 'Ginásio'], ['casa', 'Em casa'], ['fora', 'Ao ar livre']])}</div><div class="onb-f"><span>Nível</span>${chips(a, 'nivel', [['Iniciante', 'Iniciante'], ['Intermédio', 'Intermédio'], ['Avançado', 'Avançado']])}</div>` : ''}
-      <div class="onb-f"><span>Desportos que praticas</span>${chips(a, 'desp', SPORTS, 1)}</div>
+    b: a => `<div class="onb-f"><span>Objetivo${Q('obj')}</span>${QH('obj')}${chips(a, 'obj', [['cut', 'Perder gordura'], ['bulk', 'Ganhar massa muscular'], ['keep', 'Manter e ter saúde'], ['sport', 'Render mais num desporto']])}</div>
+      <div class="onb-f"><span>Quantos dias por semana queres treinar?${Q('dias')}</span>${QH('dias')}${chips(a, 'dias', [[0, 'Nenhum'], [2, '2'], [3, '3'], [4, '4'], [5, '5'], [6, '6']])}</div>
+      ${+a.dias ? `<div class="onb-f"><span>Onde?${Q('onde')}</span>${QH('onde')}${chips(a, 'onde', [['gym', 'Ginásio'], ['casa', 'Em casa'], ['fora', 'Ao ar livre']])}</div><div class="onb-f"><span>Nível${Q('nivel')}</span>${QH('nivel')}${chips(a, 'nivel', [['Iniciante', 'Iniciante'], ['Intermédio', 'Intermédio'], ['Avançado', 'Avançado']])}</div>` : ''}
+      <div class="onb-f"><span>Desportos que praticas${Q('desp')}</span>${QH('desp')}${chips(a, 'desp', SPORTS, 1)}</div>
       <div class="onb-3">${inp(a, 'peso', 'Peso (kg)', { t: 'number', min: 30, max: 250 })}${inp(a, 'altura', 'Altura (cm)', { t: 'number', min: 120, max: 230 })}${inp(a, 'idade', 'Idade', { t: 'number', min: 12, max: 100 })}</div>
-      <div class="onb-f"><span>Para as contas das calorias</span>${chips(a, 'sexo', [['M', 'Homem'], ['F', 'Mulher']])}</div>` },
+      <div class="onb-f"><span>Para as contas das calorias${Q('sexo')}</span>${QH('sexo')}${chips(a, 'sexo', [['M', 'Homem'], ['F', 'Mulher']])}</div>` },
   { id: 'dinheiro', show: a => on(a, 'financas', 'investimentos'), t: 'O teu dinheiro', s: 'Para as contas, as metas de poupança e os marcos de Fortuna.',
-    b: a => `<label class="onb-f"><span>Moeda principal</span><select class="field" data-ok="moeda">${CURS(a.country).map(m => `<option value="${m}"${m === a.moeda ? ' selected' : ''}>${m} · ${esc(curName(m))}</option>`).join('')}</select></label>
-      <div class="onb-f"><span>O que queres agora? (podes escolher vários)</span>${chips(a, 'dinh', [['controlar', 'Saber para onde vai o dinheiro'], ['divida', 'Sair das dívidas'], ['reserva', 'Criar um fundo de emergência'], ['poupar', 'Poupar para um objetivo'], ['investir', 'Começar a investir']], 1)}</div>
-      <div class="onb-f"><span>Quanto do que ganhas queres poupar?</span>${chips(a, 'poup', [['10', '10%'], ['15', '15%'], ['20', '20%'], ['30', '30%']])}</div>` },
+    b: a => `<label class="onb-f"><span>Moeda principal${Q('moeda')}</span>${QH('moeda')}<select class="field" data-ok="moeda">${CURS(a.country).map(m => `<option value="${m}"${m === a.moeda ? ' selected' : ''}>${m} · ${esc(curName(m))}</option>`).join('')}</select></label>
+      <div class="onb-f"><span>O que queres agora? (podes escolher vários)${Q('dinh')}</span>${QH('dinh')}${chips(a, 'dinh', [['controlar', 'Saber para onde vai o dinheiro'], ['divida', 'Sair das dívidas'], ['reserva', 'Criar um fundo de emergência'], ['poupar', 'Poupar para um objetivo'], ['investir', 'Começar a investir']], 1)}</div>
+      <div class="onb-f"><span>Quanto do que ganhas queres poupar?${Q('poup')}</span>${QH('poup')}${chips(a, 'poup', [['10', '10%'], ['15', '15%'], ['20', '20%'], ['30', '30%']])}</div>` },
   { id: 'rotina', t: 'A tua rotina e as tuas metas', s: 'Os hábitos entram no teu quadro de hábitos; as metas entram em Metas e no jogo.',
     b: a => `<div class="onb-2">${inp(a, 'acordar', 'Acordo às', { t: 'time' })}${inp(a, 'deitar', 'Deito-me às', { t: 'time' })}</div>
-      <div class="onb-f"><span>Hábitos que queres ter</span>${chips(a, 'hab', habits(a).filter(h => (h[0] !== 'fe' || on(a, 'fe')) && (h[0] !== 'estudo' || (a.est && a.est !== 'nao')) && (h[0] !== 'treino' || +a.dias || (a.desp || []).length) && (h[0] !== 'gastos' || on(a, 'financas', 'gasto'))).map(h => [h[0], h[1]]), 1)}</div>
-      <div class="onb-f"><span>Três coisas que queres conseguir nos próximos 12 meses</span>${[0, 1, 2].map(i => `<input class="field onb-m" data-om3="${i}" value="${esc(a.metas[i] || '')}" placeholder="${['ex.: Passar a todas as cadeiras', 'ex.: Juntar 1000 € de reserva', 'ex.: Correr 10 km'][i]}">`).join('')}</div>` },
+      <div class="onb-f"><span>Hábitos que queres ter${Q('hab')}</span>${QH('hab')}${chips(a, 'hab', habits(a).filter(h => (h[0] !== 'fe' || on(a, 'fe')) && (h[0] !== 'estudo' || (a.est && a.est !== 'nao')) && (h[0] !== 'treino' || +a.dias || (a.desp || []).length) && (h[0] !== 'gastos' || on(a, 'financas', 'gasto'))).map(h => [h[0], h[1]]), 1)}</div>
+      <div class="onb-f"><span>Três coisas que queres conseguir nos próximos 12 meses${Q('metas')}</span>${QH('metas')}${[0, 1, 2].map(i => `<input class="field onb-m" data-om3="${i}" value="${esc(a.metas[i] || '')}" placeholder="${['ex.: Passar a todas as cadeiras', 'ex.: Juntar 1000 € de reserva', 'ex.: Correr 10 km'][i]}">`).join('')}</div>` },
   { id: 'fim', t: 'Pronto para criar o teu Prumo', s: 'Isto é o que vou preparar para ti. Muda o que quiseres depois.',
     b: a => `<ul class="onb-sum">${plan(a).map(x => `<li>${UI.ic('check')}<span>${esc(x)}</span></li>`).join('')}</ul>` }];
 
@@ -239,7 +278,7 @@ const draw = () => { if (!W) return; const h = host(), L = steps(), s = L[Math.m
     <div class="onb-foot"><span class="grow"></span><button class="btn pri" data-onb="fechar">Começar</button></div></div>`; h.hidden = false; return; }
   h.innerHTML = `<div class="onb-in"><div class="onb-top"><span class="onb-brand">${OS.Lock.logo(30)}${OS.Lock.word(18)}</span><span class="onb-n">${W.only ? '' : `${W.i + 1} de ${n}`}</span>${W.only ? `<button class="icon-btn" data-onb="fechar" aria-label="Fechar">${UI.ic('x')}</button>` : `<button class="btn sm ghost" data-onb="saltar">Saltar</button>`}</div>
     ${W.only ? '' : `<div class="onb-bar" aria-hidden="true"><i style="width:${Math.round((W.i + 1) / n * 100)}%"></i></div>`}
-    <div class="onb-body"><h1>${esc(s.t)}</h1><p class="onb-s">${esc(s.s)}</p>${s.b(W.a)}</div>
+    <div class="onb-body"><h1>${esc(s.t)}</h1><p class="onb-s">${esc(s.s)}${s.q ? ` <button type="button" class="onb-qs" data-onbq="${s.q}" aria-expanded="${helpOpen(s.q)}">${s.q === 'areas' ? 'O que é cada aba?' : 'O que significa cada opção?'}</button>` : ''}</p>${s.q ? QH(s.q) : ''}${s.b(W.a)}</div>
     <div class="onb-foot">${W.i > 0 && !W.only ? `<button class="btn ghost" data-onb="voltar">Voltar</button>` : ''}<span class="grow"></span>${W.only ? `<button class="btn pri" data-onb="guardarAreas">Guardar</button>` : last ? `<button class="btn pri" data-onb="criar" ${W.busy ? 'disabled' : ''}>${W.busy ? 'A preparar…' : 'Criar o meu Prumo'}</button>` : `<button class="btn pri" data-onb="seguinte">Continuar</button>`}</div></div>`;
   h.hidden = false; document.body.classList.add('onb-open'); };
 const close = () => { const h = document.getElementById('onb'); if (h) { h.hidden = true; h.innerHTML = ''; } document.body.classList.remove('onb-open'); W = null; OS.request(); };
@@ -250,6 +289,8 @@ const onInput = e => { if (!W) return; const el = e.target, k = el.dataset.ok, m
     if (k === 'lang' && e.type === 'change') { W.langSet = 1; langNow(el.value); draw(); } }
   if (m3 != null) W.a.metas[+m3] = el.value; };
 const onClick = async e => { if (!W) return; const b = e.target.closest('button'); if (!b || b.disabled) return; const a = W.a, hide = new Set(a.hide);
+  if (b.dataset.onbq) { const k = b.dataset.onbq, box = document.querySelector(`#onb [data-onbh="${k}"]`); W.help = W.help || new Set(); const open = !W.help.has(k); open ? W.help.add(k) : W.help.delete(k);
+    if (box) box.hidden = !open; document.querySelectorAll(`#onb [data-onbq="${k}"]`).forEach(x => x.setAttribute('aria-expanded', String(open))); return; }
   if (b.dataset.oc) { a[b.dataset.oc] = isNaN(+b.dataset.v) || b.dataset.oc === 'poup' || b.dataset.oc === 'nivel' ? b.dataset.v : +b.dataset.v; if (b.dataset.oc === 'ia') { const f = document.querySelector('#onb [data-ok=ia]'); if (f) f.value = ''; }
     if (b.dataset.oc === 'voz' && OS.Spyke && OS.Spyke.say) { const prev = OS.one('spyke').voice; OS.one('spyke').voice = b.dataset.v; try { OS.Spyke.say(`Olá${a.short ? ', ' + a.short.split(' ')[0] : ''}. É assim que eu falo.`, { bg: true, tap: true, eng: 'gemini' }); } catch (e) { } setTimeout(() => { if (!OS.one('onb').done) OS.one('spyke').voice = prev; }, 8000); }
     return draw(); }

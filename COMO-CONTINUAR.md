@@ -325,3 +325,9 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 ### 3.25: e-mail de teste no Admin
 - `mailSend(email, nome, code)` devolve `{ok, st, via, msg}` e regista no servidor (`nautilo email <via> <status> <resposta>`) quando o Brevo/Resend recusa; `sendCode` usa-o (só `ok`).
 - Op `adminTesteEmail` (admin, 6 por hora): envia o código 123456 para o e-mail da conta de administração e devolve a resposta do serviço. Admin › Por fazer: `admMailTest` mostra o resultado e uma dica (`mailDica`: IP não autorizado, remetente, chave, conta por ativar).
+
+### 3.27: explicações nas perguntas
+- `js/onboard.js`: `HELP` (texto por pergunta, com `<b>` para cada opção) e `AREA_HELP` (uma linha por aba). `Q(k)` põe o botão "?" (`.onb-q`, `data-onbq`), `QH(k)` a caixa (`.onb-help`, `data-onbh`). O clique abre/fecha sem redesenhar (estado em `W.help`). Passos com `q:` (abas, estudas, trabalhas) têm "O que é cada aba?" / "O que significa cada opção?" (`.onb-qs`). `NOQ`: campos óbvios sem "?".
+- `js/legal.js`: `LQ` + `lq(k)`: "O que é isto?" debaixo de cada caixa (`.lg-q`, `.lg-qa`), fora da label (não marca a caixa).
+- pt-BR: 83 traduções à mão em `standalone/i18n/packs/pt-BR.json` (explicações, boas-vindas, planos). `js/lingua.js`: com pontuação nas duas pontas (": … (fica sempre)"), tenta também com o ")" do fim.
+- Os dicionários (pt-BR, en, es, fr, it, de) foram gerados antes da 3.20: há ~4260 textos novos sem tradução nas outras línguas. Para os gerar: publicar e correr `node standalone/i18n/packgen.js` + `python3 standalone/i18n/packfix.py` (usa a IA do servidor).

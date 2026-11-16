@@ -3083,6 +3083,9 @@ async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis 
   await A.fill('#acc input[name=nome]', 'Ana Teste'); await A.fill('#acc input[name=email]', 'ana@exemplo.pt'); await A.fill('#acc input[name=senha]', 'segredo123'); await A.click('#acc button[type=submit]'); await sleep(500);
   const nt = await E(A, () => ({ gate: !!document.querySelector('#acc form[data-acf=criar]'), msg: ((document.querySelector('#acc .ac-msg') || {}).textContent || '') + ' ' + ((document.querySelector('#acc input[name=t_termos]') || {}).validationMessage || '') }));
   ok('Criar conta sem aceitar os termos: não cria (as três caixas são obrigatórias)', nt.gate && !files().some(f => /[\\/]a[\\/]/.test(f)), JSON.stringify(nt));
+  await A.click('#acc [data-lgq=saude]'); await sleep(150);
+  const lq = await E(A, () => { const p = document.querySelector('#acc [data-lgqa=saude]'); return { open: !!p && !p.hidden, t: p ? p.textContent : '', ck: document.querySelector('#acc input[name=t_saude]').checked, n: document.querySelectorAll('#acc [data-lgq]').length }; });
+  ok('Criar conta: "O que é isto?" em cada caixa explica em linguagem simples (sem marcar a caixa)', lq.open && /dados sensíveis/.test(lq.t) && !lq.ck && lq.n === 3, JSON.stringify(lq).slice(0, 200));
   for (const n of ['t_termos', 't_saude', 't_idade']) await A.check('#acc input[name=' + n + ']'); await A.click('#acc button[type=submit]');
   await A.waitForSelector('#acc .ac-code', { timeout: 15000 }); const rec = await E(A, () => document.querySelector('#acc .ac-code').textContent.trim());
   ok('Criar conta: mostra o código de recuperação (só uma vez)', /^[A-Z0-9]{4}(-[A-Z0-9]{4}){3}$/.test(rec), rec);
@@ -3390,7 +3393,16 @@ async function onbTests(b) { cur = 'Boas-vindas'; console.log('\n=== Vamos conhe
   const A = await open(await mkPub()); const p = A.p;
   await p.waitForSelector('#onb:not([hidden]) .onb-body', { timeout: 12000 }).catch(() => { });
   ok('Primeira vez numa conta: abre "Vamos fazer o Prumo à tua medida" (com Saltar)', await E(p, () => /à tua medida/.test((document.querySelector('#onb h1') || {}).textContent || '') && !!document.querySelector('#onb [data-onb=saltar]')));
+  await F(p, '[data-ok=short]', 'Bia'); await C(p, '[data-onbq=ia]'); await sleep(150);
+  const hq = await E(p, () => { const h = document.querySelector('#onb [data-onbh=ia]'); return { open: !!h && !h.hidden, t: h ? h.textContent : '', n: document.querySelectorAll('#onb .onb-q').length, nome: document.querySelector('#onb [data-ok=short]').value, h1: document.querySelector('#onb h1').textContent }; });
+  try { await p.screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'onb-ajuda.png') }); } catch (e) { }
+  ok('Perguntas iniciais: o "?" de cada pergunta explica o que é (a IA, a religião, o país…) sem sair do passo nem perder o que já escreveste', hq.open && /assistente/.test(hq.t) && hq.n >= 5 && hq.nome === 'Bia' && /à tua medida/.test(hq.h1), JSON.stringify(hq).slice(0, 220));
+  await C(p, '[data-onbq=ia]'); await sleep(100); ok('Tocar outra vez no "?" fecha a explicação', await E(p, () => document.querySelector('#onb [data-onbh=ia]').hidden));
   await F(p, '[data-ok=short]', 'Bia'); await p.selectOption('#onb [data-ok=country]', 'BR'); await F(p, '[data-ok=city]', 'Belo Horizonte'); await C(p, '[data-oc=ia][data-v=Luna]'); await next(p);
+  await C(p, '[data-onbq=areas]'); await sleep(150);
+  try { await p.screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'onb-abas.png') }); } catch (e) { }
+  ok('Abas: "O que é cada aba?" mostra o que é cada uma (Painel, Bloco de foco, Capital Profissional…)', await E(p, () => { const h = document.querySelector('#onb [data-onbh=areas]'); return !!h && !h.hidden && h.querySelectorAll('li').length >= 30; }));
+  ok('Abas (Brasil): a explicação aparece em português do Brasil, também nas frases com parênteses no fim', await E(p, () => { const t = document.querySelector('#onb [data-onbh=areas]').innerText; return /numa só tela \(fica sempre\)/.test(t) && /só você abre\)/.test(t) && !/ecrã/.test(t); }), await E(p, () => document.querySelector('#onb [data-onbh=areas] li').innerText));
   ok('Abas: todas escolhidas de início, o Painel não se pode tirar', await E(p, () => document.querySelectorAll('#onb [data-oa].on').length === document.querySelectorAll('#onb [data-oa]').length && document.querySelector('#onb [data-oa=visao]').disabled));
   await C(p, '[data-oa=fe]'); await C(p, '[data-oag=Carreira]'); await next(p);
   await C(p, '[data-oc=est][data-v=uni]'); await F(p, '[data-ok=inst]', 'UFMG'); await F(p, '[data-ok=curso]', 'Administração'); await C(p, '[data-oc=ano][data-v="1"]'); await C(p, '[data-act=onbSug]');

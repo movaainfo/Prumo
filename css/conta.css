@@ -109,6 +109,10 @@ html.ac-open,html.ac-open body{overflow:hidden}
 .lg-ck{display:flex;flex-direction:column;gap:10px;margin:4px 0 2px}
 .lg-ck label{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;font-size:13.5px;line-height:1.45;color:#C9D2DD;cursor:pointer}
 .lg-ck input{width:20px;height:20px;margin:1px 0 0;accent-color:var(--farol,#F2C48D);cursor:pointer}
+.lg-ci{display:flex;flex-direction:column;gap:4px}
+.lg-q{align-self:flex-start;margin-left:32px;padding:2px 0;border:0;background:none;color:var(--farol,#F2C48D);font:inherit;font-size:12.5px;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.lg-q:focus-visible{outline:2px solid var(--farol,#F2C48D);outline-offset:2px;border-radius:4px}
+.lg-qa{margin:2px 0 4px 32px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.05);font-size:12.5px;line-height:1.5;color:#C9D2DD;max-width:62ch}
 .lg-ck a{color:var(--farol,#F2C48D);text-decoration:underline;text-underline-offset:2px}
 .lg-ck b{color:#F1F4F8;font-weight:600}
 #lgl{position:fixed;inset:0;z-index:400}
