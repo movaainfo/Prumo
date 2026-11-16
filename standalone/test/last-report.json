@@ -3,7 +3,7 @@
   "p": "Planos",
   "name": "Conta nova: 14 dias grátis do plano Completo, sem cartão",
   "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1795996688396}"
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1795996788092}"
  },
  {
   "p": "Planos",
@@ -21,13 +21,13 @@
   "p": "Planos",
   "name": "Teste acabado, mas sem o Stripe ligado: continua com tudo (não há como pagar ainda)",
   "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"semCobranca\":1,\"testeAcabou\":1794787088396}"
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"semCobranca\":1,\"testeAcabou\":1794787188092}"
  },
  {
   "p": "Planos",
   "name": "Com o Stripe ligado e o teste acabado: fica sem plano (a app pede para escolher)",
   "pass": true,
-  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1794787088396}"
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1794787188092}"
  },
  {
   "p": "Planos",
@@ -45,7 +45,7 @@
   "p": "Planos",
   "name": "Assinar: abre o pagamento do Stripe com o preço do Essencial (3,99 € por mês), a conta e o regresso ao Prumo",
   "pass": true,
-  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"73871217a992b1d6c5410793\",\"success_url\":\"http://localhost:8781/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8781/Oceanum/#planos\",\"allow_promotion_codes\":\"true\",\"locale\":\"pt\",\"adaptive_pricing[enabled]\":\"false\",\"line_items[0]["
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"b8327474684d9a388a763428\",\"success_url\":\"http://localhost:8781/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8781/Oceanum/#planos\",\"allow_promotion_codes\":\"true\",\"locale\":\"pt\",\"adaptive_pricing[enabled]\":\"false\",\"line_items[0]["
  },
  {
   "p": "Planos",
@@ -57,17 +57,11 @@
   "p": "Planos",
   "name": "Se o Stripe ainda não conhecer a marca na página de pagamento, abre o pagamento sem ela",
   "pass": true,
-  "info": "{\"ok\":true,\"url\":\"https://checkout.stripe.test/c/cs_test_3e3644656cac\",\"_st\":200}"
+  "info": "{\"ok\":true,\"url\":\"https://checkout.stripe.test/c/cs_test_b2d1e7d90194\",\"_st\":200}"
  },
  {
   "p": "Planos",
-  "name": "Conta do Stripe sem métodos de pagamento ativos para a moeda: tenta outra vez só com cartão",
-  "pass": true,
-  "info": "{\"ok\":true,\"url\":\"https://checkout.stripe.test/c/cs_test_c1325b402ebd\",\"_st\":200}"
- },
- {
-  "p": "Planos",
-  "name": "Se o Stripe ainda não aceitar pagamentos (conta em análise): mensagem clara em português, sem o erro técnico",
+  "name": "Sem métodos de pagamento ativos no Stripe (conta em análise): mensagem clara em português, sem o erro técnico",
   "pass": true,
   "info": "{\"ok\":false,\"msg\":\"Os pagamentos ainda estão a ser ativados. Tenta daqui a pouco; o teu teste grátis continua.\",\"code\":\"pagamentos\",\"_st\":503}"
  },
@@ -93,7 +87,7 @@
   "p": "Planos",
   "name": "Depois de pagar: plano Essencial (mensal), com a data da renovação",
   "pass": true,
-  "info": "{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"perfis\":1,\"ia\":20,\"cobranca\":true,\"pago\":1,\"ate\":1797379088000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}"
+  "info": "{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"perfis\":1,\"ia\":20,\"cobranca\":true,\"pago\":1,\"ate\":1797379188000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}"
  },
  {
   "p": "Planos",
@@ -117,13 +111,13 @@
   "p": "Planos",
   "name": "Mudar para o Avançado anual: o Stripe recebe o novo preço (79,90 €/ano) e a conta passa a Avançado",
   "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797379088000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797379188000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
  },
  {
   "p": "Planos",
   "name": "Cancelar: continua até ao fim do período pago (sem renovar)",
   "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"cancelar\":1,\"ate\":1797379088000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"cancelar\":1,\"ate\":1797379188000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
  },
  {
   "p": "Planos",
@@ -141,13 +135,13 @@
   "p": "Planos",
   "name": "O Prumo configura sozinho o portal do cliente (uma vez): cartão, faturas com NIF e cancelar no fim do período",
   "pass": true,
-  "info": "{\"n\":1,\"conf\":[\"bpc_bd1a6db402c4\",\"bpc_bd1a6db402c4\"]}"
+  "info": "{\"n\":1,\"conf\":[\"bpc_7a709475179b\",\"bpc_7a709475179b\"]}"
  },
  {
   "p": "Planos",
   "name": "Pagou e fechou a página antes de voltar ao Prumo: o plano ativa sozinho na próxima vez que abre a app",
   "pass": true,
-  "info": "{\"a\":0,\"b\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"pago\":1,\"ate\":1797379088000,\"ciclo\":\"mes\",\"cur\":\"BRL\",\"cliente\":1}}"
+  "info": "{\"a\":0,\"b\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"pago\":1,\"ate\":1797379188000,\"ciclo\":\"mes\",\"cur\":\"BRL\",\"cliente\":1}}"
  },
  {
   "p": "Planos",
@@ -159,19 +153,19 @@
   "p": "Planos",
   "name": "Administração oferece o Completo por 30 dias (a pessoa vê o aviso)",
   "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797379088938}"
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797379188583}"
  },
  {
   "p": "Planos",
   "name": "Admin: a lista de contas mostra o plano de cada uma",
   "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797379088938}"
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797379188583}"
  },
  {
   "p": "Planos",
   "name": "Admin: com uma oferta, mostra também o que seria no Automático (aqui, sem plano)",
   "pass": true,
-  "info": "{\"o\":{\"id\":\"completo\",\"ate\":1797379088938},\"a\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1794787088651}}"
+  "info": "{\"o\":{\"id\":\"completo\",\"ate\":1797379188583},\"a\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1794787188320}}"
  },
  {
   "p": "Planos",
@@ -183,13 +177,13 @@
   "p": "Planos",
   "name": "Admin dá o Essencial grátis a quem paga o Avançado: fica com o maior (Avançado pago)",
   "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797379088000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797379188000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
  },
  {
   "p": "Planos",
   "name": "Admin: \"Automático\" tira a escolha (volta ao teste e ao que a pessoa assinou)",
   "pass": true,
-  "info": "{\"ok\":true,\"email\":\"teoc79fa401@teste.pt\",\"plano\":\"\",\"dias\":0,\"agora\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797379088000,\"ciclo\":\"ano\",\"cur\":\"EUR\""
+  "info": "{\"ok\":true,\"email\":\"teobfad8458@teste.pt\",\"plano\":\"\",\"dias\":0,\"agora\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797379188000,\"ciclo\":\"ano\",\"cur\":\"EUR\""
  },
  {
   "p": "Planos",
@@ -207,7 +201,7 @@
   "p": "Planos",
   "name": "Chave real no lugar da de teste: a assinatura de teste deixa de contar e o novo pagamento não usa o cliente de teste",
   "pass": true,
-  "info": "{\"p\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1794787088396},\"f\":\"teoc79fa401@teste.pt\"}"
+  "info": "{\"p\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1794787188092},\"f\":\"teobfad8458@teste.pt\"}"
  },
  {
   "p": "Planos",
@@ -267,7 +261,7 @@
   "p": "Planos",
   "name": "Admin › Por fazer: os passos do Stripe em modo de teste e do e-mail (Brevo)",
   "pass": true,
-  "info": "Por fazer 4 pendentes pendente Chave Google da IA para todos (GEMINI_API_KEY) Para a IA das contas ler fotos (comida, exames, escala) e PDFs. 1) aistudio.google.com/apikey → Create API key. 2) Vercel → projeto prumo → Settings → Environment Variables → nome GEMINI_API_KEY, valor a chave, Production."
+  "info": "Por fazer 3 pendentes pendente Chave Google da IA para todos (GEMINI_API_KEY) Para a IA das contas ler fotos (comida, exames, escala) e PDFs. 1) aistudio.google.com/apikey → Create API key. 2) Vercel → projeto prumo → Settings → Environment Variables → nome GEMINI_API_KEY, valor a chave, Production."
  },
  {
   "p": "Planos",
@@ -279,13 +273,13 @@
   "p": "Planos",
   "name": "Admin › conta: \"Avançado grátis\" durante 3 meses fica na conta da pessoa",
   "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"oferta\":1,\"ate\":1802563099377}"
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"oferta\":1,\"ate\":1802563198826}"
  },
  {
   "p": "Planos",
   "name": "Admin › conta: \"Automático\" devolve a conta ao teste e à assinatura (aqui o teste já acabou: sem plano)",
   "pass": true,
-  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1794787088651}"
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1794787188320}"
  },
  {
   "p": "Planos",

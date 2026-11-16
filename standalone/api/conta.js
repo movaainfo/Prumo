@@ -141,12 +141,11 @@ const fimPlano = async (req, cancelar) => { const s = await session(req), p = s.
   const up = await P.stripe('subscriptions/' + p.sub, { cancel_at_period_end: cancelar ? 'true' : 'false' }); const st = Object.assign(P.doStripe(up), { id: p.id, ciclo: p.ciclo });
   const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; };
 // cria o pagamento; se o Stripe da conta ainda não conhecer a marca ou a moeda fixa (versão antiga da API), cria sem elas
-//   v3.25: e se a conta do Stripe ainda não tiver métodos de pagamento ativos para a moeda, pede só "cartão" (inclui Apple Pay e Google Pay)
+//   (os métodos de pagamento escolhem-se só no painel do Stripe: Definições › Métodos de pagamento; a API já não aceita payment_method_types)
 const sesCria = async (params, x) => { let q = Object.assign({}, params);
-  for (let i = 0; i < 3; i++) { try { return await P.stripe('checkout/sessions', q); }
+  for (let i = 0; i < 2; i++) { try { return await P.stripe('checkout/sessions', q); }
     catch (e) { const m = String(e.message || ''); if (!(x && e.stripe && e.status === 400)) throw e;
       if (/branding_settings|adaptive_pricing/.test(m) && (q.branding_settings || q.adaptive_pricing)) { q = Object.assign({}, q); delete q.branding_settings; if (/adaptive_pricing/.test(m)) delete q.adaptive_pricing; continue; }
-      if (/payment method types/i.test(m) && !q.payment_method_types) { q = Object.assign({}, q, { payment_method_types: { 0: 'card' } }); continue; }
       throw e; } } };
 // um erro do Stripe vira uma mensagem clara para a pessoa (o pormenor fica no registo do servidor, sem chaves)
 const pagErr = (e, onde) => { if (!(e && e.stripe)) return e; console.error('nautilo stripe', onde, e.status || '', String(e.message || '').slice(0, 300));

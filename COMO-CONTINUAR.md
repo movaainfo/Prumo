@@ -317,7 +317,7 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `api/conta.js`: `canon(email)` (Gmail/googlemail sem pontos e sem `+…`; Outlook, Hotmail, Live, MSN, iCloud, Proton sem `+…`), índice `c/<emailId(canon)>` → `{eid}`. `outraConta` recusa no registo e no `adminEmail` (409 "ou com uma variação dele"). As contas antigas entram no índice no primeiro `eu` (`rec.cx`). Apagar (a própria, admin, contas de teste) tira do índice.
 - Testes: `email` (variações recusadas e e-mail livre depois de apagar), `planos` (boas-vindas com os planos).
 
-### 3.25: pagamento com a conta do Stripe em análise
-- `sesCria` tenta até 3 vezes: sem `branding_settings`/`adaptive_pricing` se o Stripe não os conhecer, e com `payment_method_types[0]=card` se responder "No valid payment method types" (conta nova sem métodos ativos para a moeda).
+### 3.24 (servidor, 15/11): pagamento com a conta do Stripe em análise
+- `sesCria` tenta outra vez sem `branding_settings`/`adaptive_pricing` se o Stripe não os conhecer. A API do Stripe já não aceita `payment_method_types` no Checkout: os métodos (cartões, Apple Pay, Google Pay) ligam-se só no painel (Definições › Métodos de pagamento). Sem métodos ativos, o Stripe responde "No valid payment method types" → 503 com mensagem clara.
 - `pagErr(e, onde)`: erros do Stripe no checkout viram mensagem em pt-PT (503 "Os pagamentos ainda estão a ser ativados…" com a conta em análise; 502 nos outros) e o pormenor fica no registo do servidor (`nautilo stripe`).
 - 15/11/2026: chave real (`rk_live_`, acesso total exceto operações sensíveis) no Vercel; a conta Prumo do Stripe está em análise (2–3 dias), por isso os pagamentos reais ainda não abrem.
