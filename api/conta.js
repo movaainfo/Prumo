@@ -93,9 +93,8 @@ const spCid = () => { const v = String(process.env.SPOTIFY_CLIENT_ID || '').trim
    e só fica ativa depois de o confirmar na app. Sem serviço de e-mail ligado, o passo não aparece (ninguém fica preso). */
 const mailOn = () => !!(process.env.RESEND_API_KEY || process.env.BREVO_API_KEY || process.env.NAUTILO_EMAIL_MOCK);
 const code6 = () => String(N.crypto.randomInt(0, 1e6)).padStart(6, '0');
-const mailSend = async (email, nome, code) => { const de = String(process.env.NAUTILO_EMAIL_DE || 'Prumo <onboarding@resend.dev>').trim(), sub = 'O teu código do Prumo: ' + code, cc = code.slice(0, 3) + ' ' + code.slice(3);
-  const txt = `Olá${nome ? ' ' + nome : ''},\n\nO teu código para confirmar o e-mail no Prumo é: ${cc}\nVale 30 minutos.\n\nSe não foste tu a criar a conta, ignora este e-mail.\n\nPrumo`;
-  const html = `<div style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;max-width:480px;margin:auto;padding:24px;color:#1b1b1b"><p>Olá${nome ? ' ' + nome.replace(/[<>&"]/g, '') : ''},</p><p>O teu código para confirmar o e-mail no <b>Prumo</b> é:</p><p style="font-size:32px;letter-spacing:6px;font-weight:700;margin:18px 0">${cc}</p><p>Vale 30 minutos.</p><p style="color:#666;font-size:13px">Se não foste tu a criar a conta, ignora este e-mail.</p></div>`;
+// v3.29: envio genérico (código, resumo do mês…): Brevo, Resend ou o simulador dos testes
+const mailRaw = async (email, sub, txt, html) => { const de = String(process.env.NAUTILO_EMAIL_DE || 'Prumo <onboarding@resend.dev>').trim();
   const ac = new AbortController(), to = setTimeout(() => ac.abort(), 15e3); let r;
   try { if (process.env.NAUTILO_EMAIL_MOCK) r = await fetch(process.env.NAUTILO_EMAIL_MOCK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ to: email, subject: sub, text: txt }), signal: ac.signal });
     else if (process.env.RESEND_API_KEY) r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'content-type': 'application/json' }, body: JSON.stringify({ from: de, to: [email], subject: sub, text: txt, html }), signal: ac.signal });
@@ -106,6 +105,10 @@ const mailSend = async (email, nome, code) => { const de = String(process.env.NA
     return { ok: false, st: r.status, via: mailVia(), msg: String(msg || '').slice(0, 240) }; }
   catch (e) { console.error('nautilo email', mailVia(), 'falhou', e.name === 'AbortError' ? 'sem resposta em 15 s' : String(e.message || e).slice(0, 200)); return { ok: false, st: 0, via: mailVia(), msg: e.name === 'AbortError' ? 'O serviço de e-mail não respondeu em 15 segundos.' : String(e.message || e).slice(0, 200) }; }
   finally { clearTimeout(to); } };
+const mailSend = async (email, nome, code) => { const sub = 'O teu código do Prumo: ' + code, cc = code.slice(0, 3) + ' ' + code.slice(3);
+  const txt = `Olá${nome ? ' ' + nome : ''},\n\nO teu código para confirmar o e-mail no Prumo é: ${cc}\nVale 30 minutos.\n\nSe não foste tu a criar a conta, ignora este e-mail.\n\nPrumo`;
+  const html = `<div style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;max-width:480px;margin:auto;padding:24px;color:#1b1b1b"><p>Olá${nome ? ' ' + nome.replace(/[<>&"]/g, '') : ''},</p><p>O teu código para confirmar o e-mail no <b>Prumo</b> é:</p><p style="font-size:32px;letter-spacing:6px;font-weight:700;margin:18px 0">${cc}</p><p>Vale 30 minutos.</p><p style="color:#666;font-size:13px">Se não foste tu a criar a conta, ignora este e-mail.</p></div>`;
+  return mailRaw(email, sub, txt, html); };
 const mailVia = () => process.env.NAUTILO_EMAIL_MOCK ? 'teste' : process.env.RESEND_API_KEY ? 'resend' : process.env.BREVO_API_KEY ? 'brevo' : '';
 const sendCode = async (email, nome, code) => (await mailSend(email, nome, code)).ok;
 const VPEND = new Set(['eu', 'verificarEmail', 'reenviarCodigo', 'apagar', 'termos', 'planos']);
@@ -244,6 +247,27 @@ const OPS = {
     try { const volta = voltaDe(req, b.volta), conf = await portalCfg(volta).catch(() => '');
       const ps = await P.stripe('billing_portal/sessions', Object.assign({ customer: cus, return_url: volta + '#planos' }, conf ? { configuration: conf } : {})); return { url: ps.url }; }
     catch (e) { throw N.err('portal', 'A gestão de pagamentos ainda não está ativa. Fala com a administração.', 503); } },
+  // v3.29: o resumo do mês por e-mail (plano Completo; a pessoa liga em Relatórios). A app manda os números já calculados e traduzidos; um por mês
+  async resumoEmail(req, b) { const s = await session(req); if (P.efetivo(s.rec).lvl < 3) throw N.err('plano', 'O resumo do mês por e-mail é do plano Completo.', 402);
+    if (!mailOn()) throw N.err('email', 'O envio de e-mails ainda não está ligado.', 503);
+    const ref = String(b.ref || ''); if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(ref)) throw N.err('ref', 'Mês inválido.', 400);
+    if ((s.rec.resumos || []).includes(ref)) return { ja: 1 };
+    if (N.limit(req, 'resumo|' + s.rec.uid, 4, 864e5)) throw N.err('limite', 'Tenta amanhã.', 429);
+    const cl = (x, n) => String(x == null ? '' : x).replace(/[\u0000-\u001f<>]/g, ' ').trim().slice(0, n), e = x => x.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    const rows = (a, n) => (Array.isArray(a) ? a : []).slice(0, n).map(r => [cl((r || [])[0], 48), cl((r || [])[1], 32)]).filter(r => r[0]);
+    const T = { tit: cl(b.titulo, 80) || 'O teu mês no Prumo', mes: cl(b.label, 40) || ref, cat: cl(b.tCats, 60) || 'Onde gastaste mais', abrir: cl(b.tAbrir, 40) || 'Abrir o Prumo', pe: cl(b.rodape, 200) || 'Recebes este resumo porque o ligaste em Relatórios. Para deixar de receber, desliga-o lá.' };
+    const lin = rows(b.lin, 10), cats = rows(b.cats, 6); if (!lin.length) throw N.err('vazio', 'Sem números para enviar.', 400);
+    const url = voltaDe(req, b.volta) + '#relatorios', nome = cl(s.rec.nome, 40);
+    const tr = (r, i) => `<tr><td style="padding:9px 0;border-top:${i ? '1px solid #eadfce' : '0'};color:#5b4a3a">${e(r[0])}</td><td style="padding:9px 0;border-top:${i ? '1px solid #eadfce' : '0'};text-align:right;font-weight:600;color:#2a1d14">${e(r[1])}</td></tr>`;
+    const html = `<div style="background:#f6efe4;padding:24px 12px;font-family:Georgia,'Times New Roman',serif"><div style="max-width:520px;margin:auto;background:#fffaf2;border:1px solid #eadfce;border-radius:14px;padding:26px 24px;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:#2a1d14">
+      <p style="margin:0 0 4px;color:#8e1b2a;font:600 13px system-ui,Arial,sans-serif">Prumo</p><h1 style="margin:0 0 4px;font:500 26px Georgia,serif;color:#2a1d14">${e(T.tit)}</h1><p style="margin:0 0 18px;color:#7a6654">${e(T.mes)}${nome ? ' · ' + e(nome) : ''}</p>
+      <table style="width:100%;border-collapse:collapse;font-size:15px">${lin.map(tr).join('')}</table>
+      ${cats.length ? `<h2 style="margin:22px 0 6px;font:600 15px system-ui,Arial,sans-serif;color:#8e1b2a">${e(T.cat)}</h2><table style="width:100%;border-collapse:collapse;font-size:14px">${cats.map(tr).join('')}</table>` : ''}
+      <p style="margin:24px 0 8px"><a href="${e(url)}" style="display:inline-block;background:#8e1b2a;color:#fff;text-decoration:none;padding:11px 18px;border-radius:10px;font-weight:600">${e(T.abrir)}</a></p>
+      <p style="margin:16px 0 0;color:#9a8673;font-size:12px">${e(T.pe)}</p></div></div>`;
+    const txt = `${T.tit}\n${T.mes}\n\n${lin.map(r => r[0] + ': ' + r[1]).join('\n')}${cats.length ? '\n\n' + T.cat + '\n' + cats.map(r => r[0] + ': ' + r[1]).join('\n') : ''}\n\n${url}\n\n${T.pe}`;
+    const r = await mailRaw(s.rec.email, T.tit + ': ' + T.mes, txt, html); if (!r.ok) throw N.err('envio', 'Não consegui enviar o e-mail agora. Tenta mais tarde.', 502);
+    await change(s.eid, x => { x.resumos = (x.resumos || []).filter(k => k !== ref).concat(ref).slice(-24); }); return { enviado: 1 }; },
   // v3.24: e-mail de teste para a própria conta de administração (mostra o que o Brevo/Resend respondeu)
   async adminTesteEmail(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
     if (!mailOn()) throw N.err('email', 'Ainda não há serviço de e-mail ligado (BREVO_API_KEY ou RESEND_API_KEY no Vercel).', 400);
@@ -266,7 +290,7 @@ const OPS = {
   async pedido(req, b) { const s = await session(req); if (N.limit(req, 'pedido|' + s.rec.uid, 5, 864e5)) throw N.err('limite', 'Já fizeste vários pedidos hoje. Responderemos a todos.', 429);
     const TIPOS = ['confirmar', 'acesso', 'corrigir', 'eliminar', 'portabilidade', 'partilha', 'revogar', 'oposicao', 'outro'], tipo = TIPOS.includes(b.tipo) ? b.tipo : 'outro';
     const id = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 14) + '-' + N.crypto.randomBytes(3).toString('hex');
-    await N.store().put('p/' + id, N.seal(await N.accKey(), { id, uid: s.rec.uid, email: s.rec.email, nome: s.rec.nome || '', tipo, msg: String(b.msg || '').slice(0, 3000), at: new Date().toISOString(), estado: 'novo' }), { overwrite: false });
+    await N.store().put('p/' + id, N.seal(await N.accKey(), { id, uid: s.rec.uid, email: s.rec.email, nome: s.rec.nome || '', tipo, msg: String(b.msg || '').slice(0, 3000), at: new Date().toISOString(), estado: 'novo', prio: P.efetivo(s.rec).lvl >= 3 && !isAdmin(s.rec.email) ? 1 : 0 }), { overwrite: false });
     return { protocolo: id }; },
   async pedidoFeito(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); const id = String(b.id || ''); if (!/^\d{14}-[a-f0-9]{6}$/.test(id)) throw N.err('id', 'Pedido desconhecido.', 400);
     const st = N.store(), key = await N.accKey(), g = await st.get('p/' + id); if (!g) throw N.err('id', 'Pedido desconhecido.', 404); const p = N.open(key, g.buf);
