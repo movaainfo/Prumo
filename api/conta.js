@@ -150,6 +150,22 @@ const refreshPlano = async s => { if (!P.cobranca()) return null;
 const fimPlano = async (req, cancelar) => { const s = await session(req), p = s.rec.plano; if (!P.cobranca() || !p || !p.sub || !P.mesmo(p)) throw N.err('sem', 'Ainda não tens assinatura.', 400);
   const up = await P.stripe('subscriptions/' + p.sub, { cancel_at_period_end: cancelar ? 'true' : 'false' }); const st = Object.assign(P.doStripe(up), { id: p.id, ciclo: p.ciclo });
   const rec = await change(s.eid, r => { r.plano = st; }); return { conta: pub(rec) }; };
+// v3.31: códigos de desconto. Cada código = um cupão do Stripe (a percentagem e a duração) + um código promocional (o texto que a pessoa escreve).
+//   A lista do Prumo (blob cfg/cupoes-<modo>) guarda os pormenores para o Admin e para mostrar o preço com desconto antes de pagar.
+const CKEY = () => 'cfg/cupoes-' + P.modo();
+const cLoad = async () => { try { const g = await N.store().get(CKEY()); return g ? (N.open(await N.accKey(), g.buf) || []) : []; } catch (e) { return []; } };
+const cSave = async L => N.store().put(CKEY(), N.seal(await N.accKey(), L.slice(-500)));
+const cNorm = c => String(c || '').trim().toUpperCase().replace(/\s+/g, '');
+const CODE_RX = /^[A-Z0-9][A-Z0-9-]{2,29}$/;
+const cPub = c => ({ code: c.code, pct: c.pct, dur: c.dur, meses: c.meses || 0, planos: c.planos || [] });
+// procura um código válido (ativo, dentro do prazo e dos usos); devolve os pormenores ou null
+const cupaoDe = async code => { code = cNorm(code); if (!CODE_RX.test(code)) return null;
+  const L = await P.stripe('promotion_codes', { code, active: 'true', limit: 1 }, 'GET').catch(() => null), pc = L && (L.data || [])[0]; if (!pc || !pc.active) return null;
+  if (pc.expires_at && pc.expires_at * 1000 < Date.now()) return null; if (pc.max_redemptions && (pc.times_redeemed || 0) >= pc.max_redemptions) return null;
+  const mine = (await cLoad()).find(x => x.promo === pc.id); if (mine) return Object.assign(cPub(mine), { promo: pc.id, novos: !!mine.novos });
+  // um código criado à mão no painel do Stripe: lê o cupão
+  const cid = (pc.promotion && pc.promotion.coupon) || (pc.coupon && (pc.coupon.id || pc.coupon)) || ''; const cp = typeof cid === 'object' ? cid : cid ? await P.stripe('coupons/' + cid, null, 'GET').catch(() => null) : null;
+  if (!cp || !cp.valid || !cp.percent_off) return null; return { code, pct: +cp.percent_off, dur: cp.duration, meses: cp.duration_in_months || 0, planos: [], promo: pc.id }; };
 // cria o pagamento; se o Stripe da conta ainda não conhecer a marca ou a moeda fixa (versão antiga da API), cria sem elas
 //   (os métodos de pagamento escolhem-se só no painel do Stripe: Definições › Métodos de pagamento; a API já não aceita payment_method_types)
 const sesCria = async (params, x) => { let q = Object.assign({}, params);
@@ -217,12 +233,15 @@ const OPS = {
     const e = P.efetivo(s.rec); if (e.pago) throw N.err('ja', 'Já tens uma assinatura: muda de plano na página Planos.', 409);
     if (N.limit(req, 'checkout|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
     const volta = voltaDe(req, b.volta), prod = await produto(pl.id).catch(e => { throw pagErr(e, 'produto'); }), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus;
+    let desc = null; if (b.cupao) { desc = await cupaoDe(b.cupao); if (!desc) throw N.err('cupao', 'Esse código de desconto não é válido ou já expirou.', 400); if (desc.planos.length && !desc.planos.includes(pl.id)) throw N.err('cupao', 'Esse código não serve para o plano ' + pl.n + '.', 400); }
     const ses = await sesCria(Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: cur === 'BRL' ? 'pt-BR' : cur === 'EUR' ? 'pt' : 'auto',
       // só euros, dólares ou reais: sem a conversão do Stripe para a moeda local (Adaptive Pricing); um cartão noutra moeda é convertido pelo banco de quem paga
       adaptive_pricing: { enabled: 'false' },
       line_items: { 0: { quantity: 1, price_data: { currency: cur.toLowerCase(), unit_amount: pl.precos[cur][ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: prod } } },
       branding_settings: marca(volta),
-      metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo, app: 'prumo' } } }, cus ? { customer: cus } : { customer_email: s.rec.email }), true).catch(e => { throw pagErr(e, 'checkout'); });
+      metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo, app: 'prumo' } } }, cus ? { customer: cus } : { customer_email: s.rec.email },
+      // com um código já aplicado no Prumo vai o desconto (o Stripe não deixa juntar com "tenho um código" na página dele)
+      desc ? { discounts: { 0: { promotion_code: desc.promo } }, allow_promotion_codes: undefined } : {}), true).catch(e => { if (desc && e.stripe && /first.time|first-time|customer.*not eligible|primeira/i.test(e.message || '')) throw N.err('cupao', 'Esse código é só para quem assina pela primeira vez.', 400); throw pagErr(e, 'checkout'); });
     await change(s.eid, r => { r.pend = { cs: ses.id, at: Date.now(), modo: P.modo() }; });
     return { url: ses.url }; },
   // de volta do Stripe: confirma no Stripe (não confia na app) e guarda a assinatura na conta
@@ -247,6 +266,31 @@ const OPS = {
     try { const volta = voltaDe(req, b.volta), conf = await portalCfg(volta).catch(() => '');
       const ps = await P.stripe('billing_portal/sessions', Object.assign({ customer: cus, return_url: volta + '#planos' }, conf ? { configuration: conf } : {})); return { url: ps.url }; }
     catch (e) { throw N.err('portal', 'A gestão de pagamentos ainda não está ativa. Fala com a administração.', 503); } },
+  // v3.31: códigos de desconto
+  async cupao(req, b) { const s = await session(req); if (!P.cobranca()) throw N.err('cobranca', 'As assinaturas ainda não estão abertas.', 503);
+    if (N.limit(req, 'cupao|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitas tentativas. Tenta daqui a pouco.', 429);
+    const c = await cupaoDe(b.code); if (!c) throw N.err('cupao', 'Esse código de desconto não é válido ou já expirou.', 404); return { cupao: c }; },
+  async adminCupoes(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); if (!P.cobranca()) return { cupoes: [], cobranca: false };
+    const L = await cLoad(), live = await P.stripe('promotion_codes', { limit: 100 }, 'GET').catch(() => null), by = {}; ((live && live.data) || []).forEach(x => { by[x.id] = x; });
+    return { cobranca: true, cupoes: L.map(c => { const x = by[c.promo] || {}; return Object.assign({}, c, { usos: x.times_redeemed != null ? x.times_redeemed : c.usos || 0, ativo: x.active != null ? !!x.active && !(c.expira && c.expira < Date.now()) : !!c.ativo }); }).reverse() }; },
+  async adminCupaoCriar(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); if (!P.cobranca()) throw N.err('cobranca', 'Liga primeiro o Stripe.', 400);
+    const code = cNorm(b.code); if (!CODE_RX.test(code)) throw N.err('code', 'O código tem de ter 3 a 30 letras, números ou hífenes (ex.: LANCAMENTO20).', 400);
+    const pct = Math.round(+b.pct * 100) / 100; if (!(pct > 0 && pct <= 100)) throw N.err('pct', 'O desconto tem de ser entre 1% e 100%.', 400);
+    const dur = ['once', 'repeating', 'forever'].includes(b.dur) ? b.dur : 'once', meses = dur === 'repeating' ? Math.max(1, Math.min(36, Math.round(+b.meses || 0))) : 0;
+    const planos = (Array.isArray(b.planos) ? b.planos : []).filter(x => P.byId(x)); const todos = !planos.length || planos.length === P.planos().length;
+    const max = Math.max(0, Math.min(1e6, Math.round(+b.max || 0))), expira = b.expira && /^\d{4}-\d{2}-\d{2}$/.test(b.expira) ? Date.parse(b.expira + 'T23:59:59Z') : 0; if (expira && expira < Date.now()) throw N.err('expira', 'A data de validade já passou.', 400);
+    if ((await cupaoDe(code))) throw N.err('existe', 'Já existe um código ativo com esse nome.', 409);
+    try { const prods = todos ? [] : await Promise.all(planos.map(id => produto(id)));
+      const cp = await P.stripe('coupons', Object.assign({ percent_off: pct, duration: dur, name: code + ' · ' + pct + '%', metadata: { app: 'prumo', code } }, meses ? { duration_in_months: meses } : {}, prods.length ? { applies_to: { products: Object.fromEntries(prods.map((x, i) => [i, x])) } } : {}));
+      const base = Object.assign({ code, metadata: { app: 'prumo' } }, max ? { max_redemptions: max } : {}, expira ? { expires_at: Math.floor(expira / 1000) } : {}, b.novos ? { restrictions: { first_time_transaction: 'true' } } : {});
+      let pc; try { pc = await P.stripe('promotion_codes', Object.assign({ promotion: { type: 'coupon', coupon: cp.id } }, base)); }
+      catch (e) { if (!(e.stripe && e.status === 400 && /promotion/i.test(e.message || ''))) throw e; pc = await P.stripe('promotion_codes', Object.assign({ coupon: cp.id }, base)); }   // versões antigas da API
+      const c = { code, pct, dur, meses, planos: todos ? [] : planos, max, expira, novos: !!b.novos, promo: pc.id, coupon: cp.id, criado: Date.now(), ativo: true };
+      const L = await cLoad(); L.push(c); await cSave(L); return { cupao: c }; }
+    catch (e) { if (e.stripe) { console.error('nautilo stripe cupao', e.status || '', String(e.message || '').slice(0, 200)); throw N.err('stripe', /already exists|já existe/i.test(e.message || '') ? 'Já existe um código com esse nome no Stripe.' : 'O Stripe recusou o código: ' + String(e.message || '').slice(0, 140), 400); } throw e; } },
+  async adminCupaoFim(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+    const L = await cLoad(), c = L.find(x => x.promo === b.promo); if (!c) throw N.err('cupao', 'Código desconhecido.', 404);
+    await P.stripe('promotion_codes/' + c.promo, { active: 'false' }).catch(e => { throw N.err('stripe', 'O Stripe não desativou o código agora.', 502); }); c.ativo = false; c.fim = Date.now(); await cSave(L); return { ok: 1 }; },
   // v3.29: o resumo do mês por e-mail (plano Completo; a pessoa liga em Relatórios). A app manda os números já calculados e traduzidos; um por mês
   async resumoEmail(req, b) { const s = await session(req); if (P.efetivo(s.rec).lvl < 3) throw N.err('plano', 'O resumo do mês por e-mail é do plano Completo.', 402);
     if (!mailOn()) throw N.err('email', 'O envio de e-mails ainda não está ligado.', 503);
