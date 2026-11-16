@@ -93,14 +93,21 @@ const spCid = () => { const v = String(process.env.SPOTIFY_CLIENT_ID || '').trim
    e só fica ativa depois de o confirmar na app. Sem serviço de e-mail ligado, o passo não aparece (ninguém fica preso). */
 const mailOn = () => !!(process.env.RESEND_API_KEY || process.env.BREVO_API_KEY || process.env.NAUTILO_EMAIL_MOCK);
 const code6 = () => String(N.crypto.randomInt(0, 1e6)).padStart(6, '0');
-const sendCode = async (email, nome, code) => { const de = process.env.NAUTILO_EMAIL_DE || 'Prumo <onboarding@resend.dev>', sub = 'O teu código do Prumo: ' + code, cc = code.slice(0, 3) + ' ' + code.slice(3);
+const mailSend = async (email, nome, code) => { const de = String(process.env.NAUTILO_EMAIL_DE || 'Prumo <onboarding@resend.dev>').trim(), sub = 'O teu código do Prumo: ' + code, cc = code.slice(0, 3) + ' ' + code.slice(3);
   const txt = `Olá${nome ? ' ' + nome : ''},\n\nO teu código para confirmar o e-mail no Prumo é: ${cc}\nVale 30 minutos.\n\nSe não foste tu a criar a conta, ignora este e-mail.\n\nPrumo`;
   const html = `<div style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;max-width:480px;margin:auto;padding:24px;color:#1b1b1b"><p>Olá${nome ? ' ' + nome.replace(/[<>&"]/g, '') : ''},</p><p>O teu código para confirmar o e-mail no <b>Prumo</b> é:</p><p style="font-size:32px;letter-spacing:6px;font-weight:700;margin:18px 0">${cc}</p><p>Vale 30 minutos.</p><p style="color:#666;font-size:13px">Se não foste tu a criar a conta, ignora este e-mail.</p></div>`;
   const ac = new AbortController(), to = setTimeout(() => ac.abort(), 15e3); let r;
   try { if (process.env.NAUTILO_EMAIL_MOCK) r = await fetch(process.env.NAUTILO_EMAIL_MOCK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ to: email, subject: sub, text: txt }), signal: ac.signal });
     else if (process.env.RESEND_API_KEY) r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'content-type': 'application/json' }, body: JSON.stringify({ from: de, to: [email], subject: sub, text: txt, html }), signal: ac.signal });
     else { const m = de.match(/^\s*(.*?)\s*<([^>]+)>\s*$/); r = await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ sender: m ? { name: m[1] || 'Prumo', email: m[2] } : { name: 'Prumo', email: de }, to: [{ email }], subject: sub, textContent: txt, htmlContent: html }), signal: ac.signal }); }
-    return r.ok; } catch (e) { return false; } finally { clearTimeout(to); } };
+    // v3.24: se o serviço recusar, fica no registo o que ele respondeu (nunca a chave) e a administração pode ver no teste
+    if (r.ok) return { ok: true, st: r.status, via: mailVia() };
+    const t = (await r.text().catch(() => '')).slice(0, 300); console.error('nautilo email', mailVia(), r.status, t); let msg = t; try { const j = JSON.parse(t); msg = j.message || j.error || (j.name ? j.name + ': ' + (j.message || '') : t); } catch (x) { }
+    return { ok: false, st: r.status, via: mailVia(), msg: String(msg || '').slice(0, 240) }; }
+  catch (e) { console.error('nautilo email', mailVia(), 'falhou', e.name === 'AbortError' ? 'sem resposta em 15 s' : String(e.message || e).slice(0, 200)); return { ok: false, st: 0, via: mailVia(), msg: e.name === 'AbortError' ? 'O serviço de e-mail não respondeu em 15 segundos.' : String(e.message || e).slice(0, 200) }; }
+  finally { clearTimeout(to); } };
+const mailVia = () => process.env.NAUTILO_EMAIL_MOCK ? 'teste' : process.env.RESEND_API_KEY ? 'resend' : process.env.BREVO_API_KEY ? 'brevo' : '';
+const sendCode = async (email, nome, code) => (await mailSend(email, nome, code)).ok;
 const VPEND = new Set(['eu', 'verificarEmail', 'reenviarCodigo', 'apagar', 'termos', 'planos']);
 
 /* ---------- planos: ajudas ---------- */
@@ -237,6 +244,11 @@ const OPS = {
     try { const volta = voltaDe(req, b.volta), conf = await portalCfg(volta).catch(() => '');
       const ps = await P.stripe('billing_portal/sessions', Object.assign({ customer: cus, return_url: volta + '#planos' }, conf ? { configuration: conf } : {})); return { url: ps.url }; }
     catch (e) { throw N.err('portal', 'A gestão de pagamentos ainda não está ativa. Fala com a administração.', 503); } },
+  // v3.24: e-mail de teste para a própria conta de administração (mostra o que o Brevo/Resend respondeu)
+  async adminTesteEmail(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+    if (!mailOn()) throw N.err('email', 'Ainda não há serviço de e-mail ligado (BREVO_API_KEY ou RESEND_API_KEY no Vercel).', 400);
+    if (N.limit(req, 'testeEmail|' + s0.rec.uid, 6, 3600e3)) throw N.err('limite', 'Já fizeste muitos testes. Tenta daqui a uma hora.', 429);
+    const r = await mailSend(s0.rec.email, s0.rec.nome || '', '123456'); return { ok: r.ok, via: r.via, st: r.st, msg: r.msg || '', para: s0.rec.email, de: String(process.env.NAUTILO_EMAIL_DE || '').replace(/^.*<([^>]+)>.*$/, '$1').trim() }; },
   // a administração escolhe o plano da conta: um plano grátis (por uns dias ou sem fim) ou vazio = Automático (teste e depois o que a pessoa assinar)
   //   não pede a senha (como o Spotify): não apaga nada e desfaz-se com outro toque
   async adminPlano(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);

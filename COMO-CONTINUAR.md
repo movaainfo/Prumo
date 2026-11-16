@@ -321,3 +321,7 @@ O perfil pessoal do Ryan e o modo local ficam sempre em português de Portugal e
 - `sesCria` tenta outra vez sem `branding_settings`/`adaptive_pricing` se o Stripe não os conhecer. A API do Stripe já não aceita `payment_method_types` no Checkout: os métodos (cartões, Apple Pay, Google Pay) ligam-se só no painel (Definições › Métodos de pagamento). Sem métodos ativos, o Stripe responde "No valid payment method types" → 503 com mensagem clara.
 - `pagErr(e, onde)`: erros do Stripe no checkout viram mensagem em pt-PT (503 "Os pagamentos ainda estão a ser ativados…" com a conta em análise; 502 nos outros) e o pormenor fica no registo do servidor (`nautilo stripe`).
 - 15/11/2026: chave real (`rk_live_`, acesso total exceto operações sensíveis) no Vercel; a conta Prumo do Stripe está em análise (2–3 dias), por isso os pagamentos reais ainda não abrem.
+
+### 3.25: e-mail de teste no Admin
+- `mailSend(email, nome, code)` devolve `{ok, st, via, msg}` e regista no servidor (`nautilo email <via> <status> <resposta>`) quando o Brevo/Resend recusa; `sendCode` usa-o (só `ok`).
+- Op `adminTesteEmail` (admin, 6 por hora): envia o código 123456 para o e-mail da conta de administração e devolve a resposta do serviço. Admin › Por fazer: `admMailTest` mostra o resultado e uma dica (`mailDica`: IP não autorizado, remetente, chave, conta por ativar).
