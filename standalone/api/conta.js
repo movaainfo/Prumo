@@ -248,7 +248,7 @@ const OPS = {
   async adminTesteEmail(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
     if (!mailOn()) throw N.err('email', 'Ainda não há serviço de e-mail ligado (BREVO_API_KEY ou RESEND_API_KEY no Vercel).', 400);
     if (N.limit(req, 'testeEmail|' + s0.rec.uid, 6, 3600e3)) throw N.err('limite', 'Já fizeste muitos testes. Tenta daqui a uma hora.', 429);
-    const r = await mailSend(s0.rec.email, s0.rec.nome || '', '123456'); return { ok: r.ok, via: r.via, st: r.st, msg: r.msg || '', para: s0.rec.email, de: String(process.env.NAUTILO_EMAIL_DE || '').replace(/^.*<([^>]+)>.*$/, '$1').trim() }; },
+    const r = await mailSend(s0.rec.email, s0.rec.nome || '', '123456'); return { enviado: !!r.ok, via: r.via, st: r.st, msg: r.msg || '', para: s0.rec.email, de: String(process.env.NAUTILO_EMAIL_DE || '').replace(/^.*<([^>]+)>.*$/, '$1').trim() }; },
   // a administração escolhe o plano da conta: um plano grátis (por uns dias ou sem fim) ou vazio = Automático (teste e depois o que a pessoa assinar)
   //   não pede a senha (como o Spotify): não apaga nada e desfaz-se com outro toque
   async adminPlano(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
