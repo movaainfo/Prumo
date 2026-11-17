@@ -45,6 +45,7 @@
   .tabs a.on{background:var(--tx);border-color:var(--tx);color:var(--bg)}
   .tabs a.on,.tabs a{border-bottom-width:1px}
   .tabs a.on{border-bottom-color:var(--tx)}
+  html #view .tabs a.on::after{display:none!important}
   /* cartões e números com mais ar */
   .pn{border-radius:16px}
   .kpis{gap:8px}
