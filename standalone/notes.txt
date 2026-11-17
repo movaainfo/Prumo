@@ -1,3 +1,4 @@
+Línguas: os textos novos dos Animes, do futebol ao vivo e do telemóvel repaginado também em português do Brasil, inglês, espanhol, francês, italiano e alemão.
 Animes ao estilo Crunchyroll (destaque em carrossel, continuar a ver, novos episódios, navegar, categorias, simulcasts, calendário, notícias, listas, episódios com miniaturas, personagens, músicas) e pesquisa nas três bases (AniList, Kitsu, MyAnimeList) com a IA quando não encontra.
 Sem zoom no app (só no mapa do mundo, com pinça e botões).
 Telemóvel repaginado: barra de baixo (Painel, Hoje, Registar, IA, Tudo) e o ecrã Tudo com todas as áreas em ícones.
