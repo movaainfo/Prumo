@@ -2581,6 +2581,12 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
       const J = o => rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ data: o }) });
       if (Q.down) return rt.fulfill({ status: 500, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: '{"errors":[{"message":"down"}]}' });
       if (/airingSchedules/.test(q)) { const t0 = Math.floor(now / 1000); return J({ Page: { pageInfo: { hasNextPage: false }, airingSchedules: [{ episode: 7, airingAt: t0 + 3600, media: Object.assign({ isAdult: false }, SEA[1]) }, { episode: 3, airingAt: t0 + 86400 + 600, media: Object.assign({ isAdult: false }, SEA[3]) }, { episode: 1, airingAt: t0 + 7200, media: Object.assign({ isAdult: true }, mk(50, 'Adulto')) }] } }); }
+      if (/s0: Media\(/.test(q)) { const o = {}; (q.match(/s\d+: Media/g) || []).forEach((m, i) => { o['s' + i] = { id: i, recommendations: { nodes: [{ rating: 900, mediaRecommendation: mk(71, 'Violet Evergarden', { averageScore: 87 }) }, { rating: 400, mediaRecommendation: mk(72, 'Mushoku Tensei') }, { rating: 300, mediaRecommendation: mk(11, 'Steins;Gate', { averageScore: 90 }) }, { rating: 0, mediaRecommendation: mk(73, 'Sem Votos') }] } }; }); return J(o); }
+      if (/r0: Page/.test(q)) { const o = {}; Object.keys(v).forEach(k => { const n = v[k]; o['r' + k.slice(1)] = { media: /mushishi/i.test(n) ? [mk(61, 'Mushishi', { averageScore: 86 })] : /steins/i.test(n) ? [mk(11, 'Steins;Gate', { averageScore: 90 })] : [] }; }); return J(o); }
+      if (/genre_in/.test(q)) { const g = (q.match(/genre_in:\["([^"]+)"\]/) || [])[1]; return J({ Page: { media: [mk(81, 'Género ' + g), FRI] } }); }
+      if (/popularity_greater:150000/.test(q)) return J({ Page: { media: [mk(82, 'Clássico Teste', { averageScore: 92 }), FRI] } });
+      if (/popularity_lesser/.test(q)) return J({ Page: { media: [mk(83, 'Joia Teste', { averageScore: 85 })] } });
+      if (/format:MOVIE/.test(q)) return J({ Page: { media: [mk(84, 'Filme Imperdível', { format: 'MOVIE', averageScore: 89 })] } });
       if (/Media\(/.test(q)) return J({ Media: DET(v.id === 154587 || v.mal === 155587 ? FRI : SEA.find(x => x.id === v.id) || FRI) });
       if (/search:\$q/.test(q)) return J({ Page: { media: /frieren/i.test(v.q || '') ? [FRI, mk(99, 'Frieren Season 2')] : [] } });
       if (/TRENDING_DESC/.test(q)) return J({ Page: { media: [SEA[1], FRI] } });
@@ -2629,6 +2635,10 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
   await E(p, () => { location.hash = 'animes.tier'; }); await sleep(400);
   ok('Animes › Top 10 e tier list: o anime está no tier S e no 1.º lugar', await E(p, () => /Frieren/.test(document.querySelector('#view .an-tr.tS').innerText) && /Frieren/.test(document.querySelector('#view .an-pod .p1').innerText)));
   if (SH) await p.screenshot({ path: SH + '/an-tier.png', fullPage: true });
+  if (LIVE) { await E(p, () => { location.hash = 'animes.recomendados'; }); await p.waitForFunction(() => document.querySelectorAll('#view .an-grid .an-pc').length > 5, null, { timeout: 20000 }).catch(() => { }); await sleep(2500);
+    const fyl = await E(p, () => ({ n: document.querySelectorAll('#view .an-grid .an-pc').length, rows: [...document.querySelectorAll('#view .an-row h3')].map(h => h.innerText), first: [...document.querySelectorAll('#view .an-grid .an-pc')].slice(0, 6).map(b => b.innerText.replace(/\s+/g, ' ')) }));
+    ok('Animes (AniList real) › Para ti: recomendações a partir do que viste', fyl.n >= 6 && fyl.first.some(r => /Porque viste/.test(r)), JSON.stringify(fyl).slice(0, 700)); console.log('    ', JSON.stringify(fyl).slice(0, 700));
+    if (SH) { await p.screenshot({ path: SH + '/an-paraTi.png', fullPage: true }); } }
   if (!LIVE) {
     await E(p, () => { location.hash = 'animes.temporada'; }); await sleep(800);
     const tp = await E(p, () => ({ h: document.querySelector('#view .an-sea h2').innerText, n: document.querySelectorAll('#view .an-grid .an-pc').length, t: document.querySelector('#view .an-grid').innerText.replace(/\s+/g, ' ') }));
@@ -2647,13 +2657,25 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
     await p.click('#view .an-rank [data-s="Quero ver"]'); await sleep(200);
     ok('Animes: "Quero ver" num anime do ranking junta à lista', await E(p, () => OS.all('animes').some(a => a.t === 'Steins;Gate' && a.status === 'Quero ver')));
     if (SH) await p.screenshot({ path: SH + '/an-melhores.png', fullPage: true });
+    // Para ti: a partir do que viste (Frieren, nota 9, favorito), sem o que já está na lista, e a IA
+    await E(p, () => { location.hash = 'animes.recomendados'; }); await p.waitForFunction(() => /Joia Teste/.test((document.getElementById('view') || {}).innerText || ''), null, { timeout: 15000 }).catch(() => { }); await sleep(300);
+    const fy = await E(p, () => ({ t: document.getElementById('view').innerText.replace(/\s+/g, ' '), pick: [...document.querySelectorAll('#view .an-grid .an-pc')].map(b => b.innerText.replace(/\s+/g, ' ')) }));
+    ok('Animes › Para ti: a escolha a partir do que viste, a dizer porquê, sem o que já tens na lista', fy.pick.some(x => /Violet Evergarden/.test(x) && /Porque viste Frieren/.test(x)) && !fy.pick.some(x => /Steins;Gate|Sem Votos/.test(x)) && /A escolha para ti/.test(fy.t), JSON.stringify(fy.pick).slice(0, 300));
+    ok('Animes › Para ti: os teus géneros, clássicos, joias escondidas e filmes', /Porque viste Frieren/.test(fy.t) && /Mais Aventura/.test(fy.t) && /Género Adventure/.test(fy.t) && /Clássicos que quase toda a gente adora/.test(fy.t) && /Clássico Teste/.test(fy.t) && /Joias escondidas/.test(fy.t) && /Filme Imperdível/.test(fy.t), fy.t.slice(0, 600));
+    await E(p, () => { OS.AI.json = async () => ({ recs: [{ titulo: 'Mushishi', porque: 'Calmo e contemplativo, como Frieren.' }, { titulo: 'Steins;Gate', porque: 'Já está na lista.' }] }); });
+    await p.fill('#view .an-aif input[name=q]', 'algo calmo'); await p.click('#view .an-aif button'); await p.waitForFunction(() => !!document.querySelector('#view .an-air li'), null, { timeout: 15000 }).catch(() => { });
+    const air = await E(p, () => ((document.querySelector('#view .an-air') || {}).innerText || '').replace(/\s+/g, ' '));
+    ok('Animes › Para ti: pedir à IA dá animes reais com o porquê (os da lista ficam de fora)', /Mushishi/.test(air) && /Calmo e contemplativo/.test(air) && !/Steins/.test(air), air);
+    if (SH) await p.screenshot({ path: SH + '/an-paraTi.png', fullPage: true });
+    await E(p, () => { location.hash = 'animes'; }); await sleep(600);
+    ok('Animes › Início: faixa "Recomendado para ti"', await E(p, () => [...document.querySelectorAll('#view .an-row h3')].some(h => h.innerText === 'Recomendado para ti')));
     // AniList em baixo: a pesquisa vai à reserva (MyAnimeList pelo Jikan)
     Q.down = true; await E(p, () => { location.hash = 'animes.pesquisar'; }); await sleep(200); await p.fill('#view .an-q input[name=q]', 'Sousou no Frieren'); await p.click('#view .an-q button'); await p.waitForFunction(() => /9,3/.test((document.querySelector('#view .an-grid') || {}).innerText || ''), null, { timeout: 15000 }).catch(() => { });
     ok('Animes: com o AniList em baixo, a pesquisa usa o MyAnimeList (reserva)', await E(p, () => /Frieren/.test((document.querySelector('#view .an-grid') || {}).innerText || '') && /9,3/.test((document.querySelector('#view .an-grid') || {}).innerText || '')));
     Q.down = false;
   }
   await p.setViewportSize({ width: 390, height: 844 }); const ov = [];
-  for (const r of ['animes', 'animes.temporada', 'animes.calendario', 'animes.melhores', 'animes.lista', 'animes.tier', 'animes.pesquisar', 'animes.anime']) { await E(p, r => { location.hash = r; }, r); await sleep(700); if (!(await E(p, () => document.documentElement.scrollWidth <= innerWidth + 1))) ov.push(r); if (SH) await p.screenshot({ path: SH + '/an-tel-' + r.replace('animes.', '').replace('animes', 'inicio') + '.png', fullPage: true }); }
+  for (const r of ['animes', 'animes.recomendados', 'animes.temporada', 'animes.calendario', 'animes.melhores', 'animes.lista', 'animes.tier', 'animes.pesquisar', 'animes.anime']) { await E(p, r => { location.hash = r; }, r); await sleep(700); if (!(await E(p, () => document.documentElement.scrollWidth <= innerWidth + 1))) ov.push(r); if (SH) await p.screenshot({ path: SH + '/an-tel-' + r.replace('animes.', '').replace('animes', 'inicio') + '.png', fullPage: true }); }
   ok('Animes: no telemóvel nada sai do ecrã', !ov.length, ov.join(','));
   ok('Animes: sem erros na consola', !errs.length, errs.slice(0, 3).join(' | '));
   await ctx.close(); }

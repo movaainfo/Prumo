@@ -76,6 +76,17 @@ const API = {
     for (let p = 1; p <= 5; p++) { const d = await gql(`query($a:Int,$b:Int,$p:Int){Page(page:$p,perPage:50){pageInfo{hasNextPage} airingSchedules(airingAt_greater:$a,airingAt_lesser:$b,sort:TIME){episode airingAt media{${F} isAdult}}}}`, { a, b, p });
       const P = d.Page || {}; (P.airingSchedules || []).forEach(s => { const x = s.media && !s.media.isAdult && nAL(s.media); if (x) out.push({ at: s.airingAt * 1000, ep: s.episode, x }); }); if (!(P.pageInfo && P.pageInfo.hasNextPage)) break; }
     return out; },
+  // recomendações do AniList para vários animes de uma vez (um pedido com um apelido por anime)
+  recs: async S => { const d = await gql('query{' + S.map((x, i) => `s${i}: Media(${x.al ? 'id:' + (+x.al) : 'idMal:' + (+x.mal)},type:ANIME){id recommendations(perPage:15,sort:RATING_DESC){nodes{rating mediaRecommendation{${F}}}}}`).join(' ') + '}');
+    return S.map((x, i) => { const M = d['s' + i]; return { t: x.t, k: kOf(x), list: ((M && M.recommendations && M.recommendations.nodes) || []).filter(n => n && n.mediaRecommendation && (n.rating || 0) > 0).map(n => ({ x: nAL(n.mediaRecommendation), r: n.rating })).filter(o => o.x) }; }); },
+  genre: g => gql(page(`genre_in:[${JSON.stringify(String(g).replace(/[^A-Za-z' -]/g, ''))}],sort:SCORE_DESC,popularity_greater:20000`, 30)).then(listOf),
+  classics: () => both(() => gql(page('sort:SCORE_DESC,popularity_greater:150000', 40)).then(listOf), () => jk('top/anime?sfw=true&limit=25')),
+  gems: () => gql(page('sort:SCORE_DESC,popularity_greater:5000,popularity_lesser:50000,averageScore_greater:78', 40)).then(listOf),
+  movies: () => both(() => gql(page('format:MOVIE,sort:SCORE_DESC,popularity_greater:40000', 30)).then(listOf), () => jk('top/anime?type=movie&sfw=true&limit=25')),
+  // os títulos que a IA sugeriu → os animes certos do AniList (um pedido, variáveis em vez de texto no pedido)
+  resolve: async names => { const vs = {}; names.forEach((n, i) => { vs['q' + i] = n; });
+    const d = await gql(`query(${names.map((_, i) => '$q' + i + ':String').join(',')}){${names.map((_, i) => `r${i}: Page(perPage:1){media(search:$q${i},type:ANIME,isAdult:false,sort:SEARCH_MATCH){${F}}}`).join(' ')}}`, vs);
+    return names.map((_, i) => nAL(((d['r' + i] || {}).media || [])[0])); },
   detail: x => both(async () => { const d = await gql(x.al ? `query($id:Int){Media(id:$id,type:ANIME){${FD}}}` : `query($mal:Int){Media(idMal:$mal,type:ANIME){${FD}}}`, x.al ? { id: x.al } : { mal: x.mal }), m = d.Media, n = nAL(m); if (!n) throw new Error('AniList: não encontrado');
     n.desc = clean(m.description); n.tr = m.trailer && m.trailer.site === 'youtube' ? m.trailer.id : '';
     n.links = (m.externalLinks || []).filter(l => l.type === 'STREAMING' && /^https:\/\//.test(l.url || '')).map(l => ({ site: l.site, url: l.url }));
@@ -97,7 +108,7 @@ const DATA = {}, TRY = {}, ERR = {}, PEND = new Set();
 const need = (k, ttl, f, store) => { let d = DATA[k]; if (!d && store) { const c = cGet(k, ttl); if (c) d = DATA[k] = { at: Date.now() - 1, v: c }; }
   if ((!d || Date.now() - d.at > ttl) && !PEND.has(k) && !(TRY[k] && Date.now() - TRY[k] < 8000)) { TRY[k] = Date.now(); PEND.add(k);
     f().then(v => { DATA[k] = { at: Date.now(), v }; if (store) cSet(k, v); delete ERR[k]; }).catch(e => { ERR[k] = (e && e.message) || 'erro'; }).finally(() => { PEND.delete(k); if (/^#animes/.test(location.hash)) OS.request(); }); }
-  const v = d ? d.v : null; if (Array.isArray(v)) v.forEach(x => keep(x && x.x ? x.x : x)); return v; };
+  const v = d ? d.v : null; if (Array.isArray(v)) v.forEach(x => { const y = x && x.x ? x.x : x; if (y && (y.al || y.mal)) keep(y); }); return v; };
 const H6 = 6 * 36e5;
 const errBox = k => ERR[k] ? `<div class="note an-err">Não consegui falar com a base de animes (${esc(ERR[k])}). Tenta outra vez daqui a pouco. <button class="btn xs" data-act="anRetry" data-k="${esc(k)}">Tentar outra vez</button></div>` : '';
 const loading = t => `<div class="an-ld"><span class="an-sp" aria-hidden="true"></span>${esc(t || 'A buscar os animes…')}</div>`;
@@ -159,7 +170,7 @@ A.anTr = async b => { const k = b.dataset.k, d = DATA['d:' + k] && DATA['d:' + k
 A.anTrailer = b => { const box = document.getElementById('anTrl'); if (!box) return; box.innerHTML = box.innerHTML ? '' : `<div class="an-ytp"><iframe src="https://www.youtube-nocookie.com/embed/${esc(b.dataset.y)}?autoplay=1&playsinline=1&rel=0" title="Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; };
 
 /* ================= páginas ================= */
-const AT = [['', 'Início'], ['temporada', 'Temporada'], ['calendario', 'Calendário'], ['melhores', 'Melhores do ano'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list'], ['pesquisar', 'Pesquisar']];
+const AT = [['', 'Início'], ['recomendados', 'Para ti'], ['temporada', 'Temporada'], ['calendario', 'Calendário'], ['melhores', 'Melhores do ano'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list'], ['pesquisar', 'Pesquisar']];
 const P = {};
 V.animes = sub => { const k = sub === 'anime' ? 'anime' : P[sub || ''] ? (sub || '') : '';
   return UI.head('Animes', 'Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.', `<a class="btn pri" href="#animes.pesquisar">${UI.ic('search')}<span>Pesquisar anime</span></a>`, 'Eu')
@@ -176,10 +187,49 @@ P[''] = () => { const S = sNow(), L = mineAll(), sea = need('s:' + S.y + S.s, H6
         <div class="an-hb2"><button type="button" class="btn pri" data-act="anOpen" data-k="${esc(kOf(x))}">Ver detalhes</button>${m && m.status === 'A ver' ? `<button type="button" class="btn" data-act="anEp" data-id="${m.id}" data-d="1">${UI.ic('plus')}Vi o episódio ${(+m.ep || 0) + 1}</button>` : !m ? `<button type="button" class="btn" data-act="anSet" data-k="${esc(kOf(x))}" data-s="Quero ver">${UI.ic('plus')}Quero ver</button>` : ''}</div></div></div></section>`; })() : (sea ? '' : errBox('s:' + S.y + S.s) || loading());
   const cont = watching.length ? `<section class="an-row"><div class="an-rh"><h3>Continuar a ver</h3><a class="an-more" href="#animes.lista">A minha lista</a></div><div class="an-cw">${watching.slice(0, 8).map(a => { const x = keep(fromMine(a)), t = +a.eps || 0, ep = +a.ep || 0;
       return `<div class="an-cwi" style="--c:${colOf(a)}"><button type="button" class="an-cwc" data-act="anOpen" data-k="${esc(kOf(a))}">${cover(x, 'sm')}</button><div class="an-cwt"><b class="click" data-act="anOpen" data-k="${esc(kOf(a))}">${esc(a.t)}</b><small>${t ? `Episódio ${ep} de ${t}` : `Episódio ${ep}`}</small>${t ? `<span class="an-bar"><i style="width:${Math.round(ep / t * 100)}%"></i></span>` : ''}</div><button type="button" class="btn sm" data-act="anEp" data-id="${a.id}" data-d="1" aria-label="Vi mais um episódio">${UI.ic('plus')}1</button></div>`; }).join('')}</div></section>` : '';
-  return hero + cont + row(`${esc(sName(S))} <small>${SEM[S.s]}</small>`, (sea || []).slice(0, 20), { more: '#animes.temporada' })
+  const SD = seedsOf(), rby = SD.length ? need(recKey(SD), 12 * 36e5, () => API.recs(SD), true) : null, ragg = rby ? recsAgg(rby, SD) : [];
+  return hero + cont + (ragg.length ? row('Recomendado para ti', ragg.slice(0, 20).map(c => c.x), { more: '#animes.recomendados', card: x => { const c = ragg.find(z => z.x === x); return { sub: c ? 'Porque viste ' + c.why[0] : '' }; } }) : '')
+    + row(`${esc(sName(S))} <small>${SEM[S.s]}</small>`, (sea || []).slice(0, 20), { more: '#animes.temporada' })
     + row('Em alta agora', (tr || []).slice(0, 20)) + row('Os teus favoritos', favs.map(fromMine), { card: () => ({ nosc: 1 }) }) + row('Queres ver', want.map(fromMine), { card: () => ({ nosc: 1 }) })
     + (!L.length ? `<div class="pn an-wel"><h3>Começa a tua lista</h3><p class="mut">Pesquisa os animes que já viste e marca <b>Já vi</b>, ou toca num da temporada para o seguires episódio a episódio.</p><a class="btn pri" href="#animes.pesquisar">${UI.ic('search')}Pesquisar anime</a></div>` : '')
     + (tr ? '' : errBox('trend')) + '<p class="mut an-src">Dados do AniList e do MyAnimeList.</p>'; };
+
+/* Para ti: recomendações a partir do que viste e das tuas notas, dos teus géneros, clássicos, joias escondidas, filmes e a IA */
+// sementes: os que viste ou estás a ver e de que gostaste (favoritos e as melhores notas primeiro; nota abaixo de 6 não conta)
+const seedsOf = () => U.sortBy(mineAll().filter(a => ['Visto', 'A ver', 'Em pausa'].includes(a.status) && !(+a.nota && +a.nota < 6) && (a.al || a.mal)), a => -((a.fav ? 100 : 0) + (+a.nota || 6.5) * 10 + (a._u || 0) / 1e13)).slice(0, 6);
+const recKey = S => 'r:' + S.map(kOf).join(',');
+const recsAgg = (by, S) => { const m = new Map(), seedK = new Set(S.map(kOf));
+  (by || []).forEach(b => { const sd = S.find(z => kOf(z) === b.k) || {}, w = (sd.fav ? 1.5 : 1) * ((+sd.nota || 7) / 7);
+    (b.list || []).forEach((o, j) => { const k = kOf(o.x); if (seedK.has(k) || mine(o.x)) return; const c = m.get(k) || { x: o.x, s: 0, why: [] }; c.s += w * Math.log(1 + o.r) * (1 - j / 30); if (!c.why.includes(b.t)) c.why.push(b.t); m.set(k, c); }); });
+  return [...m.values()].sort((a, b) => b.s - a.s || (b.x.sc || 0) - (a.x.sc || 0)); };
+const topGenres = () => { const c = {}; mineAll().filter(a => ['Visto', 'A ver'].includes(a.status) && !(+a.nota && +a.nota < 6)).forEach(a => (a.gen || []).forEach(g => { c[g] = (c[g] || 0) + (+a.nota >= 8 ? 2 : 1); })); return Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 2).map(e => e[0]); };
+const fresh = L => (L || []).filter(x => !mine(x));
+const AIRK = 'oc_an_air'; let AIR = U.ls.get(AIRK, null), AIB = false, AIE = '';
+const aiBox = () => { const r = AIR && Array.isArray(AIR.items) ? AIR.items.filter(o => o.x && !mine(o.x)) : [];
+  return `<section class="pn an-ai"><div class="pn-h"><h3>${UI.ic('brain')}Pede à IA</h3></div><p class="mut">Diz o que te apetece ver e a IA escolhe 8 animes a pensar na tua lista (os que já tens ficam de fora).</p>
+    <form class="an-aif" data-form="anAI"><input class="field" name="q" value="${esc((AIR && AIR.q) || '')}" placeholder="Ex.: algo curto e leve, parecido com Frieren, um filme para ver hoje" aria-label="O que te apetece ver?" maxlength="200" autocomplete="off"><button class="btn pri" ${AIB ? 'disabled' : ''}>${AIB ? 'A pensar…' : 'Recomendar'}</button></form>
+    ${AIE ? `<p class="an-aie">${esc(AIE)}</p>` : ''}${r.length ? `<ul class="an-air">${r.map(o => { const x = keep(o.x), kk = esc(kOf(x));
+      return `<li style="--c:${colOf(x)}"><button type="button" class="an-rc" data-act="anOpen" data-k="${kk}">${cover(x, 'sm')}</button><div class="an-ri"><b class="click" data-act="anOpen" data-k="${kk}">${esc(x.t)}</b><small>${esc(subOf(x))}</small>${o.why ? `<p>${esc(o.why)}</p>` : ''}<span class="an-rq"><button type="button" class="btn xs" data-act="anSet" data-k="${kk}" data-s="Quero ver">Quero ver</button><button type="button" class="btn xs ghost" data-act="anSet" data-k="${kk}" data-s="Visto">Já vi</button></span></div>${x.sc ? `<span class="an-rs"><b>${scT(x.sc)}</b><small>de 10</small></span>` : ''}</li>`; }).join('')}</ul>` : ''}</section>`; };
+OS.forms.anAI = async (f, v) => { if (AIB) return; if (!OS.AI || !OS.AI.json) { UI.toast('A IA não está disponível neste aparelho', 'warn'); return; }
+  const q = String(v('q') || '').trim().slice(0, 200), L = U.sortBy(mineAll(), a => -(a._u || 0)).slice(0, 60).map(a => `${a.t} · ${a.status}${a.nota ? ' · nota ' + a.nota : ''}`);
+  AIB = true; AIE = ''; AIR = Object.assign({}, AIR || {}, { q }); OS.request();
+  try { const o = await OS.AI.json([{ text: `És um especialista em anime. Recomenda 8 animes que esta pessoa ainda não viu (nenhum da lista dela)${q ? ', a pensar no que ela pede agora: ' + JSON.stringify(q) : ''}. Escolhe só animes que existem mesmo e escreve o título como aparece no AniList (em romaji ou em inglês). Lista da pessoa (título · estado · nota de 1 a 10): ${L.length ? L.join('; ') : 'ainda vazia'}. Responde APENAS JSON {"recs":[{"titulo":"…","porque":"uma frase curta, em ${langName() || 'inglês'}, a dizer porque é para ela"}]}` }], .5);
+    const recs = ((o && o.recs) || []).filter(r => r && r.titulo).slice(0, 8); if (!recs.length) throw new Error('a IA não respondeu com animes');
+    const X = await API.resolve(recs.map(r => String(r.titulo).slice(0, 100))), seen = new Set();
+    const items = recs.map((r, i) => ({ x: X[i] ? Object.assign(pick(X[i]), { sc: X[i].sc || 0 }) : null, why: String(r.porque || '').slice(0, 300) })).filter(o => o.x && !mine(o.x) && !seen.has(kOf(o.x)) && seen.add(kOf(o.x)));
+    if (!items.length) throw new Error('as sugestões já estão todas na tua lista');
+    AIR = { at: Date.now(), q, items }; try { U.ls.set(AIRK, AIR); } catch (e) { }
+  } catch (e) { AIE = /não está ligada/i.test((e && e.message) || '') ? 'A IA ainda não está ligada: liga-a em Definições › IA.' : 'A IA não conseguiu recomendar agora (' + ((e && e.message) || 'erro') + '). Tenta outra vez.'; }
+  AIB = false; OS.request(); };
+P.recomendados = () => { const S = seedsOf(), k = recKey(S), by = S.length ? need(k, 12 * 36e5, () => API.recs(S), true) : null, agg = by ? recsAgg(by, S) : null, G = topGenres();
+  const gl = G.map(g => ({ g, L: need('g:' + g, 24 * 36e5, () => API.genre(g), true) })), cl = need('classics', 24 * 36e5, API.classics, true), gm = need('gems', 24 * 36e5, API.gems, true), mv = need('movies', 24 * 36e5, API.movies, true);
+  const head = `<section class="an-fy"><h2>Recomendado para ti</h2><p class="mut">${S.length ? `A partir do que viste e das tuas notas (${S.slice(0, 3).map(x => esc(x.t)).join(', ')}${S.length > 3 ? '…' : ''}). O que já está na tua lista não aparece: marca <b>Quero ver</b> ou <b>Já vi</b> e as sugestões mudam.` : `Marca alguns animes que já viste (e dá-lhes nota) para as recomendações ficarem à tua medida. Até lá, ficam os que quase toda a gente adora.`}</p></section>`;
+  const pickT = S.length ? (agg ? (agg.length ? `<section class="an-row"><div class="an-rh"><h3>A escolha para ti</h3></div><div class="an-grid">${agg.slice(0, 12).map(c => poster(c.x, { sub: 'Porque viste ' + c.why.slice(0, 2).join(' e ') })).join('')}</div></section>` : '') : errBox(k) || loading('A escolher animes para ti…')) : '';
+  return head + pickT + aiBox()
+    + (S.length > 1 ? (by || []).slice(0, 4).map(b => row(`Porque viste ${esc(b.t)}`, fresh(b.list.map(o => o.x)).slice(0, 15))).join('') : '')
+    + gl.map(o => row(`Mais ${esc(gN(o.g))}`, fresh(o.L).slice(0, 20))).join('')
+    + row('Clássicos que quase toda a gente adora', fresh(cl).slice(0, 20)) + row('Joias escondidas (muito boas e pouco conhecidas)', fresh(gm).slice(0, 20)) + row('Filmes imperdíveis', fresh(mv).slice(0, 20))
+    + (cl ? '' : errBox('classics') || loading()) + '<p class="mut an-src">Recomendações da comunidade do AniList.</p>'; };
 
 /* Temporada: escolhe a estação e o ano; ordena por popularidade, nota ou próximo episódio */
 P.temporada = () => { const S = OS.ui.anS || sNow(), k = 's:' + S.y + S.s, L = need(k, H6, () => API.season(S), true), f = OS.ui.anSf || {};

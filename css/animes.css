@@ -186,6 +186,16 @@
 .an-toa{display:flex;gap:2px}
 @media (max-width:520px){.an-tr{grid-template-columns:62px minmax(0,1fr)}.an-tlb b{font-size:21px}.an-tlb small{display:none}.an-pl{width:96px}.an-pl .an-img{width:78px;height:117px}.an-pl.p1 .an-img{width:96px;height:144px}}
 
+/* para ti */
+.an-fy h2{margin:0 0 4px;font-size:22px}.an-fy p{margin:0;font-size:13.5px;max-width:75ch}
+.an-ai{display:flex;flex-direction:column;gap:10px}.an-ai .pn-h h3{display:flex;align-items:center;gap:8px;margin:0}.an-ai>p{margin:0;font-size:13px}
+.an-aif{display:flex;gap:8px}.an-aif input{flex:1;min-width:0}
+.an-aie{margin:0;font-size:13px;color:var(--neg,#e5484d)}
+.an-air{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:8px}
+.an-air li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:start;padding:10px 12px;border-radius:14px;background:var(--pn2,var(--pn));box-shadow:inset 3px 0 0 var(--c,var(--accent))}
+.an-air p{margin:4px 0 0;font-size:13px;line-height:1.45}
+@media (max-width:520px){.an-aif{flex-direction:column}.an-air{grid-template-columns:minmax(0,1fr)}.an-air li{grid-template-columns:44px minmax(0,1fr)}.an-air .an-rs{grid-column:2;flex-direction:row;gap:5px;align-items:baseline}}
+
 /* pesquisa */
 .an-q{display:flex;align-items:center;gap:10px}
 .an-q>span .ic{width:18px;height:18px;opacity:.6}
