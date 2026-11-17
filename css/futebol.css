@@ -313,6 +313,11 @@
 .fbw-sb.on b{color:inherit}
 .fbw-sb:focus-visible,.fbw-q:focus-within{outline:2px solid var(--accent);outline-offset:2px}
 .fbw-dot{width:7px;height:7px;border-radius:50%;background:#d73a3f;display:inline-block;flex:none;animation:fbPulse 1.6s ease-in-out 10}
+.fbw-days{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin:0 -2px}.fbw-days::-webkit-scrollbar{display:none}
+.fbw-db{flex:none;min-height:36px;padding:6px 12px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--tx2,var(--tx));font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.fbw-db.on{background:var(--pn3,var(--pn));border-color:var(--accent);color:var(--tx);font-weight:600}
+.fbw-db:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fbw-fifa{display:flex;align-items:flex-start;gap:8px;margin:8px 0 0;font-size:13px;padding:8px 10px;border-radius:10px;background:var(--accentBg,rgba(255,255,255,.05));max-width:72ch}.fbw-fifa .ic{width:16px;height:16px;flex:none;margin-top:1px}
 .fbw-q{display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--pn);max-width:480px}
 .fbw-q .ic{width:16px;height:16px;opacity:.6}
 .fbw-q input{flex:1;min-width:0;border:0;background:transparent;color:var(--tx);font:inherit;font-size:15px;padding:10px 0;outline:none}

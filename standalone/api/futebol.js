@@ -34,9 +34,12 @@ const cmp = e => { const c = (e.competitions || [])[0] || {}, s = c.status || e.
   const ke = (c.details || []).map(k => { const t = kOf(k); if (!t) return null; const p = (k.athletesInvolved || [])[0] || {}; const o = { t, min: (k.clock && k.clock.displayValue) || '', tid: String((k.team && k.team.id) || ''), who: p.displayName || p.shortName || '' }; if (k.penaltyKick && t === 'g') o.pen = 1; return o; }).filter(Boolean);
   return { id: String(e.id), lid, lg: LID[lid] || '', lgF: c.altGameNote || (e.season && e.season.slug ? String(e.season.slug).replace(/^\d{4}(-\d{2,4})?-/, '').replace(/-/g, ' ') : ''), d: Date.parse(e.date || c.date) || 0, st: ty.state || 'pre', sn: ty.name || '', clk: s.displayClock || '', det: ty.shortDetail || '', h, a, ven: (c.venue && c.venue.fullName) || (e.venue && e.venue.fullName) || '', ke }; };
 const golos = e => e.ke.filter(k => k.t === 'g' || k.t === 'og').length;
-const vivo = async d => { const c = VIVO.get(d); if (c && Date.now() - c.at < (+process.env.ESPN_VIVO_MS || 10000)) return c.j;
-  const j = await getJ(ES() + 'all/scoreboard?limit=500' + (d ? '&dates=' + d : ''), 9000);
-  const ev = (j.events || []).map(cmp).filter(Boolean).slice(0, 400), now = Date.now();
+// live=1 (o "hoje" de quem pede): junta também os jogos a decorrer do placar do dia da ESPN (o dia da ESPN é o de Nova Iorque:
+// um jogo que começou antes da meia-noite de quem vê continua na lista depois da meia-noite)
+const vivo = async (d, live) => { const ck = d + (live ? 'L' : ''), c = VIVO.get(ck); if (c && Date.now() - c.at < (+process.env.ESPN_VIVO_MS || 10000)) return c.j;
+  const [j, j0] = await Promise.all([getJ(ES() + 'all/scoreboard?limit=500' + (d ? '&dates=' + d : ''), 9000), live && d ? getJ(ES() + 'all/scoreboard?limit=500', 9000).catch(() => null) : null]);
+  const raw = (j.events || []).slice(); if (j0) { const ids = new Set(raw.map(e => String(e.id))); (j0.events || []).forEach(e => { const st = (((e.competitions || [])[0] || {}).status || e.status || {}).type || {}; if (st.state === 'in' && !ids.has(String(e.id))) raw.push(e); }); }
+  const ev = raw.map(cmp).filter(Boolean).slice(0, 400), now = Date.now();
   // resumos a ler: jogos com golo novo (ao vivo ou acabados há menos de 4 h) e um jogo por cada liga que ainda não se conhece
   const lidNeed = new Set(), need = ev.filter(e => { const g = golos(e), m = SUMC.get(e.id), hot = e.st === 'in' || (e.st === 'post' && now - e.d < 6 * 36e5);
     if (g && hot && (!m || m.g !== g)) return true; if (!e.lg && e.lid && !LID[e.lid] && !lidNeed.has(e.lid) && e.st !== 'pre') { lidNeed.add(e.lid); return !m; } return false; }).slice(0, 24);
@@ -49,7 +52,7 @@ const vivo = async d => { const c = VIVO.get(d); if (c && Date.now() - c.at < (+
   ev.forEach(e => { if (!e.lg && LID[e.lid]) e.lg = LID[e.lid]; const m = SUMC.get(e.id); if (!m) return; const used = new Set();
     e.ke.forEach(k => { if (k.t !== 'g' && k.t !== 'og') return; const ix = m.as.findIndex((x, n) => !used.has(n) && x.min === k.min && (!k.who || !x.who || x.who === k.who)); if (ix < 0) return; used.add(ix); if (m.as[ix].as && k.t === 'g') k.as = m.as[ix].as; if (!k.who) k.who = m.as[ix].who; }); });
   const out = { ok: true, at: now, d: (j.day && j.day.date) || '', ev };
-  VIVO.set(d, { at: Date.now(), j: out }); if (VIVO.size > 20) VIVO.delete(VIVO.keys().next().value); return out; };
+  VIVO.set(ck, { at: Date.now(), j: out }); if (VIVO.size > 20) VIVO.delete(VIVO.keys().next().value); return out; };
 const ttl = u => /sports\.core/.test(u) ? 86400 : /\/summary\?|\/scoreboard$/.test(u) ? 15 : /\/scoreboard\?/.test(u) ? 120 : /\/schedule/.test(u) ? 120 : /\/standings/.test(u) ? 300 : 3600;
 module.exports = async (req, res) => {
   const origin = req.headers.origin || '', ref = req.headers.referer || '', site = req.headers['sec-fetch-site'] || '';
@@ -62,7 +65,7 @@ module.exports = async (req, res) => {
   if (h.length > 600) { res.statusCode = 429; return res.end('{"ok":false,"msg":"demasiados pedidos"}'); }
   const q = req.query || {}, u = String(Array.isArray(q.u) ? q.u[0] : q.u || '');
   if (q.vivo) { const d = String(q.d || ''); if (d && !/^20\d{6}$/.test(d)) { res.statusCode = 400; return res.end('{"ok":false,"msg":"data inválida"}'); }
-    try { const o = await vivo(d); res.statusCode = 200; res.setHeader('Cache-Control', 'public, max-age=8, s-maxage=12, stale-while-revalidate=30'); return res.end(JSON.stringify(o)); }
+    try { const o = await vivo(d, !!q.live); res.statusCode = 200; res.setHeader('Cache-Control', 'public, max-age=8, s-maxage=12, stale-while-revalidate=30'); return res.end(JSON.stringify(o)); }
     catch (e) { res.statusCode = 504; return res.end('{"ok":false,"msg":"a ESPN não respondeu a tempo"}'); } }
   if (q.yt) { const v = await ytList(); res.statusCode = 200; res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=90, stale-while-revalidate=300'); return res.end(JSON.stringify({ ok: true, v })); }
   if (u.length > 600 || !ALLOW.test(u) || /\.\.|%2e%2e|@|\\/i.test(u)) { res.statusCode = 400; return res.end('{"ok":false,"msg":"endereço não permitido"}'); }

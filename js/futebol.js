@@ -144,10 +144,15 @@ const wIn = x => { if (!x || !x.id || !x.h || !x.a || !x.h.id || !x.a.id) return
     Object.assign(old, n); return old; }
   EVX.set(id, n); return n; };
 const wEv = () => WORLD.ids.map(id => EVX.get(id)).filter(Boolean);
-const loadWorld = async () => { const d = dNow(); let L;
-  try { const j = await fetchJ('api/futebol?vivo=1&d=' + d, { credentials: 'same-origin' }); if (!j || !Array.isArray(j.ev)) throw new Error('sem dados'); L = j.ev; }
+// outros dias (ontem, amanhã e a semana): os jogos de todos os campeonatos e seleções, à tua hora
+const WDAY = {};
+const dOff = n => U.addDays(U.today(), n).replace(/-/g, '');
+const loadWorld = async d0 => { const d = d0 || dNow(), today = d === dNow(); let L;
+  try { const j = await fetchJ('api/futebol?vivo=1&d=' + d + (today ? '&live=1' : ''), { credentials: 'same-origin' }); if (!j || !Array.isArray(j.ev)) throw new Error('sem dados'); L = j.ev; }
   catch (e) { const j = await get(B + 'all/scoreboard?limit=500&dates=' + d, 12e3); L = (j.events || []).map(x => { const o = evN(x, ''); if (!o.lg) o.lg = 'all'; return o; }); }
-  const ev = L.map(wIn).filter(Boolean); WORLD.at = Date.now(); WORLD.d = d; WORLD.ids = ev.map(e => e.id);
+  const ev = L.map(wIn).filter(Boolean);
+  if (!today) { WDAY[d] = { at: Date.now(), ids: ev.map(e => e.id) }; const ks = Object.keys(WDAY); if (ks.length > 9) delete WDAY[ks[0]]; return ev; }
+  WORLD.at = Date.now(); WORLD.d = d; WORLD.ids = ev.map(e => e.id);
   Object.keys(TM).forEach(id => { const m = TM[id]; let add = false; ev.forEach(e => { if ((e.h.id === id || e.a.id === id) && !m.ev.some(x => x.id === e.id)) { m.ev.push(e); add = true; } }); if (add) m.ev.sort((x, y) => x.d - y.d); });
   return ev; };
 
@@ -497,25 +502,32 @@ const wRow = e => { const [wh, wa] = winOf(e), K = (e.ke || []).filter(k => isG(
 const worldStrip = skip => { if (navigator.webdriver && !window.__fbTest) return ''; needWorld(); const L = wEv().filter(e => e.st === 'in' && !skip.includes(e.id)).sort((a, b) => wRank(b) - wRank(a)); if (!L.length) return '';
   needLogos(L.slice(0, 6).map(e => e.lg));
   return sec(`<span class="fb-live"><i></i>Ao vivo</span> no mundo agora`, `<div class="fbw-list">${L.slice(0, 6).map(wRow).join('')}</div>`, `<a class="btn xs ghost" href="#futebol.vivo">Ver todos <b class="fbw-c">${L.length}</b></a>`); };
-P.vivo = () => { needWorld(); const E = wEv();
-  if (!WORLD.at) return errBox('w') || loading('A buscar todos os jogos de hoje no mundo…');
-  const nIn = E.filter(e => e.st === 'in').length, nPost = E.filter(e => e.st === 'post').length, f = OS.ui.fbW && (OS.ui.fbW !== 'in' || nIn) ? OS.ui.fbW : nIn ? 'in' : 'all';
+P.vivo = () => { const off = Math.max(-1, Math.min(6, +OS.ui.fbWd || 0)), isT = off === 0, d = dOff(off), wk = 'wd' + d;
+  if (isT) needWorld(); else ensure(wk, () => !WDAY[d] || Date.now() - WDAY[d].at > 10 * 6e4, () => loadWorld(d));
+  const E = isT ? wEv() : ((WDAY[d] && WDAY[d].ids) || []).map(id => EVX.get(id)).filter(Boolean), at = isT ? WORLD.at : WDAY[d] && WDAY[d].at;
+  const dt = new Date(U.addDays(U.today(), off) + 'T12:00:00'), dName = off === -1 ? 'Ontem' : isT ? 'Hoje' : off === 1 ? 'Amanhã' : WD[dt.getDay()] + ' ' + p2(dt.getDate()) + '/' + p2(dt.getMonth() + 1);
+  const days = `<div class="fbw-days" role="group" aria-label="Que dia">${[-1, 0, 1, 2, 3, 4, 5, 6].map(o => { const t = new Date(U.addDays(U.today(), o) + 'T12:00:00'), l = o === -1 ? 'Ontem' : o === 0 ? 'Hoje' : o === 1 ? 'Amanhã' : WD[t.getDay()] + ' ' + p2(t.getDate()) + '/' + p2(t.getMonth() + 1); return `<button type="button" class="fbw-db${o === off ? ' on' : ''}" data-act="fbWd" data-o="${o}" aria-pressed="${o === off}">${esc(l)}</button>`; }).join('')}</div>`;
+  if (!at) return days + (errBox(isT ? 'w' : wk) || loading(isT ? 'A buscar todos os jogos de hoje no mundo…' : 'A buscar os jogos de ' + dName.toLowerCase() + '…'));
+  const nIn = E.filter(e => e.st === 'in').length, nPost = E.filter(e => e.st === 'post').length, f = !isT ? 'all' : OS.ui.fbW && (OS.ui.fbW !== 'in' || nIn) ? OS.ui.fbW : nIn ? 'in' : 'all';
   const L = E.filter(e => f === 'in' ? e.st === 'in' : f === 'post' ? e.st === 'post' : true), G = new Map();
   L.forEach(e => { const k = e.lg && e.lg !== 'all' ? e.lg : 'x:' + (e.lgF || 'Outros jogos'); if (!G.has(k)) G.set(k, []); G.get(k).push(e); });
   const ord = { in: 0, pre: 1, post: 2 }, groups = [...G.entries()].map(([k, l]) => ({ k, l: l.sort((a, b) => (ord[a.st] - ord[b.st]) || (a.st === 'post' ? b.d - a.d : a.d - b.d)), r: Math.max(...l.map(wRank)), n: l.filter(e => e.st === 'in').length }))
     .sort((a, b) => b.r - a.r || b.n - a.n || a.l[0].d - b.l[0].d);
   needLogos(groups.filter(g => !/^x:/.test(g.k)).map(g => g.k));
-  const seg = [['in', 'Ao vivo', nIn], ['all', 'Hoje', E.length], ['post', 'Terminados', nPost]].map(([k, l, n]) => `<button type="button" class="fbw-sb${f === k ? ' on' : ''}" data-act="fbW" data-k="${k}" aria-pressed="${f === k}">${k === 'in' && n ? '<i class="fbw-dot" aria-hidden="true"></i>' : ''}<span>${l}</span><b>${n}</b></button>`).join('');
+  const seg = [['in', 'Ao vivo', nIn], ['all', 'Todos', E.length], ['post', 'Terminados', nPost]].map(([k, l, n]) => `<button type="button" class="fbw-sb${f === k ? ' on' : ''}" data-act="fbW" data-k="${k}" aria-pressed="${f === k}">${k === 'in' && n ? '<i class="fbw-dot" aria-hidden="true"></i>' : ''}<span>${l}</span><b>${n}</b></button>`).join('');
   const body = groups.length ? groups.map(g => { const e0 = g.l[0], known = !/^x:/.test(g.k);
     return `<section class="fbw-gp"${WQ && !g.l.some(e => wKey(e).includes(WQ)) ? ' hidden' : ''}><div class="fbw-gh">${known ? lgImg(g.k, 22) : `<span class="fb-lg fb-lg0" style="width:22px;height:22px" aria-hidden="true">${UI.ic('award')}</span>`}<h4>${esc(lgN(e0.lg, e0.lgF))}</h4>${g.n ? `<span class="fbw-n"><i class="fbw-dot" aria-hidden="true"></i>${g.n}</span>` : ''}${known ? `<button type="button" class="icon-btn fbw-go" data-act="fbComp" data-slug="${esc(g.k)}" aria-label="Abrir o campeonato">${UI.ic('right')}</button>` : ''}</div>
       <div class="fbw-list">${g.l.map(wRow).join('')}</div></section>`; }).join('')
-    : `<div class="fb-wel"><h2>${f === 'in' ? 'Nenhum jogo a decorrer agora' : 'Ainda sem jogos hoje'}</h2><p>${f === 'in' ? 'Vê os jogos de hoje, com as horas de começo, em «Hoje».' : 'A ESPN ainda não tem jogos marcados para hoje.'}</p></div>`;
-  return `<section class="fbw-hd"><div class="fbw-hdt"><h2>${nIn ? '<span class="fb-live"><i></i>Ao vivo</span>' : ''}<span>Todos os jogos de hoje no mundo</span></h2>
-      <p class="mut">Golos com quem marcou e quem deu a assistência, cartões vermelhos e o minuto de cada jogo. Atualiza sozinho a cada 15 segundos <span class="fbw-at">(última vez às ${esc(hms(WORLD.at))})</span>. Toca num jogo para ver todos os lances, as estatísticas e as escalações.</p></div>
-    <div class="fbw-seg" role="group" aria-label="Que jogos mostrar">${seg}</div>
+    : `<div class="fb-wel"><h2>${f === 'in' ? 'Nenhum jogo a decorrer agora' : isT ? 'Ainda sem jogos hoje' : 'Sem jogos marcados neste dia'}</h2><p>${f === 'in' ? 'Vê os jogos de hoje, com as horas de começo, em «Todos», ou os dos próximos dias nos botões dos dias.' : 'A ESPN ainda não tem jogos marcados para este dia.'}</p></div>`;
+  const natT = x => /teamlogos\/countries\//.test((x && x.logo) || ''), nat = E.filter(e => natT(e.h) && natT(e.a)).length, big = E.length - nat; // seleções: o símbolo da ESPN é a bandeira (teamlogos/countries)
+  return `<section class="fbw-hd"><div class="fbw-hdt"><h2>${nIn ? '<span class="fb-live"><i></i>Ao vivo</span>' : ''}<span>${isT ? 'Todos os jogos de hoje no mundo' : off === -1 ? 'Os jogos de ontem no mundo' : off === 1 ? 'Os jogos de amanhã no mundo' : 'Os jogos de ' + esc(dName)}</span></h2>
+      <p class="mut">${isT ? `Todos os campeonatos de clubes e as seleções: golos com quem marcou e quem deu a assistência, cartões vermelhos e o minuto de cada jogo. Atualiza sozinho a cada 15 segundos <span class="fbw-at">(última vez às ${esc(hms(at))})</span>. Toca num jogo para ver todos os lances, as estatísticas e as escalações.` : 'Todos os campeonatos de clubes e as seleções, com as horas de começo à tua hora. Toca num jogo para ver o detalhe.'}</p>
+      ${isT && E.length && nat >= E.length * .8 && big <= E.length * .2 ? `<p class="fbw-fifa">${UI.ic('info')}Hoje é data FIFA: os campeonatos de clubes estão parados e jogam as seleções. Vê os jogos dos campeonatos nos próximos dias.</p>` : ''}</div>
+    ${days}${isT ? `<div class="fbw-seg" role="group" aria-label="Que jogos mostrar">${seg}</div>` : ''}
     <label class="fbw-q"><span class="fb-qi">${UI.ic('search')}</span><input type="search" data-fbw value="${esc(WQ)}" placeholder="Filtrar por equipa, seleção ou campeonato" aria-label="Filtrar os jogos" autocomplete="off"></label></section>`
     + errBox('w') + body + '<p class="mut fb-src">Dados da ESPN.</p>'; };
 A.fbW = b => { OS.ui.fbW = b.dataset.k; req(); };
+A.fbWd = b => { OS.ui.fbWd = +b.dataset.o || 0; req(); };
 document.addEventListener('input', e => { const el = e.target; if (!el || !el.dataset || el.dataset.fbw == null) return; WQ = norm(el.value);
   document.querySelectorAll('#view .fbw-r[data-wk]').forEach(r => { r.hidden = !!WQ && !r.dataset.wk.includes(WQ); });
   document.querySelectorAll('#view .fbw-gp').forEach(g => { g.hidden = !g.querySelector('.fbw-r:not([hidden])'); }); });
