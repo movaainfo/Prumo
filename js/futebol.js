@@ -32,7 +32,15 @@ const CTYD = { Brazil: 'Brasil', Portugal: 'Portugal', Argentina: 'Argentina', G
   'Republic of Ireland': 'Irlanda', Ireland: 'Irlanda', 'Northern Ireland': 'Irlanda do Norte', Denmark: 'Dinamarca', Sweden: 'Suécia', Norway: 'Noruega', Poland: 'Polónia', Turkey: 'Turquia', 'Türkiye': 'Turquia', Greece: 'Grécia', Austria: 'Áustria', Ukraine: 'Ucrânia', Serbia: 'Sérvia', Czechia: 'Chéquia', 'Czech Republic': 'Chéquia', Hungary: 'Hungria', Romania: 'Roménia', Russia: 'Rússia', Iceland: 'Islândia', Slovakia: 'Eslováquia', Slovenia: 'Eslovénia', Albania: 'Albânia', Georgia: 'Geórgia',
   Uruguay: 'Uruguai', Colombia: 'Colômbia', Chile: 'Chile', Paraguay: 'Paraguai', Ecuador: 'Equador', Peru: 'Peru', Bolivia: 'Bolívia', Venezuela: 'Venezuela', Mexico: 'México', 'United States': 'Estados Unidos', USA: 'Estados Unidos', Canada: 'Canadá', 'Costa Rica': 'Costa Rica', Panama: 'Panamá', Jamaica: 'Jamaica', Honduras: 'Honduras',
   Japan: 'Japão', 'South Korea': 'Coreia do Sul', 'Korea Republic': 'Coreia do Sul', 'China PR': 'China', China: 'China', Australia: 'Austrália', 'Saudi Arabia': 'Arábia Saudita', Qatar: 'Catar', Iran: 'Irão', Iraq: 'Iraque', Jordan: 'Jordânia', Uzbekistan: 'Usbequistão',
-  Morocco: 'Marrocos', Senegal: 'Senegal', Egypt: 'Egito', Nigeria: 'Nigéria', Ghana: 'Gana', Cameroon: 'Camarões', "Côte d'Ivoire": 'Costa do Marfim', 'Ivory Coast': 'Costa do Marfim', Algeria: 'Argélia', Tunisia: 'Tunísia', 'South Africa': 'África do Sul', Angola: 'Angola', 'Cape Verde': 'Cabo Verde', 'Cape Verde Islands': 'Cabo Verde', Mozambique: 'Moçambique', 'New Zealand': 'Nova Zelândia' };
+  Morocco: 'Marrocos', Senegal: 'Senegal', Egypt: 'Egito', Nigeria: 'Nigéria', Ghana: 'Gana', Cameroon: 'Camarões', "Côte d'Ivoire": 'Costa do Marfim', 'Ivory Coast': 'Costa do Marfim', Algeria: 'Argélia', Tunisia: 'Tunísia', 'South Africa': 'África do Sul', Angola: 'Angola', 'Cape Verde': 'Cabo Verde', 'Cape Verde Islands': 'Cabo Verde', Mozambique: 'Moçambique', 'New Zealand': 'Nova Zelândia',
+  Singapore: 'Singapura', Malaysia: 'Malásia', Thailand: 'Tailândia', Vietnam: 'Vietname', Indonesia: 'Indonésia', India: 'Índia', Philippines: 'Filipinas', Bahrain: 'Barém', Kuwait: 'Koweit', Oman: 'Omã', 'United Arab Emirates': 'Emirados Árabes Unidos', Syria: 'Síria', Lebanon: 'Líbano', Palestine: 'Palestina', Yemen: 'Iémen',
+  'Kyrgyz Republic': 'Quirguistão', Kyrgyzstan: 'Quirguistão', Tajikistan: 'Tajiquistão', Turkmenistan: 'Turquemenistão', 'North Korea': 'Coreia do Norte', 'Korea DPR': 'Coreia do Norte', 'Chinese Taipei': 'Taiwan', 'Hong Kong': 'Hong Kong', 'Cook Islands': 'Ilhas Cook', Tahiti: 'Taiti', Fiji: 'Fiji', 'New Caledonia': 'Nova Caledónia', 'Solomon Islands': 'Ilhas Salomão',
+  'Dominican Republic': 'República Dominicana', Haiti: 'Haiti', Cuba: 'Cuba', Guatemala: 'Guatemala', 'El Salvador': 'El Salvador', Nicaragua: 'Nicarágua', 'Trinidad and Tobago': 'Trindade e Tobago', 'Curaçao': 'Curaçau', Curacao: 'Curaçau', Suriname: 'Suriname', Guyana: 'Guiana', 'French Guiana': 'Guiana Francesa', Belize: 'Belize', Barbados: 'Barbados', 'St. Lucia': 'Santa Lúcia', Dominica: 'Dominica',
+  'Cayman Islands': 'Ilhas Caimão', 'St. Kitts and Nevis': 'São Cristóvão e Neves', 'St. Vincent and the Grenadines': 'São Vicente e Granadinas', 'Sint Maarten': 'São Martinho', Grenada: 'Granada', Bermuda: 'Bermudas', 'Puerto Rico': 'Porto Rico', Martinique: 'Martinica', Guadeloupe: 'Guadalupe', Aruba: 'Aruba',
+  Mali: 'Mali', 'Burkina Faso': 'Burkina Faso', Guinea: 'Guiné', 'Guinea-Bissau': 'Guiné-Bissau', 'Equatorial Guinea': 'Guiné Equatorial', Gabon: 'Gabão', Congo: 'Congo', 'DR Congo': 'RD Congo', 'Congo DR': 'RD Congo', Zambia: 'Zâmbia', Zimbabwe: 'Zimbabué', Kenya: 'Quénia', Uganda: 'Uganda', Tanzania: 'Tanzânia', Ethiopia: 'Etiópia', Sudan: 'Sudão', Libya: 'Líbia', Benin: 'Benim', Togo: 'Togo',
+  'Sierra Leone': 'Serra Leoa', Liberia: 'Libéria', Gambia: 'Gâmbia', 'The Gambia': 'Gâmbia', Mauritania: 'Mauritânia', Madagascar: 'Madagáscar', Namibia: 'Namíbia', Botswana: 'Botsuana', Malawi: 'Maláui', 'São Tomé and Príncipe': 'São Tomé e Príncipe', 'Sao Tome and Principe': 'São Tomé e Príncipe', Comoros: 'Comores', Rwanda: 'Ruanda', Burundi: 'Burundi', Niger: 'Níger', Chad: 'Chade',
+  Finland: 'Finlândia', Estonia: 'Estónia', Latvia: 'Letónia', Lithuania: 'Lituânia', Belarus: 'Bielorrússia', Moldova: 'Moldávia', 'Bosnia-Herzegovina': 'Bósnia e Herzegovina', 'Bosnia and Herzegovina': 'Bósnia e Herzegovina', Montenegro: 'Montenegro', 'North Macedonia': 'Macedónia do Norte', Kosovo: 'Kosovo', Armenia: 'Arménia', Azerbaijan: 'Azerbaijão', Kazakhstan: 'Cazaquistão',
+  Cyprus: 'Chipre', Malta: 'Malta', Luxembourg: 'Luxemburgo', Liechtenstein: 'Liechtenstein', Andorra: 'Andorra', 'San Marino': 'São Marino', Gibraltar: 'Gibraltar', 'Faroe Islands': 'Ilhas Faroé', Israel: 'Israel', Bulgaria: 'Bulgária' };
 const CTY = {}; Object.entries(CTYD).forEach(([en, pt]) => { const k = norm(pt); if (!CTY[k]) CTY[k] = en; });
 Object.assign(CTY, { eua: 'United States', holanda: 'Netherlands', ira: 'Iran', 'republica checa': 'Czechia', 'coreia': 'South Korea', inglaterra: 'England' });
 const LQ = { brasileirao: 'brazilian serie a', 'serie a brasil': 'brazilian serie a', 'serie b': 'brazilian serie b', 'brasileirao serie b': 'brazilian serie b', 'sul americana': 'sudamericana', sulamericana: 'sudamericana', 'liga dos campeoes': 'champions league', champions: 'champions league',
@@ -65,13 +73,14 @@ const sc0 = v => v == null || v === '' ? '0' : String(v);
 const EVX = new Map(); // id → evento (para abrir o detalhe de qualquer lado)
 // tipo do lance: só os golos (scoringPlay) podem ser autogolo, e só pelo tipo ("own-goal", "Own Goal"); o texto dos cartões diz "is shown"
 const OWN = /\bown[- ]?goal\b|own-goal/i;
-const keyOf = (type, scoring) => scoring ? (OWN.test(type) ? 'og' : 'g') : /red/i.test(type) ? 'r' : /yellow/i.test(type) ? 'y' : '';
+const keyOf = (type, scoring) => scoring ? (OWN.test(type) ? 'og' : 'g') : /red/i.test(type) ? 'r' : /yellow/i.test(type) ? 'y' : /substitut/i.test(type) ? 's' : '';
+const isG = k => k && (k.t === 'g' || k.t === 'og'), gN = L => (L || []).filter(isG).length;
 const evN = (e, slug) => { const c = (e.competitions || [])[0] || {}, s = c.status || e.status || {}, ty = s.type || {}, cp = c.competitors || [];
   const side = x => x && x.team ? { id: String(x.team.id), n: x.team.displayName || x.team.name || '', sn: x.team.shortDisplayName || x.team.displayName || '', logo: logoOf(x.team), s: scv(x.score), so: x.shootoutScore != null ? String(x.shootoutScore) : null } : null;
   const h = cp.find(x => x.homeAway === 'home') || cp[0], a = cp.find(x => x.homeAway === 'away') || cp[1];
-  const ke = (c.details || []).map(k => { const ty2 = (k.type && (k.type.text || k.type.type)) || ''; const t = keyOf(ty2, k.scoringPlay || k.ownGoal); return t ? { t, min: (k.clock && k.clock.displayValue) || '', tid: String((k.team && k.team.id) || ''), who: ((k.athletesInvolved || [])[0] || {}).displayName || '' } : null; }).filter(Boolean);
+  const ke = (c.details || []).map(k => { if (k.shootout) return null; const ty2 = (k.type && (k.type.text || k.type.type)) || ''; const t = keyOf(ty2, k.scoringPlay || k.ownGoal); if (!t || t === 's') return null; const o = { t, min: (k.clock && k.clock.displayValue) || '', tid: String((k.team && k.team.id) || ''), who: ((k.athletesInvolved || [])[0] || {}).displayName || '' }; if (k.penaltyKick && t === 'g') o.pen = 1; return o; }).filter(Boolean);
   const o = { id: String(e.id), lg: slug || (e.league && e.league.slug) || '', lgF: (e.league && (e.league.name || e.league.abbreviation)) || '', d: Date.parse(e.date || c.date), st: ty.state || 'pre', sn: ty.name || '', clk: s.displayClock || '', det: ty.shortDetail || '', h: side(h), a: side(a), ven: (c.venue && c.venue.fullName) || '' };
-  if (ke.length) o.ke = ke; const old = EVX.get(o.id); if (old && old.ke && !o.ke) o.ke = old.ke; EVX.set(o.id, o); return o; };
+  if (ke.length) o.ke = ke; const old = EVX.get(o.id); if (old && old.ke && (!o.ke || (old.keS && gN(old.ke) >= gN(o.ke)))) { o.ke = old.ke; if (old.keS) o.keS = 1; } EVX.set(o.id, o); return o; };
 const isHot = e => e.st === 'in' || (e.st === 'pre' && e.d - Date.now() < 15 * 6e4 && Date.now() - e.d < 3 * 36e5);
 const done = e => e.st === 'post' && !/POSTPONED|CANCEL|ABANDON/.test(e.sn);
 
@@ -91,16 +100,21 @@ const loadTeam = async (t, force) => { if (!force && TM[t.id] && Date.now() - TM
     if (!a && !b) return null; const ev = [].concat((a && a.events) || [], (b && b.events) || []).map(e => evN(e, s)).filter(e => e.h && e.a && e.d > now - 200 * 864e5 && e.d < now + 400 * 864e5); return { s, ev, team: (a && a.team) || (b && b.team) }; });
   const ok = R.filter(Boolean); if (!ok.length) { if (tmOf(t.id)) return tmOf(t.id); throw new Error('sem ligação à ESPN'); }
   const map = new Map(); ok.forEach(o => o.ev.forEach(e => { const old = TM[t.id] && TM[t.id].ev.find(x => x.id === e.id); if (old && old.st === 'in' && e.st === 'pre') return map.set(e.id, old); map.set(e.id, e); }));
+  // a ESPN tira o jogo da lista da equipa enquanto ele decorre (não está nos resultados nem nos próximos): o que já se conhecia fica, e o placar mundial junta o resto
+  if (TM[t.id]) TM[t.id].ev.forEach(x => { if (!map.has(x.id) && (x.st === 'in' || (x.st === 'pre' && x.d < now + 15 * 6e4 && now - x.d < 4 * 36e5))) map.set(x.id, x); });
+  wEv().forEach(x => { if ((x.h.id === t.id || x.a.id === t.id) && !map.has(x.id)) map.set(x.id, x); });
   const ev = [...map.values()].sort((x, y) => x.d - y.d), comps = ok.filter(o => o.ev.length).map(o => o.s), tm = (ok.find(o => o.team) || {}).team || {};
   if (!fresh) { DISC[t.id] = { at: now, lg: comps.length ? comps : [t.lg] }; U.ls.set(DK, DISC); }
   const m = TM[t.id] = { at: Date.now(), ev, comps: comps.length ? comps : [t.lg], col: tm.color || t.col || '', logo: logoOf(tm) || t.logo };
   SNAP[t.id] = { at: m.at, ev: ev.filter(e => e.d > Date.now() - 45 * 864e5).slice(0, 40), comps: m.comps, col: m.col, logo: m.logo }; U.ls.set(SK, SNAP); return m; };
-const keyEv = j => (j.keyEvents || []).map(k => { const ty = (k.type && (k.type.type || k.type.text)) || '', t = keyOf(ty, k.scoringPlay); if (!t) return null;
-  return { t, min: (k.clock && k.clock.displayValue) || '', tid: String((k.team && k.team.id) || ''), who: ((k.participants || []).map(p => p.athlete && p.athlete.displayName).filter(Boolean))[0] || '' }; }).filter(Boolean);
+// do resumo do jogo: quem marcou e quem deu a assistência (2.º participante do golo), grandes penalidades, cartões e substituições (entra, sai)
+const keyEv = j => (j.keyEvents || []).map(k => { if (k.shootout) return null; const ty = (k.type && (k.type.type || k.type.text)) || '', t = keyOf(ty, k.scoringPlay); if (!t) return null;
+  const P = (k.participants || []).map(p => p.athlete && p.athlete.displayName).filter(Boolean), o = { t, min: (k.clock && k.clock.displayValue) || '', tid: String((k.team && k.team.id) || ''), who: P[0] || '' };
+  if (t === 'g' && P[1]) o.as = P[1]; if (t === 's' && P[1]) o.out = P[1]; if (t === 'g' && /penalty/i.test(ty)) o.pen = 1; return o; }).filter(Boolean);
 const SUM = {};
-const liveEv = async (e, ttl) => { const j = await get(B + e.lg + '/summary?event=' + e.id, ttl || 2e4); const hc = j && j.header && j.header.competitions && j.header.competitions[0]; if (!hc) return e;
+const liveEv = async (e, ttl) => { const j = await get(B + (e.lg || 'all') + '/summary?event=' + e.id, ttl || 12e3); const hc = j && j.header && j.header.competitions && j.header.competitions[0]; if (!hc) return e;
   const ids = (hc.competitors || []).map(x => String(x.team && x.team.id)); if (e.h && e.a && !(ids.includes(e.h.id) && ids.includes(e.a.id))) return e;
-  const n = evN({ id: e.id, date: hc.date || new Date(e.d).toISOString(), competitions: [hc] }, e.lg); n.lgF = e.lgF; n.ven = n.ven || e.ven; n.ke = keyEv(j); SUM[e.id] = { at: Date.now(), j };
+  const n = evN({ id: e.id, date: hc.date || new Date(e.d).toISOString(), competitions: [hc] }, e.lg); n.lgF = e.lgF || n.lgF; n.ven = n.ven || e.ven; n.ke = keyEv(j); n.keS = 1; SUM[e.id] = { at: Date.now(), j };
   Object.assign(e, n); Object.values(TM).forEach(m => m.ev.forEach(x => { if (x.id === e.id && x !== e) Object.assign(x, n); })); Object.values(CM).forEach(m => ['ev', 'next', 'prev'].forEach(k => (m[k] || []).forEach(x => { if (x.id === e.id && x !== e) Object.assign(x, n); }))); EVX.set(e.id, e); return e; };
 const loadComp = async (slug, force) => { const m = CM[slug], hot = m && m.ev.some(isHot); if (!force && m && Date.now() - m.at < (hot ? 25e3 : 5 * 6e4)) return m;
   const sb = await get(B + slug + '/scoreboard', hot ? 2e4 : 4 * 6e4), L = (sb.leagues || [])[0] || {}, ev = (sb.events || []).map(e => evN(e, slug)).filter(e => e.h && e.a).sort((a, b) => a.d - b.d);
@@ -115,18 +129,42 @@ const loadTable = async slug => { const j = await get(BS + slug + '/standings', 
     .sort((a, b) => (a.pos || 99) - (b.pos || 99) || b.pts - a.pts || b.dg - a.dg) })).filter(g => g.rows.length);
   groups.forEach(g => g.rows.forEach((r, i) => { if (!r.pos) r.pos = i + 1; })); TB[slug] = { at: Date.now(), groups, name: j.name || '' }; return TB[slug]; };
 
+/* ---------- ao vivo no mundo: todos os jogos do dia (ESPN, todas as provas) ----------
+   Pelo servidor do Prumo (api/futebol?vivo=1): uma resposta pequena com quem marcou, quem deu a assistência e os cartões, guardada 12 s na CDN.
+   Se o servidor falhar, lê o placar completo da ESPN diretamente. Com o Futebol aberto atualiza a cada 15 s. */
+const WORLD = { at: 0, d: '', ids: [] };
+const dNow = () => U.today().replace(/-/g, '');
+const fetchJ = async (u, o) => { const ac = window.AbortController ? new AbortController() : null, to = ac && setTimeout(() => ac.abort(), 12000);
+  try { const r = await fetch(u, Object.assign({ signal: ac ? ac.signal : undefined }, o)); if (!r.ok) throw new Error('HTTP ' + r.status); return await r.json(); } finally { to && clearTimeout(to); } };
+const wIn = x => { if (!x || !x.id || !x.h || !x.a || !x.h.id || !x.a.id) return null; const id = String(x.id), old = EVX.get(id);
+  const n = { id, lg: x.lg && x.lg !== 'all' ? x.lg : (old && old.lg) || 'all', lgF: x.lgF || (old && old.lgF) || '', d: +x.d || (old && old.d) || 0, st: x.st || 'pre', sn: x.sn || '', clk: x.clk || '', det: x.det || '', h: x.h, a: x.a, ven: x.ven || (old && old.ven) || '' };
+  if (Array.isArray(x.ke) && x.ke.length) n.ke = x.ke;
+  if (old) { if (old.keS && (old.ke || []).length && gN(old.ke) >= gN(n.ke)) delete n.ke; else if (n.ke) delete old.keS;
+    if (old.h && old.a) { n.h = Object.assign({}, old.h, n.h, { logo: n.h.logo || old.h.logo }); n.a = Object.assign({}, old.a, n.a, { logo: n.a.logo || old.a.logo }); }
+    Object.assign(old, n); return old; }
+  EVX.set(id, n); return n; };
+const wEv = () => WORLD.ids.map(id => EVX.get(id)).filter(Boolean);
+const loadWorld = async () => { const d = dNow(); let L;
+  try { const j = await fetchJ('api/futebol?vivo=1&d=' + d, { credentials: 'same-origin' }); if (!j || !Array.isArray(j.ev)) throw new Error('sem dados'); L = j.ev; }
+  catch (e) { const j = await get(B + 'all/scoreboard?limit=500&dates=' + d, 12e3); L = (j.events || []).map(x => { const o = evN(x, ''); if (!o.lg) o.lg = 'all'; return o; }); }
+  const ev = L.map(wIn).filter(Boolean); WORLD.at = Date.now(); WORLD.d = d; WORLD.ids = ev.map(e => e.id);
+  Object.keys(TM).forEach(id => { const m = TM[id]; let add = false; ev.forEach(e => { if ((e.h.id === id || e.a.id === id) && !m.ev.some(x => x.id === e.id)) { m.ev.push(e); add = true; } }); if (add) m.ev.sort((x, y) => x.d - y.d); });
+  return ev; };
+
 /* carregamentos pedidos pelo ecrã (sem repetir em ciclo: cada coisa só volta a pedir quando fica velha) */
 // redesenhar sem estragar a pesquisa: enquanto escreves no campo de procurar, o ecrã espera (e redesenha quando sais do campo)
 let pendR = false;
-const req = () => { const a = document.activeElement; if (a && a.dataset && a.dataset.fbq) { pendR = true; return; } OS.request(); };
-document.addEventListener('focusout', e => { if (e.target && e.target.dataset && e.target.dataset.fbq && pendR) { pendR = false; setTimeout(() => OS.request(), 150); } });
+const typing = a => !!(a && a.dataset && (a.dataset.fbq || a.dataset.fbw != null));
+const req = () => { if (typing(document.activeElement)) { pendR = true; return; } OS.request(); };
+document.addEventListener('focusout', e => { if (typing(e.target) && pendR) { pendR = false; setTimeout(() => OS.request(), 150); } });
 const TRY = {}, ERR = {}, PEND = new Set();
 const ensure = (k, isStale, f) => { if (!isStale() || PEND.has(k) || (TRY[k] && Date.now() - TRY[k] < 15e3)) return; TRY[k] = Date.now(); PEND.add(k);
   f().then(() => { delete ERR[k]; }).catch(e => { ERR[k] = (e && e.message) || 'erro'; }).finally(() => { PEND.delete(k); if (/^#futebol/.test(location.hash)) req(); }); };
 const needTeam = t => ensure('t' + t.id, () => !TM[t.id] || Date.now() - TM[t.id].at > (TM[t.id].ev.some(isHot) ? 3e4 : 5 * 6e4), () => loadTeam(t).then(m => pool(m.ev.filter(isHot), 2, e => liveEv(e))));
 const needComp = s => ensure('c' + s, () => !CM[s] || Date.now() - CM[s].at > (CM[s].ev.some(isHot) ? 3e4 : 5 * 6e4), () => loadComp(s));
 const needTable = s => ensure('b' + s, () => !TB[s] || Date.now() - TB[s].at > 10 * 6e4, () => loadTable(s));
-const needSum = e => ensure('s' + e.id, () => !SUM[e.id] || Date.now() - SUM[e.id].at > (e.st === 'in' ? 3e4 : 30 * 6e4), () => liveEv(e, e.st === 'in' ? 2e4 : 30 * 6e4));
+const needSum = e => ensure('s' + e.id, () => !SUM[e.id] || Date.now() - SUM[e.id].at > (e.st === 'in' ? 15e3 : 30 * 6e4), () => liveEv(e, e.st === 'in' ? 12e3 : 30 * 6e4));
+const needWorld = () => ensure('w', () => WORLD.d !== dNow() || Date.now() - WORLD.at > (wEv().some(isHot) ? 15e3 : 6e4), loadWorld);
 
 /* ---------- ao vivo e avisos ---------- */
 const SEEN = U.ls.get('oc_fut_seen', {}) || {};
@@ -138,22 +176,27 @@ const watch = (e, mine) => { if (!e.h || !e.a) return; const p = SEEN[e.id], c =
   const a = av(); if (!p || (!mine && !a.comp)) return; const vs = `${tN(e.h.sn)} ${sc0(e.h.s)}-${sc0(e.a.s)} ${tN(e.a.sn)}`;
   if (p.st === 'pre' && c.st === 'in' && a.ini) say('Começou', `${tN(e.h.n)} × ${tN(e.a.n)} · ${lgN(e.lg, e.lgF)}`, e);
   if (c.st !== 'pre' && p.s !== c.s && a.gol) { const [ph, pa] = p.s.split('-').map(Number), hs = U.num(e.h.s), as = U.num(e.a.s), side = hs > ph ? e.h : as > pa ? e.a : null;
-    if (side) { const g = (e.ke || []).filter(k => (k.t === 'g' || k.t === 'og') && k.tid === side.id).pop() || (e.ke || []).filter(k => k.t === 'g' || k.t === 'og').pop(); say('Golo · ' + tN(side.sn), (g && g.who ? g.who + (g.t === 'og' ? ' (pb)' : '') + (g.min ? ' ' + g.min : '') + ' · ' : '') + vs, e); }
+    if (side) { const g = (e.ke || []).filter(k => (k.t === 'g' || k.t === 'og') && k.tid === side.id).pop() || (e.ke || []).filter(k => k.t === 'g' || k.t === 'og').pop(); say('Golo · ' + tN(side.sn), (g && g.who ? g.who + (g.t === 'og' ? ' (pb)' : g.pen ? ' (pen.)' : '') + (g.min ? ' ' + g.min : '') + (g.as ? ', assistência de ' + g.as : '') + ' · ' : '') + vs, e); }
     else say('Resultado corrigido', vs, e); }
   if (p.sn !== 'STATUS_HALFTIME' && c.sn === 'STATUS_HALFTIME' && a.int) say('Intervalo', vs, e);
   if (p.st !== 'post' && c.st === 'post' && a.fim) say(/POSTPONED/.test(c.sn) ? 'Adiado' : 'Terminou', vs, e); };
-const myEv = () => { const s = st(), out = new Map(); s.teams.forEach(t => { const m = tmOf(t.id); if (m) m.ev.forEach(e => { if (!out.has(e.id)) out.set(e.id, Object.assign(e, { me: e.me || t.id })); }); }); return [...out.values()].sort((a, b) => a.d - b.d); };
+const myEv = () => { const s = st(), out = new Map(), ids = new Set(s.teams.map(t => t.id)); s.teams.forEach(t => { const m = tmOf(t.id); if (m) m.ev.forEach(e => { if (!out.has(e.id)) out.set(e.id, Object.assign(e, { me: e.me || t.id })); }); });
+  if (ids.size) wEv().forEach(e => { if (out.has(e.id)) return; const me = ids.has(e.h.id) ? e.h.id : ids.has(e.a.id) ? e.a.id : ''; if (me) out.set(e.id, Object.assign(e, { me: e.me || me })); });
+  return [...out.values()].sort((a, b) => a.d - b.d); };
 const liveN = () => myEv().filter(e => e.st === 'in').length;
 let busy = false;
+const onFb = () => /^#futebol/.test(location.hash);
 const tick = async () => { if (busy) return; busy = true; const n0 = liveN(); try { const s = st();
+  if (s.teams.length || onFb()) await loadWorld().catch(() => { });
   await pool(s.teams, 3, t => loadTeam(t)); const hot = myEv().filter(isHot); await pool(hot, 3, e => liveEv(e));
   myEv().forEach(e => { if (Math.abs(e.d - Date.now()) < 36 * 36e5) watch(e, 1); });
   if (s.comps.length) { await pool(s.comps, 3, c => loadComp(c.slug)); s.comps.forEach(c => { const m = CM[c.slug]; if (m) m.ev.forEach(e => watch(e, s.teams.some(t => e.h && e.a && (t.id === e.h.id || t.id === e.a.id)))); }); }
   saveSeen(); } finally { busy = false; } if (/^#futebol/.test(location.hash) || liveN() !== n0) req(); };
 let loopT = 0;
 const soon = () => myEv().some(e => e.st === 'pre' && e.d - Date.now() < 30 * 6e4 && Date.now() - e.d < 3 * 36e5);
-const anyHot = () => myEv().some(isHot) || Object.values(CM).some(m => m.ev.some(isHot));
-const loop = (ms) => { clearTimeout(loopT); const s = st(); if (!s.teams.length && !s.comps.length) return; loopT = setTimeout(async () => { if (!document.hidden) { try { await tick(); } catch (e) { } } loop(); }, ms != null ? ms : anyHot() ? 3e4 : soon() ? 6e4 : 5 * 6e4); };
+const anyHot = () => myEv().some(isHot) || Object.values(CM).some(m => m.ev.some(isHot)) || (onFb() && wEv().some(isHot));
+const loop = (ms) => { clearTimeout(loopT); const s = st(); if (!s.teams.length && !s.comps.length && !onFb()) return; loopT = setTimeout(async () => { if (!document.hidden) { try { await tick(); } catch (e) { } } loop(); }, ms != null ? ms : anyHot() ? 15e3 : soon() || onFb() ? 6e4 : 5 * 6e4); };
+window.addEventListener('hashchange', () => { if (onFb() && !(navigator.webdriver && !window.__fbTest)) loop(400); });
 OS.on('ready', () => { if (navigator.webdriver && !window.__fbTest) return; loop(4000); });
 document.addEventListener('visibilitychange', () => { if (!document.hidden && !(navigator.webdriver && !window.__fbTest)) loop(800); });
 
@@ -266,7 +309,7 @@ const aiCtx = e => { const S = (SUM[e.id] && SUM[e.id].j) || {}, P = probs(e), R
   const side = x => ({ nome: tN(x.n), golos: e.st === 'pre' ? undefined : sc0(x.s), tabela: tab(x.id), ultimos_5: frm(x.id), estatisticas: st2(x.id) });
   const ss = ((S.seasonseries || []).find(x => (x.events || []).length) || {});
   return { competicao: lgN(e.lg, e.lgF), data: new Date(e.d).toLocaleString('pt-PT'), estado: e.st === 'pre' ? 'por começar' : e.st === 'in' ? 'a decorrer, ' + stat(e) : 'terminado', campo_neutro: !!(S.header && ((S.header.competitions || [])[0] || {}).neutralSite), estadio: e.ven || undefined,
-    casa: side(e.h), fora: side(e.a), lances: (e.ke || []).filter(k => k.t !== 'y').map(k => `${k.min} ${k.t === 'r' ? 'expulsão' : k.t === 'og' ? 'autogolo' : 'golo'} ${k.who || ''} (${k.tid === e.h.id ? tN(e.h.sn) : tN(e.a.sn)})`),
+    casa: side(e.h), fora: side(e.a), lances: (e.ke || []).filter(k => isG(k) || k.t === 'r').map(k => `${k.min} ${k.t === 'r' ? 'expulsão' : k.t === 'og' ? 'autogolo' : 'golo'} ${k.who || ''}${k.as ? ' (assistência de ' + k.as + ')' : ''} (${k.tid === e.h.id ? tN(e.h.sn) : tN(e.a.sn)})`),
     confronto_direto: ss.summary || undefined, probabilidade_calculada: P ? { casa: pct(P.p[0]), empate: pct(P.p[1]), fora: pct(P.p[2]), fonte: P.src === 'odds' ? 'odds do mercado' : 'estimativa por tabela, forma e fator casa' } : undefined }; };
 const aiRun = async e => { if (!SUM[e.id]) { try { await liveEv(e, 10 * 6e4); } catch (x) { } }
   const S = (SUM[e.id] && SUM[e.id].j) || {}, off = [lineupOf(S, e.h.id), lineupOf(S, e.a.id)];
@@ -352,7 +395,7 @@ const form5 = L => L.length ? `<span class="fb-form" aria-label="Últimos jogos"
 const LOGO = U.ls.get('oc_fut_logo', {}) || {};
 const darkOf = L => { const d = (L || []).find(x => (x.rel || []).includes('dark')) || (L || [])[0]; return d ? d.href : ''; };
 const lgLogo = s => LOGO[s] || (CM[s] && CM[s].logo) || '';
-const needLogos = list => { const miss = [...new Set(list)].filter(s => s && LOGO[s] == null); if (!miss.length) return;
+const needLogos = list => { const miss = [...new Set(list)].filter(s => s && s !== 'all' && LOGO[s] == null); if (!miss.length) return;
   ensure('lg', () => true, () => pool(miss, 4, async s => { try { const j = await get('https://sports.core.api.espn.com/v2/sports/soccer/leagues/' + s + '?lang=en&region=us', 30 * 864e5); LOGO[s] = darkOf(j.logos); } catch (e) { LOGO[s] = ''; } })
     .then(() => U.ls.set('oc_fut_logo', Object.fromEntries(Object.entries(LOGO).filter(([, v]) => v))))); };
 const lgImg = (s, w, n) => { const u = lgLogo(s); return u ? `<img class="fb-lg" src="${esc(img(u, w * 2))}" alt="" width="${w}" height="${w}" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<span class="fb-lg fb-lg0" style="width:${w}px;height:${w}px" aria-hidden="true">${UI.ic('award')}</span>`; };
@@ -365,14 +408,15 @@ const mCard = (e, o) => { o = o || {}; const r = o.me ? wdl(e, o.me) : '', [wh, 
     <span class="fb-mch">${o.nolg ? '' : `${lgImg(e.lg, 16)}<span class="fb-mcl">${esc(lgN(e.lg, e.lgF))}</span>`}<span class="fb-mcs">${e.st === 'in' ? liveTag(e) : esc(e.st === 'pre' ? (/POSTPONED/.test(e.sn) ? 'Adiado' : dayLbl(e.d) + ' · ' + hm(e.d)) : stat(e) + ' · ' + dayLbl(e.d))}</span>${r ? `<span class="fb-r ${r}" title="${RL[r]}">${r.toUpperCase()}</span>` : ''}</span>
     ${mSide(e, e.h, wh)}${mSide(e, e.a, wa)}${(() => { const x = e.st !== 'post' && aiOf(e), sc = x && scoreOf(x.o); return sc ? `<span class="fb-mcai">${UI.ic('brain')}${x.eng === 'prumo' ? 'Palpite' : 'Palpite da IA'}: <b>${esc(tN(e.h.sn))} ${esc(sc[0])}×${esc(sc[1])} ${esc(tN(e.a.sn))}</b></span>` : ''; })()}</button>`; };
 const grid = L => `<div class="fb-grid">${L.join('')}</div>`;
-const goals = (e, side) => (e.ke || []).filter(k => (k.t === 'g' || k.t === 'og') && k.tid === side.id).map(k => `<span>${UI.ic('ball')}${esc(k.who || 'Golo')}${k.t === 'og' ? ' (pb)' : ''} <b>${esc(k.min)}</b></span>`).join('');
+const asT = k => k.as ? `<small class="fb-as"><em>assistência</em> ${esc(k.as)}</small>` : '';
+const goals = (e, side) => (e.ke || []).filter(k => isG(k) && k.tid === side.id).map(k => `<span>${UI.ic('ball')}${esc(k.who || 'Golo')}${k.t === 'og' ? ' (pb)' : k.pen ? ' (pen.)' : ''} <b>${esc(k.min)}</b>${asT(k)}</span>`).join('');
 const reds = (e, side) => (e.ke || []).filter(k => k.t === 'r' && k.tid === side.id).map(k => `<span class="fb-rc" title="Expulsão">${esc(k.who || '')} ${esc(k.min)}</span>`).join('');
 const placard = (e, label) => `<div class="fb-pl ${e.st}" data-act="fbMatch" data-id="${esc(e.id)}" role="button" tabindex="0">
   <div class="fb-pl-top"><span class="fb-pl-lg">${lgImg(e.lg, 18)}${label ? `<b>${esc(label)}</b> · ` : ''}${esc(lgN(e.lg, e.lgF))}</span>${e.st === 'in' ? liveTag(e) : `<span>${esc(dayLbl(e.d))} · ${esc(hm(e.d))}</span>`}</div>
   <div class="fb-pl-mid"><div class="fb-pl-t">${cr(e.h.logo, e.h.n, 64)}<b>${esc(tN(e.h.n))}</b></div>
     <div class="fb-pl-sc">${e.st === 'pre' ? `<small>faltam</small><span class="fb-cd">${esc(cd(e.d))}</span>` : `<span class="fb-dg">${esc(sc0(e.h.s))}</span><i>:</i><span class="fb-dg">${esc(sc0(e.a.s))}</span>`}${e.st === 'post' ? `<small>${esc(stat(e))}</small>` : ''}${pen(e)}</div>
     <div class="fb-pl-t">${cr(e.a.logo, e.a.n, 64)}<b>${esc(tN(e.a.n))}</b></div></div>
-  ${e.st !== 'pre' && (e.ke || []).some(k => k.t !== 'y') ? `<div class="fb-pl-g"><div>${goals(e, e.h)}${reds(e, e.h)}</div><div>${goals(e, e.a)}${reds(e, e.a)}</div></div>` : ''}${(() => { const P = probs(e); return P ? probBar(e, P) : ''; })()}${(() => { const x = aiOf(e); const sc = x && scoreOf(x.o); return x ? `<div class="fb-plai">${UI.ic('brain')}<span>${sc ? `<b class="fb-plsc">${x.eng === 'prumo' ? 'Palpite' : 'Palpite da IA'}: ${esc(sc[0])}×${esc(sc[1])}</b> · ` : '<b>IA:</b> '}${esc(x.o.titulo)}</span></div>` : ''; })()}</div>`;
+  ${e.st !== 'pre' && (e.ke || []).some(k => isG(k) || k.t === 'r') ? `<div class="fb-pl-g"><div>${goals(e, e.h)}${reds(e, e.h)}</div><div>${goals(e, e.a)}${reds(e, e.a)}</div></div>` : ''}${(() => { const P = probs(e); return P ? probBar(e, P) : ''; })()}${(() => { const x = aiOf(e); const sc = x && scoreOf(x.o); return x ? `<div class="fb-plai">${UI.ic('brain')}<span>${sc ? `<b class="fb-plsc">${x.eng === 'prumo' ? 'Palpite' : 'Palpite da IA'}: ${esc(sc[0])}×${esc(sc[1])}</b> · ` : '<b>IA:</b> '}${esc(x.o.titulo)}</span></div>` : ''; })()}</div>`;
 const PITCH = `<svg class="fb-pitch" viewBox="0 0 400 220" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"><rect x="12" y="12" width="376" height="196" rx="2"/><path d="M200 12v196"/><circle cx="200" cy="110" r="30"/><rect x="12" y="58" width="56" height="104"/><rect x="12" y="86" width="20" height="48"/><rect x="332" y="58" width="56" height="104"/><rect x="368" y="86" width="20" height="48"/><path d="M68 92a22 22 0 0 1 0 36M332 92a22 22 0 0 0 0 36"/></g><circle cx="200" cy="110" r="2.2" fill="#fff"/></svg>`;
 const hero = (inner, cls) => `<section class="fb-hero ${cls || ''}">${PITCH}<div class="fb-hero-in">${inner}</div></section>`;
 const sec = (t, body, side) => `<section class="fb-sec"><div class="fb-sh"><h3>${t}</h3>${side || ''}</div>${body}</section>`;
@@ -409,7 +453,7 @@ const table = (slug, o) => { o = o || {}; const T = TB[slug]; if (!T) return ERR
     + (own ? '<p class="mut fb-zn">Zonas habituais; podem mudar com os campeões das taças.</p>' : ''); };
 
 /* ---------- páginas ---------- */
-const TABS = [['', 'Agora'], ['equipas', 'Equipas e seleções'], ['campeonatos', 'Campeonatos']];
+const TABS = [['', 'Agora'], ['vivo', 'Ao vivo no mundo'], ['equipas', 'Equipas e seleções'], ['campeonatos', 'Campeonatos']];
 const QT = ['Brasil', 'Portugal', 'Argentina', 'França', 'Flamengo', 'Palmeiras', 'Corinthians', 'São Paulo', 'Benfica', 'FC Porto', 'Sporting', 'Real Madrid', 'Barcelona', 'Manchester City'];
 const POP = [['Brasil', ['bra.1', 'bra.2', 'bra.copa_do_brazil', 'bra.camp.carioca', 'bra.camp.paulista']], ['América do Sul', ['conmebol.libertadores', 'conmebol.sudamericana']], ['Portugal', ['por.1', 'por.taca.portugal']],
   ['Europa', ['uefa.champions', 'uefa.europa', 'uefa.europa.conf', 'eng.1', 'esp.1', 'ita.1', 'ger.1', 'fra.1']], ['Seleções', ['fifa.world', 'fifa.worldq.conmebol', 'fifa.worldq.uefa', 'uefa.nations', 'conmebol.america', 'uefa.euro', 'fifa.friendly']], ['Resto do mundo', ['fifa.cwc', 'arg.1', 'usa.1', 'sau.1', 'mex.1']]];
@@ -419,7 +463,7 @@ const searchBox = kind => `<form class="fb-q" data-form="fbFind" role="search"><
 const welcome = () => hero(`<div class="fb-wel"><span class="fb-wb" aria-hidden="true">${UI.ic('ball')}</span><h2>As tuas equipas, ao vivo</h2><p>Escolhe as equipas, seleções e campeonatos que queres seguir. Aqui aparecem os jogos a decorrer com o minuto e os golos, quem tem mais probabilidade de ganhar, os próximos jogos, os resultados e a tabela, e o Prumo avisa-te quando começa, quando há golo e quando acaba.</p>
   <div class="fb-wel-b"><a class="btn pri" href="#futebol.equipas">${UI.ic('star')}Escolher equipas e seleções</a><a class="btn fb-btn-l" href="#futebol.campeonatos">${UI.ic('award')}Escolher campeonatos</a></div></div>`);
 const P = {};
-P[''] = () => { const s = st(); if (!s.teams.length && !s.comps.length) return welcome();
+P[''] = () => { const s = st(); if (!s.teams.length && !s.comps.length) return welcome() + worldStrip([]);
   s.teams.forEach(needTeam); s.comps.forEach(c => needComp(c.slug)); s.teams.forEach(t => needTable(t.lg)); needLogos(s.comps.map(c => c.slug).concat(myEv().map(e => e.lg)));
   const E = myEv(), live = E.filter(e => e.st === 'in'), next = E.filter(e => e.st === 'pre' && !/POSTPONED/.test(e.sn) && e.d > Date.now() - 3 * 36e5), last = E.filter(done).slice(-6).reverse();
   const compLive = []; s.comps.forEach(c => { const m = CM[c.slug]; if (m) m.ev.filter(e => e.st === 'in' && !live.some(x => x.id === e.id)).forEach(e => compLive.push(e)); });
@@ -430,11 +474,51 @@ P[''] = () => { const s = st(); if (!s.teams.length && !s.comps.length) return w
   return (top ? hero(top + (live.length > 3 ? `<p class="fb-more">+${live.length - 3} jogo(s) ao vivo nas listas abaixo</p>` : '')) : '')
     + errBox('t' + (s.teams[0] || {}).id)
     + (compLive.length ? sec(`<span class="fb-live"><i></i>Ao vivo</span> nos teus campeonatos`, grid(compLive.map(e => mCard(e)))) : '')
+    + worldStrip(live.slice(0, 3).concat(compLive).map(e => e.id))
     + (next.length > (live.length ? 0 : 1) ? sec('Próximos jogos', grid(next.slice(live.length ? 0 : 1, 9).map(e => mCard(e, { me: e.me })))) : '')
     + (last.length ? sec('Últimos resultados', grid(last.map(e => mCard(e, { me: e.me })))) : '')
     + (comps ? sec('Nos teus campeonatos', comps) : '')
     + (FEED.length ? sec('Últimos avisos', `<ul class="fb-feed">${FEED.slice(0, 6).map(f => `<li><span class="fb-fi">${UI.ic(/Golo/.test(f.title) ? 'ball' : 'bell')}</span><span><b>${esc(f.title)}</b> ${esc(f.body)}</span><small>${esc(dayLbl(f.at))} ${esc(hm(f.at))}</small></li>`).join('')}</ul>`) : '')
     + avisos(); };
+/* ---------- ao vivo no mundo (aba própria e uma faixa no "Agora") ---------- */
+const TOPL = ['fifa.world', 'uefa.champions', 'conmebol.libertadores', 'bra.1', 'por.1', 'eng.1', 'esp.1', 'ita.1', 'ger.1', 'fra.1', 'uefa.euro', 'conmebol.america', 'fifa.cwc', 'uefa.nations', 'fifa.worldq.conmebol', 'fifa.worldq.uefa', 'conmebol.sudamericana', 'uefa.europa', 'bra.copa_do_brazil', 'por.taca.portugal', 'fifa.friendly', 'uefa.europa.conf', 'bra.2', 'arg.1', 'usa.1', 'sau.1'];
+const fem = e => /women|wom[e]n|femen|femin|\bwsl\b|nwsl|liga f\b|vrouwen|frauen/i.test((e.lgF || '') + ' ' + (e.lg || '') + ' ' + e.h.n + ' ' + e.a.n);
+const wRank = e => { const ids = new Set(st().teams.map(t => t.id)); let r = 0; if (ids.has(e.h.id) || ids.has(e.a.id)) r += 1000; if (e.lg && cFollow(e.lg)) r += 500; const i = TOPL.indexOf(e.lg); r += i >= 0 ? 200 - i * 5 : LG[e.lg] ? 60 : 0; if (!fem(e)) r += 20; return r; };
+const hms = t => { const d = new Date(t); return hm(t) + ':' + p2(d.getSeconds()); };
+const wKey = e => [tN(e.h.n), tN(e.a.n), e.h.n, e.a.n, lgN(e.lg, e.lgF), e.lgF].map(norm).join(' ');
+let WQ = '';
+const wSide = (e, x, w) => `<span class="fbw-s ${w}">${cr(x.logo, x.n, 22)}<b>${esc(tN(x.n))}</b><em>${e.st === 'pre' ? '' : esc(sc0(x.s))}${x.so != null && e.st !== 'pre' ? `<sup>${esc(x.so)}</sup>` : ''}</em></span>`;
+const wK = (e, k) => { const sd = k.tid === e.h.id ? e.h : k.tid === e.a.id ? e.a : null;
+  return `<span class="fbw-g ${k.t}">${k.t === 'r' ? '<i class="fb-card-r" title="Expulsão"></i>' : UI.ic('ball')}<b>${esc(k.min)}</b>${sd ? cr(sd.logo, sd.n, 14, 'fbw-gc') : '<i></i>'}<span>${esc(k.who || (k.t === 'r' ? 'Expulsão' : 'Golo'))}${k.t === 'og' ? ' (pb)' : k.pen ? ' (pen.)' : ''}</span>${asT(k)}</span>`; };
+const wRow = e => { const [wh, wa] = winOf(e), K = (e.ke || []).filter(k => isG(k) || k.t === 'r').slice().sort((x, y) => U.num(x.min) - U.num(y.min)), hide = WQ && !wKey(e).includes(WQ);
+  return `<button type="button" class="fbw-r ${e.st}" data-act="fbMatch" data-id="${esc(e.id)}" data-wk="${esc(wKey(e))}"${hide ? ' hidden' : ''}>
+    <span class="fbw-t">${e.st === 'in' ? liveTag(e) : e.st === 'pre' ? `<b>${esc(/POSTPONED/.test(e.sn) ? 'Adiado' : hm(e.d))}</b>` : `<small>${esc(stat(e))}</small>`}</span>
+    <span class="fbw-tm">${wSide(e, e.h, wh)}${wSide(e, e.a, wa)}</span>${K.length ? `<span class="fbw-k">${K.map(k => wK(e, k)).join('')}</span>` : ''}</button>`; };
+const worldStrip = skip => { if (navigator.webdriver && !window.__fbTest) return ''; needWorld(); const L = wEv().filter(e => e.st === 'in' && !skip.includes(e.id)).sort((a, b) => wRank(b) - wRank(a)); if (!L.length) return '';
+  needLogos(L.slice(0, 6).map(e => e.lg));
+  return sec(`<span class="fb-live"><i></i>Ao vivo</span> no mundo agora`, `<div class="fbw-list">${L.slice(0, 6).map(wRow).join('')}</div>`, `<a class="btn xs ghost" href="#futebol.vivo">Ver todos <b class="fbw-c">${L.length}</b></a>`); };
+P.vivo = () => { needWorld(); const E = wEv();
+  if (!WORLD.at) return errBox('w') || loading('A buscar todos os jogos de hoje no mundo…');
+  const nIn = E.filter(e => e.st === 'in').length, nPost = E.filter(e => e.st === 'post').length, f = OS.ui.fbW && (OS.ui.fbW !== 'in' || nIn) ? OS.ui.fbW : nIn ? 'in' : 'all';
+  const L = E.filter(e => f === 'in' ? e.st === 'in' : f === 'post' ? e.st === 'post' : true), G = new Map();
+  L.forEach(e => { const k = e.lg && e.lg !== 'all' ? e.lg : 'x:' + (e.lgF || 'Outros jogos'); if (!G.has(k)) G.set(k, []); G.get(k).push(e); });
+  const ord = { in: 0, pre: 1, post: 2 }, groups = [...G.entries()].map(([k, l]) => ({ k, l: l.sort((a, b) => (ord[a.st] - ord[b.st]) || (a.st === 'post' ? b.d - a.d : a.d - b.d)), r: Math.max(...l.map(wRank)), n: l.filter(e => e.st === 'in').length }))
+    .sort((a, b) => b.r - a.r || b.n - a.n || a.l[0].d - b.l[0].d);
+  needLogos(groups.filter(g => !/^x:/.test(g.k)).map(g => g.k));
+  const seg = [['in', 'Ao vivo', nIn], ['all', 'Hoje', E.length], ['post', 'Terminados', nPost]].map(([k, l, n]) => `<button type="button" class="fbw-sb${f === k ? ' on' : ''}" data-act="fbW" data-k="${k}" aria-pressed="${f === k}">${k === 'in' && n ? '<i class="fbw-dot" aria-hidden="true"></i>' : ''}<span>${l}</span><b>${n}</b></button>`).join('');
+  const body = groups.length ? groups.map(g => { const e0 = g.l[0], known = !/^x:/.test(g.k);
+    return `<section class="fbw-gp"${WQ && !g.l.some(e => wKey(e).includes(WQ)) ? ' hidden' : ''}><div class="fbw-gh">${known ? lgImg(g.k, 22) : `<span class="fb-lg fb-lg0" style="width:22px;height:22px" aria-hidden="true">${UI.ic('award')}</span>`}<h4>${esc(lgN(e0.lg, e0.lgF))}</h4>${g.n ? `<span class="fbw-n"><i class="fbw-dot" aria-hidden="true"></i>${g.n}</span>` : ''}${known ? `<button type="button" class="icon-btn fbw-go" data-act="fbComp" data-slug="${esc(g.k)}" aria-label="Abrir o campeonato">${UI.ic('right')}</button>` : ''}</div>
+      <div class="fbw-list">${g.l.map(wRow).join('')}</div></section>`; }).join('')
+    : `<div class="fb-wel"><h2>${f === 'in' ? 'Nenhum jogo a decorrer agora' : 'Ainda sem jogos hoje'}</h2><p>${f === 'in' ? 'Vê os jogos de hoje, com as horas de começo, em «Hoje».' : 'A ESPN ainda não tem jogos marcados para hoje.'}</p></div>`;
+  return `<section class="fbw-hd"><div class="fbw-hdt"><h2>${nIn ? '<span class="fb-live"><i></i>Ao vivo</span>' : ''}<span>Todos os jogos de hoje no mundo</span></h2>
+      <p class="mut">Golos com quem marcou e quem deu a assistência, cartões vermelhos e o minuto de cada jogo. Atualiza sozinho a cada 15 segundos <span class="fbw-at">(última vez às ${esc(hms(WORLD.at))})</span>. Toca num jogo para ver todos os lances, as estatísticas e as escalações.</p></div>
+    <div class="fbw-seg" role="group" aria-label="Que jogos mostrar">${seg}</div>
+    <label class="fbw-q"><span class="fb-qi">${UI.ic('search')}</span><input type="search" data-fbw value="${esc(WQ)}" placeholder="Filtrar por equipa, seleção ou campeonato" aria-label="Filtrar os jogos" autocomplete="off"></label></section>`
+    + errBox('w') + body + '<p class="mut fb-src">Dados da ESPN.</p>'; };
+A.fbW = b => { OS.ui.fbW = b.dataset.k; req(); };
+document.addEventListener('input', e => { const el = e.target; if (!el || !el.dataset || el.dataset.fbw == null) return; WQ = norm(el.value);
+  document.querySelectorAll('#view .fbw-r[data-wk]').forEach(r => { r.hidden = !!WQ && !r.dataset.wk.includes(WQ); });
+  document.querySelectorAll('#view .fbw-gp').forEach(g => { g.hidden = !g.querySelector('.fbw-r:not([hidden])'); }); });
 // a jornada a mostrar de um campeonato: hoje; senão a próxima; senão a última (a ESPN dá a última jornada quando hoje não há jogos)
 const jorn = m => { const td = U.today(), today = m.ev.filter(e => U.iso(new Date(e.d)) === td); if (today.length) return { t: 'Hoje', L: today };
   const fut = m.ev.filter(e => e.d > Date.now()).length ? m.ev : (m.next || []); if (fut.length && fut[0].d > Date.now() - 864e5) return { t: 'Próxima jornada · ' + dayLbl(fut[0].d), L: fut };
@@ -567,7 +651,7 @@ const STATS = [['possessionPct', 'Posse de bola', '%'], ['totalShots', 'Remates'
 const mBody = e => { const S = SUM[e.id] && SUM[e.id].j, bx = (S && S.boxscore && S.boxscore.teams) || [], tOf = id => bx.find(x => String(x.team && x.team.id) === id), th = tOf(e.h.id), ta = tOf(e.a.id);
   const val = (t, k) => { const x = t && (t.statistics || []).find(s => s.name === k); return x ? U.num(x.displayValue) : null; };
   const rows = e.st === 'pre' ? '' : STATS.map(([k, l, u]) => { const a = val(th, k), b = val(ta, k); if (a == null && b == null) return ''; const tot = (a || 0) + (b || 0) || 1; return `<div class="fb-st"><b>${a == null ? '–' : a}${u || ''}</b><span>${l}<i><s style="width:${Math.round((a || 0) / tot * 100)}%"></s><s style="width:${Math.round((b || 0) / tot * 100)}%"></s></i></span><b>${b == null ? '–' : b}${u || ''}</b></div>`; }).join('');
-  const tl = (e.ke || []).slice().sort((x, y) => U.num(x.min) - U.num(y.min)).map(k => `<li class="${k.tid === e.h.id ? 'h' : 'a'} ${k.t}"><span class="fb-km">${esc(k.min)}</span><span class="fb-kt">${k.t === 'g' ? UI.ic('ball') : k.t === 'og' ? UI.ic('ball') : '<i class="fb-card-' + k.t + '"></i>'}${esc(k.who || '')}${k.t === 'og' ? ' (pb)' : ''}</span></li>`).join('');
+  const tl = (e.ke || []).slice().sort((x, y) => U.num(x.min) - U.num(y.min)).map(k => `<li class="${k.tid === e.h.id ? 'h' : 'a'} ${k.t}"><span class="fb-km">${esc(k.min)}</span><span class="fb-kt">${isG(k) ? UI.ic('ball') : k.t === 's' ? `<span class="fb-sub" aria-label="Substituição">${UI.ic('sync')}</span>` : '<i class="fb-card-' + k.t + '"></i>'}${k.t === 's' ? `<span class="fb-sin"><em>entra</em> ${esc(k.who || '')}</span>${k.out ? `<span class="fb-sout"><em>sai</em> ${esc(k.out)}</span>` : ''}` : `<span>${esc(k.who || '')}${k.t === 'og' ? ' (pb)' : k.pen ? ' (pen.)' : ''}</span>`}${asT(k)}</span></li>`).join('');
   const RR = { W: 'v', D: 'e', L: 'd' }, frm = side => { const L = ((S && S.lastFiveGames) || []).find(x => String(x.team && x.team.id) === side.id); return L && (L.events || []).length ? `<div class="fb-fr">${cr(side.logo, side.n, 22)}<b>${esc(tN(side.sn))}</b><span class="fb-form">${L.events.slice().reverse().map(g => `<i class="${RR[g.gameResult] || ''}" title="${esc((g.atVs === '@' ? 'fora, ' : 'casa, ') + ((g.opponent && g.opponent.displayName) || '') + ' ' + (g.score || ''))}">${(RR[g.gameResult] || '?').toUpperCase()}</i>`).join('')}</span></div>` : ''; };
   const ss = ((S && S.seasonseries) || []).find(x => (x.events || []).length), h2 = ss ? (() => { let wh = 0, wa = 0, dr = 0; const L = ss.events.slice(0, 5).map(g => { const cs = g.competitors || [], ch = cs.find(c => String((c.team && c.team.id) || c.id) === e.h.id), ca = cs.find(c => String((c.team && c.team.id) || c.id) === e.a.id); if (!ch || !ca) return ''; const x = U.num(ch.score), y = U.num(ca.score); if (x > y) wh++; else if (y > x) wa++; else dr++; const hm2 = cs[0], aw2 = cs[1];
       return `<li><small>${esc(g.date ? U.fmtD ? U.fmtD(String(g.date).slice(0, 10)) : String(g.date).slice(0, 10) : '')}</small><span>${esc(tN((hm2.team && (hm2.team.shortDisplayName || hm2.team.displayName || hm2.team.abbreviation)) || ''))} <b>${esc(hm2.score || '0')}–${esc(aw2.score || '0')}</b> ${esc(tN((aw2.team && (aw2.team.shortDisplayName || aw2.team.displayName || aw2.team.abbreviation)) || ''))}</span></li>`; }).join('');
@@ -588,10 +672,10 @@ const evFind = id => EVX.get(id) || [].concat(...Object.values(TM).map(m => m.ev
 const mSafe = e => { try { return mBody(e); } catch (x) { return `<div class="fb-md">${(() => { try { return hero(placard(e)); } catch (y) { return ''; } })()}<p class="note">Não consegui mostrar todos os detalhes deste jogo (${esc((x && x.message) || 'erro')}). Fecha e abre outra vez.</p></div>`; } };
 A.fbMatch = b => { const e = evFind(b.dataset.id); if (!e) { UI.toast('A carregar este jogo… toca outra vez daqui a um instante'); A.fbRefresh && A.fbRefresh(); return; } EVX.set(e.id, e); clearTimeout(mdT); YTOPEN.delete(e.id);
   UI.modal(`<div class="row between" style="align-items:center"><h3 style="margin:0">${esc(lgN(e.lg, e.lgF))}</h3><button type="button" class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div><div id="fbYtSlot"></div><div id="fbMd" data-id="${esc(e.id)}">${mSafe(e)}</div>`, 'fb-modal');
-  const upd = async () => { if (!document.getElementById('fbMd')) return; try { if (e.st !== 'pre' || !SUM[e.id]) await liveEv(e, e.st === 'in' ? 2e4 : 10 * 6e4); } catch (x) { } const box = document.getElementById('fbMd'); if (!box) return; box.innerHTML = mSafe(e);
+  const upd = async () => { if (!document.getElementById('fbMd')) return; try { if (e.st !== 'pre' || !SUM[e.id]) await liveEv(e, e.st === 'in' ? 12e3 : 10 * 6e4); } catch (x) { } const box = document.getElementById('fbMd'); if (!box) return; box.innerHTML = mSafe(e);
     const S = SUM[e.id] && SUM[e.id].j; if (e.st === 'pre' && S && !lineupOf(S, e.h.id) && !lineupOf(S, e.a.id) && (!PROB[e.h.id] || !PROB[e.a.id])) Promise.all([e.h, e.a].map(x => PROB[x.id] ? 0 : loadProbable(x, e.lg).catch(() => { PROB[x.id] = { at: Date.now(), none: 1 }; }))).then(() => mdRedraw(e.id));
-    if (e.st === 'in') mdT = setTimeout(upd, 3e4); };
+    if (e.st === 'in') mdT = setTimeout(upd, 15e3); };
   upd(); };
 
-OS.Futebol = { tick, liveN, state: () => ({ TM, CM, TB, SEEN, FEED }), loop, _redraw: id => mdRedraw(id), _clearCache: () => MEM.clear(), _sumReset: id => { delete SUM[id]; [...MEM.keys()].forEach(k => { if (k.includes('event=' + id)) MEM.delete(k); }); }, _reset: () => { MEM.clear(); [TM, CM, TB, TRY, ERR].forEach(o => Object.keys(o).forEach(k => delete o[k])); Object.keys(SEEN).forEach(k => delete SEEN[k]); FEED.splice(0); DISC = {}; SNAP = {}; } };
+OS.Futebol = { tick, liveN, state: () => ({ TM, CM, TB, SEEN, FEED, WORLD }), loadWorld, loop, _redraw: id => mdRedraw(id), _clearCache: () => MEM.clear(), _sumReset: id => { delete SUM[id]; [...MEM.keys()].forEach(k => { if (k.includes('event=' + id)) MEM.delete(k); }); }, _reset: () => { MEM.clear(); WORLD.at = 0; WORLD.d = ''; WORLD.ids = []; WQ = ''; [TM, CM, TB, TRY, ERR].forEach(o => Object.keys(o).forEach(k => delete o[k])); Object.keys(SEEN).forEach(k => delete SEEN[k]); FEED.splice(0); DISC = {}; SNAP = {}; } };
 })();

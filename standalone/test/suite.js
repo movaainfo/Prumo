@@ -48,6 +48,8 @@ const GM = { reset() { this.tokenCalls = []; this.queries = []; this.revoked = n
     J(404, { error: { code: 404, message: 'Not Found' } }); } }; GM.reset();
 // Finanças › Banco: Pluggy (Meu Pluggy) e Enable Banking simulados para api/banco
 const YTMOCK = { calls: [] }; process.env.YT_FEED = 'http://localhost:' + PORT + '/ytmock?channel_id=';
+// ESPN simulada para o placar mundial do servidor (api/futebol?vivo=1): todos os jogos do dia e o resumo de cada um (assistências)
+const WMOCK = { ev: [], sum: {}, calls: [] }; process.env.ESPN_SITE = 'http://localhost:' + PORT + '/espnmock/'; process.env.ESPN_VIVO_MS = '1';
 const BKM = { reset() { this.auth = []; this.jwt = []; this.ebAuth = []; this.del = []; this.txp = []; this.ct = []; this.pgDel = []; this.cuid = ''; },
   W_ITEM: 'aaaaaaaa-2222-4b2b-9c3d-123456789abc', X_ITEM: 'bbbbbbbb-3333-4b2b-9c3d-123456789abc',
   PG_ITEM: '0b7c2c3e-1111-4a2b-9c3d-123456789abc',
@@ -136,6 +138,9 @@ const srv = http.createServer((req, res) => {
   if (u.pathname === '/ytmock') { YTMOCK.calls.push(u.query.channel_id || ''); const ent = (id, t, h) => `<entry><id>yt:video:${id}</id><yt:videoId>${id}</yt:videoId><title>${t}</title><published>${new Date(Date.now() - h * 36e5).toISOString()}</published></entry>`;
     res.writeHead(200, { 'Content-Type': 'application/atom+xml' }); return res.end(`<?xml version="1.0"?><feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">${ent('mlhrMomnts1', 'MELHORES MOMENTOS: FLAMENGO X PALMEIRAS', 1)}${ent('cazeAoVivo1', 'AO VIVO: FLAMENGO X PALMEIRAS | BRASILEIRÃO 2026 | 37ª RODADA', 2)}${ent('outroJogo01', 'AO VIVO: GRÊMIO X INTERNACIONAL | BRASILEIRÃO 2026', 2)}${ent('tenisMesa01', 'TÊNIS DE MESA (SOM AMBIENTE) &amp; MAIS', 3)}</feed>`); }
   if (u.pathname.startsWith('/pgmock/') || u.pathname.startsWith('/ebmock/')) { let body = ''; req.on('data', c => body += c); req.on('end', () => BKM.handle(req, res, u, body)); return; }
+  if (u.pathname.startsWith('/espnmock/')) { WMOCK.calls.push(u.path); res.writeHead(200, { 'Content-Type': 'application/json' });
+    if (/all\/scoreboard/.test(u.pathname)) return res.end(JSON.stringify({ events: WMOCK.ev }));
+    if (/all\/summary/.test(u.pathname)) return res.end(JSON.stringify(WMOCK.sum[u.query.event] || {})); return res.end('{}'); }
   if (OFFLINE) { req.socket.destroy(); return; }
   // contas: as funções do servidor a sério (api/conta.js e api/dados.js), com uma pasta temporária no lugar do Vercel Blob
   if (u.pathname.startsWith('/rssmock/')) { const q = u.query.q || '', n = (k) => `<item><title>${k} - Jornal Teste</title><link>https://exemplo.pt/${encodeURIComponent(k)}</link><pubDate>${new Date().toUTCString()}</pubDate><source url="https://exemplo.pt">Jornal Teste</source><description></description></item>`;
@@ -2321,10 +2326,15 @@ async function admSenhaTests(b) { cur = 'ADM'; console.log('\n=== ADM: repor sen
 // v2.98: Eu › Troféus e medalhas (todas as contas)
 async function futebolTests(b) { cur = 'Futebol'; console.log('\n=== Visão Geral: futebol ===');
   if (process.env.FBLIVE) { const { ctx, p, errs } = await newPage(b, PROFILES[0]); const SH = process.env.SHOTS || ''; await p.setViewportSize({ width: 1100, height: 900 }); await p.goto(BASE); await unlock(p);
-    await E(p, () => { OS.Futebol._reset(); OS.setOne('fut', { teams: [], comps: [] }); location.hash = 'futebol.equipas'; }); await sleep(500);
+    await E(p, () => { OS.Futebol._reset(); OS.setOne('fut', { teams: [], comps: [] }); location.hash = 'futebol.vivo'; }); await p.waitForFunction(() => document.querySelectorAll('#view .fbw-r').length > 0, null, { timeout: 30000 }).catch(() => { }); await sleep(1500);
+    const wv = await E(p, () => ({ n: document.querySelectorAll('#view .fbw-r').length, live: document.querySelectorAll('#view .fbw-r.in').length, as: document.querySelectorAll('#view .fb-as').length, t: document.getElementById('view').innerText.replace(/\s+/g, ' ').slice(0, 900) }));
+    ok('Futebol (ESPN real): Ao vivo no mundo lista os jogos de hoje (com assistências quando há golos)', wv.n > 0, JSON.stringify(wv)); console.log('    ', JSON.stringify(wv).slice(0, 900));
+    if (SH) { await p.screenshot({ path: SH + '/fb-real-vivo.png', fullPage: true }); await p.setViewportSize({ width: 390, height: 844 }); await sleep(500); await p.screenshot({ path: SH + '/fb-real-vivo-tel.png', fullPage: true }); await p.setViewportSize({ width: 1100, height: 900 }); }
+    const m1 = await E(p, () => { const r = document.querySelector('#view .fbw-r.in') || document.querySelector('#view .fbw-r.post'); if (!r) return ''; r.click(); return r.dataset.id; }); if (m1) { await sleep(5000); if (SH) await p.screenshot({ path: SH + '/fb-real-vivo-jogo.png' }); ok('Futebol (ESPN real): o jogo do mundo abre com os lances', await E(p, () => /Lances|faltam|Estatísticas/.test((document.querySelector('#modal') || {}).innerText || '')), await E(p, () => ((document.querySelector('#modal') || {}).innerText || '').replace(/\s+/g, ' ').slice(0, 500))); await E(p, () => OS.UI.closeModal()); }
+    await E(p, () => { location.hash = 'futebol.equipas'; }); await sleep(500);
     const follow = async (q, re) => { await sleep(700); await p.fill('#view input[data-fbq=t]', q); await p.waitForFunction(re => [...document.querySelectorAll('#fbRes .fb-ri')].some(r => new RegExp(re, 'i').test(r.innerText)), re, { timeout: 15000 }).catch(() => { });
       return E(p, re => { const r = [...document.querySelectorAll('#fbRes .fb-ri')].find(r => new RegExp(re, 'i').test(r.innerText)); if (!r) return JSON.stringify({ v: (document.querySelector('#view input[data-fbq=t]') || {}).value, r: document.getElementById('fbRes').innerText.slice(0, 160), n: document.querySelectorAll('#fbRes .fb-ri').length }); r.querySelector('[data-act=fbFollow]').click(); return 'ok'; }, re); };
-    for (const [q, re] of [['Benfica', '^Benfica'], ['Flamengo', '^Flamengo\\b(?!.*U\\d)'], ['Japão', 'Japão'], ['Real Madrid', '^Real Madrid']]) { const fr = await follow(q, re); ok('Futebol (ESPN real): pesquisar e seguir ' + q, fr === 'ok', fr); }
+    for (const [q, re] of [['Benfica', '^Benfica'], ['Flamengo', '^Flamengo\\b(?!.*U\\d)'], ['Japão', 'Japão'], ['Real Madrid', '^Real Madrid'], ['Brasil', '^Brasil\\s+Seleção\\s']]) { const fr = await follow(q, re); ok('Futebol (ESPN real): pesquisar e seguir ' + q, fr === 'ok', fr); }
     await E(p, () => { location.hash = 'futebol.campeonatos'; }); await sleep(400); await p.click('#view [data-act=fbFollowC][data-slug="uefa.champions"]'); await p.click('#view [data-act=fbFollowC][data-slug="bra.1"]');
     await E(p, () => { location.hash = 'futebol'; }); await p.waitForFunction(() => !document.querySelector('#view .fb-ld') || document.querySelectorAll('#view .fb-mc').length > 2, null, { timeout: 30000 }).catch(() => { }); await sleep(4000);
     const ag = await E(p, () => ({ n: document.querySelectorAll('#view .fb-mc').length, pl: document.querySelectorAll('#view .fb-pl').length, t: document.getElementById('view').innerText.slice(0, 600) }));
@@ -2332,7 +2342,7 @@ async function futebolTests(b) { cur = 'Futebol'; console.log('\n=== Visão Gera
     if (SH) await p.screenshot({ path: SH + '/fb-real-agora.png', fullPage: true });
     await E(p, () => { location.hash = 'futebol.equipas'; }); await sleep(3000); if (SH) await p.screenshot({ path: SH + '/fb-real-equipas.png', fullPage: true });
     const cards = await E(p, () => [...document.querySelectorAll('#view .fb-card')].map(c => c.innerText.replace(/\s+/g, ' ')));
-    ok('Futebol (ESPN real): cromos com a posição na tabela', cards.length === 4 && cards.filter(c => /lugar/.test(c)).length >= 2, cards.join(' || '));
+    ok('Futebol (ESPN real): cromos com a posição na tabela', cards.length >= 4 && cards.filter(c => /lugar/.test(c)).length >= 2, cards.join(' || '));
     await p.click('#view .fb-card'); await sleep(5000); if (SH) await p.screenshot({ path: SH + '/fb-real-equipa.png', fullPage: true });
     ok('Futebol (ESPN real): página da equipa com tabela e resultados', await E(p, () => !!document.querySelector('#view .fb-tb tr.me') && /Resultados/.test(document.getElementById('view').innerText)));
     await p.waitForFunction(() => document.querySelectorAll('#view .fb-pc2').length > 10, null, { timeout: 20000 }).catch(() => { }); if (SH) await p.screenshot({ path: SH + '/fb-real-plantel.png', fullPage: true });
@@ -2515,9 +2525,43 @@ async function futebolTests(b) { cur = 'Futebol'; console.log('\n=== Visão Gera
   const lo = await E(p, () => ((document.querySelector('#modal .fb-ai') || {}).innerText || '').replace(/\s+/g, ' '));
   ok('Futebol: sem IA (cota gasta e reserva em baixo) a análise aparece na mesma, feita pelo Prumo, com palpite e explicação', /Análise do Prumo/.test(lo) && /Placar previsto \S+ \d+ × \d+ \S+/.test(lo) && /cota grátis da IA do Google acabou/.test(lo) && /Pedir à IA outra vez/.test(lo), lo.slice(0, 300));
   await E(p, () => OS.UI.closeModal());
+  // ao vivo no mundo: todos os jogos do dia (pelo servidor), com quem marcou e quem deu a assistência
+  { const wT = (id, n, c) => ({ id, displayName: n, shortDisplayName: n, logo: 'https://a.espncdn.com/i/teamlogos/countries/500/' + c + '.png' });
+    const SIN = wT('4384', 'Singapore', 'sin'), BRZ = wT('205', 'Brazil', 'bra'), ENGW = wT('8001', 'Arsenal Women', 'ars'), CHW = wT('8002', 'Chelsea Women', 'che'), XA = wT('8101', 'Clube Alfa', 'a'), XB = wT('8102', 'Clube Beta', 'b');
+    const wE = (id, lid, note, t, st, h, a, sh, sa, det) => ({ id, uid: 's:600~l:' + lid + '~e:' + id, date: new Date(t).toISOString(), season: { slug: '2026-teste' }, competitions: [{ altGameNote: note, venue: { fullName: 'Estádio Nacional' }, status: { displayClock: st === 'in' ? "38'" : "0'", type: { state: st, name: st === 'in' ? 'STATUS_FIRST_HALF' : st === 'post' ? 'STATUS_FULL_TIME' : 'STATUS_SCHEDULED', shortDetail: '' } }, competitors: [{ homeAway: 'home', team: h, score: sh == null ? undefined : String(sh) }, { homeAway: 'away', team: a, score: sa == null ? undefined : String(sa) }], details: det || [] }] });
+    const wG = (min, tid, who, x) => Object.assign({ type: { text: 'Goal' }, clock: { displayValue: min }, team: { id: tid }, scoringPlay: true, athletesInvolved: [{ displayName: who }] }, x || {});
+    const kS = (min, who, as) => ({ type: { type: 'goal' }, scoringPlay: true, clock: { displayValue: min }, team: { id: '205' }, participants: [{ athlete: { displayName: who } }].concat(as ? [{ athlete: { displayName: as } }] : []) });
+    const brDet = [wG("9'", '205', 'Vinícius Júnior'), wG("15'", '205', 'Vinícius Júnior', { penaltyKick: true }), { type: { text: 'Red Card' }, redCard: true, clock: { displayValue: "33'" }, team: { id: '4384' }, athletesInvolved: [{ displayName: 'Ikhsan Fandi' }] }];
+    WMOCK.ev = [wE('991', '3922', "Men's International Friendly", now - 40 * 6e4, 'in', SIN, BRZ, 0, 2, brDet), wE('992', '20500', "Women's Super League", now + 5 * 36e5, 'pre', ENGW, CHW), wE('993', '99999', 'Liga Teste, Ronda 3', now - 4 * 36e5, 'post', XA, XB, 1, 0, [wG("50'", '8101', 'Zé Alfa')])];
+    WMOCK.sum = { 991: { header: { league: { id: '3922', slug: 'fifa.friendly' } }, keyEvents: [kS("9'", 'Vinícius Júnior', 'Bruno Guimarães'), kS("15'", 'Vinícius Júnior')] }, 993: { header: { league: { id: '99999', slug: 'tst.1' } }, keyEvents: [] } };
+    await E(p, () => { location.hash = 'futebol.vivo'; }); await p.waitForFunction(() => document.querySelectorAll('#view .fbw-r').length > 0, null, { timeout: 10000 }).catch(() => { }); await sleep(300);
+    const w1 = await E(p, () => ({ t: document.getElementById('view').innerText.replace(/\s+/g, ' '), n: document.querySelectorAll('#view .fbw-r:not([hidden])').length, seg: [...document.querySelectorAll('#view .fbw-sb')].map(b => b.innerText.replace(/\s+/g, ' ')).join('|') }));
+    ok('Futebol › Ao vivo no mundo: abre nos jogos a decorrer (com quantos há em cada filtro)', w1.n === 1 && /Ao vivo 1\|Hoje 3\|Terminados 1/.test(w1.seg), w1.seg + ' · ' + w1.n);
+    ok('Futebol › Ao vivo no mundo: golos com quem marcou, a assistência, a grande penalidade e a expulsão (nomes em português)', /Singapura/.test(w1.t) && /Brasil/.test(w1.t) && /9' Vinícius Júnior assistência Bruno Guimarães/.test(w1.t) && /15' Vinícius Júnior \(pen\.\)/.test(w1.t) && /33' Ikhsan Fandi/.test(w1.t) && /38'/.test(w1.t), w1.t.slice(0, 600));
+    ok('Futebol › Ao vivo no mundo: o servidor lê o resumo só dos jogos com golos (assistências) e aprende as ligas novas', WMOCK.calls.some(c => /summary\?event=991/.test(c)) && WMOCK.calls.some(c => /summary\?event=993/.test(c)) && !WMOCK.calls.some(c => /summary\?event=992/.test(c)), WMOCK.calls.filter(c => /summary/.test(c)).join(','));
+    await p.click('#view .fbw-sb[data-k=all]'); await sleep(300);
+    const w2 = await E(p, () => ({ n: document.querySelectorAll('#view .fbw-r:not([hidden])').length, g: [...document.querySelectorAll('#view .fbw-gh h4')].map(h => h.innerText) }));
+    ok('Futebol › Ao vivo no mundo: "Hoje" mostra todos os jogos do dia agrupados por prova (a ao vivo primeiro)', w2.n === 3 && w2.g[0] === 'Jogos amigáveis' && w2.g.some(g => /Women's Super League/.test(g)) && w2.g.some(g => /Liga Teste/.test(g)), JSON.stringify(w2));
+    await p.fill('#view input[data-fbw]', 'singa'); await sleep(200);
+    ok('Futebol › Ao vivo no mundo: filtrar pelo nome da equipa (em português) esconde o resto', await E(p, () => document.querySelectorAll('#view .fbw-r:not([hidden])').length === 1 && !document.querySelector('#view .fbw-r[data-id="992"]:not([hidden])')));
+    await p.fill('#view input[data-fbw]', ''); await E(p, () => document.activeElement.blur());
+    await p.click('#view .fbw-r[data-id="991"]'); await sleep(1200);
+    ok('Futebol › Ao vivo no mundo: tocar no jogo abre o detalhe com os lances e a assistência', await E(p, () => /Lances/.test(document.querySelector('#modal').innerText) && /assistência Bruno Guimarães/.test(document.querySelector('#modal').innerText)), await E(p, () => document.querySelector('#modal').innerText.replace(/\s+/g, ' ').slice(0, 300)));
+    await E(p, () => OS.UI.closeModal());
+    // o jogo da seleção que segues não estava na lista da equipa (a ESPN tira-o enquanto decorre): agora aparece no Agora
+    await E(p, () => { location.hash = 'futebol'; }); await E(p, () => OS.Futebol.tick()); await sleep(800);
+    const ag2 = await E(p, () => ({ hero: (document.querySelector('#view .fb-hero') || {}).innerText || '', n: OS.Futebol.liveN() }));
+    ok('Futebol › Agora: o jogo ao vivo da seleção que segues aparece mesmo fora da lista da equipa (com a assistência)', /Singapura/.test(ag2.hero) && /Brasil/.test(ag2.hero) && /assistência Bruno Guimarães/.test(ag2.hero) && ag2.n === 2, JSON.stringify(ag2).slice(0, 400));
+    await E(p, () => { window.__toasts = []; const o = OS.UI.toast; if (!o.__t) { OS.UI.toast = (m, k) => { window.__toasts.push(m); return o(m, k); }; OS.UI.toast.__t = 1; } });
+    WMOCK.ev[0].competitions[0].competitors[1].score = '3'; WMOCK.ev[0].competitions[0].details.push(wG("21'", '205', 'Vinícius Júnior')); WMOCK.sum[991].keyEvents.push(kS("21'", 'Vinícius Júnior', 'Estêvão'));
+    await E(p, () => OS.Futebol.tick()); await sleep(400); await E(p, () => OS.Futebol.tick()); await sleep(300);
+    const ts2 = await E(p, () => window.__toasts.join(' | '));
+    ok('Futebol: golo da seleção (vindo do placar mundial) → aviso com quem marcou e quem deu a assistência', /Golo · Brasil/.test(ts2) && /Vinícius Júnior 21', assistência de Estêvão/.test(ts2) && /0-3/.test(ts2), ts2);
+    if (SH) { await E(p, () => { location.hash = 'futebol.vivo'; }); await sleep(500); await p.screenshot({ path: SH + '/fb-vivo.png', fullPage: true }); }
+    WMOCK.ev = []; WMOCK.sum = {}; }
   // telemóvel
   await p.setViewportSize({ width: 390, height: 844 }); const ov = [];
-  for (const r of ['futebol', 'futebol.equipas', 'futebol.equipa', 'futebol.campeonatos', 'futebol.campeonato']) { await E(p, r => { location.hash = r; }, r); await sleep(700); if (!(await E(p, () => document.documentElement.scrollWidth <= innerWidth + 1))) ov.push(r); }
+  for (const r of ['futebol', 'futebol.vivo', 'futebol.equipas', 'futebol.equipa', 'futebol.campeonatos', 'futebol.campeonato']) { await E(p, r => { location.hash = r; }, r); await sleep(700); if (!(await E(p, () => document.documentElement.scrollWidth <= innerWidth + 1))) ov.push(r); }
   if (SH) { await E(p, () => { location.hash = 'futebol'; }); await sleep(600); await p.screenshot({ path: SH + '/fb-tel.png', fullPage: true }); await E(p, () => { location.hash = 'futebol.equipas'; }); await sleep(600); await p.screenshot({ path: SH + '/fb-tel-equipas.png', fullPage: true }); }
   ok('Futebol: no telemóvel nada sai do ecrã', !ov.length, ov.join(','));
   ok('Futebol: sem erros na consola', !errs.length, errs.slice(0, 3).join(' | '));

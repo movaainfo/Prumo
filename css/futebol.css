@@ -301,8 +301,65 @@
   .fb-ri .btn.ghost{display:none}
   .fb-q .btn{display:none}
 }
-@media (prefers-reduced-motion:reduce){.fb-live i,.fb-ball .ic{animation:none}.fb-pbb s{transition:none}}
-html.lite-x .fb-live i,html.lite-x .fb-ball .ic{animation:none}
+/* ao vivo no mundo: a lista de jogos do dia, uma linha por jogo (placar, minuto e, por baixo, os golos com a assistência) */
+.fbw-hd{display:flex;flex-direction:column;gap:12px}
+.fbw-hdt h2{margin:0 0 6px;font-size:19px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fbw-hdt p{margin:0;font-size:13px;line-height:1.5;max-width:72ch}
+.fbw-at{font-variant-numeric:tabular-nums;white-space:nowrap}
+.fbw-seg{display:flex;gap:6px;flex-wrap:wrap}
+.fbw-sb{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--pn);color:var(--tx);font:inherit;font-size:13.5px;cursor:pointer}
+.fbw-sb b{font:600 12px/1 var(--mono);color:var(--mut)}
+.fbw-sb.on{background:var(--accentBg);border-color:var(--accent);color:var(--accent)}
+.fbw-sb.on b{color:inherit}
+.fbw-sb:focus-visible,.fbw-q:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.fbw-dot{width:7px;height:7px;border-radius:50%;background:#d73a3f;display:inline-block;flex:none;animation:fbPulse 1.6s ease-in-out 10}
+.fbw-q{display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--pn);max-width:480px}
+.fbw-q .ic{width:16px;height:16px;opacity:.6}
+.fbw-q input{flex:1;min-width:0;border:0;background:transparent;color:var(--tx);font:inherit;font-size:15px;padding:10px 0;outline:none}
+.fbw-gp{display:flex;flex-direction:column;gap:8px;min-width:0}
+.fbw-gp[hidden],.fbw-r[hidden]{display:none}
+.fbw-gh{display:flex;align-items:center;gap:9px;min-width:0}
+.fbw-gh h4{margin:0;font-size:14.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fbw-n{display:inline-flex;align-items:center;gap:5px;font:700 12px/1 var(--mono);color:#e5484d}
+.fbw-go{width:32px;height:32px;flex:none}
+.fbw-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--pn);min-width:0}
+.fbw-r{display:grid;grid-template-columns:64px minmax(0,1fr);gap:6px 10px;align-items:center;width:100%;padding:11px 12px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--tx);font:inherit;text-align:left;cursor:pointer;min-width:0}
+.fbw-r:first-child{border-top:0}
+.fbw-r:hover{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.fbw-r:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.fbw-r.in{background:color-mix(in srgb,#d73a3f 8%,transparent);box-shadow:inset 3px 0 0 #d73a3f}
+.fbw-t{font-family:var(--mono);font-size:12px;color:var(--mut);min-width:0}
+.fbw-t b{color:var(--tx);font-weight:600;font-size:13px}
+.fbw-t .fb-live{font-size:10.5px;padding:3px 7px}
+.fbw-tm{display:flex;flex-direction:column;gap:5px;min-width:0}
+.fbw-s{display:flex;align-items:center;gap:8px;min-width:0;font-size:14.5px}
+.fbw-s b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.fbw-s em{font:700 17px/1 var(--mono);font-style:normal;min-width:22px;text-align:right}
+.fbw-s em sup{font-size:10px;color:var(--mut);margin-left:2px}
+.fbw-s.w b{font-weight:700}.fbw-s.l{opacity:.62}
+.fbw-s .fb-cr{width:22px;height:22px}
+.fbw-k{grid-column:2;display:flex;flex-direction:column;gap:4px;padding-top:6px;border-top:1px dashed var(--line);font-size:12.5px;min-width:0}
+.fbw-g{display:grid;grid-template-columns:12px 38px 14px minmax(0,1fr);align-items:center;gap:1px 7px;min-width:0}
+.fbw-g>.ic,.fbw-g>.fb-card-r{width:12px;height:12px;opacity:.75}
+.fbw-g>.fb-card-r{width:9px;opacity:1}
+.fbw-g>b{font:600 11.5px/1 var(--mono);color:var(--mut)}
+.fbw-g .fbw-gc{width:14px;height:14px}
+.fbw-g>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fbw-g>.fb-as{grid-column:4;line-height:1.3}
+@media (min-width:700px){.fbw-g{grid-template-columns:12px 38px 14px auto minmax(0,1fr)}.fbw-g>.fb-as{grid-column:5}}
+.fbw-g.r>span{color:#e5484d}
+.fb-as{color:var(--mut);font-size:11.5px}
+.fb-as em{font-style:normal;opacity:.8}
+.fbw-c{font-family:var(--mono);margin-left:4px}
+.fb-pl-g span{flex-wrap:wrap}
+.fb-pl-g .fb-as{flex-basis:100%;color:rgba(244,246,242,.62)}
+.fb-kt{flex-wrap:wrap}
+.fb-sub .ic{width:14px;height:14px;color:var(--mut)}
+.fb-sin{color:#2f9e5b;font-weight:600}.fb-sout{color:var(--mut)}
+.fb-sin em,.fb-sout em{font-style:normal;font-weight:400;opacity:.8}
+@media (max-width:520px){.fbw-r{grid-template-columns:54px minmax(0,1fr);padding:10px}.fbw-s{font-size:14px}}
+@media (prefers-reduced-motion:reduce){.fb-live i,.fb-ball .ic,.fbw-dot{animation:none}.fb-pbb s{transition:none}}
+html.lite-x .fb-live i,html.lite-x .fb-ball .ic,html.lite-x .fbw-dot{animation:none}
 @media (prefers-reduced-motion:reduce){.fb-mc{transition:none}.fb-mc:hover{transform:none}}
 
 /* análise da IA (quem tem mais probabilidade de ganhar) */
