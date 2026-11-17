@@ -343,7 +343,7 @@ async function sharedTests(b) {
     ok('iPhone: "Definições" nos atalhos de "Tudo" (barra de baixo), visível sem rolar', vis); await p.tap('#mob a[href="#definicoes"]'); await sleep(400);
     ok('iPhone: tocar em Definições (em "Tudo") abre as Definições e fecha o painel', (await E(p, () => location.hash)) === '#definicoes' && await E(p, () => !document.body.classList.contains('mob-open')));
     const tb = await E(p, () => ({ items: [...document.querySelectorAll('#tabbar .tb-i span')].map(x => x.innerText), add: !!document.querySelector('#tabbar .tb-add'), fabs: ['calcFab', 'jvFab', 'gameFab'].filter(id => { const e = document.getElementById(id); return e && getComputedStyle(e).display !== 'none'; }) }));
-    ok('iPhone: barra de baixo com Painel, Hoje, Registar, a IA e Tudo (sem os botões a flutuar por cima)', tb.items[0] === 'Painel' && tb.items[1] === 'Hoje' && tb.add && tb.items[3] && tb.items[4] === 'Tudo' && !tb.fabs.length, JSON.stringify(tb));
+    ok('iPhone: barra de baixo com Painel, Hoje, Registar, a IA e Tudo (sem os botões a flutuar por cima)', tb.items[0] === 'Painel' && tb.items[1] === 'Hoje' && tb.add && tb.items[2] && tb.items[3] === 'Tudo' && !tb.fabs.length, JSON.stringify(tb));
     await p.tap('#tabbar [data-act=mobAll]'); await sleep(500);
     const tg = await E(p, () => ({ g: [...document.querySelectorAll('#mob .mob-g h6')].map(h => h.innerText), n: document.querySelectorAll('#mob .mob-t').length, nav: OS.NAV.reduce((a, g) => a + g[1].length, 0) - (OS.Areas ? OS.Areas.hidden().size : 0) }));
     ok('iPhone: "Tudo" mostra todas as áreas do menu em ícones, por grupo', tg.g.includes('Dinheiro') && tg.n >= tg.nav - 2, JSON.stringify(tg));

@@ -33,6 +33,10 @@
   .toast{bottom:calc(var(--tbh) + 18px + env(safe-area-inset-bottom,0px))}
   #dock{bottom:calc(var(--tbh) + 12px + env(safe-area-inset-bottom,0px))}
   #d3fly{bottom:calc(var(--tbh) + 18px + env(safe-area-inset-bottom,0px))}
+  .wk-pill,.fo-pill{bottom:calc(var(--tbh) + 14px + env(safe-area-inset-bottom,0px))}
+  .fo-float{bottom:calc(var(--tbh) + 16px + env(safe-area-inset-bottom,0px))}
+  .f-up{bottom:calc(var(--tbh) + 70px + env(safe-area-inset-bottom,0px))}
+  #spMini{bottom:calc(var(--tbh) + 12px + env(safe-area-inset-bottom,0px))}
   /* cabeçalho das páginas: mais baixo, a descrição em duas linhas */
   .phead{flex-direction:column;align-items:stretch;gap:12px}
   .phead h1{font-size:32px}
