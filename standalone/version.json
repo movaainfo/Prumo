@@ -1,7 +1,10 @@
 {
- "n": 247,
- "hash": "7ea650d90b65",
+ "n": 248,
+ "hash": "844e187ad1c8",
  "notes": [
+  "Animes ao estilo Crunchyroll (destaque em carrossel, continuar a ver, novos episódios, navegar, categorias, simulcasts, calendário, notícias, listas, episódios com miniaturas, personagens, músicas) e pesquisa nas três bases (AniList, Kitsu, MyAnimeList) com a IA quando não encontra.",
+  "Sem zoom no app (só no mapa do mundo, com pinça e botões).",
+  "Telemóvel repaginado: barra de baixo (Painel, Hoje, Registar, IA, Tudo) e o ecrã Tudo com todas as áreas em ícones.",
   "Futebol em tempo real: separador \"Ao vivo no mundo\" com todos os jogos do dia (golos com quem marcou e a assistência, expulsões, atualização a cada 15 s) e o jogo da equipa seguida que a ESPN tirava da lista enquanto decorria.",
   "Animes (Eu, aba opcional): pesquisa de qualquer anime (AniList/MyAnimeList), lista com episódio, nota 1–10, resenha, favoritos, top 10 e tier list; temporada, calendário da semana e melhores de cada ano.",
   "Códigos de desconto: na página Planos há \"Tens um código de desconto?\". Escreves o código, vês logo o preço com desconto em cada plano e assinas com ele (o desconto aparece também nas faturas). A administração cria os códigos (percentagem, só no 1.º pagamento, durante uns meses ou para sempre, para que planos, limite de usos, validade e só para a primeira assinatura) e vê quantas vezes cada um foi usado.",

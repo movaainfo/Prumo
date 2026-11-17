@@ -338,10 +338,17 @@ async function sharedTests(b) {
   { const { ctx, p, errs } = await newPage(b, PROFILES[0]); await p.goto(BASE); await unlock(p); await E(p, () => document.querySelectorAll('#modal').forEach(m => { m.hidden = true; m.innerHTML = ''; }));
     ok('iPhone: engrenagem das Definições visível no topo', await p.isVisible('#top a[href="#definicoes"]'));
     await p.tap('#top a[href="#definicoes"]'); await sleep(400); ok('iPhone: tocar na engrenagem abre as Definições', (await E(p, () => location.hash)) === '#definicoes');
-    await E(p, () => location.hash = 'visao'); await sleep(300); await p.tap('.tn-menu'); await sleep(400);
-    const vis = await E(p, () => { const a = document.querySelector('#side .side-set'); const r = a.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; });
-    ok('iPhone: "Definições" no topo do menu ☰, visível sem rolar', vis); await p.tap('#side .side-set'); await sleep(400);
-    ok('iPhone: tocar no menu abre as Definições', (await E(p, () => location.hash)) === '#definicoes');
+    await E(p, () => location.hash = 'visao'); await sleep(300); await p.tap('#tabbar [data-act=mobAll]'); await sleep(500);
+    const vis = await E(p, () => { const a = document.querySelector('#mob a[href="#definicoes"]'); const r = a.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; });
+    ok('iPhone: "Definições" nos atalhos de "Tudo" (barra de baixo), visível sem rolar', vis); await p.tap('#mob a[href="#definicoes"]'); await sleep(400);
+    ok('iPhone: tocar em Definições (em "Tudo") abre as Definições e fecha o painel', (await E(p, () => location.hash)) === '#definicoes' && await E(p, () => !document.body.classList.contains('mob-open')));
+    const tb = await E(p, () => ({ items: [...document.querySelectorAll('#tabbar .tb-i span')].map(x => x.innerText), add: !!document.querySelector('#tabbar .tb-add'), fabs: ['calcFab', 'jvFab', 'gameFab'].filter(id => { const e = document.getElementById(id); return e && getComputedStyle(e).display !== 'none'; }) }));
+    ok('iPhone: barra de baixo com Painel, Hoje, Registar, a IA e Tudo (sem os botões a flutuar por cima)', tb.items[0] === 'Painel' && tb.items[1] === 'Hoje' && tb.add && tb.items[3] && tb.items[4] === 'Tudo' && !tb.fabs.length, JSON.stringify(tb));
+    await p.tap('#tabbar [data-act=mobAll]'); await sleep(500);
+    const tg = await E(p, () => ({ g: [...document.querySelectorAll('#mob .mob-g h6')].map(h => h.innerText), n: document.querySelectorAll('#mob .mob-t').length, nav: OS.NAV.reduce((a, g) => a + g[1].length, 0) - (OS.Areas ? OS.Areas.hidden().size : 0) }));
+    ok('iPhone: "Tudo" mostra todas as áreas do menu em ícones, por grupo', tg.g.includes('Dinheiro') && tg.n >= tg.nav - 2, JSON.stringify(tg));
+    await p.tap('#mob a[href="#financas"]'); await sleep(500);
+    ok('iPhone: tocar numa área abre-a e fecha "Tudo"', await E(p, () => location.hash === '#financas' && !document.body.classList.contains('mob-open')));
     ok('sem erros de JavaScript', !errs.length, errs.slice(0, 3).join(' | ')); await ctx.close(); }
   // Face ID no iPhone (simulado: o iPhone aceita o rosto)
   { const ctx = await b.newContext(PROFILES[0].o); const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
