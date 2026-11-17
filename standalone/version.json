@@ -1,7 +1,9 @@
 {
- "n": 232,
- "hash": "5a1e0ed34a77",
+ "n": 233,
+ "hash": "92fc304c3a8f",
  "notes": [
+  "Futebol em tempo real: novo separador \"Ao vivo no mundo\" com todos os jogos de hoje, de todas as provas (também os amigáveis das seleções), agrupados por campeonato. Cada golo mostra quem marcou, o minuto e quem deu a assistência, e as expulsões aparecem a vermelho. Atualiza sozinho a cada 15 segundos com o Futebol aberto; filtras por Ao vivo, Hoje ou Terminados e pelo nome da equipa. No Agora aparece a faixa \"Ao vivo no mundo agora\". Corrigido: o jogo de uma equipa que segues desaparecia enquanto estava a decorrer (a ESPN tira-o da lista da equipa); agora aparece no placar, com os golos e os avisos (que passam a dizer a assistência). No detalhe do jogo, os lances incluem as assistências e as substituições (entra e sai).",
+  "Animes (nova aba em Eu, opcional): começa desligada e ligas-a nas perguntas iniciais (\"O que queres no teu Prumo?\"), em Definições › Abas do menu ou em Explorar. Pesquisas qualquer anime (AniList, com o MyAnimeList de reserva), com capa, nota da comunidade, onde ver, trailer, sequelas e recomendações. Na tua lista marcas A ver (com o episódio onde vais e +1 num toque), Quero ver, Já vi, Em pausa ou Larguei; dás nota de 1 a 10, escreves a resenha, pões nos favoritos, no top 10 e na tier list (S, A, B, C, D). Para descobrir: o destaque e as faixas da temporada e do que está em alta, a temporada inteira (com a estação e o ano à escolha), o calendário dos episódios da semana à tua hora e os melhores de cada ano, desde 1960.",
   "Códigos de desconto: na página Planos há \"Tens um código de desconto?\". Escreves o código, vês logo o preço com desconto em cada plano e assinas com ele (o desconto aparece também nas faturas). A administração cria os códigos (percentagem, só no 1.º pagamento, durante uns meses ou para sempre, para que planos, limite de usos, validade e só para a primeira assinatura) e vê quantas vezes cada um foi usado.",
   "Planos com preços novos e o Completo com mais: Essencial 5,99 € por mês (59,90 € por ano), Avançado 11,99 € (119,90 €) e Completo 19,99 € (199,90 €); em dólares 6,99 $, 12,99 $ e 21,99 $; em reais R$ 19,90, R$ 39,90 e R$ 69,90 (o anual dá sempre 2 meses grátis). O Completo ganha o resumo do mês no teu e-mail (liga-se em Relatórios), as paletas exclusivas Ouro, Aurora e Sakura, atendimento prioritário (os teus pedidos chegam primeiro à administração) e até 5 perfis, um para cada pessoa da família.",
   "Línguas em dia: o app inteiro está traduzido outra vez para português do Brasil, inglês, espanhol, francês, italiano e alemão, incluindo tudo o que chegou desde os planos (planos e pagamentos, verificação do e-mail, explicações das perguntas, Admin). Antes, os textos mais novos apareciam em português de Portugal nas outras línguas.",
@@ -67,5 +69,5 @@
   "Admin em tempo real (online agora, última entrada e último acesso) e tempo de uso no ranking.",
   "Investimentos arrumados em 4 blocos, com todas as funções. Mais animações e transições suaves, também em Android."
  ],
- "date": "16/11/2026"
+ "date": "17/11/2026"
 }

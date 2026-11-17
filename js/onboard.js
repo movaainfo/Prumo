@@ -5,7 +5,7 @@
 (() => {
 'use strict';
 const U = OS.U, UI = OS.UI, A = OS.act, esc = U.esc;
-OS.ONE_DEF.areas = { hide: [] };
+OS.ONE_DEF.areas = { hide: [], on: [] };
 OS.ONE_DEF.onb = { done: '', at: '', ans: null };
 const pub = () => !!(OS.Acc && OS.Acc.on && OS.Acc.pub);
 
@@ -13,12 +13,14 @@ const pub = () => !!(OS.Acc && OS.Acc.on && OS.Acc.pub);
 const MUST = ['visao', 'definicoes'];
 // páginas só do perfil pessoal (o Prumo do Ryan): não aparecem nas outras contas (desde a 3.12 a Cozinha e a lista de compras são de todas)
 const PERSONAL = [];
-const hiddenSet = () => new Set(((OS.one('areas') || {}).hide || []).filter(k => !MUST.includes(k)).concat(pub() ? PERSONAL : []));
+// abas que começam desligadas: só aparecem a quem as escolher (no registo, em Definições ou em Explorar)
+const OPTIN = ['animes'];
+const hiddenSet = () => { const A0 = OS.one('areas') || {}, on = new Set(A0.on || []); return new Set((A0.hide || []).filter(k => !MUST.includes(k)).concat(OPTIN.filter(k => !on.has(k))).concat(pub() ? PERSONAL : [])); };
 // nas contas públicas, o que é só do perfil pessoal nem aparece para escolher
 const groups = () => (OS.NAV || []).filter(([g]) => g !== 'Admin').map(G => pub() ? [G[0], G[1].filter(([k]) => !PERSONAL.includes(k))].concat(G.slice(2)) : G);
 // prune: o que pertence a uma área desligada sai do ecrã (data-area="k1 k2": sai quando TODAS essas áreas estão desligadas)
 const prune = root => { const h = hiddenSet(); if (!h.size || !root) return; root.querySelectorAll('[data-area]').forEach(el => { const ks = el.dataset.area.split(/\s+/).filter(Boolean); if (ks.length && ks.every(k => h.has(k))) el.remove(); }); };
-OS.Areas = { prune, on: k => !hiddenSet().has(k), hidden: hiddenSet, set: hide => { OS.setOne('areas', { hide: [...new Set(hide)].filter(k => !MUST.includes(k)) }); if (OS.fitNav) setTimeout(OS.fitNav, 60); } };
+OS.Areas = { prune, on: k => !hiddenSet().has(k), hidden: hiddenSet, set: hide => { const h = [...new Set(hide)].filter(k => !MUST.includes(k)); OS.setOne('areas', { hide: h.filter(k => !OPTIN.includes(k)), on: OPTIN.filter(k => !h.includes(k)) }); if (OS.fitNav) setTimeout(OS.fitNav, 60); } };
 const areaChips = (hide, attr) => groups().map(([g, items]) => { const on = items.filter(([k]) => !hide.has(k)).length;
   return `<div class="onb-g"><div class="onb-gh"><b>${esc(g === 'Visão geral' ? 'Visão Geral' : g)}</b><button type="button" class="btn xs ghost" ${attr}g="${esc(g)}">${on === items.length ? 'Tirar tudo' : 'Quero tudo'}</button></div>
     <div class="onb-chips">${items.map(([k, l, ic]) => { const lock = MUST.includes(k), sel = lock || !hide.has(k); return `<button type="button" class="chip onb-c ${sel ? 'on' : ''}" ${lock ? 'disabled' : ''} ${attr}="${k}" aria-pressed="${sel}">${UI.ic(ic)}${esc(k === 'mova' ? (OS.one('mova').name || 'O meu negócio') : l)}</button>`; }).join('')}</div></div>`; }).join('');
@@ -76,7 +78,7 @@ const HELP = {
   hab: 'Hábitos são coisas que queres fazer todos os dias (ou quase), como ler ou beber água. Ficam no teu quadro de hábitos e dão pontos quando os cumpres.',
   metas: 'Coisas grandes que queres conseguir este ano. Entram na página Metas e no Dominus, o jogo do Prumo: as missões do dia saem delas. Podes deixar em branco.' };
 // o que é cada aba (passo "O que queres no teu Prumo?")
-const AREA_HELP = { visao: 'o resumo do teu dia e da tua vida num só ecrã (fica sempre)', hoje: 'o que tens para fazer hoje: tarefas, hábitos, aulas e treino', ranking: 'compara a tua pontuação com as outras pessoas do Prumo',
+const AREA_HELP = { animes: 'os animes que viste, estás a ver ou queres ver, com nota, resenha e tier list; a temporada e os episódios da semana (começa desligada)', visao: 'o resumo do teu dia e da tua vida num só ecrã (fica sempre)', hoje: 'o que tens para fazer hoje: tarefas, hábitos, aulas e treino', ranking: 'compara a tua pontuação com as outras pessoas do Prumo',
   jornal: 'as notícias do teu país e do mundo, com resumo da IA', futebol: 'as tuas equipas e campeonatos, jogos ao vivo e tabelas', email: 'liga o teu Gmail ou Outlook e a IA resume e organiza os e-mails', calendario: 'a tua agenda, ligada ao Google Calendar e ao iPhone',
   tarefas: 'a lista de coisas por fazer, com datas e prioridades', habitos: 'os hábitos que queres manter e o teu dia por horas', foco: 'um cronómetro para estudar ou trabalhar sem distrações, que dá pontos', projetos: 'projetos maiores divididos em passos', metas: 'os teus objetivos, com o progresso medido pelo que fazes',
   eu: 'o teu perfil, os teus valores e troféus, e a IA a conhecer-te', mundo: 'o mapa dos países e cidades que visitaste e queres visitar', senhas: 'um cofre cifrado para as tuas senhas (só tu o abres)', cozinha: 'a despensa, a lista de compras e receitas com o que tens em casa',
