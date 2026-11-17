@@ -18,6 +18,12 @@
 .mu-mapc{padding-bottom:12px}
 .mu-zc{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px}.mu-zc::-webkit-scrollbar{display:none}.mu-zc .chip{flex:none}
 .mu-map{border-radius:14px;overflow:hidden;border:1px solid var(--line2);background:#05172C}
+.mu-pzm{position:relative;touch-action:pan-y}.mu-pzm.zoomed{touch-action:none}
+.mu-pz{transform-origin:0 0}
+.mu-pzb{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:4px;z-index:2}
+.mu-pzb button{width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(5,23,44,.82);color:#fff;font:700 18px/1 inherit;cursor:pointer;display:grid;place-items:center}
+.mu-pzb button:last-child:nth-child(3){font-size:11px}
+.mu-pzb button:focus-visible{outline:2px solid #fff;outline-offset:1px}
 .mu-svg{display:block;width:100%;height:auto;touch-action:manipulation}
 .mu-eq{stroke:rgba(125,211,252,.16);stroke-dasharray:4 5;fill:none}
 .mu-o{fill:#15304C;stroke:none}

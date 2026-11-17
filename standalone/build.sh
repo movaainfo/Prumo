@@ -23,7 +23,7 @@ cat > "$OUT/index.html" <<HTML
 <html lang="pt">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Prumo</title>
 <meta name="description" content="Prumo — o sistema operativo da tua vida: finanças, estudos, treino, dieta, metas e o jogo Dominus.">
 <meta name="theme-color" content="#070D16">

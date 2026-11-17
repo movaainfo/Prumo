@@ -40,7 +40,7 @@ TITLES.visao = ['Painel', 'Visão geral'];
 function renderTop(cur) {
   const grp = (NAV.find(([, items]) => items.some(([k]) => k === cur)) || [''])[0];
   setH(U.$('#top'), `<button class="icon-btn tn-menu" data-act="navOpen" aria-label="Menu">${UI.ic('menu')}</button>
-  <a class="tn-brand" href="#visao" aria-label="Prumo, Painel">${OS.Lock.logo(28)}${OS.Lock.word(16, '')}</a>
+  <a class="tn-brand" href="#visao" aria-label="Prumo, Painel">${OS.Lock.logo(28)}${OS.Lock.word(16, '')}</a><span class="tn-pt" aria-hidden="true">${esc((TITLES[cur] || [''])[0] || '')}</span>
   <nav class="tn" aria-label="Secções">${navVis().map(([g, items], i) => `<div class="tn-g ${grp === g ? 'cur' : ''}" data-tni="${i}"><button class="tn-b" data-act="tnToggle" aria-haspopup="true">${g === 'Visão geral' ? 'Visão Geral' : g}<svg viewBox="0 0 24 24" class="ic tn-car"><path d="M6 9l6 6 6-6"/></svg></button>
     <div class="tn-dd">${tnLinks(items, cur)}</div></div>`).join('')}
     <div class="tn-g tn-more" hidden><button class="tn-b" data-act="tnToggle" aria-haspopup="true">Mais<svg viewBox="0 0 24 24" class="ic tn-car"><path d="M6 9l6 6 6-6"/></svg></button><div class="tn-dd">${navVis().map(([g, items], i) => `<div class="tn-mg" data-tni="${i}" hidden><small class="tn-mh">${g === 'Visão geral' ? 'Visão Geral' : g}</small>${tnLinks(items, cur)}</div>`).join('')}</div></div></nav>
@@ -62,8 +62,33 @@ const fitNav = () => { const nav = U.$('#top .tn'); if (!nav || !nav.offsetParen
 OS.fitNav = fitNav;
 window.addEventListener('resize', U.deb ? U.deb(fitNav, 120) : fitNav);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitNav);
+/* ---------- telemóvel: barra de baixo (Painel, Hoje, Registar, a IA e Tudo) e o ecrã "Tudo" com todas as áreas em ícones ----------
+   Só aparece nos telemóveis (css/mobile.css, até 640 px); no tablet e no computador fica tudo como estava. */
+const iaName = () => { try { return (OS.one('spyke') || {}).nome || 'Spyke'; } catch (e) { return 'Spyke'; } };
+const MOBG = { 'Visão geral': '#5aa9ff', Execução: '#3ccf86', Eu: '#f2b84b', Fé: '#d9a7ff', Dinheiro: '#2fd3a8', Estudos: '#8c95ff', Corpo: '#ff7a59', Carreira: '#ffb04d', Direção: '#4fd1ff', Empresa: '#c8c8d0', Admin: '#b0b0b8' };
+const MOBQ = [['crown', 'Dominus', '#dominus'], ['zap', 'Modo Comando', 'jvOpen'], ['calc', 'Calculadora', 'calcOpen'], ['focus', 'Modo foco', 'focusStart'], ['settings', 'Definições', '#definicoes'], ['lock', 'Bloquear', 'lockNow']];
+const mobHTML = cur => `<div class="mob-h"><span class="mob-grab" aria-hidden="true"></span><div class="mob-ht"><b>Tudo no Prumo</b><button type="button" class="icon-btn" data-act="mobClose" aria-label="Fechar">${UI.ic('x')}</button></div>
+  <button type="button" class="mob-q" data-act="mobFind">${UI.ic('search')}<span>Procurar uma página ou um registo</span></button></div>
+  <div class="mob-b"><div class="mob-quick">${MOBQ.map(([ic, l, t]) => t[0] === '#' ? `<a class="mob-qa" href="${t}">${UI.ic(ic)}<span>${l}</span></a>` : `<button type="button" class="mob-qa" data-act="mobDo" data-a="${t}">${UI.ic(ic)}<span>${l}</span></button>`).join('')}</div>
+  ${navVis().map(([g, items]) => `<section class="mob-g" style="--g:${MOBG[g] || '#d9b27c'}"><h6>${g === 'Visão geral' ? 'Visão Geral' : esc(g)}</h6><div class="mob-grid">${items.map(([k, l, ic, cnt]) => { let c = null; if (cnt) { try { c = cnt(); } catch (e) { } }
+    return `<a href="#${k}" class="mob-t${cur === k ? ' on' : ''}"><span class="mob-i">${UI.ic(ic)}${c && c[0] ? `<em class="${c[1] === 'neg' ? 'neg' : ''}">${esc(String(c[0]))}</em>` : ''}</span><span class="mob-l">${k === 'mova' ? esc(OS.one('mova').name || 'Mova') : l}</span></a>`; }).join('')}</div></section>`).join('')}</div>`;
+const mobEl = () => { let m = document.getElementById('mob'); if (!m) { m = document.createElement('div'); m.id = 'mob'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'Tudo no Prumo'); m.hidden = true; document.body.appendChild(m); } return m; };
+const curRoute = () => (location.hash.slice(1).split('.')[0] || 'visao');
+A.mobAll = () => { const m = mobEl(); if (!m.hidden) return A.mobClose(); m.innerHTML = mobHTML(curRoute()); m.hidden = false; document.body.classList.add('mob-open'); requestAnimationFrame(() => m.classList.add('on')); const t = U.$('#tabbar [data-act=mobAll]'); if (t) t.classList.add('on'); };
+A.mobClose = () => { const m = document.getElementById('mob'); if (!m || m.hidden) return; m.classList.remove('on'); document.body.classList.remove('mob-open'); m.hidden = true; const t = U.$('#tabbar [data-act=mobAll]'); if (t) t.classList.remove('on'); };
+A.mobFind = () => { A.mobClose(); A.cmdOpen(); };
+A.mobDo = b => { const a = b.dataset.a; A.mobClose(); if (a === 'jvOpen') { if (OS.Jarvis && OS.Jarvis.open) OS.Jarvis.open(true); } else if (a === 'calcOpen') { if (OS.Calc) OS.Calc.open(); } else if (A[a]) A[a](b); };
+window.addEventListener('hashchange', () => A.mobClose());
+document.addEventListener('keydown', e => { if (e.key === 'Escape') A.mobClose(); });
+document.addEventListener('click', e => { if (document.body.classList.contains('mob-open') && !e.target.closest('#mob') && !e.target.closest('#tabbar')) A.mobClose(); });
+// no telemóvel o topo mostra "Prumo" e, quando o título da página sai do ecrã ao descer, passa a mostrar o nome da página
+const tnTitle = () => { const t = document.getElementById('top'); if (!t) return; const h = document.querySelector('#view .phead h1'), show = !h || h.getBoundingClientRect().bottom < t.getBoundingClientRect().bottom + 6; if (t.classList.contains('tn-tt') !== show) t.classList.toggle('tn-tt', show); };
+window.addEventListener('scroll', tnTitle, { passive: true });
 function renderTab(cur) {
-  setH(U.$('#tabbar'), '');
+  const on = k => cur === k ? ' on' : '';
+  setH(U.$('#tabbar'), `<a href="#visao" class="tb-i${on('visao')}" aria-label="Painel">${UI.ic('home')}<span>Painel</span></a><a href="#hoje" class="tb-i${on('hoje')}" aria-label="Hoje">${UI.ic('sun')}<span>Hoje</span></a>
+    <button type="button" class="tb-add" data-act="quickAdd" aria-label="Registar">${UI.ic('plus')}</button>
+    <button type="button" class="tb-i" data-act="spyOpen" aria-label="${esc(iaName())}">${UI.ic('mic')}<span>${esc(iaName())}</span></button><button type="button" class="tb-i" data-act="mobAll" aria-label="Tudo">${UI.ic('grid')}<span>Tudo</span></button>`);
   let fab = document.getElementById('gameFab');
   if (!fab) { fab = document.createElement('a'); fab.id = 'gameFab'; fab.href = '#dominus'; document.body.appendChild(fab); }
   const dom = OS.one('dominus'); let lv = 0, pend = 0; try { if (dom.born) { lv = OS.Dom.level(); pend = OS.Dom.chests() + OS.Dom.news(); } } catch (e) { }
@@ -106,7 +131,7 @@ function render() {
   const a = document.activeElement; let fsel = null, caret = null;
   if (a && a !== document.body && U.$('#view').contains(a)) { for (const at of FOCUS_ATTRS) { const v = a.getAttribute(at); if (v) { fsel = `[${at}="${CSS.escape(v)}"]`; break; } } try { caret = a.selectionStart; } catch (e) { } }
   // a Floresta vive dentro do Bloco de foco (o menu marca o Bloco de foco)
-  try { const nk = cur === 'floresta' ? 'foco' : cur; renderSide(nk); renderTop(nk); fitNav(); renderTab(nk); } catch (e) { console.error(e); }
+  try { const nk = cur === 'floresta' ? 'foco' : cur; renderSide(nk); renderTop(nk); fitNav(); renderTab(nk); setTimeout(tnTitle, 0); } catch (e) { console.error(e); }
   C.reset(); let html;
   try { html = cur === 'definicoes' && OS.settingsView ? OS.Fold.html(OS.settingsView(r.sub), r.sub) : V[cur](r.sub); } catch (e) { console.error(e); html = `<div class="pn"><b>Não foi possível mostrar esta página.</b><p class="mut">${esc(e.message)}</p></div>`; }
   if (OS.aiN) html = OS.aiN(String(html || ''));
@@ -282,3 +307,7 @@ OS.boot(() => { const go = () => OS.Lock.gate(() => { if (U.ls.get('os2startGast
   // a intro ao abrir (js/intro.js) acaba no ecrã de carregamento; só depois entra o ecrã do código
   if (window.PrumoIntro) window.PrumoIntro.wait(go); else go(); });
 })();
+/* sem zoom no app: o iPhone ignora o "user-scalable=no" e faz pinça na mesma; isto trava-a (o mapa do mundo tem a sua própria pinça) */
+['gesturestart', 'gesturechange', 'gestureend'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); }, { passive: false }));
+document.addEventListener('touchmove', e => { if (e.touches && e.touches.length > 1 && !(e.target.closest && e.target.closest('.mu-pzm'))) e.preventDefault(); }, { passive: false });
+

@@ -161,7 +161,29 @@ A.muDoc = b => { const c = b.dataset.c, d = b.dataset.d, L = recOf(c); if (!BY[c
 A.muClear = b => { recOf(b.dataset.c).forEach(r => { if (Array.isArray(r.docs) && r.docs.length) OS.upd('countries', r.id, { status: '' }); else OS.del('countries', r.id); }); UI.closeModal(); };
 A.muEdit = b => { UI.closeModal(); UI.openForm('countries', b.dataset.id); };
 A.muTog = b => { const c = b.dataset.c, v = b.dataset.v, r = mine()[c]; if (r && (r.status === v || (v === 'Visitei' && r.status === 'Morei'))) { recOf(c).forEach(x => { if (Array.isArray(x.docs) && x.docs.length) OS.upd('countries', x.id, { status: '' }); else OS.del('countries', x.id); }); return; } A.muSet(b); };
-A.muZoom = b => OS.setUI('muZ', b.dataset.v);
+A.muZoom = b => { MZ.s = 1; MZ.x = 0; MZ.y = 0; OS.setUI('muZ', b.dataset.v); };
+/* zoom do mapa do mundo (o único sítio do app com zoom): pinça com dois dedos, arrastar com um quando está ampliado,
+   Ctrl + roda ou pinça do trackpad no computador, e os botões + − e "voltar ao normal". Fica ao mudar de ecrã. */
+const MZ = { s: 1, x: 0, y: 0 };
+const pzStyle = () => MZ.s > 1.001 ? `transform:translate(${MZ.x.toFixed(1)}px,${MZ.y.toFixed(1)}px) scale(${MZ.s.toFixed(3)})` : '';
+const mzApply = el => { const pz = el.querySelector('.mu-pz'), z = MZ.s > 1.001; if (pz) pz.style.transform = z ? `translate(${MZ.x}px,${MZ.y}px) scale(${MZ.s})` : ''; el.classList.toggle('zoomed', z);
+  const bx = el.querySelector('.mu-pzb'), r1 = bx && bx.querySelector('[data-d="0"]'); if (bx && z && !r1) bx.insertAdjacentHTML('beforeend', '<button type="button" data-act="muPZ" data-d="0" aria-label="Voltar ao mapa inteiro">1:1</button>'); else if (r1 && !z) r1.remove(); };
+const mzClamp = el => { const w = el.clientWidth, h = el.clientHeight; MZ.s = Math.min(8, Math.max(1, MZ.s)); MZ.x = Math.min(0, Math.max(w - w * MZ.s, MZ.x)); MZ.y = Math.min(0, Math.max(h - h * MZ.s, MZ.y)); if (MZ.s <= 1.001) { MZ.x = 0; MZ.y = 0; } };
+const mzAt = (el, ns, cx, cy) => { const k = Math.min(8, Math.max(1, ns)) / MZ.s; MZ.x = cx - (cx - MZ.x) * k; MZ.y = cy - (cy - MZ.y) * k; MZ.s *= k; mzClamp(el); mzApply(el); };
+const mapEl = t => t && t.closest && t.closest('.mu-map.mu-pzm');
+let T0 = null;
+document.addEventListener('touchstart', e => { const el = mapEl(e.target); if (!el) return; const r = el.getBoundingClientRect();
+  if (e.touches.length === 2) { const a = e.touches[0], b = e.touches[1]; T0 = { el, d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) || 1, s: MZ.s, cx: (a.clientX + b.clientX) / 2 - r.left, cy: (a.clientY + b.clientY) / 2 - r.top, x: MZ.x, y: MZ.y, moved: true }; }
+  else if (e.touches.length === 1 && MZ.s > 1.001) { const t = e.touches[0]; T0 = { el, pan: 1, sx: t.clientX, sy: t.clientY, x: MZ.x, y: MZ.y, moved: false }; } }, { passive: true });
+document.addEventListener('touchmove', e => { if (!T0) return; const el = T0.el, r = el.getBoundingClientRect();
+  if (e.touches.length === 2 && T0.d) { e.preventDefault(); const a = e.touches[0], b = e.touches[1], d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), cx = (a.clientX + b.clientX) / 2 - r.left, cy = (a.clientY + b.clientY) / 2 - r.top;
+    const ns = Math.min(8, Math.max(1, T0.s * d / T0.d)), k = ns / T0.s; MZ.s = ns; MZ.x = cx - (T0.cx - T0.x) * k; MZ.y = cy - (T0.cy - T0.y) * k; mzClamp(el); mzApply(el); }
+  else if (T0.pan && e.touches.length === 1) { const t = e.touches[0], dx = t.clientX - T0.sx, dy = t.clientY - T0.sy; if (Math.abs(dx) + Math.abs(dy) > 6) T0.moved = true; if (T0.moved) { e.preventDefault(); MZ.x = T0.x + dx; MZ.y = T0.y + dy; mzClamp(el); mzApply(el); } } }, { passive: false });
+document.addEventListener('touchend', e => { if (!T0) return; if (T0.moved) T0.el._noClick = Date.now(); if (!e.touches.length || T0.d) T0 = null; }, { passive: true });
+// depois de arrastar ou de fazer pinça, o toque não marca o país por baixo do dedo
+document.addEventListener('click', e => { const el = mapEl(e.target); if (el && el._noClick && Date.now() - el._noClick < 400) { e.stopPropagation(); e.preventDefault(); } }, true);
+document.addEventListener('wheel', e => { const el = mapEl(e.target); if (!el || !e.ctrlKey) return; e.preventDefault(); const r = el.getBoundingClientRect(); mzAt(el, MZ.s * Math.exp(-e.deltaY / 180), e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+A.muPZ = b => { const el = b.closest('.mu-map'); if (!el) return; const d = +b.dataset.d; if (!d) { MZ.s = 1; MZ.x = 0; MZ.y = 0; mzApply(el); return; } mzAt(el, MZ.s * (d > 0 ? 1.6 : 1 / 1.6), el.clientWidth / 2, el.clientHeight / 2); };
 A.muGrp = b => { const g = Object.assign({}, OS.ui.muG || {}), i = b.dataset.i; g[i] = !g[i]; OS.setUI('muG', g); };
 A.muF = b => OS.setUI('muF', b.dataset.v);
 
@@ -195,7 +217,7 @@ V.mundo = () => { const S = stats(), z = OS.ui.muZ != null ? String(OS.ui.muZ) :
       <div class="mu-hem">${S.hem.map(([n, ok]) => `<span class="${ok ? 'on' : ''}">${ok ? '✓' : '○'} Hemisfério ${n}</span>`).join('')}</div></div>
     ${(() => { const [q, who, cap, bk] = verneQ(); return `<button class="mu-vq" data-act="muVq" aria-label="Outra frase de viagem"><q>${esc(q)}</q><small>${esc(who)} · ${bk === 'h' ? `<cite>Odisseia</cite>, Homero, canto ${cap}` : `<cite>A Volta ao Mundo em 80 Dias</cite>, Júlio Verne, cap. ${cap}`}</small></button>`; })()}</section>
   <section class="pn mu-mapc"><div class="mu-zc">${UI.chip('Mundo', 'muZoom', z === '', 'data-v=""')}${CONT.map((n, i) => UI.chip(n, 'muZoom', z === String(i), `data-v="${i}"`)).join('')}${UI.chip('Rota de Phileas Fogg', 'muFogg', OS.ui.muFogg !== false)}${UI.chip('Viagem de Odisseu', 'muOdi', OS.ui.muOdi !== false)}</div>
-    <div class="mu-map">${mapSvg(m, z)}</div>
+    <div class="mu-map mu-pzm${MZ.s > 1.001 ? ' zoomed' : ''}"><div class="mu-pz" style="${pzStyle()}">${mapSvg(m, z)}</div><div class="mu-pzb"><button type="button" data-act="muPZ" data-d="1" aria-label="Aproximar o mapa">+</button><button type="button" data-act="muPZ" data-d="-1" aria-label="Afastar o mapa">−</button>${MZ.s > 1.001 ? '<button type="button" data-act="muPZ" data-d="0" aria-label="Voltar ao mapa inteiro">1:1</button>' : ''}</div></div>
     <div class="mu-leg"><span><i class="v"></i>Visitei</span><span><i class="m"></i>Morei</span><span><i class="w"></i>Quero ir</span><span><i></i>Por conhecer</span>${OS.ui.muFogg !== false ? '<span><i class="fogg"></i>Rota de Phileas Fogg (1872)</span>' : ''}${OS.ui.muOdi !== false ? '<span><i class="odi"></i>Viagem de Odisseu (Odisseia)</span>' : ''}<span class="mut">Toca num país para o marcar.</span></div></section>
   <section class="mu-conts">${S.byC.map(c => `<button class="mu-ct ${z === String(c.i) ? 'on' : ''}" data-act="muZoom" data-v="${c.i}" style="--c:${CCOL[c.i]}"><b>${esc(c.n)}</b><span class="mono">${c.v}/${c.tot}</span>${UI.bar(c.v / c.tot)}<small>${pf(c.v / c.tot * 100)}%</small></button>`).join('')}</section>
   <section class="pn"><div class="pn-h"><h3>${UI.ic('award')}Volta ao mundo</h3><span class="mut">marcos</span></div><div class="mu-mil">${MIL.map(([n, t]) => `<div class="${S.n >= n ? 'on' : ''}"><b class="mono">${n}</b><span>${esc(t)}</span></div>`).join('')}

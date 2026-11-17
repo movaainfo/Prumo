@@ -252,7 +252,7 @@ select option{background:#0D141D}
 
 /* ============ CHARTS ============ */
 .chart{width:100%;position:relative}
-.chart svg{display:block;overflow:visible}
+.chart svg{display:block;overflow:visible;max-width:100%}
 .chart .gl{stroke:var(--line);stroke-width:1}
 .chart .gl0{stroke:var(--line3);stroke-width:1}
 .chart .tgt{stroke:var(--warn);stroke-dasharray:4 4;stroke-width:1.2}
@@ -619,3 +619,6 @@ select option{background:#0D141D}
 .mt-card .gp small{font-size:11.5px}
 .cap-row{padding:2px 0}.cap-why{display:block;margin:-2px 0 6px 172px;font-size:11.5px}
 @media (max-width:620px){.cap-why{margin-left:0}}
+/* sem zoom no app (pinça e duplo toque); só o mapa do mundo tem o seu (js/mundo.js) */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{touch-action:pan-x pan-y}
