@@ -755,9 +755,14 @@ async function sharedTests(b) {
     // ESTUDOS: CURSOS, CERTIFICAÇÕES, LEITURAS
     await ctx.route(/googleapis\.com\/books/, rt => rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ items: [{ id: 'g1', volumeInfo: { title: 'O Pequeno Príncipe', authors: ['Antoine de Saint-Exupéry'], publishedDate: '2015', pageCount: 96, categories: ['Juvenile Fiction'], description: 'Um piloto.' } }] }) }));
     await ctx.route(/openlibrary\.org\/search/, rt => rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ docs: [{ key: '/w/2', title: 'Dom Casmurro', author_name: ['Machado de Assis'], number_of_pages_median: 256 }] }) }));
+    const KAG = { id: 86635, title: { romaji: 'Kaguya-sama wa Kokurasetai', english: 'Kaguya-sama: Love is War', native: 'かぐや様は告らせたい' }, format: 'MANGA', volumes: 28, startDate: { year: 2015 }, coverImage: { large: 'https://s4.anilist.co/m/86635.jpg' }, genres: ['Comedy', 'Romance'], averageScore: 85, staff: { edges: [{ role: 'Story & Art', node: { name: { full: 'Aka Akasaka' } } }, { role: 'Translator (English)', node: { name: { full: 'Tradutor X' } } }] }, description: 'Two geniuses.' };
+    await ctx.route(/graphql\.anilist\.co/, rt => { const q = ((JSON.parse(rt.request().postData() || '{}').variables || {}).q || '').toLowerCase(); rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ data: { Page: { media: /kaguya/.test(q) ? [KAG] : [] } } }) }); });
     await E(p, () => { location.hash = 'leituras.buscar'; }); await sleep(300); await p.fill('#view [data-form=bkSearch] input', 'pequeno principe'); await p.press('#view [data-form=bkSearch] input', 'Enter'); await sleep(700);
     await p.click('#view .bk-r >> nth=0 >> [data-act=bkAdd][data-s=Lido]'); await sleep(200); await p.click('#view .bk-r >> nth=1 >> [data-act=bkAdd][data-own="1"]'); await sleep(200);
     ok('leituras: pesquisar livro e marcar já li / tenho na estante', await E(p, () => { const a = OS.all('books').find(x => x.title === 'O Pequeno Príncipe'), b = OS.all('books').find(x => x.title === 'Dom Casmurro'); return a && a.status === 'Lido' && a.pages === 96 && a.cats.includes('Infantojuvenil') && b && b.own === 'Tenho'; }));
+    await p.fill('#view [data-form=bkSearch] input', 'kaguya sama'); await p.press('#view [data-form=bkSearch] input', 'Enter'); await sleep(700);
+    const kg = await E(p, () => { const r = document.querySelector('#view .bk-r'); return r ? r.innerText.replace(/\s+/g, ' ') : ''; });
+    ok('leituras: também mangás (AniList), à frente das edições noutra língua, com autor e volumes', /Kaguya-sama: Love is War/.test(kg) && /Mangá/.test(kg) && /Aka Akasaka/.test(kg) && !/Tradutor X/.test(kg) && /28 volumes/.test(kg) && /HQ \/ Mangá/.test(kg), kg.slice(0, 200));
     await E(p, () => { OS.ui.bk = OS.all('books').find(x => x.title === 'O Pequeno Príncipe').id; location.hash = 'leituras.livro'; }); await sleep(300); await p.fill('#bkRev', 'Resenha de teste.'); await p.press('#bkRev', 'Tab'); await sleep(200);
     await E(p, () => { location.hash = 'leituras.desafios'; }); await sleep(300); await p.click('#view [data-act=chNew][data-i="3"]'); await sleep(300);
     ok('leituras: resenha e desafio literário que conta o livro lido', await E(p, () => OS.all('books').find(x => x.title === 'O Pequeno Príncipe').review === 'Resenha de teste.' && /1 de 12 cumpridos/.test(document.querySelector('#view').textContent)));
@@ -2595,6 +2600,8 @@ async function futebolTests(b) { cur = 'Futebol'; console.log('\n=== Visão Gera
 // fotografias do app no telemóvel (para rever o layout): TELSHOTS=rota1,rota2 escolhe as páginas
 async function telShots(b) { cur = 'Telemóvel'; const SH = process.env.SHOTS || ''; if (!SH) return; const { ctx, p, errs } = await newPage(b, PROFILES[0]); await p.goto(BASE); await unlock(p); await sleep(800);
   const R = (process.env.TELSHOTS || 'visao,hoje,financas,treino,eu,tarefas,definicoes').split(',');
+  if (process.env.TELPRE) { await p.evaluate(process.env.TELPRE); await sleep(400); }
+  if (process.env.TELEVAL) { const R0 = (process.env.TELSHOTS || '').split(',')[0]; if (R0) { await E(p, r => { location.hash = r; }, R0); await sleep(1500); } console.log('TELEVAL', JSON.stringify(await p.evaluate(process.env.TELEVAL))); }
   for (const r of R) { await E(p, r => { location.hash = r; }, r); await sleep(1500); await p.screenshot({ path: SH + '/tel-' + r.replace(/\W/g, '_') + '.png' }); await p.screenshot({ path: SH + '/tel-' + r.replace(/\W/g, '_') + '-full.png', fullPage: true }); }
   await E(p, () => { location.hash = 'visao'; }); await sleep(800); const mb = await p.$('#tabbar [data-act=mobAll]'); if (mb && await mb.isVisible()) { await mb.click(); await sleep(600); await p.screenshot({ path: SH + '/tel-tudo.png' }); await E(p, () => { const b = document.querySelector('#mob .mob-b'); if (b) b.scrollTop = 900; }); await sleep(200); await p.screenshot({ path: SH + '/tel-tudo2.png' }); await E(p, () => OS.act.mobClose()); }
   ok('Telemóvel: fotografias tiradas', true, R.join(',')); await ctx.close(); }
@@ -2610,6 +2617,7 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
   const Q = { calls: [], down: false };
   if (!LIVE) {
     await ctx.route(/s4\.anilist\.co|cdn\.myanimelist\.net/, rt => rt.fulfill({ status: 200, contentType: 'image/png', body: PNG }));
+    await ctx.route(/translate\.googleapis\.com/, rt => { const q = new URL(rt.request().url()).searchParams.get('q') || ''; rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify([[['PT: ' + q, q]], null, 'en']) }); });
     await ctx.route(/graphql\.anilist\.co/, rt => { let j = {}; try { j = JSON.parse(rt.request().postData() || '{}'); } catch (e) { } const q = j.query || '', v = j.variables || {}; Q.calls.push(q.slice(0, 120) + ' ' + JSON.stringify(v));
       const J = o => rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ data: o }) });
       if (Q.down) return rt.fulfill({ status: 500, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: '{"errors":[{"message":"down"}]}' });
@@ -2653,6 +2661,7 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
   await p.click('#view .an-grid .an-pc'); await p.waitForFunction(() => /Sinopse/.test((document.querySelector('#view .an') || {}).innerText || ''), null, { timeout: 15000 }).catch(() => { }); await sleep(300);
   const dt = await E(p, () => ({ t: document.querySelector('#view .an').innerText.replace(/\s+/g, ' '), where: [...document.querySelectorAll('#view .an-where a')].map(a => a.innerText + ' ' + a.href) }));
   ok('Animes › Detalhe: título, nota, ranking, géneros em português, sinopse e onde ver (só streaming)', /Frieren/.test(dt.t) && (LIVE ? /\d,\d nota da comunidade/.test(dt.t) && /\.º mais bem avaliado/.test(dt.t) && /Sinopse/.test(dt.t) && dt.where.length >= 1 : /9,1/.test(dt.t) && /1\.º mais bem avaliado de sempre/.test(dt.t) && /A young elf mage reflects/.test(dt.t) && dt.where.length === 1 && /Crunchyroll/.test(dt.where[0])) && /Aventura/.test(dt.t) && /Fantasia/.test(dt.t), JSON.stringify(dt).slice(0, 500));
+  if (!LIVE) ok('Animes › Detalhe: a sinopse aparece traduzida sozinha (grátis, com "Ver o original")', await p.waitForFunction(() => { const t = (document.querySelector('#view .an-syn') || {}).innerText || ''; return /PT: A young elf mage/.test(t) && /Tradução automática/.test(t) && /Ver o original/.test(t); }, null, { timeout: 6000 }).then(() => true).catch(() => false));
   ok('Animes › Detalhe: sequela na mesma história (sem a manga) e recomendações', /Da mesma história/.test(dt.t) && (LIVE || (/Frieren Season 2/.test(dt.t) && !/Manga/.test(dt.t))) && /Sequela/.test(dt.t) && /Se gostaste, vê também/.test(dt.t));
   if (SH) await p.screenshot({ path: SH + '/an-detalhe.png', fullPage: true });
   if (!LIVE) { await p.waitForFunction(() => /Yuusha/.test((document.querySelector('#view .an') || {}).innerText || ''), null, { timeout: 8000 }).catch(() => { });
@@ -2663,6 +2672,9 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
     ok('Animes › Detalhe: tocar no episódio 2 marca que viste até lá', await E(p, () => OS.all('animes')[0].ep === 2 && !!document.querySelector('#view .an-ec.seen'))); await p.click('#view .an-ec:nth-child(2) .an-eci'); await p.click('#view .an-ec:nth-child(1) .an-eci'); await sleep(200); }
   let a1 = await E(p, () => OS.all('animes')[0]);
   ok('Animes: "Estou a ver" junta à lista com o episódio 0 e a data de começo', a1 && a1.status === 'A ver' && a1.ep === 0 && a1.start === await E(p, () => OS.U.today()) && a1.eps === 28, JSON.stringify(a1 || {}).slice(0, 200));
+  await p.click('#view .an-stb.s-ver'); await sleep(300); const gone = await E(p, () => !OS.all('animes').length && !document.querySelector('#view .an-stb.on'));
+  await p.click('#view .an-stb.s-ver'); await sleep(300);
+  ok('Animes: tocar outra vez no estado marcado tira da lista (e tocar de novo volta a juntar)', gone && await E(p, () => OS.all('animes').length === 1 && OS.all('animes')[0].status === 'A ver')); a1 = await E(p, () => OS.all('animes')[0]);
   await p.click('#view .an-eps2 [data-d="1"]'); await p.click('#view .an-eps2 [data-d="1"]'); await sleep(200);
   await p.click('#view .an-nb [data-v="9"]'); await sleep(150); await p.click('#view [data-act=anFav]'); await sleep(150);
   await p.fill('#view .an-rev textarea', 'A melhor fantasia dos últimos anos.'); await p.click('#view .an-rev button'); await sleep(200);

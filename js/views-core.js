@@ -391,7 +391,7 @@ A.focusStart = b => {
     <div class="fld"><label for="fsubj">Registar como estudo de</label><select id="fsubj"><option value="">Não registar como estudo</option>${St.current().map(s => `<option value="${s.id}"${s.id === subject ? ' selected' : ''}>${esc(s.name)}</option>`).join('')}${OS.all('skills').map(s => `<option value="sk:${s.id}">Competência · ${esc(s.name)}</option>`).join('')}</select></div>
     <label class="switch"><input type="checkbox" id="fphone" checked><span></span>Telemóvel noutra divisão</label>
     <div class="note">Antes: abre só o material da sessão e escreve "No fim desta sessão eu vou conseguir…". Distrações vão para um papel.</div>
-    <a class="btn ghost sm" href="#foco" data-close style="margin-top:10px">${UI.ic('lock')}Bloco de foco: várias pendências seguidas, saída com Face ID</a></div>
+    <a class="fo-lock" href="#foco" data-close>${UI.ic('lock')}<span><b>Bloco de foco</b><small>Várias pendências seguidas, saída com Face ID</small></span>${UI.ic('right')}</a></div>
     <div class="drw-f"><span></span><button class="btn pri" data-act="focusGo" data-task="${task ? task.id : ''}" data-label="${esc(label)}">${UI.ic('play')}Começar</button></div>`;
   UI.drawer(html);
 };

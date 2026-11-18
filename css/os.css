@@ -622,3 +622,8 @@ select option{background:#0D141D}
 /* sem zoom no app (pinça e duplo toque); só o mapa do mundo tem o seu (js/mundo.js) */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{touch-action:pan-x pan-y}
+/* modo foco: atalho para o Bloco de foco */
+.fo-lock{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line2);border-radius:var(--r2);color:var(--tx);text-decoration:none;background:var(--pn2,rgba(255,255,255,.03))}
+.fo-lock>.ic{flex:none;width:20px;height:20px;color:var(--accent)}.fo-lock>.ic:last-child{width:16px;height:16px;color:var(--tx2);opacity:.7}
+.fo-lock span{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}.fo-lock b{font-size:14px;font-weight:600}.fo-lock small{font-size:12.5px;color:var(--tx2)}
+.fo-lock:hover{border-color:var(--accent)}

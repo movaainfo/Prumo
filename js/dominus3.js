@@ -1406,12 +1406,14 @@ const born = () => { const s = S(), st = D.state();
 const mig4 = () => { const s = S(); if (s.v4) return; s.v4 = 1; Object.values(s.boss || {}).forEach(b => { if (b && b.hp && b.hp < 3000) b.hp *= 10; }); try { const st = D.state(); s.opened = Math.min(s.opened || 0, st.H.l); seeClass(st); s.seen = snap(st); } catch (e) { } qsave(); };
 V.dominus = sub => { const s = S(); if (!s.born) return born(); mig4();
   const st = D.state(), key = sub === 'codex' ? 'marcos' : TABS.some(t => t[0] === sub) ? sub : '', ch = D.chests(), M = D.missions(), mleft = M.dl.filter(m => !m.ok).length, bf = D.bossFight();
-  setTimeout(D.check, 250);
+  setTimeout(D.check, 250); d3Center();
   const badge = k => k === 'baus' && ch ? `<span class="n">${ch}</span>` : k === 'missoes' && mleft ? `<span class="n dim">${mleft}</span>` : k === 'chefe' && bf.dead ? '<span class="n ok">✓</span>' : '';
   // menu de jogo (v3.9): o ecrã atual em destaque, setas para o anterior e o seguinte e uma fila de medalhões só com ícones
   const at = Math.max(0, TABS.findIndex(t => t[0] === key)), cur = TABS[at], pv = TABS[(at + TABS.length - 1) % TABS.length], nx = TABS[(at + 1) % TABS.length], hr = k => '#dominus' + (k ? '.' + k : '');
   return `<div class="dom d3"><nav class="d3-nav" aria-label="Ecrãs do Dominus"><div class="d3-navh"><a class="d3-arr" href="${hr(pv[0])}" aria-label="Anterior: ${pv[1]}" title="${pv[1]}">${ic('left')}</a><div class="d3-navt"><span class="d3-navi">${ic(cur[2])}</span><div><b>${cur[1]}</b><small>${esc(TDESC[cur[0]] || '')}</small></div></div><a class="d3-arr" href="${hr(nx[0])}" aria-label="Seguinte: ${nx[1]}" title="${nx[1]}">${ic('right')}</a></div>
-    <div class="dtabs d3-tabs">${TABS.map(([k, l, i]) => `<a href="${hr(k)}" class="${key === k ? 'on' : ''}" aria-label="${l}" title="${l}" ${key === k ? 'aria-current="page"' : ''}>${ic(i)}${badge(k)}</a>`).join('')}</div></nav>${T[key || 'heroi'](st)}</div>`; };
+    <div class="dtabs d3-tabs">${TABS.map(([k, l, i]) => `<a href="${hr(k)}" class="${key === k ? 'on' : ''}" aria-label="${l}" title="${l}" ${key === k ? 'aria-current="page"' : ''}>${ic(i)}<span class="d3-tl">${l}</span>${badge(k)}</a>`).join('')}</div></nav>${T[key || 'heroi'](st)}</div>`; };
+// no telemóvel os ecrãs são uma fila de separadores com o nome: o atual fica à vista
+const d3Center = () => setTimeout(() => { const t = document.querySelector('#view .d3-tabs'), a = t && t.querySelector('a.on'); if (a && t.scrollWidth > t.clientWidth) t.scrollLeft = a.offsetLeft - (t.clientWidth - a.offsetWidth) / 2; }, 0);
 
 /* ================= AÇÕES ================= */
 OS.forms.d3Born = (f, v) => { const s = S(); s.name = v('n').slice(0, 24); s.born = today(); const st = D.state(); s.seen = snap(st); save(); OS.request();

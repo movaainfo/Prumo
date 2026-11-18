@@ -37,6 +37,30 @@
   .fo-float{bottom:calc(var(--tbh) + 16px + env(safe-area-inset-bottom,0px))}
   .f-up{bottom:calc(var(--tbh) + 70px + env(safe-area-inset-bottom,0px))}
   #spMini{bottom:calc(var(--tbh) + 12px + env(safe-area-inset-bottom,0px))}
+  /* Animes: sem o cabeçalho da página (como na Crunchyroll, o destaque é o topo; Pesquisar é o 2.º separador) */
+  #view:has(> .an) > .phead{display:none}
+  /* Dominus: os ecrãs numa fila de separadores com o nome (como no resto do app), presa no topo; sem o cartão grande com setas */
+  .d3 .d3-nav{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:25;margin:-6px calc((100% - 100vw) / 2) 0;padding:8px 0 10px;gap:0;border:0;border-radius:0;background:var(--bg);box-shadow:none}
+  .d3 .d3-navh{display:none}
+  .d3 .d3-nav .d3-tabs{justify-content:flex-start;gap:6px;padding:0 16px;-webkit-mask-image:none;mask-image:none}
+  html .d3 .d3-nav .d3-tabs a{width:auto;height:auto;flex:none;display:inline-flex;flex-direction:row;align-items:center;gap:7px;padding:8px 14px 8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--pn);color:var(--tx2);font:600 13.5px/1.2 var(--sans);letter-spacing:0;text-transform:none;white-space:nowrap}
+  html .d3 .d3-nav .d3-tabs a .ic{width:16px;height:16px;filter:none;color:inherit}
+  html .d3 .d3-nav .d3-tabs a.on{background:var(--tx);border:1px solid var(--tx);color:var(--bg);box-shadow:none}
+  html .d3 .d3-nav .d3-tabs a .n{position:static;margin:0 0 0 2px}
+  html .d3 .d3-hero .d3-cardw{width:min(260px,68vw)}
+  html .d3 .d3-hero{gap:16px}
+  .d3 .d3-tl{display:inline}
+  /* janelas (formulários, modo foco, decisões): folha que sobe de baixo, com a altura do que tem e sem ficar debaixo do relógio */
+  #drawer .drw{top:auto;left:0;right:0;bottom:0;width:100%;max-height:calc(100% - env(safe-area-inset-top,0px) - 14px);border:0;border-top:1px solid var(--line2);border-radius:22px 22px 0 0;box-shadow:0 -14px 40px rgba(0,0,0,.45);animation:mobSheet .24s cubic-bezier(.2,.8,.2,1)}
+  #drawer .drw>.form{flex:1 1 auto;min-height:0;height:auto}
+  #drawer .drw-b{flex:1 1 auto;min-height:0;padding:16px 18px 20px}
+  #drawer .drw-h{position:relative;padding:24px 18px 12px}
+  #drawer .drw-h::before{content:"";position:absolute;top:9px;left:50%;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:var(--line2)}
+  #drawer .drw-f{padding:12px 18px calc(14px + env(safe-area-inset-bottom,0px))}
+  #drawer .drw-f .btn.pri{min-height:48px;padding:12px 24px}
+  #drawer .drw-b .seg{display:flex;width:100%}#drawer .drw-b .seg button{flex:1;justify-content:center;text-align:center}
+  #drawer .drw-f>span:first-child:empty+.btn.pri{flex:1;justify-content:center}
+  #drawer .drw-f>span:first-child:empty{display:none}
   /* cabeçalho das páginas: mais baixo, a descrição em duas linhas */
   .phead{flex-direction:column;align-items:stretch;gap:12px}
   .phead h1{font-size:32px}
@@ -44,7 +68,7 @@
   .phead-a{gap:8px}
   .phead-a .btn{min-height:42px}
   /* separadores: pílulas que deslizam, presas por baixo do topo */
-  .tabs{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:25;gap:6px;margin:-6px -14px 0;padding:8px 14px 10px;background:var(--bg);border-bottom:0;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  .tabs{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:25;gap:6px;margin:-6px calc((100% - 100vw) / 2) 0;padding:8px 16px 10px;scroll-padding:0 16px;background:var(--bg);border-bottom:0;}
   .tabs a{flex:none;padding:8px 15px;border-radius:999px;border:1px solid var(--line);background:var(--pn);font-size:13.5px;font-weight:600;margin:0}
   .tabs a.on{background:var(--tx);border-color:var(--tx);color:var(--bg)}
   .tabs a.on,.tabs a{border-bottom-width:1px}
@@ -80,5 +104,6 @@
   .mob-l{font-size:11.5px;line-height:1.2;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 }
 @keyframes tnIn{from{opacity:0;transform:translateY(4px)}}
+@keyframes mobSheet{from{transform:translateY(60px);opacity:.5}to{transform:none;opacity:1}}
 @media (max-width:640px) and (prefers-reduced-motion:reduce){#mob{transition:none}.tn-pt{animation:none}}
 html.lite-x #mob{transition:none}
