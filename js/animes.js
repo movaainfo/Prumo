@@ -270,11 +270,10 @@ V.animes = sub => { const k = sub === 'anime' ? 'anime' : P[sub || ''] ? (sub ||
 
 /* destaque em carrossel (muda sozinho; pára quando tocas ou passas o rato; sem animação para quem a desliga) */
 let HI = 0;
-const GIF0 = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 // no telemóvel a capa (vertical), no computador o banner; a imagem que não se vê nunca é descarregada
-const heroImg = (x, i) => { const mob = x.img || x.ban, desk = x.ban || x.img;
-  const po = x.img ? `<picture><source media="(max-width:640px)" srcset="${GIF0}"><img class="an-hpo" src="${esc(x.img)}" alt="" decoding="async" referrerpolicy="no-referrer"${i ? ' loading="lazy"' : ''}></picture>` : '';
-  return `<div class="an-hpic">${mob ? `<picture><source media="(max-width:640px)" srcset="${esc(mob)}"><img class="an-hb${x.ban ? '' : ' an-hbc'}" src="${esc(desk)}" alt="" decoding="async" referrerpolicy="no-referrer"${i ? ' loading="lazy"' : ' fetchpriority="high"'}></picture>` : '<div class="an-hb an-hb0"></div>'}<div class="an-hg"></div>${po}<button type="button" class="an-hopen" data-act="anOpen" data-k="${esc(kOf(x))}" tabindex="-1" aria-label="${esc(x.t)}: ver detalhes"></button></div>`; };
+// o fundo do destaque é sempre a arte do anime (a capa): há banners que são só uma textura ou uma cor
+const heroImg = (x, i) => { const im = x.img || x.ban;
+  return `<div class="an-hpic">${im ? `<img class="an-hb an-hbc" src="${esc(im)}" alt="" decoding="async" referrerpolicy="no-referrer"${i ? ' loading="lazy"' : ' fetchpriority="high"'}>` : '<div class="an-hb an-hb0"></div>'}<div class="an-hg"></div><button type="button" class="an-hopen" data-act="anOpen" data-k="${esc(kOf(x))}" tabindex="-1" aria-label="${esc(x.t)}: ver detalhes"></button></div>`; };
 // estado na lista (tocar outra vez tira): no telemóvel só o ícone, ao lado do botão laranja
 const bmBtn = (x, m) => `<button type="button" class="btn an-ghost an-bm${m ? ' on' : ''}" data-act="anSet" data-k="${esc(kOf(x))}" data-s="${m ? esc(m.status) : 'Quero ver'}" aria-pressed="${!!m}" title="${m ? esc(m.status) + ': toca para tirar da lista' : 'Quero ver'}">${UI.ic(m ? 'check' : 'mark')}<span class="an-bmt">${m ? esc(m.status) : 'Quero ver'}</span></button>`;
 const heroSlides = L => L.map((x, i) => { x = keep(x); const m = mine(x), nt = nextT(x), ds = x.desc ? autoTr(x.desc) : '';
