@@ -2598,7 +2598,7 @@ async function futebolTests(b) { cur = 'Futebol'; console.log('\n=== Visão Gera
   ok('Futebol: sem erros na consola', !errs.length, errs.slice(0, 3).join(' | '));
   await ctx.close(); }
 // fotografias do app no telemóvel (para rever o layout): TELSHOTS=rota1,rota2 escolhe as páginas
-async function telShots(b) { cur = 'Telemóvel'; const SH = process.env.SHOTS || ''; if (!SH) return; const { ctx, p, errs } = await newPage(b, PROFILES[0]); await p.goto(BASE); await unlock(p); await sleep(800);
+async function telShots(b) { cur = 'Telemóvel'; const SH = process.env.SHOTS || ''; if (!SH) return; const { ctx, p, errs } = await newPage(b, PROFILES[+process.env.TELPROF || 0]); await p.goto(BASE); await unlock(p); await sleep(800);
   const R = (process.env.TELSHOTS || 'visao,hoje,financas,treino,eu,tarefas,definicoes').split(',');
   if (process.env.TELPRE) { await p.evaluate(process.env.TELPRE); await sleep(400); }
   if (process.env.TELEVAL) { const R0 = (process.env.TELSHOTS || '').split(',')[0]; if (R0) { await E(p, r => { location.hash = r; }, R0); await sleep(1500); } console.log('TELEVAL', JSON.stringify(await p.evaluate(process.env.TELEVAL))); }
