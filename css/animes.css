@@ -385,9 +385,9 @@
 html.lite-x .an-ov{transition:none}html.lite-x .an-dots button.on::after{animation:none}
 @media (max-width:520px){.an-epg{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px}.an-ec b{font-size:12.5px}}
 .an-lnk{border:0;background:none;padding:0;font:inherit;color:var(--an-or);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-/* destaque no computador e tablet: a arte do anime de fundo, do lado direito, a desvanecer para o texto; cartões largos com a capa por cima do banner */
-@media (min-width:641px){.an-hero .an-hb{left:auto;right:0;width:66%;object-position:center 22%;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 38%);mask-image:linear-gradient(90deg,transparent 0%,#000 38%)}
-  .an-hero .an-hg{background:linear-gradient(90deg,#000 0%,rgba(0,0,0,.85) 30%,rgba(0,0,0,.25) 60%,transparent 80%),linear-gradient(0deg,#000 0%,rgba(0,0,0,.35) 22%,transparent 45%)}
+/* destaque no computador e tablet: a arte do anime preenche o destaque todo; escurece só à esquerda, onde está o texto. Cartões largos com a capa por cima do banner */
+@media (min-width:641px){.an-hero .an-hb{inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}.an-hero .an-hbc{object-position:center 18%}
+  .an-hero .an-hg{background:linear-gradient(90deg,rgba(0,0,0,.9) 0%,rgba(0,0,0,.7) 30%,rgba(0,0,0,.2) 62%,transparent 85%),linear-gradient(0deg,#000 0%,rgba(0,0,0,.35) 22%,transparent 45%)}
   .an-hero .an-ht{max-width:min(600px,58%)}}
 .an-wci .an-wcs{object-position:center 22%}
 .an-wcp{position:absolute;left:10px;bottom:10px;height:72%;width:auto;aspect-ratio:2/3;object-fit:cover;border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.1)}

@@ -161,12 +161,15 @@ A.anRetry = b => { delete TRY[b.dataset.k]; delete ERR[b.dataset.k]; delete DATA
 
 /* ---------- peças do ecrã ---------- */
 // tamanho certo de cada imagem: a maior (até 600 KB) só no destaque e na página do anime; nos cartões a de ~230 px (5 a 10× mais leve)
-const imgS = (u, sz) => { u = String(u || ''); const s = sz === 's';
+const imgS = (u, sz) => { u = String(u || ''); const s = sz === 's'; if (sz === 'l') return u;
   if (/s4\.anilist\.co\/.*\/cover\/large\//.test(u)) return u.replace('/cover/large/', s ? '/cover/small/' : '/cover/medium/');
   if (/kitsu\.(app|io)\/.*poster_images\/\d+\/(large|medium|original)\./.test(u)) return u.replace(/\/(large|medium|original)\./, s ? '/tiny.' : '/small.');
   if (/cdn\.myanimelist\.net\/images\/anime\/\d+\/\d+l\.(jpg|webp)/.test(u)) return u.replace(/(\d+)l\.(jpg|webp)/, '$1.$2');
   return u; };
-const cover = (x, cls) => x.img ? `<img class="an-img ${cls || ''}" src="${esc(/an-dp/.test(cls || '') ? x.img : imgS(x.img, /\bxs\b/.test(cls || '') ? 's' : 'm'))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<span class="an-img an-img0 ${cls || ''}" aria-hidden="true">${esc(String(x.t || '?').slice(0, 2).toUpperCase())}</span>`;
+// pósteres: a versão de ~230 px e a de ~460 px; o ecrã escolhe (nítido no tablet e no iPhone, leve onde chega a pequena)
+const srcset = u => { const m = imgS(u, 'm'); return m && m !== u ? ` srcset="${esc(m)} 230w, ${esc(u)} 460w"` : ''; };
+const SIZES = ' sizes="(max-width:520px) 42vw, (max-width:860px) 24vw, 190px"';
+const cover = (x, cls) => x.img ? `<img class="an-img ${cls || ''}" src="${esc(/an-dp|\blg\b/.test(cls || '') ? x.img : imgS(x.img, /\bxs\b/.test(cls || '') ? 's' : 'm'))}"${cls ? '' : srcset(x.img) + SIZES} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<span class="an-img an-img0 ${cls || ''}" aria-hidden="true">${esc(String(x.t || '?').slice(0, 2).toUpperCase())}</span>`;
 const colOf = x => /^#[0-9a-f]{6}$/i.test(x.col || '') ? x.col : '#ff640a';
 const subOf = x => [fmtN(x.fmt), x.eps ? x.eps + (x.eps === 1 ? ' episódio' : ' episódios') : '', x.y || ''].filter(Boolean).join(' · ');
 const poster = (x, o) => { o = o || {}; x = keep(x); const m = mine(x), k = kOf(x), p = m && m.status === 'A ver' && (m.eps || x.eps) ? Math.min(100, Math.round((m.ep || 0) / (m.eps || x.eps) * 100)) : 0;
@@ -176,7 +179,7 @@ const poster = (x, o) => { o = o || {}; x = keep(x); const m = mine(x), k = kOf(
     <b>${esc(x.t)}</b><small>${esc(o.sub != null ? o.sub : subOf(x))}</small></button>`; };
 // cartão largo (16:9): continuar a ver e novos episódios
 // cartão largo: o banner de fundo e a capa por cima (há banners que são só uma textura ou cor; a capa mostra sempre o anime)
-const wide = (x, o) => { x = keep(x); const img = o.img || x.ban || imgS(x.img, 'm'), pc = !o.img && x.img ? imgS(x.img, 'm') : '';
+const wide = (x, o) => { x = keep(x); const bn = x.ban && !banBad(x.ban) ? x.ban : '', img = o.img || bn || imgS(x.img, 'l'), pc = !o.img && bn && x.img ? imgS(x.img, 'm') : '';
   return `<div class="an-wc" style="--c:${colOf(x)}"><button type="button" class="an-wci${pc ? ' pc' : ''}" data-act="anOpen" data-k="${esc(kOf(x))}" aria-label="${esc(x.t)}">${img ? `<img src="${esc(img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"${img === pc ? ' class="an-wcs"' : ''}>` : ''}<span class="an-wcg"></span>${pc ? `<img class="an-wcp" src="${esc(pc)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : ''}${o.badge ? `<span class="an-wcb">${esc(o.badge)}</span>` : ''}${o.p != null ? `<span class="an-pg"><i style="width:${o.p}%"></i></span>` : ''}</button>
     <div class="an-wct"><b class="click" data-act="anOpen" data-k="${esc(kOf(x))}">${esc(x.t)}</b><small>${esc(o.sub || '')}</small></div>${o.act || ''}</div>`; };
 const row = (title, list, o) => { o = o || {}; if (!list || !list.length) return ''; return `<section class="an-row${o.wide ? ' wd' : ''}"><div class="an-rh"><h3>${title}</h3>${o.more ? `<a class="an-more" href="${o.more}">Ver tudo</a>` : ''}<span class="an-arr"><button type="button" class="icon-btn" data-act="anScroll" data-d="-1" aria-label="Para trás">${UI.ic('left')}</button><button type="button" class="icon-btn" data-act="anScroll" data-d="1" aria-label="Para a frente">${UI.ic('right')}</button></span></div>
@@ -271,9 +274,20 @@ V.animes = sub => { const k = sub === 'anime' ? 'anime' : P[sub || ''] ? (sub ||
 /* destaque em carrossel (muda sozinho; pára quando tocas ou passas o rato; sem animação para quem a desliga) */
 let HI = 0;
 // no telemóvel a capa (vertical), no computador o banner; a imagem que não se vê nunca é descarregada
-// o fundo do destaque é sempre a arte do anime (a capa): há banners que são só uma textura ou uma cor
-const heroImg = (x, i) => { const im = x.img || x.ban;
-  return `<div class="an-hpic">${im ? `<img class="an-hb an-hbc" src="${esc(im)}" alt="" decoding="async" referrerpolicy="no-referrer"${i ? ' loading="lazy"' : ' fetchpriority="high"'}>` : '<div class="an-hb an-hb0"></div>'}<div class="an-hg"></div><button type="button" class="an-hopen" data-act="anOpen" data-k="${esc(kOf(x))}" tabindex="-1" aria-label="${esc(x.t)}: ver detalhes"></button></div>`; };
+// fundo do destaque, de ponta a ponta: no telemóvel a capa (vertical); no tablet e no computador o banner (largo e nítido).
+// Há banners que são só uma textura ou uma cor desfocada: o app mede a nitidez uma vez (guardada no aparelho) e, nesses, usa a capa.
+const BANK = 'oc_an_ban', BANQ = U.ls.get(BANK, {}) || {}, BANP = new Set();
+const banBad = u => BANQ[u] === 1;
+const banCheck = u => { if (!u || u in BANQ || BANP.has(u) || !(window.matchMedia && matchMedia('(min-width:641px)').matches)) return; BANP.add(u);
+  const im = new Image(); im.crossOrigin = 'anonymous'; im.decoding = 'async';
+  im.onload = () => { try { const W = 240, H = 50, c = document.createElement('canvas'); c.width = W; c.height = H; const g2 = c.getContext('2d', { willReadFrequently: true }); g2.drawImage(im, 0, 0, W, H);
+      const px = g2.getImageData(0, 0, W, H).data, g = new Float32Array(W * H); let m = 0; for (let i = 0; i < W * H; i++) { g[i] = .299 * px[i * 4] + .587 * px[i * 4 + 1] + .114 * px[i * 4 + 2]; m += g[i]; } m /= W * H;
+      let e = 0, n = 0, v = 0; for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) { const i = y * W + x; e += Math.abs(4 * g[i] - g[i - 1] - g[i + 1] - g[i - W] - g[i + W]); n++; }
+      for (let i = 0; i < W * H; i++) v += (g[i] - m) * (g[i] - m); const sd = Math.sqrt(v / (W * H)), lap = e / n;
+      BANQ[u] = sd < 18 || lap < 8 ? 1 : 0; const ks = Object.keys(BANQ); if (ks.length > 600) delete BANQ[ks[0]]; U.ls.set(BANK, BANQ); if (BANQ[u]) redraw(); } catch (e) { BANQ[u] = 0; } finally { BANP.delete(u); } };
+  im.onerror = () => BANP.delete(u); im.src = u; };
+const heroImg = (x, i) => { const mob = x.img || x.ban, bad = x.ban && banBad(x.ban), desk = x.ban && !bad ? x.ban : x.img || x.ban; if (x.ban && !bad) banCheck(x.ban);
+  return `<div class="an-hpic">${mob ? `<picture><source media="(max-width:640px)" srcset="${esc(mob)}"><img class="an-hb${desk === x.ban ? '' : ' an-hbc'}" src="${esc(desk)}" alt="" decoding="async" referrerpolicy="no-referrer"${i ? ' loading="lazy"' : ' fetchpriority="high"'}></picture>` : '<div class="an-hb an-hb0"></div>'}<div class="an-hg"></div><button type="button" class="an-hopen" data-act="anOpen" data-k="${esc(kOf(x))}" tabindex="-1" aria-label="${esc(x.t)}: ver detalhes"></button></div>`; };
 // estado na lista (tocar outra vez tira): no telemóvel só o ícone, ao lado do botão laranja
 const bmBtn = (x, m) => `<button type="button" class="btn an-ghost an-bm${m ? ' on' : ''}" data-act="anSet" data-k="${esc(kOf(x))}" data-s="${m ? esc(m.status) : 'Quero ver'}" aria-pressed="${!!m}" title="${m ? esc(m.status) + ': toca para tirar da lista' : 'Quero ver'}">${UI.ic(m ? 'check' : 'mark')}<span class="an-bmt">${m ? esc(m.status) : 'Quero ver'}</span></button>`;
 const heroSlides = L => L.map((x, i) => { x = keep(x); const m = mine(x), nt = nextT(x), ds = x.desc ? autoTr(x.desc) : '';
@@ -528,7 +542,7 @@ const detail = () => { const k = OS.ui.anK || '', base = itemOf(k);
   const yt = s => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(s);
   const music = th && (th.op.length || th.ed.length) ? `<section class="an-mus"><div class="an-rh"><h3>Músicas</h3></div><div class="an-mug">${[['Aberturas', th.op], ['Encerramentos', th.ed]].filter(r => r[1].length).map(([l, L]) => `<div><h4>${l}</h4><ol>${L.map(s => `<li><a href="${esc(yt(s))}" target="_blank" rel="noopener noreferrer">${UI.ic('play')}<span>${esc(s)}</span></a></li>`).join('')}</ol></div>`).join('')}</div></section>` : '';
   const rel = d && d.rel && d.rel.length ? row('Da mesma história', d.rel.map(r => r.x), { card: r => ({ sub: RELN[(d.rel.find(z => z.x === r) || {}).t] || 'Relacionado' }) }) : '';
-  return `<section class="an-dh" style="--c:${colOf(x)}">${x.ban ? `<img class="an-hb" src="${esc(x.ban)}" alt="" decoding="async" referrerpolicy="no-referrer">` : '<div class="an-hb an-hb0"></div>'}<div class="an-hg"></div>
+  return `<section class="an-dh" style="--c:${colOf(x)}">${x.ban && !banBad(x.ban) ? `<img class="an-hb" src="${esc(x.ban)}" alt="" decoding="async" referrerpolicy="no-referrer">` : '<div class="an-hb an-hb0"></div>'}<div class="an-hg"></div>
       <div class="an-dc">${cover(x, 'an-dp')}<div class="an-dt"><a class="an-back" href="#animes">${UI.ic('left')}Animes</a><h2>${esc(x.t)}</h2>${x.ro || x.na ? `<p class="an-alt">${esc([x.ro, x.na].filter(Boolean).join(' · '))}</p>` : ''}
         <div class="an-dm">${x.sc ? `<span class="an-dsc">${UI.ic('star')}<b>${scT(x.sc)}</b><small>nota da comunidade</small></span>` : ''}${rk ? `<span class="an-drk">${rk.rank}.º mais bem avaliado de sempre</span>` : rky ? `<span class="an-drk">${rky.rank}.º mais bem avaliado de ${rky.y}</span>` : ''}</div>
         <p class="an-hm">${meta.slice(0, 4).map(r => esc(r[0])).join(' · ')}</p>${nt ? `<p class="an-hn">${esc(nt)}</p>` : ''}<div class="an-gen">${(x.gen || []).map(g => `<span>${esc(gN(g))}</span>`).join('')}</div></div></div></section>
