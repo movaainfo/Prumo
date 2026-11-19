@@ -1,56 +1,8 @@
 [
  {
-  "p": "Desportos",
-  "name": "Desportos: em Eu no menu (no lugar do Futebol, que fica dentro de Desportos)",
+  "p": "Telemóvel",
+  "name": "Telemóvel: fotografias tiradas",
   "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Início: os desportos (com o Futebol), as Olimpíadas e as tuas equipas",
-  "pass": true,
-  "info": "{\"sp\":15,\"fut\":true,\"oly\":true}"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › NBA › Equipas: tocar numa equipa segue-a",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › NBA › Jogos: o jogo ao vivo com o resultado e o próximo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › NBA › Classificação: a conferência com a tua equipa destacada",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Início: o jogo ao vivo em destaque e a tua equipa com o resultado de agora, o próximo jogo e o último",
-  "pass": true,
-  "info": "{\"hero\":\"1 jogo ao vivo\\nAgora a jogar\\nNBA\\nAo vivo · Halftime\\nBoston Celtics\\n11-3\\n61\\nDenver Nuggets\\n7-5\\ncasa\\n49\",\"team\":\"Boston Celtics\\nNBA\\nHalftime\\nBOS 61 – 49 DEN\\nÚltimo\\nLAL 100 – 110 BOS\\nVitória\"}"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Fórmula 1: o próximo Grande Prémio com as sessões e o campeonato de pilotos",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Olimpíadas: a próxima edição com a contagem, o calendário, os desportos de LA 2028 e o quadro de Paris 2024 com o teu país",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos: sem erros de JavaScript",
-  "pass": true,
-  "info": ""
+  "info": "esportes,esportes.olimpiadas"
  }
 ]
