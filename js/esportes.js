@@ -241,7 +241,7 @@ const pump = async () => { if (lBusy) return; lBusy = true; try { while (LQ.leng
 const vLogo = (n, g) => { if (!n || n === 'A definir') return ''; g = g ? 1 : 0; const k = g + ':' + n, c = LOGO[k];
   if (c && Date.now() - c.at < (c.u ? 30 : 7) * 864e5) return c.u; if (!LP.has(k) && LQ.length < 60) { LP.add(k); LQ.push([n, g]); setTimeout(pump, 60); } return c ? c.u : ''; };
 // sem escudo: a sigla da equipa num círculo com uma cor só dela
-const hue = x => [...String(x || '')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 7);
+const hue = x => { let h = 2166136261; for (const ch of String(x || '')) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return Math.round(((h >>> 0) % 1000) * 137.508) % 360; };
 const vImg = (x, cls) => x.logo ? img(x.logo, cls, x.ab || x.n) : `<span class="${cls} sp-noimg sp-vni" style="--nh:${hue(x.n)}" aria-hidden="true">${esc(String(x.ab || x.n || '?').slice(0, 3).toUpperCase())}</span>`;
 // estado de um jogo na FIVB: 1–3 antes, 4–23 a decorrer (set a set), 24 em diante acabado
 const vEv = (m, nat, g) => { const s = +m.status || 0, d = Date.parse(m.dateTimeUtc) || 0; let st = s >= 24 ? 'post' : s >= 4 ? 'in' : 'pre'; if (st === 'in' && Date.now() - d > 8 * 36e5) st = 'post';
