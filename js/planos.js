@@ -26,8 +26,12 @@ PL.FEAT = FEAT;
 const fmtD = ms => ms ? new Date(ms).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 const dias = ms => Math.max(0, Math.ceil((ms - Date.now()) / 864e5));
 const money = (c, cur) => (c / 100).toLocaleString(cur === 'BRL' ? 'pt-BR' : (OS.loc ? OS.loc() : 'pt-PT'), { style: 'currency', currency: cur, minimumFractionDigits: 2 });
-// paga-se só em euros, dólares ou reais: quem usa o real paga em reais, quem está na Europa em euros e o resto do mundo em dólares
-const MOEDAS = [['EUR', '€ euro'], ['USD', '$ dólar'], ['BRL', 'R$ real']], EUROPA = /^(EUR|GBP|CHF|SEK|NOK|DKK|PLN|CZK|HUF|RON|BGN|ISK|RSD|BAM|MKD|ALL|MDL|UAH)$/;
+// v3.60: os preços são em euros (o que o dono recebe). Quem usa outra moeda vê ao lado o valor aproximado nela; ao pagar, o Stripe converte pelo câmbio do dia
+const MOEDAS = [['EUR', 'euros'], ['USD', 'dólares'], ['BRL', 'reais']];
+// câmbio do dia (BCE, pela Frankfurter), guardado 12 h; sem rede, não mostra o aproximado
+let FX = (() => { try { const o = JSON.parse(localStorage.getItem('os2plfx') || 'null'); return o && Date.now() - o.at < 12 * 36e5 ? o : null; } catch (e) { return null; } })(), FXB = false;
+const loadFx = async () => { if (FX || FXB) return; FXB = true; try { const j = await (await fetch('https://api.frankfurter.dev/v1/latest?base=EUR')).json(); if (j && j.rates) { FX = { at: Date.now(), r: j.rates }; try { localStorage.setItem('os2plfx', JSON.stringify(FX)); } catch (e) { } OS.request(); } } catch (e) { } };
+const approx = (c, cur) => { const r = FX && FX.r && +FX.r[cur]; if (!r || cur === 'EUR') return ''; const v = c * r; return '≈ ' + (v / 100).toLocaleString(cur === 'BRL' ? 'pt-BR' : (OS.loc ? OS.loc() : 'pt-PT'), { style: 'currency', currency: cur, maximumFractionDigits: v >= 100000 ? 0 : 2 }); };
 const titleOf = k => { for (const [, L] of (OS.NAV || [])) for (const it of L) if (it[0] === k) return it[1]; return k.charAt(0).toUpperCase() + k.slice(1); };
 const lock = (need, what) => `<div class="pn pl-lock"><div class="pl-li">${UI.ic('lock')}</div><div class="grow"><b>${esc(what || 'Esta parte')} está no plano ${NOME[need]}${need < 3 ? ' (e no Completo)' : ''}</b>
   <p class="mut">${PL.lvl() ? 'O teu plano é o ' + esc(NOME[PL.lvl()]) + '.' : 'O teu teste grátis acabou.'} Muda de plano para a desbloquear; os teus dados ficam todos.</p>
@@ -37,8 +41,8 @@ PL.lock = lock;
 /* ---------- os preços (do servidor) ---------- */
 let PRE = null, PREB = false;
 const loadPre = async () => { if (PRE || PREB || !(OS.Acc && OS.Acc.call)) return; PREB = true; try { PRE = await OS.Acc.call('planos', {}); } catch (e) { } PREB = false; OS.request(); };
-const curOf = c => { if (c && c.pago && c.cur) return c.cur; if (OS.ui.plCur) return OS.ui.plCur; const p = OS.one('profile') || {}, k = String((OS.cur && OS.cur()) || p.cur || '').toUpperCase();
-  return p.country === 'BR' || k === 'BRL' ? 'BRL' : !k || EUROPA.test(k) ? 'EUR' : 'USD'; };
+// a moeda de quem vê (para o valor aproximado e a língua da página de pagamento)
+const curOf = () => { const p = OS.one('profile') || {}, k = String((OS.cur && OS.cur()) || p.cur || '').toUpperCase(); return p.country === 'BR' ? 'BRL' : /^[A-Z]{3}$/.test(k) ? k : 'EUR'; };
 
 /* ---------- a página Planos ---------- */
 const status = c => { if (c.local) return 'Modo pessoal: tens tudo.';
@@ -49,10 +53,11 @@ const status = c => { if (c.local) return 'Modo pessoal: tens tudo.';
   if (c.acabou) return 'O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados.';
   if (c.semCobranca) return 'As assinaturas abrem em breve: até lá tens tudo do Completo.';
   return ''; };
-const cards = (c, P0) => { const cur = curOf(c), ci = OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', L = (P0 && P0.planos) || [], open = !!(P0 && P0.cobranca);
+const cards = (c, P0) => { const cur = 'EUR', loc = curOf(), ci = OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', L = (P0 && P0.planos) || [], open = !!(P0 && P0.cobranca);
+  if (loc !== 'EUR') loadFx();
   return `<div class="pl-ctl"><div class="seg" role="radiogroup" aria-label="Pagamento">${[['mes', 'Mensal'], ['ano', 'Anual · 2 meses grátis']].map(([k, l]) => `<button type="button" class="${ci === k ? 'on' : ''}" data-act="plCiclo" data-v="${k}" aria-pressed="${ci === k}">${l}</button>`).join('')}</div>
-    ${c.pago ? `<span class="mut pl-curx">Pagas em ${esc((MOEDAS.find(m => m[0] === cur) || [, cur])[1])}</span>` : `<div class="seg" role="radiogroup" aria-label="Moeda">${MOEDAS.map(([k, l]) => `<button type="button" class="${cur === k ? 'on' : ''}" data-act="plCur" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('')}</div>`}</div>
-  <p class="mut pl-curn">Paga-se em euros, dólares ou reais. Se o teu cartão for de outra moeda, o teu banco converte sozinho (pode cobrar uma pequena taxa de câmbio).</p>
+    ${c.pago && c.cur && c.cur !== 'EUR' ? `<span class="mut pl-curx">A tua assinatura é paga em ${esc((MOEDAS.find(m => m[0] === c.cur) || [, c.cur])[1])}</span>` : ''}</div>
+  <p class="mut pl-curn">Os preços são em euros, com impostos incluídos.${loc !== 'EUR' ? ' Ao pagar, vês o valor na tua moeda, convertido pelo câmbio do dia (o valor ao lado de cada preço é aproximado).' : ' Se pagares com um cartão noutra moeda, o valor é convertido pelo câmbio do dia.'}</p>
   ${open && !c.pago && !c.local ? cupBox() : ''}
   <div class="pl-g">${[1, 2, 3].map(l => { const p = L.find(x => x.lvl === l), pr = p && p.precos && p.precos[cur], val = pr ? pr[ci] : 0, mine = c.pago && c.lvl === l, top = l === 3;
     const btn = !open ? `<button class="btn" disabled>${c.admin ? 'Liga o Stripe para abrir' : 'Em breve'}</button>`
@@ -63,7 +68,8 @@ const cards = (c, P0) => { const cur = curOf(c), ci = OS.ui.plCiclo === 'ano' ? 
     return `<section class="pl-c${top ? ' top' : ''}${mine || (!c.pago && c.lvl === l && !c.teste) ? ' mine' : ''}"><div class="pl-ch"><b>${NOME[l]}</b>${top ? '<span class="bdg pos">o mais completo</span>' : ''}</div>
       ${(() => { const cp = cupOk(ID[l]) && !c.pago ? OS.ui.plCupao : null, dv = cp ? Math.round(val * (100 - cp.pct)) / 100 : 0;
         if (cp && val) return `<div class="pl-p"><s class="pl-old">${money(val, cur)}</s> <b>${money(dv, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small></div><small class="pl-cupn">−${cp.pct}% ${esc(cupDur(cp, ci))}</small>`;
-        return `<div class="pl-p">${val ? `<b>${money(val, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small>` : '<b>—</b>'}</div>${val && ci === 'ano' ? `<small class="mut">${money(Math.round(val / 12), cur)} por mês</small>` : '<small class="mut">&nbsp;</small>'}`; })()}
+        const ax = val ? approx(val, loc) : '';
+        return `<div class="pl-p">${val ? `<b>${money(val, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small>` : '<b>—</b>'}</div>${val && ci === 'ano' ? `<small class="mut">${money(Math.round(val / 12), cur)} por mês${ax ? ' · ' + ax + ' por ano' : ''}</small>` : ax ? `<small class="mut pl-ax">${ax} por mês</small>` : '<small class="mut">&nbsp;</small>'}`; })()}
       <ul class="pl-f">${FEAT[l].map(f => `<li>${UI.ic('check')}<span>${esc(f)}</span></li>`).join('')}</ul>${btn}</section>`; }).join('')}</div>`; };
 /* ---------- v3.31: código de desconto (criado pela administração) ---------- */
 const cupOk = id => { const cp = OS.ui.plCupao; return !!cp && (!(cp.planos || []).length || cp.planos.includes(id)); };
@@ -101,7 +107,6 @@ const busy = b => { if (b) { b.disabled = true; b.dataset.l = b.innerHTML; b.tex
 const free = b => { if (b) { b.disabled = false; if (b.dataset.l) b.innerHTML = b.dataset.l; } };
 const take = j => { if (j && j.conta && OS.Acc.take) OS.Acc.take(j); OS.request(); };
 A.plCiclo = b => { OS.ui.plCiclo = b.dataset.v; OS.request(); };
-A.plCur = b => { OS.ui.plCur = b.dataset.v; OS.request(); };
 A.plAssinar = async b => { busy(b); try { const j = await OS.Acc.call('checkout', Object.assign({ plano: b.dataset.id, ciclo: OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', cur: curOf(), volta: volta() }, OS.ui.plCupao && cupOk(b.dataset.id) ? { cupao: OS.ui.plCupao.code } : {})); if (j.url) location.href = j.url; }
   catch (e) { UI.toast(e.message || 'Não consegui abrir o pagamento.', 'neg'); free(b); } };
 A.plMudar = b => { const id = b.dataset.id, n = NOME[{ essencial: 1, avancado: 2, completo: 3 }[id]];
