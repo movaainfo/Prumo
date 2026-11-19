@@ -1,6 +1,8 @@
 // PRUMO · resultados de futebol (função do Vercel). Plano B para quando o aparelho não consegue ler diretamente a API pública
 // da ESPN (por exemplo, se a ESPN recusar o pedido do navegador): pede o mesmo endereço do lado do servidor e devolve o JSON,
 // com cache curta na CDN (os jogos ao vivo mudam a cada minuto, por isso 15 s; as tabelas 5 min; a pesquisa 1 h).
+// MotoGP (?mgp=1): o calendário com as sessões, os resultados do fim de semana e o campeonato (API pública da MotoGP, que não deixa o navegador ler), num resumo pequeno.
+// Vôlei: a FIVB (VIS) lê-se diretamente no aparelho; aqui só como plano B (só pedidos GetVolley… de listas, jogos e classificações).
 // Segurança: só endereços de desporto da ESPN (site.api.espn.com/apis/.../sports/soccer|basketball|football|baseball|hockey|racing|tennis|mma|golf/, site.web.api.espn.com/apis/search/v2 e os símbolos das ligas em sports.core.api.espn.com),
 // Jogos grátis em canais oficiais do YouTube (?yt=1): lê só o feed público dos canais da lista YT (nada de endereços vindos de fora),
 // para a app tocar a transmissão oficial dentro do jogo.
@@ -9,7 +11,7 @@
 // só GET, só a própria app, no máximo 10 s e 3 MB por pedido e 600 pedidos por minuto por endereço (abrir o Futebol pela primeira vez faz muitos pedidos de uma vez). Não guarda nada.
 'use strict';
 const OK = /^https:\/\/(oceanum|nautilo|prumo)(-[a-z0-9-]+)?\.vercel\.app$/, HITS = new Map();
-const ALLOW = /^https:\/\/(site\.api\.espn\.com\/apis\/(site\/v2|v2)\/sports\/(soccer|basketball|football|baseball|hockey|racing|tennis|mma|golf)\/[a-z0-9._-]+\/[a-z0-9/._-]*(\?[a-zA-Z0-9=&%._:-]*)?|site\.web\.api\.espn\.com\/apis\/search\/v2\?[a-zA-Z0-9=&%._+~:-]*|sports\.core\.api\.espn\.com\/v2\/sports\/soccer\/leagues\/[a-z0-9._-]+(\?[a-zA-Z0-9=&%._:-]*)?)$/;
+const ALLOW = /^https:\/\/(site\.api\.espn\.com\/apis\/(site\/v2|v2)\/sports\/(soccer|basketball|football|baseball|hockey|racing|tennis|mma|golf)\/[a-z0-9._-]+\/[a-z0-9/._-]*(\?[a-zA-Z0-9=&%._:-]*)?|site\.web\.api\.espn\.com\/apis\/search\/v2\?[a-zA-Z0-9=&%._+~:-]*|sports\.core\.api\.espn\.com\/v2\/sports\/soccer\/leagues\/[a-z0-9._-]+(\?[a-zA-Z0-9=&%._:-]*)?|www\.fivb\.org\/vis2009\/XmlRequest\.asmx\?Request=%3CRequest%20Type%3D%22GetVolley(TournamentList|MatchList|PoolList|PoolRanking)%22[A-Za-z0-9%._~*'()!-]*)$/;
 const UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
 // canais oficiais com jogos de graça no YouTube (com os direitos de transmissão): nome a mostrar → id do canal
 const YT = [['CazéTV', 'UCZiYbVptd3PVPf4f6eR6UaQ']], YTF = () => process.env.YT_FEED || 'https://www.youtube.com/feeds/videos.xml?channel_id=';
@@ -53,7 +55,30 @@ const vivo = async (d, live) => { const ck = d + (live ? 'L' : ''), c = VIVO.get
     e.ke.forEach(k => { if (k.t !== 'g' && k.t !== 'og') return; const ix = m.as.findIndex((x, n) => !used.has(n) && x.min === k.min && (!k.who || !x.who || x.who === k.who)); if (ix < 0) return; used.add(ix); if (m.as[ix].as && k.t === 'g') k.as = m.as[ix].as; if (!k.who) k.who = m.as[ix].who; }); });
   const out = { ok: true, at: now, d: (j.day && j.day.date) || '', ev };
   VIVO.set(ck, { at: Date.now(), j: out }); if (VIVO.size > 20) VIVO.delete(VIVO.keys().next().value); return out; };
-const ttl = u => /sports\.core/.test(u) ? 86400 : /\/summary\?|\/scoreboard$/.test(u) ? 15 : /\/scoreboard\?/.test(u) ? 120 : /\/schedule/.test(u) ? 120 : /\/standings/.test(u) ? 300 : 3600;
+// ---------- MotoGP ----------
+const MG = () => process.env.MOTOGP_API || 'https://api.motogp.pulselive.com/motogp/v1/';
+let MGC = null; // { at, live, j }
+const tIso = x => { const t = Date.parse(String(x || '').replace(/([+-]\d\d)(\d\d)$/, '$1:$2')); return isNaN(t) ? 0 : t; };
+const mgp = async () => { if (MGC && Date.now() - MGC.at < (MGC.live ? 25e3 : 12e4)) return MGC.j;
+  const SS = await getJ(MG() + 'results/seasons', 8000), s = (SS || []).find(x => x.current) || (SS || [])[0]; if (!s) throw new Error('sem época');
+  const [CS, EV, RE] = await Promise.all([getJ(MG() + 'results/categories?seasonUuid=' + s.id, 8000), getJ(MG() + 'events?seasonYear=' + s.year, 9000), getJ(MG() + 'results/events?seasonUuid=' + s.id, 8000).catch(() => [])]);
+  const c = (CS || []).find(x => /^motogp/i.test(x.name || '')) || (CS || [])[0], rid = {}, now = Date.now();
+  (RE || []).forEach(x => { if (!x.test && x.short_name) rid[x.short_name] = x.id; });
+  const gps = (EV || []).filter(x => x.kind === 'GP').map(x => { const ci = x.circuit || {}; return { sn: x.shortname || '', n: String(x.name || '').trim(), cc: typeof x.country === 'string' ? x.country : (x.country || {}).iso || '', ci: ci.name || '', city: ci.city || ci.place || '', a: tIso(x.date_start), b: tIso(x.date_end), st: x.status || '', rid: rid[x.shortname] || '',
+    sess: (x.broadcasts || []).filter(b => b.type === 'SESSION' && (b.category || {}).acronym === 'MGP').map(b => ({ ab: b.shortname || '', n: b.name || '', d: tIso(b.date_start), e: tIso(b.date_end), st: b.status || '' })).sort((p, q) => p.d - q.d) }; }).sort((p, q) => p.a - q.a);
+  // resultados: os do fim de semana que está a decorrer (se já começou) ou os do último Grande Prémio
+  const cur = gps.find(g => g.b + 864e5 > now), last = [...gps].reverse().find(g => g.b + 864e5 <= now), rg = cur && cur.a <= now ? cur : last;
+  let res = null;
+  if (rg && rg.rid && c) { const SE = await getJ(MG() + 'results/sessions?eventUuid=' + rg.rid + '&categoryUuid=' + c.id, 8000).catch(() => []), F = (SE || []).filter(x => x.status === 'FINISHED');
+    const pick = [F.find(x => x.type === 'RAC'), F.find(x => x.type === 'SPR')].filter(Boolean); if (!pick.length) { const q = F.filter(x => x.type === 'Q').sort((p, q2) => (q2.number || 0) - (p.number || 0))[0] || F[F.length - 1]; if (q) pick.push(q); }
+    const S = await Promise.all(pick.map(x => getJ(MG() + 'results/session/' + x.id + '/classification?test=false', 8000).then(j => ({ ab: x.type === 'Q' || x.type === 'FP' ? x.type + (x.number || '') : x.type, rows: ((j && j.classification) || []).slice(0, 15).map(r => { const R = r.rider || {}; return { p: r.position || 0, n: R.full_name || '', num: R.number || '', cc: (R.country || {}).iso || '', tm: (r.team || {}).name || '', t: r.time || '', gap: (r.gap || {}).first || '', pts: r.points || 0, st: r.status || '' }; }) })).catch(() => null)));
+    res = { sn: rg.sn, n: rg.n, s: S.filter(x => x && x.rows.length) }; }
+  const STD = c ? await getJ(MG() + 'results/standings?seasonUuid=' + s.id + '&categoryUuid=' + c.id, 8000).catch(() => null) : null;
+  const std = ((STD && STD.classification) || []).slice(0, 30).map(r => { const R = r.rider || {}; return { p: r.position || 0, n: R.full_name || '', cc: (R.country || {}).iso || '', tm: (r.team || {}).name || '', pts: r.points || 0, w: r.race_wins || 0, pod: r.podiums || 0 }; });
+  const live = gps.some(g => g.sess.some(x => now >= x.d - 6e5 && now <= (x.e || x.d + 36e5) + 6e5));
+  const j = { ok: true, at: now, y: s.year, live, gps: gps.map(g => { const o = Object.assign({}, g); delete o.rid; return o; }), res, std };
+  MGC = { at: Date.now(), live, j }; return j; };
+const ttl = u => /fivb\.org/.test(u) ? (/MatchList/.test(u) ? 20 : /PoolRanking/.test(u) ? 120 : 3600) : /sports\.core/.test(u) ? 86400 : /\/summary\?|\/scoreboard$/.test(u) ? 15 : /\/scoreboard\?/.test(u) ? 120 : /\/schedule/.test(u) ? 120 : /\/standings/.test(u) ? 300 : 3600;
 module.exports = async (req, res) => {
   const origin = req.headers.origin || '', ref = req.headers.referer || '', site = req.headers['sec-fetch-site'] || '';
   const mine = OK.test(origin) || (!origin && (site === 'same-origin' || OK.test((ref.match(/^https:\/\/[^/]+/) || [''])[0])));
@@ -67,8 +92,10 @@ module.exports = async (req, res) => {
   if (q.vivo) { const d = String(q.d || ''); if (d && !/^20\d{6}$/.test(d)) { res.statusCode = 400; return res.end('{"ok":false,"msg":"data inválida"}'); }
     try { const o = await vivo(d, !!q.live); res.statusCode = 200; res.setHeader('Cache-Control', 'public, max-age=8, s-maxage=12, stale-while-revalidate=30'); return res.end(JSON.stringify(o)); }
     catch (e) { res.statusCode = 504; return res.end('{"ok":false,"msg":"a ESPN não respondeu a tempo"}'); } }
+  if (q.mgp) { try { const o = await mgp(); res.statusCode = 200; res.setHeader('Cache-Control', o.live ? 'public, max-age=15, s-maxage=25, stale-while-revalidate=60' : 'public, max-age=60, s-maxage=120, stale-while-revalidate=900'); return res.end(JSON.stringify(o)); }
+    catch (e) { res.statusCode = 504; return res.end('{"ok":false,"msg":"a MotoGP não respondeu a tempo"}'); } }
   if (q.yt) { const v = await ytList(); res.statusCode = 200; res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=90, stale-while-revalidate=300'); return res.end(JSON.stringify({ ok: true, v })); }
-  if (u.length > 600 || !ALLOW.test(u) || /\.\.|%2e%2e|@|\\/i.test(u)) { res.statusCode = 400; return res.end('{"ok":false,"msg":"endereço não permitido"}'); }
+  if (u.length > (/^https:\/\/www\.fivb\.org\//.test(u) ? 1600 : 600) || !ALLOW.test(u) || /\.\.|%2e%2e|@|\\/i.test(u)) { res.statusCode = 400; return res.end('{"ok":false,"msg":"endereço não permitido"}'); }
   const ac = new AbortController(), to = setTimeout(() => ac.abort(), 10000);
   try {
     const r = await fetch(u, { headers: { 'user-agent': UA, accept: 'application/json' }, redirect: 'error', signal: ac.signal });

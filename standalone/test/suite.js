@@ -2623,7 +2623,24 @@ async function esportesTests(b) { cur = 'Desportos'; console.log('\n=== Eu: desp
     return { events: [] }; };
   const J = (rt, o) => rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(o) });
   await ctx.route(/site\.api\.espn\.com\/apis\/(site\/v2|v2)\/sports\/(basketball|racing|football|tennis|mma|golf|baseball|hockey)\//, rt => J(rt, R(rt.request().url())));
-  await ctx.route(/\/api\/futebol\?u=/, rt => { const u = new URL(rt.request().url()).searchParams.get('u') || ''; if (/sports\/soccer/.test(u)) return rt.continue(); return J(rt, R(u)); });
+  const TD = d => new Date(now + d * 864e5).toISOString().slice(0, 10), VBM = { st2: 0 };
+  const vbR = u => { const q = decodeURIComponent(u.split('Request=')[1] || '');
+    if (/GetVolleyTournamentList/.test(q)) return { data: [{ no: 9001, name: "Men's National League Brazil 2026/2027", startDate: TD(-30), endDate: TD(150), gender: 0 }, { no: 9002, name: "Men's Volleyball Nations League 2027", startDate: TD(200), endDate: TD(250), gender: 0 }, { no: 9003, name: "FIVB Volleyball Boys' U19 World Championship 2027", startDate: TD(10), endDate: TD(20), gender: 0 }] };
+    if (/GetVolleyMatchList/.test(q)) return { data: [
+      { no: 1, dateTimeUtc: iso(now - 50 * 6e4), teamAName: 'Sada Cruzeiro', teamBName: 'Minas Tênis Clube', teamACode: 'CRU', teamBCode: 'MIN', noTeamA: 501, noTeamB: 502, matchPointsA: 2, matchPointsB: 0, pointsTeamASet1: 25, pointsTeamBSet1: 21, pointsTeamASet2: 25, pointsTeamBSet2: 23, pointsTeamASet3: 12, pointsTeamBSet3: 10, status: 11, city: 'Contagem' },
+      { no: 2, dateTimeUtc: iso(now + 10 * 6e4), teamAName: 'Sesi Bauru', teamBName: 'Sada Cruzeiro', teamACode: 'BAU', teamBCode: 'CRU', noTeamA: 503, noTeamB: 501, matchPointsA: VBM.st2 ? 0 : null, matchPointsB: VBM.st2 ? 0 : null, status: VBM.st2 || 1, city: 'Bauru' },
+      { no: 3, dateTimeUtc: iso(now - 3 * 864e5), teamAName: 'Minas Tênis Clube', teamBName: 'Sesi Bauru', teamACode: 'MIN', teamBCode: 'BAU', noTeamA: 502, noTeamB: 503, matchPointsA: 3, matchPointsB: 1, pointsTeamASet1: 25, pointsTeamBSet1: 20, status: 25, city: 'Belo Horizonte' }] };
+    if (/GetVolleyPoolList/.test(q)) return { data: [{ no: 77, code: 'RR', name: 'Round robin' }] };
+    if (/GetVolleyPoolRanking/.test(q)) return { data: [{ position: 1, teamName: 'Sada Cruzeiro', teamCode: 'CRU', noTeam: 501, matchesWon: 6, matchesLost: 1, matchPoints: 18, setsWon: 19, setsLost: 6 }, { position: 2, teamName: 'Minas Tênis Clube', teamCode: 'MIN', noTeam: 502, matchesWon: 5, matchesLost: 2, matchPoints: 15, setsWon: 16, setsLost: 9 }] };
+    return { data: [] }; };
+  const MG = { ok: true, at: now, y: 2026, live: false, gps: [
+    { sn: 'QAT', n: 'QATAR AIRWAYS GRAND PRIX OF QATAR', cc: 'QA', ci: 'Lusail International Circuit', city: 'Lusail', a: now - 12 * 864e5, b: now - 10 * 864e5, st: 'FINISHED', sess: [] },
+    { sn: 'POR', n: 'REPSOL GRAND PRIX OF PORTUGAL', cc: 'PT', ci: 'Autódromo Internacional do Algarve', city: 'Portimão', a: now - 864e5, b: now + 864e5, st: 'NOT-STARTED', sess: [{ ab: 'Q2', n: 'Qualifying Nr. 2', d: now - 5 * 36e5, e: now - 4.5 * 36e5 }, { ab: 'SPR', n: 'Tissot Sprint', d: now - 2 * 36e5, e: now - 1.5 * 36e5 }, { ab: 'RAC', n: 'Grand Prix', d: now + 10 * 6e4, e: now + 60 * 6e4 }] }],
+    res: { sn: 'POR', n: 'REPSOL GRAND PRIX OF PORTUGAL', s: [{ ab: 'SPR', rows: [{ p: 1, n: 'Marc Marquez', num: 93, cc: 'ES', tm: 'Ducati Lenovo Team', t: '18:46.450', gap: '0.000', pts: 12, st: 'INSTND' }, { p: 2, n: 'Miguel Oliveira', num: 88, cc: 'PT', tm: 'Pramac Racing', t: '', gap: '0.862', pts: 9, st: 'INSTND' }] }] },
+    std: [{ p: 1, n: 'Marc Marquez', cc: 'ES', tm: 'Ducati Lenovo Team', pts: 431, w: 7, pod: 8 }] };
+  await ctx.route(/flagcdn\.com/, rt => rt.fulfill({ status: 200, contentType: 'image/png', body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', 'base64') }));
+  await ctx.route(/\/api\/futebol\?mgp=1/, rt => J(rt, MG));
+  await ctx.route(/\/api\/futebol\?u=/, rt => { const u = new URL(rt.request().url()).searchParams.get('u') || ''; if (/fivb\.org/.test(u)) return J(rt, vbR(u)); if (/sports\/soccer/.test(u)) return rt.continue(); return J(rt, R(u)); });
   await p.goto(BASE); await unlock(p);
   ok('Desportos: em Eu no menu (no lugar do Futebol, que fica dentro de Desportos)', await E(p, () => OS.NAV.find(g => g[0] === 'Eu')[1].some(x => x[0] === 'esportes') && !OS.NAV.some(g => g[1].some(x => x[0] === 'futebol'))));
   await E(p, () => { location.hash = 'esportes'; }); await sleep(800);
@@ -2644,7 +2661,35 @@ async function esportesTests(b) { cur = 'Desportos'; console.log('\n=== Eu: desp
   await E(p, () => { location.hash = 'esportes.olimpiadas'; }); await sleep(500);
   ok('Desportos › Olimpíadas: a próxima edição com a contagem, o calendário, os desportos de LA 2028 e o quadro de Paris 2024 com o teu país', await E(p, () => { const t = document.getElementById('view').innerText; return /Los Angeles 2028/.test(t) && !!document.querySelector('#view .sp-ohero .sp-cd') && /Brisbane 2032/.test(t) && /Flag football/.test(t) && /Paris 2024: quadro de medalhas/.test(t) && !!document.querySelector('#view .sp-med tr.me'); }));
   if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + '/sp-oly.png', fullPage: true });
+  // v3.56: voleibol (FIVB), MotoGP e avisos
+  await E(p, () => { location.hash = 'esportes.volei'; }); await sleep(1500);
+  const vb = await E(p, () => { const L = document.querySelector('#view .sp-vg.live'); return { t: document.getElementById('view').innerText, live: !!L, sets: L ? L.querySelector('.sp-vst').children.length : 0, chips: [...document.querySelectorAll('#view .sp-vbc button')].map(b => b.innerText.split('\n')[0]) }; });
+  ok('Desportos › Voleibol: a Superliga a decorrer com o jogo ao vivo (set a set) e os próximos jogos; a Liga das Nações com a data; sem os sub-19', /Superliga masculina \(Brasil\) 2026\/27/.test(vb.t) && vb.live && /Ao vivo · Set 3/.test(vb.t) && vb.sets === 3 && /Próximos jogos/.test(vb.t) && /Resultados/.test(vb.t) && vb.chips.length === 2 && /Liga das Nações masculina 2027/.test(vb.chips[1]) && !/U19/.test(vb.t), JSON.stringify(vb).slice(0, 400));
+  await p.click('#view [data-act=dsTab][data-sp=volei][data-t=tabela]'); await sleep(800);
+  ok('Desportos › Voleibol › Classificação: a tabela da fase regular com pontos e sets', await E(p, () => { const r = document.querySelector('#view .sp-tb tbody tr'); return !!r && /Sada Cruzeiro/.test(r.innerText) && /18/.test(r.innerText); }));
+  await p.click('#view [data-act=dsTab][data-sp=volei][data-t=equipas]'); await sleep(600);
+  await p.click('#view [data-act=dsFollow][data-sp=volei][data-id="501"]'); await sleep(300);
+  ok('Desportos › Voleibol › Equipas: seguir uma equipa guarda também a competição', await E(p, () => OS.one('sports').teams.some(t => t.lg === 'volei' && t.id === '501' && t.t === '9001' && t.n === 'Sada Cruzeiro')));
+  await E(p, () => { window.__spTest = true; OS.Sports.seen['volei:1'] = { st: 'in', s: '1-0', sn: '8', at: Date.now() }; OS.Sports.flush(); return OS.Sports.tick(); }); await sleep(300);
+  let fd = await E(p, () => OS.Sports.feed.map(f => f.title + ' | ' + f.body));
+  ok('Desportos › Avisos: set ganho pela tua equipa e o jogo que começa daqui a 15 minutos', fd.some(x => /^Set para Sada Cruzeiro \| Sada Cruzeiro 2–0 Minas Tênis Clube/.test(x)) && fd.some(x => /^Daqui a 15 minutos \| Sesi Bauru × Sada Cruzeiro · Voleibol/.test(x)), JSON.stringify(fd));
+  VBM.st2 = 5; await E(p, () => { OS.Sports.flush(); return OS.Sports.tick(); }); await sleep(300); fd = await E(p, () => OS.Sports.feed.map(f => f.title + ' | ' + f.body));
+  ok('Desportos › Avisos: avisa quando o jogo começa (uma vez só)', fd.filter(x => /^Começou \| Sesi Bauru × Sada Cruzeiro/.test(x)).length === 1 && fd.filter(x => /^Daqui a 15 minutos/.test(x)).length === 1, JSON.stringify(fd));
+  await E(p, () => { location.hash = 'esportes.motogp'; }); await sleep(1200);
+  const mg = await E(p, () => document.getElementById('view').innerText);
+  ok('Desportos › MotoGP: o fim de semana com as sessões, o resultado do sprint, o campeonato e o calendário', /Este fim de semana/.test(mg) && /Grande Prémio de Portugal/.test(mg) && /Qualificação 2/.test(mg) && /Sprint · Grande Prémio de Portugal/.test(mg) && /Miguel Oliveira/.test(mg) && /\+0\.862/.test(mg) && /Campeonato de pilotos 2026/.test(mg) && /431 pts/.test(mg) && /Calendário 2026/.test(mg) && /Grande Prémio do Catar/.test(mg), mg.slice(0, 400));
+  if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + '/sp-motogp.png', fullPage: true });
+  await p.click('#view [data-act=dsBell][data-sp=motogp]'); await sleep(300);
+  await E(p, () => { OS.Sports.flush(); return OS.Sports.tick(); }); await sleep(300); fd = await E(p, () => OS.Sports.feed.map(f => f.title + ' | ' + f.body));
+  ok('Desportos › MotoGP: com o sino ligado avisa 15 minutos antes da corrida', await E(p, () => (OS.one('sports').bell || []).includes('motogp')) && fd.some(x => /^Corrida daqui a 15 minutos \| MotoGP · Grande Prémio de Portugal/.test(x)), JSON.stringify(fd));
+  await E(p, () => { location.hash = 'esportes'; }); await sleep(1200);
+  const hv = await E(p, () => ({ av: document.querySelectorAll('#view .sp-av input[data-act=dsAv]').length, feed: document.querySelectorAll('#view .sp-feed li').length, tc: [...document.querySelectorAll('#view .sp-tc')].map(x => x.innerText.replace(/\s+/g, ' ')).join(' || ') }));
+  ok('Desportos › Início: painel de avisos (4 escolhas e os últimos avisos) e a equipa de voleibol que segues com o jogo ao vivo', hv.av === 4 && hv.feed >= 3 && /Sada Cruzeiro.*(CRU 2 – 0 MIN|BAU 0 – 0 CRU)/.test(hv.tc), JSON.stringify(hv).slice(0, 500));
+  await p.click('#view .sp-av label:has(input[data-k=pts])'); await sleep(200);
+  ok('Desportos › Avisos: desligar os golos, pontos e sets fica guardado', await E(p, () => (OS.one('sports').av || {}).pts === 0 ), '');
+  await E(p, () => { window.__spTest = false; });
   const e2 = errs.filter(e => !/Access to fetch at 'https:\/\/(site|sports\.core)\.api\.espn\.com/.test(e));
+
   ok('Desportos: sem erros de JavaScript', !e2.length, e2.slice(0, 3).join(' | ')); await ctx.close(); }
 // v3.33: Animes (Eu › Animes): aba opcional, AniList com reserva no Jikan, lista, nota, resenha, top 10, tier list, temporada, calendário e melhores do ano
 async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ===');

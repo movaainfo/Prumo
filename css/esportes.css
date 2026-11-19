@@ -145,4 +145,45 @@
 @media (max-width:760px){.sp-hero{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:640px){.sp-olyb{grid-template-columns:auto minmax(0,1fr)}.sp-olyb .sp-cd{grid-column:1/-1}.sp-sps{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.sp-spc{padding:12px 10px;gap:8px}.sp-spc b{font-size:12.5px}
   .sp-gg,.sp-mt,.sp-ms{grid-template-columns:minmax(0,1fr)}.sp-teams{grid-template-columns:repeat(3,minmax(0,1fr))}.sp-vs{grid-template-columns:minmax(0,1fr)}.sp-vs em{justify-self:center}}
+/* cabeçalho de um desporto: sino (F1 e MotoGP) e "nos teus desportos" lado a lado */
+.sp-hb{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.sp-bell .ic{width:15px;height:15px}.sp-bell.on{background:color-mix(in srgb,var(--sc) 85%,#000);border-color:transparent;color:#fff}
+@media (max-width:560px){.sp-shd{flex-wrap:wrap}.sp-hb{width:100%;justify-content:flex-start}}
+/* listas de classificação com nome e equipa por baixo */
+.sp-rw{display:flex;flex-direction:column;min-width:0}.sp-rw b{display:block}.sp-rw b small{font-weight:600;color:var(--sp-mut)}
+.sp-rk li.pod{border-color:color-mix(in srgb,var(--sc,#f5c542) 30%,var(--sp-ln))}
+/* MotoGP */
+.sp-gpw{display:flex;align-items:center;gap:8px}.sp-gpw .sp-fl{flex:none}
+.sp-se.big{background:color-mix(in srgb,var(--sc) 16%,rgba(255,255,255,.04));border-color:color-mix(in srgb,var(--sc) 40%,transparent)}.sp-se.big b{color:#fff}
+.sp-se.big.post{opacity:.75}
+.sp-cal{display:flex;flex-direction:column;border:1px solid var(--sp-ln);border-radius:16px;overflow:hidden;background:var(--sp-c1)}
+.sp-cr{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 14px;border-top:1px solid var(--sp-ln)}
+.sp-cr:first-child{border-top:0}.sp-cr span{display:flex;flex-direction:column;min-width:0}.sp-cr b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-cr small{font-size:12px;color:var(--sp-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-cr em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--sp-mut);white-space:nowrap}
+.sp-cr.post{opacity:.55}.sp-cr.cur{background:linear-gradient(90deg,color-mix(in srgb,var(--sc,#f97316) 22%,transparent),transparent 70%);box-shadow:inset 3px 0 0 var(--sc,#f97316);opacity:1}.sp-cr.cur em{color:#fff}
+.sp-moto{--sc:#f97316}
+/* voleibol: competições em fila, os pontos de cada set */
+.sp-vbc{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 4px;margin:0 -2px}.sp-vbc::-webkit-scrollbar{display:none}
+.sp-vbc button{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:3px;max-width:220px;padding:10px 14px;border-radius:14px;border:1px solid var(--sp-ln);background:var(--sp-c1);color:var(--sp-tx);font:inherit;text-align:left;cursor:pointer}
+.sp-vbc button b{font-size:13.5px;line-height:1.25}.sp-vbc button small{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--sp-mut)}
+.sp-vbc button small i{width:6px;height:6px;border-radius:50%;background:var(--sp-live)}
+.sp-vbc button.post{opacity:.7}.sp-vbc button.on{background:#fff;border-color:#fff;color:#0b0e14;opacity:1}.sp-vbc button.on small{color:#475569}
+.sp-vst{display:flex;gap:4px;margin-top:2px}.sp-vst i{font-style:normal;min-width:20px;padding:0 3px;border-radius:5px;text-align:center;font-size:11.5px;font-weight:700;color:var(--sp-mut);background:rgba(255,255,255,.05);font-variant-numeric:tabular-nums}
+.sp-vst i.w{color:#fff;background:color-mix(in srgb,var(--sc) 45%,transparent)}
+.sp-gv{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--sp-mut);margin-top:2px}.sp-gv .ic{width:13px;height:13px}
+/* avisos */
+.sp-av{padding:18px;border-radius:20px;border:1px solid var(--sp-ln);background:radial-gradient(120% 140% at 0% 0%,rgba(255,59,71,.10),transparent 55%),var(--sp-c1)}
+.sp-avok{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#4ade80}.sp-avok .ic{width:14px;height:14px}
+.sp-avt{display:flex;flex-wrap:wrap;gap:8px}
+.sp-sw{position:relative;display:inline-flex;align-items:center;cursor:pointer}
+.sp-sw input{position:absolute;opacity:0;width:1px;height:1px}
+.sp-sw span{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--sp-ln);background:var(--sp-c2);color:var(--sp-mut);font-size:13.5px;font-weight:700}
+.sp-sw span::before{content:"";width:9px;height:9px;border-radius:50%;border:2px solid currentColor;box-sizing:border-box}
+.sp-sw input:checked+span{color:#fff;border-color:color-mix(in srgb,var(--sp-live) 60%,transparent);background:color-mix(in srgb,var(--sp-live) 22%,var(--sp-c2))}
+.sp-sw input:checked+span::before{background:var(--sp-live);border-color:var(--sp-live)}
+.sp-sw input:focus-visible+span{outline:2px solid #fff;outline-offset:2px}
+.sp-feed{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.sp-feed li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;font-size:13px;color:var(--sp-mut)}
+.sp-feed li b{color:var(--sp-tx)}.sp-feed small{font-size:11.5px;white-space:nowrap}
+.sp-fi{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:rgba(255,59,71,.14);color:var(--sp-live)}.sp-fi .ic{width:14px;height:14px}
 @media (prefers-reduced-motion:reduce){.sp-gs.on i,.sp-sp{animation:none}.sp-spc{transition:none}}

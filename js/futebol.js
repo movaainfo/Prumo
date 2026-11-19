@@ -8,7 +8,7 @@
 const U = OS.U, UI = OS.UI, esc = U.esc, A = OS.act, V = OS.views;
 UI.IP.ball = 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7.6l3.3 2.4-1.3 3.9h-4l-1.3-3.9zM12 3v4.6M15.3 10l4.5-1.3M14 13.9l2.6 3.9M10 13.9l-2.6 3.9M8.7 10L4.2 8.7';
 if (!UI.IP.bell) UI.IP.bell = 'M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 20.5a2 2 0 0 0 4 0';
-const AV0 = { ini: 1, gol: 1, int: 0, fim: 1, comp: 0 };
+const AV0 = { pre: 1, ini: 1, gol: 1, int: 0, fim: 1, comp: 0 };
 OS.ONE_DEF.fut = { teams: [], comps: [], av: Object.assign({}, AV0) };
 const st = () => { const s = OS.one('fut'); if (!Array.isArray(s.teams)) s.teams = []; if (!Array.isArray(s.comps)) s.comps = []; return s; };
 const save = o => OS.setOne('fut', o), av = () => Object.assign({}, AV0, st().av || {});
@@ -178,8 +178,9 @@ const saveSeen = () => { const lim = Date.now() - 3 * 864e5; Object.keys(SEEN).f
 const FEED = U.ls.get('oc_fut_feed', []) || [];
 const say = (title, body, e) => { FEED.unshift({ at: Date.now(), title, body, id: e.id, lg: e.lg }); FEED.splice(15); U.ls.set('oc_fut_feed', FEED); UI.toast(title + ' · ' + body, 'pos');
   try { if ('Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then(r => r.showNotification(title, { body, icon: 'icon-192.png', tag: 'fb-' + e.id + '-' + title, data: { url: '#futebol' } })).catch(() => { }); } catch (x) { } };
-const watch = (e, mine) => { if (!e.h || !e.a) return; const p = SEEN[e.id], c = { s: sc0(e.h.s) + '-' + sc0(e.a.s), st: e.st, sn: e.sn, at: Date.now() }; SEEN[e.id] = c;
-  const a = av(); if (!p || (!mine && !a.comp)) return; const vs = `${tN(e.h.sn)} ${sc0(e.h.s)}-${sc0(e.a.s)} ${tN(e.a.sn)}`;
+const watch = (e, mine) => { if (!e.h || !e.a) return; const p = SEEN[e.id], c = { s: sc0(e.h.s) + '-' + sc0(e.a.s), st: e.st, sn: e.sn, at: Date.now(), pre: p ? p.pre : 0 }; SEEN[e.id] = c;
+  const a = av(), dt = e.d - Date.now(); if (a.pre && (mine || a.comp) && e.st === 'pre' && !/POSTPONED/.test(e.sn || '') && !c.pre && dt > 0 && dt <= 15 * 6e4) { c.pre = 1; say('Daqui a 15 minutos', `${tN(e.h.n)} × ${tN(e.a.n)} · ${lgN(e.lg, e.lgF)}`, e); }
+  if (!p || (!mine && !a.comp)) return; const vs = `${tN(e.h.sn)} ${sc0(e.h.s)}-${sc0(e.a.s)} ${tN(e.a.sn)}`;
   if (p.st === 'pre' && c.st === 'in' && a.ini) say('Começou', `${tN(e.h.n)} × ${tN(e.a.n)} · ${lgN(e.lg, e.lgF)}`, e);
   if (c.st !== 'pre' && p.s !== c.s && a.gol) { const [ph, pa] = p.s.split('-').map(Number), hs = U.num(e.h.s), as = U.num(e.a.s), side = hs > ph ? e.h : as > pa ? e.a : null;
     if (side) { const g = (e.ke || []).filter(k => (k.t === 'g' || k.t === 'og') && k.tid === side.id).pop() || (e.ke || []).filter(k => k.t === 'g' || k.t === 'og').pop(); say('Golo · ' + tN(side.sn), (g && g.who ? g.who + (g.t === 'og' ? ' (pb)' : g.pen ? ' (pen.)' : '') + (g.min ? ' ' + g.min : '') + (g.as ? ', assistência de ' + g.as : '') + ' · ' : '') + vs, e); }
@@ -201,7 +202,7 @@ const tick = async () => { if (busy) return; busy = true; const n0 = liveN(); tr
 let loopT = 0;
 const soon = () => myEv().some(e => e.st === 'pre' && e.d - Date.now() < 30 * 6e4 && Date.now() - e.d < 3 * 36e5);
 const anyHot = () => myEv().some(isHot) || Object.values(CM).some(m => m.ev.some(isHot)) || (onFb() && wEv().some(isHot));
-const loop = (ms) => { clearTimeout(loopT); const s = st(); if (!s.teams.length && !s.comps.length && !onFb()) return; loopT = setTimeout(async () => { if (!document.hidden) { try { await tick(); } catch (e) { } } loop(); }, ms != null ? ms : anyHot() ? 15e3 : soon() || onFb() ? 6e4 : 5 * 6e4); };
+const loop = (ms) => { clearTimeout(loopT); const s = st(); if (!s.teams.length && !s.comps.length && !onFb()) return; loopT = setTimeout(async () => { if (!document.hidden || anyHot() || soon()) { try { await tick(); } catch (e) { } } loop(); }, ms != null ? ms : anyHot() ? 15e3 : soon() || onFb() ? 6e4 : 5 * 6e4); };
 window.addEventListener('hashchange', () => { if (onFb() && !(navigator.webdriver && !window.__fbTest)) loop(400); });
 OS.on('ready', () => { if (navigator.webdriver && !window.__fbTest) return; loop(4000); });
 document.addEventListener('visibilitychange', () => { if (!document.hidden && !(navigator.webdriver && !window.__fbTest)) loop(800); });
@@ -561,8 +562,8 @@ const jorn = m => { const td = U.today(), today = m.ev.filter(e => U.iso(new Dat
   const pas = m.ev.length ? m.ev : (m.prev || []); return pas.length ? { t: 'Última jornada · ' + dayLbl(pas[0].d), L: pas } : null; };
 const avisos = () => { const a = av(), perm = 'Notification' in window ? Notification.permission : 'na';
   return `<section class="pn fb-av"><div class="pn-h"><h3>${UI.ic('bell')}Avisos</h3>${perm === 'granted' ? '<span class="bdg pos">ligados neste aparelho</span>' : perm === 'na' ? '' : `<button class="btn sm" data-act="fbNotif">Ligar avisos neste aparelho</button>`}</div>
-  <div class="fb-tg">${[['ini', 'Começo do jogo'], ['gol', 'Golos'], ['int', 'Intervalo'], ['fim', 'Resultado final'], ['comp', 'Também os jogos dos campeonatos que segues']].map(([k, l]) => `<label class="fb-sw"><input type="checkbox" data-act="fbAv" data-k="${k}" ${a[k] ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
-  <small class="mut">Os avisos chegam com o Prumo aberto; no computador e no Android também com ele em segundo plano. No iPhone, com o app fechado, ainda não chegam.</small></section>`; };
+  <div class="fb-tg">${[['pre', '15 minutos antes'], ['ini', 'Começo do jogo'], ['gol', 'Golos'], ['int', 'Intervalo'], ['fim', 'Resultado final'], ['comp', 'Também os jogos dos campeonatos que segues']].map(([k, l]) => `<label class="fb-sw"><input type="checkbox" data-act="fbAv" data-k="${k}" ${a[k] ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
+  <small class="mut">Os avisos chegam com o Prumo aberto; no computador também com a janela em segundo plano. Com o app fechado no telemóvel ainda não chegam.</small></section>`; };
 const card = t => { const m = tmOf(t.id), ev = m ? m.ev : [], lv = ev.find(e => e.st === 'in'), nx = ev.find(e => e.st === 'pre' && !/POSTPONED/.test(e.sn) && e.d > Date.now() - 2 * 36e5), form = ev.filter(done).slice(-5).map(e => wdl(e, t.id)).filter(Boolean);
   return `<button type="button" class="fb-card" data-act="fbTeam" data-id="${esc(t.id)}" style="--tc:${col(m && m.col || t.col)}"><span class="fb-band" aria-hidden="true"></span>${cr((m && m.logo) || t.logo, t.n, 64, 'big')}
     <b class="fb-cn">${esc(tN(t.n))}</b><small class="fb-cs">${esc(posOf(t) || subT(t))}</small>

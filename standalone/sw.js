@@ -39,3 +39,6 @@ function fresh(e) { const cached = () => caches.match(SHELLKEY).then(h => h || c
   return Promise.race([net.then(plain, cached), slow.then(h => h || net.then(plain))]).then(r => r || net.then(plain))
     .catch(() => cached().then(h => h || new Response('<meta name="viewport" content="width=device-width"><h2 style="font-family:system-ui;padding:24px">Sem internet. Abre outra vez quando tiveres rede.</h2>', { headers: { 'Content-Type': 'text/html; charset=utf-8' } }))); }
 self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(); });
+// tocar num aviso (golo, começo do jogo…) abre o Prumo na página certa: usa a janela que já está aberta, se houver
+self.addEventListener('notificationclick', e => { e.notification.close(); const h = String((e.notification.data || {}).url || '').replace(/[^#\w.-]/g, ''), url = self.registration.scope + (h.startsWith('#') ? h : '');
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(L => { const c = L.find(x => x.url.startsWith(self.registration.scope)); if (c) return c.focus().then(w => { try { (w || c).postMessage({ go: h }); } catch (x) { } return w; }); return self.clients.openWindow(url); })); });
