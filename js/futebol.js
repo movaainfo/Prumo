@@ -122,7 +122,8 @@ const loadComp = async (slug, force) => { const m = CM[slug], hot = m && m.ev.so
   const nx = cal.find(x => x > day), pv = [...cal].reverse().find(x => x < day);
   const ex = await Promise.all([nx, pv].map(x => x ? get(B + slug + '/scoreboard?dates=' + x.replace(/-/g, ''), 10 * 6e4).then(j => (j.events || []).map(e => evN(e, slug)).filter(e => e.h && e.a).sort((a, b) => a.d - b.d)).catch(() => []) : Promise.resolve([])));
   if (darkOf(L.logos)) LOGO[slug] = LOGO[slug] || darkOf(L.logos);
-  return CM[slug] = { at: Date.now(), name: L.name || '', logo: darkOf(L.logos) || logoOf(L), season: (L.season && L.season.displayName) || '', ev, next: ex[0], prev: ex[1] }; };
+  const se = L.season || {}, c0 = cal[0] || ((se.startDate || '').slice(0, 10));
+  return CM[slug] = { at: Date.now(), name: L.name || '', logo: darkOf(L.logos) || logoOf(L), season: se.displayName || '', sEnd: Date.parse(se.endDate || '') || 0, c0, ev, next: ex[0], prev: ex[1] }; };
 const loadTable = async slug => { const j = await get(BS + slug + '/standings', 10 * 6e4); const G = (j.children && j.children.length ? j.children : [j]);
   const groups = G.map(g => ({ name: g.name || '', rows: (((g.standings || {}).entries) || []).map(r => { const S = {}; (r.stats || []).forEach(x => { S[x.name || x.type] = x; }); const v = k => S[k] ? (S[k].value != null ? +S[k].value : U.num(S[k].displayValue) || 0) : 0;
     return { id: String(r.team.id), n: r.team.displayName || '', sn: r.team.shortDisplayName || r.team.displayName || '', logo: logoOf(r.team), pos: v('rank'), j: v('gamesPlayed'), v: v('wins'), e: v('ties'), d: v('losses'), gm: v('pointsFor'), gs: v('pointsAgainst'), dg: v('pointDifferential'), pts: v('points'), note: r.note && r.note.color ? { c: r.note.color, t: r.note.description || '' } : null }; })
@@ -431,6 +432,28 @@ const opp = (e, id) => e.h.id === id ? e.a : e.h;
 const errBox = k => ERR[k] ? `<div class="note fb-err">Não consegui falar com o serviço de resultados (${esc(ERR[k])}). Tenta outra vez daqui a pouco. <button class="btn xs" data-act="fbRefresh">Tentar outra vez</button></div>` : '';
 const loading = t => `<div class="fb-ld"><span class="fb-ball" aria-hidden="true">${UI.ic('ball')}</span>${esc(t || 'A buscar os jogos…')}</div>`;
 
+/* tabela ao vivo: os jogos a decorrer contam já, com o resultado de agora (a ESPN só mexe na tabela depois do apito final).
+   Cada equipa a jogar tem o resultado ao lado e uma seta se subiu ou desceu; as zonas (apuramento, descida) ficam presas aos lugares. */
+// (todos os jogos que o app conhece: os do campeonato, os das equipas que segues e os do mundo; só os que começaram há menos de 3 h)
+const liveFor = slug => { const now = Date.now(), M = new Map(); [...EVX.values()].forEach(e => { if (e && e.st === 'in' && e.lg === slug && e.h && e.a && e.d <= now && now - e.d < 3 * 36e5) M.set(e.id, e); }); return [...M.values()]; };
+const liveTable = slug => { const T = TB[slug]; if (!T) return T; const L = liveFor(slug); if (!L.length) return T; let any = false;
+  const groups = T.groups.map(g => { const rows = g.rows.map(r => Object.assign({}, r, { p0: r.pos })), nb = new Map(g.rows.map(r => [r.pos, r.note])); let hit = false;
+    L.forEach(e => { const h = rows.find(r => r.id === e.h.id), a = rows.find(r => r.id === e.a.id); if (!h || !a) return; hit = true; const hs = parseInt(e.h.s, 10) || 0, as = parseInt(e.a.s, 10) || 0;
+      [[h, hs, as], [a, as, hs]].forEach(([r, f, c]) => { r.j += 1; r.gm += f; r.gs += c; r.dg += f - c; if (f > c) { r.v += 1; r.pts += 3; r.lv = 'w'; } else if (f === c) { r.e += 1; r.pts += 1; r.lv = 'e'; } else { r.d += 1; r.lv = 'l'; } r.lsc = f + '-' + c; r.lev = e.id; }); });
+    if (!hit) return g; any = true; const PZ = rows.map(r => r.p0).sort((x, y) => x - y); rows.sort((x, y) => y.pts - x.pts || y.dg - x.dg || y.gm - x.gm || x.p0 - y.p0); rows.forEach((r, i) => { r.pos = PZ[i]; r.mv = r.p0 - r.pos; r.note = nb.get(r.pos) || null; }); return Object.assign({}, g, { rows, live: 1 }); });
+  return any ? Object.assign({}, T, { groups, live: L.filter(e => groups.some(g => g.live && g.rows.some(r => r.lev === e.id))).length }) : T; };
+// campeonato parado (acabou ou ainda não começou): quando volta — a data do calendário quando já existe; senão uma previsão pela época anterior
+const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const EDI = { 'fifa.world': [2030, 5, 'Mundial 2030'], 'uefa.euro': [2028, 5, 'Euro 2028'], 'conmebol.america': [2028, 5, 'Copa América 2028'], 'fifa.cwc': [2029, 5, 'Mundial de Clubes 2029'], 'fifa.wwc': [2027, 5, 'Mundial Feminino 2027'] };
+const backOf = slug => { const m = CM[slug]; if (!m) return null; const now = Date.now(); if (m.ev.some(e => e.st === 'in')) return null;
+  const up = [].concat(m.ev || [], m.next || []).filter(e => e.st === 'pre' && e.d > now).sort((a, b) => a.d - b.d)[0];
+  if (up) return up.d - now > 10 * 864e5 ? { exact: 1, d: up.d } : null;   // pausa longa: volta a…
+  if (m.ev.some(e => e.d > now - 2 * 864e5)) return null;                  // jogou há pouco: ainda não é "parado"
+  const ed = EDI[slug]; if (ed) return ed[0] * 12 + ed[1] > new Date().getFullYear() * 12 + new Date().getMonth() ? { y: ed[0], m: ed[1], what: ed[2] } : null;
+  if (!m.c0) return null; const c = new Date(m.c0 + 'T12:00:00'); if (isNaN(c)) return null; let y = c.getFullYear() + 1; while (new Date(y, c.getMonth(), 1) < new Date()) y++;
+  return { y, m: c.getMonth() }; };
+const backTxt = b => !b ? '' : b.exact ? 'Volta a ' + new Date(b.d).toLocaleDateString('pt-PT', { day: 'numeric', month: 'long' }) + (new Date(b.d).getFullYear() !== new Date().getFullYear() ? ' de ' + new Date(b.d).getFullYear() : '') : (b.what ? b.what + ': ' : 'Próxima época: ') + 'previsão para ' + MESES[b.m] + ' de ' + b.y;
+
 /* tabela: pódio dos 3 primeiros, zonas com cor (apuramento, despromoção) e a tua equipa destacada */
 const NOTE = [[/round of 16/i, 'Oitavos de final'], [/playoffs? - seeded/i, 'Play-off (cabeça de série)'], [/playoffs? - unseeded/i, 'Play-off'], [/eliminated/i, 'Eliminado'], [/relegation play/i, 'Play-off de despromoção'], [/relegat/i, 'Despromoção'], [/promotion play/i, 'Play-off de subida'], [/promot/i, 'Subida'],
   [/champions league qualif/i, 'Pré-eliminatória da Liga dos Campeões'], [/champions league/i, 'Liga dos Campeões'], [/europa league qualif/i, 'Pré-eliminatória da Liga Europa'], [/europa league/i, 'Liga Europa'], [/conference league/i, 'Liga Conferência'], [/libertadores qualif|libertadores.*(prelim|qualif)/i, 'Pré-Libertadores'], [/libertadores/i, 'Libertadores'], [/sudamericana/i, 'Sul-Americana'],
@@ -444,17 +467,18 @@ const zcat = t => /despromo|rebaix|relegat/i.test(t) ? (/play/i.test(t) ? 'rpo' 
 const ZRULE = { 'bra.1': [[1, 4, 'Libertadores (fase de grupos)'], [5, 6, 'Pré-Libertadores'], [7, 12, 'Sul-Americana'], [17, 20, 'Rebaixamento (Z4)']], 'bra.2': [[1, 4, 'Acesso à Série A'], [17, 20, 'Rebaixamento (Z4)']], 'mex.1': [[1, 6, 'Liguilla'], [7, 10, 'Play-in']] };
 const zoneOf = (slug, T, r) => { if (r.note && r.note.t) return noteT(r.note.t); if (T.groups.length !== 1 || T.groups[0].rows.some(x => x.note && x.note.t)) return ''; const z = (ZRULE[slug] || []).find(([a, b]) => r.pos >= a && r.pos <= b); return z ? z[2] : ''; };
 const MED = ['', 'ouro', 'prata', 'bronze'];
-const podium = (slug) => { const T = TB[slug]; if (!T || T.groups.length !== 1) return ''; const R = T.groups[0].rows.slice(0, 3); if (R.length < 3) return ''; const mine = new Set(st().teams.map(t => t.id));
+const podium = (slug) => { const T = liveTable(slug); if (!T || T.groups.length !== 1) return ''; const R = T.groups[0].rows.slice(0, 3); if (R.length < 3) return ''; const mine = new Set(st().teams.map(t => t.id));
   return `<div class="fb-pod">${[R[1], R[0], R[2]].map(r => `<button type="button" class="fb-pd p${r.pos}${mine.has(r.id) ? ' me' : ''}" data-act="fbTeamRow" data-id="${esc(r.id)}" data-lg="${esc(slug)}" data-n="${esc(r.n)}" data-logo="${esc(r.logo)}"><span class="fb-pdm ${MED[r.pos] || ''}">${r.pos}</span>${cr(r.logo, r.n, r.pos === 1 ? 64 : 52)}<b>${esc(tN(r.sn))}</b><small><em>${r.pts}</em> pts · ${r.j} J</small></button>`).join('')}</div>`; };
-const table = (slug, o) => { o = o || {}; const T = TB[slug]; if (!T) return ERR['b' + slug] ? '' : loading('A buscar a tabela…'); const mine = new Set(st().teams.map(t => t.id));
+const table = (slug, o) => { o = o || {}; const T = liveTable(slug); if (!T) return ERR['b' + slug] ? '' : loading('A buscar a tabela…'); const mine = new Set(st().teams.map(t => t.id));
   let G = T.groups; if (o.only) { const g = G.find(x => x.rows.some(r => r.id === o.only)); G = g ? [g] : []; } if (!G.length) return '';
   const notes = new Map(), ZZ = new Map(); G.forEach(g => g.rows.forEach(r => { const z = zoneOf(slug, T, r); ZZ.set(r, z); if (z && !notes.has(z)) notes.set(z, zcat(z)); }));
   const own = !!ZRULE[slug] && T.groups.length === 1 && !T.groups[0].rows.some(x => x.note && x.note.t);
   const legend = notes.size ? `<div class="fb-zl">${[...notes].map(([t, c]) => `<span class="z-${c}"><i style="background:${ZC[c]}"></i>${esc(t)}</span>`).join('')}</div>` : '';
-  return legend + G.map(g => { let rows = g.rows; if (o.only && rows.length > 10) { const i = rows.findIndex(r => r.id === o.only), keep = new Set([0, 1, 2, 3, i - 2, i - 1, i, i + 1, i + 2, rows.length - 1]); rows = rows.filter((r, k) => keep.has(k)); }
+  const lvh = T.live ? `<p class="fb-tlv"><span class="fb-live"><i></i>Tabela ao vivo</span> ${T.live === 1 ? '1 jogo a decorrer conta' : T.live + ' jogos a decorrer contam'} já com o resultado de agora.</p>` : '';
+  return lvh + legend + G.map(g => { let rows = g.rows; if (o.only && rows.length > 10) { const i = rows.findIndex(r => r.id === o.only), keep = new Set([0, 1, 2, 3, i - 2, i - 1, i, i + 1, i + 2, rows.length - 1]); rows = rows.filter((r, k) => keep.has(k)); }
     let prev = 0, pz = null; return `${G.length > 1 || (g.name && T.groups.length > 1) ? `<h4 class="fb-gh">${esc(g.name.replace(/^Group/, 'Grupo'))}</h4>` : ''}<div class="fb-tw"><table class="fb-tb"><thead><tr><th>#</th><th class="l">Equipa</th><th>J</th><th class="hm">V</th><th class="hm">E</th><th class="hm">D</th><th class="hm">Golos</th><th>DG</th><th>Pts</th></tr></thead><tbody>${rows.map(r => { const gap = prev && r.pos - prev > 1; prev = r.pos;
       const z = ZZ.get(r), c = z ? zcat(z) : '', zb = pz !== null && pz !== c && !gap; pz = c;
-      return `<tr class="${mine.has(r.id) || r.id === o.only ? 'me' : ''}${gap ? ' gap' : ''}${c ? ' z z-' + c : ''}${zb ? ' zb' : ''}" style="${c ? '--zc:' + ZC[c] : ''}"${z ? ` title="${esc(z)}"` : ''}><td class="p"><span>${r.pos}</span></td><td class="l"><button type="button" class="fb-tl" data-act="fbTeamRow" data-id="${esc(r.id)}" data-lg="${esc(slug)}" data-n="${esc(r.n)}" data-logo="${esc(r.logo)}">${cr(r.logo, r.n, 24)}<span>${esc(tN(r.sn))}</span></button></td><td>${r.j}</td><td class="hm">${r.v}</td><td class="hm">${r.e}</td><td class="hm">${r.d}</td><td class="hm">${r.gm}:${r.gs}</td><td>${r.dg > 0 ? '+' + r.dg : r.dg}</td><td class="pts">${r.pts}</td></tr>`; }).join('')}</tbody></table></div>`; }).join('')
+      return `<tr class="${mine.has(r.id) || r.id === o.only ? 'me' : ''}${r.lv ? ' lvr' : ''}${gap ? ' gap' : ''}${c ? ' z z-' + c : ''}${zb ? ' zb' : ''}" style="${c ? '--zc:' + ZC[c] : ''}"${z ? ` title="${esc(z)}"` : ''}><td class="p"><span>${r.pos}</span>${r.mv ? `<i class="fb-mv ${r.mv > 0 ? 'up' : 'dn'}" title="${r.mv > 0 ? 'Sobe ' + r.mv : 'Desce ' + -r.mv} ao vivo"></i>` : ''}</td><td class="l"><button type="button" class="fb-tl" data-act="fbTeamRow" data-id="${esc(r.id)}" data-lg="${esc(slug)}" data-n="${esc(r.n)}" data-logo="${esc(r.logo)}">${cr(r.logo, r.n, 24)}<span>${esc(tN(r.sn))}</span>${r.lv ? `<em class="fb-lvs ${r.lv}" title="A jogar agora">${esc(r.lsc)}</em>` : ''}</button></td><td>${r.j}</td><td class="hm">${r.v}</td><td class="hm">${r.e}</td><td class="hm">${r.d}</td><td class="hm">${r.gm}:${r.gs}</td><td>${r.dg > 0 ? '+' + r.dg : r.dg}</td><td class="pts">${r.pts}</td></tr>`; }).join('')}</tbody></table></div>`; }).join('')
     + (own ? '<p class="mut fb-zn">Zonas habituais; podem mudar com os campeões das taças.</p>' : ''); };
 
 /* ---------- páginas ---------- */
@@ -577,12 +601,12 @@ const lgCard = (slug, n, info) => { const on = cFollow(slug); return `<div class
 P.campeonatos = () => { const s = st(); s.comps.forEach(c => needComp(c.slug)); needLogos(POP.flatMap(([, L]) => L).concat(s.comps.map(c => c.slug)));
   return `<section class="fb-find">${searchBox('l')}</section>`
     + sec('Os teus campeonatos', s.comps.length ? `<div class="fb-lgs mine">${s.comps.map(c => { const m = CM[c.slug], lv = m ? m.ev.filter(e => e.st === 'in').length : 0, J = m && jorn(m);
-      return lgCard(c.slug, c.n, lv ? `<span class="fb-live"><i></i>${lv} ao vivo</span>` : J ? esc(J.t + ' · ' + J.L.length + ' jogo(s)') : esc((m && m.season) || '')); }).join('')}</div>` : `<p class="mut fb-none">Toca no + de um campeonato para o seguir, ou procura qualquer outro pelo nome.</p>`)
+      const bk = !lv && backOf(c.slug); return lgCard(c.slug, c.n, lv ? `<span class="fb-live"><i></i>${lv} ao vivo</span>` : bk ? esc(backTxt(bk)) : J ? esc(J.t + ' · ' + J.L.length + ' jogo(s)') : esc((m && m.season) || '')); }).join('')}</div>` : `<p class="mut fb-none">Toca no + de um campeonato para o seguir, ou procura qualquer outro pelo nome.</p>`)
     + POP.map(([g, L]) => sec(g, `<div class="fb-lgs">${L.map(slug => lgCard(slug)).join('')}</div>`)).join(''); };
 P.campeonato = () => { const slug = OS.ui.fbC; if (!slug) return P.campeonatos(); needComp(slug); needTable(slug); needLogos([slug]); const m = CM[slug], on = cFollow(slug), c = st().comps.find(x => x.slug === slug) || RESL.get(slug) || {};
   const T = TB[slug], lead = T && T.groups.length === 1 && T.groups[0].rows[0];
   const head = hero(`<a class="fb-back" href="#futebol.campeonatos">${UI.ic('left')}<span>Campeonatos</span></a><div class="fb-cth">${(() => { const u = lgLogo(slug) || c.logo; return u ? `<span class="fb-cthl"><img src="${esc(img(u, 192))}" alt="" width="96" height="96" referrerpolicy="no-referrer"></span>` : `<span class="fb-cthl">${UI.ic('award')}</span>`; })()}
-    <div class="fb-ctht"><h2>${esc(lgN(slug, (m && m.name) || c.n))}</h2><p>${esc((m && m.season) || '')}</p>${lead ? `<span class="fb-lead">${cr(lead.logo, lead.n, 22)}Líder: <b>${esc(tN(lead.sn))}</b> · ${lead.pts} pts</span>` : ''}</div>
+    <div class="fb-ctht"><h2>${esc(lgN(slug, (m && m.name) || c.n))}</h2><p>${esc((m && m.season) || '')}</p>${backOf(slug) ? `<span class="fb-back2">${UI.ic('cal')}${esc(backTxt(backOf(slug)))}</span>` : ''}${lead ? `<span class="fb-lead">${cr(lead.logo, lead.n, 22)}Líder: <b>${esc(tN(lead.sn))}</b> · ${lead.pts} pts</span>` : ''}</div>
     <button class="btn ${on ? 'fb-btn-l' : 'pri'}" data-act="fbFollowC" data-slug="${esc(slug)}">${UI.ic(on ? 'check' : 'star')}${on ? 'A seguir' : 'Seguir'}</button></div>`, 'fb-hc');
   if (!m) return head + (errBox('c' + slug) || loading());
   const lv = m.ev.filter(e => e.st === 'in'), J = jorn(m), seen = new Set(J ? J.L.map(e => e.id) : []); lv.slice(0, 2).forEach(needSum);

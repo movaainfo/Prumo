@@ -2481,11 +2481,14 @@ async function futebolTests(b) { cur = 'Futebol'; console.log('\n=== Visão Gera
   const ti = await E(p, () => document.getElementById('view').innerText.replace(/\s+/g, ' '));
   ok('Futebol › equipa: a IA procura o treinador, os lesionados e os castigados (com fontes)', /Treinador: Filipe Luís/.test(ti) && /Lesionados: Bruno Henrique/.test(ti) && /Castigados: Léo Ortiz/.test(ti) && /ge\.globo\.com/.test(ti), ti.slice(ti.indexOf('Pesquisado') - 10, ti.indexOf('Pesquisado') + 200).replace(/\s+/g, ' '));
   if (SH) await p.screenshot({ path: SH + '/fb-plantel.png', fullPage: true });
-  ok('Futebol › equipa: página da equipa com calendário, resultados e a tabela com a equipa destacada', /Resultados/.test(td.t) && /Classificação · Brasileirão/.test(td.t) && /Flamengo/.test(td.me) && /76/.test(td.me), td.t.slice(0, 160));
+  ok('Futebol › equipa: página da equipa com calendário, resultados e a tabela com a equipa destacada', /Resultados/.test(td.t) && /Classificação · Brasileirão/.test(td.t) && /Flamengo/.test(td.me) && /76|79/.test(td.me), td.t.slice(0, 160));
   await E(p, () => { OS.ui.fbC = 'bra.1'; location.hash = 'futebol.campeonato'; }); await sleep(1500);
   const zn = await E(p, () => { const z = n => { const tr = [...document.querySelectorAll('#view .fb-tb tbody tr')].find(t => t.innerText.includes(n)); return tr ? (tr.className.match(/z-(\w+)/) || [])[1] || '' : '?'; }; return { fla: z('Flamengo'), pal: z('Palmeiras'), cap: z('Athletico'), gre: z('Grêmio'), juv: z('Juventude'), leg: (document.querySelector('#view .fb-zl') || {}).innerText || '', nota: /Zonas habituais/.test(document.getElementById('view').innerText) }; });
   ok('Futebol › tabela: zonas com cores diferentes (Libertadores, Sul-Americana, rebaixamento) mesmo quando a ESPN não as marca', zn.fla === 'top' && zn.pal === 'top' && zn.cap === 'eu' && zn.gre === '' && zn.juv === 'rel' && /Rebaixamento \(Z4\)/.test(zn.leg) && /Sul-Americana/.test(zn.leg) && zn.nota, JSON.stringify(zn));
   if (SH) await p.screenshot({ path: SH + '/fb-zonas.png', fullPage: true });
+  // tabela ao vivo: o Flamengo 2-0 Palmeiras a decorrer já conta (76 → 79 pontos, 35 jogos), com o resultado ao lado
+  const tl = await E(p, () => { const tr = n => [...document.querySelectorAll('#view .fb-tb tbody tr')].find(t => t.innerText.includes(n)); const f = tr('Flamengo'), q = tr('Palmeiras'); return { h: !!document.querySelector('#view .fb-tlv'), f: f && f.innerText.replace(/\s+/g, ' '), fl: f && f.classList.contains('lvr'), fs: f && (f.querySelector('.fb-lvs.w') || {}).innerText, q: q && (q.querySelector('.fb-lvs.l') || {}).innerText }; });
+  ok('Futebol › tabela ao vivo: o jogo a decorrer já conta (pontos, jogos e o resultado de agora ao lado)', tl.h && tl.fl && tl.fs === '2-0' && tl.q === '0-2' && / 79$/.test(tl.f) && / 35 /.test(tl.f), JSON.stringify(tl));
   // campeonatos
   await E(p, () => { location.hash = 'futebol.campeonatos'; }); await sleep(500);
   await p.click('#view [data-act=fbFollowC][data-slug="conmebol.libertadores"]'); await sleep(300);

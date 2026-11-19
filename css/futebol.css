@@ -495,3 +495,12 @@ html.lite-x .fb-live i,html.lite-x .fb-ball .ic,html.lite-x .fbw-dot{animation:n
 .fb-tvc{display:inline-flex;align-items:baseline;gap:6px;padding:6px 10px;border-radius:10px;border:1px solid var(--line2);background-color:var(--bg);font-size:13px;color:var(--tx);text-decoration:none}
 a.fb-tvc:hover{border-color:var(--accent)}.fb-tvc small{font-size:11px;color:var(--mut)}
 .fb-tv>small{font-size:11.5px}
+/* tabela ao vivo e regresso dos campeonatos parados */
+.fb-tlv{margin:0 0 10px;font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fb-tb tr.lvr td{background:rgba(229,72,77,.06)}
+.fb-lvs{margin-left:8px;font-style:normal;font-size:11.5px;font-weight:800;padding:1px 6px;border-radius:5px;background:#3a3d45;color:#fff;font-variant-numeric:tabular-nums}
+.fb-lvs.w{background:#1f8f55}.fb-lvs.e{background:#8a6d1d}.fb-lvs.l{background:#b3363a}
+.fb-mv{display:inline-block;width:0;height:0;margin-left:4px;vertical-align:middle;border-left:4px solid transparent;border-right:4px solid transparent}
+.fb-mv.up{border-bottom:6px solid #2fbf71}.fb-mv.dn{border-top:6px solid #e5484d}
+.fb-back2{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12.5px;font-weight:700}
+.fb-back2 .ic{width:14px;height:14px}
