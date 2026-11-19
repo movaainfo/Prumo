@@ -345,7 +345,7 @@ const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), tea
 /* ---------- planos: os Desportos completos são do Completo; o Futebol é de todos ---------- */
 const full = () => !OS.Plano || !OS.Plano.can || OS.Plano.can('desportos');
 const hubLite = () => `<section class="sp-hero"><div class="sp-hl"><span class="sp-ok">Desportos</span><h2>O teu Futebol</h2><p>No teu plano tens o Futebol: as tuas equipas ao vivo, as tabelas, os golos e os avisos.</p><div class="row gap8" style="margin-top:12px"><a class="btn pri" href="#futebol">${UI.ic('ball')}Abrir o Futebol</a></div></div></section>`
-  + (OS.Plano && OS.Plano.lock ? OS.Plano.lock(3, 'NBA, NFL, Fórmula 1, MotoGP, MMA, ténis e os outros desportos, as Olimpíadas e a Copa do Mundo') : '')
+  + (OS.Plano && OS.Plano.lock ? OS.Plano.lock(3, 'O resto dos Desportos (NBA, NFL, Fórmula 1, MotoGP, MMA, ténis, Olimpíadas, Copa do Mundo e mais)') : '')
   + sec('Desportos', `<div class="sp-sps">${SP.map(sp => sp[0] === 'futebol' ? `<a class="sp-spc on" href="#futebol" style="--sc:${sp[4]}">${spIc(sp)}<b>${esc(sp[1])}</b></a>` : `<a class="sp-spc sp-lk" href="#planos" style="--sc:${sp[4]}" title="No plano Completo">${spIc(sp)}<b>${esc(sp[1])}</b><span class="sp-lki">${UI.ic('lock')}</span></a>`).join('')}</div>`);
 
 /* ---------- página ---------- */

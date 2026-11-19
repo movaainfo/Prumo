@@ -2785,9 +2785,12 @@ async function esportesTests(b) { cur = 'Desportos'; console.log('\n=== Eu: desp
   await p.click('#view .sp-av label:has(input[data-k=pts])'); await sleep(200);
   ok('Desportos › Avisos: desligar os golos, pontos e sets fica guardado', await E(p, () => (OS.one('sports').av || {}).pts === 0 ), '');
   // planos: no Essencial e no Avançado fica o Futebol; o resto dos Desportos é do Completo
-  const pl = await E(p, async () => { const o = OS.Plano.cur; OS.Plano.cur = () => ({ id: 'essencial', n: 'Essencial', lvl: 1 }); location.hash = 'esportes'; await new Promise(r => setTimeout(r, 700));
+  const pl = await E(p, async () => { const o = OS.Plano.cur; OS.Plano.cur = () => ({ id: 'essencial', n: 'Essencial', lvl: 1 }); OS.go('esportes'); await new Promise(r => setTimeout(r, 700));
     const a = { t: document.getElementById('view').innerText, fut: !!document.querySelector('#view a.btn[href="#futebol"]'), lk: document.querySelectorAll('#view .sp-spc.sp-lk').length };
-    location.hash = 'esportes.nba'; await new Promise(r => setTimeout(r, 600)); a.nba = !!document.querySelector('#view .pl-lock') && !document.querySelector('#view .sp-g'); a.up = (OS.Push && OS.Push.syncAll) ? 1 : 0; OS.Plano.cur = o; return a; });
+    window.__plO = o; return a; });
+  if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + '/sp-essencial.png', fullPage: true });
+  Object.assign(pl, await E(p, async () => { const a = {}, o = window.__plO;
+    OS.go('esportes.nba'); await new Promise(r => setTimeout(r, 600)); a.nba = !!document.querySelector('#view .pl-lock') && !document.querySelector('#view .sp-g'); a.up = (OS.Push && OS.Push.syncAll) ? 1 : 0; OS.Plano.cur = o; return a; }));
   ok('Planos: no Essencial os Desportos mostram o Futebol e o resto com cadeado (Completo)', pl.fut && pl.lk >= 10 && /plano Completo/.test(pl.t) && pl.nba, JSON.stringify(pl).slice(0, 300));
   await E(p, () => { window.__spTest = false; });
   const e2 = errs.filter(e => !/Access to fetch at 'https:\/\/(site|sports\.core)\.api\.espn\.com/.test(e));
