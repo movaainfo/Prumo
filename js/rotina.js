@@ -35,7 +35,14 @@ const doneOn = (r, d) => !!((r.log || {})[d]);
 const RT = OS.Rotina = { segs, all, doneOn,
   // agora e a seguir (só rotina), para o Hoje e o Spyke
   now: () => { const n = nowM(); return segs(wd(today())).find(x => x.s <= n && n < x.e) || null; },
-  next: () => { const n = nowM(); return segs(wd(today())).find(x => x.s > n) || null; } };
+  next: () => { const n = nowM(); return segs(wd(today())).find(x => x.s > n) || null; },
+  // os avisos dos próximos dias (para chegarem com a app fechada: o servidor envia-os na hora). Os blocos já feitos hoje não avisam.
+  upcoming: (days = 14) => { const out = [], t0 = today(), now = Date.now();
+    for (let i = 0; i < days; i++) { const d = U.addDays(t0, i), [y, mo, da] = d.split('-').map(Number);
+      segs(wd(d)).filter(x => !x.cont).forEach(x => { const r = x.r, w = r.warn === 'off' ? null : U.num(r.warn) || 0; if (w == null || doneOn(r, d)) return;
+        const at = new Date(y, mo - 1, da, 0, x.s - w).getTime(); if (at < now - 6e4) return;
+        out.push({ at, t: w ? `Daqui a ${w} min: ${r.title} (${r.start}–${r.end})` : `Agora: ${r.title} até ${r.end}`, b: r.notes ? String(r.notes).slice(0, 120) : 'Rotina do Prumo', u: '#habitos.rotina', g: 'rt-' + r.id }); }); }
+    return out.sort((a, b) => a.at - b.at).slice(0, 300); } };
 
 /* ---------- ações ---------- */
 A.rtDone = b => { const r = OS.get('routine', b.dataset.id), t = today(); if (!r) return;
@@ -65,7 +72,7 @@ const TPL = {
 A.rtTpl = b => { const T = TPL[b.dataset.v], k = b.dataset.k; if (!T) return;
   T[1].forEach(([s, e, title, area]) => OS.add('routine', { title, start: s, end: e, days: [k], area, warn: '0' }, { silent: true }));
   OS.request(); UI.toast(`Modelo "${T[0]}" posto em ${L.WEEK.find(w => w[0] === k)[1]}. Toca num bloco para o mudar.`, 'pos'); };
-A.rtNotif = async () => { try { if (!('Notification' in window)) return UI.toast('Este aparelho não deixa a app mandar avisos', 'warn'); const p = await Notification.requestPermission(); UI.toast(p === 'granted' ? 'Avisos ligados neste aparelho' : 'Avisos não autorizados', p === 'granted' ? 'pos' : 'warn'); OS.request(); } catch (e) { } };
+A.rtNotif = async () => { if (OS.Push && !OS.Push.why()) return OS.Push.enable(); try { if (!('Notification' in window)) return UI.toast('Este aparelho não deixa a app mandar avisos', 'warn'); const p = await Notification.requestPermission(); UI.toast(p === 'granted' ? 'Avisos ligados neste aparelho' : 'Avisos não autorizados', p === 'granted' ? 'pos' : 'warn'); OS.request(); } catch (e) { } };
 
 /* ---------- a página ---------- */
 const PX = 46; // altura de uma hora
@@ -115,7 +122,7 @@ const page = () => { const tk = wd(today()), sel = OS.ui.rtDay || tk, week = sel
       <div class="row between gap8" style="margin-top:10px"><small class="mut">Os blocos passam a repetir nesses dias.</small>${S.some(x => !x.cont) ? `<button type="button" class="btn xs ghost" data-act="rtClear" data-k="${k}">Limpar o dia</button>` : ''}</div>
       ${!S.some(x => !x.cont) ? `<div class="divider"></div><div class="row gap8">${Object.entries(TPL).map(([id, [nm]]) => `<button type="button" class="btn xs" data-act="rtTpl" data-v="${id}" data-k="${k}">${esc(nm)}</button>`).join('')}</div>` : ''}</form>`}
     ${(() => { const c = OS.one('calx') || {}; return `<div class="pn"><div class="pn-h"><h3>${UI.ic('cal')}No calendário</h3>${c.on ? UI.badge(c.err ? 'com erro' : 'a enviar', c.err ? 'warn' : 'pos') : ''}</div><p class="mut" style="margin:0 0 8px;font-size:12.5px">Cada bloco fica guardado no Calendário do Prumo, todas as semanas. ${c.on ? 'E vai sozinho para o teu Google Calendar e o Calendário do iPhone (calendário "Náutilo · Treino e rotina"), sempre 3 semanas à frente: se mudares aqui, muda lá.' : 'Para o teres também no Google Calendar e no iPhone, liga a agenda fora da app.'}</p><div class="row gap8"><a class="btn sm" href="#calendario.semana">${UI.ic('cal')}Ver no Calendário</a>${c.on ? `<button class="btn sm ghost" data-act="cpNow">${UI.ic('sync')}Enviar agora</button>` : `<a class="btn sm ghost" href="#definicoes.ligacoes">Ligar o Google Calendar</a>`}</div></div>`; })()}
-    <div class="pn"><div class="pn-h"><h3>Avisos</h3></div><p class="mut" style="margin:0 0 8px;font-size:12.5px">Com a app aberta, avisa no início de cada bloco (ou uns minutos antes: muda no bloco). Com a app fechada, liga o Google Calendar em Definições para os blocos aparecerem no telemóvel.</p>${perm === 'granted' ? UI.badge('avisos ligados neste aparelho', 'pos') : perm === 'na' ? '' : `<button class="btn sm" data-act="rtNotif">${UI.ic('clock')}Ligar avisos neste aparelho</button>`}</div></div>`;
+    <div class="pn"><div class="pn-h"><h3>Avisos</h3></div><p class="mut" style="margin:0 0 8px;font-size:12.5px">Avisa no início de cada bloco (ou uns minutos antes: muda no bloco). Com as notificações ligadas, chegam mesmo com a app fechada.</p>${perm === 'granted' ? UI.badge('avisos ligados neste aparelho', 'pos') : perm === 'na' ? '' : `<button class="btn sm" data-act="rtNotif">${UI.ic('clock')}Ligar avisos neste aparelho</button>`}</div></div>`;
   const grid = week ? `<div class="pn flush rt-week"><div class="rt-wh">${ORDER.map(d => `<button class="${d === tk ? 'is-t' : ''}" data-ui="rtDay" data-v="${d}">${SH[d]}</button>`).join('')}</div><div class="rt-wg"><div class="rt-axis">${(() => { const h0 = Math.min(6, ...ORDER.flatMap(d => segs(d).map(x => Math.floor(x.s / 60)))), h1 = Math.max(23, ...ORDER.flatMap(d => segs(d).map(x => Math.ceil(x.e / 60)))); let s = ''; for (let h = h0; h <= h1; h++) s += `<span style="top:${(h - h0) * PX}px">${U.pad(h % 24)}h</span>`; return `<div style="position:relative;height:${(h1 - h0) * PX + 8}px">${s}</div>`; })()}</div>${ORDER.map(d => weekCol(d)).join('')}</div></div>`
     : `<div class="pn flush rt-wrap">${dayCol(k)}</div>`;
   return head + chips + add + `<div class="rt-g">${grid}${side}</div>`; };
@@ -137,7 +144,7 @@ const tick = () => { try { if (!OS.Lock || !OS.Lock.unlocked() || document.hidde
     segs(wd(t)).filter(x => !x.cont).forEach(x => { const r = x.r, w = r.warn === 'off' ? null : U.num(r.warn) || 0; if (w == null) return; const at = x.s - w, key = r.id + '|' + t;
       if (fired[key] || n < at || n > at + 3 || doneOn(r, t)) return; fired[key] = 1; ch = true;
       const msg = w ? `Daqui a ${w} min: ${r.title} (${r.start}–${r.end})` : `Agora: ${r.title} até ${r.end}`; UI.toast(msg, 'pos');
-      try { if ('Notification' in window && Notification.permission === 'granted') { const body = r.notes ? String(r.notes).slice(0, 120) : 'Rotina do Prumo'; if (navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then(g => g.showNotification(msg, { body, icon: 'icon-192.png', tag: 'rt-' + key })).catch(() => { }); else new Notification(msg, { body }); } } catch (e) { } });
+      try { if (!(OS.Push && OS.Push.on()) && 'Notification' in window && Notification.permission === 'granted') { const body = r.notes ? String(r.notes).slice(0, 120) : 'Rotina do Prumo'; if (navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then(g => g.showNotification(msg, { body, icon: 'icon-192.png', tag: 'rt-' + key })).catch(() => { }); else new Notification(msg, { body }); } } catch (e) { } });
     if (ch) LS.set(FK, fired);
     // a linha da hora anda sozinha; a página só se redesenha quando muda o bloco atual (para não apagar o que estás a escrever)
     document.querySelectorAll('#view [data-h0] > .rt-lane > .rt-now, #view .rt-wc[data-h0] > .rt-now').forEach(el => { const c = el.closest('[data-h0]'); el.style.top = (n - +c.dataset.h0 * 60) / 60 * PX + 'px'; const sp = el.querySelector('span'); if (sp) sp.textContent = U.hm(); });

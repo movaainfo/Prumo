@@ -107,3 +107,5 @@ module.exports = async (req, res) => {
   } catch (e) { res.statusCode = 504; return res.end('{"ok":false,"msg":"a ESPN não respondeu a tempo"}'); }
   finally { clearTimeout(to); }
 };
+// usados pelas notificações com o app fechado (api/push): os jogos de futebol do dia, a MotoGP e o leitor de JSON
+module.exports.vivo = vivo; module.exports.mgp = mgp; module.exports.getJ = getJ;

@@ -177,7 +177,7 @@ const SEEN = U.ls.get('oc_fut_seen', {}) || {};
 const saveSeen = () => { const lim = Date.now() - 3 * 864e5; Object.keys(SEEN).forEach(k => { if ((SEEN[k].at || 0) < lim) delete SEEN[k]; }); U.ls.set('oc_fut_seen', SEEN); };
 const FEED = U.ls.get('oc_fut_feed', []) || [];
 const say = (title, body, e) => { FEED.unshift({ at: Date.now(), title, body, id: e.id, lg: e.lg }); FEED.splice(15); U.ls.set('oc_fut_feed', FEED); UI.toast(title + ' · ' + body, 'pos');
-  try { if ('Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then(r => r.showNotification(title, { body, icon: 'icon-192.png', tag: 'fb-' + e.id + '-' + title, data: { url: '#futebol' } })).catch(() => { }); } catch (x) { } };
+  try { if (!(OS.Push && OS.Push.on()) && 'Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then(r => r.showNotification(title, { body, icon: 'icon-192.png', tag: 'fb-' + e.id + '-' + title, data: { url: '#futebol' } })).catch(() => { }); } catch (x) { } };
 const watch = (e, mine) => { if (!e.h || !e.a) return; const p = SEEN[e.id], c = { s: sc0(e.h.s) + '-' + sc0(e.a.s), st: e.st, sn: e.sn, at: Date.now(), pre: p ? p.pre : 0 }; SEEN[e.id] = c;
   const a = av(), dt = e.d - Date.now(); if (a.pre && (mine || a.comp) && e.st === 'pre' && !/POSTPONED/.test(e.sn || '') && !c.pre && dt > 0 && dt <= 15 * 6e4) { c.pre = 1; say('Daqui a 15 minutos', `${tN(e.h.n)} × ${tN(e.a.n)} · ${lgN(e.lg, e.lgF)}`, e); }
   if (!p || (!mine && !a.comp)) return; const vs = `${tN(e.h.sn)} ${sc0(e.h.s)}-${sc0(e.a.s)} ${tN(e.a.sn)}`;
@@ -561,9 +561,9 @@ const jorn = m => { const td = U.today(), today = m.ev.filter(e => U.iso(new Dat
   const fut = m.ev.filter(e => e.d > Date.now()).length ? m.ev : (m.next || []); if (fut.length && fut[0].d > Date.now() - 864e5) return { t: 'Próxima jornada · ' + dayLbl(fut[0].d), L: fut };
   const pas = m.ev.length ? m.ev : (m.prev || []); return pas.length ? { t: 'Última jornada · ' + dayLbl(pas[0].d), L: pas } : null; };
 const avisos = () => { const a = av(), perm = 'Notification' in window ? Notification.permission : 'na';
-  return `<section class="pn fb-av"><div class="pn-h"><h3>${UI.ic('bell')}Avisos</h3>${perm === 'granted' ? '<span class="bdg pos">ligados neste aparelho</span>' : perm === 'na' ? '' : `<button class="btn sm" data-act="fbNotif">Ligar avisos neste aparelho</button>`}</div>
+  return `<section class="pn fb-av"><div class="pn-h"><h3>${UI.ic('bell')}Avisos</h3>${perm === 'granted' && (!OS.Push || OS.Push.on() || OS.Push.why()) ? '<span class="bdg pos">ligados neste aparelho</span>' : perm === 'na' ? '' : `<button class="btn sm" data-act="fbNotif">Ligar avisos neste aparelho</button>`}</div>
   <div class="fb-tg">${[['pre', '15 minutos antes'], ['ini', 'Começo do jogo'], ['gol', 'Golos'], ['int', 'Intervalo'], ['fim', 'Resultado final'], ['comp', 'Também os jogos dos campeonatos que segues']].map(([k, l]) => `<label class="fb-sw"><input type="checkbox" data-act="fbAv" data-k="${k}" ${a[k] ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
-  <small class="mut">Os avisos chegam com o Prumo aberto; no computador também com a janela em segundo plano. Com o app fechado no telemóvel ainda não chegam.</small></section>`; };
+  <small class="mut">${OS.Push && OS.Push.on() ? 'Os avisos chegam mesmo com o Prumo fechado.' : 'Liga as notificações para os avisos chegarem também com o Prumo fechado.'}</small></section>`; };
 const card = t => { const m = tmOf(t.id), ev = m ? m.ev : [], lv = ev.find(e => e.st === 'in'), nx = ev.find(e => e.st === 'pre' && !/POSTPONED/.test(e.sn) && e.d > Date.now() - 2 * 36e5), form = ev.filter(done).slice(-5).map(e => wdl(e, t.id)).filter(Boolean);
   return `<button type="button" class="fb-card" data-act="fbTeam" data-id="${esc(t.id)}" style="--tc:${col(m && m.col || t.col)}"><span class="fb-band" aria-hidden="true"></span>${cr((m && m.logo) || t.logo, t.n, 64, 'big')}
     <b class="fb-cn">${esc(tN(t.n))}</b><small class="fb-cs">${esc(posOf(t) || subT(t))}</small>
@@ -654,7 +654,7 @@ A.fbTeamRow = b => { const id = b.dataset.id; if (!tFind(id)) RES.set(id, { id, 
 A.fbComp = b => { OS.ui.fbC = b.dataset.slug; location.hash = 'futebol.campeonato'; OS.request(); };
 A.fbRefresh = () => { MEM.clear(); Object.keys(TRY).forEach(k => delete TRY[k]); Object.keys(ERR).forEach(k => delete ERR[k]); Object.keys(TM).forEach(k => { TM[k].at = 0; }); Object.keys(CM).forEach(k => { CM[k].at = 0; }); Object.keys(TB).forEach(k => { TB[k].at = 0; }); UI.toast('A atualizar…'); OS.request(); };
 A.fbAv = b => { save({ av: Object.assign(av(), { [b.dataset.k]: b.checked ? 1 : 0 }) }); };
-A.fbNotif = async () => { if (!('Notification' in window)) return UI.toast('Este aparelho não deixa o app mandar avisos. No iPhone, instala o Prumo no ecrã principal.', 'warn'); const p = await Notification.requestPermission(); UI.toast(p === 'granted' ? 'Avisos ligados neste aparelho' : 'Os avisos ficaram desligados (podes ligar nas definições do aparelho)', p === 'granted' ? 'pos' : 'warn'); OS.request(); };
+A.fbNotif = async () => { if (OS.Push && !OS.Push.why()) return OS.Push.enable(); if (!('Notification' in window)) return UI.toast('Este aparelho não deixa o app mandar avisos. No iPhone, instala o Prumo no ecrã principal.', 'warn'); const p = await Notification.requestPermission(); UI.toast(p === 'granted' ? 'Avisos ligados neste aparelho' : 'Os avisos ficaram desligados (podes ligar nas definições do aparelho)', p === 'granted' ? 'pos' : 'warn'); OS.request(); };
 
 /* ---------- ver o jogo: a transmissão oficial e grátis no YouTube, a tocar dentro do app, e onde mais passa ----------
    O servidor (api/futebol?yt=1) só lê o feed público dos canais oficiais com direitos (por agora a CazéTV). Aqui procura-se o vídeo

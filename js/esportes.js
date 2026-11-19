@@ -325,7 +325,7 @@ const AVD = { pre: 1, ini: 1, pts: 1, fim: 1 }, avS = () => Object.assign({}, AV
 const SEEN = U.ls.get('oc_sp_seen', {}) || {}, FEED = U.ls.get('oc_sp_feed', []) || [];
 const saveSeen = () => { const lim = Date.now() - 3 * 864e5; Object.keys(SEEN).forEach(k => { if ((SEEN[k].at || 0) < lim) delete SEEN[k]; }); U.ls.set('oc_sp_seen', SEEN); };
 const say = (title, body, tag) => { FEED.unshift({ at: Date.now(), title, body }); FEED.splice(12); U.ls.set('oc_sp_feed', FEED); UI.toast(title + ' · ' + body, 'pos');
-  try { if ('Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker) navigator.serviceWorker.ready.then(r => r.showNotification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', tag: 'sp-' + tag, data: { url: '#esportes' } })).catch(() => { }); } catch (x) { } };
+  try { if (!(OS.Push && OS.Push.on()) && 'Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker) navigator.serviceWorker.ready.then(r => r.showNotification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', tag: 'sp-' + tag, data: { url: '#esportes' } })).catch(() => { }); } catch (x) { } };
 // o que conta como "marcar" em cada desporto (no basquetebol os pontos são a toda a hora: avisa o começo, o intervalo e o fim)
 const ptsMsg = (e, side, d) => { const P = (spOf(e.lg) || [])[2] || '';
   if (e.lg === 'volei') return 'Set para ' + side.sn;
@@ -341,7 +341,7 @@ const watchEv = e => { if (!e.h || !e.a || !e.d) return; const k = e.lg + ':' + 
   if (a.pre && e.st === 'pre' && !c.pre && e.d - now <= 15 * 6e4 && e.d - now > 0) { c.pre = 1; say('Daqui a 15 minutos', nmL(e) + ' · ' + lgL(e), k + ':pre'); }
   if (!p) return;
   if (a.ini && p.st === 'pre' && c.st === 'in') say('Começou', nmL(e) + ' · ' + lgL(e), k + ':ini');
-  if (a.pts && c.st !== 'pre' && p.s && c.s !== p.s) { const [ph, pa] = p.s.split('-').map(Number), hs = +e.h.s || 0, as = +e.a.s || 0, side = hs > ph ? e.h : as > pa ? e.a : null;
+  const ps = p.s || (p.st === 'pre' ? '0-0' : ''); if (a.pts && c.st !== 'pre' && ps && c.s !== ps) { const [ph, pa] = ps.split('-').map(Number), hs = +e.h.s || 0, as = +e.a.s || 0, side = hs > ph ? e.h : as > pa ? e.a : null;
     const t = side && ptsMsg(e, side, side === e.h ? hs - ph : as - pa); if (t) say(t, vsL(e), k + ':' + c.s); }
   if (a.ini && /HALFTIME/.test(c.sn) && !/HALFTIME/.test(p.sn || '')) say('Intervalo', vsL(e), k + ':int');
   if (a.fim && p.st !== 'post' && c.st === 'post') { const me = isMine(e.lg, e.h.id) ? e.h : isMine(e.lg, e.a.id) ? e.a : null; say(me ? (me.w ? 'Vitória · ' : (e.h.w || e.a.w) ? 'Derrota · ' : 'Terminou · ') + me.sn : 'Terminou', vsL(e), k + ':fim'); } };
@@ -383,9 +383,9 @@ try { if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('mes
 document.addEventListener('visibilitychange', () => { if (!document.hidden) loop(1500); });
 const agoL = t => { const m = Math.round((Date.now() - t) / 6e4); return m < 1 ? 'agora' : m < 60 ? 'há ' + m + ' min' : m < 24 * 60 ? 'há ' + Math.round(m / 60) + ' h' : new Date(t).toLocaleDateString('pt-PT', { day: 'numeric', month: 'short' }); };
 const avPanel = () => { const a = avS(), perm = 'Notification' in window ? Notification.permission : 'na';
-  return `<section class="sp-sec sp-av"><div class="sp-sh"><h3>Avisos</h3>${perm === 'granted' ? `<span class="sp-avok">${UI.ic('check')}Ligados neste aparelho</span>` : perm === 'na' ? '' : `<button type="button" class="btn sm" data-act="dsNotif">${UI.ic('bell')}Ligar neste aparelho</button>`}</div>
+  return `<section class="sp-sec sp-av"><div class="sp-sh"><h3>Avisos</h3>${perm === 'granted' && (!OS.Push || OS.Push.on() || OS.Push.why()) ? `<span class="sp-avok">${UI.ic('check')}Ligados neste aparelho</span>` : perm === 'na' && !(OS.Push && OS.Push.why() === 'ios') ? '' : `<button type="button" class="btn sm" data-act="dsNotif">${UI.ic('bell')}Ligar neste aparelho</button>`}</div>
     <div class="sp-avt">${[['pre', '15 minutos antes'], ['ini', 'Começo do jogo'], ['pts', 'Golos, pontos e sets'], ['fim', 'Resultado final']].map(([k, l]) => `<label class="sp-sw"><input type="checkbox" data-act="dsAv" data-k="${k}" ${a[k] ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
-    <p class="sp-note">Das equipas que segues: golo no hóquei, touchdown na NFL, corrida no basebol e set no voleibol; no basquetebol, o começo, o intervalo e o fim. Na Fórmula 1, na MotoGP e no MMA, toca no sino. Os golos do futebol estão no Futebol. Chegam com o Prumo aberto (no computador, também em segundo plano).</p>
+    <p class="sp-note">Das equipas que segues: golo no hóquei, touchdown na NFL, corrida no basebol e set no voleibol; no basquetebol, o começo, o intervalo e o fim. Na Fórmula 1, na MotoGP e no MMA, toca no sino. Os golos do futebol estão no Futebol. ${OS.Push && OS.Push.on() ? 'Chegam mesmo com o Prumo fechado.' : 'Liga as notificações para chegarem também com o Prumo fechado.'}</p>
     ${FEED.length ? `<ul class="sp-feed">${FEED.slice(0, 5).map(f => `<li><span class="sp-fi">${UI.ic('bell')}</span><span><b>${esc(f.title)}</b> ${esc(f.body)}</span><small>${esc(agoL(f.at))}</small></li>`).join('')}</ul>` : ''}</section>`; };
 
 /* ---------- início: ao vivo, as tuas equipas, os desportos, Olimpíadas ---------- */
@@ -441,7 +441,7 @@ A.dsAv = b => { const s = st(); s.av = Object.assign({}, avS(), { [b.dataset.k]:
 A.dsBell = b => { const s = st(), k = b.dataset.sp, B = s.bell || []; s.bell = B.includes(k) ? B.filter(x => x !== k) : B.concat(k); save();
   if (s.bell.includes(k)) { UI.toast((spOf(k) || [])[1] + (k === 'mma' ? ': avisamos 15 minutos antes e quando começa cada evento' : ': avisamos 15 minutos antes e quando começam a qualificação, o sprint e a corrida'), 'pos'); if ('Notification' in window && Notification.permission === 'default') A.dsNotif(); }
   else UI.toast('Avisos da ' + (spOf(k) || [])[1] + ' desligados', 'pos'); OS.request(); loop(1500); };
-A.dsNotif = async () => { if (!('Notification' in window)) return UI.toast('Este aparelho não deixa o app mandar avisos. No iPhone, instala o Prumo no ecrã principal.', 'warn');
+A.dsNotif = async () => { if (OS.Push && !OS.Push.why()) return OS.Push.enable(); if (!('Notification' in window)) return UI.toast('Este aparelho não deixa o app mandar avisos. No iPhone, instala o Prumo no ecrã principal.', 'warn');
   const p = await Notification.requestPermission(); UI.toast(p === 'granted' ? 'Avisos ligados neste aparelho' : 'Os avisos ficam só dentro do app (o aparelho não deu autorização)', p === 'granted' ? 'pos' : 'warn'); OS.request(); };
 // ao vivo: com os Desportos abertos, atualiza a cada 20 s (e a contagem das Olimpíadas a cada minuto)
 setInterval(() => { if (document.hidden || !/^#esportes/.test(location.hash)) return; const live = Object.keys(DATA).some(k => /^b:/.test(k) && DATA[k].v && (DATA[k].v.events || []).some(e => { const c = (e.competitions || [])[0] || {}; return ((c.status || e.status || {}).type || {}).state === 'in'; }));

@@ -9,7 +9,9 @@
 const U = OS.U, UI = OS.UI, V = OS.views, A = OS.act, esc = U.esc;
 const K = 'os2fblk';
 let B = U.ls.get(K, null);                 // bloco em curso
-const save = () => { if (B) U.ls.set(K, B); else U.ls.del(K); };
+const save = () => { if (B) U.ls.set(K, B); else U.ls.del(K);
+  // o fim do bloco também avisa com a app fechada (o servidor envia na hora)
+  try { const it = B && B.items && B.items[B.i]; if (OS.Push) OS.Push.put('foco', B && B.phase === 'run' && B.end > Date.now() ? [{ at: B.end, t: 'Bloco de foco', b: 'Acabou o tempo de: ' + ((it && it.title) || 'esta pendência') + '. Terminaste?', u: '#hoje', g: 'foco' }] : []); } catch (e) { } };
 const APPS = ['Instagram', 'TikTok', 'YouTube', 'WhatsApp', 'X (Twitter)', 'Facebook', 'Snapchat', 'Reddit', 'Netflix', 'Twitch', 'Discord', 'Telegram', 'Pinterest', 'Kwai', 'Jogos', 'Safari', 'Spotify', 'LinkedIn'];
 OS.ONE_DEF.focusblk = { apps: ['Instagram', 'TikTok', 'YouTube', 'WhatsApp', 'X (Twitter)', 'Netflix', 'Jogos'], sc: false, scOn: 'Prumo Foco', scOff: 'Prumo Fim', n: 5 };
 const cfg = () => Object.assign({}, OS.ONE_DEF.focusblk, OS.one('focusblk'));
@@ -161,7 +163,7 @@ function tick() {
 }
 function alarm(it) { try { const a = new (window.AudioContext || window.webkitAudioContext)(); [0, .25, .5, .9, 1.15, 1.4].forEach(t => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(.18, a.currentTime + t); g.gain.exponentialRampToValueAtTime(.001, a.currentTime + t + .2); o.start(a.currentTime + t); o.stop(a.currentTime + t + .21); }); } catch (e) { }
   try { navigator.vibrate && navigator.vibrate([300, 120, 300]); } catch (e) { }
-  try { if (document.hidden && window.Notification && Notification.permission === 'granted') new Notification('Bloco de foco', { body: 'Acabou o tempo de: ' + it.title + '. Terminaste?' }); } catch (e) { } }
+  try { if (document.hidden && !(OS.Push && OS.Push.on()) && window.Notification && Notification.permission === 'granted') new Notification('Bloco de foco', { body: 'Acabou o tempo de: ' + it.title + '. Terminaste?' }); } catch (e) { } }
 setInterval(tick, 1000);
 // sair da app conta como fuga (exceto quando foi o Prumo a abrir o Atalho)
 document.addEventListener('visibilitychange', () => { if (!B || B.phase === 'end') return;

@@ -210,3 +210,9 @@ html.esc-on body::after{content:'';position:fixed;inset:0;z-index:2147483646;poi
 .adm-cup button[type=submit]{justify-self:start}
 .adm-cupl{margin-top:14px}.adm-cupl .li.off{opacity:.6}
 
+/* Definições › Notificações (com o app fechado) */
+.push-cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.push-cat{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--pn);cursor:pointer}
+.push-cat input{margin-top:3px;accent-color:var(--acc,#c03b3b);width:16px;height:16px;flex:none}
+.push-cat span{display:flex;flex-direction:column;gap:2px;min-width:0}.push-cat b{font-size:14px}.push-cat small{font-size:12px;color:var(--tx3,var(--mut))}
+.push-why{margin:0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--warn,#e0a020) 14%,transparent);font-size:13.5px;line-height:1.45}
