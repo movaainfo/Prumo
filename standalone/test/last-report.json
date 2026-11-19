@@ -1,115 +1,61 @@
 [
  {
-  "p": "Desportos",
-  "name": "Desportos: em Eu no menu (no lugar do Futebol, que fica dentro de Desportos)",
+  "p": "Notificações",
+  "name": "Definições: grupo Notificações aberto, com o botão para ligar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Início: os desportos (com o Futebol), as Olimpíadas e as tuas equipas",
+  "p": "Notificações",
+  "name": "Ligar: o aparelho subscreve com a chave do servidor e fica ligado",
   "pass": true,
-  "info": "{\"sp\":17,\"fut\":true,\"oly\":true}"
+  "info": "{\"on\":true,\"key\":[4,23,85,133,56,194,184,149,70,74,224,117,113,194,45,5,150,56,164,252,198,50,207,204,40,80,131,142,183,229,13,3,119,11,164,77,230,8,167,230,85,223,239,247,204,17,3,218,101,59,208,178,"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › NBA › Equipas: tocar numa equipa segue-a",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › NBA › Jogos: o jogo ao vivo com o resultado e o próximo",
+  "p": "Notificações",
+  "name": "Servidor: guardou este aparelho no perfil",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › NBA › Classificação: a conferência com a tua equipa destacada",
+  "p": "Notificações",
+  "name": "Enviar um teste: chega ao aparelho (cifrado) com o aviso de que está ligado",
+  "pass": true,
+  "info": "[{\"at\":1795079483905,\"t\":\"Notificações ligadas\",\"b\":\"Vão chegar mesmo com o Prumo fechado.\",\"u\":\"#definicoes\",\"g\":\"teste\"}]"
+ },
+ {
+  "p": "Notificações",
+  "name": "Rotina com o app fechado: o servidor envia o lembrete do bloco na hora",
+  "pass": true,
+  "info": "{\"c\":{\"ok\":true,\"msgs\":1,\"sent\":1,\"gone\":0,\"users\":1},\"INB\":[{\"at\":1795079489218,\"t\":\"Agora: Treino de teste até 10:13\",\"b\":\"Rotina do Prumo\",\"u\":\"#habitos.rotina\",\"g\":\"rt-5o5pezbz6zt\"}]}"
+ },
+ {
+  "p": "Notificações",
+  "name": "Desligar a Rotina nas Definições: deixa de enviar os lembretes da rotina",
+  "pass": true,
+  "info": "[]"
+ },
+ {
+  "p": "Notificações",
+  "name": "Desportos: os avisos dizem que chegam mesmo com o Prumo fechado",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Início: o jogo ao vivo em destaque e a tua equipa com o resultado de agora, o próximo jogo e o último",
-  "pass": true,
-  "info": "{\"hero\":\"1 jogo ao vivo\\nAgora a jogar\\nNBA\\nAo vivo · Halftime\\nBoston Celtics\\n11-3\\n61\\nDenver Nuggets\\n7-5\\ncasa\\n49\",\"team\":\"Boston Celtics\\nNBA\\nHalftime\\nBOS 61 – 49 DEN\\nÚltimo\\nLAL 100 – 110 BOS\\nVitória\"}"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Fórmula 1: o próximo Grande Prémio com as sessões e o campeonato de pilotos",
+  "p": "Notificações",
+  "name": "Desligar neste aparelho: sai do servidor",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Olimpíadas: a próxima edição com a contagem, o calendário, os desportos de LA 2028 e o quadro de Paris 2024 com o teu país",
+  "p": "Notificações",
+  "name": "Notificações: sem erros de JavaScript",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Voleibol: a Superliga a decorrer com o jogo ao vivo (set a set) e os próximos jogos; a Liga das Nações com a data; sem os sub-19",
-  "pass": true,
-  "info": "{\"t\":\"Eu\\nDESPORTOS\\n\\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\\n\\nInício\\nFutebol\\nNBA\\nFórmula 1\\nMotoGP\\nVoleibol\\nNFL\\nTénis ATP\\nTénis WTA\\nUFC\\nMLB\\nNHL\\nWNBA\\nGolfe PGA\\nBasquetebol universitário\\nFutebol americano universitário\\nIndyCar\\nOlimpíadas\\nVoleibol\\n\\nSuperliga, Liga das Nações, Mundiai"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Voleibol: escudos dos clubes (TheSportsDB e, se faltar, a Wikipédia); sem escudo, a sigla da equipa a cores",
-  "pass": true,
-  "info": "{\"cru\":2,\"min\":true,\"ini\":[\"BAU\",\"BAU\"]}"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Voleibol › Classificação: a tabela da fase regular com pontos e sets",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Voleibol › Equipas: seguir uma equipa guarda também a competição",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Avisos: set ganho pela tua equipa e o jogo que começa daqui a 15 minutos",
-  "pass": true,
-  "info": "[\"Daqui a 15 minutos | Sesi Bauru × Sada Cruzeiro · Voleibol\",\"Set para Sada Cruzeiro | Sada Cruzeiro 2–0 Minas Tênis Clube\"]"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Avisos: avisa quando o jogo começa (uma vez só)",
-  "pass": true,
-  "info": "[\"Começou | Sesi Bauru × Sada Cruzeiro · Voleibol\",\"Daqui a 15 minutos | Sesi Bauru × Sada Cruzeiro · Voleibol\",\"Set para Sada Cruzeiro | Sada Cruzeiro 2–0 Minas Tênis Clube\"]"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › MotoGP: o fim de semana com as sessões, o resultado do sprint, o campeonato e o calendário",
-  "pass": true,
-  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nVoleibol\nNFL\nTénis ATP\nTénis WTA\nUFC\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMotoGP\n\nGrandes Prémios de motos e campeonato\n\nAvisar\nJuntar aos meus\nEste f"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › MotoGP: com o sino ligado avisa 15 minutos antes da corrida",
-  "pass": true,
-  "info": "[\"Corrida daqui a 15 minutos | MotoGP · Grande Prémio de Portugal\",\"Começou | Sesi Bauru × Sada Cruzeiro · Voleibol\",\"Daqui a 15 minutos | Sesi Bauru × Sada Cruzeiro · Voleibol\",\"Set para Sada Cruzeiro | Sada Cruzeiro 2–0 Minas Tênis Clube\"]"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Início: painel de avisos (4 escolhas e os últimos avisos) e a equipa de voleibol que segues com o jogo ao vivo",
-  "pass": true,
-  "info": "{\"av\":4,\"feed\":4,\"tc\":\"Boston Celtics NBA Halftime BOS 61 – 49 DEN Último LAL 100 – 110 BOS Vitória || Sada Cruzeiro Voleibol Set 3 CRU 2 – 0 MIN\"}"
- },
- {
-  "p": "Desportos",
-  "name": "Desportos › Avisos: desligar os golos, pontos e sets fica guardado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Desportos",
-  "name": "Desportos: sem erros de JavaScript",
+  "p": "Notificações",
+  "name": "iPhone sem o Prumo no ecrã principal: explica como instalar para receber notificações",
   "pass": true,
   "info": ""
  }

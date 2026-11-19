@@ -262,6 +262,7 @@ OS.Fold = (() => {
   const CHEV = '<svg viewBox="0 0 24 24" class="ic" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
   // Geral: os blocos por temas (chave = id do bloco ou o título)
   const GROUPS = [['Tu', 'Os teus dados e metas: entram nos cálculos de todo o Prumo.', ['pfMe', 'paisSet', 'relSet', 'rkSet', 'onbSet', 'pfUni', 'pfWork', 'pfGoals', 'contextos']],
+    ['Notificações', 'Os avisos do Prumo, mesmo com o app fechado.', ['pushSet']],
     ['Segurança e conta', 'Código de bloqueio, Face ID e a tua conta.', ['seguranca', 'codigo neste aparelho', 'accMig']],
     ['Aparelhos e dados', 'Sincronizar aparelhos, cópias de segurança e mudar de endereço.', ['syncPn', 'dataPn', 'mudanca de endereco']],
     ['Aplicação', 'Cores, aparência, música, desempenho e atualizações.', ['palSet', 'introSet', 'fdSet', 'animSet', 'spSet', 'desempenho', 'verPn']]];

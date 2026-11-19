@@ -150,7 +150,7 @@ const srv = http.createServer((req, res) => {
   // contas: as funções do servidor a sério (api/conta.js e api/dados.js), com uma pasta temporária no lugar do Vercel Blob
   if (u.pathname.startsWith('/rssmock/')) { const q = u.query.q || '', n = (k) => `<item><title>${k} - Jornal Teste</title><link>https://exemplo.pt/${encodeURIComponent(k)}</link><pubDate>${new Date().toUTCString()}</pubDate><source url="https://exemplo.pt">Jornal Teste</source><description></description></item>`;
     res.writeHead(200, { 'Content-Type': 'application/rss+xml' }); return res.end(`<?xml version="1.0"?><rss><channel>${[1, 2, 3].map(i => n((q ? 'Pesquisa ' : 'Notícia da conta ') + i)).join('')}</channel></rss>`); }
-  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua|futebol|banco|anime)$/);
+  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua|futebol|banco|anime|push)$/);
   if (am) { const fn = ACCAPI(am[1]); if (!fn) { res.writeHead(404); return res.end(); } req.query = u.query;
     if (process.env.DEBUGAPI) { const t0 = Date.now(), id = Math.random().toString(36).slice(2, 7); let op = ''; const oe = req.emit; req.emit = function (ev, ch) { if (ev === 'data' && !op) op = String(ch).slice(0, 40); return oe.apply(this, arguments); };
       INFL.set(id, () => am[1] + ' ' + op + ' ' + (Date.now() - t0) + 'ms'); res.on('finish', () => { INFL.delete(id); if (Date.now() - t0 > 2500) console.log('    [api lenta]', am[1], op, Date.now() - t0, 'ms'); }); }
@@ -2619,12 +2619,12 @@ async function pushTests(b) { cur = 'Notificações'; console.log('\n=== Notific
   const INB = [], of = global.fetch; global.fetch = async (u, o) => /fcm\.googleapis\.com/.test(String(u)) ? (INB.push(dec(Buffer.from(o.body))), new Response('', { status: 201 })) : of(u, o);
   try {
     const init = await mkAcc(), { ctx, p, errs } = await newPage(b, PROFILES[4], init); await ctx.grantPermissions(['notifications']).catch(() => { });
-    await p.addInitScript(S => { window.__pushTest = true; const pm = { getSubscription: async () => window.__sub || null, subscribe: async o => { window.__subKey = Array.from(new Uint8Array(o.applicationServerKey));
+    await p.addInitScript(S => { window.__pushTest = true; try { Object.defineProperty(Notification, 'permission', { configurable: true, get: () => 'granted' }); Notification.requestPermission = async () => 'granted'; } catch (e) { } const pm = { getSubscription: async () => window.__sub || null, subscribe: async o => { window.__subKey = Array.from(new Uint8Array(o.applicationServerKey));
         window.__sub = { endpoint: S.endpoint, options: { applicationServerKey: o.applicationServerKey }, toJSON: () => ({ endpoint: S.endpoint, keys: { p256dh: S.p256dh, auth: S.auth } }), unsubscribe: async () => { window.__sub = null; return true; } }; return window.__sub; } };
       try { Object.defineProperty(navigator.serviceWorker, 'ready', { configurable: true, get: () => Promise.resolve({ pushManager: pm, showNotification: async () => { } }) }); } catch (e) { } }, SUB);
     await p.goto(BASE); await unlock(p); await sleep(600);
     await E(p, () => { location.hash = 'definicoes'; }); await sleep(800);
-    ok('Definições: painel das notificações com o botão para ligar (logo a seguir ao título)', await E(p, () => { const pn = document.querySelector('#view #pushSet'); return !!pn && !!pn.querySelector('[data-act=pushOn]') && pn.previousElementSibling && pn.previousElementSibling.matches('header.phead'); }));
+    ok('Definições: grupo Notificações aberto, com o botão para ligar', await E(p, () => { const pn = document.querySelector('#view #pushSet'), g = pn && pn.closest('.set-grp'); return !!pn && !!pn.offsetParent && !pn.classList.contains('shut') && !!pn.querySelector('[data-act=pushOn]') && !!g && /Notificações/.test(g.querySelector('.set-gh').innerText); }));
     await p.click('#view [data-act=pushOn]'); await p.waitForFunction(() => document.querySelector('#view #pushSet [data-act=pushTest]'), null, { timeout: 10000 }).catch(() => { });
     const st0 = await E(p, () => ({ on: OS.Push.on(), key: window.__subKey || [], t: (document.querySelector('#view #pushSet') || {}).innerText || '' }));
     const chave = await (await fetch(BASE + 'api/push', { method: 'POST', headers: { 'content-type': 'application/json', origin: 'http://localhost:' + PORT }, body: JSON.stringify({ op: 'chave' }) })).json();

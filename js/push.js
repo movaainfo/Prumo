@@ -85,7 +85,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && HA
 /* ---------- Definições › Notificações ---------- */
 const CATS = [['rot', 'Rotina', 'cada bloco do teu dia, na hora (ou uns minutos antes)'], ['foco', 'Bloco de foco', 'quando acaba o tempo'], ['fut', 'Futebol', 'as tuas equipas e campeonatos: começo, golos, resultado'], ['sp', 'Desportos', 'NBA, NFL, voleibol, F1, MotoGP, MMA…'], ['inv', 'Alertas de preço', 'quando uma ação ou cripto chega ao valor que escolheste']];
 const panel = () => { const w = P.why(), on = P.on(), cat = SRC.cat();
-  return `<div class="pn" id="pushSet"><div class="pn-h"><h3>${UI.ic('bell')}Notificações</h3>${on ? UI.badge('ligadas neste aparelho', 'pos') : ''}</div>
+  return `<div class="pn" id="pushSet" data-open="1"><div class="pn-h"><h3>${UI.ic('bell')}Notificações</h3>${on ? UI.badge('ligadas neste aparelho', 'pos') : ''}</div>
     <p class="mut" style="margin:0 0 10px;font-size:13px">Os avisos do Prumo chegam a este aparelho mesmo com o app fechado: a rotina, o fim do bloco de foco, o futebol e os outros desportos que segues e os alertas de preço.</p>
     ${on ? `<div class="row gap8 wrap" style="margin-bottom:12px"><button class="btn sm" data-act="pushTest">${UI.ic('bell')}Enviar um teste</button><button class="btn sm ghost" data-act="pushOff">Desligar neste aparelho</button></div>
       <div class="push-cats">${CATS.map(([k, l, d]) => `<label class="push-cat"><input type="checkbox" data-act="pushCat" data-k="${k}" ${cat[k] ? 'checked' : ''}><span><b>${esc(l)}</b><small>${esc(d)}</small></span></label>`).join('')}</div>`
