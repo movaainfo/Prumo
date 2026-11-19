@@ -220,17 +220,40 @@ const VB = {
   matches: no => vis(`<Request Type="GetVolleyMatchList" Fields="${VBF}"><Filter NoTournament="${no}" /></Request>`, 2e4),
   pools: no => vis(`<Request Type="GetVolleyPoolList" Fields="No Code Name"><Filter NoTournament="${no}" /></Request>`, 864e5),
   rank: pool => vis(`<Request Type="GetVolleyPoolRanking" NoPool="${pool}" Fields="Position TeamName TeamCode NoTeam MatchesWon MatchesLost MatchPoints SetsWon SetsLost" />`, 10 * 6e4) };
+// escudos dos clubes: a FIVB só tem as seleções (bandeiras). Procura-se o clube na TheSportsDB e, se não estiver, na Wikipédia;
+// o que se encontra fica guardado no aparelho 30 dias (o que não se encontra, 7 dias) e a página redesenha-se quando chega
+const LOGO = U.ls.get('oc_vb_logo', {}) || {}, LQ = [], LP = new Set(), LGAP = navigator.webdriver ? 30 : 2100; let lBusy = false, rqT = 0;
+const nrm = x => String(x || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const reqSoon = () => { clearTimeout(rqT); rqT = setTimeout(() => { if (/^#esportes/.test(location.hash)) OS.request(); }, 400); };
+const tsdb = async (q, g) => { const j = await once('https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=' + encodeURIComponent(q), { credentials: 'omit' });
+  const T = ((j && j.teams) || []).filter(x => x.strSport === 'Volleyball' && x.strBadge && (!x.strGender || (g === 1) === /female|women/i.test(x.strGender))); return T[0] ? T[0].strBadge + '/tiny' : ''; };
+const wiki = async (lang, q, toks) => { const j = await once(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrlimit=3&gsrsearch=${encodeURIComponent(q)}&prop=pageimages&piprop=thumbnail%7Cname&pithumbsize=96`, { credentials: 'omit' });
+  const P = Object.values((j && j.query && j.query.pages) || {}).sort((a, b) => (a.index || 0) - (b.index || 0));
+  const ok = P.find(x => x.thumbnail && /logo|crest|emblem|escudo|stemma|herb|badge|\.svg/i.test(x.pageimage || '') && toks.some(t => nrm(x.title).includes(t))); return ok ? ok.thumbnail.source : ''; };
+const findLogo = async (n, g) => { const toks = nrm(n).split(/[\s'’-]+/).filter(t => t.length >= 4); let u = await tsdb(n, g).catch(() => '');
+  if (!u) { const W = n.split(/\s+/), cap = W.find(w => w.length >= 4 && w === w.toUpperCase() && /[A-Z]/.test(w)), last = W[W.length - 1], alt = cap || (W.length > 1 && last.length >= 5 ? last : ''); if (alt) { await wait(LGAP); u = await tsdb(alt, g).catch(() => ''); } }
+  if (!u) u = await wiki('en', n + (g === 1 ? " women's volleyball" : ' volleyball'), toks).catch(() => '');
+  if (!u) u = await wiki('pt', n + ' voleibol', toks).catch(() => '');
+  return u; };
+const pump = async () => { if (lBusy) return; lBusy = true; try { while (LQ.length) { const [n, g] = LQ.shift(), k = g + ':' + n; let u = '';
+  try { u = await findLogo(n, g); LOGO[k] = { u, at: Date.now() }; U.ls.set('oc_vb_logo', LOGO); if (u) reqSoon(); } catch (e) { } LP.delete(k); await wait(LGAP); } } finally { lBusy = false; } };
+const vLogo = (n, g) => { if (!n || n === 'A definir') return ''; g = g ? 1 : 0; const k = g + ':' + n, c = LOGO[k];
+  if (c && Date.now() - c.at < (c.u ? 30 : 7) * 864e5) return c.u; if (!LP.has(k) && LQ.length < 60) { LP.add(k); LQ.push([n, g]); setTimeout(pump, 60); } return c ? c.u : ''; };
+// sem escudo: a sigla da equipa num círculo com uma cor só dela
+const hue = x => [...String(x || '')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 7);
+const vImg = (x, cls) => x.logo ? img(x.logo, cls, x.ab || x.n) : `<span class="${cls} sp-noimg sp-vni" style="--nh:${hue(x.n)}" aria-hidden="true">${esc(String(x.ab || x.n || '?').slice(0, 3).toUpperCase())}</span>`;
 // estado de um jogo na FIVB: 1–3 antes, 4–23 a decorrer (set a set), 24 em diante acabado
-const vEv = (m, nat) => { const s = +m.status || 0, d = Date.parse(m.dateTimeUtc) || 0; let st = s >= 24 ? 'post' : s >= 4 ? 'in' : 'pre'; if (st === 'in' && Date.now() - d > 8 * 36e5) st = 'post';
+const vEv = (m, nat, g) => { const s = +m.status || 0, d = Date.parse(m.dateTimeUtc) || 0; let st = s >= 24 ? 'post' : s >= 4 ? 'in' : 'pre'; if (st === 'in' && Date.now() - d > 8 * 36e5) st = 'post';
   const A = +m.matchPointsA || 0, B = +m.matchPointsB || 0, k = Math.min(5, Math.floor((s - 4) / 3) + 1);
   const sets = [1, 2, 3, 4, 5].map(i => [m['pointsTeamASet' + i], m['pointsTeamBSet' + i]]).filter(x => x[0] != null && x[1] != null && (+x[0] || +x[1])).map(x => [+x[0], +x[1]]);
-  const side = (n, c, no, mp, w) => ({ id: String(no || ''), n: n || 'A definir', sn: n || 'A definir', ab: c || '', logo: nat ? flag2(IOC[c]) : '', c: '', s: st === 'pre' || mp == null ? '' : String(mp), w, rec: '' });
+  const side = (n, c, no, mp, w) => ({ id: String(no || ''), n: n || 'A definir', sn: n || 'A definir', ab: c || '', logo: nat ? flag2(IOC[c]) : vLogo(n, g), c: '', s: st === 'pre' || mp == null ? '' : String(mp), w, rec: '' });
   return { id: String(m.no), lg: 'volei', d, st, sn: String(s), det: st === 'in' ? 'Set ' + k : st === 'post' ? 'Final' : '', ven: String(m.city || '').replace(/^\s*\d[\d-]{3,}\s*/, '').split(/\s+ul\.|,/)[0].trim(), sets,
     h: side(m.teamAName, m.teamACode, m.noTeamA, m.matchPointsA, st === 'post' && A > B), a: side(m.teamBName, m.teamBCode, m.noTeamB, m.matchPointsB, st === 'post' && B > A) }; };
 const VBT = {}; // equipas vistas (para seguir): id → { n, ab, logo, t, nat }
-const vbM = (no, nat) => { const d = DATA['vb:m:' + no], now = Date.now(), hot = d && (d.v || []).some(m => { const s = +m.status || 0, t = Date.parse(m.dateTimeUtc) || 0; return (s >= 4 && s < 24 && now - t < 8 * 36e5) || (s < 4 && Math.abs(t - now) < 30 * 6e4); });
+const vbM = (no, nat, g) => { const d = DATA['vb:m:' + no], now = Date.now(), hot = d && (d.v || []).some(m => { const s = +m.status || 0, t = Date.parse(m.dateTimeUtc) || 0; return (s >= 4 && s < 24 && now - t < 8 * 36e5) || (s < 4 && Math.abs(t - now) < 30 * 6e4); });
   const L = need('vb:m:' + no, hot ? 2e4 : 5 * 6e4, () => VB.matches(no)); if (!L) return null;
-  const E = L.map(m => vEv(m, nat)).filter(e => e.d); E.forEach(e => [e.h, e.a].forEach(x => { if (x.id && x.id !== '0' && !VBT[x.id]) VBT[x.id] = { n: x.n, ab: x.ab, logo: x.logo, t: no, nat: !!nat }; })); return E; };
+  const E = L.map(m => vEv(m, nat, g)).filter(e => e.d); E.forEach(e => [e.h, e.a].forEach(x => { if (x.id && x.id !== '0' && (!VBT[x.id] || (!VBT[x.id].logo && x.logo))) VBT[x.id] = { n: x.n, ab: x.ab, logo: x.logo, t: no, nat: !!nat, g: g ? 1 : 0 }; })); return E; };
 const vbState = t => { const n = U.today(); return t.a > n ? 'pre' : t.b < n ? 'post' : 'in'; };
 const fmtS = s => D0(s).toLocaleDateString('pt-PT', { day: 'numeric', month: 'short' }).replace('.', '');
 const vbTour = T => { const S = UIst(), cc = String((OS.one('profile') || {}).country || 'PT').toUpperCase(), now = U.today(), f = S.vb && T.find(t => t.no === S.vb); if (f) return f;
@@ -241,7 +264,7 @@ const poolName = n => String(n || '').replace(/^Round robin.*$/i, 'Fase regular'
 const vCard = (e, o) => { o = o || {}; const lv = isLive(e), done = e.st === 'post', sp = spOf('volei');
   return `<div class="sp-g sp-vg${lv ? ' live' : ''}${o.big ? ' big' : ''}" style="--sc:${sp[4]};--hc:#0f3d3a;--ac:#1e293b">
     <div class="sp-gt">${o.lg ? `<span class="sp-gl">${UI.ic(sp[5])}${esc(o.tn || sp[1])}</span>` : ''}<span class="sp-gs${lv ? ' on' : ''}">${lv ? '<i></i>Ao vivo · ' + esc(e.det) : esc(done ? 'Final' : dayL(e.d))}</span></div>
-    ${[e.h, e.a].map((x, i) => `<div class="sp-gr${done && x.w ? ' win' : done ? ' lose' : ''}${isMine('volei', x.id) ? ' me' : ''}">${img(x.logo, 'sp-gi', x.ab || x.n)}<span class="sp-gn"><b>${esc(x.n)}</b>${e.sets.length ? `<small class="sp-vst">${e.sets.map(z => `<i class="${z[i] > z[1 - i] ? 'w' : ''}">${z[i]}</i>`).join('')}</small>` : ''}</span><b class="sp-gp">${esc(x.s)}</b></div>`).join('')}
+    ${[e.h, e.a].map((x, i) => `<div class="sp-gr${done && x.w ? ' win' : done ? ' lose' : ''}${isMine('volei', x.id) ? ' me' : ''}">${vImg(x, 'sp-gi')}<span class="sp-gn"><b>${esc(x.n)}</b>${e.sets.length ? `<small class="sp-vst">${e.sets.map(z => `<i class="${z[i] > z[1 - i] ? 'w' : ''}">${z[i]}</i>`).join('')}</small>` : ''}</span><b class="sp-gp">${esc(x.s)}</b></div>`).join('')}
     ${e.ven && e.st === 'pre' ? `<small class="sp-gv">${UI.ic('pin')}${esc(e.ven)}</small>` : ''}</div>`; };
 const card = (e, o) => e.lg === 'volei' ? vCard(e, o) : gCard(e, o);
 const vbPage = sp => { const T = need('vb:t', 6 * 36e5, VB.tours); if (!T) return errBox('vb:t') || loading('A buscar as competições…');
@@ -251,7 +274,7 @@ const vbPage = sp => { const T = need('vb:t', 6 * 36e5, VB.tours); if (!T) retur
   const chips = `<div class="sp-vbc" role="list">${[t].concat(order.filter(x => x !== t)).slice(0, 18).map(x => { const s = vbState(x); return `<button type="button" class="${x.no === t.no ? 'on ' : ''}${s}" data-act="dsVb" data-no="${x.no}" aria-pressed="${x.no === t.no}"><b>${esc(x.n)}</b><small>${s === 'in' ? '<i></i>A decorrer' : s === 'pre' ? 'Começa a ' + esc(fmtS(x.a)) : 'Terminou a ' + esc(fmtS(x.b))}</small></button>`; }).join('')}</div>`;
   const head = `<section class="sp-f1 sp-vbh" style="--sc:${sp[4]}"><span class="sp-ok">${ts === 'in' ? '<span class="sp-gs on"><i></i>A decorrer</span>' : ts === 'pre' ? 'Ainda não começou' : 'Terminou'}</span><h2>${esc(t.n)}</h2><p>${esc(fmtR(t.a, t.b))}</p>${ts === 'pre' ? `<div class="sp-cdw">Começa a <b>${esc(fmtD(t.a))}</b></div>` : ''}</section>`;
   const tabs = `<div class="sp-seg" role="tablist">${[['jogos', 'Jogos'], ['tabela', 'Classificação'], ['equipas', 'Equipas']].map(([k, l]) => `<button type="button" class="${tab === k ? 'on' : ''}" data-act="dsTab" data-sp="volei" data-t="${k}" role="tab" aria-selected="${tab === k}">${l}</button>`).join('')}</div>`;
-  const E = vbM(t.no, t.nat), mk = 'vb:m:' + t.no; let body = '';
+  const E = vbM(t.no, t.nat, t.g), mk = 'vb:m:' + t.no; let body = '';
   if (tab === 'jogos') { if (!E) body = errBox(mk) || loading('A buscar os jogos…');
     else if (!E.length) body = `<div class="sp-empty">${spIc(sp, 1)}<b>Ainda sem jogos marcados</b><small>${ts === 'pre' ? 'A competição começa a ' + esc(fmtD(t.a)) + '.' : 'A FIVB ainda não tem os jogos desta competição.'}</small></div>`;
     else { const now = Date.now(), lv = E.filter(isLive), up = E.filter(e => e.st === 'pre' && e.d > now - 36e5).sort((a, b) => a.d - b.d).slice(0, 12), dn = E.filter(e => e.st === 'post').sort((a, b) => b.d - a.d).slice(0, 12), gg = L => `<div class="sp-gg">${L.map(e => vCard(e)).join('')}</div>`;
@@ -260,12 +283,12 @@ const vbPage = sp => { const T = need('vb:t', 6 * 36e5, VB.tours); if (!T) retur
     if (!P) body = errBox('vb:p:' + t.no) || loading('A buscar a classificação…');
     else { const rr = P.filter(p => /^(RR|RK)$/i.test(p.code || '')), use = (rr.length ? rr : P.filter(p => /Pool|Round robin|Preliminary|Group|Regular/i.test(p.name || ''))).slice(0, 8);
       body = !use.length ? '<p class="sp-note">Esta competição ainda não tem classificação na FIVB.</p>' : use.map(p => { const R = need('vb:r:' + p.no, 10 * 6e4, () => VB.rank(p.no));
-        (R || []).forEach(r => { const id = String(r.noTeam || ''); if (id && !VBT[id]) VBT[id] = { n: r.teamName || '', ab: r.teamCode || '', logo: t.nat ? flag2(IOC[r.teamCode]) : '', t: t.no, nat: t.nat }; });
+        (R || []).forEach(r => { const id = String(r.noTeam || ''); if (id && !VBT[id]) VBT[id] = { n: r.teamName || '', ab: r.teamCode || '', logo: t.nat ? flag2(IOC[r.teamCode]) : vLogo(r.teamName, t.g), t: t.no, nat: t.nat, g: t.g ? 1 : 0 }; });
         return (use.length > 1 ? `<h4 class="sp-gh">${esc(poolName(p.name))}</h4>` : '') + (!R ? errBox('vb:r:' + p.no) || loading('A buscar…') : !R.length ? '<p class="sp-note">Ainda sem jogos nesta fase.</p>'
-          : `<div class="sp-tw"><table class="sp-tb"><thead><tr><th>#</th><th class="l">Equipa</th><th>J</th><th>V</th><th>D</th><th>Pts</th><th class="hm">Sets</th></tr></thead><tbody>${R.map((r, i) => `<tr class="${isMine('volei', String(r.noTeam)) ? 'me' : ''}"><td>${r.position || i + 1}</td><td class="l"><span class="sp-tn">${img(t.nat ? flag2(IOC[r.teamCode]) : '', 'sp-ti', r.teamCode || r.teamName)}<span>${esc(r.teamName || '')}</span></span></td><td>${(+r.matchesWon || 0) + (+r.matchesLost || 0)}</td><td>${+r.matchesWon || 0}</td><td>${+r.matchesLost || 0}</td><td><b>${r.matchPoints != null ? +r.matchPoints : +r.matchesWon || 0}</b></td><td class="hm">${+r.setsWon || 0}:${+r.setsLost || 0}</td></tr>`).join('')}</tbody></table></div>`); }).join(''); } }
+          : `<div class="sp-tw"><table class="sp-tb"><thead><tr><th>#</th><th class="l">Equipa</th><th>J</th><th>V</th><th>D</th><th>Pts</th><th class="hm">Sets</th></tr></thead><tbody>${R.map((r, i) => `<tr class="${isMine('volei', String(r.noTeam)) ? 'me' : ''}"><td>${r.position || i + 1}</td><td class="l"><span class="sp-tn">${vImg({ logo: t.nat ? flag2(IOC[r.teamCode]) : vLogo(r.teamName, t.g), ab: r.teamCode, n: r.teamName }, 'sp-ti')}<span>${esc(r.teamName || '')}</span></span></td><td>${(+r.matchesWon || 0) + (+r.matchesLost || 0)}</td><td>${+r.matchesWon || 0}</td><td>${+r.matchesLost || 0}</td><td><b>${r.matchPoints != null ? +r.matchPoints : +r.matchesWon || 0}</b></td><td class="hm">${+r.setsWon || 0}:${+r.setsLost || 0}</td></tr>`).join('')}</tbody></table></div>`); }).join(''); } }
   else { if (!E) body = errBox(mk) || loading('A buscar as equipas…');
     else { const ids = [...new Set([].concat(...E.map(e => [e.h.id, e.a.id])).filter(id => id && id !== '0' && VBT[id]))].sort((a, b) => VBT[a].n.localeCompare(VBT[b].n));
-      body = !ids.length ? '<p class="sp-note">As equipas aparecem quando a FIVB tiver os jogos desta competição.</p>' : `<p class="sp-note">Toca numa equipa para a seguir: aparece no início de Desportos com o próximo jogo e o resultado ao vivo, e recebes os avisos.</p><div class="sp-teams">${ids.map(id => { const x = VBT[id], on = isMine('volei', id); return `<button type="button" class="sp-team${on ? ' on' : ''}" data-act="dsFollow" data-sp="volei" data-id="${esc(id)}" aria-pressed="${on}" style="--tc:${sp[4]}">${img(x.logo, 'sp-tl', x.ab || x.n)}<b>${esc(x.n)}</b><span class="sp-star">${UI.ic(on ? 'check' : 'plus')}</span></button>`; }).join('')}</div>`; } }
+      body = !ids.length ? '<p class="sp-note">As equipas aparecem quando a FIVB tiver os jogos desta competição.</p>' : `<p class="sp-note">Toca numa equipa para a seguir: aparece no início de Desportos com o próximo jogo e o resultado ao vivo, e recebes os avisos.</p><div class="sp-teams">${ids.map(id => { const x = VBT[id], on = isMine('volei', id); return `<button type="button" class="sp-team${on ? ' on' : ''}" data-act="dsFollow" data-sp="volei" data-id="${esc(id)}" aria-pressed="${on}" style="--tc:${sp[4]}">${vImg(x.nat ? x : Object.assign({}, x, { logo: x.logo || vLogo(x.n, x.g) }), 'sp-tl')}<b>${esc(x.n)}</b><span class="sp-star">${UI.ic(on ? 'check' : 'plus')}</span></button>`; }).join('')}</div>`; } }
   return chips + head + tabs + body; };
 
 /* ---------- MotoGP ---------- */
@@ -330,7 +353,7 @@ const tick = async () => { if (busy) return; busy = true; let hot = false, soon 
       (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a && (isMine(sp[0], e.h.id) || isMine(sp[0], e.a.id))).forEach(e => { near(e); watchEv(e); }); } catch (x) { } }));
     // voleibol: os jogos das competições das tuas equipas
     await Promise.all([...new Set(T.filter(t => t.lg === 'volei' && t.t).map(t => t.t))].map(async no => { try { const L = await VB.matches(no); DATA['vb:m:' + no] = { at: Date.now(), v: L };
-      L.map(m => vEv(m)).filter(e => e.d && Math.abs(e.d - now) < 2 * 864e5 && (isMine('volei', e.h.id) || isMine('volei', e.a.id))).forEach(e => { near(e); watchEv(e); }); } catch (x) { } }));
+      L.map(m => vEv(m, true)).filter(e => e.d && Math.abs(e.d - now) < 2 * 864e5 && (isMine('volei', e.h.id) || isMine('volei', e.a.id))).forEach(e => { near(e); watchEv(e); }); } catch (x) { } }));
     // Fórmula 1 e MotoGP com o sino ligado
     if (bell.includes('f1')) { try { const j = await API.board(spOf('f1')); DATA['b:f1'] = { at: Date.now(), v: j }; const e = (j.events || [])[0];
       if (e) { const S = (e.competitions || []).map(c => { const ab = (c.type || {}).abbreviation || ''; return { ab, n: SESS[ab] || ab, d: Date.parse(c.date), st: ((c.status || {}).type || {}).state, c }; });
@@ -362,7 +385,7 @@ const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), tea
   const lgs = [...new Set(mine.filter(x => x[3] === 'team').map(x => x[0]).concat(teams.map(t => t.lg)))].map(spOf).filter(x => x && x[2] && x[3] === 'team');
   const all = [].concat(...lgs.map(sp => { const j = need('b:' + sp[0] + ':hoje', 2e4, () => API.board(sp)); return j ? (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a) : []; }));
   // voleibol: os jogos das competições das tuas equipas (FIVB)
-  const vbE = {}; teams.filter(t => t.lg === 'volei' && t.t).forEach(t => { if (!vbE[t.t]) vbE[t.t] = vbM(t.t, t.nat) || []; });
+  const vbE = {}; teams.filter(t => t.lg === 'volei' && t.t).forEach(t => { if (!vbE[t.t]) vbE[t.t] = vbM(t.t, t.nat, t.g) || []; });
   const vbOf = t => (vbE[t.t] || []).filter(e => e.h.id === t.id || e.a.id === t.id).sort((a, b) => a.d - b.d);
   [].concat(...Object.values(vbE)).forEach(e => { if (isLive(e) && (isMine('volei', e.h.id) || isMine('volei', e.a.id)) && !all.some(x => x.lg === 'volei' && x.id === e.id)) all.push(e); });
   const schedOf = t => { if (t.lg === 'volei') return vbOf(t); const sp = spOf(t.lg); return sp && sp[2] ? need('sc:' + t.lg + ':' + t.id, 10 * 6e4, () => API.sched(sp, t.id)) || [] : []; };
@@ -376,7 +399,7 @@ const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), tea
   // as tuas equipas: próximo jogo (ou ao vivo) e o último resultado
   const tcards = teams.length ? `<div class="sp-mt">${teams.map(t => { const sp = spOf(t.lg); if (!sp) return ''; const S = schedOf(t), now = Date.now(), V = t.lg === 'volei', sl = e => V ? `${esc(e.h.ab || e.h.sn)} ${esc(e.h.s)} – ${esc(e.a.s)} ${esc(e.a.ab || e.a.sn)}` : `${esc(e.a.ab || e.a.sn)} ${esc(e.a.s)} – ${esc(e.h.s)} ${esc(e.h.ab || e.h.sn)}`;
       const lv = all.find(e => isLive(e) && (e.h.id === t.id || e.a.id === t.id) && e.lg === t.lg), nx = S.find(e => e.st === 'pre' && e.d > now - 36e5), ls = [...S].reverse().find(e => e.st === 'post'), opp = e => e.h.id === t.id ? e.a : e.h;
-      return `<div class="sp-tc${lv ? ' live' : ''}" style="--tc:${t.c || sp[4]}"><div class="sp-tch">${img(t.logo, 'sp-tcl', t.ab)}<span><b>${esc(t.n)}</b><small>${spIc(sp)}${esc(sp[1])}</small></span><button type="button" class="sp-x" data-act="dsFollow" data-sp="${esc(t.lg)}" data-id="${esc(t.id)}" aria-label="Deixar de seguir ${esc(t.n)}">${UI.ic('x')}</button></div>
+      return `<div class="sp-tc${lv ? ' live' : ''}" style="--tc:${t.c || sp[4]}"><div class="sp-tch">${V ? vImg({ logo: t.logo || (t.nat ? '' : vLogo(t.n, t.g)), ab: t.ab, n: t.n }, 'sp-tcl') : img(t.logo, 'sp-tcl', t.ab)}<span><b>${esc(t.n)}</b><small>${spIc(sp)}${esc(sp[1])}</small></span><button type="button" class="sp-x" data-act="dsFollow" data-sp="${esc(t.lg)}" data-id="${esc(t.id)}" aria-label="Deixar de seguir ${esc(t.n)}">${UI.ic('x')}</button></div>
         ${lv ? `<div class="sp-tcl2"><span class="sp-gs on"><i></i>${esc(lv.det)}</span><b>${sl(lv)}</b></div>` : nx ? `<div class="sp-tcl2"><small>Próximo</small><b>${nx.h.id === t.id ? 'vs' : '@'} ${esc(opp(nx).sn)}</b><span>${esc(dayL(nx.d))}</span></div>` : ''}
         ${ls ? `<div class="sp-tcl2 last"><small>Último</small><b>${sl(ls)}</b><span class="${(ls.h.id === t.id ? ls.h : ls.a).w ? 'w' : 'l'}">${(ls.h.id === t.id ? ls.h : ls.a).w ? 'Vitória' : 'Derrota'}</span></div>` : ''}</div>`; }).join('')}</div>`
     : `<div class="sp-empty">${UI.ic('star')}<b>Ainda não segues nenhuma equipa</b><small>Abre um desporto (NBA, NFL, voleibol…) › Equipas e toca nas que queres seguir. No futebol, segue em Futebol.</small></div>`;
@@ -401,7 +424,7 @@ A.dsMine = b => { const s = st(), k = b.dataset.sp; s.mine = s.mine.includes(k) 
 A.dsFollow = b => { const s = st(), lg = b.dataset.sp, id = b.dataset.id, sp = spOf(lg); if (!sp) return; const i = s.teams.findIndex(t => t.lg === lg && t.id === id);
   if (i >= 0) { const t = s.teams[i]; s.teams.splice(i, 1); save(); UI.toast(t.n + ' deixou de ser seguida', 'pos'); }
   else { const T = lg === 'volei' ? Object.keys(VBT).map(k => Object.assign({ id: k }, VBT[k])) : (DATA['t:' + lg] && DATA['t:' + lg].v) || [], t = T.find(x => x.id === id); if (!t) return;
-    s.teams.push(Object.assign({ lg, id, n: t.n, ab: t.ab, logo: t.logo, c: t.c || '' }, lg === 'volei' ? { t: t.t, nat: !!t.nat } : {})); if (!s.mine.includes(lg)) s.mine.push(lg); save(); UI.toast('A seguir ' + t.n, 'pos'); }
+    s.teams.push(Object.assign({ lg, id, n: t.n, ab: t.ab, logo: t.logo, c: t.c || '' }, lg === 'volei' ? { t: t.t, nat: !!t.nat, g: t.g ? 1 : 0 } : {})); if (!s.mine.includes(lg)) s.mine.push(lg); save(); UI.toast('A seguir ' + t.n, 'pos'); }
   OS.request(); loop(1500); };
 A.dsVb = b => { UIst().vb = b.dataset.no; OS.request(); };
 A.dsAv = b => { const s = st(); s.av = Object.assign({}, avS(), { [b.dataset.k]: b.checked ? 1 : 0 }); save(); };

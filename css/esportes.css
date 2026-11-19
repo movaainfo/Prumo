@@ -55,6 +55,7 @@
 .sp-gr.lose{opacity:.55}.sp-gr.win .sp-gp{color:#fff}
 .sp-gr.me .sp-gn b{color:#ffd166}
 .sp-noimg{display:grid;place-items:center;border-radius:50%;background:#252c38;color:#cbd5e1;font-size:11px;font-weight:800}
+.sp-vni{background:linear-gradient(145deg,hsl(var(--nh) 55% 38%),hsl(var(--nh) 50% 22%));color:#fff;font-size:10px;letter-spacing:.02em;box-shadow:inset 0 0 0 1.5px hsl(var(--nh) 60% 55% / .55)}
 /* desportos (início) */
 .sp-sps{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
 .sp-spc{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:14px;border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--sc) 16%,var(--sp-c1)),var(--sp-c1) 70%);border:1px solid var(--sp-ln);color:var(--sp-tx);text-decoration:none;min-width:0;transition:transform .15s ease,border-color .15s ease}
