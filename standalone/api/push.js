@@ -210,7 +210,7 @@ module.exports = async (req, res) => {
   const ua = String(req.headers['user-agent'] || '');
   if (req.method === 'GET' && (q.op === 'cron' || /vercel-cron/i.test(ua))) {
     const sec = process.env.CRON_SECRET, auth = String(req.headers.authorization || '');
-    if (sec ? auth !== 'Bearer ' + sec : !/vercel-cron/i.test(ua)) return N.send(res, 403, { ok: false });
+    if (sec ? auth !== 'Bearer ' + sec : !/vercel-cron/i.test(ua)) { console.warn('push cron recusado', sec ? (auth ? 'chave errada' : 'sem chave') : 'sem vercel-cron', ua.slice(0, 40)); return N.send(res, 403, { ok: false }); }
     if (!N.store()) return N.send(res, 503, { ok: false });
     try { return N.send(res, 200, await cron()); } catch (e) { console.error('push cron', e.message); return N.send(res, 500, { ok: false }); } }
   return api(req, res); };
