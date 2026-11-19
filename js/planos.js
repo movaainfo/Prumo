@@ -11,7 +11,7 @@ const NOME = { 1: 'Essencial', 2: 'Avançado', 3: 'Completo' }, ID = { 1: 'essen
 PL.cur = () => { if (!(OS.Acc && OS.Acc.on)) return { id: 'completo', n: 'Completo', lvl: 3, local: 1 }; const s = OS.Acc.sess && OS.Acc.sess(); return (s && s.plano) || { id: 'completo', n: 'Completo', lvl: 3, porVer: 1 }; };
 PL.lvl = () => +(PL.cur().lvl || 0);
 // funções que dependem do plano (o resto é de todos os planos)
-const CAPS = { fotos: 2, calc: 2, paletas: 2, futebolIA: 2, masmorras: 2, deep: 3, voz: 1, banco: 3, resumoMail: 3, palPro: 3 };   // voz: com a chave da própria pessoa, em qualquer plano
+const CAPS = { fotos: 2, calc: 2, paletas: 2, futebolIA: 2, masmorras: 2, deep: 3, voz: 1, banco: 3, resumoMail: 3, palPro: 3, desportos: 3 };   // desportos: NBA, F1, MotoGP, MMA, ténis…, Olimpíadas e Copa (o Futebol é de todos)   // voz: com a chave da própria pessoa, em qualquer plano
 PL.can = cap => PL.lvl() >= (CAPS[cap] || 1);
 // páginas que dependem do plano
 const ROUTES = { universidade: 2, cursos: 2, certificacoes: 2, aprendizagem: 2, conhecimento: 2, carreira: 2, capital: 2, oportunidades: 2, investimentos: 2, ativos: 2, cotacoes: 2, simuladores: 2, email: 2, decisoes: 2, coach: 2, relatorios: 3 };
@@ -19,9 +19,9 @@ const FREE = new Set(['planos', 'definicoes', 'perfil', 'ajuda', 'sobre', 'admin
 PL.ROUTES = ROUTES; PL.CAPS = CAPS;
 // o que cada plano traz (a página Planos e os cadeados)
 const FEAT = {
-  1: ['Tarefas, hábitos, rotina por horas e agenda', 'Finanças à mão e importar extratos do banco', 'Treino, dieta, corrida, sono e Cozinha', 'Diário, Fé, leituras e Mundo', 'Ranking, dias de foco e Dominus (missões e chefe)', 'Cofre de senhas, atalhos do iPhone e a agenda no Calendário', 'IA: 20 pedidos por dia', '1 perfil'],
-  2: ['Tudo do Essencial', 'IA: 150 pedidos por dia, com fotos e PDFs (comida, exames, escala do trabalho)', 'E-mail e notícias com IA', 'Universidade, cursos, carreira e oportunidades', 'Investimentos ao vivo e simuladores', 'Calculadora financeira, gráfica e de cálculo', 'Futebol com a análise da IA e "Ver o jogo"', 'Dominus completo (masmorras), cores e fundos', 'Até 3 perfis'],
-  3: ['Tudo do Avançado', 'IA: 400 pedidos por dia', 'Relatórios e impostos (IRS e IRPF)', 'O resumo do teu mês no e-mail (se quiseres)', 'Paletas de cores exclusivas: Ouro, Aurora e Sakura', 'Atendimento prioritário: os teus pedidos passam à frente', 'Até 5 perfis: um para cada pessoa da família, cada um com o seu código'] };
+  1: ['Tarefas, hábitos, rotina por horas e agenda', 'Notificações com o app fechado (rotina, bloco de foco)', 'Finanças à mão e importar extratos do banco', 'Treino, dieta, corrida, sono e Cozinha', 'Diário, Fé, leituras, animes e Mundo', 'Futebol: as tuas equipas ao vivo, tabelas e avisos de golo', 'Ranking, dias de foco e Dominus (missões e chefe)', 'Cofre de senhas, atalhos do iPhone e a agenda no Calendário', 'Escala do trabalho a partir de Excel ou CSV', 'IA: 20 pedidos por dia', '1 perfil'],
+  2: ['Tudo do Essencial', 'IA: 150 pedidos por dia, com fotos e PDFs (comida, exames, escala do trabalho por foto ou PDF)', 'E-mail e notícias com IA', 'Universidade, cursos, carreira e oportunidades', 'Investimentos ao vivo e simuladores', 'Calculadora financeira, gráfica e de cálculo', 'Futebol com a análise da IA e "Ver o jogo"', 'Dominus completo (masmorras), cores e fundos', 'Até 3 perfis'],
+  3: ['Tudo do Avançado', 'Desportos completos: NBA, NFL, Fórmula 1, MotoGP, MMA, ténis e mais, com as Olimpíadas e a Copa do Mundo, e avisos de cada jogo', 'O teu banco ligado: os movimentos entram sozinhos (Open Finance)', 'IA: 400 pedidos por dia', 'Relatórios e impostos (IRS e IRPF)', 'O resumo do teu mês no e-mail (se quiseres)', 'Paletas de cores exclusivas: Ouro, Aurora e Sakura', 'Atendimento prioritário: os teus pedidos passam à frente', 'Até 5 perfis: um para cada pessoa da família, cada um com o seu código'] };
 PL.FEAT = FEAT;
 const fmtD = ms => ms ? new Date(ms).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 const dias = ms => Math.max(0, Math.ceil((ms - Date.now()) / 864e5));

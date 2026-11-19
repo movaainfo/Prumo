@@ -285,7 +285,7 @@ const watchSess = (lg, gp, S) => { const a = avS(), now = Date.now(), L = ((spOf
 const winOnce = (k, t, b) => { if (SEEN[k] || !avS().fim) return; SEEN[k] = { at: Date.now() }; say(t, b, k); };
 let loopT = 0, busy = false, HOT = false, SOON = false;
 const canLoop = () => !navigator.webdriver || !!window.__spTest;
-const tick = async () => { if (busy) return; busy = true; let hot = false, soon = false; const now = Date.now(), near = e => { if (isLive(e)) hot = true; else if (e.st === 'pre' && e.d - now < 30 * 6e4 && e.d - now > -36e5) soon = true; };
+const tick = async () => { if (busy || !full()) return; busy = true; let hot = false, soon = false; const now = Date.now(), near = e => { if (isLive(e)) hot = true; else if (e.st === 'pre' && e.d - now < 30 * 6e4 && e.d - now > -36e5) soon = true; };
   try { const s = st(), T = s.teams, bell = s.bell || [];
     // equipas da ESPN: o quadro de hoje de cada liga
     await Promise.all([...new Set(T.map(t => t.lg))].map(spOf).filter(x => x && x[2]).map(async sp => { try { const j = await API.board(sp); DATA['b:' + sp[0] + ':hoje'] = { at: Date.now(), v: j };
@@ -342,11 +342,18 @@ const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), tea
     + (cn ? `<a class="sp-olyb sp-cupb" href="#esportes.copa" data-act="dsCopa" data-g="${cn === copaNext('f') ? 'f' : 'm'}" style="--oc:${cn.c}"><span class="sp-oring">${UI.ic('sp_cup')}</span><span><small>Copa do Mundo</small><b>${esc(cn.t)}</b><span>${esc(fmtR(cn.ini, cn.fim))} · ${esc(cn.sede)}</span></span>${edState(cn) === 'pre' ? countdown(cn) : '<span class="sp-gs on"><i></i>A decorrer</span>'}</a>` : '') + '</div>';
   return hero + sec('As tuas equipas', tcards) + avPanel() + oly + sec('Desportos', sports) + (live.length > 2 ? sec('Ao vivo agora', `<div class="sp-gg">${live.slice(2, 14).map(e => card(e, { lg: 1 })).join('')}</div>`) : ''); };
 
+/* ---------- planos: os Desportos completos são do Completo; o Futebol é de todos ---------- */
+const full = () => !OS.Plano || !OS.Plano.can || OS.Plano.can('desportos');
+const hubLite = () => `<section class="sp-hero"><div class="sp-hl"><span class="sp-ok">Desportos</span><h2>O teu Futebol</h2><p>No teu plano tens o Futebol: as tuas equipas ao vivo, as tabelas, os golos e os avisos.</p><div class="row gap8" style="margin-top:12px"><a class="btn pri" href="#futebol">${UI.ic('ball')}Abrir o Futebol</a></div></div></section>`
+  + (OS.Plano && OS.Plano.lock ? OS.Plano.lock(3, 'NBA, NFL, Fórmula 1, MotoGP, MMA, ténis e os outros desportos, as Olimpíadas e a Copa do Mundo') : '')
+  + sec('Desportos', `<div class="sp-sps">${SP.map(sp => sp[0] === 'futebol' ? `<a class="sp-spc on" href="#futebol" style="--sc:${sp[4]}">${spIc(sp)}<b>${esc(sp[1])}</b></a>` : `<a class="sp-spc sp-lk" href="#planos" style="--sc:${sp[4]}" title="No plano Completo">${spIc(sp)}<b>${esc(sp[1])}</b><span class="sp-lki">${UI.ic('lock')}</span></a>`).join('')}</div>`);
+
 /* ---------- página ---------- */
 V.esportes = sub => { const k = sub === 'ufc' ? 'mma' : sub || ''; if (k === 'futebol') { setTimeout(() => { location.hash = 'futebol'; }, 0); return loading('A abrir o Futebol…'); }
   const sp = spOf(k), nav = `<nav class="sp-nav" aria-label="Desportos"><a href="#esportes" class="${!k ? 'on' : ''}">${UI.ic('home')}Início</a>${SP.map(x => `<a href="${x[0] === 'futebol' ? '#futebol' : '#esportes.' + x[0]}" class="${k === x[0] ? 'on' : ''}" style="--sc:${x[4]}">${UI.ic(x[5])}${esc(x[1])}</a>`).join('')}</nav>`;
   let body;
-  if (!sp) body = hub();
+  if (!full()) body = sp && sp[0] !== 'futebol' ? (OS.Plano.lock(3, esc(sp[1])) + `<p class="sp-note" style="margin-top:10px">O Futebol está no teu plano: <a class="acc" href="#futebol">abrir o Futebol</a>.</p>`) : hubLite();
+  else if (!sp) body = hub();
   else { const on = st().mine.includes(sp[0]);
     const head = sp[3] === 'oly' || sp[3] === 'copa' ? '' : `<section class="sp-shd" style="--sc:${sp[4]}">${spIc(sp, 1)}<div><h2>${esc(sp[1])}</h2><p>${esc(sp[6])}</p></div><span class="sp-hb">${sp[3] === 'f1' && sp[0] === 'f1' || sp[3] === 'moto' || sp[3] === 'mma' ? (b => `<button type="button" class="btn sm sp-bell${b ? ' on' : ''}" data-act="dsBell" data-sp="${sp[0]}" aria-pressed="${b}" title="${sp[3] === 'mma' ? 'Avisar 15 minutos antes e quando começa o evento' : 'Avisar 15 minutos antes e quando começam a qualificação, o sprint e a corrida'}">${UI.ic('bell')}${b ? 'Avisos ligados' : 'Avisar'}</button>`)((st().bell || []).includes(sp[0])) : ''}<button type="button" class="btn sm sp-fav${on ? ' on' : ''}" data-act="dsMine" data-sp="${sp[0]}" aria-pressed="${on}">${UI.ic(on ? 'check' : 'star')}${on ? 'Nos teus desportos' : 'Juntar aos meus'}</button></span></section>`;
     body = head + (sp[3] === 'team' ? teamPage(sp) : sp[3] === 'f1' ? f1Page(sp) : sp[3] === 'ten' ? tenPage(sp) : sp[3] === 'mma' ? mmaPage(sp) : sp[3] === 'golf' ? golfPage(sp) : sp[3] === 'moto' ? motoPage(sp) : sp[3] === 'copa' ? copaPage(sp) : sp[3] === 'oly' ? olyPage() : ''); }

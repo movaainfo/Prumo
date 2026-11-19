@@ -30,7 +30,7 @@ const MSG = {
 const SRC = {
   rot: () => (OS.Rotina && OS.Rotina.upcoming ? OS.Rotina.upcoming(14) : undefined),
   fut: () => { const s = OS.one('fut') || {}; return { teams: (s.teams || []).map(t => ({ id: t.id, n: t.n })), comps: (s.comps || []).map(c => ({ slug: c.slug, n: c.n })), av: s.av || {} }; },
-  sp: () => { const s = OS.one('sports') || {}; return { teams: (s.teams || []).map(t => ({ lg: t.lg, id: t.id, n: t.n, t: t.t || '' })), bell: s.bell || [], av: s.av || {} }; },
+  sp: () => { const s = OS.one('sports') || {}; if (OS.Plano && OS.Plano.can && !OS.Plano.can('desportos')) return { teams: [], bell: [], av: s.av || {} }; return { teams: (s.teams || []).map(t => ({ lg: t.lg, id: t.id, n: t.n, t: t.t || '' })), bell: s.bell || [], av: s.av || {} }; },
   inv: () => OS.all('palerts').map(a => ({ id: a.id, s: a.s, k: a.k, v: +a.v || 0, r: a.r, n: a.n || '', on: a.on && !(a.r !== 'diario' && a.firedAt) ? 1 : 0 })),
   foco: () => { const B = U.ls.get('os2fblk', null), it = B && B.items && B.items[B.i]; return B && B.phase === 'run' && B.end > Date.now() ? [{ at: B.end, t: 'Bloco de foco', b: 'Acabou o tempo de: ' + ((it && it.title) || 'esta pendência') + '. Terminaste?', u: '#hoje', g: 'foco' }] : []; },
   cat: () => Object.assign({ rot: 1, foco: 1, fut: 1, sp: 1, inv: 1 }, (OS.one('pushcfg') || {}).cat || {}) };
