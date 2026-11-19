@@ -1,7 +1,7 @@
 // PRUMO · resultados de futebol (função do Vercel). Plano B para quando o aparelho não consegue ler diretamente a API pública
 // da ESPN (por exemplo, se a ESPN recusar o pedido do navegador): pede o mesmo endereço do lado do servidor e devolve o JSON,
 // com cache curta na CDN (os jogos ao vivo mudam a cada minuto, por isso 15 s; as tabelas 5 min; a pesquisa 1 h).
-// Segurança: só endereços de futebol da ESPN (site.api.espn.com/apis/.../sports/soccer/, site.web.api.espn.com/apis/search/v2 e os símbolos das ligas em sports.core.api.espn.com),
+// Segurança: só endereços de desporto da ESPN (site.api.espn.com/apis/.../sports/soccer|basketball|football|baseball|hockey|racing|tennis|mma|golf/, site.web.api.espn.com/apis/search/v2 e os símbolos das ligas em sports.core.api.espn.com),
 // Jogos grátis em canais oficiais do YouTube (?yt=1): lê só o feed público dos canais da lista YT (nada de endereços vindos de fora),
 // para a app tocar a transmissão oficial dentro do jogo.
 // Ao vivo no mundo (?vivo=1&d=AAAAMMDD): todos os jogos do dia da ESPN (soccer/all), compactados (de ~700 KB para ~40 KB) com quem marcou,
@@ -9,7 +9,7 @@
 // só GET, só a própria app, no máximo 10 s e 3 MB por pedido e 600 pedidos por minuto por endereço (abrir o Futebol pela primeira vez faz muitos pedidos de uma vez). Não guarda nada.
 'use strict';
 const OK = /^https:\/\/(oceanum|nautilo|prumo)(-[a-z0-9-]+)?\.vercel\.app$/, HITS = new Map();
-const ALLOW = /^https:\/\/(site\.api\.espn\.com\/apis\/(site\/v2|v2)\/sports\/soccer\/[a-z0-9._-]+\/[a-z0-9/._-]*(\?[a-zA-Z0-9=&%._:-]*)?|site\.web\.api\.espn\.com\/apis\/search\/v2\?[a-zA-Z0-9=&%._+~:-]*|sports\.core\.api\.espn\.com\/v2\/sports\/soccer\/leagues\/[a-z0-9._-]+(\?[a-zA-Z0-9=&%._:-]*)?)$/;
+const ALLOW = /^https:\/\/(site\.api\.espn\.com\/apis\/(site\/v2|v2)\/sports\/(soccer|basketball|football|baseball|hockey|racing|tennis|mma|golf)\/[a-z0-9._-]+\/[a-z0-9/._-]*(\?[a-zA-Z0-9=&%._:-]*)?|site\.web\.api\.espn\.com\/apis\/search\/v2\?[a-zA-Z0-9=&%._+~:-]*|sports\.core\.api\.espn\.com\/v2\/sports\/soccer\/leagues\/[a-z0-9._-]+(\?[a-zA-Z0-9=&%._:-]*)?)$/;
 const UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
 // canais oficiais com jogos de graça no YouTube (com os direitos de transmissão): nome a mostrar → id do canal
 const YT = [['CazéTV', 'UCZiYbVptd3PVPf4f6eR6UaQ']], YTF = () => process.env.YT_FEED || 'https://www.youtube.com/feeds/videos.xml?channel_id=';
