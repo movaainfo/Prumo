@@ -1,9 +1,16 @@
 /* Prumo — service worker: abre instantaneamente e funciona sem internet. */
-const V = 'oceanum-5208bd2a9f';
+const V = 'oceanum-54ab698e90';
 const SHELL = ["manifest.webmanifest","apple-touch-icon.png","favicon-32.png","icon-192.png","icon-512.png","icon-maskable-512.png","selo-96.png","som/intro.mp3","vendor/fonts/11adc6349b.woff2","vendor/fonts/2fed1d1b2e.woff2","vendor/fonts/4667f67516.woff2","vendor/fonts/53a6c32636.woff2","vendor/fonts/63551c15ca.woff2","vendor/fonts/9076820487.woff2","vendor/fonts/9ca58f5002.woff2","vendor/fonts/ANTON-OFL.txt","vendor/fonts/anton-latin-ext.woff2","vendor/fonts/anton-latin.woff2","vendor/fonts/b291d87cd7.woff2","vendor/fonts/bodoni-moda.woff2","vendor/fonts/d0980034bf.woff2","vendor/fonts/e09adcd0ca.woff2","vendor/fonts/e2aaf8d658.woff2","vendor/fonts/f377472eee.woff2"];
 const SHELLKEY = new URL('./', self.registration.scope).href;
 const IMG = 'oceanum-img'; // fotos dos exercícios e dos alimentos: guardadas para funcionarem sem internet
 const IMGHOST = /(^|\.)(jsdelivr\.net|themealdb\.com|openfoodfacts\.org|wikimedia\.org|pinimg\.com)$/;
+// capas e fotos de fora (animes, livros, futebol, notícias, vídeos): guardadas no aparelho; da segunda vez aparecem logo, sem ir à internet
+const PICHOST = /(^|\.)(anilist\.co|kitsu\.app|kitsu\.io|myanimelist\.net|crunchyroll\.com|espncdn\.com|books\.google\.com|googleusercontent\.com|openlibrary\.org|archive\.org|ytimg\.com|ggpht\.com)$/;
+const PICMAX = 900; let picN = 0;
+// a AniList deixa ler as imagens (CORS): assim ficam guardadas no tamanho real (as opacas ocupam muito mais espaço na cache)
+const CORSOK = /(^|\.)anilist\.co$/;
+const getPic = (req, u) => CORSOK.test(u.hostname) ? fetch(u.href, { mode: 'cors', credentials: 'omit' }).catch(() => fetch(req)) : fetch(req);
+const trimPics = () => caches.open(IMG).then(c => c.keys().then(ks => ks.length > PICMAX ? Promise.all(ks.slice(0, ks.length - PICMAX).map(k => c.delete(k))) : 0)).catch(() => { });
 // instalar nunca falha: cada ficheiro é guardado à parte (antes, um ficheiro que falhasse no iPhone impedia a versão nova de entrar)
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(V).then(c => Promise.all(SHELL.map(x => fetch(x, { cache: 'no-cache' }).then(r => r.ok ? c.put(x, r) : 0).catch(() => 0))))); });
 // a cópia da app para usar sem internet é guardada logo a seguir (sem atrasar a entrada da versão nova)
@@ -14,6 +21,7 @@ self.addEventListener('fetch', e => {
   if (u.searchParams.has('vchk')) return; // verificação de versão: vai sempre à rede
   if (/\/api\//.test(u.pathname)) return; // funções do servidor (cotações, leitor de notícias): sempre à rede, nunca da cache
   if (IMGHOST.test(u.hostname) && /\.(jpe?g|png|webp)$/i.test(u.pathname)) { e.respondWith(caches.open(IMG).then(c => c.match(e.request).then(hit => hit || fetch(e.request).then(r => { if (r.ok || r.type === 'opaque') c.put(e.request, r.clone()); return r; })))); return; }
+  if (PICHOST.test(u.hostname) && (e.request.destination === 'image' || /\.(jpe?g|png|webp|gif)$/i.test(u.pathname)) && !u.searchParams.has('nitidez')) { e.respondWith(caches.open(IMG).then(c => c.match(e.request).then(hit => hit || getPic(e.request, u).then(r => { if (r.ok || r.type === 'opaque') { c.put(e.request, r.clone()).catch(() => { }); if (++picN % 40 === 0) trimPics(); } return r; })))); return; }
   if (u.hostname === 'cdnjs.cloudflare.com' && /three\.js/.test(u.pathname)) { e.respondWith(caches.open(IMG).then(c => c.match(e.request).then(hit => hit || fetch(e.request).then(r => { if (r.ok) c.put(e.request, r.clone()); return r; })))); return; }
   if (u.origin !== location.origin) return;
   if (/^\/(termos|privacidade|cookies|direitos|acessibilidade|creditos)(\.html)?$/.test(u.pathname)) return; // documentos legais públicos: páginas à parte, sempre da rede
