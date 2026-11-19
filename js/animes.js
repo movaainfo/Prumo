@@ -125,7 +125,8 @@ const API = {
   detail: x => both(async () => { const q = x.al ? [`query($id:Int){Media(id:$id,type:ANIME){${FD}}}`, { id: x.al }] : x.mal ? [`query($mal:Int){Media(idMal:$mal,type:ANIME){${FD}}}`, { mal: x.mal }] : [`query($q:String){Media(search:$q,type:ANIME,isAdult:false){${FD}}}`, { q: x.ro || x.t }];
     const d = await gql(q[0], q[1]), m = d.Media, n = nAL(m); if (!n) throw new Error('AniList: não encontrado');
     n.tr = m.trailer && m.trailer.site === 'youtube' ? m.trailer.id : '';
-    n.links = (m.externalLinks || []).filter(l => l.type === 'STREAMING' && /^https:\/\//.test(l.url || '')).map(l => ({ site: l.site, url: l.url }));
+    // (a AniList guarda alguns links ainda com http://, como o da Crunchyroll do One Piece: passam a https e contam)
+    n.links = (m.externalLinks || []).filter(l => l.type === 'STREAMING' && /^https?:\/\//.test(l.url || '')).map(l => ({ site: l.site, url: l.url.replace(/^http:/, 'https:') }));
     n.rank = (m.rankings || []).filter(r => r.type === 'RATED').map(r => ({ rank: r.rank, all: r.allTime, y: r.year, s: r.season, ctx: r.context }));
     n.epis = (m.streamingEpisodes || []).filter(e => e && e.title).map(e => ({ t: e.title, img: /^https?:\/\//.test(e.thumbnail || '') ? e.thumbnail.replace(/^http:/, 'https:') : '', url: /^https?:\/\//.test(e.url || '') ? e.url.replace(/^http:/, 'https:') : '', site: e.site || '' }));
     n.chars = ((m.characters && m.characters.edges) || []).map(e => ({ n: e.node && e.node.name && e.node.name.full, img: e.node && e.node.image && e.node.image.medium, role: e.role, va: ((e.voiceActors || [])[0] || {}).name ? e.voiceActors[0].name.full : '', vimg: ((e.voiceActors || [])[0] || {}).image ? e.voiceActors[0].image.medium : '' })).filter(c => c.n);
@@ -174,11 +175,9 @@ const errBox = k => ERR[k] ? `<div class="note an-err">Não consegui falar com a
 const loading = t => `<div class="an-ld"><span class="an-sp" aria-hidden="true"></span>${esc(t || 'A buscar os animes…')}</div>`;
 A.anRetry = b => { delete TRY[b.dataset.k]; delete ERR[b.dataset.k]; delete DATA[b.dataset.k]; OS.request(); };
 
-// onde ver: só os serviços onde se vê o anime inteiro (sem canais de vídeos, bibliotecas nem serviços só da Ásia), sem repetidos,
-// e o JustWatch do teu país, que diz onde passa aí (Portugal e Brasil)
+// onde ver: só os serviços onde se vê o anime inteiro (sem canais de vídeos, bibliotecas nem serviços só da Ásia), sem repetidos
 const WATCH = /^(crunchyroll|netflix|(amazon )?prime video|amazon|disney ?(\+|plus)|hulu|hidive|max|hbo max|adn|animation digital network|funimation|apple tv\+?|tubi|pluto tv|globoplay|star\+|paramount\+|peacock|rtp play|anime onegai|wakanim)$/i;
 const watchL = L => { const sn = new Set(); return (L || []).filter(l => { const k = String(l.site || '').trim().toLowerCase(); if (!WATCH.test(k) || sn.has(k)) return false; sn.add(k); return true; }); };
-const jwURL = t => { const l = (OS.one('profile') || {}).lang || 'pt-PT'; return !t ? '' : l === 'pt-BR' ? 'https://br.justwatch.com/br/busca?q=' + encodeURIComponent(t) : /^pt/.test(l) ? 'https://www.justwatch.com/pt/busca?q=' + encodeURIComponent(t) : ''; };
 /* ---------- peças do ecrã ---------- */
 // tamanho certo de cada imagem: a maior (até 600 KB) só no destaque e na página do anime; nos cartões a de ~230 px (5 a 10× mais leve)
 const imgS = (u, sz) => { u = String(u || ''); const s = sz === 's'; if (sz === 'l') return u;
@@ -595,7 +594,7 @@ const detail = () => { const k = OS.ui.anK || '', base = itemOf(k);
     <div class="an-pad">${mineBox}
     ${d && d.desc ? (() => { const at = tr ? '' : autoTr(d.desc), auto = !tr && at !== d.desc, orig = OS.ui.anOrig === k, txt = tr || (auto && !orig ? at : d.desc);
       return `<section class="an-syn"><div class="an-rh"><h3>Sinopse</h3>${tr || auto ? '' : langName() ? `<button type="button" class="btn xs an-ghost" data-act="anTr" data-k="${kk}" ${TRB ? 'disabled' : ''}>${TRB === k ? 'A traduzir…' : 'Traduzir com a IA'}</button>` : ''}</div><p>${esc(txt).replace(/\n/g, '<br>')}</p>${tr ? '<small>Traduzido pela IA.</small>' : auto ? `<small>Tradução automática. <button type="button" class="an-lnk" data-act="anOrig" data-k="${esc(k)}">${orig ? 'Ver a tradução' : 'Ver o original'}</button></small>` : ''}</section>`; })() : !d ? (errBox('d:' + k) || loading('A buscar os detalhes…')) : ''}
-    ${d && (watchL(d.links).length || jwURL(x.t)) ? `<section class="an-where"><h3>Onde ver</h3><div class="row gap6" style="flex-wrap:wrap">${watchL(d.links).map(l => `<a class="btn sm an-ghost" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${UI.ic('play')}${esc(l.site)}</a>`).join('')}${jwURL(x.t) ? `<a class="btn sm an-jw" href="${esc(jwURL(x.t))}" target="_blank" rel="noopener noreferrer">${UI.ic('search')}Onde passa no teu país</a>` : ''}${d.tr ? `<button type="button" class="btn sm an-cta" data-act="anTrailer" data-y="${esc(d.tr)}">${UI.ic('play')}Ver o trailer</button>` : ''}</div><div id="anTrl"></div></section>` : d && d.tr ? `<section class="an-trl"><button type="button" class="btn an-cta" data-act="anTrailer" data-y="${esc(d.tr)}">${UI.ic('play')}Ver o trailer</button><div id="anTrl"></div></section>` : ''}
+    ${d && watchL(d.links).length ? `<section class="an-where"><h3>Onde ver</h3><div class="row gap6" style="flex-wrap:wrap">${watchL(d.links).map(l => `<a class="btn sm an-ghost" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${UI.ic('play')}${esc(l.site)}</a>`).join('')}${d.tr ? `<button type="button" class="btn sm an-cta" data-act="anTrailer" data-y="${esc(d.tr)}">${UI.ic('play')}Ver o trailer</button>` : ''}</div><div id="anTrl"></div></section>` : d && d.tr ? `<section class="an-trl"><button type="button" class="btn an-cta" data-act="anTrailer" data-y="${esc(d.tr)}">${UI.ic('play')}Ver o trailer</button><div id="anTrl"></div></section>` : ''}
     ${seas}${epList}
     <dl class="an-meta">${meta.map(([v, l]) => `<div><dt>${l}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
     ${chars}${music}${rel}${d && d.rec && d.rec.length ? row('Se gostaste, vê também', d.rec) : ''}</div>`; };
