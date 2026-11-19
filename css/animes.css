@@ -392,3 +392,24 @@ html.lite-x .an-ov{transition:none}html.lite-x .an-dots button.on::after{animati
 .an-wci .an-wcs{object-position:center 22%}
 .an-wcp{position:absolute;left:10px;bottom:10px;height:72%;width:auto;aspect-ratio:2/3;object-fit:cover;border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.1)}
 .an-wci.pc .an-wcb{left:auto;right:8px}
+/* telemóvel: interface como a da Crunchyroll — a imagem do destaque sobe até ao topo do ecrã, com o selo e os botões a flutuar por cima */
+.an-chrome,.an-subnav{display:none}
+@media (max-width:640px){
+  body:has(#view .an-hero) #top{display:none}
+  body:has(#view .an-hero) #view{padding-top:0}
+  #view:has(.an-hero) > .tabs{display:none}
+  .an-hpic{height:calc(min(112vw,560px) + env(safe-area-inset-top,0px))}
+  .an-hb{object-position:center 12%}
+  .an-hg{background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,transparent 18%),linear-gradient(0deg,#000 0%,rgba(0,0,0,.82) 16%,rgba(0,0,0,.25) 42%,transparent 60%)}
+  .an-chrome{display:flex;position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + 8px);left:14px;right:14px;align-items:center;gap:10px;pointer-events:none}
+  .an-chrome>*{pointer-events:auto}
+  .an-cbg{flex:1;pointer-events:none!important}
+  .an-cb{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:rgba(32,32,36,.62);color:#fff;text-decoration:none;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+  .an-cb .ic{width:22px;height:22px}
+  .an-cbl{background:none;box-shadow:none;width:auto;height:auto}
+  .an-cbl .oc-logo{width:42px;height:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.55))}
+  .an-subnav{display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;padding:14px 16px 4px;scrollbar-width:none}
+  .an-subnav::-webkit-scrollbar{display:none}
+  .an-subnav a{flex:none;padding:9px 15px;border-radius:999px;background:#1c1d22;border:1px solid #2c2e35;color:#ececf1;font-size:13.5px;font-weight:700;text-decoration:none}
+  .an-subnav a:active{background:#2a2c33}
+}

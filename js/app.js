@@ -86,7 +86,11 @@ const tnTitle = () => { const t = document.getElementById('top'); if (!t) return
 window.addEventListener('scroll', tnTitle, { passive: true });
 function renderTab(cur) {
   const on = k => cur === k ? ' on' : '';
-  setH(U.$('#tabbar'), `<a href="#visao" class="tb-i${on('visao')}" aria-label="Painel">${UI.ic('home')}<span>Painel</span></a><a href="#hoje" class="tb-i${on('hoje')}" aria-label="Hoje">${UI.ic('sun')}<span>Hoje</span></a>
+  // nos Animes, no telemóvel, a barra de baixo é a dos animes (como na Crunchyroll), com "Prumo" para voltar ao resto do app
+  document.body.classList.toggle('tb-an', cur === 'animes');
+  if (cur === 'animes') { const sub = OS.route().sub || '', a = (k, l, i) => `<a href="#animes${k ? '.' + k : ''}" class="tb-i${sub === k ? ' on' : ''}" aria-label="${l}">${UI.ic(i)}<span>${l}</span></a>`;
+    setH(U.$('#tabbar'), a('', 'Início', 'home') + a('lista', 'A minha lista', 'mark') + a('navegar', 'Navegar', 'grid') + a('recomendados', 'Para ti', 'star') + `<a href="#visao" class="tb-i tb-out" aria-label="Voltar ao Prumo">${OS.Lock.logo(26)}<span>Prumo</span></a>`); }
+  else setH(U.$('#tabbar'), `<a href="#visao" class="tb-i${on('visao')}" aria-label="Painel">${UI.ic('home')}<span>Painel</span></a><a href="#hoje" class="tb-i${on('hoje')}" aria-label="Hoje">${UI.ic('sun')}<span>Hoje</span></a>
     <button type="button" class="tb-add" data-act="quickAdd" aria-label="Registar">${UI.ic('plus')}</button>
     <button type="button" class="tb-i" data-act="spyOpen" aria-label="${esc(iaName())}">${UI.ic('mic')}<span>${esc(iaName())}</span></button><button type="button" class="tb-i" data-act="mobAll" aria-label="Tudo">${UI.ic('grid')}<span>Tudo</span></button>`);
   let fab = document.getElementById('gameFab');

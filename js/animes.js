@@ -302,7 +302,7 @@ const heroOf = L => { if (!L.length) return ''; if (HI >= L.length) HI = 0;
   // depois de redesenhar, o carrossel volta ao destaque onde estavas (sem animação)
   // (logo a seguir a pôr a página, antes de a desenhar: não pisca o primeiro destaque)
   if (HI) (window.queueMicrotask || (f => Promise.resolve().then(f)))(() => { const s = document.querySelector('#view .an-hs'); if (s && Math.round(s.scrollLeft / Math.max(1, s.clientWidth)) !== HI) s.scrollLeft = HI * s.clientWidth; });
-  return `<section class="an-hero${Date.now() < HOLD ? ' hold' : ''}" aria-roledescription="carrossel" aria-label="Em destaque"><div class="an-hs">${heroSlides(L)}</div>
+  return `<section class="an-hero${Date.now() < HOLD ? ' hold' : ''}" aria-roledescription="carrossel" aria-label="Em destaque"><div class="an-chrome"><a class="an-cb an-cbl" href="#visao" aria-label="Voltar ao Prumo">${OS.Lock && OS.Lock.logo ? OS.Lock.logo(34) : UI.ic('left')}</a><span class="an-cbg"></span><a class="an-cb" href="#animes.lista" aria-label="A minha lista">${UI.ic('mark')}</a><a class="an-cb" href="#animes.pesquisar" aria-label="Pesquisar anime">${UI.ic('search')}</a></div><div class="an-hs">${heroSlides(L)}</div>
   ${L.length > 1 ? `<button type="button" class="an-har l" data-act="anHero" data-d="-1" aria-label="Anterior">${UI.ic('left')}</button><button type="button" class="an-har r" data-act="anHero" data-d="1" aria-label="Seguinte">${UI.ic('right')}</button><div class="an-dots">${L.map((_, i) => `<button type="button" class="${i === HI ? 'on' : ''}" data-act="anHero" data-i="${i}" aria-label="Destaque ${i + 1}"></button>`).join('')}</div>` : ''}</section>`; };
 const heroMark = h => { h.querySelectorAll('.an-slide').forEach((s, j) => { const on = j === HI; s.classList.toggle('on', on); s.setAttribute('aria-hidden', !on); s.inert = !on; }); h.querySelectorAll('.an-dots button').forEach((d, j) => d.classList.toggle('on', j === HI)); };
 const reduceM = () => (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) || document.documentElement.classList.contains('lite-x');
@@ -327,7 +327,8 @@ P[''] = () => { const S = sNow(), L = mineAll(), sea = need('s:' + S.y + S.s, H6
       return wide(fromMine(a), { badge: 'E' + (ep + 1), sub: t ? `Episódio ${ep} de ${t}` : `Episódio ${ep}`, p: t ? Math.round(ep / t * 100) : 0, act: `<button type="button" class="an-plus" data-act="anEp" data-id="${a.id}" data-d="1" aria-label="Vi mais um episódio">${UI.ic('plus')}1</button>` }); }), { wide: 1, more: '#animes.lista' }) : '';
   const fresh0 = (rc || []).map(e => wide(e.x, { badge: 'E' + e.ep, sub: `Episódio ${e.ep} · ${ago(e.at)}` }));
   const SD = seedsOf(), rby = SD.length ? need(recKey(SD), 12 * 36e5, () => API.recs(SD), true) : null, ragg = rby ? recsAgg(rby, SD) : [];
-  return hero + `<div class="an-pad">` + cont + row('Novos episódios', fresh0.slice(0, 20), { wide: 1, more: '#animes.calendario' })
+  const subnav = `<nav class="an-subnav" aria-label="Páginas dos animes">${AT.filter(a => a[0]).map(([k, l]) => `<a href="#animes.${k}">${l}</a>`).join('')}</nav>`;
+  return hero + subnav + `<div class="an-pad">` + cont + row('Novos episódios', fresh0.slice(0, 20), { wide: 1, more: '#animes.calendario' })
     + (ragg.length ? row('Recomendado para ti', ragg.slice(0, 20).map(c => c.x), { more: '#animes.recomendados', card: x => { const c = ragg.find(z => z.x === x); return { sub: c ? 'Porque viste ' + c.why[0] : '' }; } }) : '')
     + row(`Simulcasts de ${esc(sName(S))} <small>${SEM[S.s]}</small>`, (sea || []).slice(0, 20), { more: '#animes.temporada' })
     + row('Em alta agora', (tr || []).slice(0, 20))

@@ -99,7 +99,7 @@
   "p": "Geral",
   "name": "atualização: depois mostra \"Atualizado\" e a versão nova",
   "pass": true,
-  "info": "Atualizado · versão 9.9 · 19/11/2026 · Animes no iPad: o destaque já troca os ba"
+  "info": "Atualizado · versão 9.9 · 19/11/2026 · Animes: passar o destaque com o dedo já n"
  },
  {
   "p": "Geral",
@@ -477,7 +477,7 @@
   "p": "Geral",
   "name": "dieta: 200 g de frango = macros certas",
   "pass": true,
-  "info": "{\"date\":\"2026-11-19\",\"meal\":\"Pequeno-almoço\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"k6u8i7slhk5\",\"_c\":1795046932517,\"_u\":1795046932517,\"_s\":0}"
+  "info": "{\"date\":\"2026-11-19\",\"meal\":\"Pequeno-almoço\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"gp5dect7ysb\",\"_c\":1795047981275,\"_u\":1795047981275,\"_s\":0}"
  },
  {
   "p": "Geral",
@@ -627,7 +627,7 @@
   "p": "Geral",
   "name": "regista com a opção e a marca escolhidas",
   "pass": true,
-  "info": "{\"date\":\"2026-11-19\",\"meal\":\"Pequeno-almoço\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"8eose4slxw4\",\"_c\":1795046953684,\"_u\":1795046953684,\"_s\":0}"
+  "info": "{\"date\":\"2026-11-19\",\"meal\":\"Pequeno-almoço\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"kxda6ht8f3t\",\"_c\":1795048002425,\"_u\":1795048002425,\"_s\":0}"
  },
  {
   "p": "Geral",
@@ -1539,7 +1539,7 @@
   "p": "Geral",
   "name": "sem erros de JavaScript (corpo)",
   "pass": false,
-  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8781' has been blocked by CORS policy: No 'Access-Control-Allow | consola: Access to fetch at 'https://api.open-meteo.com/v1/forecast?latitude=40.64575&longitude=-8.64643&current=temperature_2m,apparent_temperature,weather_code,wind_sp"
+  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8781' has been blocked by CORS policy: No 'Access-Control-Allow"
  },
  {
   "p": "Geral",
@@ -1554,254 +1554,644 @@
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "finanças: saldo da conta = abertura + receitas − despesas − transferências (1279,50 €)",
-  "pass": true,
-  "info": "{\"a\":1279.5,\"c\":100,\"inc\":500,\"exp\":1119.5,\"fut\":true,\"up\":true}"
- },
- {
-  "p": "Áreas",
-  "name": "finanças: transferência entra na conta de destino (100 €)",
+  "p": "Dominus",
+  "name": "Criar o herói: boneco em pixel art à tua imagem (cabelo cacheado, óculos, cavanhaque) num cenário em pixel art",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "finanças: mês soma receitas e despesas (despesa futura ainda não conta no saldo)",
-  "pass": true,
-  "info": "{\"a\":1279.5,\"c\":100,\"inc\":500,\"exp\":1119.5,\"fut\":true,\"up\":true}"
- },
- {
-  "p": "Áreas",
-  "name": "finanças: despesa agendada aparece nos próximos pagamentos",
+  "p": "Dominus",
+  "name": "Personalizar: mudar o cabelo muda o personagem",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "finanças: compra em 3 parcelas cria 3 movimentos de 100 € em meses seguidos",
-  "pass": true,
-  "info": "[[100,1,3,\"2026-11\"],[100,2,3,\"2026-12\"],[100,3,3,\"2027-01\"]]"
- },
- {
-  "p": "Áreas",
-  "name": "finanças: recorrente aparece antes de pagar e desaparece depois de pago",
-  "pass": true,
-  "info": "{\"before\":true,\"paid\":true,\"after\":false}"
- },
- {
-  "p": "Áreas",
-  "name": "finanças: pagar 200 € de uma dívida de 1000 € deixa 800 € (património igual)",
-  "pass": true,
-  "info": "{\"bal\":800,\"nwDelta\":0}"
- },
- {
-  "p": "Áreas",
-  "name": "finanças: orçamento soma o gasto da categoria no mês",
+  "p": "Dominus",
+  "name": "Conjuntos prontos (fatos, armaduras, mago, samurai, Dominus…) com cadeado até teres o nível",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "tarefas: \"Rever balanço @Universidade !1 amanhã\" → título, prioridade 1, amanhã, área",
-  "pass": true,
-  "info": "[\"Rever balanço\",\"1\",true,\"Universidade\",\"Próxima\"]"
- },
- {
-  "p": "Áreas",
-  "name": "tarefas: concluir tarefa diária marca a data e cria a de amanhã",
-  "pass": true,
-  "info": "{\"done\":true,\"next\":true}"
- },
- {
-  "p": "Áreas",
-  "name": "tarefas: prazo passado conta como atrasada",
+  "p": "Dominus",
+  "name": "Muitas peças para escolher: armaduras, fatos, elmos, capas, armas e escudos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "próxima ação: prioridade 1 com prazo hoje vem antes da prioridade 4",
+  "p": "Dominus",
+  "name": "Herói criado com nome",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "hábitos: 3 dias seguidos = sequência de 3",
+  "p": "Dominus",
+  "name": "Os 8 atributos sobem sozinhos com o que registas (treino, foco, estudo, gastos, pessoas, fé, trabalho, tarefas)",
   "pass": true,
-  "info": "{\"streak\":3,\"wkend\":false,\"auto\":true,\"past\":true}"
+  "info": "corpo,mente,intelecto,fortuna,relacoes,espirito,carreira,disciplina"
  },
  {
-  "p": "Áreas",
-  "name": "hábitos: \"dias úteis\" não conta ao sábado",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "hábitos: automático (registar um gasto) marca-se sozinho",
+  "p": "Dominus",
+  "name": "Missões: 3 de hoje, 3 da semana e 3 campanhas do mês",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "hábitos: não deixa marcar dias passados",
+  "p": "Dominus",
+  "name": "Missões difíceis a sério (estudo de 2 h, 90 min de foco, 8 tarefas…) e o monstro do dia em pixel art",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "metas: manual 5 de 10 = 50%",
+  "p": "Dominus",
+  "name": "Chefe da semana em pixel art, com vida e dano feito pelo que registaste",
   "pass": true,
-  "info": "[0.5,0.5,0.25,\"Atrás do ritmo\"]"
+  "info": "[3000,22,\"Capitão Bobo do Adiar\",true]"
  },
  {
-  "p": "Áreas",
-  "name": "metas: 2 de 4 passos = 50%",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Áreas",
-  "name": "metas: meta ligada a uma conta segue o saldo (100 de 400 = 25%)",
+  "p": "Dominus",
+  "name": "Colosso do mês (só o avanço real dá dano inteiro)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "metas: atrás do ritmo é detetado",
+  "p": "Dominus",
+  "name": "Conquistas mais difíceis: 5 graus (bronze a diamante), \"Forjado no Ferro\" só aos 25 treinos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "universidade: média ponderada 40%×12 + 60%×16 = 14,4",
-  "pass": true,
-  "info": "{\"avg\":14.4,\"due1\":true,\"r1\":true,\"next\":true}"
- },
- {
-  "p": "Áreas",
-  "name": "universidade: revisão de ontem está para hoje e a seguinte é a 7 dias",
+  "p": "Dominus",
+  "name": "…e aos 26 treinos chega o bronze",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "calendário: evento semanal repete-se daqui a 7 dias",
-  "pass": true,
-  "info": "{\"ev0\":true,\"ev7\":true,\"shift\":true,\"exam\":true}"
- },
- {
-  "p": "Áreas",
-  "name": "calendário: turnos e avaliações aparecem",
+  "p": "Dominus",
+  "name": "Muitos mais níveis (até 300) e títulos (25 ou mais)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "decisões: filtro Alpha (24 h, 3 dias, passado)",
-  "pass": true,
-  "info": "[\"Responde às 5 perguntas\",\"Esperar 24 h\",\"Filtro passado\",\"Esperar 3 dias\",\"Filtro passado\"]"
- },
- {
-  "p": "Áreas",
-  "name": "segurança: mudar o código pede o atual e 6 números (só números, também no perfil pessoal)",
-  "pass": true,
-  "info": "[\"O código atual não está certo.\",\"O novo código tem de ter 6 números.\",null,null,\"Código incorreto.\",6,null]"
- },
- {
-  "p": "Áreas",
-  "name": "segurança: depois de mudar, o novo código entra e o antigo não",
+  "p": "Dominus",
+  "name": "38 classes, cada uma com 5 graus e uma skin por grau",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "segurança: o código nunca fica guardado em texto",
+  "p": "Dominus",
+  "name": "Masmorras: 114 criaturas em pixel art (monstros dos andares, chefes e colossos)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "v3.20: na conta do dono não há escudo (pode tirar prints e copiar em Senhas)",
+  "p": "Dominus",
+  "name": "Marcos: 5 pilares com 100 marcos cada (com o Espírito)",
+  "pass": true,
+  "info": "[100,100,100,100,100]"
+ },
+ {
+  "p": "Dominus",
+  "name": "Marcar um marco pede a prova por escrito (não basta tocar)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "segurança: 5 códigos errados bloqueiam 30 s (mesmo com o certo)",
-  "pass": true,
-  "info": "[\"Código errado 5 vezes. Espera 30 s.\",\"Muitas tentativas. Espera 30 s.\"]"
- },
- {
-  "p": "Áreas",
-  "name": "clima: frase com cidade, graus, sensação e chuva",
-  "pass": true,
-  "info": "Em Aveiro estão 18 graus, sensação de 14, chuva fraca. Máxima de 21 e mínima de 13, 70% de probabilidade de chuva: leva guarda-chuva."
- },
- {
-  "p": "Áreas",
-  "name": "clima: amanhã e ícone sem emojis",
+  "p": "Dominus",
+  "name": "Uma prova curta demais não conta",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "mudança: recuperar recusa endereço errado e aceita o do script (tira as aspas da chave)",
-  "pass": true,
-  "info": "{\"bad\":null,\"ok\":true,\"done\":1}"
- },
- {
-  "p": "Áreas",
-  "name": "todas as 189 páginas: cada botão tem função",
+  "p": "Dominus",
+  "name": "Com prova, o marco dá +25 000 XP e guarda a prova",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "todas as páginas: cada formulário tem função",
+  "p": "Dominus",
+  "name": "Marcos que se provam sozinhos pelos registos (livros, maratona, países…)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "todas as páginas: \"editar\" aponta para dados que existem",
+  "p": "Dominus",
+  "name": "Acrescentar um marco teu: fica como o próximo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "todas as páginas: sem \"undefined\", \"NaN\" ou \"[object Object]\" no ecrã",
+  "p": "Dominus",
+  "name": "Tirar marcos da lista (os teus e os de base)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "IA unificada: nenhuma página tem o cartão antigo \"Ligar a IA\"",
+  "p": "Dominus",
+  "name": "Repor os marcos tirados",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "IA unificada: o cartão do Spyke aparece onde a IA faz falta",
-  "pass": true,
-  "info": "universidade.flashcards, universidade.simulados, universidade.questoes, trabalho.foto"
- },
- {
-  "p": "Áreas",
-  "name": "IA unificada: a página do Spyke tem o cérebro (IA) com os passos",
+  "p": "Dominus",
+  "name": "Visual: separador Classes com as 5 skins da tua classe (as dos graus acima com cadeado)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "IA unificada: ligar uma vez liga a app inteira",
+  "p": "Dominus",
+  "name": "Visual: roupas melhores ficam presas até subires a Fortuna",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Áreas",
-  "name": "sem erros de JavaScript (áreas)",
+  "p": "Dominus",
+  "name": "Loja: comprar uma moldura com o ouro ganho",
+  "pass": true,
+  "info": "ouro 760"
+ },
+ {
+  "p": "Dominus",
+  "name": "Ao registar noutra página aparece o +XP no canto",
+  "pass": true,
+  "info": "+16 Corpo"
+ },
+ {
+  "p": "Dominus",
+  "name": "Aventuras: catálogo grande para escolher (montanha, céu, neve, água…)",
+  "pass": true,
+  "info": "125 ideias"
+ },
+ {
+  "p": "Dominus",
+  "name": "Aventura feita dá XP de Corpo e conta para a conquista \"Aventureiro\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Dominus",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Botão flutuante da calculadora em todo o app",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "RPN: 5 ENTER 3 + = 8",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Financeira: empréstimo de 10 000 a 5% ao ano em 48 meses → PMT = −230,29",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "BEG: pagamentos no início do mês dão uma prestação menor",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Calcular a taxa (i) a partir das outras: ≈ 0,4167% ao mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Fluxos de caixa: −1000 e 4 × 300 → TIR ≈ 7,71%",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "NPV a 10% ≈ −49,04",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Percentagens: 200 ENTER 15 % = 30 e Δ% de 80 para 100 = 25%",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Tabela de amortização (prestações iguais e SAC)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Básica: 2(3+4)^2 = 98, √(16)+sin(30) = 4,5 (graus), 2^-1 = 0,5 e −2^2 = −4",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Básica: escrever e Enter dá o resultado e guarda no histórico",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Gráfica: desenha as funções num gráfico com eixos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Gráfica: tocar mostra x e os valores das funções",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Cálculo › Derivadas: f′ e f″ pelas regras (x²·sin(x) → x²·cos(x) + 2x·sin(x))",
+  "pass": true,
+  "info": "f′(x) x²·cos(x) + 2x·sin(x) f″(x) −x²·sin(x) + 2x·cos(x) + 2(x·cos(x) + sin(x)) Máximos, mínimos e pontos estacionários (onde f′ = 0, entre −10 e 10) mínimo local em x = −8,096163603 (f = −63,63498195"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Derivadas: máximos e mínimos (x³ − 3x: máximo em x = −1, mínimo em x = 1)",
+  "pass": true,
+  "info": "f′(x) 3x² − 3 f″(x) 6x Máximos, mínimos e pontos estacionários (onde f′ = 0, entre −10 e 10) máximo local em x = −1 (f = 2) mínimo local em x = 1 (f = −2) Ver f e f′ no gráfico"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Derivadas: valor num ponto e reta tangente (em x = 2: f′ = 9, y = 9x − 16)",
+  "pass": true,
+  "info": "f′(x) 3x² − 3 f″(x) 6x f(2) 2 f′(2) 9 f″(2) 12 Reta tangente y = 9x − 16 Máximos, mínimos e pontos estacionários (onde f′ = 0, entre −10 e 10) máximo local em x = −1 (f = 2) mínimo local em x = 1 (f = −2) Ver f e f′ no gráfico"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Derivadas: \"Ver no gráfico\" desenha f e f′ na Gráfica",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Integrais: primitiva (∫ x·eˣ dx = x·eˣ − eˣ + C) e o definido de 0 a 1 = 1",
+  "pass": true,
+  "info": "∫ f(x) dx x·e^x − e^x + C ∫ de 0 a 1 1 = F(1) − F(0) Ver f e a primitiva no gráfico"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Integrais: cos²(x) → x/2 + sin(2x)/4",
+  "pass": true,
+  "info": "∫ f(x) dx x/2 + sin(2x)/4 + C ∫ de 0 a 1 0,7273243567 = F(1) − F(0) Ver f e a primitiva no gráfico"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Integrais: impróprio de −∞ a ∞ (e^(−x²) dá √π)",
+  "pass": true,
+  "info": "∫ f(x) dx não encontrei a primitiva exata (o integral definido calcula-se na mesma) ∫ de −∞ a ∞ 1,772453851 = √π calculado numericamente"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Integrais: diz quando o integral não converge (1/x de 1 a ∞)",
+  "pass": true,
+  "info": "∫ f(x) dx ln|x| + C ∫ de 1 a ∞ diverge (o integral não converge) Ver f e a primitiva no gráfico"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Matrizes: determinante exato (det = 5)",
+  "pass": true,
+  "info": "det(A) = 5 Como det(A) ≠ 0, A tem inversa."
+ },
+ {
+  "p": "Calculadora",
+  "name": "Matrizes: inversa com frações exatas (3/5, −1/5, 2/5)",
+  "pass": true,
+  "info": "A⁻¹ = 3/5 −1/5 −1/5 2/5 det(A) = 5"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Matrizes: resolve sistemas (2x + y = 5, x + 3y = 10 → x₁ = 1, x₂ = 3)",
+  "pass": true,
+  "info": "Solução única X = 1 3 x₁ = 1 · x₂ = 3"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Matrizes: polinómio característico e valores próprios",
+  "pass": true,
+  "info": "Polinómio característico det(λI − A) = λ² − 5λ + 5 Valores próprios λ = 3,618033989 λ = 1,381966011"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Matrizes: sistema com infinitas soluções mostra as equações com a variável livre",
+  "pass": true,
+  "info": "Sistema possível e indeterminado (infinitas soluções) x₁ = x₃ x₂ = 3 − 2x₃ x₃ livre (qualquer número) Matriz ampliada escalonada 1 0 −1 0 0 1 2 3 0 0 0 0"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Sucessões: termos, limite de (1 + 1/n)ⁿ = e, monotonia e soma",
+  "pass": true,
+  "info": "uₙ = (1/n + 1)^n u₁ 2 u₂ 9/4 u₃ 64/27 u₄ 625/256 u₅ 2,48832 u₆ 2,521626372 u₇ 2,546499697 u₈ 2,565784514 u₉ 2,581174792 u₁₀ 2,59374246 lim uₙ 2,718282 = e (estimado com n até 10⁹) · converge Monotonia crescente (pelos primeiros termos) Soma dos 10 primeiros termos 24,35892445 Converge ou oscila entr"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Sucessões: (−1)ⁿ não tem limite (oscila)",
+  "pass": true,
+  "info": "uₙ = (−1)^n u₁ −1 u₂ 1 u₃ −1 u₄ 1 u₅ −1 u₆ 1 u₇ −1 u₈ 1 u₉ −1 u₁₀ 1 lim uₙ não tem limite · diverge (oscila) Monotonia não é monótona (pelos primeiros termos) Soma dos 10 primeiros termos 0 Converge ou oscila entre valores finitos: é limitada."
+ },
+ {
+  "p": "Calculadora",
+  "name": "Sucessões: n!/nⁿ tende para 0",
+  "pass": true,
+  "info": "uₙ = n^(−n)·n! u₁ 1 u₂ 1/2 u₃ 2/9 u₄ 3/32 u₅ 24/625 u₆ 5/324 u₇ 0,006119899022 u₈ 0,002403259277 u₉ 0,0009366567084 u₁₀ 0,00036288 lim uₙ 0 (estimado com n até 10⁹) · converge Monotonia decrescente (pelos primeiros termos) Soma dos 10 primeiros termos 1,879627016 Converge ou oscila entre valores fin"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Sucessões por recorrência: uₙ₊₁ = uₙ/2 + 1 converge para 2",
+  "pass": true,
+  "info": "u₁ = 1 u₁ 1 u₂ 3/2 u₃ 7/4 u₄ 15/8 u₅ 31/16 u₆ 63/32 u₇ 127/64 u₈ 255/128 u₉ 511/256 u₁₀ 1023/512 lim uₙ 2 (estimado com n até 10⁹) · converge Monotonia crescente (pelos primeiros termos) Soma dos 10 primeiros termos 18,00195313 Converge ou oscila entre valores finitos: é limitada."
+ },
+ {
+  "p": "Calculadora",
+  "name": "Progressões: aritmética (u₁ = 2, r = 3 → u₁₀ = 29, S₁₀ = 155)",
+  "pass": true,
+  "info": "u₁₀ = u₁ + (n − 1)·r 29 S₁₀ = n·(u₁ + uₙ)/2 155 Termo geral uₙ = 3(n − 1) + 2"
+ },
+ {
+  "p": "Calculadora",
+  "name": "A barra de símbolos escreve no campo onde estás",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Esc fecha e o botão volta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "No telemóvel abre por baixo, a toda a largura, sem sair do ecrã",
+  "pass": true,
+  "info": "{\"w\":390,\"b\":844,\"ih\":844,\"iw\":390,\"sw\":390,\"vv\":[390,1],\"h\":\"\",\"wide\":[\"text.:328-409 <\",\"text.:363-432 <\"]}"
+ },
+ {
+  "p": "Calculadora",
+  "name": "Cálculo no telemóvel: cabe no ecrã (sem sair para o lado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Calculadora",
+  "name": "Calculadora: sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: começa desligada (só aparece a quem a escolher)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no perfil pessoal do Ryan já vem ligada (e desligar fica guardado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no registo (escolher as abas) aparece desligada para a pessoa ligar",
+  "pass": true,
+  "info": "{\"on\":false,\"k\":\"animes\"}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: ligar no registo põe a aba no menu (em Eu)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: destaque com a faixa, a temporada e o que está em alta",
+  "pass": true,
+  "info": "[\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: carrossel de destaque (com pontos para mudar) e os novos episódios",
+  "pass": true,
+  "info": "{\"n\":2,\"on\":0} [\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: passar o destaque não volta ao primeiro quando a página se redesenha a meio",
+  "pass": true,
+  "info": "{\"t\":1,\"i\":1,\"on\":1}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: encontra pelo nome (com a nota da comunidade)",
+  "pass": true,
+  "info": "Eu\nANIMES\n\nTodos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.\n\nPesquisar anime\nInício\nPesquisar\nPara ti\nNavegar\nSimulcasts\nCalendário\nCategorias\nMelhores do ano\nNot"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: título, nota, ranking, géneros em português, sinopse e onde ver (só streaming)",
+  "pass": true,
+  "info": "{\"t\":\"Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões no teu tier. Sinopse PT: A young elf mage reflects on life. Tradução automática. Ver o original Onde ver Crunchyroll Ver o trailer Episódios 2 E1 Episódio 1"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: a sinopse aparece traduzida sozinha (grátis, com \"Ver o original\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: sequela na mesma história (sem a manga) e recomendações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: episódios com miniaturas, personagens com a voz e as aberturas/encerramentos",
+  "pass": true,
+  "info": "Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões no teu tier. Sinopse PT: A young elf mage reflects on life. Tr"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: tocar no episódio 2 marca que viste até lá",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: \"Estou a ver\" junta à lista com o episódio 0 e a data de começo",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: tocar outra vez no estado marcado tira da lista (e tocar de novo volta a juntar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: episódio, nota 1–10, favorito, resenha, top 10 e tier ficam guardados",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":2023,\"sea\":\"FALL\",\"fmt\":\"TV\",\"eps\":28,\"dur\":24,\"gen\":[\"Adventure\",\"Drama\",\"Fantasy\"],\"stu\":\"Estúdio "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: mostra o episódio, a nota com o nome e o tier",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: chegar ao último episódio passa para \"Visto\" com a data de fim",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › A minha lista: vistos, episódios, horas, nota média e géneros",
+  "pass": true,
+  "info": "Eu ANIMES Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano. Pesquisar anime Início Pesquisar Para ti Navegar Simulcasts Calendário Categorias Melhores do ano Notícias A minha lista Top 10 e tier list Vistos 1 A ver 0 Quero ver 0 Episódios vistos 28 11 horas a ver anime A tua nota média 9,0 1 com nota Os géneros que mais vês Aventura 1 Drama 1 Fantasia 1 A minha"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Top 10 e tier list: o anime está no tier S e no 1.º lugar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: a estação atual com todos os animes e o próximo episódio",
+  "pass": true,
+  "info": "{\"h\":\"Outono 2026\",\"n\":4,\"t\":\"8,0 Cyberpunk: Edgerunners 2 Série na internet · 10 episódios · 2026 Ação · Drama Cyberpunk: Edgerunners 2 Ep. 8 · sáb 00:29 8,5 The Apothecary Diaries Season 3 Série · 12 episódios · 2026 Drama · Mistério Uma farmacêutica resolve mistérios no palácio. The Apothecary Di"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: filtrar só os filmes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: voltar à temporada anterior (Verão 2026)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Calendário: os episódios da semana por dia e à hora certa (sem conteúdo adulto)",
+  "pass": true,
+  "info": "Eu ANIMES Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano. Pesquisar anime Início Pesquisar Para ti Navegar Simulcasts Calendário Categorias Melhores do ano Notícias A minha lista Top 10 e tier list Calendário de lançamentos Os episódios novos dos próximos 7 dia"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Melhores do ano: ranking com o 1.º, a nota e os botões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Melhores do ano: escolher outro ano (2011)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: \"Quero ver\" num anime do ranking junta à lista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Navegar: populares com \"Ver mais\" (página seguinte)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Categorias: tocar em Ação abre os animes dessa categoria",
+  "pass": true,
+  "info": "#animes.navegar ias A minha lista Top 10 e tier list Ação Populares Novidades Mais bem avaliados A–Z Tudo Séries Filmes Outros Todas as categorias Ação Aventura Comédia Drama Fantasia Romance Ficção científica Quotidiano Mistério Terror Psicológico Desporto Sobrenatural Suspense Mecha Música Garotas mágicas Ecchi 8,0 Navegar Action página 1 Série · 12 episódios · 2026 Ação · Drama Navegar Action página 1 Série · "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Notícias: notícias de anime pelo servidor do Prumo",
+  "pass": true,
+  "info": "Eu\nANIMES\n\nTodos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.\n\nPesquisar anime\nInício\nPesquisar\nPara ti\nNavegar\nSimulcasts\nCalendário\nCategorias\nMelhores do ano\nNot"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: junta o Kitsu (encontra o que o AniList não tem) e esconde o conteúdo adulto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: \"Pedir à IA para encontrar\" descobre o anime pelo nome em português",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe de um anime que só o Kitsu tinha: o AniList completa (procura pelo nome)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › As minhas listas: criar uma lista a partir do anime e vê-la em A minha lista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: a escolha a partir do que viste, a dizer porquê, sem o que já tens na lista",
+  "pass": true,
+  "info": "[\"8,7 Violet Evergarden Série · 12 episódios · 2026 Ação · Drama Violet Evergarden Porque viste Frieren: Beyond Journey's End\",\"8,0 Mushoku Tensei Série · 12 episódios · 2026 Ação · Drama Mushoku Tensei Porque viste Frieren: Beyond Journey's End\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: os teus géneros, clássicos, joias escondidas e filmes",
+  "pass": true,
+  "info": "Eu ANIMES Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano. Pesquisar anime Início Pesquisar Para ti Navegar Simulcasts Calendário Categorias Melhores do ano Notícias A minha lista Top 10 e tier list Recomendado para ti A partir do que viste e das tuas notas (Frieren: Beyond Journey's End). O que já está na tua lista não aparece: marca Quero ver ou Já vi e as sugestões mudam. A escolha para ti 8,7 Violet Evergarden Série · 12 episódios · 2026 Ação · Drama Vio"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: pedir à IA dá animes reais com o porquê (os da lista ficam de fora)",
+  "pass": true,
+  "info": "Mushishi Série · 12 episódios · 2026 Calmo e contemplativo, como Frieren. Quero ver Já vi 8,6 de 10"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: faixa \"Recomendado para ti\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: com o AniList em baixo, a pesquisa usa o MyAnimeList (reserva)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no telemóvel nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: sem erros na consola",
   "pass": true,
   "info": ""
  }
