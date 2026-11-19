@@ -175,9 +175,14 @@ const errBox = k => ERR[k] ? `<div class="note an-err">Não consegui falar com a
 const loading = t => `<div class="an-ld"><span class="an-sp" aria-hidden="true"></span>${esc(t || 'A buscar os animes…')}</div>`;
 A.anRetry = b => { delete TRY[b.dataset.k]; delete ERR[b.dataset.k]; delete DATA[b.dataset.k]; OS.request(); };
 
-// onde ver: só os serviços onde se vê o anime inteiro (sem canais de vídeos, bibliotecas nem serviços só da Ásia), sem repetidos
-const WATCH = /^(crunchyroll|netflix|(amazon )?prime video|amazon|disney ?(\+|plus)|hulu|hidive|max|hbo max|adn|animation digital network|funimation|apple tv\+?|tubi|pluto tv|globoplay|star\+|paramount\+|peacock|rtp play|anime onegai|wakanim)$/i;
-const watchL = L => { const sn = new Set(); return (L || []).filter(l => { const k = String(l.site || '').trim().toLowerCase(); if (!WATCH.test(k) || sn.has(k)) return false; sn.add(k); return true; }); };
+// onde ver: só os serviços onde se vê o anime inteiro (sem canais de vídeos, bibliotecas nem serviços só da Ásia), sem repetidos,
+// e só os que existem no país que escolheste ao criar a conta (a Hulu, por exemplo, só existe nos EUA)
+const SVCW = /^(crunchyroll|netflix|(amazon )?prime video|amazon|disney ?(\+|plus)|apple tv\+?)$/i;   // em quase todos os países
+const SVCC = [[/^hulu$/i, 'US JP'], [/^hidive$/i, 'US CA GB IE AU NZ'], [/^(max|hbo max)$/i, 'US BR MX AR CL CO PE PT ES FR PL NL BE SE NO DK FI RO HU CZ SK BG HR SI'], [/^(adn|animation digital network)$/i, 'FR BE CH LU DE AT'],
+  [/^tubi$/i, 'US CA MX AU GB'], [/^pluto tv$/i, 'US BR MX AR CL CO PE GB DE AT CH FR IT ES'], [/^globoplay$/i, 'BR'], [/^rtp play$/i, 'PT'], [/^paramount\+$/i, 'US BR CA AU GB MX AR CL CO PE IT FR DE AT CH'], [/^peacock$/i, 'US'], [/^anime onegai$/i, 'BR MX AR CL CO PE']];
+const myCC = () => String((OS.one('profile') || {}).country || 'PT').toUpperCase();
+const inCC = site => { const k = String(site || '').trim(); if (SVCW.test(k)) return true; const r = SVCC.find(z => z[0].test(k)); return !!r && r[1].split(' ').includes(myCC()); };
+const watchL = L => { const sn = new Set(); return (L || []).filter(l => { const k = String(l.site || '').trim().toLowerCase(); if (!inCC(k) || sn.has(k)) return false; sn.add(k); return true; }); };
 /* ---------- peças do ecrã ---------- */
 // tamanho certo de cada imagem: a maior (até 600 KB) só no destaque e na página do anime; nos cartões a de ~230 px (5 a 10× mais leve)
 const imgS = (u, sz) => { u = String(u || ''); const s = sz === 's'; if (sz === 'l') return u;

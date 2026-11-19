@@ -593,7 +593,7 @@ P.campeonato = () => { const slug = OS.ui.fbC; if (!slug) return P.campeonatos()
     + (pv.length && !/^Última/.test(J ? J.t : '') ? sec('Última jornada · ' + esc(dayLbl(pv[0].d)), grid(pv.slice(0, 12).map(e => mCard(e, { nolg: 1 })))) : '')
     + (T && !T.groups.length ? '' : sec('Classificação', podium(slug) + table(slug))); };
 V.futebol = sub => { const k = P[sub || ''] ? (sub || '') : '', tk = k === 'equipa' ? 'equipas' : k === 'campeonato' ? 'campeonatos' : k;
-  return UI.head('Futebol', 'As tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.', `<button class="btn sm ghost" data-act="fbRefresh">${UI.ic('sync')}Atualizar</button>`, 'Visão geral')
+  return UI.head('Futebol', 'As tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.', `<button class="btn sm ghost" data-act="fbRefresh">${UI.ic('sync')}Atualizar</button>`, 'Eu')
     + UI.tabs('futebol', TABS, tk) + `<div class="fb">${P[k]()}</div>`; };
 
 /* ---------- pesquisa ---------- */
