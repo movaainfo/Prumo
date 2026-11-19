@@ -2,7 +2,6 @@
 // da ESPN (por exemplo, se a ESPN recusar o pedido do navegador): pede o mesmo endereço do lado do servidor e devolve o JSON,
 // com cache curta na CDN (os jogos ao vivo mudam a cada minuto, por isso 15 s; as tabelas 5 min; a pesquisa 1 h).
 // MotoGP (?mgp=1): o calendário com as sessões, os resultados do fim de semana e o campeonato (API pública da MotoGP, que não deixa o navegador ler), num resumo pequeno.
-// Vôlei: a FIVB (VIS) lê-se diretamente no aparelho; aqui só como plano B (só pedidos GetVolley… de listas, jogos e classificações).
 // Segurança: só endereços de desporto da ESPN (site.api.espn.com/apis/.../sports/soccer|basketball|football|baseball|hockey|racing|tennis|mma|golf/, site.web.api.espn.com/apis/search/v2 e os símbolos das ligas em sports.core.api.espn.com),
 // Jogos grátis em canais oficiais do YouTube (?yt=1): lê só o feed público dos canais da lista YT (nada de endereços vindos de fora),
 // para a app tocar a transmissão oficial dentro do jogo.
@@ -11,7 +10,7 @@
 // só GET, só a própria app, no máximo 10 s e 3 MB por pedido e 600 pedidos por minuto por endereço (abrir o Futebol pela primeira vez faz muitos pedidos de uma vez). Não guarda nada.
 'use strict';
 const OK = /^https:\/\/(oceanum|nautilo|prumo)(-[a-z0-9-]+)?\.vercel\.app$/, HITS = new Map();
-const ALLOW = /^https:\/\/(site\.api\.espn\.com\/apis\/(site\/v2|v2)\/sports\/(soccer|basketball|football|baseball|hockey|racing|tennis|mma|golf)\/[a-z0-9._-]+\/[a-z0-9/._-]*(\?[a-zA-Z0-9=&%._:-]*)?|site\.web\.api\.espn\.com\/apis\/search\/v2\?[a-zA-Z0-9=&%._+~:-]*|sports\.core\.api\.espn\.com\/v2\/sports\/soccer\/leagues\/[a-z0-9._-]+(\?[a-zA-Z0-9=&%._:-]*)?|www\.fivb\.org\/vis2009\/XmlRequest\.asmx\?Request=%3CRequest%20Type%3D%22GetVolley(TournamentList|MatchList|PoolList|PoolRanking)%22[A-Za-z0-9%._~*'()!-]*)$/;
+const ALLOW = /^https:\/\/(site\.api\.espn\.com\/apis\/(site\/v2|v2)\/sports\/(soccer|basketball|football|baseball|hockey|racing|tennis|mma|golf)\/[a-z0-9._-]+\/[a-z0-9/._-]*(\?[a-zA-Z0-9=&%._:-]*)?|site\.web\.api\.espn\.com\/apis\/search\/v2\?[a-zA-Z0-9=&%._+~:-]*|sports\.core\.api\.espn\.com\/v2\/sports\/soccer\/leagues\/[a-z0-9._-]+(\?[a-zA-Z0-9=&%._:-]*)?)$/;
 const UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
 // canais oficiais com jogos de graça no YouTube (com os direitos de transmissão): nome a mostrar → id do canal
 const YT = [['CazéTV', 'UCZiYbVptd3PVPf4f6eR6UaQ']], YTF = () => process.env.YT_FEED || 'https://www.youtube.com/feeds/videos.xml?channel_id=';
@@ -78,7 +77,7 @@ const mgp = async () => { if (MGC && Date.now() - MGC.at < (MGC.live ? 25e3 : 12
   const live = gps.some(g => g.sess.some(x => now >= x.d - 6e5 && now <= (x.e || x.d + 36e5) + 6e5));
   const j = { ok: true, at: now, y: s.year, live, gps: gps.map(g => { const o = Object.assign({}, g); delete o.rid; return o; }), res, std };
   MGC = { at: Date.now(), live, j }; return j; };
-const ttl = u => /fivb\.org/.test(u) ? (/MatchList/.test(u) ? 20 : /PoolRanking/.test(u) ? 120 : 3600) : /sports\.core/.test(u) ? 86400 : /\/summary\?|\/scoreboard$/.test(u) ? 15 : /\/scoreboard\?/.test(u) ? 120 : /\/schedule/.test(u) ? 120 : /\/standings/.test(u) ? 300 : 3600;
+const ttl = u => /sports\.core/.test(u) ? 86400 : /\/summary\?|\/scoreboard$/.test(u) ? 15 : /\/scoreboard\?/.test(u) ? 120 : /\/schedule/.test(u) ? 120 : /\/standings/.test(u) ? 300 : 3600;
 module.exports = async (req, res) => {
   const origin = req.headers.origin || '', ref = req.headers.referer || '', site = req.headers['sec-fetch-site'] || '';
   const mine = OK.test(origin) || (!origin && (site === 'same-origin' || OK.test((ref.match(/^https:\/\/[^/]+/) || [''])[0])));
@@ -95,7 +94,7 @@ module.exports = async (req, res) => {
   if (q.mgp) { try { const o = await mgp(); res.statusCode = 200; res.setHeader('Cache-Control', o.live ? 'public, max-age=15, s-maxage=25, stale-while-revalidate=60' : 'public, max-age=60, s-maxage=120, stale-while-revalidate=900'); return res.end(JSON.stringify(o)); }
     catch (e) { res.statusCode = 504; return res.end('{"ok":false,"msg":"a MotoGP não respondeu a tempo"}'); } }
   if (q.yt) { const v = await ytList(); res.statusCode = 200; res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=90, stale-while-revalidate=300'); return res.end(JSON.stringify({ ok: true, v })); }
-  if (u.length > (/^https:\/\/www\.fivb\.org\//.test(u) ? 1600 : 600) || !ALLOW.test(u) || /\.\.|%2e%2e|@|\\/i.test(u)) { res.statusCode = 400; return res.end('{"ok":false,"msg":"endereço não permitido"}'); }
+  if (u.length > 600 || !ALLOW.test(u) || /\.\.|%2e%2e|@|\\/i.test(u)) { res.statusCode = 400; return res.end('{"ok":false,"msg":"endereço não permitido"}'); }
   const ac = new AbortController(), to = setTimeout(() => ac.abort(), 10000);
   try {
     const r = await fetch(u, { headers: { 'user-agent': UA, accept: 'application/json' }, redirect: 'error', signal: ac.signal });

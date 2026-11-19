@@ -714,5 +714,5 @@ A.fbMatch = b => { const e = evFind(b.dataset.id); if (!e) { UI.toast('A carrega
     if (e.st === 'in') mdT = setTimeout(upd, 15e3); };
   upd(); };
 
-OS.Futebol = { tick, liveN, state: () => ({ TM, CM, TB, SEEN, FEED, WORLD }), loadWorld, loop, _redraw: id => mdRedraw(id), _clearCache: () => MEM.clear(), _sumReset: id => { delete SUM[id]; [...MEM.keys()].forEach(k => { if (k.includes('event=' + id)) MEM.delete(k); }); }, _reset: () => { MEM.clear(); WORLD.at = 0; WORLD.d = ''; WORLD.ids = []; WQ = ''; [TM, CM, TB, TRY, ERR].forEach(o => Object.keys(o).forEach(k => delete o[k])); Object.keys(SEEN).forEach(k => delete SEEN[k]); FEED.splice(0); DISC = {}; SNAP = {}; } };
+OS.Futebol = { tN, tick, liveN, state: () => ({ TM, CM, TB, SEEN, FEED, WORLD }), loadWorld, loop, _redraw: id => mdRedraw(id), _clearCache: () => MEM.clear(), _sumReset: id => { delete SUM[id]; [...MEM.keys()].forEach(k => { if (k.includes('event=' + id)) MEM.delete(k); }); }, _reset: () => { MEM.clear(); WORLD.at = 0; WORLD.d = ''; WORLD.ids = []; WQ = ''; [TM, CM, TB, TRY, ERR].forEach(o => Object.keys(o).forEach(k => delete o[k])); Object.keys(SEEN).forEach(k => delete SEEN[k]); FEED.splice(0); DISC = {}; SNAP = {}; } };
 })();

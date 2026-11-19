@@ -4,13 +4,14 @@
    têm jogos do dia, classificação e equipas para seguir; a Fórmula 1 tem o próximo Grande Prémio com as sessões e as
    classificações; o ténis (ATP e WTA) os jogos do torneio; o UFC o próximo evento com os combates; o golfe a classificação.
    MotoGP: o fim de semana com as sessões, os resultados, o campeonato e o calendário (API pública da MotoGP, pelo servidor do Prumo).
-   Voleibol: as competições da FIVB (Superliga, Liga das Nações, Mundiais, ligas de Itália, Polónia, Japão e Turquia), lidas no aparelho.
+   Copa do Mundo (masculina e feminina): só os jogos oficiais (fase final e eliminatórias); antes de começar, a contagem até à próxima.
    Avisos: 15 minutos antes, começo, golos/pontos/sets e resultado final das equipas que segues; F1 e MotoGP com o sino. */
 (() => {
 'use strict';
 const OS = window.OS, U = OS.U, UI = OS.UI, A = OS.act, V = OS.views, { esc } = U;
 OS.ONE_DEF.sports = { teams: [], mine: ['nba', 'f1'] };
-const st = () => { const s = OS.one('sports'); if (!Array.isArray(s.teams)) s.teams = []; if (!Array.isArray(s.mine)) s.mine = []; if (s.mine.includes('ufc')) s.mine = [...new Set(s.mine.map(k => k === 'ufc' ? 'mma' : k))]; return s; };
+const st = () => { const s = OS.one('sports'); if (!Array.isArray(s.teams)) s.teams = []; if (s.teams.some(t => t.lg === 'volei')) s.teams = s.teams.filter(t => t.lg !== 'volei'); // o voleibol saiu dos Desportos
+  if (!Array.isArray(s.mine)) s.mine = []; if (s.mine.includes('ufc')) s.mine = [...new Set(s.mine.map(k => k === 'ufc' ? 'mma' : k))]; return s; };
 const save = () => OS.touch('sports');
 
 /* ícones dos desportos (traço, 24×24) */
@@ -26,7 +27,7 @@ Object.assign(UI.IP, {
   sp_golf: 'M12 18V3l7 3.5-7 3.5M7 21c0-1.7 2.2-3 5-3s5 1.3 5 3',
   sp_oly: 'M2 10a3 3 0 1 0 6 0 3 3 0 1 0-6 0M9 10a3 3 0 1 0 6 0 3 3 0 1 0-6 0M16 10a3 3 0 1 0 6 0 3 3 0 1 0-6 0M5.5 13.5a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12.5 13.5a3 3 0 1 0 6 0 3 3 0 1 0-6 0',
   sp_moto: 'M5 17a3 3 0 1 0 0-.01M19 17a3 3 0 1 0 0-.01M8 17h6l3-6h-4l-2-3H8M14 11l-2-3M17 11l2 6',
-  sp_volei: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 3c-1 4 0 7 3 9M3.5 9c4 0 7 1.5 8.5 3M12 12c-2 3-5 5-8 5.5M12 12c3 1 6 1 8.5-1M15 12c0 3.5-1 6.5-3 9'
+  sp_cup: 'M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4a3 3 0 0 0 3 3M17 6h3a3 3 0 0 1-3 3M12 13v4M8 21h8M9 17h6'
 });
 
 /* os desportos: chave, nome, caminho na ESPN, tipo, cor, ícone, a que se refere */
@@ -35,7 +36,7 @@ const SP = [
   ['nba', 'NBA', 'basketball/nba', 'team', '#e11d48', 'sp_bask', 'Basquetebol dos EUA'],
   ['f1', 'Fórmula 1', 'racing/f1', 'f1', '#ef4444', 'sp_f1', 'Grandes Prémios e campeonato'],
   ['motogp', 'MotoGP', '', 'moto', '#f97316', 'sp_moto', 'Grandes Prémios de motos e campeonato'],
-  ['volei', 'Voleibol', '', 'vb', '#14b8a6', 'sp_volei', 'Superliga, Liga das Nações, Mundiais e ligas'],
+  ['copa', 'Copa do Mundo', '', 'copa', '#d97706', 'sp_cup', 'Masculina e feminina: só os jogos oficiais'],
   ['nfl', 'NFL', 'football/nfl', 'team', '#2563eb', 'sp_amf', 'Futebol americano'],
   ['atp', 'Ténis ATP', 'tennis/atp', 'ten', '#65a30d', 'sp_ten', 'Torneios masculinos'],
   ['wta', 'Ténis WTA', 'tennis/wta', 'ten', '#c026d3', 'sp_ten', 'Torneios femininos'],
@@ -124,10 +125,42 @@ const countdown = o => { const ms = D0(o.ini).getTime() - Date.now(); if (ms <= 
 const olyCard = o => { const s = olyState(o); return `<div class="sp-oc ${s}" style="--oc:${o.c}"><span class="sp-ot">${esc(o.tp)}</span><h4>${esc(o.t)}</h4><p>${esc(fmtR(o.ini, o.fim))}</p><small>${esc(o.sede)}</small>${o.para ? `<small class="sp-op">Paralímpicos: ${esc(fmtR(o.para[0], o.para[1]))}</small>` : ''}${s === 'in' ? '<span class="sp-gs on"><i></i>A decorrer</span>' : s === 'post' ? '<span class="sp-oend">Terminados</span>' : ''}</div>`; };
 const olyPage = () => { const n = olyNext(), cc = String((OS.one('profile') || {}).country || 'PT').toUpperCase(), me = MED24X[cc];
   return `<section class="sp-ohero" style="--oc:${n.c}"><div class="sp-oring">${UI.ic('sp_oly')}</div><span class="sp-ok">Próximos Jogos Olímpicos</span><h2>${esc(n.t)}</h2><p>${esc(fmtR(n.ini, n.fim))} · ${esc(n.sede)}</p>${olyState(n) === 'in' ? '<span class="sp-gs on big"><i></i>A decorrer agora</span>' : countdown(n)}<small>${esc(n.info)}</small></section>`
+    + ((w => w && w !== n ? `<section class="sp-owin" style="--oc:${w.c}"><div><span class="sp-ok">Jogos Olímpicos de Inverno</span><h3>${esc(w.t)}</h3><p>${esc(fmtR(w.ini, w.fim))} · ${esc(w.sede)}</p>${w.para ? `<small>Paralímpicos: ${esc(fmtR(w.para[0], w.para[1]))}</small>` : ''}</div>${olyState(w) === 'in' ? '<span class="sp-gs on"><i></i>A decorrer</span>' : countdown(w)}</section>` : '')(OLY.find(o => o.tp === 'Inverno' && olyState(o) !== 'post')))
     + sec('Calendário das próximas edições', `<div class="sp-ocs">${OLY.filter(o => olyState(o) !== 'post').map(olyCard).join('')}</div>`)
     + sec('Los Angeles 2028: os desportos', `<div class="sp-chips">${LA28.map(x => `<span class="${NOVO.has(x) ? 'new' : ''}">${esc(x)}${NOVO.has(x) ? '<em>novo</em>' : ''}</span>`).join('')}</div><p class="sp-note">Os Jogos abrem a 14 de julho e fecham a 30 de julho de 2028; os Paralímpicos são de 15 a 27 de agosto de 2028.</p>`)
     + sec('Paris 2024: quadro de medalhas', `<div class="sp-tw"><table class="sp-tb sp-med"><thead><tr><th>#</th><th class="l">País</th><th title="Ouro"><i class="md g"></i></th><th title="Prata"><i class="md s"></i></th><th title="Bronze"><i class="md b"></i></th><th>Total</th></tr></thead><tbody>${MED24.map((r, i) => `<tr><td>${i + 1}</td><td class="l">${esc(r[0])}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><b>${r[1] + r[2] + r[3]}</b></td></tr>`).join('')}${me ? `<tr class="me"><td>${me[4]}</td><td class="l">${esc(me[0])}</td><td>${me[1]}</td><td>${me[2]}</td><td>${me[3]}</td><td><b>${me[1] + me[2] + me[3]}</b></td></tr>` : ''}</tbody></table></div>`)
     + sec('Edições anteriores', `<div class="sp-ocs">${OLY.filter(o => olyState(o) === 'post').reverse().map(olyCard).join('')}</div>`); };
+
+
+/* ---------- Copa do Mundo: masculina e feminina, só os jogos oficiais (os amigáveis ficam no Futebol) ---------- */
+const COPA = {
+  m: { lg: 'fifa.world', n: 'Copa do Mundo', ed: [{ t: 'Copa do Mundo 2030', ini: '2030-06-13', fim: '2030-07-21', sede: 'Marrocos, Portugal e Espanha', extra: 'Jogos do centenário a 8 e 9 de junho no Uruguai, na Argentina e no Paraguai. Datas previstas pela FIFA.', c: '#b45309' }, { t: 'Copa do Mundo 2034', ini: '2034-06-01', fim: '2034-07-31', sede: 'Arábia Saudita', extra: 'Datas por marcar.', c: '#047857', vago: 1 }], q: [] },
+  f: { lg: 'fifa.wwc', n: 'Copa do Mundo Feminina', ed: [{ t: 'Copa do Mundo Feminina 2027', ini: '2027-06-24', fim: '2027-07-25', sede: 'Brasil', extra: '32 seleções; a primeira Copa feminina na América do Sul.', c: '#15803d' }], q: [['fifa.wworldq.uefa', 'Europa'], ['fifa.wwcq.ply', 'Repescagem']] } };
+const edState = o => olyState(o);
+const copaNext = g => COPA[g].ed.find(o => edState(o) !== 'post') || COPA[g].ed[COPA[g].ed.length - 1];
+// os nomes das seleções em português (o Futebol já os sabe)
+const copaGame = (e, lg) => { const v = tEv(e, 'copa'), tn = OS.Futebol && OS.Futebol.tN; v.k = lg; if (tn) [v.h, v.a].forEach(x => { if (x) { x.n = tn(x.n); x.sn = tn(x.sn); } }); return v; };
+const copaPage = sp => { const S = UIst(), g = S.copa === 'f' ? 'f' : 'm', C = COPA[g], n = copaNext(g), stt = edState(n), now = Date.now();
+  const seg = `<div class="sp-seg" role="tablist">${[['m', 'Masculina'], ['f', 'Feminina']].map(([k, l]) => `<button type="button" class="${g === k ? 'on' : ''}" data-act="dsCopa" data-g="${k}" role="tab" aria-selected="${g === k}">${l}</button>`).join('')}</div>`;
+  const hero = `<section class="sp-ohero sp-cup" style="--oc:${n.c}"><div class="sp-oring">${UI.ic('sp_cup')}</div><span class="sp-ok">${stt === 'in' ? 'A decorrer' : 'Próxima ' + (g === 'f' ? 'Copa feminina' : 'Copa')}</span><h2>${esc(n.t)}</h2><p>${n.vago ? esc(n.sede) + ' · 2034' : esc(fmtR(n.ini, n.fim)) + ' · ' + esc(n.sede)}</p>${stt === 'in' ? '<span class="sp-gs on big"><i></i>A decorrer agora</span>' : n.vago ? '' : countdown(n)}<small>${esc(n.extra)}</small></section>`;
+  let body = '';
+  // durante a Copa: os jogos (ao vivo, hoje, a seguir, resultados) e os grupos
+  if (stt === 'in') { const k = 'cp:' + C.lg + ':' + n.ini, j = need(k, 2e4, () => get(SITE + 'soccer/' + C.lg + '/scoreboard?limit=200&dates=' + dk(U.addDays(n.ini, -1)) + '-' + dk(U.addDays(n.fim, 1)), 2e4));
+    const E = j ? (j.events || []).map(e => copaGame(e, C.lg)).filter(e => e.h && e.a) : null, gg = L => `<div class="sp-gg">${L.map(e => gCard(e)).join('')}</div>`;
+    if (!E) body += errBox(k) || loading('A buscar os jogos…');
+    else { const lv = E.filter(isLive), up = E.filter(e => e.st === 'pre').sort((a, b) => a.d - b.d).slice(0, 12), dn = E.filter(e => e.st === 'post').sort((a, b) => b.d - a.d).slice(0, 12);
+      body += (lv.length ? sec('Ao vivo', gg(lv)) : '') + (up.length ? sec('A seguir', gg(up)) : '') + (dn.length ? sec('Resultados', gg(dn)) : ''); }
+    const G = need('cps:' + C.lg, 10 * 6e4, () => API.stand(['', '', 'soccer/' + C.lg]));
+    if (G && G.length) body += sec('Grupos', G.map(x => `<h4 class="sp-gh">${esc(x.name.replace(/^Group/, 'Grupo'))}</h4><div class="sp-tw"><table class="sp-tb"><thead><tr><th>#</th><th class="l">Seleção</th><th>V</th><th>E</th><th>D</th><th>Pts</th></tr></thead><tbody>${x.rows.map((r, i) => `<tr><td>${r.seed || i + 1}</td><td class="l"><span class="sp-tn">${img(r.logo, 'sp-ti', r.n)}<span>${esc(r.n)}</span></span></td><td>${esc(r.w)}</td><td>${esc(r.t)}</td><td>${esc(r.l)}</td><td><b>${esc(r.pts)}</b></td></tr>`).join('')}</tbody></table></div>`).join('')); }
+  // a última edição: a final e quem foi campeão (a ESPN dá o último jogo quando não há Copa a decorrer)
+  if (stt !== 'in') { const k = 'cpl:' + C.lg, j = need(k, 6 * 36e5, () => get(SITE + 'soccer/' + C.lg + '/scoreboard', 36e5)), e = j && (j.events || []).map(x => copaGame(x, C.lg)).filter(x => x.h && x.a && x.st === 'post').pop();
+    if (e) { const w = e.h.w ? e.h : e.a.w ? e.a : null, yr = new Date(e.d).getFullYear();
+      body += sec('Última edição · ' + yr, `<div class="sp-cupl">${w ? `<div class="sp-champ">${img(w.logo, 'sp-chl', w.ab || w.n)}<span><small>${g === 'f' ? 'Campeã' : 'Campeão'} do mundo</small><b>${esc(w.n)}</b></span></div>` : ''}<div class="sp-gg">${gCard(e, { big: 1 })}</div></div>`); } }
+  // eliminatórias a decorrer (jogos oficiais da Copa)
+  C.q.forEach(([lg, nm]) => { const k = 'cpq:' + lg, j = need(k, 10 * 6e4, () => get(SITE + 'soccer/' + lg + '/scoreboard', 6e4)), E = j ? (j.events || []).map(x => copaGame(x, lg)).filter(x => x.h && x.a && Math.abs(x.d - now) < 45 * 864e5) : [];
+    if (E.length) body += sec('Eliminatórias · ' + esc(nm), `<div class="sp-gg">${E.sort((a, b) => (isLive(b) - isLive(a)) || a.d - b.d).slice(0, 12).map(x => gCard(x)).join('')}</div>`); });
+  body += sec('Próximas edições', `<div class="sp-ocs">${C.ed.filter(o => edState(o) !== 'post').map(o => `<div class="sp-oc pre" style="--oc:${o.c}"><span class="sp-ot">${g === 'f' ? 'Feminina' : 'Masculina'}</span><h4>${esc(o.t)}</h4><p>${o.vago ? '2034' : esc(fmtR(o.ini, o.fim))}</p><small>${esc(o.sede)}</small></div>`).join('')}</div>`);
+  return seg + hero + body; };
 
 /* ---------- desportos de equipa (NBA, NFL, MLB, NHL, WNBA, universitários) ---------- */
 const UIst = () => OS.ui.sp || (OS.ui.sp = { tab: {}, day: {} });
@@ -195,108 +228,8 @@ const golfPage = sp => { const j = need('b:' + sp[0], 6e4, () => API.board(sp));
   const R = (c.competitors || []).slice().sort((a, b) => (a.order || 999) - (b.order || 999)).slice(0, 20);
   return `<section class="sp-f1" style="--sc:${sp[4]}"><span class="sp-ok">Torneio</span><h2>${esc(e.name || '')}</h2><p>${esc(dayL(Date.parse(e.date)))}</p></section>` + sec('Classificação', `<ol class="sp-rk">${R.map(x => `<li><span class="sp-rn">${x.order || ''}</span>${img(((x.athlete || {}).flag || {}).href, 'sp-fl', '')}<b>${esc((x.athlete || {}).displayName || '')}</b><em>${esc(scoreOf(x.score))}</em></li>`).join('')}</ol>`); };
 
-/* ---------- voleibol (FIVB · VIS: público, lido diretamente no aparelho) ---------- */
-const VIS = 'https://www.fivb.org/vis2009/XmlRequest.asmx?Request=';
-const vis = (xml, ttl) => get(VIS + encodeURIComponent(xml), ttl).then(j => (j && j.data) || []);
-// códigos das seleções na FIVB (os do COI) → bandeira
-const IOC = ('ALG:dz,ANG:ao,ARG:ar,ARM:am,AUS:au,AUT:at,AZE:az,BAN:bd,BEL:be,BIH:ba,BLR:by,BOL:bo,BRA:br,BRN:bh,BUL:bg,CAN:ca,CHI:cl,CHN:cn,CIV:ci,CMR:cm,COL:co,CPV:cv,CRC:cr,CRO:hr,CUB:cu,CZE:cz,DEN:dk,DOM:do,ECU:ec,EGY:eg,ESA:sv,ESP:es,EST:ee,FIN:fi,FRA:fr,GBR:gb,GEO:ge,GER:de,GHA:gh,GRE:gr,GUA:gt,HKG:hk,HON:hn,HUN:hu,INA:id,IND:in,IRI:ir,IRL:ie,IRQ:iq,ISR:il,ITA:it,JAM:jm,JOR:jo,JPN:jp,KAZ:kz,KEN:ke,KGZ:kg,KOR:kr,KSA:sa,KUW:kw,LAT:lv,LBN:lb,LTU:lt,MAR:ma,MAS:my,MEX:mx,MGL:mn,MKD:mk,MNE:me,MOZ:mz,NCA:ni,NED:nl,NGR:ng,NOR:no,NZL:nz,PAK:pk,PAN:pa,PAR:py,PER:pe,PHI:ph,POL:pl,POR:pt,PUR:pr,QAT:qa,ROU:ro,RSA:za,RUS:ru,SEN:sn,SGP:sg,SLO:si,SRB:rs,SRI:lk,SUI:ch,SVK:sk,SWE:se,SYR:sy,THA:th,TPE:tw,TTO:tt,TUN:tn,TUR:tr,UAE:ae,UGA:ug,UKR:ua,URU:uy,USA:us,UZB:uz,VEN:ve,VIE:vn,ZIM:zw')
-  .split(',').reduce((o, x) => { const [a, b] = x.split(':'); o[a] = b; return o; }, {});
 const flag2 = cc => /^[A-Za-z]{2}$/.test(cc || '') ? 'https://flagcdn.com/w80/' + cc.toLowerCase() + '.png' : '';
-const VBMAJ = /Nations League|World Championship|World Cup|Olympic|EuroVolley|South American Continental|National League Brazil|Superliga|Serie A (Maschile|Femminile)|TAURON Liga|Japan League|Turkish league/i;
-const VBNO = /U ?1\d|U ?2\d|U-\d|Boys|Girls|Zone|Coppa|Supercop|Final Four|Challenge|Courmayeur|Division/i;
-const vbYear = n => { const m = String(n).match(/(20\d\d)\s*[\/-]\s*(?:20)?(\d\d)\b/); if (m) return m[1] + '/' + m[2]; const y = String(n).match(/20\d\d/); return y ? y[0] : ''; };
-const vbName = (n, g) => { const F = g === 1, A = F ? 'feminina' : 'masculina', O = F ? 'feminino' : 'masculino', y = vbYear(n), Y = y ? ' ' + y : '';
-  if (/Nations League/i.test(n)) return 'Liga das Nações ' + A + Y;
-  if (/Club World/i.test(n)) return 'Mundial de Clubes ' + O + Y;
-  if (/World Championship/i.test(n)) return 'Mundial ' + O + Y;
-  if (/World Cup/i.test(n)) return 'Taça do Mundo ' + A + Y;
-  if (/Olympic/i.test(n)) return 'Torneio olímpico ' + O + Y;
-  if (/EuroVolley/i.test(n)) return 'Europeu ' + O + Y;
-  if (/South American/i.test(n)) return 'Sul-Americano ' + O + Y;
-  if (/Brazil|Superliga/i.test(n)) return 'Superliga ' + A + ' (Brasil)' + Y;
-  if (/Serie A/i.test(n)) return (F ? 'Serie A1 feminina' : 'SuperLega') + ' (Itália)' + Y;
-  if (/TAURON|Poland/i.test(n)) return (F ? 'Liga feminina' : 'PlusLiga') + ' (Polónia)' + Y;
-  if (/Japan/i.test(n)) return 'SV.League ' + A + ' (Japão)' + Y;
-  if (/Turkish/i.test(n)) return 'Liga turca ' + A + Y;
-  return n; };
-const VBC = { BR: /Brazil|Superliga/i, IT: /Serie A/i, PL: /TAURON|Poland/i, JP: /Japan/i, TR: /Turkish/i };
-const VBF = 'No DateTimeUtc TeamAName TeamBName TeamACode TeamBCode NoTeamA NoTeamB MatchPointsA MatchPointsB ' + [1, 2, 3, 4, 5].map(i => 'PointsTeamASet' + i + ' PointsTeamBSet' + i).join(' ') + ' Status City';
-const VB = {
-  tours: () => vis(`<Request Type="GetVolleyTournamentList" Fields="No Name StartDate EndDate Gender"><Filter FirstDate="${dayOff(-200)}" LastDate="${dayOff(400)}" /></Request>`, 6 * 36e5)
-    .then(L => L.filter(t => VBMAJ.test(t.name || '') && !VBNO.test(t.name || '') && t.startDate && t.endDate).map(t => ({ no: String(t.no), n: vbName(t.name, t.gender), raw: t.name, g: t.gender, a: String(t.startDate).slice(0, 10), b: String(t.endDate).slice(0, 10), nat: !/Club|Brazil|Superliga|Serie A|TAURON|Poland|Japan|Turkish/i.test(t.name) }))),
-  matches: no => vis(`<Request Type="GetVolleyMatchList" Fields="${VBF}"><Filter NoTournament="${no}" /></Request>`, 2e4),
-  pools: no => vis(`<Request Type="GetVolleyPoolList" Fields="No Code Name"><Filter NoTournament="${no}" /></Request>`, 864e5),
-  rank: pool => vis(`<Request Type="GetVolleyPoolRanking" NoPool="${pool}" Fields="Position TeamName TeamCode NoTeam MatchesWon MatchesLost MatchPoints SetsWon SetsLost" />`, 10 * 6e4) };
-// escudos dos clubes: a FIVB só tem as seleções (bandeiras). Procura-se o clube na TheSportsDB e, se não estiver, na Wikipédia;
-// o que se encontra fica guardado no aparelho 30 dias (o que não se encontra, 7 dias) e a página redesenha-se quando chega
-const LOGO = U.ls.get('oc_vb_logo', {}) || {}, LQ = [], LP = new Set(), LGAP = navigator.webdriver ? 30 : 2100; let lBusy = false, rqT = 0;
-const nrm = x => String(x || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-const wait = ms => new Promise(r => setTimeout(r, ms));
-const reqSoon = () => { clearTimeout(rqT); rqT = setTimeout(() => { if (/^#esportes/.test(location.hash)) OS.request(); }, 400); };
-const tsdb = async (q, g) => { const j = await once('https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=' + encodeURIComponent(q), { credentials: 'omit' });
-  const T = ((j && j.teams) || []).filter(x => x.strSport === 'Volleyball' && x.strBadge && (!x.strGender || (g === 1) === /female|women/i.test(x.strGender))); return T[0] ? T[0].strBadge + '/tiny' : ''; };
-const wiki = async (lang, q, toks) => { const j = await once(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrlimit=3&gsrsearch=${encodeURIComponent(q)}&prop=pageimages&piprop=thumbnail%7Cname&pithumbsize=96`, { credentials: 'omit' });
-  const P = Object.values((j && j.query && j.query.pages) || {}).sort((a, b) => (a.index || 0) - (b.index || 0));
-  const ok = P.find(x => x.thumbnail && /logo|crest|emblem|escudo|stemma|herb|badge|\.svg/i.test(x.pageimage || '') && toks.some(t => nrm(x.title).includes(t))); return ok ? ok.thumbnail.source : ''; };
-const findLogo = async (n, g) => { const toks = nrm(n).split(/[\s'’-]+/).filter(t => t.length >= 4); let u = await tsdb(n, g).catch(() => '');
-  if (!u) { const W = n.split(/\s+/), cap = W.find(w => w.length >= 4 && w === w.toUpperCase() && /[A-Z]/.test(w)), last = W[W.length - 1], alt = cap || (W.length > 1 && last.length >= 5 ? last : ''); if (alt) { await wait(LGAP); u = await tsdb(alt, g).catch(() => ''); } }
-  if (!u) u = await wiki('en', n + (g === 1 ? " women's volleyball" : ' volleyball'), toks).catch(() => '');
-  if (!u) u = await wiki('pt', n + ' voleibol', toks).catch(() => '');
-  return u; };
-const pump = async () => { if (lBusy) return; lBusy = true; try { while (LQ.length) { const [n, g] = LQ.shift(), k = g + ':' + n; let u = '';
-  try { u = await findLogo(n, g); LOGO[k] = { u, at: Date.now() }; U.ls.set('oc_vb_logo', LOGO); if (u) reqSoon(); } catch (e) { } LP.delete(k); await wait(LGAP); } } finally { lBusy = false; } };
-const vLogo = (n, g) => { if (!n || n === 'A definir') return ''; g = g ? 1 : 0; const k = g + ':' + n, c = LOGO[k];
-  if (c && Date.now() - c.at < (c.u ? 30 : 7) * 864e5) return c.u; if (!LP.has(k) && LQ.length < 60) { LP.add(k); LQ.push([n, g]); setTimeout(pump, 60); } return c ? c.u : ''; };
-// sem escudo: a sigla da equipa num círculo com uma cor só dela
-const hue = x => { let h = 2166136261; for (const ch of String(x || '')) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return Math.round(((h >>> 0) % 1000) * 137.508) % 360; };
-const vImg = (x, cls) => x.logo ? img(x.logo, cls, x.ab || x.n) : `<span class="${cls} sp-noimg sp-vni" style="--nh:${hue(x.n)}" aria-hidden="true">${esc(String(x.ab || x.n || '?').slice(0, 3).toUpperCase())}</span>`;
-// estado de um jogo na FIVB: 1–3 antes, 4–23 a decorrer (set a set), 24 em diante acabado
-const vEv = (m, nat, g) => { const s = +m.status || 0, d = Date.parse(m.dateTimeUtc) || 0; let st = s >= 24 ? 'post' : s >= 4 ? 'in' : 'pre'; if (st === 'in' && Date.now() - d > 8 * 36e5) st = 'post';
-  const A = +m.matchPointsA || 0, B = +m.matchPointsB || 0, k = Math.min(5, Math.floor((s - 4) / 3) + 1);
-  const sets = [1, 2, 3, 4, 5].map(i => [m['pointsTeamASet' + i], m['pointsTeamBSet' + i]]).filter(x => x[0] != null && x[1] != null && (+x[0] || +x[1])).map(x => [+x[0], +x[1]]);
-  const side = (n, c, no, mp, w) => ({ id: String(no || ''), n: n || 'A definir', sn: n || 'A definir', ab: c || '', logo: nat ? flag2(IOC[c]) : vLogo(n, g), c: '', s: st === 'pre' || mp == null ? '' : String(mp), w, rec: '' });
-  return { id: String(m.no), lg: 'volei', d, st, sn: String(s), det: st === 'in' ? 'Set ' + k : st === 'post' ? 'Final' : '', ven: String(m.city || '').replace(/^\s*\d[\d-]{3,}\s*/, '').split(/\s+ul\.|,/)[0].trim(), sets,
-    h: side(m.teamAName, m.teamACode, m.noTeamA, m.matchPointsA, st === 'post' && A > B), a: side(m.teamBName, m.teamBCode, m.noTeamB, m.matchPointsB, st === 'post' && B > A) }; };
-const VBT = {}; // equipas vistas (para seguir): id → { n, ab, logo, t, nat }
-const vbM = (no, nat, g) => { const d = DATA['vb:m:' + no], now = Date.now(), hot = d && (d.v || []).some(m => { const s = +m.status || 0, t = Date.parse(m.dateTimeUtc) || 0; return (s >= 4 && s < 24 && now - t < 8 * 36e5) || (s < 4 && Math.abs(t - now) < 30 * 6e4); });
-  const L = need('vb:m:' + no, hot ? 2e4 : 5 * 6e4, () => VB.matches(no)); if (!L) return null;
-  const E = L.map(m => vEv(m, nat, g)).filter(e => e.d); E.forEach(e => [e.h, e.a].forEach(x => { if (x.id && x.id !== '0' && (!VBT[x.id] || (!VBT[x.id].logo && x.logo))) VBT[x.id] = { n: x.n, ab: x.ab, logo: x.logo, t: no, nat: !!nat, g: g ? 1 : 0 }; })); return E; };
-const vbState = t => { const n = U.today(); return t.a > n ? 'pre' : t.b < n ? 'post' : 'in'; };
-const fmtS = s => D0(s).toLocaleDateString('pt-PT', { day: 'numeric', month: 'short' }).replace('.', '');
-const vbTour = T => { const S = UIst(), cc = String((OS.one('profile') || {}).country || 'PT').toUpperCase(), now = U.today(), f = S.vb && T.find(t => t.no === S.vb); if (f) return f;
-  const pri = t => (VBC[cc] && VBC[cc].test(t.raw) ? 0 : t.nat ? 1 : 2) * 10 + (t.g || 0), run = T.filter(t => vbState(t) === 'in').sort((a, b) => pri(a) - pri(b));
-  return run[0] || T.filter(t => t.a > now).sort((a, b) => a.a.localeCompare(b.a))[0] || T.slice().sort((a, b) => b.b.localeCompare(a.b))[0]; };
-const poolName = n => String(n || '').replace(/^Round robin.*$/i, 'Fase regular').replace(/^Pool (\w+)\s*-\s*Preliminary Phase$/i, 'Grupo $1 · fase preliminar').replace(/^Pool (\w+)$/i, 'Grupo $1').replace(/Preliminary/i, 'Preliminar');
-// cartão de um jogo de voleibol: a equipa da casa em cima, os pontos de cada set ao lado
-const vCard = (e, o) => { o = o || {}; const lv = isLive(e), done = e.st === 'post', sp = spOf('volei');
-  return `<div class="sp-g sp-vg${lv ? ' live' : ''}${o.big ? ' big' : ''}" style="--sc:${sp[4]};--hc:#0f3d3a;--ac:#1e293b">
-    <div class="sp-gt">${o.lg ? `<span class="sp-gl">${UI.ic(sp[5])}${esc(o.tn || sp[1])}</span>` : ''}<span class="sp-gs${lv ? ' on' : ''}">${lv ? '<i></i>Ao vivo · ' + esc(e.det) : esc(done ? 'Final' : dayL(e.d))}</span></div>
-    ${[e.h, e.a].map((x, i) => `<div class="sp-gr${done && x.w ? ' win' : done ? ' lose' : ''}${isMine('volei', x.id) ? ' me' : ''}">${vImg(x, 'sp-gi')}<span class="sp-gn"><b>${esc(x.n)}</b>${e.sets.length ? `<small class="sp-vst">${e.sets.map(z => `<i class="${z[i] > z[1 - i] ? 'w' : ''}">${z[i]}</i>`).join('')}</small>` : ''}</span><b class="sp-gp">${esc(x.s)}</b></div>`).join('')}
-    ${e.ven && e.st === 'pre' ? `<small class="sp-gv">${UI.ic('pin')}${esc(e.ven)}</small>` : ''}</div>`; };
-const card = (e, o) => e.lg === 'volei' ? vCard(e, o) : gCard(e, o);
-const vbPage = sp => { const T = need('vb:t', 6 * 36e5, VB.tours); if (!T) return errBox('vb:t') || loading('A buscar as competições…');
-  if (!T.length) return `<div class="sp-empty">${spIc(sp, 1)}<b>Sem competições agora</b><small>Volta mais tarde.</small></div>`;
-  const t = vbTour(T), S = UIst(), tab = S.tab.volei || 'jogos', ts = vbState(t), rk = { in: 0, pre: 1, post: 2 };
-  const order = T.slice().sort((a, b) => rk[vbState(a)] - rk[vbState(b)] || (vbState(a) === 'post' ? b.b.localeCompare(a.b) : a.a.localeCompare(b.a)));
-  const chips = `<div class="sp-vbc" role="list">${[t].concat(order.filter(x => x !== t)).slice(0, 18).map(x => { const s = vbState(x); return `<button type="button" class="${x.no === t.no ? 'on ' : ''}${s}" data-act="dsVb" data-no="${x.no}" aria-pressed="${x.no === t.no}"><b>${esc(x.n)}</b><small>${s === 'in' ? '<i></i>A decorrer' : s === 'pre' ? 'Começa a ' + esc(fmtS(x.a)) : 'Terminou a ' + esc(fmtS(x.b))}</small></button>`; }).join('')}</div>`;
-  const head = `<section class="sp-f1 sp-vbh" style="--sc:${sp[4]}"><span class="sp-ok">${ts === 'in' ? '<span class="sp-gs on"><i></i>A decorrer</span>' : ts === 'pre' ? 'Ainda não começou' : 'Terminou'}</span><h2>${esc(t.n)}</h2><p>${esc(fmtR(t.a, t.b))}</p>${ts === 'pre' ? `<div class="sp-cdw">Começa a <b>${esc(fmtD(t.a))}</b></div>` : ''}</section>`;
-  const tabs = `<div class="sp-seg" role="tablist">${[['jogos', 'Jogos'], ['tabela', 'Classificação'], ['equipas', 'Equipas']].map(([k, l]) => `<button type="button" class="${tab === k ? 'on' : ''}" data-act="dsTab" data-sp="volei" data-t="${k}" role="tab" aria-selected="${tab === k}">${l}</button>`).join('')}</div>`;
-  const E = vbM(t.no, t.nat, t.g), mk = 'vb:m:' + t.no; let body = '';
-  if (tab === 'jogos') { if (!E) body = errBox(mk) || loading('A buscar os jogos…');
-    else if (!E.length) body = `<div class="sp-empty">${spIc(sp, 1)}<b>Ainda sem jogos marcados</b><small>${ts === 'pre' ? 'A competição começa a ' + esc(fmtD(t.a)) + '.' : 'A FIVB ainda não tem os jogos desta competição.'}</small></div>`;
-    else { const now = Date.now(), lv = E.filter(isLive), up = E.filter(e => e.st === 'pre' && e.d > now - 36e5).sort((a, b) => a.d - b.d).slice(0, 12), dn = E.filter(e => e.st === 'post').sort((a, b) => b.d - a.d).slice(0, 12), gg = L => `<div class="sp-gg">${L.map(e => vCard(e)).join('')}</div>`;
-      body = errBox(mk) + (lv.length ? sec('Ao vivo', gg(lv)) : '') + (up.length ? sec('Próximos jogos', gg(up)) : '') + (dn.length ? sec('Resultados', gg(dn)) : ''); } }
-  else if (tab === 'tabela') { const P = need('vb:p:' + t.no, 864e5, () => VB.pools(t.no));
-    if (!P) body = errBox('vb:p:' + t.no) || loading('A buscar a classificação…');
-    else { const rr = P.filter(p => /^(RR|RK)$/i.test(p.code || '')), use = (rr.length ? rr : P.filter(p => /Pool|Round robin|Preliminary|Group|Regular/i.test(p.name || ''))).slice(0, 8);
-      body = !use.length ? '<p class="sp-note">Esta competição ainda não tem classificação na FIVB.</p>' : use.map(p => { const R = need('vb:r:' + p.no, 10 * 6e4, () => VB.rank(p.no));
-        (R || []).forEach(r => { const id = String(r.noTeam || ''); if (id && !VBT[id]) VBT[id] = { n: r.teamName || '', ab: r.teamCode || '', logo: t.nat ? flag2(IOC[r.teamCode]) : vLogo(r.teamName, t.g), t: t.no, nat: t.nat, g: t.g ? 1 : 0 }; });
-        return (use.length > 1 ? `<h4 class="sp-gh">${esc(poolName(p.name))}</h4>` : '') + (!R ? errBox('vb:r:' + p.no) || loading('A buscar…') : !R.length ? '<p class="sp-note">Ainda sem jogos nesta fase.</p>'
-          : `<div class="sp-tw"><table class="sp-tb"><thead><tr><th>#</th><th class="l">Equipa</th><th>J</th><th>V</th><th>D</th><th>Pts</th><th class="hm">Sets</th></tr></thead><tbody>${R.map((r, i) => `<tr class="${isMine('volei', String(r.noTeam)) ? 'me' : ''}"><td>${r.position || i + 1}</td><td class="l"><span class="sp-tn">${vImg({ logo: t.nat ? flag2(IOC[r.teamCode]) : vLogo(r.teamName, t.g), ab: r.teamCode, n: r.teamName }, 'sp-ti')}<span>${esc(r.teamName || '')}</span></span></td><td>${(+r.matchesWon || 0) + (+r.matchesLost || 0)}</td><td>${+r.matchesWon || 0}</td><td>${+r.matchesLost || 0}</td><td><b>${r.matchPoints != null ? +r.matchPoints : +r.matchesWon || 0}</b></td><td class="hm">${+r.setsWon || 0}:${+r.setsLost || 0}</td></tr>`).join('')}</tbody></table></div>`); }).join(''); } }
-  else { if (!E) body = errBox(mk) || loading('A buscar as equipas…');
-    else { const ids = [...new Set([].concat(...E.map(e => [e.h.id, e.a.id])).filter(id => id && id !== '0' && VBT[id]))].sort((a, b) => VBT[a].n.localeCompare(VBT[b].n));
-      body = !ids.length ? '<p class="sp-note">As equipas aparecem quando a FIVB tiver os jogos desta competição.</p>' : `<p class="sp-note">Toca numa equipa para a seguir: aparece no início de Desportos com o próximo jogo e o resultado ao vivo, e recebes os avisos.</p><div class="sp-teams">${ids.map(id => { const x = VBT[id], on = isMine('volei', id); return `<button type="button" class="sp-team${on ? ' on' : ''}" data-act="dsFollow" data-sp="volei" data-id="${esc(id)}" aria-pressed="${on}" style="--tc:${sp[4]}">${vImg(x.nat ? x : Object.assign({}, x, { logo: x.logo || vLogo(x.n, x.g) }), 'sp-tl')}<b>${esc(x.n)}</b><span class="sp-star">${UI.ic(on ? 'check' : 'plus')}</span></button>`; }).join('')}</div>`; } }
-  return chips + head + tabs + body; };
+const card = (e, o) => gCard(e, o);
 
 /* ---------- MotoGP ---------- */
 const MSESS = { FP1: 'Treino livre 1', FP2: 'Treino livre 2', PR: 'Treino', Q1: 'Qualificação 1', Q2: 'Qualificação 2', Q: 'Qualificação', SPR: 'Sprint', WUP: 'Aquecimento', RAC: 'Corrida' };
@@ -328,14 +261,13 @@ const say = (title, body, tag) => { FEED.unshift({ at: Date.now(), title, body }
   try { if (!(OS.Push && OS.Push.on()) && 'Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker) navigator.serviceWorker.ready.then(r => r.showNotification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', tag: 'sp-' + tag, data: { url: '#esportes' } })).catch(() => { }); } catch (x) { } };
 // o que conta como "marcar" em cada desporto (no basquetebol os pontos são a toda a hora: avisa o começo, o intervalo e o fim)
 const ptsMsg = (e, side, d) => { const P = (spOf(e.lg) || [])[2] || '';
-  if (e.lg === 'volei') return 'Set para ' + side.sn;
   if (/^hockey/.test(P)) return (d > 1 ? d + ' golos' : 'Golo') + ' · ' + side.sn;
   if (/^football/.test(P)) return (d >= 6 ? 'Touchdown' : d === 3 ? 'Field goal' : d === 2 ? 'Safety' : 'Pontos') + ' · ' + side.sn;
   if (/^baseball/.test(P)) return (d > 1 ? d + ' corridas' : 'Corrida') + ' · ' + side.sn;
   return ''; };
 const lgL = e => (spOf(e.lg) || [])[1] || '';
-const vsL = e => e.lg === 'volei' ? `${e.h.sn} ${e.h.s}–${e.a.s} ${e.a.sn}` : `${e.a.sn} ${e.a.s}–${e.h.s} ${e.h.sn}`;
-const nmL = e => e.lg === 'volei' ? `${e.h.sn} × ${e.a.sn}` : `${e.a.sn} × ${e.h.sn}`;
+const vsL = e => `${e.a.sn} ${e.a.s}–${e.h.s} ${e.h.sn}`;
+const nmL = e => `${e.a.sn} × ${e.h.sn}`;
 const watchEv = e => { if (!e.h || !e.a || !e.d) return; const k = e.lg + ':' + e.id, p = SEEN[k], now = Date.now(), a = avS();
   const c = { st: e.st, s: e.st === 'pre' ? '' : (+e.h.s || 0) + '-' + (+e.a.s || 0), sn: e.sn || '', pre: p ? p.pre : 0, at: now }; SEEN[k] = c;
   if (a.pre && e.st === 'pre' && !c.pre && e.d - now <= 15 * 6e4 && e.d - now > 0) { c.pre = 1; say('Daqui a 15 minutos', nmL(e) + ' · ' + lgL(e), k + ':pre'); }
@@ -356,11 +288,8 @@ const canLoop = () => !navigator.webdriver || !!window.__spTest;
 const tick = async () => { if (busy) return; busy = true; let hot = false, soon = false; const now = Date.now(), near = e => { if (isLive(e)) hot = true; else if (e.st === 'pre' && e.d - now < 30 * 6e4 && e.d - now > -36e5) soon = true; };
   try { const s = st(), T = s.teams, bell = s.bell || [];
     // equipas da ESPN: o quadro de hoje de cada liga
-    await Promise.all([...new Set(T.filter(t => t.lg !== 'volei').map(t => t.lg))].map(spOf).filter(x => x && x[2]).map(async sp => { try { const j = await API.board(sp); DATA['b:' + sp[0] + ':hoje'] = { at: Date.now(), v: j };
+    await Promise.all([...new Set(T.map(t => t.lg))].map(spOf).filter(x => x && x[2]).map(async sp => { try { const j = await API.board(sp); DATA['b:' + sp[0] + ':hoje'] = { at: Date.now(), v: j };
       (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a && (isMine(sp[0], e.h.id) || isMine(sp[0], e.a.id))).forEach(e => { near(e); watchEv(e); }); } catch (x) { } }));
-    // voleibol: os jogos das competições das tuas equipas
-    await Promise.all([...new Set(T.filter(t => t.lg === 'volei' && t.t).map(t => t.t))].map(async no => { try { const L = await VB.matches(no); DATA['vb:m:' + no] = { at: Date.now(), v: L };
-      L.map(m => vEv(m, true)).filter(e => e.d && Math.abs(e.d - now) < 2 * 864e5 && (isMine('volei', e.h.id) || isMine('volei', e.a.id))).forEach(e => { near(e); watchEv(e); }); } catch (x) { } }));
     // Fórmula 1 e MotoGP com o sino ligado
     if (bell.includes('f1')) { try { const j = await API.board(spOf('f1')); DATA['b:f1'] = { at: Date.now(), v: j }; const e = (j.events || [])[0];
       if (e) { const S = (e.competitions || []).map(c => { const ab = (c.type || {}).abbreviation || ''; return { ab, n: SESS[ab] || ab, d: Date.parse(c.date), st: ((c.status || {}).type || {}).state, c }; });
@@ -385,7 +314,7 @@ const agoL = t => { const m = Math.round((Date.now() - t) / 6e4); return m < 1 ?
 const avPanel = () => { const a = avS(), perm = 'Notification' in window ? Notification.permission : 'na';
   return `<section class="sp-sec sp-av"><div class="sp-sh"><h3>Avisos</h3>${perm === 'granted' && (!OS.Push || OS.Push.on() || OS.Push.why()) ? `<span class="sp-avok">${UI.ic('check')}Ligados neste aparelho</span>` : perm === 'na' && !(OS.Push && OS.Push.why() === 'ios') ? '' : `<button type="button" class="btn sm" data-act="dsNotif">${UI.ic('bell')}Ligar neste aparelho</button>`}</div>
     <div class="sp-avt">${[['pre', '15 minutos antes'], ['ini', 'Começo do jogo'], ['pts', 'Golos, pontos e sets'], ['fim', 'Resultado final']].map(([k, l]) => `<label class="sp-sw"><input type="checkbox" data-act="dsAv" data-k="${k}" ${a[k] ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
-    <p class="sp-note">Das equipas que segues: golo no hóquei, touchdown na NFL, corrida no basebol e set no voleibol; no basquetebol, o começo, o intervalo e o fim. Na Fórmula 1, na MotoGP e no MMA, toca no sino. Os golos do futebol estão no Futebol. ${OS.Push && OS.Push.on() ? 'Chegam mesmo com o Prumo fechado.' : 'Liga as notificações para chegarem também com o Prumo fechado.'}</p>
+    <p class="sp-note">Das equipas que segues: golo no hóquei, touchdown na NFL e corrida no basebol; no basquetebol, o começo, o intervalo e o fim. Na Fórmula 1, na MotoGP e no MMA, toca no sino. Os golos do futebol estão no Futebol. ${OS.Push && OS.Push.on() ? 'Chegam mesmo com o Prumo fechado.' : 'Liga as notificações para chegarem também com o Prumo fechado.'}</p>
     ${FEED.length ? `<ul class="sp-feed">${FEED.slice(0, 5).map(f => `<li><span class="sp-fi">${UI.ic('bell')}</span><span><b>${esc(f.title)}</b> ${esc(f.body)}</span><small>${esc(agoL(f.at))}</small></li>`).join('')}</ul>` : ''}</section>`; };
 
 /* ---------- início: ao vivo, as tuas equipas, os desportos, Olimpíadas ---------- */
@@ -393,11 +322,7 @@ const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), tea
   // ao vivo e a seguir: os quadros de hoje dos desportos de equipa que segues (e das tuas equipas)
   const lgs = [...new Set(mine.filter(x => x[3] === 'team').map(x => x[0]).concat(teams.map(t => t.lg)))].map(spOf).filter(x => x && x[2] && x[3] === 'team');
   const all = [].concat(...lgs.map(sp => { const j = need('b:' + sp[0] + ':hoje', 2e4, () => API.board(sp)); return j ? (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a) : []; }));
-  // voleibol: os jogos das competições das tuas equipas (FIVB)
-  const vbE = {}; teams.filter(t => t.lg === 'volei' && t.t).forEach(t => { if (!vbE[t.t]) vbE[t.t] = vbM(t.t, t.nat, t.g) || []; });
-  const vbOf = t => (vbE[t.t] || []).filter(e => e.h.id === t.id || e.a.id === t.id).sort((a, b) => a.d - b.d);
-  [].concat(...Object.values(vbE)).forEach(e => { if (isLive(e) && (isMine('volei', e.h.id) || isMine('volei', e.a.id)) && !all.some(x => x.lg === 'volei' && x.id === e.id)) all.push(e); });
-  const schedOf = t => { if (t.lg === 'volei') return vbOf(t); const sp = spOf(t.lg); return sp && sp[2] ? need('sc:' + t.lg + ':' + t.id, 10 * 6e4, () => API.sched(sp, t.id)) || [] : []; };
+  const schedOf = t => { const sp = spOf(t.lg); return sp && sp[2] ? need('sc:' + t.lg + ':' + t.id, 10 * 6e4, () => API.sched(sp, t.id)) || [] : []; };
   const nextOf = t => schedOf(t).find(e => e.st === 'pre' && e.d > Date.now() - 36e5);
   const nexts = teams.map(nextOf).filter(Boolean).sort((a, b) => a.d - b.d);
   const mineEv = all.filter(e => isMine(e.lg, e.h.id) || isMine(e.lg, e.a.id)), live = all.filter(isLive).sort((a, b) => (isMine(b.lg, b.h.id) || isMine(b.lg, b.a.id)) - (isMine(a.lg, a.h.id) || isMine(a.lg, a.a.id)));
@@ -406,13 +331,15 @@ const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), tea
   const hero = `<section class="sp-hero"><div class="sp-hl"><span class="sp-ok">${live.length ? `<span class="sp-gs on"><i></i>${live.length} ${live.length === 1 ? 'jogo' : 'jogos'} ao vivo</span>` : 'Desportos'}</span><h2>${live.length ? 'Agora a jogar' : top.length ? 'A seguir' : 'Tudo o que segues, num só sítio'}</h2>${!top.length ? '<p>Futebol, NBA, Fórmula 1, ténis, UFC e mais: segue as tuas equipas e vê os resultados ao vivo, os próximos jogos e as classificações.</p>' : ''}</div>${top.length ? `<div class="sp-hg">${top.map(e => card(e, { big: 1, lg: 1 })).join('')}</div>` : ''}</section>`;
   const sports = `<div class="sp-sps">${SP.map(sp => { const on = s.mine.includes(sp[0]); return `<a class="sp-spc${on ? ' on' : ''}" href="${sp[0] === 'futebol' ? '#futebol' : '#esportes.' + sp[0]}" style="--sc:${sp[4]}" title="${esc(sp[6])}">${spIc(sp)}<b>${esc(sp[1])}</b></a>`; }).join('')}</div>`;
   // as tuas equipas: próximo jogo (ou ao vivo) e o último resultado
-  const tcards = teams.length ? `<div class="sp-mt">${teams.map(t => { const sp = spOf(t.lg); if (!sp) return ''; const S = schedOf(t), now = Date.now(), V = t.lg === 'volei', sl = e => V ? `${esc(e.h.ab || e.h.sn)} ${esc(e.h.s)} – ${esc(e.a.s)} ${esc(e.a.ab || e.a.sn)}` : `${esc(e.a.ab || e.a.sn)} ${esc(e.a.s)} – ${esc(e.h.s)} ${esc(e.h.ab || e.h.sn)}`;
+  const tcards = teams.length ? `<div class="sp-mt">${teams.map(t => { const sp = spOf(t.lg); if (!sp) return ''; const S = schedOf(t), now = Date.now(), sl = e => `${esc(e.a.ab || e.a.sn)} ${esc(e.a.s)} – ${esc(e.h.s)} ${esc(e.h.ab || e.h.sn)}`;
       const lv = all.find(e => isLive(e) && (e.h.id === t.id || e.a.id === t.id) && e.lg === t.lg), nx = S.find(e => e.st === 'pre' && e.d > now - 36e5), ls = [...S].reverse().find(e => e.st === 'post'), opp = e => e.h.id === t.id ? e.a : e.h;
-      return `<div class="sp-tc${lv ? ' live' : ''}" style="--tc:${t.c || sp[4]}"><div class="sp-tch">${V ? vImg({ logo: t.logo || (t.nat ? '' : vLogo(t.n, t.g)), ab: t.ab, n: t.n }, 'sp-tcl') : img(t.logo, 'sp-tcl', t.ab)}<span><b>${esc(t.n)}</b><small>${spIc(sp)}${esc(sp[1])}</small></span><button type="button" class="sp-x" data-act="dsFollow" data-sp="${esc(t.lg)}" data-id="${esc(t.id)}" aria-label="Deixar de seguir ${esc(t.n)}">${UI.ic('x')}</button></div>
+      return `<div class="sp-tc${lv ? ' live' : ''}" style="--tc:${t.c || sp[4]}"><div class="sp-tch">${img(t.logo, 'sp-tcl', t.ab)}<span><b>${esc(t.n)}</b><small>${spIc(sp)}${esc(sp[1])}</small></span><button type="button" class="sp-x" data-act="dsFollow" data-sp="${esc(t.lg)}" data-id="${esc(t.id)}" aria-label="Deixar de seguir ${esc(t.n)}">${UI.ic('x')}</button></div>
         ${lv ? `<div class="sp-tcl2"><span class="sp-gs on"><i></i>${esc(lv.det)}</span><b>${sl(lv)}</b></div>` : nx ? `<div class="sp-tcl2"><small>Próximo</small><b>${nx.h.id === t.id ? 'vs' : '@'} ${esc(opp(nx).sn)}</b><span>${esc(dayL(nx.d))}</span></div>` : ''}
         ${ls ? `<div class="sp-tcl2 last"><small>Último</small><b>${sl(ls)}</b><span class="${(ls.h.id === t.id ? ls.h : ls.a).w ? 'w' : 'l'}">${(ls.h.id === t.id ? ls.h : ls.a).w ? 'Vitória' : 'Derrota'}</span></div>` : ''}</div>`; }).join('')}</div>`
-    : `<div class="sp-empty">${UI.ic('star')}<b>Ainda não segues nenhuma equipa</b><small>Abre um desporto (NBA, NFL, voleibol…) › Equipas e toca nas que queres seguir. No futebol, segue em Futebol.</small></div>`;
-  const oly = `<a class="sp-olyb" href="#esportes.olimpiadas" style="--oc:${o.c}"><span class="sp-oring">${UI.ic('sp_oly')}</span><span><small>Olimpíadas</small><b>${esc(o.t)}</b><span>${esc(fmtR(o.ini, o.fim))}</span></span>${olyState(o) === 'pre' ? countdown(o) : '<span class="sp-gs on"><i></i>A decorrer</span>'}</a>`;
+    : `<div class="sp-empty">${UI.ic('star')}<b>Ainda não segues nenhuma equipa</b><small>Abre um desporto (NBA, NFL, NHL…) › Equipas e toca nas que queres seguir. No futebol, segue em Futebol.</small></div>`;
+  const wi = OLY.find(x => x.tp === 'Inverno' && olyState(x) !== 'post'), cn = [copaNext('f'), copaNext('m')].filter(x => !x.vago).sort((a, b) => a.ini.localeCompare(b.ini))[0];
+  const oly = `<div class="sp-bans"><a class="sp-olyb" href="#esportes.olimpiadas" style="--oc:${o.c}"><span class="sp-oring">${UI.ic('sp_oly')}</span><span><small>Olimpíadas</small><b>${esc(o.t)}</b><span>${esc(fmtR(o.ini, o.fim))}${wi && wi !== o ? ' · Inverno: ' + esc(wi.t) : ''}</span></span>${olyState(o) === 'pre' ? countdown(o) : '<span class="sp-gs on"><i></i>A decorrer</span>'}</a>`
+    + (cn ? `<a class="sp-olyb sp-cupb" href="#esportes.copa" data-act="dsCopa" data-g="${cn === copaNext('f') ? 'f' : 'm'}" style="--oc:${cn.c}"><span class="sp-oring">${UI.ic('sp_cup')}</span><span><small>Copa do Mundo</small><b>${esc(cn.t)}</b><span>${esc(fmtR(cn.ini, cn.fim))} · ${esc(cn.sede)}</span></span>${edState(cn) === 'pre' ? countdown(cn) : '<span class="sp-gs on"><i></i>A decorrer</span>'}</a>` : '') + '</div>';
   return hero + sec('As tuas equipas', tcards) + avPanel() + oly + sec('Desportos', sports) + (live.length > 2 ? sec('Ao vivo agora', `<div class="sp-gg">${live.slice(2, 14).map(e => card(e, { lg: 1 })).join('')}</div>`) : ''); };
 
 /* ---------- página ---------- */
@@ -421,8 +348,8 @@ V.esportes = sub => { const k = sub === 'ufc' ? 'mma' : sub || ''; if (k === 'fu
   let body;
   if (!sp) body = hub();
   else { const on = st().mine.includes(sp[0]);
-    const head = sp[3] === 'oly' ? '' : `<section class="sp-shd" style="--sc:${sp[4]}">${spIc(sp, 1)}<div><h2>${esc(sp[1])}</h2><p>${esc(sp[6])}</p></div><span class="sp-hb">${sp[3] === 'f1' && sp[0] === 'f1' || sp[3] === 'moto' || sp[3] === 'mma' ? (b => `<button type="button" class="btn sm sp-bell${b ? ' on' : ''}" data-act="dsBell" data-sp="${sp[0]}" aria-pressed="${b}" title="${sp[3] === 'mma' ? 'Avisar 15 minutos antes e quando começa o evento' : 'Avisar 15 minutos antes e quando começam a qualificação, o sprint e a corrida'}">${UI.ic('bell')}${b ? 'Avisos ligados' : 'Avisar'}</button>`)((st().bell || []).includes(sp[0])) : ''}<button type="button" class="btn sm sp-fav${on ? ' on' : ''}" data-act="dsMine" data-sp="${sp[0]}" aria-pressed="${on}">${UI.ic(on ? 'check' : 'star')}${on ? 'Nos teus desportos' : 'Juntar aos meus'}</button></span></section>`;
-    body = head + (sp[3] === 'team' ? teamPage(sp) : sp[3] === 'f1' ? f1Page(sp) : sp[3] === 'ten' ? tenPage(sp) : sp[3] === 'mma' ? mmaPage(sp) : sp[3] === 'golf' ? golfPage(sp) : sp[3] === 'moto' ? motoPage(sp) : sp[3] === 'vb' ? vbPage(sp) : sp[3] === 'oly' ? olyPage() : ''); }
+    const head = sp[3] === 'oly' || sp[3] === 'copa' ? '' : `<section class="sp-shd" style="--sc:${sp[4]}">${spIc(sp, 1)}<div><h2>${esc(sp[1])}</h2><p>${esc(sp[6])}</p></div><span class="sp-hb">${sp[3] === 'f1' && sp[0] === 'f1' || sp[3] === 'moto' || sp[3] === 'mma' ? (b => `<button type="button" class="btn sm sp-bell${b ? ' on' : ''}" data-act="dsBell" data-sp="${sp[0]}" aria-pressed="${b}" title="${sp[3] === 'mma' ? 'Avisar 15 minutos antes e quando começa o evento' : 'Avisar 15 minutos antes e quando começam a qualificação, o sprint e a corrida'}">${UI.ic('bell')}${b ? 'Avisos ligados' : 'Avisar'}</button>`)((st().bell || []).includes(sp[0])) : ''}<button type="button" class="btn sm sp-fav${on ? ' on' : ''}" data-act="dsMine" data-sp="${sp[0]}" aria-pressed="${on}">${UI.ic(on ? 'check' : 'star')}${on ? 'Nos teus desportos' : 'Juntar aos meus'}</button></span></section>`;
+    body = head + (sp[3] === 'team' ? teamPage(sp) : sp[3] === 'f1' ? f1Page(sp) : sp[3] === 'ten' ? tenPage(sp) : sp[3] === 'mma' ? mmaPage(sp) : sp[3] === 'golf' ? golfPage(sp) : sp[3] === 'moto' ? motoPage(sp) : sp[3] === 'copa' ? copaPage(sp) : sp[3] === 'oly' ? olyPage() : ''); }
   return UI.head('Desportos', 'O futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.', '', 'Eu') + (sp ? nav : '') + `<div class="sp">${body}</div>`; };
 
 /* ---------- ações ---------- */
@@ -432,10 +359,10 @@ A.dsDay = b => { UIst().day[b.dataset.sp] = b.dataset.d || ''; OS.request(); };
 A.dsMine = b => { const s = st(), k = b.dataset.sp; s.mine = s.mine.includes(k) ? s.mine.filter(x => x !== k) : s.mine.concat(k); save(); UI.toast(s.mine.includes(k) ? spOf(k)[1] + ' nos teus desportos' : spOf(k)[1] + ' saiu dos teus desportos', 'pos'); OS.request(); };
 A.dsFollow = b => { const s = st(), lg = b.dataset.sp, id = b.dataset.id, sp = spOf(lg); if (!sp) return; const i = s.teams.findIndex(t => t.lg === lg && t.id === id);
   if (i >= 0) { const t = s.teams[i]; s.teams.splice(i, 1); save(); UI.toast(t.n + ' deixou de ser seguida', 'pos'); }
-  else { const T = lg === 'volei' ? Object.keys(VBT).map(k => Object.assign({ id: k }, VBT[k])) : (DATA['t:' + lg] && DATA['t:' + lg].v) || [], t = T.find(x => x.id === id); if (!t) return;
-    s.teams.push(Object.assign({ lg, id, n: t.n, ab: t.ab, logo: t.logo, c: t.c || '' }, lg === 'volei' ? { t: t.t, nat: !!t.nat, g: t.g ? 1 : 0 } : {})); if (!s.mine.includes(lg)) s.mine.push(lg); save(); UI.toast('A seguir ' + t.n, 'pos'); }
+  else { const T = (DATA['t:' + lg] && DATA['t:' + lg].v) || [], t = T.find(x => x.id === id); if (!t) return;
+    s.teams.push({ lg, id, n: t.n, ab: t.ab, logo: t.logo, c: t.c || '' }); if (!s.mine.includes(lg)) s.mine.push(lg); save(); UI.toast('A seguir ' + t.n, 'pos'); }
   OS.request(); loop(1500); };
-A.dsVb = b => { UIst().vb = b.dataset.no; OS.request(); };
+A.dsCopa = b => { UIst().copa = b.dataset.g; if (b.tagName === 'A') location.hash = 'esportes.copa'; else OS.request(); };
 A.dsMma = b => { UIst().mma = b.dataset.o; OS.request(); };
 A.dsAv = b => { const s = st(); s.av = Object.assign({}, avS(), { [b.dataset.k]: b.checked ? 1 : 0 }); save(); };
 A.dsBell = b => { const s = st(), k = b.dataset.sp, B = s.bell || []; s.bell = B.includes(k) ? B.filter(x => x !== k) : B.concat(k); save();
@@ -445,8 +372,8 @@ A.dsNotif = async () => { if (OS.Push && !OS.Push.why()) return OS.Push.enable()
   const p = await Notification.requestPermission(); UI.toast(p === 'granted' ? 'Avisos ligados neste aparelho' : 'Os avisos ficam só dentro do app (o aparelho não deu autorização)', p === 'granted' ? 'pos' : 'warn'); OS.request(); };
 // ao vivo: com os Desportos abertos, atualiza a cada 20 s (e a contagem das Olimpíadas a cada minuto)
 setInterval(() => { if (document.hidden || !/^#esportes/.test(location.hash)) return; const live = Object.keys(DATA).some(k => /^b:/.test(k) && DATA[k].v && (DATA[k].v.events || []).some(e => { const c = (e.competitions || [])[0] || {}; return ((c.status || e.status || {}).type || {}).state === 'in'; }));
-  const vl = Object.keys(DATA).some(k => /^vb:m:/.test(k) && (DATA[k].v || []).some(m => { const s = +m.status || 0; return s >= 4 && s < 24 && Date.now() - Date.parse(m.dateTimeUtc) < 8 * 36e5; })), ml = DATA.mgp && DATA.mgp.v && DATA.mgp.v.live;
-  if (live) Object.keys(DATA).filter(k => /^b:/.test(k)).forEach(k => { DATA[k].at = 0; }); if (vl) Object.keys(DATA).filter(k => /^vb:m:/.test(k)).forEach(k => { DATA[k].at = 0; }); if (ml) DATA.mgp.at = 0;
+  const vl = false, ml = DATA.mgp && DATA.mgp.v && DATA.mgp.v.live;
+  if (live) Object.keys(DATA).filter(k => /^b:/.test(k)).forEach(k => { DATA[k].at = 0; }); if (ml) DATA.mgp.at = 0;
   if (live || vl || ml) OS.request(); }, 20000);
 OS.Sports = { st, tick, seen: SEEN, feed: FEED, flush: () => MEM.clear(), liveN: () => Object.keys(DATA).filter(k => /^b:.*:/.test(k)).reduce((n, k) => n + ((DATA[k].v && DATA[k].v.events) || []).filter(e => { const c = (e.competitions || [])[0] || {}, sp = k.split(':')[1]; return ((c.status || e.status || {}).type || {}).state === 'in' && (c.competitors || []).some(x => x.team && isMine(sp, String(x.team.id))); }).length, 0) };
 })();

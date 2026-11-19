@@ -1560,3 +1560,8 @@ svg.ig-ch .i{fill:var(--accent);opacity:.55}svg.ig-ch .g{fill:var(--pos,#4ade80)
 .pl-li{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--accentBg);flex:none}.pl-li .ic{width:20px;height:20px}
 .pl-ban{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;margin:0 0 12px;border:1px solid var(--line);border-radius:12px;background:var(--accentBg)}
 .pl-ban>span{flex:1;min-width:180px;display:inline-flex;align-items:center;gap:6px}.pl-ban .ic{width:16px;height:16px}.pl-ban.warn{border-color:var(--warn,#E3A33B)}
+/* escala: ficheiros escolhidos e "qual és tu?" */
+.ws-file{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--pn);font-size:13px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ws-file .ic{width:16px;height:16px;flex:none}
+.ws-pick{margin-top:12px;padding:12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--acc,#c03b3b) 40%,var(--line));background:color-mix(in srgb,var(--acc,#c03b3b) 8%,transparent);display:flex;flex-direction:column;gap:10px}
+.ws-pick .row{flex-wrap:wrap}

@@ -1,61 +1,157 @@
 [
  {
-  "p": "Notificações",
-  "name": "Definições: grupo Notificações aberto, com o botão para ligar",
+  "p": "Desportos",
+  "name": "Desportos: em Eu no menu (no lugar do Futebol, que fica dentro de Desportos)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Notificações",
-  "name": "Ligar: o aparelho subscreve com a chave do servidor e fica ligado",
+  "p": "Desportos",
+  "name": "Desportos › Início: os desportos (com o Futebol), as Olimpíadas e as tuas equipas",
   "pass": true,
-  "info": "{\"on\":true,\"key\":[4,23,85,133,56,194,184,149,70,74,224,117,113,194,45,5,150,56,164,252,198,50,207,204,40,80,131,142,183,229,13,3,119,11,164,77,230,8,167,230,85,223,239,247,204,17,3,218,101,59,208,178,"
+  "info": "{\"sp\":17,\"fut\":true,\"oly\":true}"
  },
  {
-  "p": "Notificações",
-  "name": "Servidor: guardou este aparelho no perfil",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Notificações",
-  "name": "Enviar um teste: chega ao aparelho (cifrado) com o aviso de que está ligado",
-  "pass": true,
-  "info": "[{\"at\":1795079483905,\"t\":\"Notificações ligadas\",\"b\":\"Vão chegar mesmo com o Prumo fechado.\",\"u\":\"#definicoes\",\"g\":\"teste\"}]"
- },
- {
-  "p": "Notificações",
-  "name": "Rotina com o app fechado: o servidor envia o lembrete do bloco na hora",
-  "pass": true,
-  "info": "{\"c\":{\"ok\":true,\"msgs\":1,\"sent\":1,\"gone\":0,\"users\":1},\"INB\":[{\"at\":1795079489218,\"t\":\"Agora: Treino de teste até 10:13\",\"b\":\"Rotina do Prumo\",\"u\":\"#habitos.rotina\",\"g\":\"rt-5o5pezbz6zt\"}]}"
- },
- {
-  "p": "Notificações",
-  "name": "Desligar a Rotina nas Definições: deixa de enviar os lembretes da rotina",
-  "pass": true,
-  "info": "[]"
- },
- {
-  "p": "Notificações",
-  "name": "Desportos: os avisos dizem que chegam mesmo com o Prumo fechado",
+  "p": "Desportos",
+  "name": "Desportos › NBA › Equipas: tocar numa equipa segue-a",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Notificações",
-  "name": "Desligar neste aparelho: sai do servidor",
+  "p": "Desportos",
+  "name": "Desportos › NBA › Jogos: o jogo ao vivo com o resultado e o próximo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Notificações",
-  "name": "Notificações: sem erros de JavaScript",
+  "p": "Desportos",
+  "name": "Desportos › NBA › Classificação: a conferência com a tua equipa destacada",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Notificações",
-  "name": "iPhone sem o Prumo no ecrã principal: explica como instalar para receber notificações",
+  "p": "Desportos",
+  "name": "Desportos › Início: o jogo ao vivo em destaque e a tua equipa com o resultado de agora, o próximo jogo e o último",
+  "pass": true,
+  "info": "{\"hero\":\"1 jogo ao vivo\\nAgora a jogar\\nNBA\\nAo vivo · Halftime\\nBoston Celtics\\n11-3\\n61\\nDenver Nuggets\\n7-5\\ncasa\\n49\",\"team\":\"Boston Celtics\\nNBA\\nHalftime\\nBOS 61 – 49 DEN\\nÚltimo\\nLAL 100 – 110 BOS\\nVitória\"}"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Fórmula 1: o próximo Grande Prémio com as sessões e o campeonato de pilotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Olimpíadas: a próxima edição com a contagem, o calendário, os desportos de LA 2028 e o quadro de Paris 2024 com o teu país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Olimpíadas: os próximos Jogos de Inverno (Alpes Franceses 2030) com a contagem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Copa do Mundo › Masculina: a de 2030 com a contagem e a última edição (campeão e final, com nomes em português)",
+  "pass": true,
+  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nCopa do Mundo\nNFL\nTénis ATP\nTénis WTA\nMMA\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMasculina\nFeminina\nPróxima Copa\nCopa do Mundo 2030\n\n13 de junho a 21 de julho de 2030 · Marrocos, Portugal e Espanha\n\n1301\ndias\n14\nhoras\nJogos do centenário a 8 e 9 de jun"
+ },
+ {
+  "p": "Desportos",
+  "name": "Copa do Mundo › Feminina: Brasil 2027 com a contagem, a campeã de 2023 e as eliminatórias a decorrer",
+  "pass": true,
+  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nCopa do Mundo\nNFL\nTénis ATP\nTénis WTA\nMMA\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMasculina\nFeminina\nPróxima Copa feminina\nCopa do Mundo Feminina 2027\n\n24 de junho a 25 de julho de 2027 · Brasil\n\n216\ndias\n14\nhoras\n32 seleções; a primeira Copa feminina na América do Sul.\nÚltima edição · 2023\nCampeã do mundo\nEspanha\nFinal\nInglaterra\n11-3\n0\nEspanha\n7-5\nc"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos: o voleibol saiu",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Avisos: golo da tua equipa (hóquei) e o jogo que começa daqui a 15 minutos",
+  "pass": true,
+  "info": "[\"Daqui a 15 minutos | Bruins × Leafs · NHL\",\"Golo · Bruins | Rangers 1–2 Bruins\"]"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Avisos: avisa quando o jogo começa (uma vez só)",
+  "pass": true,
+  "info": "[\"Começou | Bruins × Leafs · NHL\",\"Daqui a 15 minutos | Bruins × Leafs · NHL\",\"Golo · Bruins | Rangers 1–2 Bruins\"]"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › MotoGP: o fim de semana com as sessões, o resultado do sprint, o campeonato e o calendário",
+  "pass": true,
+  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nCopa do Mundo\nNFL\nTénis ATP\nTénis WTA\nMMA\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMotoGP\n\nGrandes Prémios de motos e campeonato\n\nAvisar\nJuntar aos meus\nE"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › MotoGP: com o sino ligado avisa 15 minutos antes da corrida",
+  "pass": true,
+  "info": "[\"Corrida daqui a 15 minutos | MotoGP · Grande Prémio de Portugal\",\"Começou | Bruins × Leafs · NHL\",\"Daqui a 15 minutos | Bruins × Leafs · NHL\",\"Golo · Bruins | Rangers 1–2 Bruins\"]"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Início: painel de avisos (4 escolhas e os últimos avisos), a equipa de hóquei que segues e o banner da Copa do Mundo",
+  "pass": true,
+  "info": "{\"av\":4,\"feed\":4,\"tc\":\"Boston Celtics NBA Halftime BOS 61 – 49 DEN Último LAL 100 – 110 BOS Vitória || Boston Bruins NHL Halftime NYR 1 – 2 BRU Último TOR 2 – 3 BRU Vitória\"}"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Avisos: desligar os golos, pontos e sets fica guardado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos: sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Escala",
+  "name": "Escala: aceita foto, PDF, Excel e CSV",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Escala",
+  "name": "Foto com a equipa toda: só \"Ryan\" é ambíguo, pergunta qual é (sem mexer na escala)",
+  "pass": true,
+  "info": "[\"RYAN SILVA MAGALHAES\",\"JOÃO RYAN\"]"
+ },
+ {
+  "p": "Escala",
+  "name": "Depois de escolher: a IA lê só essa linha (com quem está acima e abaixo) e a escala muda",
+  "pass": true,
+  "info": "Isto é uma escala/horário de trabalho de uma equipa, com várias pessoas. Lê APENAS a linha (ou coluna) da pessoa \"RYAN SILVA MAGALHAES\", que vem logo a seguir a \"ANA PAULA SOUSA\" e antes de \"JOÃO RYAN\". Ignora todas as outras pessoas: não juntes horários de outras linhas. Segue a linha de \"RYAN SILV"
+ },
+ {
+  "p": "Escala",
+  "name": "Se a IA ler a linha de outra pessoa, avisa e não mexe na escala",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Escala",
+  "name": "CSV: encontra a linha de \"RYAN SILVA MAGALHAES\" sozinho; à IA só vai essa linha, as datas e a legenda (nada das outras pessoas)",
+  "pass": true,
+  "info": "Isto é UMA linha de uma escala de trabalho (folha de cálculo), já escolhida: a da pessoa \"Ryan Silva Magalhães M F\". Por cima estão as linhas de cabeçalho com as datas/dias; no fim, a legenda dos códigos (se houver). Colunas separadas por TAB.\n\nEscala da loja\t20/11\t21/11\t22/11\t23/11\nRyan Silva Magal"
+ },
+ {
+  "p": "Escala",
+  "name": "Excel (.xlsx): lê a folha, converte as datas do Excel e manda só a linha da pessoa",
+  "pass": true,
+  "info": "Isto é UMA linha de uma escala de trabalho (folha de cálculo), já escolhida: a da pessoa \"RYAN SILVA MAGALHAES T F\". Por cima estão as linhas de cabeçalho com as datas/dias; no fim, a legenda dos códigos (se houver). Colunas separadas por TAB.\n\nNome\t2026-11-20\t2026-11-21\t2026-11-22\t2026-11-23\nRYAN S"
+ },
+ {
+  "p": "Escala",
+  "name": "Escala: sem erros de JavaScript",
   "pass": true,
   "info": ""
  }

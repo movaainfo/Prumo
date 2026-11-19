@@ -66,21 +66,16 @@ const deliver = async (I, out, o = {}) => { if (!out.length) return { n: 0, gone
 /* ---------- desportos: os jogos e as sessões que alguém segue ---------- */
 const ESPN = { nba: 'basketball/nba', nfl: 'football/nfl', mlb: 'baseball/mlb', nhl: 'hockey/nhl', wnba: 'basketball/wnba', ncaab: 'basketball/mens-college-basketball', cfb: 'football/college-football' };
 const SITE = () => process.env.ESPN_SITE_ALL || 'https://site.api.espn.com/apis/site/v2/sports/';
-const VISU = () => process.env.FIVB_VIS || 'https://www.fivb.org/vis2009/XmlRequest.asmx?Request=';
 const scr = x => x == null ? '' : typeof x === 'object' ? String(x.displayValue != null ? x.displayValue : x.value != null ? x.value : '') : String(x);
 const side = x => x && x.team ? { id: String(x.team.id), n: x.team.displayName || '', sn: x.team.shortDisplayName || x.team.displayName || '', s: scr(x.score), w: !!x.winner } : null;
 const tEv = (e, lg) => { const c = (e.competitions || [])[0] || {}, ty = ((c.status || e.status || {}).type) || {}, cp = c.competitors || [];
   return { k: lg + ':' + e.id, lg, d: Date.parse(e.date || c.date) || 0, st: ty.state || 'pre', sn: ty.name || '', h: side(cp.find(x => x.homeAway === 'home') || cp[0]), a: side(cp.find(x => x.homeAway === 'away') || cp[1]) }; };
-const vEv = m => { const s = +m.status || 0, d = Date.parse(m.dateTimeUtc) || 0; let st = s >= 24 ? 'post' : s >= 4 ? 'in' : 'pre'; if (st === 'in' && Date.now() - d > 8 * 36e5) st = 'post'; const A = +m.matchPointsA || 0, B = +m.matchPointsB || 0;
-  const sd = (n, no, mp, w) => ({ id: String(no || ''), n: n || '', sn: n || '', s: st === 'pre' || mp == null ? '' : String(mp), w });
-  return { k: 'volei:' + m.no, lg: 'volei', d, st, sn: String(s), h: sd(m.teamAName, m.noTeamA, m.matchPointsA, st === 'post' && A > B), a: sd(m.teamBName, m.noTeamB, m.matchPointsB, st === 'post' && B > A) }; };
 const ptsMsg = (lang, lg, sd, d) => { const P = ESPN[lg] || '';
-  if (lg === 'volei') return T(lang, 'set') + ' ' + sd.sn;
   if (/^hockey/.test(P)) return (d > 1 ? d + ' ' + T(lang, 'gols') : T(lang, 'gol')) + ' · ' + sd.sn;
   if (/^football/.test(P)) return (d >= 6 ? 'Touchdown' : d === 3 ? 'Field goal' : d === 2 ? 'Safety' : '+' + d) + ' · ' + sd.sn;
   if (/^baseball/.test(P)) return (d > 1 ? d + ' ' + T(lang, 'runs') : T(lang, 'run')) + ' · ' + sd.sn;
   return ''; };
-const LGN = { nba: 'NBA', nfl: 'NFL', mlb: 'MLB', nhl: 'NHL', wnba: 'WNBA', ncaab: 'NCAA', cfb: 'NCAA', volei: 'Voleibol', f1: 'Fórmula 1', motogp: 'MotoGP', mma: 'MMA' };
+const LGN = { nba: 'NBA', nfl: 'NFL', mlb: 'MLB', nhl: 'NHL', wnba: 'WNBA', ncaab: 'NCAA', cfb: 'NCAA', f1: 'Fórmula 1', motogp: 'MotoGP', mma: 'MMA' };
 const MMAORG = [['ufc', 'UFC'], ['pfl', 'PFL'], ['lfa', 'LFA'], ['cage-warriors', 'Cage Warriors'], ['bellator', 'Bellator'], ['ksw', 'KSW'], ['rizin', 'Rizin']];
 const ymd = t => new Date(t).toISOString().slice(0, 10).replace(/-/g, '');
 
@@ -102,12 +97,9 @@ const sports = async (U, st, now, out) => {
   // futebol: todos os jogos do dia de uma vez (a função do futebol já os junta e diz quem marcou)
   if (FUT.length) { const days = [ymd(now)]; if (new Date(now).getUTCHours() >= 21) days.push(ymd(now + 864e5));
     for (const d of days) { try { const j = await F.vivo(d, true); (j.ev || []).forEach(e => { if (!evs.some(x => x.k === 'fut:' + e.id)) evs.push(Object.assign({}, e, { k: 'fut:' + e.id, lg: 'fut', slug: e.lg })); }); } catch (e) { } } }
-  // outros desportos de equipa (ESPN) e voleibol (FIVB)
+  // outros desportos de equipa (ESPN)
   const lgs = [...new Set(SPT.flatMap(([, x]) => x.sp.teams.map(t => t.lg)).filter(lg => ESPN[lg]))];
   await pool(lgs, 4, async lg => { const j = await F.getJ(SITE() + ESPN[lg] + '/scoreboard', 7000); (j.events || []).forEach(e => { const v = tEv(e, lg); if (v.h && v.a) evs.push(v); }); });
-  const tours = [...new Set(SPT.flatMap(([, x]) => x.sp.teams.filter(t => t.lg === 'volei' && t.t).map(t => t.t)))].slice(0, 12);
-  await pool(tours, 3, async no => { const r = await fetch(VISU() + encodeURIComponent(`<Request Type="GetVolleyMatchList" Fields="No DateTimeUtc TeamAName TeamBName NoTeamA NoTeamB MatchPointsA MatchPointsB Status"><Filter NoTournament="${no}" /></Request>`), { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(7000) });
-    const j = await r.json(); (j.data || []).forEach(m => { const v = vEv(m); if (v.d && Math.abs(v.d - now) < 2 * 864e5) evs.push(v); }); });
   st.ev = st.ev || {};
   for (const e of evs) { if (!e.h || !e.a) continue; const isF = e.lg === 'fut';
     // quem segue este jogo
