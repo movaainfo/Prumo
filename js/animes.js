@@ -276,16 +276,17 @@ let HI = 0;
 // no telemóvel a capa (vertical), no computador o banner; a imagem que não se vê nunca é descarregada
 // fundo do destaque, de ponta a ponta: no telemóvel a capa (vertical); no tablet e no computador o banner (largo e nítido).
 // Há banners que são só uma textura ou uma cor desfocada: o app mede a nitidez uma vez (guardada no aparelho) e, nesses, usa a capa.
-const BANK = 'oc_an_ban', BANQ = U.ls.get(BANK, {}) || {}, BANP = new Set();
+const BANK = 'oc_an_ban', BANQ = U.ls.get(BANK, {}) || {}, BANP = new Set(), BANF = new Set();
 const banBad = u => BANQ[u] === 1;
-const banCheck = u => { if (!u || u in BANQ || BANP.has(u) || !(window.matchMedia && matchMedia('(min-width:641px)').matches)) return; BANP.add(u);
+const banCheck = u => { if (!u || u in BANQ || BANP.has(u) || BANF.has(u) || !(window.matchMedia && matchMedia('(min-width:641px)').matches)) return; BANP.add(u);
   const im = new Image(); im.crossOrigin = 'anonymous'; im.decoding = 'async';
   im.onload = () => { try { const W = 240, H = 50, c = document.createElement('canvas'); c.width = W; c.height = H; const g2 = c.getContext('2d', { willReadFrequently: true }); g2.drawImage(im, 0, 0, W, H);
       const px = g2.getImageData(0, 0, W, H).data, g = new Float32Array(W * H); let m = 0; for (let i = 0; i < W * H; i++) { g[i] = .299 * px[i * 4] + .587 * px[i * 4 + 1] + .114 * px[i * 4 + 2]; m += g[i]; } m /= W * H;
       let e = 0, n = 0, v = 0; for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) { const i = y * W + x; e += Math.abs(4 * g[i] - g[i - 1] - g[i + 1] - g[i - W] - g[i + W]); n++; }
       for (let i = 0; i < W * H; i++) v += (g[i] - m) * (g[i] - m); const sd = Math.sqrt(v / (W * H)), lap = e / n;
       BANQ[u] = sd < 18 || lap < 8 ? 1 : 0; const ks = Object.keys(BANQ); if (ks.length > 600) delete BANQ[ks[0]]; U.ls.set(BANK, BANQ); if (BANQ[u]) redraw(); } catch (e) { BANQ[u] = 0; } finally { BANP.delete(u); } };
-  im.onerror = () => BANP.delete(u); im.src = u; };
+  // endereço à parte para a medição: o Safari reaproveita a imagem já guardada sem permissão de leitura (CORS) e a medição falhava
+  im.onerror = () => { BANP.delete(u); BANF.add(u); }; im.src = u + (u.includes('?') ? '&' : '?') + 'nitidez=1'; };
 const heroImg = (x, i) => { const mob = x.img || x.ban, bad = x.ban && banBad(x.ban), desk = x.ban && !bad ? x.ban : x.img || x.ban; if (x.ban && !bad) banCheck(x.ban);
   return `<div class="an-hpic">${mob ? `<picture><source media="(max-width:640px)" srcset="${esc(mob)}"><img class="an-hb${desk === x.ban ? '' : ' an-hbc'}" src="${esc(desk)}" alt="" decoding="async" referrerpolicy="no-referrer"${i ? ' loading="lazy"' : ' fetchpriority="high"'}></picture>` : '<div class="an-hb an-hb0"></div>'}<div class="an-hg"></div><button type="button" class="an-hopen" data-act="anOpen" data-k="${esc(kOf(x))}" tabindex="-1" aria-label="${esc(x.t)}: ver detalhes"></button></div>`; };
 // estado na lista (tocar outra vez tira): no telemóvel só o ícone, ao lado do botão laranja

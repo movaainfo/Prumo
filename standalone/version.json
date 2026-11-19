@@ -1,7 +1,8 @@
 {
- "n": 245,
- "hash": "78f2875afb6a",
+ "n": 246,
+ "hash": "3c80d909cb54",
  "notes": [
+  "Animes no iPad: o destaque já troca os banners desfocados pela arte do anime (o Safari reaproveitava a imagem guardada e a verificação falhava).",
   "Animes: o destaque volta a ser preenchido de ponta a ponta com a imagem do anime. No tablet e no computador usa o banner (largo e nítido); quando o banner é só uma textura ou uma cor desfocada, o app percebe sozinho e usa a arte do anime. As capas voltam a ficar nítidas no tablet e no iPhone (cada ecrã descarrega o tamanho de que precisa) e os cartões de \"Novos episódios\" mostram a capa por cima do banner.",
   "Línguas: os textos novos (animes, mangás nas Leituras, Bloco de foco) também em português do Brasil, inglês, espanhol, francês, italiano e alemão.",
   "Animes no telemóvel como na Crunchyroll: o destaque ocupa a largura toda com o título por cima, por baixo as informações, a sinopse, o botão laranja e o de guardar, e as barrinhas que enchem; passa-se de um para o outro a arrastar com o dedo. As imagens carregam muito mais depressa (cada cartão usa a imagem do tamanho certo, até 10 vezes mais leve) e as sinopses aparecem traduzidas sozinhas (\"Ver o original\" mostra o texto de origem).",
@@ -79,5 +80,5 @@
   "Admin em tempo real (online agora, última entrada e último acesso) e tempo de uso no ranking.",
   "Investimentos arrumados em 4 blocos, com todas as funções. Mais animações e transições suaves, também em Android."
  ],
- "date": "18/11/2026"
+ "date": "19/11/2026"
 }
