@@ -70,7 +70,16 @@
     },
     "api/banco.js": {
       "maxDuration": 120
+    },
+    "api/push.js": {
+      "maxDuration": 60
     }
   },
-  "cleanUrls": true
+  "cleanUrls": true,
+  "crons": [
+    {
+      "path": "/api/push?op=cron",
+      "schedule": "* * * * *"
+    }
+  ]
 }
