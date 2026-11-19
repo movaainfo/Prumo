@@ -413,3 +413,15 @@ html.lite-x .an-ov{transition:none}html.lite-x .an-dots button.on::after{animati
   .an-subnav a{flex:none;padding:9px 15px;border-radius:999px;background:#1c1d22;border:1px solid #2c2e35;color:#ececf1;font-size:13.5px;font-weight:700;text-decoration:none}
   .an-subnav a:active{background:#2a2c33}
 }
+/* temporadas do mesmo anime e blocos de episódios */
+.an-seac{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.an-seac::-webkit-scrollbar{display:none}
+.an-sea{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:118px;padding:10px 14px;border-radius:6px;border:1px solid var(--an-ln);background:var(--an-c1);color:var(--an-tx);font:inherit;text-align:left;cursor:pointer}
+.an-sea b{font-size:14.5px;font-weight:800}.an-sea small{font-size:12px;color:var(--an-mut)}
+.an-sea.on{border-color:var(--an-or);background:rgba(255,100,10,.14)}.an-sea.on b{color:#ffb27f}
+.an-sea:hover{border-color:#3a3d46}
+.an-epr{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:4px;scrollbar-width:none}
+.an-epr::-webkit-scrollbar{display:none}
+.an-epr button{flex:none;padding:7px 12px;border-radius:999px;border:1px solid var(--an-ln);background:var(--an-c1);color:var(--an-tx);font:inherit;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.an-epr button.on{background:var(--an-or);border-color:var(--an-or);color:#111}
+.an-eph{margin:18px 0 10px;font-size:15px;font-weight:800;color:var(--an-tx)}
