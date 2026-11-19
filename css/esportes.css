@@ -56,10 +56,10 @@
 .sp-gr.me .sp-gn b{color:#ffd166}
 .sp-noimg{display:grid;place-items:center;border-radius:50%;background:#252c38;color:#cbd5e1;font-size:11px;font-weight:800}
 /* desportos (início) */
-.sp-sps{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
-.sp-spc{position:relative;display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--sc) 16%,var(--sp-c1)),var(--sp-c1) 70%);border:1px solid var(--sp-ln);color:var(--sp-tx);text-decoration:none;min-width:0;transition:transform .15s ease,border-color .15s ease}
+.sp-sps{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+.sp-spc{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:14px;border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--sc) 16%,var(--sp-c1)),var(--sp-c1) 70%);border:1px solid var(--sp-ln);color:var(--sp-tx);text-decoration:none;min-width:0;transition:transform .15s ease,border-color .15s ease}
 .sp-spc:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--sc) 60%,var(--sp-ln))}
-.sp-spc b{display:block;font-size:14.5px;font-weight:800}.sp-spc small{display:block;font-size:12px;color:var(--sp-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-spc b{display:block;font-size:14px;font-weight:800;line-height:1.2}.sp-spc small{display:block;font-size:12px;color:var(--sp-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sp-spc>:last-child{min-width:0}
 .sp-spc.on::after{content:"";position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--sc);box-shadow:0 0 0 3px color-mix(in srgb,var(--sc) 30%,transparent)}
 /* as tuas equipas */
@@ -143,6 +143,6 @@
 .sp-chips{display:flex;flex-wrap:wrap;gap:6px}.sp-chips span{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:var(--sp-c1);border:1px solid var(--sp-ln);font-size:13px}
 .sp-chips span.new{border-color:#eab308;color:#fde68a}.sp-chips em{font-style:normal;font-size:10.5px;font-weight:800;background:#eab308;color:#111;padding:1px 6px;border-radius:999px}
 @media (max-width:760px){.sp-hero{grid-template-columns:minmax(0,1fr)}}
-@media (max-width:640px){.sp-olyb{grid-template-columns:auto minmax(0,1fr)}.sp-olyb .sp-cd{grid-column:1/-1}.sp-sps{grid-template-columns:repeat(2,minmax(0,1fr))}.sp-spc{flex-direction:column;align-items:flex-start;gap:10px}.sp-spc small{white-space:normal}
+@media (max-width:640px){.sp-olyb{grid-template-columns:auto minmax(0,1fr)}.sp-olyb .sp-cd{grid-column:1/-1}.sp-sps{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.sp-spc{padding:12px 10px;gap:8px}.sp-spc b{font-size:12.5px}
   .sp-gg,.sp-mt,.sp-ms{grid-template-columns:minmax(0,1fr)}.sp-teams{grid-template-columns:repeat(3,minmax(0,1fr))}.sp-vs{grid-template-columns:minmax(0,1fr)}.sp-vs em{justify-self:center}}
 @media (prefers-reduced-motion:reduce){.sp-gs.on i,.sp-sp{animation:none}.sp-spc{transition:none}}

@@ -54,8 +54,9 @@ const get = (u, ttl) => { const m = MEM.get(u); if (m && Date.now() - m.at < ttl
       MEM.set(u, { at: Date.now(), j }); return j; } catch (e) { if (m) return m.j; throw e; } finally { INF.delete(u); } })();
   INF.set(u, p); return p; };
 // pedir uma vez e redesenhar quando chega
-const DATA = {}, PEND = new Set();
-const need = (k, ttl, f) => { const d = DATA[k]; if ((!d || Date.now() - d.at > ttl) && !PEND.has(k)) { PEND.add(k); f().then(v => { DATA[k] = { at: Date.now(), v }; delete ERR[k]; }).catch(e => { ERR[k] = (e && e.message) || 'erro'; }).finally(() => { PEND.delete(k); if (/^#(esportes|desportos)/.test(location.hash)) OS.request(); }); } return d ? d.v : null; };
+const DATA = {}, PEND = new Set(), FAIL = {};
+// depois de uma falha espera 30 s antes de tentar outra vez (sem rede não fica a pedir sem parar)
+const need = (k, ttl, f) => { const d = DATA[k]; if ((!d || Date.now() - d.at > ttl) && !PEND.has(k) && !(FAIL[k] && Date.now() - FAIL[k] < 3e4)) { PEND.add(k); f().then(v => { DATA[k] = { at: Date.now(), v }; delete ERR[k]; delete FAIL[k]; }).catch(e => { ERR[k] = (e && e.message) || 'erro'; FAIL[k] = Date.now(); }).finally(() => { PEND.delete(k); if (/^#(esportes|desportos)/.test(location.hash)) OS.request(); }); } return d ? d.v : null; };
 
 /* ---------- normalizar ---------- */
 const logoOf = t => (t && (t.logo || ((t.logos || [])[0] || {}).href)) || '';
@@ -89,7 +90,7 @@ const gCard = (e, o) => { o = o || {}; const sp = spOf(e.lg), lv = isLive(e), do
   </div>`; };
 const sec = (t, body, more) => `<section class="sp-sec"><div class="sp-sh"><h3>${t}</h3>${more || ''}</div>${body}</section>`;
 const loading = t => `<div class="sp-ld"><span class="sp-sp"></span>${esc(t || 'A carregar…')}</div>`;
-const errBox = k => ERR[k] ? `<p class="sp-err">Não consegui falar com a fonte dos resultados (${esc(ERR[k])}). Tenta daqui a pouco.</p>` : '';
+const errBox = k => ERR[k] ? `<p class="sp-err">Não consegui falar com a fonte dos resultados (${esc(ERR[k])}). <button type="button" class="btn xs" data-act="dsRetry" data-k="${esc(k)}">Tentar outra vez</button></p>` : '';
 
 /* ---------- Olimpíadas ---------- */
 const OLY = [
@@ -122,17 +123,21 @@ const olyPage = () => { const n = olyNext(), cc = String((OS.one('profile') || {
 /* ---------- desportos de equipa (NBA, NFL, MLB, NHL, WNBA, universitários) ---------- */
 const UIst = () => OS.ui.sp || (OS.ui.sp = { tab: {}, day: {} });
 const dayOff = n => U.addDays(U.today(), n);
-const teamPage = sp => { const S = UIst(), tab = S.tab[sp[0]] || 'jogos', day = S.day[sp[0]] || U.today(), k = 'b:' + sp[0] + ':' + day;
-  const tabs = `<div class="sp-seg" role="tablist">${[['jogos', 'Jogos'], ['tabela', 'Classificação'], ['equipas', 'Equipas']].map(([t, l]) => `<button type="button" class="${tab === t ? 'on' : ''}" data-act="spTab" data-sp="${sp[0]}" data-t="${t}" role="tab" aria-selected="${tab === t}">${l}</button>`).join('')}</div>`;
+// nomes dos grupos da classificação em português (Eastern Conference → Conferência Este)
+const gName = n => { const W = { Eastern: 'Este', Western: 'Oeste', East: 'Este', West: 'Oeste', North: 'Norte', South: 'Sul', Central: 'Central', Atlantic: 'Atlântico', Pacific: 'Pacífico', Metropolitan: 'Metropolitana' };
+  return String(n || '').replace(/American Football Conference/, 'AFC').replace(/National Football Conference/, 'NFC').replace(/American League/, 'Liga Americana').replace(/National League/, 'Liga Nacional')
+    .replace(/^(\w+) Conference$/, (m, a) => 'Conferência ' + (W[a] || a)).replace(/^(\w+) Division$/, (m, a) => 'Divisão ' + (W[a] || a)).replace(/\b(AFC|NFC|AL|NL) (East|West|North|South|Central)\b/, (m, a, b) => a + ' ' + W[b]); };
+const teamPage = sp => { const S = UIst(), tab = S.tab[sp[0]] || 'jogos', day = S.day[sp[0]] || '', k = 'b:' + sp[0] + ':' + (day || 'hoje');
+  const tabs = `<div class="sp-seg" role="tablist">${[['jogos', 'Jogos'], ['tabela', 'Classificação'], ['equipas', 'Equipas']].map(([t, l]) => `<button type="button" class="${tab === t ? 'on' : ''}" data-act="dsTab" data-sp="${sp[0]}" data-t="${t}" role="tab" aria-selected="${tab === t}">${l}</button>`).join('')}</div>`;
   let body = '';
-  if (tab === 'jogos') { const j = need(k, day === U.today() ? 2e4 : 10 * 6e4, () => API.board(sp, day)), L = j ? (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a).sort((a, b) => (isLive(b) - isLive(a)) || a.d - b.d) : null;
-    const days = [-2, -1, 0, 1, 2, 3].map(dayOff);
-    body = `<div class="sp-days">${days.map(d => `<button type="button" class="${d === day ? 'on' : ''}" data-act="spDay" data-sp="${sp[0]}" data-d="${d}">${d === U.today() ? 'Hoje' : d === dayOff(-1) ? 'Ontem' : d === dayOff(1) ? 'Amanhã' : new Date(d + 'T12:00:00').toLocaleDateString('pt-PT', { weekday: 'short', day: 'numeric' })}</button>`).join('')}</div>`
+  if (tab === 'jogos') { const j = need(k, !day ? 2e4 : 10 * 6e4, () => API.board(sp, day)), L = j ? (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a).sort((a, b) => (isLive(b) - isLive(a)) || a.d - b.d) : null;
+    const days = [-2, -1, '', 1, 2, 3].map(n => n === '' ? '' : dayOff(n));
+    body = `<div class="sp-days">${days.map(d => `<button type="button" class="${d === day ? 'on' : ''}" data-act="dsDay" data-sp="${sp[0]}" data-d="${d}">${!d ? 'Hoje' : d === dayOff(-1) ? 'Ontem' : d === dayOff(1) ? 'Amanhã' : new Date(d + 'T12:00:00').toLocaleDateString('pt-PT', { weekday: 'short', day: 'numeric' })}</button>`).join('')}</div>`
       + errBox(k) + (!L ? loading('A buscar os jogos…') : L.length ? `<div class="sp-gg">${L.map(e => gCard(e)).join('')}</div>` : `<div class="sp-empty">${spIc(sp, 1)}<b>Sem jogos neste dia</b><small>Experimenta outro dia em cima.</small></div>`); }
   else if (tab === 'tabela') { const G = need('s:' + sp[0], 10 * 6e4, () => API.stand(sp));
-    body = errBox('s:' + sp[0]) + (!G ? loading('A buscar a classificação…') : G.length ? G.map(g => `<h4 class="sp-gh">${esc(g.name.replace(/Conference/, 'Conferência').replace(/Eastern/, 'Este').replace(/Western/, 'Oeste').replace(/American Football Conference/, 'AFC').replace(/National Football Conference/, 'NFC').replace(/American League/, 'Liga Americana').replace(/National League/, 'Liga Nacional'))}</h4><div class="sp-tw"><table class="sp-tb"><thead><tr><th>#</th><th class="l">Equipa</th><th>V</th><th>D</th>${g.rows.some(r => r.t && r.t !== '0') ? '<th>E/P</th>' : ''}<th>%</th><th class="hm">Atrás</th><th class="hm">Série</th></tr></thead><tbody>${g.rows.map((r, i) => `<tr class="${isMine(sp[0], r.id) ? 'me' : ''}"><td>${r.seed || i + 1}</td><td class="l"><span class="sp-tn">${img(r.logo, 'sp-ti', r.n)}<span>${esc(r.n)}</span></span></td><td>${esc(r.w)}</td><td>${esc(r.l)}</td>${g.rows.some(x => x.t && x.t !== '0') ? `<td>${esc(r.t)}</td>` : ''}<td>${esc(r.pct)}</td><td class="hm">${esc(r.gb === '0' ? '—' : r.gb)}</td><td class="hm">${esc(r.strk)}</td></tr>`).join('')}</tbody></table></div>`).join('') : '<p class="sp-note">Ainda sem classificação.</p>'); }
+    body = errBox('s:' + sp[0]) + (!G ? loading('A buscar a classificação…') : G.length ? G.map(g => `<h4 class="sp-gh">${esc(gName(g.name))}</h4><div class="sp-tw"><table class="sp-tb"><thead><tr><th>#</th><th class="l">Equipa</th><th>V</th><th>D</th>${g.rows.some(r => r.t && r.t !== '0') ? '<th>E/P</th>' : ''}<th>%</th><th class="hm">Atrás</th><th class="hm">Série</th></tr></thead><tbody>${g.rows.map((r, i) => `<tr class="${isMine(sp[0], r.id) ? 'me' : ''}"><td>${r.seed || i + 1}</td><td class="l"><span class="sp-tn">${img(r.logo, 'sp-ti', r.n)}<span>${esc(r.n)}</span></span></td><td>${esc(r.w)}</td><td>${esc(r.l)}</td>${g.rows.some(x => x.t && x.t !== '0') ? `<td>${esc(r.t)}</td>` : ''}<td>${esc(r.pct)}</td><td class="hm">${esc(r.gb === '0' ? '—' : r.gb)}</td><td class="hm">${esc(r.strk)}</td></tr>`).join('')}</tbody></table></div>`).join('') : '<p class="sp-note">Ainda sem classificação.</p>'); }
   else { const T = need('t:' + sp[0], 864e5, () => API.teams(sp));
-    body = errBox('t:' + sp[0]) + (!T ? loading('A buscar as equipas…') : `<p class="sp-note">Toca numa equipa para a seguir: aparece no início de Desportos com o próximo jogo e o resultado ao vivo.</p><div class="sp-teams">${T.map(t => { const on = isMine(sp[0], t.id); return `<button type="button" class="sp-team${on ? ' on' : ''}" data-act="spFollow" data-sp="${sp[0]}" data-id="${esc(t.id)}" aria-pressed="${on}" style="--tc:${t.c || sp[4]}">${img(t.logo, 'sp-tl', t.ab)}<b>${esc(t.sn)}</b><span class="sp-star">${UI.ic(on ? 'check' : 'plus')}</span></button>`; }).join('')}</div>`); }
+    body = errBox('t:' + sp[0]) + (!T ? loading('A buscar as equipas…') : `<p class="sp-note">Toca numa equipa para a seguir: aparece no início de Desportos com o próximo jogo e o resultado ao vivo.</p><div class="sp-teams">${T.map(t => { const on = isMine(sp[0], t.id); return `<button type="button" class="sp-team${on ? ' on' : ''}" data-act="dsFollow" data-sp="${sp[0]}" data-id="${esc(t.id)}" aria-pressed="${on}" style="--tc:${t.c || sp[4]}">${img(t.logo, 'sp-tl', t.ab)}<b>${esc(t.sn)}</b><span class="sp-star">${UI.ic(on ? 'check' : 'plus')}</span></button>`; }).join('')}</div>`); }
   return tabs + body; };
 
 /* ---------- Fórmula 1 / IndyCar ---------- */
@@ -178,37 +183,40 @@ const golfPage = sp => { const j = need('b:' + sp[0], 6e4, () => API.board(sp));
 const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), teams = s.teams;
   // ao vivo e a seguir: os quadros de hoje dos desportos de equipa que segues (e das tuas equipas)
   const lgs = [...new Set(mine.filter(x => x[3] === 'team').map(x => x[0]).concat(teams.map(t => t.lg)))].map(spOf).filter(Boolean);
-  const all = [].concat(...lgs.map(sp => { const j = need('b:' + sp[0] + ':' + U.today(), 2e4, () => API.board(sp, U.today())); return j ? (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a) : []; }));
+  const all = [].concat(...lgs.map(sp => { const j = need('b:' + sp[0] + ':hoje', 2e4, () => API.board(sp)); return j ? (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a) : []; }));
+  const nextOf = t => { const sp = spOf(t.lg), S = sp ? need('sc:' + t.lg + ':' + t.id, 10 * 6e4, () => API.sched(sp, t.id)) || [] : []; return S.find(e => e.st === 'pre' && e.d > Date.now() - 36e5); };
+  const nexts = teams.map(nextOf).filter(Boolean).sort((a, b) => a.d - b.d);
   const mineEv = all.filter(e => isMine(e.lg, e.h.id) || isMine(e.lg, e.a.id)), live = all.filter(isLive).sort((a, b) => (isMine(b.lg, b.h.id) || isMine(b.lg, b.a.id)) - (isMine(a.lg, a.h.id) || isMine(a.lg, a.a.id)));
-  const top = live.length ? live.slice(0, 2) : mineEv.filter(e => e.st === 'pre').slice(0, 1);
+  const top = live.length ? live.slice(0, 2) : nexts.slice(0, 1);
   const o = olyNext();
   const hero = `<section class="sp-hero"><div class="sp-hl"><span class="sp-ok">${live.length ? `<span class="sp-gs on"><i></i>${live.length} ${live.length === 1 ? 'jogo' : 'jogos'} ao vivo</span>` : 'Desportos'}</span><h2>${live.length ? 'Agora a jogar' : top.length ? 'A seguir' : 'Tudo o que segues, num só sítio'}</h2>${!top.length ? '<p>Futebol, NBA, Fórmula 1, ténis, UFC e mais: segue as tuas equipas e vê os resultados ao vivo, os próximos jogos e as classificações.</p>' : ''}</div>${top.length ? `<div class="sp-hg">${top.map(e => gCard(e, { big: 1, lg: 1 })).join('')}</div>` : ''}</section>`;
-  const sports = `<div class="sp-sps">${SP.map(sp => { const on = s.mine.includes(sp[0]); return `<a class="sp-spc${on ? ' on' : ''}" href="#esportes.${sp[0] === 'futebol' ? 'futebol' : sp[0]}" style="--sc:${sp[4]}">${spIc(sp)}<b>${esc(sp[1])}</b><small>${esc(sp[6])}</small></a>`; }).join('')}</div>`;
+  const sports = `<div class="sp-sps">${SP.map(sp => { const on = s.mine.includes(sp[0]); return `<a class="sp-spc${on ? ' on' : ''}" href="${sp[0] === 'futebol' ? '#futebol' : '#esportes.' + sp[0]}" style="--sc:${sp[4]}" title="${esc(sp[6])}">${spIc(sp)}<b>${esc(sp[1])}</b></a>`; }).join('')}</div>`;
   // as tuas equipas: próximo jogo (ou ao vivo) e o último resultado
   const tcards = teams.length ? `<div class="sp-mt">${teams.map(t => { const sp = spOf(t.lg); if (!sp) return ''; const S = need('sc:' + t.lg + ':' + t.id, 10 * 6e4, () => API.sched(sp, t.id)) || [], now = Date.now();
       const lv = all.find(e => isLive(e) && (e.h.id === t.id || e.a.id === t.id) && e.lg === t.lg), nx = S.find(e => e.st === 'pre' && e.d > now - 36e5), ls = [...S].reverse().find(e => e.st === 'post'), opp = e => e.h.id === t.id ? e.a : e.h;
-      return `<div class="sp-tc${lv ? ' live' : ''}" style="--tc:${t.c || sp[4]}"><div class="sp-tch">${img(t.logo, 'sp-tcl', t.ab)}<span><b>${esc(t.n)}</b><small>${spIc(sp)}${esc(sp[1])}</small></span><button type="button" class="sp-x" data-act="spFollow" data-sp="${esc(t.lg)}" data-id="${esc(t.id)}" aria-label="Deixar de seguir ${esc(t.n)}">${UI.ic('x')}</button></div>
+      return `<div class="sp-tc${lv ? ' live' : ''}" style="--tc:${t.c || sp[4]}"><div class="sp-tch">${img(t.logo, 'sp-tcl', t.ab)}<span><b>${esc(t.n)}</b><small>${spIc(sp)}${esc(sp[1])}</small></span><button type="button" class="sp-x" data-act="dsFollow" data-sp="${esc(t.lg)}" data-id="${esc(t.id)}" aria-label="Deixar de seguir ${esc(t.n)}">${UI.ic('x')}</button></div>
         ${lv ? `<div class="sp-tcl2"><span class="sp-gs on"><i></i>${esc(lv.det)}</span><b>${esc(lv.a.ab || lv.a.sn)} ${esc(lv.a.s)} – ${esc(lv.h.s)} ${esc(lv.h.ab || lv.h.sn)}</b></div>` : nx ? `<div class="sp-tcl2"><small>Próximo</small><b>${nx.h.id === t.id ? 'vs' : '@'} ${esc(opp(nx).sn)}</b><span>${esc(dayL(nx.d))}</span></div>` : ''}
         ${ls ? `<div class="sp-tcl2 last"><small>Último</small><b>${esc(ls.a.ab || ls.a.sn)} ${esc(ls.a.s)} – ${esc(ls.h.s)} ${esc(ls.h.ab || ls.h.sn)}</b><span class="${(ls.h.id === t.id ? ls.h : ls.a).w ? 'w' : 'l'}">${(ls.h.id === t.id ? ls.h : ls.a).w ? 'Vitória' : 'Derrota'}</span></div>` : ''}</div>`; }).join('')}</div>`
     : `<div class="sp-empty">${UI.ic('star')}<b>Ainda não segues nenhuma equipa</b><small>Abre um desporto (NBA, NFL, NHL…) › Equipas e toca nas que queres seguir. No futebol, segue em Futebol.</small></div>`;
   const oly = `<a class="sp-olyb" href="#esportes.olimpiadas" style="--oc:${o.c}"><span class="sp-oring">${UI.ic('sp_oly')}</span><span><small>Olimpíadas</small><b>${esc(o.t)}</b><span>${esc(fmtR(o.ini, o.fim))}</span></span>${olyState(o) === 'pre' ? countdown(o) : '<span class="sp-gs on"><i></i>A decorrer</span>'}</a>`;
-  return hero + sec('Desportos', sports) + oly + sec('As tuas equipas', tcards) + (live.length > 2 ? sec('Ao vivo agora', `<div class="sp-gg">${live.slice(2, 14).map(e => gCard(e, { lg: 1 })).join('')}</div>`) : ''); };
+  return hero + sec('As tuas equipas', tcards) + oly + sec('Desportos', sports) + (live.length > 2 ? sec('Ao vivo agora', `<div class="sp-gg">${live.slice(2, 14).map(e => gCard(e, { lg: 1 })).join('')}</div>`) : ''); };
 
 /* ---------- página ---------- */
 V.esportes = sub => { const k = sub || ''; if (k === 'futebol') { setTimeout(() => { location.hash = 'futebol'; }, 0); return loading('A abrir o Futebol…'); }
-  const sp = spOf(k), nav = `<nav class="sp-nav" aria-label="Desportos"><a href="#esportes" class="${!k ? 'on' : ''}">${UI.ic('home')}Início</a>${SP.map(x => `<a href="#esportes.${x[0]}" class="${k === x[0] ? 'on' : ''}" style="--sc:${x[4]}">${UI.ic(x[5])}${esc(x[1])}</a>`).join('')}</nav>`;
+  const sp = spOf(k), nav = `<nav class="sp-nav" aria-label="Desportos"><a href="#esportes" class="${!k ? 'on' : ''}">${UI.ic('home')}Início</a>${SP.map(x => `<a href="${x[0] === 'futebol' ? '#futebol' : '#esportes.' + x[0]}" class="${k === x[0] ? 'on' : ''}" style="--sc:${x[4]}">${UI.ic(x[5])}${esc(x[1])}</a>`).join('')}</nav>`;
   let body;
   if (!sp) body = hub();
   else { const on = st().mine.includes(sp[0]);
-    const head = sp[3] === 'oly' ? '' : `<section class="sp-shd" style="--sc:${sp[4]}">${spIc(sp, 1)}<div><h2>${esc(sp[1])}</h2><p>${esc(sp[6])}</p></div><button type="button" class="btn sm sp-fav${on ? ' on' : ''}" data-act="spMine" data-sp="${sp[0]}" aria-pressed="${on}">${UI.ic(on ? 'check' : 'star')}${on ? 'Nos teus desportos' : 'Juntar aos meus'}</button></section>`;
+    const head = sp[3] === 'oly' ? '' : `<section class="sp-shd" style="--sc:${sp[4]}">${spIc(sp, 1)}<div><h2>${esc(sp[1])}</h2><p>${esc(sp[6])}</p></div><button type="button" class="btn sm sp-fav${on ? ' on' : ''}" data-act="dsMine" data-sp="${sp[0]}" aria-pressed="${on}">${UI.ic(on ? 'check' : 'star')}${on ? 'Nos teus desportos' : 'Juntar aos meus'}</button></section>`;
     body = head + (sp[3] === 'team' ? teamPage(sp) : sp[3] === 'f1' ? f1Page(sp) : sp[3] === 'ten' ? tenPage(sp) : sp[3] === 'mma' ? mmaPage(sp) : sp[3] === 'golf' ? golfPage(sp) : sp[3] === 'oly' ? olyPage() : ''); }
-  return UI.head('Desportos', 'O futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.', '', 'Eu') + nav + `<div class="sp">${body}</div>`; };
+  return UI.head('Desportos', 'O futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.', '', 'Eu') + (sp ? nav : '') + `<div class="sp">${body}</div>`; };
 
 /* ---------- ações ---------- */
-A.spTab = b => { UIst().tab[b.dataset.sp] = b.dataset.t; OS.request(); };
-A.spDay = b => { UIst().day[b.dataset.sp] = b.dataset.d; OS.request(); };
-A.spMine = b => { const s = st(), k = b.dataset.sp; s.mine = s.mine.includes(k) ? s.mine.filter(x => x !== k) : s.mine.concat(k); save(); UI.toast(s.mine.includes(k) ? spOf(k)[1] + ' nos teus desportos' : spOf(k)[1] + ' saiu dos teus desportos', 'pos'); OS.request(); };
-A.spFollow = b => { const s = st(), lg = b.dataset.sp, id = b.dataset.id, sp = spOf(lg); if (!sp) return; const i = s.teams.findIndex(t => t.lg === lg && t.id === id);
+A.dsTab = b => { UIst().tab[b.dataset.sp] = b.dataset.t; OS.request(); };
+A.dsRetry = b => { const k = b.dataset.k; delete FAIL[k]; delete ERR[k]; if (DATA[k]) DATA[k].at = 0; OS.request(); };
+A.dsDay = b => { UIst().day[b.dataset.sp] = b.dataset.d || ''; OS.request(); };
+A.dsMine = b => { const s = st(), k = b.dataset.sp; s.mine = s.mine.includes(k) ? s.mine.filter(x => x !== k) : s.mine.concat(k); save(); UI.toast(s.mine.includes(k) ? spOf(k)[1] + ' nos teus desportos' : spOf(k)[1] + ' saiu dos teus desportos', 'pos'); OS.request(); };
+A.dsFollow = b => { const s = st(), lg = b.dataset.sp, id = b.dataset.id, sp = spOf(lg); if (!sp) return; const i = s.teams.findIndex(t => t.lg === lg && t.id === id);
   if (i >= 0) { const t = s.teams[i]; s.teams.splice(i, 1); save(); UI.toast(t.n + ' deixou de ser seguida', 'pos'); }
   else { const T = (DATA['t:' + lg] && DATA['t:' + lg].v) || [], t = T.find(x => x.id === id); if (!t) return; s.teams.push({ lg, id, n: t.n, ab: t.ab, logo: t.logo, c: t.c }); if (!s.mine.includes(lg)) s.mine.push(lg); save(); UI.toast('A seguir ' + t.n, 'pos'); }
   OS.request(); };
