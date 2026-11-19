@@ -1,3 +1,4 @@
+Animes: passar o destaque com o dedo já não volta ao primeiro (a página esperava pelo fim do gesto para se atualizar e o destaque fica onde estavas).
 Animes no iPad: o destaque já troca os banners desfocados pela arte do anime (o Safari reaproveitava a imagem guardada e a verificação falhava).
 Animes: o destaque volta a ser preenchido de ponta a ponta com a imagem do anime. No tablet e no computador usa o banner (largo e nítido); quando o banner é só uma textura ou uma cor desfocada, o app percebe sozinho e usa a arte do anime. As capas voltam a ficar nítidas no tablet e no iPhone (cada ecrã descarrega o tamanho de que precisa) e os cartões de "Novos episódios" mostram a capa por cima do banner.
 Línguas: os textos novos (animes, mangás nas Leituras, Bloco de foco) também em português do Brasil, inglês, espanhol, francês, italiano e alemão.

@@ -300,7 +300,8 @@ const heroSlides = L => L.map((x, i) => { x = keep(x); const m = mine(x), nt = n
 let HOLD = 0, HOLDT = 0;
 const heroOf = L => { if (!L.length) return ''; if (HI >= L.length) HI = 0;
   // depois de redesenhar, o carrossel volta ao destaque onde estavas (sem animação)
-  if (HI) setTimeout(() => { const s = document.querySelector('#view .an-hs'); if (s && Math.round(s.scrollLeft / Math.max(1, s.clientWidth)) !== HI) s.scrollLeft = HI * s.clientWidth; }, 0);
+  // (logo a seguir a pôr a página, antes de a desenhar: não pisca o primeiro destaque)
+  if (HI) (window.queueMicrotask || (f => Promise.resolve().then(f)))(() => { const s = document.querySelector('#view .an-hs'); if (s && Math.round(s.scrollLeft / Math.max(1, s.clientWidth)) !== HI) s.scrollLeft = HI * s.clientWidth; });
   return `<section class="an-hero${Date.now() < HOLD ? ' hold' : ''}" aria-roledescription="carrossel" aria-label="Em destaque"><div class="an-hs">${heroSlides(L)}</div>
   ${L.length > 1 ? `<button type="button" class="an-har l" data-act="anHero" data-d="-1" aria-label="Anterior">${UI.ic('left')}</button><button type="button" class="an-har r" data-act="anHero" data-d="1" aria-label="Seguinte">${UI.ic('right')}</button><div class="an-dots">${L.map((_, i) => `<button type="button" class="${i === HI ? 'on' : ''}" data-act="anHero" data-i="${i}" aria-label="Destaque ${i + 1}"></button>`).join('')}</div>` : ''}</section>`; };
 const heroMark = h => { h.querySelectorAll('.an-slide').forEach((s, j) => { const on = j === HI; s.classList.toggle('on', on); s.setAttribute('aria-hidden', !on); s.inert = !on; }); h.querySelectorAll('.an-dots button').forEach((d, j) => d.classList.toggle('on', j === HI)); };
@@ -309,10 +310,10 @@ const heroGo = i => { const h = document.querySelector('#view .an-hero'), sc = h
   try { sc.scrollTo({ left: HI * sc.clientWidth, behavior: reduceM() ? 'auto' : 'smooth' }); } catch (e) { sc.scrollLeft = HI * sc.clientWidth; } heroMark(h); };
 A.anHero = b => { if (b.dataset.i != null) heroGo(+b.dataset.i); else heroGo(HI + (+b.dataset.d || 1)); holdHero(); };
 // arrastar com o dedo: o carrossel segue o dedo e encaixa no destaque seguinte; os pontos acompanham
-document.addEventListener('scroll', e => { const sc = e.target; if (!sc || !sc.classList || !sc.classList.contains('an-hs') || sc._raf) return;
+document.addEventListener('scroll', e => { const sc = e.target; if (!sc || !sc.classList || !sc.classList.contains('an-hs')) return; if (OS.hold) OS.hold(500); if (sc._raf) return;
   sc._raf = requestAnimationFrame(() => { sc._raf = 0; const i = Math.round(sc.scrollLeft / Math.max(1, sc.clientWidth)); if (i !== HI && i >= 0 && i < sc.children.length) { HI = i; const h = sc.closest('.an-hero'); if (h) heroMark(h); } }); }, true);
 // mexer no destaque pausa a barrinha 12 s; quando a barrinha do destaque enche, passa ao seguinte
-const holdHero = () => { HOLD = Date.now() + 12000; const h = document.querySelector('#view .an-hero'); if (h) h.classList.add('hold'); clearTimeout(HOLDT); HOLDT = setTimeout(() => { const h2 = document.querySelector('#view .an-hero'); if (h2) h2.classList.remove('hold'); }, 12050); };
+const holdHero = () => { HOLD = Date.now() + 12000; if (OS.hold) OS.hold(700); const h = document.querySelector('#view .an-hero'); if (h) h.classList.add('hold'); clearTimeout(HOLDT); HOLDT = setTimeout(() => { const h2 = document.querySelector('#view .an-hero'); if (h2) h2.classList.remove('hold'); }, 12050); };
 ['touchstart', 'pointerdown', 'wheel', 'focusin'].forEach(ev => document.addEventListener(ev, e => { if (e.target && e.target.closest && e.target.closest('#view .an-hero')) holdHero(); }, { passive: true, capture: true }));
 document.addEventListener('animationend', e => { if (e.animationName !== 'anFill') return; const h = e.target && e.target.closest && e.target.closest('#view .an-hero'); if (!h || document.hidden || h.classList.contains('hold') || h.matches(':hover')) return; heroGo(HI + 1); });
 

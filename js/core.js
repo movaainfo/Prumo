@@ -262,8 +262,12 @@ OS.route = () => { const h = decodeURIComponent((location.hash || '#visao').slic
 OS.go = h => { if (location.hash.slice(1) === h) OS.request(); else location.hash = h; };
 let raf = 0, pend = false, touching = 0;
 // não redesenha a página com o dedo no ecrã (o botão mudava debaixo do dedo e o toque perdia-se) nem com a app escondida
-OS.request = () => { if (raf) return; if ((touching && Date.now() - touching < 4000) || document.hidden) { pend = true; return; } raf = requestAnimationFrame(() => { raf = 0; OS.emit('render'); }); };
-const flushR = ms => { if (!pend) return; setTimeout(() => { if (touching || document.hidden || !pend) return; pend = false; OS.request(); }, ms); };
+// OS.hold(ms): também espera enquanto algo desliza (um carrossel a passar com o dedo: no iPhone o toque é cancelado quando o deslizar começa)
+let holdT = 0, holdTm = 0;
+OS.hold = ms => { holdT = Math.max(holdT, Date.now() + ms); };
+const holdLater = () => { clearTimeout(holdTm); holdTm = setTimeout(() => flushR(0), Math.max(0, holdT - Date.now()) + 20); };
+OS.request = () => { if (raf) return; if ((touching && Date.now() - touching < 4000) || document.hidden || Date.now() < holdT) { pend = true; if (Date.now() < holdT) holdLater(); return; } raf = requestAnimationFrame(() => { raf = 0; OS.emit('render'); }); };
+const flushR = ms => { if (!pend) return; setTimeout(() => { if (touching || document.hidden || !pend) return; if (Date.now() < holdT) return holdLater(); pend = false; OS.request(); }, ms); };
 addEventListener('pointerdown', () => { touching = Date.now(); }, true);
 ['pointerup', 'pointercancel'].forEach(ev => addEventListener(ev, () => { touching = 0; flushR(350); }, true));
 document.addEventListener("visibilitychange", () => { if (!document.hidden) flushR(30); });
