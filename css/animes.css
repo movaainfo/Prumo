@@ -425,3 +425,5 @@ html.lite-x .an-ov{transition:none}html.lite-x .an-dots button.on::after{animati
 .an-epr button{flex:none;padding:7px 12px;border-radius:999px;border:1px solid var(--an-ln);background:var(--an-c1);color:var(--an-tx);font:inherit;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
 .an-epr button.on{background:var(--an-or);border-color:var(--an-or);color:#111}
 .an-eph{margin:18px 0 10px;font-size:15px;font-weight:800;color:var(--an-tx)}
+.an .btn.an-jw{background:transparent;border:1px solid var(--an-ln);color:var(--an-tx);font-weight:700}
+.an-epsec>.an-epr,.an-epsec>.an-epn{align-self:stretch;max-width:100%;min-width:0}

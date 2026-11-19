@@ -33,7 +33,9 @@ const bg = () => { try { const sp = document.getElementById('splash'), c = sp &&
 const seal = extra => { const s = selo(); return `<div class="seal">${s ? `<img src="${s}" alt="" aria-hidden="true">` : ''}${extra || ''}</div>`; };
 const show = html => { style(); const el = document.createElement('div'); el.className = 'upd'; el.setAttribute('role', 'status'); el.style.background = bg(); el.innerHTML = `<div class="in">${html}</div>`; document.body.appendChild(el); return el; };
 // 1) chegou uma versão nova enquanto a app estava aberta: ecrã curto e recarrega
-window.OceanumUpdating = () => { show(seal('<i class="upd-ring"></i>') + '<b>A atualizar o Prumo…</b><small>versão nova encontrada</small>'); setTimeout(() => location.reload(), 900); };
+// ao atualizar, a intro volta a aparecer na versão nova (antes ficava marcada como "já vista" nesta sessão)
+const reloadNew = () => { try { sessionStorage.removeItem('nau:introOk'); } catch (e) { } location.reload(); };
+window.OceanumUpdating = () => { show(seal('<i class="upd-ring"></i>') + '<b>A atualizar o Prumo…</b><small>versão nova encontrada</small>'); setTimeout(reloadNew, 900); };
 // 2) primeira abertura de uma versão nova: confirmação
 const prev = ls.get(KEY);
 if (VER.v && prev !== VER.v) { ls.set(KEY, VER.v);
@@ -53,7 +55,7 @@ if (num(VER.v) >= num(tget().v)) ls.set(TK, '{}'); // já estamos na versão ped
 const serverVer = async () => { const r = await fetch(location.pathname + '?vchk=' + Date.now(), { cache: 'no-store', credentials: 'omit' }); if (!r.ok) return ''; const m = (await r.text()).match(/OCEANUM_VERSION=\{"v": *"([^"]+)"/); return m ? m[1] : ''; };
 const hard = async () => { if (forcing) return; forcing = true; show(seal('<i class="upd-ring"></i>') + '<b>A atualizar o Prumo…</b><small>versão nova encontrada</small>');
   try { if (navigator.serviceWorker) { const rs = await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(r => r.unregister())); } if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.filter(k => k !== 'oceanum-img').map(k => caches.delete(k))); } } catch (e) { }
-  setTimeout(() => location.reload(), 300); };
+  setTimeout(reloadNew, 300); };
 // a meio de escrever (campo com texto, formulário aberto): espera
 const busy = () => { const a = document.activeElement; if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.value && a.type !== 'search') return true; const d = document.getElementById('drawer'); return !!(d && !d.hidden && d.querySelector('form, input, textarea')); };
 const apply = sv => { if (forcing) return; if (busy()) { clearTimeout(waitT); waitT = setTimeout(() => apply(sv), 20000); return; }
@@ -61,7 +63,7 @@ const apply = sv => { if (forcing) return; if (busy()) { clearTimeout(waitT); wa
   if (n > 5) return; // algo está mesmo errado: não fica em ciclo (o botão "Procurar atualização" continua a funcionar)
   try { navigator.serviceWorker && navigator.serviceWorker.getRegistration().then(r => r && r.update()).catch(() => { }); } catch (e) { }
   if (n >= 2) return hard();
-  forcing = true; show(seal('<i class="upd-ring"></i>') + '<b>A atualizar o Prumo…</b><small>versão ' + String(sv).replace(/[<&]/g, '') + '</small>'); setTimeout(() => location.reload(), 700); };
+  forcing = true; show(seal('<i class="upd-ring"></i>') + '<b>A atualizar o Prumo…</b><small>versão ' + String(sv).replace(/[<&]/g, '') + '</small>'); setTimeout(reloadNew, 700); };
 window.OceanumCheckUpdate = async manual => { if (checking || forcing) return ''; if (!manual && Date.now() - lastCheck < 15000) return ''; if (!manual && navigator.onLine === false) return 'off'; lastCheck = Date.now(); checking = true;
   try { const sv = await serverVer(); if (!sv || num(sv) <= num(VER.v)) { if (manual) note('Já tens a versão mais recente (' + (VER.v || '') + ').', 'pos'); return 'ok'; }
     if (manual) { ls.set(TK, JSON.stringify({ v: sv, n: 1 })); note('Versão ' + sv + ' encontrada. A atualizar…'); }
