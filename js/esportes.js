@@ -10,7 +10,7 @@
 'use strict';
 const OS = window.OS, U = OS.U, UI = OS.UI, A = OS.act, V = OS.views, { esc } = U;
 OS.ONE_DEF.sports = { teams: [], mine: ['nba', 'f1'] };
-const st = () => { const s = OS.one('sports'); if (!Array.isArray(s.teams)) s.teams = []; if (!Array.isArray(s.mine)) s.mine = []; return s; };
+const st = () => { const s = OS.one('sports'); if (!Array.isArray(s.teams)) s.teams = []; if (!Array.isArray(s.mine)) s.mine = []; if (s.mine.includes('ufc')) s.mine = [...new Set(s.mine.map(k => k === 'ufc' ? 'mma' : k))]; return s; };
 const save = () => OS.touch('sports');
 
 /* ícones dos desportos (traço, 24×24) */
@@ -39,7 +39,7 @@ const SP = [
   ['nfl', 'NFL', 'football/nfl', 'team', '#2563eb', 'sp_amf', 'Futebol americano'],
   ['atp', 'Ténis ATP', 'tennis/atp', 'ten', '#65a30d', 'sp_ten', 'Torneios masculinos'],
   ['wta', 'Ténis WTA', 'tennis/wta', 'ten', '#c026d3', 'sp_ten', 'Torneios femininos'],
-  ['ufc', 'UFC', 'mma/ufc', 'mma', '#dc2626', 'sp_mma', 'Artes marciais mistas'],
+  ['mma', 'MMA', 'mma/ufc', 'mma', '#dc2626', 'sp_mma', 'UFC, PFL, LFA, Cage Warriors e mais'],
   ['mlb', 'MLB', 'baseball/mlb', 'team', '#1d4ed8', 'sp_base', 'Basebol dos EUA'],
   ['nhl', 'NHL', 'hockey/nhl', 'team', '#0ea5e9', 'sp_hock', 'Hóquei no gelo'],
   ['wnba', 'WNBA', 'basketball/wnba', 'team', '#f97316', 'sp_bask', 'Basquetebol feminino dos EUA'],
@@ -48,7 +48,7 @@ const SP = [
   ['cfb', 'Futebol americano universitário', 'football/college-football', 'team', '#b45309', 'sp_amf', 'NCAA'],
   ['irl', 'IndyCar', 'racing/irl', 'f1', '#0891b2', 'sp_f1', 'Corridas nos EUA'],
   ['olimpiadas', 'Olimpíadas', '', 'oly', '#eab308', 'sp_oly', 'Datas, contagem e quadro de medalhas']];
-const SPK = Object.fromEntries(SP.map(x => [x[0], x]));
+const SPK = Object.fromEntries(SP.map(x => [x[0], x])); SPK.ufc = SPK.mma; // o UFC passou a estar dentro do MMA
 const spOf = k => SPK[k] || null;
 
 /* ESPN: primeiro direto; se o aparelho não conseguir, pelo servidor do Prumo (api/futebol aceita os desportos da ESPN) */
@@ -173,14 +173,21 @@ const tenPage = sp => { const j = need('b:' + sp[0], 3e4, () => API.board(sp)); 
     return `<section class="sp-f1" style="--sc:${sp[4]}"><span class="sp-ok">Torneio</span><h2>${esc(e.name || '')}</h2><p>${esc(e.date ? 'Desde ' + new Date(e.date).toLocaleDateString('pt-PT', { day: 'numeric', month: 'long' }) : '')}</p></section>`
       + (lv.length ? sec('Ao vivo', `<div class="sp-ms">${lv.map(mt).join('')}</div>`) : '') + (up.length ? sec('A seguir', `<div class="sp-ms">${up.slice(0, 12).map(mt).join('')}</div>`) : '') + (dn.length ? sec('Resultados', `<div class="sp-ms">${dn.slice(0, 16).map(mt).join('')}</div>`) : ''); }).join(''); };
 
-/* ---------- UFC ---------- */
-const mmaPage = sp => { const j = need('b:' + sp[0], 6e4, () => API.board(sp)); if (!j) return errBox('b:' + sp[0]) || loading('A buscar o evento…');
-  const e = (j.events || [])[0]; if (!e) return `<div class="sp-empty">${spIc(sp, 1)}<b>Sem eventos marcados</b></div>`;
-  const C = (e.competitions || []).slice().reverse(), main = C[0];
+/* ---------- MMA: UFC, PFL, LFA, Cage Warriors, Bellator, KSW, Rizin (ESPN) ---------- */
+const MMAORG = [['ufc', 'UFC'], ['pfl', 'PFL'], ['lfa', 'LFA'], ['cage-warriors', 'Cage Warriors'], ['bellator', 'Bellator'], ['ksw', 'KSW'], ['rizin', 'Rizin']];
+const mmaBoard = o => need('mma:' + o, 10 * 6e4, () => get(SITE + 'mma/' + o + '/scoreboard', 6e4));
+const mmaEv = j => ((j && j.events) || [])[0] || null;
+const mmaBody = (sp, e, org) => { const C = (e.competitions || []).slice().reverse(), main = C[0], stt = ((e.status || {}).type || {}).state, past = stt === 'post' || (stt !== 'in' && Date.parse(e.date) < Date.now() - 864e5);
   const ftr = x => { const a = x.athlete || {}; return `<div class="sp-fx${x.winner ? ' win' : ''}">${img((a.flag || {}).href, 'sp-fl', '')}<b>${esc(a.displayName || '')}</b><small>${esc(((x.records || [])[0] || {}).summary || '')}</small></div>`; };
-  return `<section class="sp-f1" style="--sc:${sp[4]}"><span class="sp-ok">${e.status && e.status.type && e.status.type.state === 'in' ? '<span class="sp-gs on"><i></i>Ao vivo</span>' : 'Próximo evento'}</span><h2>${esc(e.name || '')}</h2><p>${esc(dayL(Date.parse(e.date)))}${(e.venues || [])[0] ? ' · ' + esc(e.venues[0].fullName || '') : ''}</p>
-    ${main ? `<div class="sp-main"><span>Combate principal · ${esc((main.type || {}).abbreviation || '')}</span><div class="sp-vs">${(main.competitors || []).map(ftr).join('<em>vs</em>')}</div></div>` : ''}</section>`
-    + sec('Combates', `<div class="sp-ms">${C.slice(1).map(c => `<div class="sp-m${c.status.type.state === 'in' ? ' live' : ''}"><small>${esc((c.type || {}).abbreviation || '')}${c.status.type.state === 'post' ? ' · ' + esc(c.status.type.shortDetail || '') : ''}</small>${(c.competitors || []).map(ftr).join('')}</div>`).join('')}</div>`); };
+  return `<section class="sp-f1" style="--sc:${sp[4]}"><span class="sp-ok">${stt === 'in' ? '<span class="sp-gs on"><i></i>Ao vivo</span>' : past ? 'Último evento' : 'Próximo evento'} · ${esc(org)}</span><h2>${esc(e.name || '')}</h2><p>${esc(past ? new Date(e.date).toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : dayL(Date.parse(e.date)))}${(e.venues || [])[0] ? ' · ' + esc(e.venues[0].fullName || '') : ''}</p>
+    ${main ? `<div class="sp-main"><span>Combate principal${(main.type || {}).abbreviation ? ' · ' + esc(main.type.abbreviation) : ''}</span><div class="sp-vs">${(main.competitors || []).map(ftr).join('<em>vs</em>')}</div></div>` : ''}</section>`
+    + (C.length > 1 ? sec('Combates', `<div class="sp-ms">${C.slice(1).map(c => `<div class="sp-m${((c.status || {}).type || {}).state === 'in' ? ' live' : ''}"><small>${esc((c.type || {}).abbreviation || '')}${((c.status || {}).type || {}).state === 'post' ? ' · ' + esc(c.status.type.shortDetail || '') : ''}</small>${(c.competitors || []).map(ftr).join('')}</div>`).join('')}</div>`) : ''); };
+const mmaPage = sp => { const S = UIst(), now = Date.now(), B = MMAORG.map(([o, l]) => ({ o, l, e: mmaEv(mmaBoard(o)) })), any = B.some(x => x.e);
+  if (!any && MMAORG.every(([o]) => !DATA['mma:' + o] && !ERR['mma:' + o])) return loading('A buscar os eventos…');
+  const rank = x => !x.e ? 3e15 : Date.parse(x.e.date) >= now - 864e5 ? Date.parse(x.e.date) : 2e15 - Date.parse(x.e.date), L = B.slice().sort((a, b) => rank(a) - rank(b));
+  const cur = L.find(x => x.o === S.mma) || L[0];
+  const chips = `<div class="sp-vbc" role="list">${L.map(x => { const d = x.e && Date.parse(x.e.date), fut = d && d >= now - 864e5; return `<button type="button" class="${x.o === cur.o ? 'on ' : ''}${!x.e || !fut ? 'post' : ''}" data-act="dsMma" data-o="${x.o}" aria-pressed="${x.o === cur.o}"><b>${esc(x.l)}</b><small>${!x.e ? (DATA['mma:' + x.o] ? 'Sem eventos' : 'A carregar…') : fut ? (((x.e.status || {}).type || {}).state === 'in' ? '<i></i>Ao vivo' : esc(dayL(d))) : 'Último: ' + esc(new Date(d).toLocaleDateString('pt-PT', { month: 'short', year: 'numeric' }))}</small></button>`; }).join('')}</div>`;
+  return chips + (errBox('mma:' + cur.o) || '') + (cur.e ? mmaBody(sp, cur.e, cur.l) : `<div class="sp-empty">${spIc(sp, 1)}<b>Sem eventos marcados</b><small>Escolhe outra organização em cima.</small></div>`); };
 
 /* ---------- golfe ---------- */
 const golfPage = sp => { const j = need('b:' + sp[0], 6e4, () => API.board(sp)); if (!j) return errBox('b:' + sp[0]) || loading('A buscar o torneio…');
@@ -338,7 +345,7 @@ const watchEv = e => { if (!e.h || !e.a || !e.d) return; const k = e.lg + ':' + 
     const t = side && ptsMsg(e, side, side === e.h ? hs - ph : as - pa); if (t) say(t, vsL(e), k + ':' + c.s); }
   if (a.ini && /HALFTIME/.test(c.sn) && !/HALFTIME/.test(p.sn || '')) say('Intervalo', vsL(e), k + ':int');
   if (a.fim && p.st !== 'post' && c.st === 'post') { const me = isMine(e.lg, e.h.id) ? e.h : isMine(e.lg, e.a.id) ? e.a : null; say(me ? (me.w ? 'Vitória · ' : (e.h.w || e.a.w) ? 'Derrota · ' : 'Terminou · ') + me.sn : 'Terminou', vsL(e), k + ':fim'); } };
-const BIG = /^(RAC|SPR|Q2|Race|Sprint|Qual)$/;
+const BIG = /^(RAC|SPR|Q2|Race|Sprint|Qual|EV)$/;
 const watchSess = (lg, gp, S) => { const a = avS(), now = Date.now(), L = ((spOf(lg) || [])[1] || '') + ' · ' + gp;
   S.forEach(x => { if (!BIG.test(x.ab) || !x.d) return; const k = lg + ':' + x.ab + ':' + x.d, p = SEEN[k] || {}; p.at = now; SEEN[k] = p;
     if (a.pre && !p.pre && x.d - now <= 15 * 6e4 && x.d - now > 0) { p.pre = 1; say(x.n + ' daqui a 15 minutos', L, k + ':pre'); }
@@ -363,6 +370,8 @@ const tick = async () => { if (busy) return; busy = true; let hot = false, soon 
       if (g) { g.sess.forEach(x => { if (mgLive(x)) hot = true; else if (x.d - now < 30 * 6e4 && x.d > now) soon = true; }); watchSess('motogp', gpName(g.n), g.sess.map(x => ({ ab: x.ab, n: MSESS[x.ab] || x.n, d: x.d }))); }
       const R = D.res, rs = R && (R.s || []).find(x => x.ab === 'RAC'), gg = R && (D.gps || []).find(x => x.sn === R.sn), rac = gg && gg.sess.find(x => x.ab === 'RAC');
       if (rs && rs.rows[0] && rac && now - rac.d < 8 * 36e5) winOnce('motogp:win:' + R.sn, 'Vencedor: ' + rs.rows[0].n, 'MotoGP · ' + gpName(R.n)); } catch (x) { } }
+    if (bell.includes('mma')) await Promise.all(MMAORG.map(async ([o, l]) => { try { const j = await get(SITE + 'mma/' + o + '/scoreboard', 6e4); DATA['mma:' + o] = { at: Date.now(), v: j }; const e = mmaEv(j); if (!e) return; const d = Date.parse(e.date);
+      if (((e.status || {}).type || {}).state === 'in') hot = true; else if (d - now < 30 * 6e4 && d > now) soon = true; watchSess('mma', l, [{ ab: 'EV', n: e.name || l, d }]); } catch (x) { } }));
     saveSeen(); } finally { busy = false; HOT = hot; SOON = soon; }
   if (/^#esportes/.test(location.hash)) OS.request(); };
 // de quanto em quanto tempo: 15 s com um jogo teu a decorrer, 1 min perto do começo, 5 min no resto (com a janela escondida só quando há jogo)
@@ -376,7 +385,7 @@ const agoL = t => { const m = Math.round((Date.now() - t) / 6e4); return m < 1 ?
 const avPanel = () => { const a = avS(), perm = 'Notification' in window ? Notification.permission : 'na';
   return `<section class="sp-sec sp-av"><div class="sp-sh"><h3>Avisos</h3>${perm === 'granted' ? `<span class="sp-avok">${UI.ic('check')}Ligados neste aparelho</span>` : perm === 'na' ? '' : `<button type="button" class="btn sm" data-act="dsNotif">${UI.ic('bell')}Ligar neste aparelho</button>`}</div>
     <div class="sp-avt">${[['pre', '15 minutos antes'], ['ini', 'Começo do jogo'], ['pts', 'Golos, pontos e sets'], ['fim', 'Resultado final']].map(([k, l]) => `<label class="sp-sw"><input type="checkbox" data-act="dsAv" data-k="${k}" ${a[k] ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
-    <p class="sp-note">Das equipas que segues: golo no hóquei, touchdown na NFL, corrida no basebol e set no voleibol; no basquetebol, o começo, o intervalo e o fim. Na Fórmula 1 e na MotoGP, toca no sino. Os golos do futebol estão no Futebol. Chegam com o Prumo aberto (no computador, também em segundo plano).</p>
+    <p class="sp-note">Das equipas que segues: golo no hóquei, touchdown na NFL, corrida no basebol e set no voleibol; no basquetebol, o começo, o intervalo e o fim. Na Fórmula 1, na MotoGP e no MMA, toca no sino. Os golos do futebol estão no Futebol. Chegam com o Prumo aberto (no computador, também em segundo plano).</p>
     ${FEED.length ? `<ul class="sp-feed">${FEED.slice(0, 5).map(f => `<li><span class="sp-fi">${UI.ic('bell')}</span><span><b>${esc(f.title)}</b> ${esc(f.body)}</span><small>${esc(agoL(f.at))}</small></li>`).join('')}</ul>` : ''}</section>`; };
 
 /* ---------- início: ao vivo, as tuas equipas, os desportos, Olimpíadas ---------- */
@@ -407,12 +416,12 @@ const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), tea
   return hero + sec('As tuas equipas', tcards) + avPanel() + oly + sec('Desportos', sports) + (live.length > 2 ? sec('Ao vivo agora', `<div class="sp-gg">${live.slice(2, 14).map(e => card(e, { lg: 1 })).join('')}</div>`) : ''); };
 
 /* ---------- página ---------- */
-V.esportes = sub => { const k = sub || ''; if (k === 'futebol') { setTimeout(() => { location.hash = 'futebol'; }, 0); return loading('A abrir o Futebol…'); }
+V.esportes = sub => { const k = sub === 'ufc' ? 'mma' : sub || ''; if (k === 'futebol') { setTimeout(() => { location.hash = 'futebol'; }, 0); return loading('A abrir o Futebol…'); }
   const sp = spOf(k), nav = `<nav class="sp-nav" aria-label="Desportos"><a href="#esportes" class="${!k ? 'on' : ''}">${UI.ic('home')}Início</a>${SP.map(x => `<a href="${x[0] === 'futebol' ? '#futebol' : '#esportes.' + x[0]}" class="${k === x[0] ? 'on' : ''}" style="--sc:${x[4]}">${UI.ic(x[5])}${esc(x[1])}</a>`).join('')}</nav>`;
   let body;
   if (!sp) body = hub();
   else { const on = st().mine.includes(sp[0]);
-    const head = sp[3] === 'oly' ? '' : `<section class="sp-shd" style="--sc:${sp[4]}">${spIc(sp, 1)}<div><h2>${esc(sp[1])}</h2><p>${esc(sp[6])}</p></div><span class="sp-hb">${sp[3] === 'f1' && sp[0] === 'f1' || sp[3] === 'moto' ? (b => `<button type="button" class="btn sm sp-bell${b ? ' on' : ''}" data-act="dsBell" data-sp="${sp[0]}" aria-pressed="${b}" title="Avisar 15 minutos antes e quando começam a qualificação, o sprint e a corrida">${UI.ic('bell')}${b ? 'Avisos ligados' : 'Avisar'}</button>`)((st().bell || []).includes(sp[0])) : ''}<button type="button" class="btn sm sp-fav${on ? ' on' : ''}" data-act="dsMine" data-sp="${sp[0]}" aria-pressed="${on}">${UI.ic(on ? 'check' : 'star')}${on ? 'Nos teus desportos' : 'Juntar aos meus'}</button></span></section>`;
+    const head = sp[3] === 'oly' ? '' : `<section class="sp-shd" style="--sc:${sp[4]}">${spIc(sp, 1)}<div><h2>${esc(sp[1])}</h2><p>${esc(sp[6])}</p></div><span class="sp-hb">${sp[3] === 'f1' && sp[0] === 'f1' || sp[3] === 'moto' || sp[3] === 'mma' ? (b => `<button type="button" class="btn sm sp-bell${b ? ' on' : ''}" data-act="dsBell" data-sp="${sp[0]}" aria-pressed="${b}" title="${sp[3] === 'mma' ? 'Avisar 15 minutos antes e quando começa o evento' : 'Avisar 15 minutos antes e quando começam a qualificação, o sprint e a corrida'}">${UI.ic('bell')}${b ? 'Avisos ligados' : 'Avisar'}</button>`)((st().bell || []).includes(sp[0])) : ''}<button type="button" class="btn sm sp-fav${on ? ' on' : ''}" data-act="dsMine" data-sp="${sp[0]}" aria-pressed="${on}">${UI.ic(on ? 'check' : 'star')}${on ? 'Nos teus desportos' : 'Juntar aos meus'}</button></span></section>`;
     body = head + (sp[3] === 'team' ? teamPage(sp) : sp[3] === 'f1' ? f1Page(sp) : sp[3] === 'ten' ? tenPage(sp) : sp[3] === 'mma' ? mmaPage(sp) : sp[3] === 'golf' ? golfPage(sp) : sp[3] === 'moto' ? motoPage(sp) : sp[3] === 'vb' ? vbPage(sp) : sp[3] === 'oly' ? olyPage() : ''); }
   return UI.head('Desportos', 'O futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.', '', 'Eu') + (sp ? nav : '') + `<div class="sp">${body}</div>`; };
 
@@ -427,9 +436,10 @@ A.dsFollow = b => { const s = st(), lg = b.dataset.sp, id = b.dataset.id, sp = s
     s.teams.push(Object.assign({ lg, id, n: t.n, ab: t.ab, logo: t.logo, c: t.c || '' }, lg === 'volei' ? { t: t.t, nat: !!t.nat, g: t.g ? 1 : 0 } : {})); if (!s.mine.includes(lg)) s.mine.push(lg); save(); UI.toast('A seguir ' + t.n, 'pos'); }
   OS.request(); loop(1500); };
 A.dsVb = b => { UIst().vb = b.dataset.no; OS.request(); };
+A.dsMma = b => { UIst().mma = b.dataset.o; OS.request(); };
 A.dsAv = b => { const s = st(); s.av = Object.assign({}, avS(), { [b.dataset.k]: b.checked ? 1 : 0 }); save(); };
 A.dsBell = b => { const s = st(), k = b.dataset.sp, B = s.bell || []; s.bell = B.includes(k) ? B.filter(x => x !== k) : B.concat(k); save();
-  if (s.bell.includes(k)) { UI.toast((spOf(k) || [])[1] + ': avisamos 15 minutos antes e quando começam a qualificação, o sprint e a corrida', 'pos'); if ('Notification' in window && Notification.permission === 'default') A.dsNotif(); }
+  if (s.bell.includes(k)) { UI.toast((spOf(k) || [])[1] + (k === 'mma' ? ': avisamos 15 minutos antes e quando começa cada evento' : ': avisamos 15 minutos antes e quando começam a qualificação, o sprint e a corrida'), 'pos'); if ('Notification' in window && Notification.permission === 'default') A.dsNotif(); }
   else UI.toast('Avisos da ' + (spOf(k) || [])[1] + ' desligados', 'pos'); OS.request(); loop(1500); };
 A.dsNotif = async () => { if (!('Notification' in window)) return UI.toast('Este aparelho não deixa o app mandar avisos. No iPhone, instala o Prumo no ecrã principal.', 'warn');
   const p = await Notification.requestPermission(); UI.toast(p === 'granted' ? 'Avisos ligados neste aparelho' : 'Os avisos ficam só dentro do app (o aparelho não deu autorização)', p === 'granted' ? 'pos' : 'warn'); OS.request(); };
