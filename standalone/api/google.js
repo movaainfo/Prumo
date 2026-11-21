@@ -24,11 +24,11 @@ const pool = async (items, n, fn) => { const out = []; let i = 0; await Promise.
 const linkPath = (uid, pid) => 'g/' + uid + '/' + pid;
 
 /* ---------- quem pede: sessão válida e perfil desta conta (como em api/dados) ---------- */
-const checkProfile = async (t, pid) => { const k = t.u + '|' + t.v + '|' + pid, c = OKS.get(k); if (c && Date.now() - c < 30e3) return true;
+const checkProfile = async (t, pid) => { const k = t.u + '|' + t.v + '|' + pid, c = OKS.get(k); if (c && Date.now() - c.at < 30e3) { await N.gate(c.em); return true; }
   const g = await N.store().get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
   if (!r || r.uid !== t.u || (r.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   if (!(r.perfis || []).some(x => x.id === pid)) throw N.err('perfil', 'Este perfil já não existe.', 404);
-  OKS.set(k, Date.now()); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); return true; };
+  OKS.set(k, { at: Date.now(), em: r.email }); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); await N.gate(r.email); return true; };
 
 /* ---------- state assinado: diz ao regresso do Google a que perfil pertence a autorização ---------- */
 const stateTag = async body => N.crypto.createHmac('sha256', await N.master()).update('google:' + body).digest().subarray(0, 18);

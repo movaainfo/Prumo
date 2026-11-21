@@ -9,7 +9,7 @@
 // quem deu a assistência e os cartões. As assistências vêm do resumo de cada jogo, lido só quando há golo novo (memória da função).
 // só GET, só a própria app, no máximo 10 s e 3 MB por pedido e 600 pedidos por minuto por endereço (abrir o Futebol pela primeira vez faz muitos pedidos de uma vez). Não guarda nada.
 'use strict';
-const OK = /^https:\/\/(oceanum|nautilo|prumo)(-[a-z0-9-]+)?\.vercel\.app$/, HITS = new Map();
+const OK = /^https:\/\/(prumo-vida|nautilo-app|oceanum-rho|(prumo|nautilo|oceanum)-movaa|prumo-movaa-info|prumo-git-[a-z0-9-]{1,60}-movaa-info|prumo-[a-z0-9]{9}-movaa-info)\.vercel\.app$/, HITS = new Map();
 const ALLOW = /^https:\/\/(site\.api\.espn\.com\/apis\/(site\/v2|v2)\/sports\/(soccer|basketball|football|baseball|hockey|racing|tennis|mma|golf)\/[a-z0-9._-]+\/[a-z0-9/._-]*(\?[a-zA-Z0-9=&%._:-]*)?|site\.web\.api\.espn\.com\/apis\/search\/v2\?[a-zA-Z0-9=&%._+~:-]*|sports\.core\.api\.espn\.com\/v2\/sports\/soccer\/leagues\/[a-z0-9._-]+(\?[a-zA-Z0-9=&%._:-]*)?)$/;
 const UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
 // canais oficiais com jogos de graça no YouTube (com os direitos de transmissão): nome a mostrar → id do canal

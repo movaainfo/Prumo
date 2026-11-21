@@ -40,8 +40,9 @@ const api = async (path, opt = {}, tries = 3) => { let last = null;
     try { const r = await fetch('api/' + path, Object.assign({ cache: 'no-store', credentials: 'omit' }, opt)); let j = null; try { j = await r.json(); } catch (e) { }
       if (j && j.ok) return j;
       const e = new Error((j && j.msg) || (r.status === 404 ? 'O servidor das contas não respondeu.' : r.status === 402 ? 'O servidor do Prumo está parado pela Vercel (limite do plano). Os teus dados continuam guardados neste aparelho e voltam a sincronizar quando o servidor voltar.' : 'Erro ' + r.status)); e.status = r.status; e.code = j && j.code;
+      if (e.code === 'manutencao') { e.ate = j.ate; try { Acc.manut && Acc.manut.show(j.ate); } catch (x) { } throw e; }   /* v3.62 */
       if (r.status < 500 && r.status !== 429) throw e; last = e; }
-    catch (e) { if (e.status && e.status < 500 && e.status !== 429) throw e; last = e.status ? e : Object.assign(new Error('Sem ligação à internet.'), { net: true }); }
+    catch (e) { if (e.code === 'manutencao' || (e.status && e.status < 500 && e.status !== 429)) throw e; last = e.status ? e : Object.assign(new Error('Sem ligação à internet.'), { net: true }); }
     await new Promise(res => setTimeout(res, 600 * (i + 1))); }
   throw last; };
 const conta = (op, body = {}) => api('conta', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, S ? { authorization: 'Bearer ' + S.t } : {}), body: JSON.stringify(Object.assign({ op }, body)) });
@@ -273,7 +274,7 @@ const view = () => {
       <div class="ac-code" id="acRec">${esc(gRec)}</div><div class="ac-row"><button class="ac-btn ghost" type="button" data-ac="copiar">Copiar</button><button class="ac-btn" type="button" data-ac="guardei">Já guardei</button></div></div>`;
   const tabs = `<div class="ac-tabs" role="tablist"><button role="tab" aria-selected="${m === 'entrar'}" class="${m === 'entrar' ? 'on' : ''}" data-ac="m" data-v="entrar">Entrar</button><button role="tab" aria-selected="${m === 'criar'}" class="${m === 'criar' ? 'on' : ''}" data-ac="m" data-v="criar">Criar conta</button></div>`;
   if (m === 'criar') return `<form class="ac-card" data-acf="criar">${tabs}
-      ${field('nome', 'O teu nome', 'text', 'maxlength="40" autocomplete="name" required')}${field('email', 'E-mail', 'email', 'autocomplete="email" required')}${field('senha', 'Senha', 'password', 'minlength="8" autocomplete="new-password" required placeholder="pelo menos 8 caracteres"')}
+      ${field('nome', 'O teu nome', 'text', 'maxlength="40" autocomplete="name" required')}<input class="ac-hp" name="site" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">${field('email', 'E-mail', 'email', 'autocomplete="email" required')}${field('senha', 'Senha', 'password', 'minlength="8" autocomplete="new-password" required placeholder="pelo menos 8 caracteres"')}
       <p class="ac-sub">Os teus dados ficam na tua conta, cifrados, e aparecem iguais no telemóvel e no computador. Podes ter até 5 perfis.</p>${OS.Legal ? OS.Legal.checks() : ''}${msg}
       <button class="ac-btn wide" type="submit" ${gBusy ? 'disabled' : ''}>${gBusy ? 'A criar…' : 'Criar conta'}</button></form>`;
   if (m === 'termos') return `<form class="ac-card" data-acf="termos"><h2>Antes de continuar</h2>
@@ -335,7 +336,7 @@ async function onSubmit(e) { const f = e.target.closest('form[data-acf]'); if (!
     if (kind === 'termos') { const t = OS.Legal ? OS.Legal.read(f) : null; if (!t) throw new Error('Para continuar, marca as três caixas.'); const j = await conta('termos', t); takeConta(j);
       if (!booting || !cur()) { set('perfis'); return; } hideGate(); OS.request && OS.request(); return; }
     if (kind === 'criar') { const t = OS.Legal ? OS.Legal.read(f) : {}; if (!t) throw new Error('Para criar a conta, marca as três caixas: termos e privacidade, dados de saúde e de fé, e idade.');
-      const email = v('email').trim().toLowerCase(), j = await conta('registar', Object.assign({ email, senha: v('senha'), nome: v('nome') }, t)); afterLogin(j, email); gRec = j.recuperacao; S.novo = v('nome'); saveS(); set(j.verificar ? 'verificar' : 'codigo-rec'); return; }
+      const email = v('email').trim().toLowerCase(), j = await conta('registar', Object.assign({ email, senha: v('senha'), nome: v('nome'), site: v('site') || '' }, t)); afterLogin(j, email); gRec = j.recuperacao; S.novo = v('nome'); saveS(); set(j.verificar ? 'verificar' : 'codigo-rec'); return; }
     if (kind === 'verificar') { const j = await conta('verificarEmail', { codigo: v('codigo') }); takeConta(j); set(gRec ? 'codigo-rec' : needTerms() ? 'termos' : profiles().length ? 'perfis' : 'novo'); return; }
     if (kind === 'recuperar') { const email = v('email').trim().toLowerCase(), j = await conta('recuperar', { email, codigo: v('codigo'), nova: v('nova') }); afterLogin(j, email); gRec = j.recuperacao; set('codigo-rec'); return; }
     if (kind === 'novo') { const lk = await code(), j = await conta('perfil', { acao: 'criar', perfil: { nome: v('nome'), cor: val('cor'), av: val('av'), img: v('img'), lk, pin: isPin ? 6 : 0 } }); takeConta(j); set('perfis'); return; }
@@ -503,7 +504,7 @@ OS.views.admin = () => { const UI = OS.UI, head = UI.head('Administração', 'Qu
     ${L.map((c, i) => { const d7 = D7.reduce((m, d) => m + ((c.dias || {})[d] || 0), 0), P = c.perfis || [];
       return `<button class="adm-r${c.online ? ' is-on' : ''}" role="row" data-act="admOne" data-i="${i}" data-uid="${esc(c.uid || '')}" data-q="${esc((c.nome + ' ' + c.email + ' ' + P.join(' ')).toLowerCase())}"><span role="cell" class="adm-who"><b>${esc(c.nome || P[0] || '—')}${c.admin ? ' <small class="mu-tag">admin</small>' : ''}</b><small>${esc(c.email)}</small>${plTag(c.plano)}<small class="mut">${P.length} ${P.length === 1 ? 'perfil' : 'perfis'}${P.length ? ': ' + esc(P.join(', ')) : ''}</small></span>
         <span role="cell"><em>Último acesso</em><span class="adm-ua" data-t="${c.ultUso || c.ultEntrada || ''}" data-on="${c.online ? '1' : ''}">${liveCell(c.ultUso || c.ultEntrada, c.online)}</span></span><span role="cell"><em>Última entrada</em><span class="adm-ue" data-t="${c.ultEntrada || ''}">${ago(c.ultEntrada)}</span>${c.entradas ? ` <small class="mut" title="logins com e-mail e senha">(${c.entradas} ${c.entradas === 1 ? 'login' : 'logins'})</small>` : ''}</span><span role="cell" class="mono"><em>Hoje</em><span class="adm-hj">${hmin((c.dias || {})[t] || 0)}</span></span><span role="cell"><em>7 dias</em>${bars(c.dias || {}, 7, 22)} <small class="mono">${hmin(d7)}</small></span><span role="cell"><em>Criada</em>${c.criado ? new Date(c.criado).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</span></button>`; }).join('') || '<p class="mut" style="padding:12px">Ainda não há contas.</p>'}</div></div>
-  ${spPn()}${cupPn()}${pendPn()}${pedidosPn()}
+  ${manPn()}${spPn()}${cupPn()}${pendPn()}${pedidosPn()}
   <div class="pn"><div class="pn-h"><h3>${UI.ic('lock')}O teu cofre de Senhas</h3></div><p class="mut" style="margin:0 0 10px">A senha mestra do teu cofre muda-se no próprio cofre (pede a atual). O cofre de cada pessoa está cifrado no aparelho dela com a senha mestra dela, que nunca sai de lá: ninguém o consegue abrir nem mudar, nem a administração. É isso que o protege.</p><button class="btn sm" data-act="admVault">${UI.ic('lock')}Mudar a senha mestra do meu cofre</button></div>
   <p class="mut adm-note">Atualizado <span id="admAt">${ago(ADM.vivoAt || ADM.at)}</span> (sozinho, a cada 20 s). O tempo de uso conta os minutos com o Prumo aberto e à vista (desbloqueado). Estes dados estão descritos na Política de Privacidade.</p></div>`; };
 A.admVault = () => { OS.setUI('vltMx', 1); OS.go('senhas'); };
@@ -580,10 +581,45 @@ OS.forms.admDel = async (f, v) => { const c = ADM && ADM.contas[+f.dataset.i]; i
   const bt = f.querySelector('button'); bt.disabled = true; bt.textContent = 'A apagar…';
   try { await conta('adminApagar', { email: c.email, senha: v('senha') }); ADM.contas = ADM.contas.filter(x => x !== c); ADM.total = ADM.contas.length; OS.UI.closeModal(); OS.UI.toast('Conta apagada: ' + c.email, 'pos'); OS.request(); }
   catch (e) { bt.disabled = false; bt.textContent = 'Apagar a conta'; OS.UI.toast(e.message || 'Não consegui apagar a conta.', 'neg'); } };
-A.admCsv = () => { if (!ADM) return; const D = lastDays(30), q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+A.admCsv = () => { if (!ADM) return; const D = lastDays(30), q = v => { let x = String(v == null ? '' : v); if (typeof v === 'string' && /^[=+\-@\t\r]/.test(x)) x = "'" + x; return '"' + x.replace(/"/g, '""') + '"'; };   // v3.62: um nome a começar por = não vira fórmula no Excel
   const rows = [['Nome', 'E-mail', 'Perfis', 'Criada', 'Última entrada', 'Último acesso', 'Último login', 'Logins', 'Minutos no total'].concat(D)].concat(ADM.contas.map(c => [c.nome, c.email, (c.perfis || []).join(' / '), c.criado ? new Date(c.criado).toISOString() : '', c.ultEntrada ? new Date(c.ultEntrada).toISOString() : '', c.ultUso ? new Date(c.ultUso).toISOString() : '', c.login ? new Date(c.login).toISOString() : '', c.entradas || 0, c.tot || 0].concat(D.map(d => (c.dias || {})[d] || 0))));
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + rows.map(r => r.map(q).join(';')).join('\n')], { type: 'text/csv;charset=utf-8' })); a.download = 'prumo-contas-' + today() + '.csv'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); };
 document.addEventListener('input', e => { if (e.target.id !== 'admQ') return; const q = e.target.value.trim().toLowerCase(); document.querySelectorAll('.adm-r[data-q]').forEach(r => { r.hidden = !!q && !r.dataset.q.includes(q); }); });
+/* ---------- v3.62: manutenção (janela semanal de madrugada ou ligada pela administração): ecrã que tapa a app; a administração só vê um aviso ---------- */
+const MAN = { on: false, ate: 0, prox: 0, motivo: '', poll: 0, warned: 0 };
+const manH = t => new Date(t).toLocaleTimeString(OS.loc ? OS.loc() : 'pt-PT', { hour: '2-digit', minute: '2-digit' });
+const manD = t => new Date(t).toLocaleString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long', hour: '2-digit', minute: '2-digit' });
+Acc.manut = {
+  state: () => MAN,
+  show(ate) { if (Acc.adm()) return; MAN.on = true; MAN.ate = +ate || MAN.ate || Date.now() + 30 * 60e3; let el = document.getElementById('manut');
+    if (!el) { el = document.createElement('div'); el.id = 'manut'; el.className = 'mn'; document.body.appendChild(el); el.addEventListener('click', e => { if (e.target.closest('[data-mn]')) Acc.manut.check(); }); }
+    el.innerHTML = `<div class="mn-box" role="alertdialog" aria-modal="true" aria-labelledby="mnT" aria-describedby="mnD"><div class="mn-ic" aria-hidden="true">${OS.UI && OS.UI.ic ? OS.UI.ic('shield') : ''}</div><h2 id="mnT">O Prumo está em manutenção</h2>
+      <p id="mnD">Estamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às <b>${manH(MAN.ate)}</b>.</p><p class="mut">Os teus dados estão guardados, no aparelho e no servidor. Não precisas de fazer nada: a app volta sozinha.</p>
+      <button type="button" class="btn" data-mn="1">Ver se já voltou</button></div>`;
+    el.hidden = false; document.documentElement.classList.add('mn-on'); clearInterval(MAN.poll); MAN.poll = setInterval(() => Acc.manut.check(), 60e3); },
+  hide() { MAN.on = false; clearInterval(MAN.poll); MAN.poll = 0; const el = document.getElementById('manut'); if (el) el.remove(); document.documentElement.classList.remove('mn-on'); OS.request && OS.request(); setTimeout(() => { try { if (OS.Inbox && OS.Inbox.pull) OS.Inbox.pull(false); } catch (e) { } }, 1500); },   /* os gastos do atalho guardados durante a manutenção entram já nas contas */
+  async check() { let j; try { j = await api('conta', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ op: 'manut' }) }, 1); } catch (e) { return MAN; }
+    const m = j.manut || {}; MAN.prox = m.prox || 0; MAN.motivo = m.motivo || '';
+    if (m.on && !Acc.adm()) Acc.manut.show(m.ate); else if (!m.on && MAN.on) Acc.manut.hide(); else { MAN.on = !!m.on; MAN.ate = m.ate || 0; }
+    if (m.on && Acc.adm() && !MAN.warned) { MAN.warned = 1; OS.UI.toast('Manutenção ativa até às ' + manH(m.ate) + ': só a tua conta (administração) usa o Prumo.', 'warn'); }
+    if (m.on && Acc.adm()) Acc.manut.fab(m.ate); else Acc.manut.fabOff();
+    return MAN; },
+  // v3.62: na conta de administração, um botão flutuante com a contagem do fim da manutenção (tocar abre a Administração)
+  fab(ate) { MAN.ate = +ate || MAN.ate; let b = document.getElementById('manFab');
+    if (!b) { b = document.createElement('a'); b.id = 'manFab'; b.href = '#admin'; b.className = 'mn-fab'; b.setAttribute('aria-live', 'off'); document.body.appendChild(b); }
+    const tick = () => { const left = MAN.ate - Date.now(); if (left <= 0) { Acc.manut.fabOff(); Acc.manut.check(); return; }
+      const h = Math.floor(left / 36e5), mi = Math.floor(left % 36e5 / 6e4), se = Math.floor(left % 6e4 / 1e3), p2 = n => String(n).padStart(2, '0');
+      b.innerHTML = `${OS.UI.ic('shield')}<span>Manutenção</span><b>${h ? h + ':' : ''}${p2(mi)}:${p2(se)}</b>`; b.setAttribute('aria-label', 'Manutenção ativa: faltam ' + (h ? h + ' h ' : '') + mi + ' min. Abrir a Administração.'); };
+    tick(); clearInterval(MAN.ft); MAN.ft = setInterval(tick, 1000); },
+  fabOff() { clearInterval(MAN.ft); MAN.ft = 0; const b = document.getElementById('manFab'); if (b) b.remove(); } };
+OS.on('ready', () => { if (S && S.t) setTimeout(() => Acc.manut.check(), 1500); setInterval(() => { if (S && S.t && (!MAN.on || Acc.adm())) Acc.manut.check(); }, 5 * 60e3); });
+const manPn = () => { const m = MAN, on = m.on;
+  return `<div class="pn"><div class="pn-h"><h3>${OS.UI.ic('shield')}Manutenção</h3><span class="bdg ${on ? 'warn' : 'pos'}">${on ? 'ativa até às ' + manH(m.ate) : 'desligada'}</span></div>
+    <p class="mut" style="margin:0 0 10px">Na manutenção só a tua conta usa o Prumo; as outras pessoas veem o ecrã de manutenção e os dados ficam parados. Todas as semanas, de madrugada (domingo, 04:00–05:30 em Lisboa), liga-se sozinha para o ataque de teste, a cópia de segurança e a revisão.${m.prox ? ' Próxima: <b>' + esc(manD(m.prox)) + '</b>.' : ''}</p>
+    <div class="row gap8">${on ? `<button class="btn sm" data-act="admManOff">Desligar agora</button>` : `<button class="btn sm" data-act="admManOn" data-min="60">Ligar agora (1 h)</button>`}</div></div>`; };
+A.admManOn = async b => { if (!confirm('Ligar a manutenção durante 1 hora? Só a tua conta fica a usar o Prumo.')) return; b.disabled = true;
+  try { const j = await conta('adminManutencao', { acao: 'ligar', min: +b.dataset.min || 60 }); Object.assign(MAN, j.manut || {}); Acc.manut.fab(MAN.ate); OS.UI.toast('Manutenção ligada até às ' + manH(MAN.ate) + '.', 'warn'); } catch (e) { OS.UI.toast(e.message, 'neg'); } OS.request(); };
+A.admManOff = async b => { b.disabled = true; try { const j = await conta('adminManutencao', { acao: 'desligar' }); Object.assign(MAN, j.manut || {}); Acc.manut.fabOff(); OS.UI.toast('Manutenção desligada.', 'pos'); } catch (e) { OS.UI.toast(e.message, 'neg'); } OS.request(); };
 OS.on('ready', () => Acc.navAdm());
 
 /* ---------- dentro da app ---------- */

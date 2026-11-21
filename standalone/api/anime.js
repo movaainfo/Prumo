@@ -2,7 +2,7 @@
 // (com "data": null) em vez de deixar o navegador com erros de CORS; guarda na CDN (temas e fichas 7 dias, listas 6 horas).
 // Segurança: só endereços do Jikan da lista abaixo (sem endereços vindos de fora), só GET, só a própria app, 8 s por pedido.
 'use strict';
-const OK = /^https:\/\/(oceanum|nautilo|prumo)(-[a-z0-9-]+)?\.vercel\.app$/, HITS = new Map();
+const OK = /^https:\/\/(prumo-vida|nautilo-app|oceanum-rho|(prumo|nautilo|oceanum)-movaa|prumo-movaa-info|prumo-git-[a-z0-9-]{1,60}-movaa-info|prumo-[a-z0-9]{9}-movaa-info)\.vercel\.app$/, HITS = new Map();
 const ALLOW = /^(anime\?[a-zA-Z0-9=&%._+~:-]{1,300}|anime\/\d{1,8}\/(themes|full)|seasons\/\d{4}\/(winter|spring|summer|fall)(\?[a-z0-9=&]{0,60})?|top\/anime(\?[a-z0-9=&]{0,80})?)$/;
 const BASE = () => process.env.JIKAN_BASE || 'https://api.jikan.moe/v4/';
 module.exports = async (req, res) => {

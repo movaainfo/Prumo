@@ -2,7 +2,7 @@
 // (o Yahoo às vezes bloqueia os servidores do Google), a app pede-as aqui: dados públicos do Yahoo Finance.
 // Só símbolos válidos, no máximo 30 por pedido, guardados 30 s; só responde à própria app.
 const CACHE = new Map(), HITS = new Map();
-const OK = /^https:\/\/(oceanum|nautilo|prumo)(-[a-z0-9-]+)?\.vercel\.app$/;
+const OK = /^https:\/\/(prumo-vida|nautilo-app|oceanum-rho|(prumo|nautilo|oceanum)-movaa|prumo-movaa-info|prumo-git-[a-z0-9-]{1,60}-movaa-info|prumo-[a-z0-9]{9}-movaa-info)\.vercel\.app$/;
 module.exports = async (req, res) => {
   const origin = req.headers.origin || '', ref = req.headers.referer || '', site = req.headers['sec-fetch-site'] || '';
   // só a própria app: pedido do mesmo site (o navegador marca-o) ou com origem/referência da app; o resto é recusado

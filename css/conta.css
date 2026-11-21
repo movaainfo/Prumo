@@ -216,3 +216,18 @@ html.esc-on body::after{content:'';position:fixed;inset:0;z-index:2147483646;poi
 .push-cat input{margin-top:3px;accent-color:var(--acc,#c03b3b);width:16px;height:16px;flex:none}
 .push-cat span{display:flex;flex-direction:column;gap:2px;min-width:0}.push-cat b{font-size:14px}.push-cat small{font-size:12px;color:var(--tx3,var(--mut))}
 .push-why{margin:0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--warn,#e0a020) 14%,transparent);font-size:13.5px;line-height:1.45}
+.ac-hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0;pointer-events:none}
+/* v3.62: ecrã de manutenção (tapa a app toda; a administração não o vê) */
+.mn{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:var(--bg);color:var(--tx)}
+.mn-box{max-width:440px;text-align:center}
+.mn-ic{display:inline-flex;width:64px;height:64px;border-radius:50%;align-items:center;justify-content:center;background:var(--card);border:1px solid var(--line);color:var(--accent)}
+.mn-ic svg{width:30px;height:30px}
+.mn h2{font-size:24px;line-height:1.25;margin:16px 0 10px}
+.mn p{margin:0 0 10px;line-height:1.5}
+.mn .btn{margin-top:8px}
+html.mn-on body{overflow:hidden}
+/* v3.62: contagem da manutenção na conta de administração */
+.mn-fab{position:fixed;z-index:9400;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 70px);display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:var(--card);border:1px solid var(--accent);color:var(--tx);text-decoration:none;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.mn-fab svg{width:16px;height:16px;color:var(--accent)}
+.mn-fab b{font-variant-numeric:tabular-nums;color:var(--accent)}
+.mn-fab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

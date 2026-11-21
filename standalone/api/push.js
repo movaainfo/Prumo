@@ -49,11 +49,11 @@ const OKS = new Map();
 const who = async (req, pid) => { const t = await N.readToken(req); if (!t) throw Object.assign(new Error('A sessão terminou. Entra outra vez.'), { status: 401, code: 'sessao' });
   if (!PID.test(pid)) throw Object.assign(new Error('Perfil inválido.'), { status: 400 });
   const k = t.u + '|' + t.v + '|' + pid, c = OKS.get(k);
-  if (!c || Date.now() - c > 30000) { const g = await N.store().get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
+  if (!c || Date.now() - c.at > 30000) { const g = await N.store().get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
     if (!r || r.uid !== t.u || (r.tv || 1) !== t.v) throw Object.assign(new Error('A sessão terminou. Entra outra vez.'), { status: 401, code: 'sessao' });
     if (!(r.perfis || []).some(x => x.id === pid)) throw Object.assign(new Error('Este perfil já não existe.'), { status: 404 });
-    OKS.set(k, Date.now()); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); }
-  return t.u + '|' + pid; };
+    OKS.set(k, { at: Date.now(), em: r.email }); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); }
+  await N.gate((OKS.get(k) || {}).em); return t.u + '|' + pid; };
 
 /* ---------- envio ---------- */
 // mensagens [{ uk, m: { t, b, u, g }, ttl }] → para todos os aparelhos de cada perfil; tira os aparelhos que já não aceitam

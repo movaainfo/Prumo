@@ -3,11 +3,16 @@
 //   POST { op:'preparar', l } → traduz o próximo lote do que falta (só com sessão numa conta) e devolve o progresso
 // Os textos vêm de i18n/strings.json (gerado no build a partir do código). Nada do que as pessoas escrevem passa por aqui.
 'use strict';
-const N = require('./_nuvem');
+const N = require('./_nuvem'), P = require('./_planos');
 const G = 'https://generativelanguage.googleapis.com/v1beta/models/';
 const FREE = () => process.env.NAUTILO_IA_LIVRE || 'https://text.pollinations.ai/openai';
 const gkey = () => String(process.env.GEMINI_API_KEY || '').trim();
-const LANG = /^(pt-BR|zh-TW|[a-z]{2})$/;
+// v3.62: só as línguas que a app oferece (antes qualquer código de 2 letras: dava para gastar a cota da IA a "traduzir" para línguas que não existem)
+const LANGS = new Set(['pt-BR', 'en', 'es', 'fr', 'it', 'de', 'nl', 'ca', 'pl', 'ro', 'ru', 'uk', 'tr', 'el', 'cs', 'sk', 'sl', 'hr', 'sr', 'bs', 'mk', 'bg', 'hu', 'sv', 'no', 'da', 'fi', 'is', 'et', 'lv', 'lt', 'sq', 'hy', 'ka', 'az', 'uz',
+  'ar', 'he', 'fa', 'hi', 'bn', 'ne', 'zh', 'zh-TW', 'ja', 'ko', 'id', 'ms', 'th', 'vi', 'km', 'lo', 'my', 'mn', 'sw', 'am', 'so']);
+const LANG = { test: l => LANGS.has(String(l)) };
+// a lista de textos vem só do próprio site (nunca de um endereço posto num cabeçalho do pedido)
+const HOST_OK = /^(prumo-vida|nautilo-app|oceanum-rho|(prumo|nautilo|oceanum)-movaa|prumo-movaa-info|prumo-git-[a-z0-9-]{1,60}-movaa-info|prumo-[a-z0-9]{9}-movaa-info)\.vercel\.app$/;
 // os modelos que esta chave tem (do melhor para o mais leve); os que falham passam ao seguinte
 const MODELS = (process.env.NAUTILO_LINGUA_MODELS || 'gemini-3.5-flash,gemini-3.1-flash-lite,gemini-3-flash-preview,gemini-3.5-flash-lite,gemini-flash-latest,gemini-flash-lite-latest').split(',');
 const BATCH_N = 160, BATCH_C = 6000;
@@ -17,7 +22,7 @@ let SRC = null, SRC_AT = 0;
 const strings = async req => { if (SRC && Date.now() - SRC_AT < 10 * 60e3) return SRC;
   let j = null; const local = process.env.NAUTILO_STRINGS;
   if (local) j = JSON.parse(require('fs').readFileSync(local, 'utf8'));
-  else { const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim(); if (!/^[a-z0-9.-]+(:\d+)?$/i.test(host)) throw N.err('host', 'Endereço inválido.', 400);
+  else { const h0 = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase(), host = HOST_OK.test(h0) ? h0 : 'prumo-vida.vercel.app';
     const r = await fetch('https://' + host + '/i18n/strings.json', { cache: 'no-store' }); if (!r.ok) throw N.err('strings', 'Sem a lista de textos do app.', 503); j = await r.json(); }
   // os textos já vêm por ordem de importância (o que se vê mais primeiro)
   SRC = { v: j.v, all: (j.s || []).concat(j.p || []) }; SRC_AT = Date.now(); return SRC; };
@@ -55,7 +60,7 @@ const ask = async (l, items) => { const input = {}; items.forEach((s, i) => { in
 const need = s => (s.match(/(^|[^A-Za-zÀ-ÿ])\{\d+\}/g) || []).map(x => x.replace(/^[^{]/, ''));
 const valid = (s, t) => typeof t === 'string' && t.trim() !== '' && need(s).every(p => t.includes(p)) && (t.match(/\{\d+\}/g) || []).every(p => s.includes(p)) && t.length < s.length * 4 + 40;
 
-const BUSY = new Map();
+const BUSY = new Map(), SESS = new Map();
 module.exports = N.handler(async (req, res) => {
   const q = req.method === 'POST' ? await N.body(req) : (req.query || {}), l = String(q.l || '');
   if (!LANG.test(l) || l === 'pt-PT') return N.send(res, 400, { ok: false, msg: 'Língua desconhecida.' });
@@ -68,6 +73,12 @@ module.exports = N.handler(async (req, res) => {
     return res.end(JSON.stringify({ ok: true, l, v: S.v, completo, total: S.all.length, feito, m })); }
   if (q.op !== 'preparar') return N.send(res, 400, { ok: false, msg: 'Pedido desconhecido.' });
   const t = await N.readToken(req); if (!t) return N.send(res, 401, { ok: false, msg: 'Entra numa conta para preparar uma língua nova.' });
+  // v3.62: a sessão tem de valer de verdade (senha não mudada, e-mail confirmado) e a conta tem de ter plano
+  { const c = SESS.get(t.u + '|' + t.v); if (!c || Date.now() - c.at > 120e3) { const g = await N.store().get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
+      if (!r || r.uid !== t.u || (r.tv || 1) !== t.v || r.verif) return N.send(res, 401, { ok: false, msg: 'A sessão terminou. Entra outra vez.' });
+      if (!P.efetivo(r).lvl) return N.send(res, 402, { ok: false, msg: 'Escolhe um plano para preparar uma língua nova.' });
+      SESS.set(t.u + '|' + t.v, { at: Date.now(), em: r.email }); if (SESS.size > 3000) SESS.delete(SESS.keys().next().value); }
+    await N.gate((SESS.get(t.u + '|' + t.v) || {}).em); }
   if (N.limit(req, 'lingua|' + t.u, 40, 60e3)) return N.send(res, 429, { ok: false, msg: 'Devagar: tenta daqui a um minuto.' });
   // um lote de cada vez por língua (nesta instância)
   if (BUSY.get(l) && Date.now() - BUSY.get(l) < 180e3) { const { d } = await load(l), feito = S.all.filter(s => d.m[s] != null).length; return N.send(res, 200, { ok: true, ocupado: true, total: S.all.length, feito, completo: feito >= S.all.length }); }
