@@ -245,8 +245,11 @@ async function inicioTests(b) { cur = 'Página inicial'; console.log('\n=== Pág
   try { await E(p, () => window.scrollTo(0, 0)); await sleep(500); await p.screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'inicio-tel.png') }); } catch (e) { }
   await c.close();
   // servidor e service worker: a raiz só mostra a página a quem não tem a marca, e nunca a guarda no lugar da app
-  const vj = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8')), rw = (vj.rewrites || []).find(r => r.source === '/'), sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-  ok('Servidor: a raiz mostra a página inicial só sem a marca da app (cookie), sem ?app, sem ?loja e fora da app do iPhone', !!rw && rw.destination === '/inicio.html' && ['prumo_app', 'app', 'loja', 'user-agent'].every(k => rw.missing.some(m => m.key === k)));
+  const sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8'), ih = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  ok('Entrada: a primeira coisa da app manda para a página inicial só quem ainda não usa o Prumo (sem marca, sem ?app/?loja, fora da app instalada e sem dados)', ih.indexOf('PrumoEntrada') > -1 && ih.indexOf('PrumoEntrada') < ih.indexOf('<title>') && /og:image/.test(ih));
+  { const k0 = await newPage(b, PROFILES[0]); await k0.p.goto(BASE); await sleep(600);
+    const dv = await E(k0.p, () => { const d = window.PrumoEntrada.deve; return [d({}), d({ marca: true }), d({ query: true }), d({ appLoja: true }), d({ instalada: true }), d({ dados: true })]; });
+    ok('Entrada: quem chega sem nada vai para a página inicial; com a marca, ?app, a app das lojas, a app instalada ou dados guardados abre a app', JSON.stringify(dv) === JSON.stringify([true, false, false, false, false, false]), JSON.stringify(dv)); await k0.ctx.close(); }
   ok('Service worker: a página inicial e os vídeos dela vão sempre à rede e nunca substituem a cópia da app', /inicio\|planos\|apagar-conta/.test(sw) && /x-prumo-pagina/.test(sw));
   const man = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.webmanifest'), 'utf8'));
   ok('App instalada abre a app (start_url com ?app=1), não a página inicial', /\?app=1/.test(man.start_url), man.start_url);

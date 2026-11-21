@@ -23,8 +23,13 @@ cat > "$OUT/index.html" <<HTML
 <html lang="pt">
 <head>
 <meta charset="utf-8">
+<script>$(cat standalone/entrada.js)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Prumo</title>
+<meta property="og:title" content="Prumo · A tua vida, a prumo">
+<meta property="og:description" content="Tarefas, dinheiro, estudos, treino, dieta e metas num só lugar. 14 dias grátis, sem cartão.">
+<meta property="og:image" content="https://prumo-vida.vercel.app/inicio/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="description" content="Prumo — o sistema operativo da tua vida: finanças, estudos, treino, dieta, metas e o jogo Dominus.">
 <meta name="theme-color" content="#070D16">
 <meta name="color-scheme" content="dark">
