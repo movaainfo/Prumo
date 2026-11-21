@@ -1,5 +1,5 @@
 /* Prumo — service worker: abre instantaneamente e funciona sem internet. */
-const V = 'oceanum-69b70e1097';
+const V = 'oceanum-e483cdf488';
 const SHELL = ["manifest.webmanifest","apple-touch-icon.png","favicon-32.png","icon-192.png","icon-512.png","icon-maskable-512.png","selo-96.png","som/intro.mp3","vendor/fonts/11adc6349b.woff2","vendor/fonts/2fed1d1b2e.woff2","vendor/fonts/4667f67516.woff2","vendor/fonts/53a6c32636.woff2","vendor/fonts/63551c15ca.woff2","vendor/fonts/9076820487.woff2","vendor/fonts/9ca58f5002.woff2","vendor/fonts/ANTON-OFL.txt","vendor/fonts/anton-latin-ext.woff2","vendor/fonts/anton-latin.woff2","vendor/fonts/b291d87cd7.woff2","vendor/fonts/bodoni-moda.woff2","vendor/fonts/d0980034bf.woff2","vendor/fonts/e09adcd0ca.woff2","vendor/fonts/e2aaf8d658.woff2","vendor/fonts/f377472eee.woff2"];
 const SHELLKEY = new URL('./', self.registration.scope).href;
 const IMG = 'oceanum-img'; // fotos dos exercícios e dos alimentos: guardadas para funcionarem sem internet
@@ -17,6 +17,7 @@ self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.o
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V && k !== IMG).map(k => caches.delete(k)))).then(() => self.clients.claim())
   .then(() => { fetch(SHELLKEY, { cache: 'no-cache', credentials: 'same-origin' }).then(r => r.ok ? caches.open(V).then(c => c.match(SHELLKEY).then(h => h || c.put(SHELLKEY, r))) : 0).catch(() => { }); })); });
 self.addEventListener('fetch', e => {
+  if (e.request.headers.has('range')) return;   // v3.64: pedidos de áudio/vídeo aos pedaços vão sempre à rede (a cópia inteira fazia o som da intro parar no telemóvel)
   const u = new URL(e.request.url); if (e.request.method !== 'GET') return;
   if (u.searchParams.has('vchk')) return; // verificação de versão: vai sempre à rede
   if (/\/api\//.test(u.pathname)) return; // funções do servidor (cotações, leitor de notícias): sempre à rede, nunca da cache

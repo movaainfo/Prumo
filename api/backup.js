@@ -26,7 +26,7 @@ const run = async (o = {}) => { const s = N.store(); if (!s) return { ok: false,
   const velhos = dias.slice(0, Math.max(0, dias.length - keep));
   for (const d of velhos) { const L = await s.list(root + d + '/'); if (L.length) await s.del(L); }
   const r = { ok: true, tipo: o.semanal ? 'semanal' : 'diaria', dia: day, total: all.length, copiados: n, faltam: falta, erros, apagados: velhos, ms: Date.now() - t0 };
-  console.log('backup ' + JSON.stringify(r)); return r; };
+  console.log('backup ' + JSON.stringify(r)); try { await s.put('cfg/backup-' + r.tipo, Buffer.from(JSON.stringify(r))); } catch (e) { } return r; };
 
 module.exports = async (req, res) => {
   const sec = process.env.CRON_SECRET, auth = String(req.headers.authorization || ''), ua = String(req.headers['user-agent'] || '');

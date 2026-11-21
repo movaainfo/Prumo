@@ -116,7 +116,15 @@ const HITS = new Map();
 // v3.62: registo de segurança (aparece nos registos do Vercel como "SEC {...}"): o endereço vai em hash com sal do dia, nunca em claro
 const ipOf = req => String((req && req.headers && (req.headers['x-real-ip'] || req.headers['x-forwarded-for'])) || (req && req.socket && req.socket.remoteAddress) || '').split(',')[0].trim();
 const ipTag = req => crypto.createHash('sha256').update('ip|' + new Date().toISOString().slice(0, 10) + '|' + ipOf(req)).digest('hex').slice(0, 12);
-const sec = (type, req, extra) => { try { console.warn('SEC ' + JSON.stringify(Object.assign({ t: type, ip: ipTag(req), p: String((req && req.url) || '').split('?')[0].slice(0, 60), ua: String((req && req.headers && req.headers['user-agent']) || '').slice(0, 60) }, extra || {}))); } catch (e) { } };
+// v3.62: contadores para o relatório semanal (sem dados pessoais): ficam em memória e vão para o armazenamento no máximo de 5 em 5 minutos por instância,
+//   cada vez num ficheiro novo (st/<dia>/<instância>-<hora>.json), sem ler nem reescrever nada — um ataque não os transforma em custo
+const CNT = {}, INST = crypto.randomBytes(4).toString('hex'); let LASTF = Date.now(), FLUSHING = false;
+const flushCounts = async (force) => { if (FLUSHING || (!force && Date.now() - LASTF < 300e3)) return; const keys = Object.keys(CNT); if (!keys.length) return;
+  FLUSHING = true; LASTF = Date.now(); const byDay = {}; keys.forEach(k => { const [d, n] = [k.slice(0, 10), k.slice(11)]; (byDay[d] = byDay[d] || {})[n] = CNT[k]; delete CNT[k]; });
+  try { const s = store(); if (s) for (const d of Object.keys(byDay)) await s.put('st/' + d + '/' + INST + '-' + Date.now().toString(36) + '.json', Buffer.from(JSON.stringify(byDay[d]))); } catch (e) { }
+  FLUSHING = false; };
+const count = (k, n = 1) => { try { const key = new Date().toISOString().slice(0, 10) + '|' + String(k).slice(0, 60); CNT[key] = (CNT[key] || 0) + n; flushCounts(); } catch (e) { } };
+const sec = (type, req, extra) => { count('sec:' + type); try { console.warn('SEC ' + JSON.stringify(Object.assign({ t: type, ip: ipTag(req), p: String((req && req.url) || '').split('?')[0].slice(0, 60), ua: String((req && req.headers && req.headers['user-agent']) || '').slice(0, 60) }, extra || {}))); } catch (e) { } };
 // travão simples por endereço (em cada instância do servidor): n pedidos por janela
 const limit = (req, key, n, ms) => { const ip = ipOf(req), k = key + '|' + ip, now = Date.now();
   const h = (HITS.get(k) || []).filter(t => now - t < ms); h.push(now); HITS.set(k, h); if (HITS.size > 5000) HITS.delete(HITS.keys().next().value);
@@ -136,7 +144,7 @@ const handler = (fn, o = {}) => async (req, res) => {
   if (req.method === 'OPTIONS') { res.statusCode = 204; return res.end(); }
   if (!o.open && !store()) return send(res, 503, { ok: false, msg: 'A base de dados das contas ainda não está ligada.' });
   try { await fn(req, res); }
-  catch (e) { const st = e.status && e.status >= 400 && e.status < 600 ? e.status : 500; send(res, st, Object.assign({ ok: false, msg: st === 500 ? 'O servidor não conseguiu fazer isto agora. Tenta outra vez.' : e.message, code: e.code }, e.ate ? { ate: e.ate } : {})); if (st === 500) console.error('nautilo', e.code || '', e.message); } };
+  catch (e) { const st = e.status && e.status >= 400 && e.status < 600 ? e.status : 500; send(res, st, Object.assign({ ok: false, msg: st === 500 ? 'O servidor não conseguiu fazer isto agora. Tenta outra vez.' : e.message, code: e.code }, e.ate ? { ate: e.ate } : {})); if (st === 500) { console.error('nautilo', e.code || '', e.message); count('erro:' + String(req.url || '').split('?')[0].slice(0, 40)); } } };
 
 /* ---------- v3.62: manutenção — janela semanal de madrugada (ataque de teste, cópia de segurança e revisão) e ligada à mão pela administração ----------
    Durante a manutenção só a conta de administração (e as contas de teste @nautilo.test do ataque semanal) usam o servidor; as outras veem o ecrã de manutenção.
@@ -166,4 +174,4 @@ const gate = async email => { if (isAdminEmail(email) || isTeste(email)) return;
 const atalhoTag = async body => crypto.createHmac('sha256', await master()).update('atalho:' + body).digest().subarray(0, 18);
 const atalhoKey = async (eid, pid, n) => { const body = b64u(JSON.stringify({ a: eid, p: pid, n })); return body + '.' + b64u(await atalhoTag(body)); };
 
-module.exports = { manut, setManut, gate, janela, isAdminEmail, isTeste, sec, ipTag, OK_ORIGIN, allowed, atalhoTag, atalhoKey, unb64u, b64u, store, master, userKey, accKey, seal, open, emailId, normEmail, hashPw, checkPw, newCode, normCode, signToken, readToken, limit, body, send, handler, err, sleep, crypto };
+module.exports = { count, flushCounts, manut, setManut, gate, janela, isAdminEmail, isTeste, sec, ipTag, OK_ORIGIN, allowed, atalhoTag, atalhoKey, unb64u, b64u, store, master, userKey, accKey, seal, open, emailId, normEmail, hashPw, checkPw, newCode, normCode, signToken, readToken, limit, body, send, handler, err, sleep, crypto };

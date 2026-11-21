@@ -79,7 +79,7 @@ module.exports = N.handler(async (req, res) => {
     if (N.limit(req, 'cl|' + t.u, 20, 60e3) || perDay(t.u, CL_DIA, 'c|')) return N.send(res, 429, { type: 'error', error: { type: 'rate_limit_error', message: 'Chegaste ao limite de conversas com o Claude por hoje. A IA do Google continua a responder.' } });
     const o = await claude(req, await N.body(req)); res.statusCode = o.status; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.setHeader('Cache-Control', 'no-store'); return res.end(o.txt); }
   // v3.18: a IA de reserva pelo servidor (no aparelho a ligação direta podia falhar com "Failed to fetch"); formato OpenAI, como a app já usa
-  if (p === 'livre') { if (req.method !== 'POST') return gErr(res, 405, 'Só POST.');
+  if (p === 'livre') { if (req.method !== 'POST') return gErr(res, 405, 'Só POST.'); N.count('ia_livre');
     if (N.limit(req, 'ia|' + t.u, POR_MIN, 60e3) || perDay(t.u, iaDia)) return gErr(res, 429, 'Limite de IA por minuto/dia atingido (quota per day). ' + (ef.lvl < 3 ? 'Os planos acima têm mais pedidos por dia.' : 'Tenta daqui a pouco.'));
     const b = await N.body(req), msgs = Array.isArray(b.messages) ? b.messages.filter(m => m && typeof m === 'object').slice(-60) : [];
     if (!msgs.length) return gErr(res, 400, 'Sem mensagens.');
@@ -92,6 +92,7 @@ module.exports = N.handler(async (req, res) => {
       catch (e) { last = e.name === 'AbortError' ? 'demorou demasiado' : 'sem resposta'; } finally { clearTimeout(to); } }
     return gErr(res, 502, 'A IA de reserva não respondeu (' + last + ').'); }
   if (!OKP.test(p)) return gErr(res, 400, 'Pedido de IA desconhecido.');
+  N.count('ia');
   if (N.limit(req, 'ia|' + t.u, POR_MIN, 60e3) || perDay(t.u, iaDia)) return gErr(res, 429, 'Limite de IA por minuto/dia atingido (quota per day). ' + (ef.lvl < 3 ? 'Os planos acima têm mais pedidos por dia.' : 'Tenta daqui a pouco.'));
   const k = gkey();
   if (/^v1beta\/models(\?|$)/.test(p)) { if (!k) return N.send(res, 200, { models: [{ name: 'models/gemini-nautilo-livre', supportedGenerationMethods: ['generateContent'] }] });
