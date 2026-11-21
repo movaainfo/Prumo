@@ -201,7 +201,7 @@ const OPS = {
       const old = await readAcc(eid); if (!(old && old.rec.verif && Date.now() - Date.parse(old.rec.criado || 0) > 30 * 60e3)) throw N.err('existe', 'Já existe uma conta com este e-mail. Entra com a tua senha.', 409);
       await dropData(old.rec.uid); await N.store().put('a/' + eid, N.seal(await N.accKey(), rec)); }
     if (vc && !(await sendCode(email, nome, vc))) { delete rec.verif; await N.store().put('a/' + eid, N.seal(await N.accKey(), rec)); }
-    await cPut(email, eid);
+    await cPut(email, eid); N.count(TESTE.test(email) ? 'registo_teste' : 'registo');
     return { token: await N.signToken(rec, eid), conta: pub(rec), recuperacao: code, verificar: rec.verif ? 1 : 0 }; },
   // confirmar o e-mail com o código de 6 números
   async verificarEmail(req, b) { const s = await session(req), v = s.rec.verif; if (!v) return { conta: pub(s.rec) };
@@ -227,7 +227,7 @@ const OPS = {
       N.sec(lk ? 'conta_trancada' : 'login_falhou', req, { c: eid.slice(0, 8) }); throw N.err('credenciais', 'E-mail ou senha errados.', 401); }
     await N.gate(email);   /* v3.62: em manutenção só a administração entra */
     const rec = await change(eid, r => { r.falhas = 0; r.bloq = 0; r.ult = Date.now(); r.logins = (r.logins || 0) + 1; }).catch(() => a.rec);
-    return { token: await N.signToken(rec, eid), conta: pub(rec) }; },
+    N.count('login'); return { token: await N.signToken(rec, eid), conta: pub(rec) }; },
 
   async eu(req) { const s = await session(req), sp = await spOk(s.rec.email); let rec = s.rec; try { rec = await refreshPlano(s) || rec; } catch (e) { }
     if (!rec.cx) { try { if (!(await cGet(rec.email))) await cPut(rec.email, s.eid); rec = await change(s.eid, r => { r.cx = 1; }); } catch (e) { } } return { conta: Object.assign(pub(rec), { sp, spc: sp ? spCid() : '' }) }; },
@@ -258,7 +258,7 @@ const OPS = {
     const ses = await P.stripe('checkout/sessions/' + b.sid, { expand: { 0: 'subscription' } }, 'GET');
     if (ses.client_reference_id !== s.rec.uid) throw N.err('outra', 'Este pagamento não é desta conta.', 403);
     if (ses.status !== 'complete' || !ses.subscription || typeof ses.subscription !== 'object') throw N.err('pendente', 'O pagamento ainda não foi concluído.', 409);
-    const st = planoDe(ses); const rec = await change(s.eid, r => { r.plano = st; if (r.pend && r.pend.cs === ses.id) delete r.pend; }); return { conta: pub(rec) }; },
+    const st = planoDe(ses); N.count('pagamento'); const rec = await change(s.eid, r => { r.plano = st; if (r.pend && r.pend.cs === ses.id) delete r.pend; }); return { conta: pub(rec) }; },
   // mudar de plano ou de ciclo (com a diferença acertada pelo Stripe)
   async mudarPlano(req, b) { const s = await session(req), p0 = s.rec.plano; if (!P.cobranca() || !p0 || !p0.sub || !P.mesmo(p0)) throw N.err('sem', 'Ainda não tens assinatura.', 400);
     const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : b.ciclo === 'mes' ? 'mes' : p0.ciclo || 'mes', pr = pl ? P.preco(pl, ciclo, p0.cur) : null; if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
@@ -339,6 +339,9 @@ const OPS = {
   // quem é o responsável e como contactar (para a Política de Privacidade); sem sessão
   // v3.62: estado da manutenção (público): a app mostra o ecrã de manutenção a quem não é da administração
   async manut() { const m = await N.manut(); return { manut: { on: m.on, ate: m.ate, motivo: m.motivo, prox: m.prox } }; },
+  // v3.62: relatórios da semana (só números, sem dados pessoais)
+  async adminRelatorios(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
+    const R = require('./_relatorio'); if (b.agora) { await N.flushCounts(true); await R.gerar({ guardar: true }); } return { relatorios: await R.lista(8), nomes: R.NOMES }; },
   async adminManutencao(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
     const now = Date.now(), min = Math.max(5, Math.min(24 * 60, Math.round(+b.min || 60)));
     if (b.acao === 'ligar') await N.setManut({ ate: now + min * 60e3, por: s0.rec.email, em: now });
@@ -555,3 +558,4 @@ module.exports = N.handler(async (req, res) => {
   if (!op || !Object.prototype.hasOwnProperty.call(OPS, b.op)) return N.send(res, 400, { ok: false, msg: 'Pedido desconhecido.' });
   N.send(res, 200, Object.assign({ ok: true }, await op(req, b)));
 });
+module.exports.mailRaw = (...a) => mailRaw(...a);

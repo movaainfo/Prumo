@@ -76,6 +76,9 @@
     },
     "api/backup.js": {
       "maxDuration": 300
+    },
+    "api/relatorio.js": {
+      "maxDuration": 120
     }
   },
   "cleanUrls": true,
@@ -91,6 +94,10 @@
     {
       "path": "/api/backup?semanal=1",
       "schedule": "20 4 * * 0"
+    },
+    {
+      "path": "/api/relatorio",
+      "schedule": "28 4 * * 0"
     }
   ]
 }

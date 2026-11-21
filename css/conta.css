@@ -231,3 +231,10 @@ html.mn-on body{overflow:hidden}
 .mn-fab svg{width:16px;height:16px;color:var(--accent)}
 .mn-fab b{font-variant-numeric:tabular-nums;color:var(--accent)}
 .mn-fab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* v3.62: relatórios da semana (Administração) */
+.adm-rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.adm-rg section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.adm-rg h4{margin:0 0 6px;font-size:14px}
+.adm-rl{margin:0;padding-left:18px;line-height:1.5}
+.adm-ral{border:1px solid var(--accent);border-radius:12px;padding:10px 14px;margin:0 0 12px}
+.adm-ral .adm-rl{margin-top:4px}

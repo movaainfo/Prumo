@@ -4,16 +4,19 @@
 (() => {
 'use strict';
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const L = OS.Legal = { V: '2026-11-21', DATA: '21 de novembro de 2026', info: { responsavel: '', contacto: '' } };
+const L = OS.Legal = { V: '2026-11-21', DATA: '21 de novembro de 2026', info: { responsavel: 'Ryan da Silva Magalhães', nif: '337532230', morada: 'Rua de Anadia, n.º 25, 5.º DRT, Aradas, 3810-208 Aveiro, Portugal', contacto: 'ryan.silvamagalhaes8@gmail.com' } };
 L.DOCS = [['termos', 'Termos de Serviço'], ['privacidade', 'Política de Privacidade'], ['cookies', 'Cookies e armazenamento'], ['direitos', 'Os teus direitos (LGPD e RGPD)'], ['acessibilidade', 'Acessibilidade'], ['creditos', 'Créditos e direitos de autor']];
-const resp = () => L.info.responsavel ? `<b>${esc(L.info.responsavel)}</b>, responsável pelo Prumo` : 'o <b>responsável pelo Prumo</b> (pessoa singular que desenvolve e mantém a app)';
+// v3.62: quem vende e é responsável (identificação obrigatória do prestador: nome, NIF, morada e contacto)
+const ident = () => L.info.responsavel ? `<b>${esc(L.info.responsavel)}</b> (pessoa singular${L.info.nif ? ', NIF ' + esc(L.info.nif) : ''}${L.info.morada ? ', com morada em ' + esc(L.info.morada) : ''})` : 'o <b>responsável pelo Prumo</b> (pessoa singular que desenvolve e mantém a app)';
+L.ident = ident;
+const resp = () => L.info.responsavel ? `${ident()}, responsável pelo Prumo` : 'o <b>responsável pelo Prumo</b> (pessoa singular que desenvolve e mantém a app)';
 const contacto = () => `pelo formulário <b>Fazer um pedido</b> em Definições › Privacidade e termos${L.info.contacto ? ` ou pelo e-mail <b>${esc(L.info.contacto)}</b>` : ''}`;
 const sec = (t, h) => `<section><h3>${t}</h3>${h}</section>`;
 const ul = a => `<ul>${a.map(x => `<li>${x}</li>`).join('')}</ul>`;
 const D = {};
 
 D.termos = () => `<p class="lg-meta">Versão de ${L.DATA}</p>
-${sec('1. O que é o Prumo', `<p>O Prumo é uma aplicação web de organização pessoal, por assinatura: tarefas, hábitos, finanças, investimentos, estudos, treino, alimentação, sono, metas, um jogo de evolução pessoal (Dominus) e uma assistente com inteligência artificial. É disponibilizado por ${resp()}.</p><p>Ao criar uma conta ou usar o Prumo aceitas estes Termos e a <a href="#" data-lgl="privacidade">Política de Privacidade</a>. Se não concordares, não uses a app.</p>`)}
+${sec('1. O que é o Prumo', `<p>O Prumo é uma aplicação web de organização pessoal, por assinatura: tarefas, hábitos, finanças, investimentos, estudos, treino, alimentação, sono, metas, um jogo de evolução pessoal (Dominus) e uma assistente com inteligência artificial. É disponibilizado por ${resp()}.</p><p>Ao criar uma conta ou usar o Prumo aceitas estes Termos e a <a href="#" data-lgl="privacidade">Política de Privacidade</a>. Se não concordares, não uses a app. Quem fornece e vende o Prumo é ${ident()}.</p>`)}
 ${sec('2. Quem pode usar', `<p>Tens de ter <b>16 anos ou mais</b>. Se tiveres menos de 18, precisas da autorização dos teus pais ou de quem te tem a cargo. A conta é pessoal: não a partilhes nem uses a de outra pessoa.</p>`)}
 ${sec('3. A tua conta e a tua segurança', ul(['És responsável por manter a senha, o código de recuperação e os códigos de bloqueio em segredo.', 'Se suspeitares de acesso indevido, muda a senha e usa “Sair dos outros aparelhos” (Definições › Conta e perfis).', 'O cofre de Senhas é cifrado com a tua senha mestra, que nunca é guardada: se a perderes, ninguém (nem o responsável) consegue recuperar o conteúdo do cofre.']))}
 ${sec('4. Os teus dados e o teu conteúdo', `<p>Tudo o que registas no Prumo <b>é teu</b>. Dás-nos apenas a autorização necessária para guardar, sincronizar e mostrar esses dados a ti, nos teus aparelhos. Não vendemos os teus dados nem os usamos para publicidade. Podes descarregá-los e apagá-los a qualquer momento (ver <a href="#" data-lgl="direitos">Os teus direitos</a>).</p>`)}
@@ -27,7 +30,7 @@ ${sec('11. Responsabilidade', `<p>Na medida máxima permitida pela lei aplicáve
 ${sec('12. Propriedade intelectual', `<p>O código, o design, os textos, o logótipo, os personagens e cenários em pixel art do Dominus e as ilustrações do Prumo pertencem ao responsável, salvo o indicado em <a href="#" data-lgl="creditos">Créditos e direitos de autor</a>. Nomes e marcas de terceiros (bancos, empresas, serviços) pertencem aos seus titulares e aparecem apenas para identificação.</p>`)}
 ${sec('13. Terminar', `<p>Podes deixar de usar o Prumo e apagar a conta quando quiseres (Definições › Conta e perfis › Apagar a conta). Ao apagar, os teus dados são apagados do servidor (ver a Política de Privacidade).</p>`)}
 ${sec('14. Lei aplicável e litígios', `<p>Estes Termos regem-se pela lei portuguesa, sem prejuízo das normas imperativas de proteção do consumidor e de proteção de dados do país onde vives (por exemplo, o Código de Defesa do Consumidor e a LGPD no Brasil). Tentamos resolver qualquer problema a bem: contacta-nos ${contacto()}. Em Portugal podes recorrer a uma entidade de resolução alternativa de litígios de consumo (lista em www.consumidor.gov.pt) e ao Livro de Reclamações; no Brasil, ao consumidor.gov.br e ao Procon.</p>`)}
-${sec('15. Contacto', `<p>${contacto()}.</p>`)}`;
+${sec('15. Quem somos e contacto', `<p>O Prumo é fornecido por ${ident()}. Para qualquer questão, reclamação ou pedido: ${contacto()}.</p>`)}`;
 
 D.privacidade = () => `<p class="lg-meta">Versão de ${L.DATA} · Feita para cumprir a Lei Geral de Proteção de Dados (LGPD, Lei n.º 13.709/2018, Brasil) e o Regulamento Geral sobre a Proteção de Dados (RGPD, Regulamento (UE) 2016/679, Portugal e União Europeia).</p>
 ${sec('1. Quem trata os teus dados', `<p>O controlador (LGPD) / responsável pelo tratamento (RGPD) é ${resp()}. Contacto, também para o encarregado de proteção de dados: ${contacto()}.</p>`)}
@@ -143,5 +146,5 @@ OS.forms.lgPedido = async f => { const tipo = f.elements.tipo.value, msg = f.ele
 OS.on('ready', () => { if (OS.SETT && !OS.SETT.some(t => t[0] === 'legal')) OS.SETT.push(['legal', 'Privacidade e termos']);
   const sv = OS.settingsView; if (sv && !sv.__lgl) { OS.settingsView = s => String(s || '') === 'legal' ? L.settings() : sv(s); OS.settingsView.__lgl = 1; } });
 // quem é o responsável e o contacto (definidos no servidor), para os documentos
-try { fetch(new URL('api/conta', document.baseURI).href, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ op: 'publico' }) }).then(r => r.ok ? r.json() : null).then(j => { if (j) { L.info.responsavel = j.responsavel || ''; L.info.contacto = j.contacto || ''; } }).catch(() => { }); } catch (e) { }
+try { fetch(new URL('api/conta', document.baseURI).href, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ op: 'publico' }) }).then(r => r.ok ? r.json() : null).then(j => { if (j) { if (j.responsavel) L.info.responsavel = j.responsavel; if (j.contacto) L.info.contacto = j.contacto; } }).catch(() => { }); } catch (e) { }
 })();

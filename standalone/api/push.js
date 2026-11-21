@@ -61,7 +61,7 @@ const deliver = async (I, out, o = {}) => { if (!out.length) return { n: 0, gone
   out.forEach(x => { const u = (I.u || {})[x.uk]; ((u && u.subs) || []).forEach(s => jobs.push({ s, x })); });
   await pool(jobs, 10, async ({ s, x }) => { const r = await W.send(V, s, Object.assign({ at: Date.now() }, x.m), { ttl: x.ttl || 3600, topic: x.m.g, fetch: o.fetch }); if (r.ok) n++; if (r.gone) gone.add(s.e); });
   if (gone.size) await mutate(IDX, v => { Object.values(v.u || {}).forEach(u => { u.subs = (u.subs || []).filter(s => !gone.has(s.e)); }); });
-  return { n, gone: gone.size }; };
+  if (n) N.count('push', n); return { n, gone: gone.size }; };
 
 /* ---------- desportos: os jogos e as sessões que alguém segue ---------- */
 const ESPN = { nba: 'basketball/nba', nfl: 'football/nfl', mlb: 'baseball/mlb', nhl: 'hockey/nhl', wnba: 'basketball/wnba', ncaab: 'basketball/mens-college-basketball', cfb: 'football/college-football' };
