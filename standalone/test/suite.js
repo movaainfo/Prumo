@@ -210,8 +210,8 @@ async function inicioTests(b) { cur = 'Página inicial'; console.log('\n=== Pág
   ok('Página inicial: título, frase principal e botões para criar conta', /Prumo/.test(base.t) && /A TUA VIDA, A PRUMO\./i.test(base.h1) && base.cta >= 4, JSON.stringify({ t: base.t, h1: base.h1, cta: base.cta }));
   ok('Página inicial: os 3 planos com os preços certos (5,99 €, 11,99 €, 19,99 € por mês)', base.pl.length === 3 && /5,99/.test(base.pl[0]) && /11,99/.test(base.pl[1]) && /19,99/.test(base.pl[2]), base.pl.join(' | '));
   ok('Página inicial: perguntas frequentes, quem vende no rodapé (nome e NIF), 7 vídeos do app e o tutorial', base.faq >= 6 && /337532230/.test(base.rod) && /Ryan da Silva Magalhães/.test(base.rod) && base.vids === 7 && base.tut, JSON.stringify({ faq: base.faq, vids: base.vids, tut: base.tut }));
-  await p.click('.ciclo button[data-ciclo=ano]'); const anual = await E(p, () => [...document.querySelectorAll('.plano .preco b')].map(x => x.textContent));
-  ok('Planos: o anual mostra 59,90 €, 119,90 € e 199,90 €', /59,90/.test(anual[0]) && /119,90/.test(anual[1]) && /199,90/.test(anual[2]), anual.join(' | '));
+  await p.click('.ciclo button[data-ciclo=ano]'); await sleep(900); const anual = await E(p, () => [...document.querySelectorAll('.plano .preco b')].map(x => x.textContent));
+  ok('Planos: o anual mostra 59,90 €, 119,90 € e 199,90 € (os números rolam até ao valor)', /59,90/.test(anual[0]) && /119,90/.test(anual[1]) && /199,90/.test(anual[2]), anual.join(' | '));
   await E(p, () => document.querySelector('#spyke').scrollIntoView()); await p.click('#sugs button[data-i="0"]'); await p.waitForFunction(() => /18,90/.test(document.getElementById('msgs').innerText), null, { timeout: 6000 }).catch(() => { });
   ok('Spyke de exemplo: tocar numa pergunta mostra a resposta com os números da conta de demonstração', await E(p, () => /Quanto gastei/.test(document.getElementById('msgs').innerText) && /18,90/.test(document.getElementById('msgs').innerText)));
   await E(p, () => document.querySelector('#dominus').scrollIntoView()); for (let i = 0; i < 2; i++) await p.click('.feitos button[data-xp="60"]');

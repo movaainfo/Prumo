@@ -107,9 +107,21 @@ const tutHtml = !tutOk ? '' : `<section class="tuto" id="tutorial" aria-label="T
   <div class="player rev" id="player"><video playsinline preload="none" poster="inicio/tutorial.webp" data-src="inicio/tutorial.mp4" aria-label="Tutorial do Prumo, com narração e legendas"></video><button class="play" type="button" aria-label="Ver o tutorial"><span><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></button></div>
 </div></div></section>`;
 
+// faixas cruzadas (palavras gigantes que correm com a rolagem)
+const FAIXA_P = ['Tarefas', 'Dinheiro', 'Estudos', 'Treino', 'Dieta', 'Sono', 'Metas', 'Leituras', 'Dominus', 'Spyke'];
+const faixaHtml = [0, 1].map(() => FAIXA_P.map((w, i) => `<span${i % 2 ? ' class="o"' : ''}>${w}</span>`).join('')).join('');
+// etiquetas à volta do telemóvel (duas por área)
+const ETQ = [['Próxima ação sugerida', '8 pontos de atenção'], ['Hábitos com um toque', 'Rotina por horas'], ['Orçamento por categoria', 'Poupança de 43%'], ['Séries, cargas e descanso', 'Corrida de 6,2 km'], ['No ritmo só com avanço real', '3 metas ativas'], ['O que estudar hoje', '8,2 h esta semana'], ['Atributos da tua vida', 'Nível, ouro e conquistas']];
+const etiqHtml = ETQ.map((e, i) => `<div class="eq e1" data-a="${i}"><b>${esc(e[0])}</b><i></i></div><div class="eq e2" data-a="${i}"><b>${esc(e[1])}</b><i></i></div>`).join('');
+// marcos da linha de prumo lateral
+const MARCOS = [['inicio', 'Início'], ['dez', 'Um só lugar'], ['app', 'O app'], ['tutorial', 'Tutorial'], ['dominus', 'Dominus'], ['spyke', 'Spyke'], ['dia', 'Um dia'], ['privacidade', 'Privacidade'], ['planos', 'Planos'], ['perguntas', 'Perguntas']].filter(([k]) => k !== 'tutorial' || tutOk);
+const marcosHtml = MARCOS.map(([k, t]) => `<a href="#${k}" data-s="${k}" aria-label="${esc(t)}"><span><b>${esc(t)}</b></span></a>`).join('');
+// heróis do Dominus (pixel art exportada do próprio jogo: media/heroi-*.png)
+let HER = []; try { HER = JSON.parse(fs.readFileSync(path.join(HERE, 'media', 'herois.json'), 'utf8')); } catch (e) { }
+const heroisHtml = HER.map((h, i) => `<button type="button" data-h="${h.id}" data-n="${esc(h.n)}" aria-pressed="${i === 0}" aria-label="Visual ${esc(h.n)}"><img src="inicio/heroi-${h.id}.png" alt="" width="48" height="72" loading="lazy"></button>`).join('');
 const DATA = { areas: AREAS.map(([k, t, d]) => ({ k, t, d })), spy: SPY, dia: DIA.map(({ h, t, p, luz }) => ({ h, t, p, luz })), planos: DATAP };
 const rep = {
-  SELO: 'inicio/selo.svg', APPS: appsHtml, AREAS: areasHtml, RAIL: railHtml, VIDEOS: videosHtml, TUTORIAL: tutHtml, SUGS: sugsHtml, DIAMAX: String(DIA.length - 1), MARCAS: marcasHtml,
+  SELO: 'inicio/selo.svg', HEROIS: heroisHtml, FAIXA: faixaHtml, ETIQ: etiqHtml, MARCOS: marcosHtml, APPS: appsHtml, AREAS: areasHtml, RAIL: railHtml, VIDEOS: videosHtml, TUTORIAL: tutHtml, SUGS: sugsHtml, DIAMAX: String(DIA.length - 1), MARCAS: marcasHtml,
   FACTOS: factosHtml, PLANOS: planosHtml, TESTE: esc(TESTE), FAQ: faqHtml, IDENT: 'O Prumo é vendido por ' + L.ident() + '.', ANO: String(new Date().getFullYear()),
   DATA: JSON.stringify(DATA).replace(/</g, '\\u003c')
 };
