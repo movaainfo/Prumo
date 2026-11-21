@@ -288,6 +288,32 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     const p2 = await atk({ op: 'pull' }); let it = []; try { it = JSON.parse(p2.t).items || []; } catch (e) { }
     ok('Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas', p2.st === 200 && it.some(x => x.v === 12.5 && /Café/.test(x.d)), p2.st + ' ' + JSON.stringify(it).slice(0, 160));
     await k.ctx.close(); }
+  // relatório da semana e saúde da base de dados (só a administração)
+  { const rel = await api('conta', { op: 'adminRelatorios', agora: 1 }, { tok: ad.token }), relN = await api('conta', { op: 'adminRelatorios' }, { tok: Bc.tok }), R0 = (rel.relatorios || [])[0] || {};
+    ok('Relatório da semana: a administração gera-o (contas, planos, atividade, segurança com os ataques de hoje, falhas, cópias, saúde) e mais ninguém o vê',
+      rel._st === 200 && R0.contas && R0.contas.total >= 2 && R0.planos && R0.uso && R0.eventos && R0.seguranca && (R0.seguranca.login_falhou || 0) + (R0.seguranca.conta_trancada || 0) >= 8 && (R0.seguranca.conta_trancada || 0) >= 1 && Array.isArray(R0.alertas) && relN._st === 403,
+      JSON.stringify({ st: rel._st, n: (rel.relatorios || []).length, contas: R0.contas, sec: R0.seguranca, alertas: (R0.alertas || []).length, outro: relN._st }).slice(0, 400));
+    const sd = await api('conta', { op: 'adminSaude', agora: 1 }, { tok: ad.token }), sdN = await api('conta', { op: 'adminSaude' }, { tok: Bc.tok });
+    ok('Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê', sd._st === 200 && sd.saude && sd.saude.ultima && sd.saude.ultima.ok && sd.saude.n >= 1 && sdN._st === 403, JSON.stringify(sd).slice(0, 300)); }
+  // rede instável e sem internet (com conta): o que se faz sem rede fica guardado e sincroniza quando volta, mesmo com o servidor a falhar pelo caminho
+  { const R = await reg(), sR = { 'nau:s': JSON.stringify({ t: R.tok, e: R.email, n: '', perfis: [{ id: R.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(R.pid), 'nau:pd': JSON.stringify(R.pid), 'nau:owner': JSON.stringify(R.email) };
+    const k = await newPage(b, PROFILES[0], sR); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; window.__accPut = 300; }); await k.p.goto(BASE); await unlock(k.p).catch(() => { });
+    await k.p.waitForFunction(() => OS.Acc && OS.Acc.sync && /sincronizada/.test(OS.Acc.sync.state), null, { timeout: 15000 }).catch(() => { });
+    await k.ctx.setOffline(true); OFFLINE = true;
+    const off = await E(k.p, async () => { OS.add('tasks', { title: 'Tarefa feita sem rede', status: 'A fazer' }); location.hash = 'tarefas'; for (let i = 0; i < 30 && !/sem ligação/.test(OS.Acc.sync.state); i++) await new Promise(r => setTimeout(r, 500)); return { st: OS.Acc.sync.state, vis: /Tarefa feita sem rede/.test(document.getElementById('view').innerText) }; });
+    // volta a rede, mas o servidor falha os 3 primeiros pedidos de gravação (503)
+    let falhas = 0; await k.ctx.route(/\/api\/dados/, rt => { const d = (() => { try { return JSON.parse(rt.request().postData() || '{}'); } catch (e) { return {}; } })(); if (d.op === 'gravar' && falhas < 3) { falhas++; return rt.fulfill({ status: 503, contentType: 'application/json', body: '{"ok":false,"msg":"instável"}' }); } return rt.continue(); });
+    OFFLINE = false; await k.ctx.setOffline(false); await E(k.p, () => window.dispatchEvent(new Event('online')));
+    await k.p.waitForFunction(() => /sincronizada/.test(OS.Acc.sync.state) && !OS.Acc.sync.err, null, { timeout: 60000 }).catch(() => { });
+    const on = await E(k.p, () => OS.Acc.sync.state); await k.ctx.close();
+    const k2 = await newPage(b, PROFILES[4] || PROFILES[0], sR); await k2.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k2.p.goto(BASE); await unlock(k2.p).catch(() => { });
+    await k2.p.waitForFunction(() => OS.all('tasks').some(t => t.title === 'Tarefa feita sem rede'), null, { timeout: 20000 }).catch(() => { });
+    const there = await E(k2.p, () => OS.all('tasks').some(t => t.title === 'Tarefa feita sem rede')); await k2.ctx.close();
+    ok('Rede instável: sem internet a app funciona e guarda; quando a rede volta (com o servidor a falhar 3 vezes) sincroniza e a tarefa aparece no outro aparelho',
+      off.vis && /sem ligação|guardado/.test(off.st) && falhas >= 1 && /sincronizada/.test(on) && there, JSON.stringify({ off, falhas, on, there })); }
+  // falhas do app chegam ao servidor (sem dados pessoais) e entram no relatório
+  { const f1 = await api('conta', { op: 'falha', m: 'TypeError: x is undefined (ana@exemplo.pt 123456789)', at: 'app.js:10:5', v: '3.64', r: 'tarefas', dev: 'tel' });
+    ok('Falhas do app: o servidor aceita o registo da falha (com limite) para o relatório da semana', f1._st === 200 && f1.ok2 === true, JSON.stringify(f1)); }
 }
 async function profileTests(b, prof) {
   cur = prof.id; console.log(`\n=== ${prof.id} ===`);

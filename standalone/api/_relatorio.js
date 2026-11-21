@@ -31,7 +31,8 @@ const gerar = async (o = {}) => { const s = N.store(); if (!s) throw N.err('stor
   // contadores do servidor (logins, registos, IA, notificações, pagamentos, segurança, erros)
   const T = {}; for (const d of D) for (const b of await s.list('st/' + d + '/')) { try { const g = await s.get(b.pathname); const o2 = g && JSON.parse(g.buf.toString()); Object.entries(o2 || {}).forEach(([k, v]) => { T[k] = (T[k] || 0) + (+v || 0); }); } catch (e) { } }
   R.eventos = { logins: T.login || 0, registos: T.registo || 0, ia: (T.ia || 0) + (T.ia_livre || 0), notificacoes: T.push || 0, pagamentos: T.pagamento || 0 };
-  R.seguranca = {}; R.erros = {}; Object.entries(T).forEach(([k, v]) => { if (k.startsWith('sec:')) R.seguranca[k.slice(4)] = v; else if (k.startsWith('erro:')) R.erros[k.slice(5)] = v; });
+  R.seguranca = {}; R.erros = {}; R.falhasApp = {}; Object.entries(T).forEach(([k, v]) => { if (k.startsWith('sec:')) R.seguranca[k.slice(4)] = v; else if (k.startsWith('erro:')) R.erros[k.slice(5)] = v; else if (k.startsWith('app:')) R.falhasApp[k.slice(4)] = v; });
+  R.falhasApp = Object.fromEntries(Object.entries(R.falhasApp).sort((a, b) => b[1] - a[1]).slice(0, 15));
   // pedidos dos titulares (LGPD/RGPD)
   const PE = { novos: 0, porResponder: 0 }; for (const b of await s.list('p/')) { try { const g = await s.get(b.pathname); const p = g && N.open(key, g.buf); if (!p) continue; if (Date.parse(p.at || 0) >= Date.parse(de)) PE.novos++; if (p.estado !== 'respondido') PE.porResponder++; } catch (e) { } }
   R.pedidos = PE;
@@ -41,6 +42,8 @@ const gerar = async (o = {}) => { const s = N.store(); if (!s) throw N.err('stor
   const diasDe = async p => [...new Set((await s.list(p)).map(b => b.pathname.split('/')[1]).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)))].sort();
   R.copias = { diarias: await diasDe('bk/'), semanais: await diasDe('bks/') };
   for (const t of ['diaria', 'semanal']) { try { const g = await s.get('cfg/backup-' + t); if (g) R.copias['ultima_' + t] = JSON.parse(g.buf.toString()); } catch (e) { } }
+  // saúde da base de dados (verificações de hora a hora)
+  try { const S = require('./_saude'); R.saude = S.resumo(await S.ler()); if (R.saude.pct != null && R.saude.pct < 100) R.alertas.push(`A base de dados falhou em ${R.saude.n - R.saude.ok} de ${R.saude.n} verificações (${R.saude.pct}% de saúde).`); } catch (e) { }
   // manutenção
   try { const m = await N.manut({ fresh: true }); R.manut = { prox: m.prox, on: m.on }; } catch (e) { }
   // alertas (o que merece atenção)
@@ -50,6 +53,7 @@ const gerar = async (o = {}) => { const s = N.store(); if (!s) throw N.err('stor
   if (n('robo_registo')) R.alertas.push(`${n('robo_registo')} robô(s) apanhados no registo.`);
   if (n('admin_negado')) R.alertas.push(`${n('admin_negado')} tentativa(s) de usar a administração sem ser administrador.`);
   const errs = Object.values(R.erros).reduce((a, b) => a + b, 0); if (errs) R.alertas.push(`${errs} erro(s) do servidor na semana (ver por rota).`);
+  const fa = Object.values(R.falhasApp).reduce((a, b) => a + b, 0); if (fa) R.alertas.push(`${fa} falha(s) do app nos aparelhos das pessoas (ver a lista).`);
   if (!R.copias.diarias.includes(ate) && !R.copias.diarias.includes(D[5])) R.alertas.push('A cópia de segurança diária não correu nos últimos 2 dias.');
   if (PE.porResponder) R.alertas.push(`${PE.porResponder} pedido(s) de direitos (LGPD/RGPD) por responder.`);
   if (C.porConfirmar) R.alertas.push(`${C.porConfirmar} conta(s) ainda sem o e-mail confirmado.`);
@@ -74,6 +78,7 @@ const email = R => { const e = s => String(s).replace(/[<>&"]/g, ''), L = [];
   L.push(['Atividade', [`${R.uso.pessoas} pessoa(s) usaram o app, ${hm(R.uso.minutos)} no total`, `Logins: ${R.eventos.logins}; contas criadas: ${R.eventos.registos}`, `Pedidos à IA: ${R.eventos.ia}; notificações enviadas: ${R.eventos.notificacoes} (${R.aparelhos == null ? '?' : R.aparelhos} aparelhos ligados)`, `Pagamentos confirmados: ${R.eventos.pagamentos}`]]);
   L.push(['Segurança', secL.length ? secL : ['Nenhuma tentativa de ataque registada.']]);
   L.push(['Erros do servidor', errL.length ? errL : ['Nenhum.']]);
+  const faL = Object.entries(R.falhasApp || {}).map(([k, v]) => `${k}: ${v}`); L.push(['Falhas do app (nos aparelhos)', faL.length ? faL : ['Nenhuma.']]);
   L.push(['Pedidos (LGPD/RGPD)', [`${R.pedidos.novos} novos; ${R.pedidos.porResponder} por responder`]]);
   L.push(['Cópias de segurança', [`Diárias guardadas: ${R.copias.diarias.length} (última: ${R.copias.diarias.slice(-1)[0] || '—'})`, `Semanais guardadas: ${R.copias.semanais.length} (última: ${R.copias.semanais.slice(-1)[0] || '—'})`]]);
   const sub = `Prumo · relatório da semana (${fd(R.de)}–${fd(R.ate)})`;

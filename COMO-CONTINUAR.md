@@ -17,6 +17,9 @@ cd standalone/test && NODE_PATH=$(npm root -g) node suite.js --only=linguas,cont
 Não voltes a gerar o site enquanto os testes correm (eles servem a pasta `dist-gh/`).
 
 ## Publicar
+**Sempre com o script (v3.64):** `bash standalone/publicar.sh "mensagem do commit"` — gera o site, corre os testes essenciais e só publica se passarem (fora as 2 falhas conhecidas do ambiente); no fim confirma os dois endereços.
+Para mudar os grupos: `GRUPOS=contas,planos bash standalone/publicar.sh "…"`.
+
 Copiar o conteúdo de `dist-gh/` para a raiz do ramo `main` (manter o `vercel.json`) e enviar.
 A Vercel (projeto `prumo`) publica a partir do GitHub em https://prumo-vida.vercel.app
 (o endereço antigo https://nautilo-app.vercel.app continua a funcionar).

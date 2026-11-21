@@ -48,7 +48,7 @@ let st = 'off', endAt = 0, waiters = [], EL = null, safety = 0, t0 = 0, MUS = nu
 const snd = () => lsGet('nau:introSom') !== false;   // som ligado por omissão
 // um som mudo minúsculo: tocá-lo dentro do toque "arma" o áudio no iPhone (depois pode tocar a música sem outro toque)
 const SILENT = 'data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
-const stopMus = () => { if (!MUS) return; try { MUS.pause(); } catch (e) { } playing = false; };
+const stopMus = () => { if (!MUS) return; playing = false; try { MUS.pause(); } catch (e) { } };
 const done = () => { if (st !== 'playing' && st !== 'waiting') return; st = 'done'; endAt = Date.now(); clearTimeout(safety); if (EL) { EL.remove(); EL = null; }
   stopMus(); const u = URLM; MUS = null; URLM = ''; READY = null; prepping = false; armed = false; if (u) setTimeout(() => { try { URL.revokeObjectURL(u); } catch (e) { } }, 1500);
   const R = document.documentElement; R.classList.remove('intro-on'); R.classList.add('intro-after'); const w = waiters; waiters = []; setTimeout(() => R.classList.remove('intro-after'), HOLD); w.forEach(cb => setTimeout(cb, HOLD)); };
@@ -124,7 +124,15 @@ const I = window.PrumoIntro = {
     const want = o.sound == null ? snd() : o.sound, S = window.PrumoIntroSom;
     if (want && window.Audio) {
       // a música vem num ficheiro que vai com o app (som/intro.mp3, gerado por standalone/gensom.js); fica já a carregar
-      try { MUS = new Audio(); MUS.preload = 'auto'; MUS.setAttribute('playsinline', ''); URLM = new URL('som/intro.mp3', document.baseURI).href; MUS.src = URLM; MUS.load(); } catch (e) { MUS = null; URLM = ''; }
+      // v3.64: o ficheiro vem inteiro para a memória antes de tocar (no telemóvel, tocar "aos pedaços" pela rede fazia o som parar a meio)
+      try { MUS = new Audio(); MUS.preload = 'auto'; MUS.setAttribute('playsinline', ''); URLM = '';
+        const net = new URL('som/intro.mp3', document.baseURI).href;
+        READY = fetch(net, { cache: 'force-cache' }).then(r => r.ok ? r.blob() : Promise.reject(new Error('som ' + r.status))).then(b => { if (!MUS || !b || b.size < 1000) throw new Error('som vazio'); URLM = URL.createObjectURL(b); MUS.src = URLM; try { MUS.load(); } catch (e) { } })
+          .catch(() => { if (!MUS) return; URLM = net; MUS.src = net; try { MUS.load(); } catch (e) { } });
+        // se o sistema parar o som sozinho a meio da intro (falta de dados, outra app), volta ao ponto certo uma vez
+        let resumed = 0; const back = () => { if (st !== 'playing' || !playing || !MUS || resumed > 2) return; const at = (Date.now() - t0) / 1000, L = window.PrumoIntroSom ? window.PrumoIntroSom.LEN : 6.4; if (at > L - .6) return; resumed++; try { MUS.currentTime = at; const p = MUS.play(); if (p && p.catch) p.catch(() => { }); } catch (e) { } };
+        MUS.addEventListener('pause', () => { if (st === 'playing' && playing) setTimeout(back, 120); }); MUS.addEventListener('stalled', () => setTimeout(back, 300)); MUS.addEventListener('waiting', () => setTimeout(() => { if (MUS && MUS.paused) back(); }, 600));
+      } catch (e) { MUS = null; URLM = ''; }
       // reserva: se o ficheiro falhar, grava-se aqui mesmo (js/introsom.js) num WAV em memória
       if (MUS && S && S.render && S.wav && window.URL && URL.createObjectURL) MUS.addEventListener('error', () => { if (!MUS || playing || (URLM && URLM.indexOf('blob:') === 0)) return; URLM = '';
         READY = S.render(44100).then(b => { if (!MUS) return; URLM = URL.createObjectURL(S.wav(b)); MUS.src = URLM; try { MUS.load(); } catch (e) { } }).catch(() => { READY = null; }); }, { once: true });

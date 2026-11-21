@@ -1,158 +1,116 @@
 [
  {
-  "p": "Desportos",
-  "name": "Desportos: em Eu no menu (no lugar do Futebol, que fica dentro de Desportos)",
+  "p": "Ataque",
+  "name": "Ataque XSS guardado: nenhum código malicioso corre nem entra no ecrã em 188 páginas",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Início: os desportos (com o Futebol), as Olimpíadas e as tuas equipas",
+  "p": "Ataque",
+  "name": "Ataque: 10 logins falsos seguidos trancam a conta 15 min (nem a senha certa entra logo a seguir)",
   "pass": true,
-  "info": "{\"sp\":17,\"fut\":true,\"oly\":true}"
+  "info": "[401,401,401,401,401,401,401,401,429,429] certa:429"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › NBA › Equipas: tocar numa equipa segue-a",
+  "p": "Ataque",
+  "name": "Ataque: enxurrada de logins do mesmo endereço é travada (429 depois de 30)",
   "pass": true,
-  "info": ""
+  "info": "[401,401,401,401,429,429]"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › NBA › Jogos: o jogo ao vivo com o resultado e o próximo",
+  "p": "Ataque",
+  "name": "Ataque: robô que preenche o campo escondido do registo é recusado",
   "pass": true,
-  "info": ""
+  "info": "{\"ok\":false,\"msg\":\"Muitas contas criadas a partir daqui. Tenta mais tarde.\",\"code\":\"limite\",\"_st\":429}"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › NBA › Classificação: a conferência com a tua equipa destacada",
+  "p": "Ataque",
+  "name": "Ataque: e-mail com código HTML é recusado no registo",
   "pass": true,
-  "info": ""
+  "info": "{\"ok\":false,\"msg\":\"Esse e-mail não parece válido.\",\"code\":\"email\",\"_st\":400}"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Início: o jogo ao vivo em destaque e a tua equipa com o resultado de agora, o próximo jogo e o último",
+  "p": "Ataque",
+  "name": "Ataque: pedidos de sites de fora (mesmo com nome parecido) são recusados",
   "pass": true,
-  "info": "{\"hero\":\"1 jogo ao vivo\\nAgora a jogar\\nNBA\\nAo vivo · Halftime\\nBoston Celtics\\n11-3\\n61\\nDenver Nuggets\\n7-5\\ncasa\\n49\",\"team\":\"Boston Celtics\\nNBA\\nHalftime\\nBOS 61 – 49 DEN\\nÚltimo\\nLAL 100 – 110 BOS\\nVitória\"}"
+  "info": "403 403"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Fórmula 1: o próximo Grande Prémio com as sessões e o campeonato de pilotos",
+  "p": "Ataque",
+  "name": "Ataque: token forjado não entra; a conta A não lê nem grava os dados da conta B",
   "pass": true,
-  "info": ""
+  "info": "401 404 404"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Olimpíadas: a próxima edição com a contagem, o calendário, os desportos de LA 2028 e o quadro de Paris 2024 com o teu país",
+  "p": "Ataque",
+  "name": "Ataque: línguas inventadas não gastam a IA (só as da lista da app)",
   "pass": true,
-  "info": ""
+  "info": "400 400"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Olimpíadas: os próximos Jogos de Inverno (Alpes Franceses 2030) com a contagem",
+  "p": "Ataque",
+  "name": "Ataque: a cópia de segurança não abre a quem não é o Vercel",
   "pass": true,
-  "info": ""
+  "info": "200 403"
  },
  {
-  "p": "Desportos",
-  "name": "Copa do Mundo › Masculina: a de 2030 com a contagem e a última edição (campeão e final, com nomes em português)",
+  "p": "Ataque",
+  "name": "Manutenção: o atalho de gastos continua a guardar (avisa que entra quando a app voltar) e a app não busca nada enquanto dura",
   "pass": true,
-  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nCopa do Mundo\nNFL\nTénis ATP\nTénis WTA\nMMA\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMasculina\nFeminina\nPróxima Copa\nCopa do Mundo 2030\n\n13 de junho a 21 de julho de 2030 · Marrocos, Portugal e Espanha\n\n1301\ndias\n14\nhoras\nJogos do centenário a 8 e 9 de jun"
+  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 06:41)\"},\"p1\":503}"
  },
  {
-  "p": "Desportos",
-  "name": "Copa do Mundo › Feminina: Brasil 2027 com a contagem, a campeã de 2023 e as eliminatórias a decorrer",
+  "p": "Ataque",
+  "name": "Manutenção: a conta de administração continua a usar a app, com o botão flutuante da contagem até ao fim",
   "pass": true,
-  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nCopa do Mundo\nNFL\nTénis ATP\nTénis WTA\nMMA\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMasculina\nFeminina\nPróxima Copa feminina\nCopa do Mundo Feminina 2027\n\n24 de junho a 25 de julho de 2027 · Brasil\n\n216\ndias\n14\nhoras\n32 seleções; a primeira Copa feminina na América do Sul.\nÚltima edição · 2023\nCampeã do mundo\nEspanha\nFinal\nInglaterra\n11-3\n0\nEspanha\n7-5\nc"
+  "info": "{\"fab\":\"Manutenção 29:56\",\"cover\":false}"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos: o voleibol saiu",
+  "p": "Ataque",
+  "name": "Manutenção: só a administração liga; ligada, as outras contas não entram nem sincronizam (503) e a administração e as contas de teste continuam",
   "pass": true,
-  "info": ""
+  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795243319410,\"motivo\":\"manual\",\"prox\":0}}"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Avisos: golo da tua equipa (hóquei) e o jogo que começa daqui a 15 minutos",
+  "p": "Ataque",
+  "name": "Manutenção: a app mostra o ecrã \"O Prumo está em manutenção\" a tapar tudo, com a hora de regresso",
   "pass": true,
-  "info": "[\"Daqui a 15 minutos | Bruins × Leafs · NHL\",\"Golo · Bruins | Rangers 1–2 Bruins\"]"
+  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 06:41.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Avisos: avisa quando o jogo começa (uma vez só)",
+  "p": "Ataque",
+  "name": "Manutenção: desligada pela administração, o ecrã sai sozinho e as contas voltam a funcionar",
   "pass": true,
-  "info": "[\"Começou | Bruins × Leafs · NHL\",\"Daqui a 15 minutos | Bruins × Leafs · NHL\",\"Golo · Bruins | Rangers 1–2 Bruins\"]"
+  "info": "true 200"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › MotoGP: o fim de semana com as sessões, o resultado do sprint, o campeonato e o calendário",
+  "p": "Ataque",
+  "name": "Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas",
   "pass": true,
-  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nCopa do Mundo\nNFL\nTénis ATP\nTénis WTA\nMMA\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMotoGP\n\nGrandes Prémios de motos e campeonato\n\nAvisar\nJuntar aos meus\nE"
+  "info": "200 [{\"id\":\"mwq0g5td-8716954a54\",\"t\":\"2026-11-21T06:11:59.473Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › MotoGP: com o sino ligado avisa 15 minutos antes da corrida",
+  "p": "Ataque",
+  "name": "Relatório da semana: a administração gera-o (contas, planos, atividade, segurança com os ataques de hoje, falhas, cópias, saúde) e mais ninguém o vê",
   "pass": true,
-  "info": "[\"Corrida daqui a 15 minutos | MotoGP · Grande Prémio de Portugal\",\"Começou | Bruins × Leafs · NHL\",\"Daqui a 15 minutos | Bruins × Leafs · NHL\",\"Golo · Bruins | Rangers 1–2 Bruins\"]"
+  "info": "{\"st\":200,\"n\":1,\"contas\":{\"total\":3,\"novas\":3,\"porConfirmar\":0,\"teste\":1,\"entraramSemana\":0,\"perfis\":3},\"sec\":{\"login_falhou\":7,\"conta_trancada\":1,\"login_bloqueada\":3,\"login_desconhecido\":30,\"limite\":1,\"robo_registo\":1,\"origem\":2,\"token_falso\":1,\"backup_negado\":1,\"admin_negado\":1,\"manutencao_ligar\":1,\"manutencao_desligar\":1},\"alertas\":4,\"outro\":403}"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Início: painel de avisos (4 escolhas e os últimos avisos), a equipa de hóquei que segues e o banner da Copa do Mundo",
+  "p": "Ataque",
+  "name": "Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê",
   "pass": true,
-  "info": "{\"av\":4,\"feed\":4,\"tc\":\"Boston Celtics NBA Halftime BOS 61 – 49 DEN Último LAL 100 – 110 BOS Vitória || Boston Bruins NHL Halftime NYR 1 – 2 BRU Último TOR 2 – 3 BRU Vitória\"}"
+  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795241555021,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":0,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":0},\"copia\":\"2026-11-21\"},\"falhas\":[]},\"_st\":200}"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos › Avisos: desligar os golos, pontos e sets fica guardado",
+  "p": "Ataque",
+  "name": "Rede instável: sem internet a app funciona e guarda; quando a rede volta (com o servidor a falhar 3 vezes) sincroniza e a tarefa aparece no outro aparelho",
   "pass": true,
-  "info": ""
+  "info": "{\"off\":{\"st\":\"sem ligação (guardado neste aparelho)\",\"vis\":true},\"falhas\":3,\"on\":\"sincronizada\",\"there\":true}"
  },
  {
-  "p": "Desportos",
-  "name": "Desportos: sem erros de JavaScript",
+  "p": "Ataque",
+  "name": "Falhas do app: o servidor aceita o registo da falha (com limite) para o relatório da semana",
   "pass": true,
-  "info": ""
- },
- {
-  "p": "Escala",
-  "name": "Escala: aceita foto, PDF, Excel e CSV",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Escala",
-  "name": "Foto com a equipa toda: só \"Ryan\" é ambíguo, pergunta qual é (sem mexer na escala)",
-  "pass": true,
-  "info": "[\"RYAN SILVA MAGALHAES\",\"JOÃO RYAN\"]"
- },
- {
-  "p": "Escala",
-  "name": "Depois de escolher: a IA lê só essa linha (com quem está acima e abaixo) e a escala muda",
-  "pass": true,
-  "info": "Isto é uma escala/horário de trabalho de uma equipa, com várias pessoas. Lê APENAS a linha (ou coluna) da pessoa \"RYAN SILVA MAGALHAES\", que vem logo a seguir a \"ANA PAULA SOUSA\" e antes de \"JOÃO RYAN\". Ignora todas as outras pessoas: não juntes horários de outras linhas. Segue a linha de \"RYAN SILV"
- },
- {
-  "p": "Escala",
-  "name": "Se a IA ler a linha de outra pessoa, avisa e não mexe na escala",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Escala",
-  "name": "CSV: encontra a linha de \"RYAN SILVA MAGALHAES\" sozinho; à IA só vai essa linha, as datas e a legenda (nada das outras pessoas)",
-  "pass": true,
-  "info": "Isto é UMA linha de uma escala de trabalho (folha de cálculo), já escolhida: a da pessoa \"Ryan Silva Magalhães M F\". Por cima estão as linhas de cabeçalho com as datas/dias; no fim, a legenda dos códigos (se houver). Colunas separadas por TAB.\n\nEscala da loja\t20/11\t21/11\t22/11\t23/11\nRyan Silva Magal"
- },
- {
-  "p": "Escala",
-  "name": "Excel (.xlsx): lê a folha, converte as datas do Excel e manda só a linha da pessoa",
-  "pass": true,
-  "info": "Isto é UMA linha de uma escala de trabalho (folha de cálculo), já escolhida: a da pessoa \"RYAN SILVA MAGALHAES T F\". Por cima estão as linhas de cabeçalho com as datas/dias; no fim, a legenda dos códigos (se houver). Colunas separadas por TAB.\n\nNome\t2026-11-20\t2026-11-21\t2026-11-22\t2026-11-23\nRYAN S"
- },
- {
-  "p": "Escala",
-  "name": "Escala: sem erros de JavaScript",
-  "pass": true,
-  "info": ""
+  "info": "{\"ok\":true,\"ok2\":true,\"_st\":200}"
  }
 ]

@@ -79,6 +79,9 @@
     },
     "api/relatorio.js": {
       "maxDuration": 120
+    },
+    "api/saude.js": {
+      "maxDuration": 60
     }
   },
   "cleanUrls": true,
@@ -98,6 +101,10 @@
     {
       "path": "/api/relatorio",
       "schedule": "28 4 * * 0"
+    },
+    {
+      "path": "/api/saude",
+      "schedule": "7 * * * *"
     }
   ]
 }

@@ -78,6 +78,10 @@ const S_KINDS = ['Curso', 'Certificação', 'Evento', 'Palestra', 'Programa univ
 const find = id => all().find(g => g.id === id);
 A.opsTake = b => { const g = find(b.dataset.id); if (!g) return; const s = D(); OS.add('opps', { name: g.name, inst: g.inst || '', kind: g.kind || 'Emprego', area: 'Carreira', deadline: g.deadline || '', status: 'Identificada', prio: g.deadline && U.diff(g.deadline, U.today()) <= 14 ? '2' : '3', next: 'Decidir se vale a pena', link: g.link || '', reqs: [g.why, g.loc ? 'Local: ' + g.loc : '', 'Origem: ' + g.src + ' · ' + g.mail].filter(Boolean).join('\n'), mailId: g.id, src: g.src });
   OS.setOne('oppscan', { took: s.took.concat(g.id).slice(-400), later: s.later.filter(x => x !== g.id) }); UI.toast('Adicionada às Oportunidades', 'pos'); };
+// v3.64: "Ver e-mail" abre o e-mail aqui dentro (o leitor do Prumo), sem sair para o Gmail
+A.opsMail = b => { const id = b.dataset.id, P = pending(), g = P.now.concat(P.later).find(x => x.id === id) || {}, it = (OS.Mail && OS.Mail.items ? OS.Mail.items() : []).find(x => x.id === id);
+  if (!OS.Mail || !OS.Mail.read) { if (g.mail) window.open(g.mail, '_blank', 'noopener'); return; }
+  OS.Mail.read(id, it || { id, s: g.name || 'E-mail', f: g.inst || g.src || '', d: g.date || '', src: g.srcI || 0, li: g.src === 'LinkedIn' }); };
 A.opsNo = b => { const s = D(), id = b.dataset.id; OS.setOne('oppscan', { no: s.no.concat(id).slice(-600), later: s.later.filter(x => x !== id) }); UI.toast('Não aparece mais'); };
 A.opsLater = b => { const s = D(), id = b.dataset.id; if (!s.later.includes(id)) OS.setOne('oppscan', { later: s.later.concat(id).slice(-200) }); UI.toast('Fica para ver depois'); };
 A.opsScan = async () => { const Mm = OS.Mail; if (!Mm) return; UI.toast('A ler o e-mail e o LinkedIn…'); try { await Mm.refresh(true); await Mm.refreshLi(true); } catch (e) { } await aiScan(true); OS.request(); const n = pending().now.length; UI.toast(n ? `${n} oportunidade${n > 1 ? 's' : ''} para decidir` : 'Nada de novo por agora', n ? 'pos' : ''); };
@@ -92,7 +96,7 @@ OS.on('upd:decisions', d => { if (!d || !d.opp || d.status !== 'Decidida' || !d.
 /* ---------- página ---------- */
 const card = g => `<div class="ops-c"><div class="ops-h"><span class="bdg ${g.src === 'LinkedIn' ? 'acc' : ''}">${esc(g.src)}</span><span class="eyebrow">${esc(g.kind || '')}</span>${g.deadline ? UI.badge('prazo ' + U.fmtDS(g.deadline), U.diff(g.deadline, U.today()) <= 7 ? 'neg' : 'warn') : ''}</div>
   <b>${esc(g.name)}</b>${g.inst || g.loc ? `<small class="mut">${esc([g.inst, g.loc].filter(Boolean).join(' · '))}</small>` : ''}${g.why ? `<small class="tx2">${esc(g.why)}</small>` : ''}
-  <div class="ops-a"><button class="btn sm pri" data-act="opsTake" data-id="${esc(g.id)}">${UI.ic('plus')}Adicionar</button><button class="btn sm" data-act="opsLater" data-id="${esc(g.id)}">Depois</button><button class="btn sm ghost" data-act="opsNo" data-id="${esc(g.id)}">Não me interessa</button><a class="btn sm ghost" href="${esc(g.mail)}" target="_blank" rel="noopener">Ver e-mail</a></div></div>`;
+  <div class="ops-a"><button class="btn sm pri" data-act="opsTake" data-id="${esc(g.id)}">${UI.ic('plus')}Adicionar</button><button class="btn sm" data-act="opsLater" data-id="${esc(g.id)}">Depois</button><button class="btn sm ghost" data-act="opsNo" data-id="${esc(g.id)}">Não me interessa</button><button class="btn sm ghost" data-act="opsMail" data-id="${esc(g.id)}">Ver e-mail</button></div></div>`;
 const mailOk = () => { const c = OS.one('inbox'); return !!(c.url && c.key) || !!(OS.Goog && OS.Goog.mail()); };
 const panel = () => { const ok = mailOk(), P = ok ? pending() : { now: [], later: [] }, li = OS.Mail && OS.Mail.li ? OS.Mail.li() : {}, at = Math.max((OS.Mail && OS.Mail.counts ? OS.Mail.counts().at : 0) || 0, (li && li.at) || 0);
   if (ok && P.now.length && aiOn()) setTimeout(() => aiScan(), 800);

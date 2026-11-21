@@ -151,7 +151,7 @@ const prefetch = async () => { const L = await dados('lista', {}, true); lastM =
   if (!mine) { known = {}; pend = new Set(); }
   const need = ids.filter(id => !pend.has(id) && (!mine || known[id] !== remote[id]));
   const got = need.length ? await fetchIds(need) : { docs: {}, etags: {} };
-  Object.assign(known, got.etags); saveKnown(); LS.set(K.data, P()); SY.state = 'sincronizada'; SY.last = Date.now();
+  Object.assign(known, got.etags); saveKnown(); LS.set(K.data, P()); SY.state = pend.size ? 'a enviar alterações…' : 'sincronizada'; SY.last = Date.now();   /* v3.64: com alterações por enviar não diz "sincronizada" */
   return { empty: !ids.length, entries: Object.entries(got.docs) }; };
 let started = false;
 const start = (cb, errCb) => { if (started) return; started = true;
@@ -165,7 +165,7 @@ const start = (cb, errCb) => { if (started) return; started = true;
       if (j.m && j.m !== lastM) { const L = await dados('lista', {}, true); lastM = L.m;
         const ch = Object.keys(L.docs || {}).filter(id => L.docs[id] !== known[id] && !pend.has(id) && !queue[id]);
         if (ch.length) { const got = await fetchIds(ch); Object.assign(known, got.etags); saveKnown(); cb(snap(Object.entries(got.docs), false)); } }
-      SY.last = Date.now(); SY.err = ''; SY.state = 'sincronizada'; }
+      SY.last = Date.now(); SY.err = ''; SY.state = pend.size ? 'a enviar alterações…' : 'sincronizada'; }
     catch (e) { SY.err = e.message; SY.state = 'sem ligação (guardado neste aparelho)'; }
     finally { polling = false; } };
   Acc.poll = poll;
@@ -504,7 +504,7 @@ OS.views.admin = () => { const UI = OS.UI, head = UI.head('Administração', 'Qu
     ${L.map((c, i) => { const d7 = D7.reduce((m, d) => m + ((c.dias || {})[d] || 0), 0), P = c.perfis || [];
       return `<button class="adm-r${c.online ? ' is-on' : ''}" role="row" data-act="admOne" data-i="${i}" data-uid="${esc(c.uid || '')}" data-q="${esc((c.nome + ' ' + c.email + ' ' + P.join(' ')).toLowerCase())}"><span role="cell" class="adm-who"><b>${esc(c.nome || P[0] || '—')}${c.admin ? ' <small class="mu-tag">admin</small>' : ''}</b><small>${esc(c.email)}</small>${plTag(c.plano)}<small class="mut">${P.length} ${P.length === 1 ? 'perfil' : 'perfis'}${P.length ? ': ' + esc(P.join(', ')) : ''}</small></span>
         <span role="cell"><em>Último acesso</em><span class="adm-ua" data-t="${c.ultUso || c.ultEntrada || ''}" data-on="${c.online ? '1' : ''}">${liveCell(c.ultUso || c.ultEntrada, c.online)}</span></span><span role="cell"><em>Última entrada</em><span class="adm-ue" data-t="${c.ultEntrada || ''}">${ago(c.ultEntrada)}</span>${c.entradas ? ` <small class="mut" title="logins com e-mail e senha">(${c.entradas} ${c.entradas === 1 ? 'login' : 'logins'})</small>` : ''}</span><span role="cell" class="mono"><em>Hoje</em><span class="adm-hj">${hmin((c.dias || {})[t] || 0)}</span></span><span role="cell"><em>7 dias</em>${bars(c.dias || {}, 7, 22)} <small class="mono">${hmin(d7)}</small></span><span role="cell"><em>Criada</em>${c.criado ? new Date(c.criado).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT') : '—'}</span></button>`; }).join('') || '<p class="mut" style="padding:12px">Ainda não há contas.</p>'}</div></div>
-  ${manPn()}${relPn()}${spPn()}${cupPn()}${pendPn()}${pedidosPn()}
+  ${manPn()}${sauPn()}${relPn()}${spPn()}${cupPn()}${pendPn()}${pedidosPn()}
   <div class="pn"><div class="pn-h"><h3>${UI.ic('lock')}O teu cofre de Senhas</h3></div><p class="mut" style="margin:0 0 10px">A senha mestra do teu cofre muda-se no próprio cofre (pede a atual). O cofre de cada pessoa está cifrado no aparelho dela com a senha mestra dela, que nunca sai de lá: ninguém o consegue abrir nem mudar, nem a administração. É isso que o protege.</p><button class="btn sm" data-act="admVault">${UI.ic('lock')}Mudar a senha mestra do meu cofre</button></div>
   <p class="mut adm-note">Atualizado <span id="admAt">${ago(ADM.vivoAt || ADM.at)}</span> (sozinho, a cada 20 s). O tempo de uso conta os minutos com o Prumo aberto e à vista (desbloqueado). Estes dados estão descritos na Política de Privacidade.</p></div>`; };
 A.admVault = () => { OS.setUI('vltMx', 1); OS.go('senhas'); };
@@ -632,11 +632,25 @@ const relPn = () => { const ic = OS.UI.ic; if (!REL.L) return `<div class="pn"><
       <section><h4>Atividade</h4>${li([`${U.pessoas} pessoa(s), ${relHm(U.minutos || 0)} no total`, `Logins: ${E.logins}; contas criadas: ${E.registos}`, `IA: ${E.ia} pedidos; notificações: ${E.notificacoes} (${R.aparelhos == null ? '?' : R.aparelhos} aparelhos)`, `Pagamentos: ${E.pagamentos}`])}</section>
       <section><h4>Segurança</h4>${sec.length ? li(sec.map(([k, v]) => `${esc(REL.nomes[k] || k)}: <b>${v}</b>`)) : '<p class="mut" style="margin:0">Nenhuma tentativa de ataque registada.</p>'}</section>
       <section><h4>Erros do servidor</h4>${err.length ? li(err.map(([k, v]) => `${esc(k)}: <b>${v}</b>`)) : '<p class="mut" style="margin:0">Nenhum.</p>'}</section>
+      <section><h4>Falhas do app (nos aparelhos)</h4>${Object.keys(R.falhasApp || {}).length ? li(Object.entries(R.falhasApp).map(([k, v]) => `${esc(k)}: <b>${v}</b>`)) : '<p class="mut" style="margin:0">Nenhuma.</p>'}</section>
+      <section><h4>Saúde da base de dados</h4>${R.saude && R.saude.pct != null ? li([`${R.saude.pct}% das verificações bem (${R.saude.ok} de ${R.saude.n})`, `Tempo médio: ${R.saude.ms} ms`]) : '<p class="mut" style="margin:0">Ainda sem verificações.</p>'}</section>
       <section><h4>Pedidos e cópias</h4>${li([`Pedidos LGPD/RGPD: ${(R.pedidos || {}).novos || 0} novos, ${(R.pedidos || {}).porResponder || 0} por responder`, `Cópias diárias: ${(R.copias || {}).diarias ? R.copias.diarias.length : 0} (última ${esc(((R.copias || {}).diarias || []).slice(-1)[0] || '—')})`, `Cópias semanais: ${(R.copias || {}).semanais ? R.copias.semanais.length : 0} (última ${esc(((R.copias || {}).semanais || []).slice(-1)[0] || '—')})`])}</section>
     </div></div>`; };
 A.admRel = () => relLoad(false);
 A.admRelNow = () => relLoad(true);
 document.addEventListener('change', e => { if (e.target.matches && e.target.matches('[data-act=admRelSel]')) { REL.i = +e.target.value || 0; OS.request(); } });
+/* ---------- v3.64: saúde da base de dados (verificação de hora a hora) ---------- */
+const SAU = { s: null, busy: false };
+const sauLoad = async agora => { SAU.busy = true; OS.request(); try { const j = await conta('adminSaude', agora ? { agora: 1 } : {}); SAU.s = j.saude; } catch (e) { OS.UI.toast(e.message, 'neg'); } SAU.busy = false; OS.request(); };
+const sauPn = () => { const ic = OS.UI.ic, s = SAU.s, when = t => t ? new Date(t).toLocaleString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+  const head = `<div class="pn-h"><h3>${ic('heart')}Saúde do servidor</h3>${s && s.pct != null ? `<span class="bdg ${s.pct === 100 ? 'pos' : s.pct >= 90 ? 'warn' : 'neg'}">${s.pct}% nas últimas ${s.n} h</span>` : ''}</div>`;
+  if (!s) return `<div class="pn">${head}<p class="mut" style="margin:0 0 10px">A cada hora o Prumo escreve, lê e apaga um ficheiro de teste na base de dados, confirma a chave e a lista de contas e vê se a cópia de segurança correu. Se falhar duas vezes seguidas, recebes um e-mail.</p><button class="btn sm" data-act="admSau"${SAU.busy ? ' disabled' : ''}>${SAU.busy ? 'A carregar…' : 'Ver a saúde'}</button></div>`;
+  const u = s.ultima || {};
+  return `<div class="pn">${head}<p style="margin:0 0 8px">Última verificação: <b>${esc(when(u.t))}</b> · ${u.ok ? '<span class="pos">tudo bem</span>' : `<span class="neg">falhou (${esc(u.err || '')})</span>`} · ${u.ms || 0} ms (média ${s.ms} ms)${u.copia ? ' · última cópia diária: ' + esc(u.copia) : ''}</p>
+    ${(s.falhas || []).length ? `<p class="mut" style="margin:0 0 6px">Falhas recentes:</p><ul class="adm-rl">${s.falhas.map(f => `<li>${esc(when(f.t))}: ${esc(f.err || 'falhou')}</li>`).join('')}</ul>` : '<p class="mut" style="margin:0 0 8px">Sem falhas nas últimas verificações.</p>'}
+    <button class="btn sm ghost" data-act="admSauNow"${SAU.busy ? ' disabled' : ''}>${SAU.busy ? 'A verificar…' : 'Verificar agora'}</button></div>`; };
+A.admSau = () => sauLoad(false);
+A.admSauNow = () => sauLoad(true);
 const manPn = () => { const m = MAN, on = m.on;
   return `<div class="pn"><div class="pn-h"><h3>${OS.UI.ic('shield')}Manutenção</h3><span class="bdg ${on ? 'warn' : 'pos'}">${on ? 'ativa até às ' + manH(m.ate) : 'desligada'}</span></div>
     <p class="mut" style="margin:0 0 10px">Na manutenção só a tua conta usa o Prumo; as outras pessoas veem o ecrã de manutenção e os dados ficam parados. Todas as semanas, de madrugada (domingo, 04:00–05:30 em Lisboa), liga-se sozinha para o ataque de teste, a cópia de segurança e a revisão.${m.prox ? ' Próxima: <b>' + esc(manD(m.prox)) + '</b>.' : ''}</p>

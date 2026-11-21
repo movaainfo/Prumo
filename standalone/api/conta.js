@@ -342,12 +342,19 @@ const OPS = {
   // v3.62: relatórios da semana (só números, sem dados pessoais)
   async adminRelatorios(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
     const R = require('./_relatorio'); if (b.agora) { await N.flushCounts(true); await R.gerar({ guardar: true }); } return { relatorios: await R.lista(8), nomes: R.NOMES }; },
+  // v3.64: saúde da base de dados (histórico das últimas 72 verificações; "verificar agora" corre uma na hora)
+  async adminSaude(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
+    const S = require('./_saude'); const H = b.agora ? (await S.run({})).H : await S.ler(); return { saude: S.resumo(H) }; },
   async adminManutencao(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
     const now = Date.now(), min = Math.max(5, Math.min(24 * 60, Math.round(+b.min || 60)));
     if (b.acao === 'ligar') await N.setManut({ ate: now + min * 60e3, por: s0.rec.email, em: now });
     else if (b.acao === 'desligar') { const m = await N.manut({ fresh: true }); await N.setManut({ ate: 0, off: m.motivo === 'semanal' ? m.ate : 0, em: now }); }
     else throw N.err('acao', 'Ação desconhecida.', 400);
     N.sec('manutencao_' + b.acao, req); const m = await N.manut({ fresh: true }); return { manut: { on: m.on, ate: m.ate, motivo: m.motivo, prox: m.prox } }; },
+  // v3.64: falha de JavaScript no aparelho de alguém (sem dados pessoais): conta para o relatório da semana
+  async falha(req, b) { if (N.limit(req, 'falha', 20, 3600e3)) return { ok2: false };
+    const m = String(b.m || '').replace(/[\u0000-\u001f]/g, ' ').slice(0, 60), at = String(b.at || '').replace(/[^\w.:-]/g, '').slice(0, 40), v = String(b.v || '').replace(/[^\d.]/g, '').slice(0, 8), dev = /^(tel|tablet|pc)$/.test(b.dev) ? b.dev : '?';
+    if (!m) return { ok2: false }; N.count('app:' + m.slice(0, 40) + ' @ ' + at.slice(0, 18)); N.count('appv:' + v + ':' + dev); console.warn('FALHA ' + JSON.stringify({ m, at, v, r: String(b.r || '').slice(0, 24), dev })); return { ok2: true }; },
   async publico() { return { responsavel: String(process.env.NAUTILO_RESPONSAVEL || '').slice(0, 120), contacto: String(process.env.NAUTILO_CONTACTO || '').slice(0, 120) }; },
   // pedidos dos titulares (LGPD art. 18 / RGPD art. 15–22): ficam cifrados para a administração responder
   async pedido(req, b) { const s = await session(req); if (N.limit(req, 'pedido|' + s.rec.uid, 5, 864e5)) throw N.err('limite', 'Já fizeste vários pedidos hoje. Responderemos a todos.', 429);
