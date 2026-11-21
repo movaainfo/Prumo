@@ -99,7 +99,7 @@ OS.PainelParts = () => {
   const SH = OS.all('shifts'), wH = U.sum(SH.filter(s => s.date >= wk && s.date <= U.addDays(wk, 6)), s => OS.Car.workedHours(s)), wNext = U.sortBy(SH.filter(s => s.date > t || (s.date === t && (s.end || '99') > U.hm())), s => s.date + s.start)[0];
   const months = Fin.months(6);
   const life = [
-    ['financas', 'Dinheiro', 'Finanças', U.eur(liq, { dec: 0 }), `disponível · patrimônio ${U.eurK(nw)}`],
+    ['financas', 'Dinheiro', 'Finanças', U.eur(liq, { dec: 0 }), `disponível · património ${U.eurK(nw)}`],
     ['universidade', 'Estudos', 'Universidade', U.nf(studyWk, 1) + (studyTgt ? '/' + studyTgt : '') + ' h', 'esta semana' + (St.gpa() ? ' · média ' + St.gpa() : '')],
     ['treino', 'Corpo', 'Treino', wkW + '/' + (p.trainTarget || 4) + ' treinos', U.nf(kmW, 1) + ' km corridos esta semana'],
     ['capital', 'Carreira', 'Carreira', U.nf(cap.score) + ' pts', 'capital profissional ' + (cap.score >= capPrev.score ? '+' : '') + (cap.score - capPrev.score) + ' em 30d'],

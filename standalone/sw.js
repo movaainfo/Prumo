@@ -25,7 +25,8 @@ self.addEventListener('fetch', e => {
   if (PICHOST.test(u.hostname) && (e.request.destination === 'image' || /\.(jpe?g|png|webp|gif)$/i.test(u.pathname)) && !u.searchParams.has('nitidez')) { e.respondWith(caches.open(IMG).then(c => c.match(e.request).then(hit => hit || getPic(e.request, u).then(r => { if (r.ok || r.type === 'opaque') { c.put(e.request, r.clone()).catch(() => { }); if (++picN % 40 === 0) trimPics(); } return r; })))); return; }
   if (u.hostname === 'cdnjs.cloudflare.com' && /three\.js/.test(u.pathname)) { e.respondWith(caches.open(IMG).then(c => c.match(e.request).then(hit => hit || fetch(e.request).then(r => { if (r.ok) c.put(e.request, r.clone()); return r; })))); return; }
   if (u.origin !== location.origin) return;
-  if (/^\/(termos|privacidade|cookies|direitos|acessibilidade|creditos)(\.html)?$/.test(u.pathname)) return; // documentos legais públicos: páginas à parte, sempre da rede
+  if (/^\/(termos|privacidade|cookies|direitos|acessibilidade|creditos)(\.html)?$/.test(u.pathname)) return;
+  if (/^\/(inicio|planos|apagar-conta)(\.html)?$/.test(u.pathname) || /^\/inicio\//.test(u.pathname)) return; // v3.66: página inicial pública e os vídeos dela: sempre da rede, nunca no lugar da app // documentos legais públicos: páginas à parte, sempre da rede
   // a app: primeiro a internet (abre sempre a versão mais recente; o servidor só manda tudo outra vez quando há versão nova),
   // a cópia guardada só quando não há rede ou a rede demora mais de 4 s
   if (e.request.mode === 'navigate' || /\/(index\.html)?$/.test(u.pathname)) { e.respondWith(fresh(e)); return; }
@@ -34,7 +35,8 @@ self.addEventListener('fetch', e => {
 });
 function fresh(e) { const cached = () => caches.match(SHELLKEY).then(h => h || caches.match(e.request, { ignoreSearch: true }));
   const net = fetch(e.request.url, { cache: 'no-cache', credentials: 'same-origin' }).then(r => { if (!r.ok) throw new Error('http ' + r.status); return r; });
-  e.waitUntil(net.then(r => { const keep = r.clone(); return caches.open(V).then(c => c.put(SHELLKEY, keep)); }).catch(() => { }));
+  // v3.66: se o servidor respondeu com a página inicial pública (quem ainda não tinha a marca da app), não a guarda no lugar da app
+  e.waitUntil(net.then(r => { if (r.headers.get('x-prumo-pagina') === 'inicio') return; const keep = r.clone(); return caches.open(V).then(c => c.put(SHELLKEY, keep)); }).catch(() => { }));
   const plain = r => r.redirected ? new Response(r.body, { status: r.status, statusText: r.statusText, headers: r.headers }) : r;
   const slow = new Promise(res => setTimeout(res, 4000)).then(cached);
   return Promise.race([net.then(plain, cached), slow.then(h => h || net.then(plain))]).then(r => r || net.then(plain))

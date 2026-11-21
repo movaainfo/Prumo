@@ -2,7 +2,7 @@
   "appId": "pt.prumo.app",
   "appName": "Prumo",
   "webDir": "www",
-  "server": { "url": "https://prumo-vida.vercel.app/#visao", "cleartext": false, "allowNavigation": ["prumo-vida.vercel.app", "nautilo-app.vercel.app"] },
+  "server": { "url": "https://prumo-vida.vercel.app/?app=1#visao", "cleartext": false, "allowNavigation": ["prumo-vida.vercel.app", "nautilo-app.vercel.app"] },
   "ios": { "appendUserAgent": "PrumoApp/ios", "contentInset": "automatic", "backgroundColor": "#130A0B", "limitsNavigationsToAppBoundDomains": true },
   "plugins": { "SplashScreen": { "backgroundColor": "#130A0B", "launchShowDuration": 600 } }
 }

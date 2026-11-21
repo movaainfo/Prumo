@@ -160,7 +160,7 @@ addEventListener('hashchange', () => { document.body.classList.remove('nav-open'
 
 /* ---------- registo rápido ---------- */
 const QA = [['tasks', 'Tarefa', 'checksq', {}], ['transactions', 'Despesa', 'wallet', { type: 'Despesa' }], ['transactions', 'Receita', 'coin', { type: 'Receita' }], ['events', 'Compromisso', 'cal', {}], ['sessions', 'Sessão de estudo', 'school', {}], ['workouts', 'Treino', 'dumbbell', {}], ['runs', 'Corrida', 'run', {}], ['notes', 'Nota', 'note', {}], ['contacts', 'Contacto', 'users', {}], ['mvsales', 'Venda Mova', 'rocket', {}], ['wishlist', 'Quero comprar…', 'cart', {}], ['goals', 'Meta', 'target', {}], ['assessments', 'Avaliação', 'flag', {}], ['opps', 'Oportunidade', 'door', {}], ['shifts', 'Turno', 'briefcase', {}], ['body', 'Peso', 'heart', {}], ['meals', 'Refeição', 'apple', {}]];
-A.quickAdd = () => UI.modal(`<h3>Registar</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px">${QA.map(([c, l, ic, d], i) => `<button class="btn" style="justify-content:flex-start;padding:10px 12px" data-qa="${i}">${UI.ic(ic)}<span>${l}</span></button>`).join('')}</div>`);
+A.quickAdd = () => UI.modal(`<h3>Registar</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px">${QA.map(([c, l, ic, d], i) => c === 'mvsales' && OS.pubAcc && OS.pubAcc() ? '' : `<button class="btn" style="justify-content:flex-start;padding:10px 12px" data-qa="${i}">${UI.ic(ic)}<span>${l}</span></button>`).join('')}</div>`);
 document.addEventListener('click', e => { const b = e.target.closest('[data-qa]'); if (!b) return; const [c, , , d] = QA[+b.dataset.qa]; UI.closeModal(); UI.openForm(c, null, d); });
 
 /* ---------- paleta de comandos ---------- */

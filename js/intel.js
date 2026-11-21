@@ -191,7 +191,7 @@ I.goalETA = g => { if (!['account', 'networth', 'invested'].includes(g.metric)) 
 const snapAt = (d, k) => { const s = U.sortBy(OS.all('snapshots').filter(x => x.date <= d || x.ym <= U.ym(d)), x => x.ym).pop(); return s ? s[k] : null; };
 const win = (end, days) => [U.addDays(end, -(days - 1)), end];
 I.metrics = [
-  { k: 'nw', l: 'Patrimônio líquido', stock: true, up: true, f: d => d === U.today() ? Fin.netWorth() : snapAt(d, 'nw'), fmt: v => U.eur(v, { dec: 0 }) },
+  { k: 'nw', l: 'Património líquido', stock: true, up: true, f: d => d === U.today() ? Fin.netWorth() : snapAt(d, 'nw'), fmt: v => U.eur(v, { dec: 0 }) },
   { k: 'inv', l: 'Carteira de investimentos', stock: true, up: true, f: d => d === U.today() ? OS.Inv.value() : snapAt(d, 'inv'), fmt: v => U.eur(v, { dec: 0 }) },
   { k: 'inc', l: 'Receitas (30 dias)', up: true, f: d => { const [a, b] = win(d, 30); return U.sum(Fin.tx(a, b, { type: 'Receita' }), x => x.amount); }, has: () => OS.all('transactions').length, fmt: v => U.eur(v, { dec: 0 }) },
   { k: 'exp', l: 'Despesas (30 dias)', up: false, f: d => { const [a, b] = win(d, 30); return U.sum(Fin.tx(a, b, { type: 'Despesa' }), x => x.amount); }, has: () => OS.all('transactions').length, fmt: v => U.eur(v, { dec: 0 }) },
@@ -237,7 +237,7 @@ I.insights = () => {
     const [ea, eb] = pair((x, y) => U.sum(Fin.tx(x, y, { type: 'Despesa' }), k => k.amount), 30);
     if (eb > 50) { const c = (ea - eb) / eb; if (c >= .15) say('neg', `Os teus gastos aumentaram: ${U.eur(ea, { dec: 0 })} nos últimos 30 dias contra ${U.eur(eb, { dec: 0 })} (+${Math.round(c * 100)}%).`, 'Finanças'); else if (c <= -.15) say('pos', `Gastaste menos: ${U.eur(ea, { dec: 0 })} contra ${U.eur(eb, { dec: 0 })} (${Math.round(c * 100)}%).`, 'Finanças'); }
   }
-  const s = Fin.nwSeries(); if (s.length >= 3) { const a = s[s.length - 1].nw, b = s[s.length - 3].nw; if (b && Math.abs(a - b) > 50) say(a > b ? 'pos' : 'neg', `Patrimônio ${a > b ? 'cresceu' : 'caiu'} ${U.eur(Math.abs(a - b), { dec: 0 })} em 2 meses.`, 'Finanças'); }
+  const s = Fin.nwSeries(); if (s.length >= 3) { const a = s[s.length - 1].nw, b = s[s.length - 3].nw; if (b && Math.abs(a - b) > 50) say(a > b ? 'pos' : 'neg', `Património ${a > b ? 'cresceu' : 'caiu'} ${U.eur(Math.abs(a - b), { dec: 0 })} em 2 meses.`, 'Finanças'); }
   OS.all('goals').filter(g => g.status === 'Ativa').forEach(g => { const i = Goal.info(g); if (i.exp != null && i.p >= i.exp + .1 && i.p < 1) say('pos', `Estás à frente do ritmo em "${g.title}": ${Math.round(i.p * 100)}% feito, esperado ${Math.round(i.exp * 100)}%.`, 'Metas'); });
   St.current().forEach(sub => { const x = St.stats(sub); if (x.avg && x.w >= 20) { if (x.avg >= x.tgt) say('pos', `${sub.name}: média ${x.avg} acima do alvo ${x.tgt} com ${x.w}% avaliado.`, 'Universidade'); } });
   return out;

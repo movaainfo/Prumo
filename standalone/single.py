@@ -20,6 +20,7 @@ if os.path.isdir(f'{src}/.well-known'): shutil.copytree(f'{src}/.well-known', f'
 shutil.copy('standalone/vercel.json', f'{out}/vercel.json')
 # páginas públicas dos documentos legais (/privacidade, /termos…)
 import subprocess; subprocess.run(['node', 'standalone/legalpages.js', out], check=True)
+subprocess.run(['node', 'standalone/inicio/gerar.js', out], check=True)  # v3.66: página inicial pública (para quem ainda não usa a app)
 files = ['manifest.webmanifest'] + sorted(x for x in os.listdir(out) if x.endswith('.png')) + (['som/' + x for x in sorted(os.listdir(f'{out}/som'))] if os.path.isdir(f'{out}/som') else []) + (['vendor/fonts/' + x for x in sorted(os.listdir(f'{out}/vendor/fonts'))] if os.path.isdir(f'{out}/vendor/fonts') else [])
 ver = hashlib.sha1(html.encode()).hexdigest()[:10]
 sw = open('standalone/sw.js').read().replace('__VERSION__', ver).replace('__FILES__', '[' + ','.join(f'"{x}"' for x in files) + ']')

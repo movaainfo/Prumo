@@ -184,7 +184,7 @@ const ended = () => { if (endedOnce) return; endedOnce = true; S = null; saveS()
 const gone = () => { if (endedOnce) return; endedOnce = true; LS.del(K.p); wipeLocal(); showGate('perfis', 'Este perfil foi apagado noutro aparelho.'); };
 
 /* ---------- ecrã da conta (por cima de tudo, com o mesmo mar do ecrã de entrada) ---------- */
-let G = null, gMode = 'entrar', gMsg = '', gEdit = null, gManage = false, gBusy = false, gRec = '';
+let G = null, gMode = /[?&]conta=criar\b/.test(location.search) ? 'criar' : 'entrar', gMsg = '', gEdit = null, gManage = false, gBusy = false, gRec = '';
 const scene = () => OS.Scene ? `<div class="lk-scene${OS.Fundo && OS.Fundo.get() === 'foto' ? ' fd-isphoto' : ''}">${OS.Fundo ? OS.Fundo.html(Math.max(320, innerWidth), Math.max(480, innerHeight), { id: 'acs', anim: 1 }) : OS.Scene.svg(Math.max(320, innerWidth), Math.max(480, innerHeight), { id: 'acs' })}</div>` : '';
 const okImg = s => typeof s === 'string' && s.length <= 60000 && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(s);
 const avatar = (p, big) => `<span class="ac-av${big ? ' big' : ''}${okImg(p.img) ? ' im' : ''}" style="--c:${esc(p.cor || PCOL[0])}">${okImg(p.img) ? `<img src="${p.img}" alt="">` : esc(p.av || first(p.nome).slice(0, 1).toUpperCase() || '?')}</span>`;

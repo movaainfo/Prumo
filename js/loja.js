@@ -13,6 +13,8 @@ if (q === 'nao') plat = ''; else if (q) plat = q;
 else if (/^android-app:\/\//.test(document.referrer || '')) plat = 'android';
 else if (/PrumoApp\/ios/.test(navigator.userAgent || '')) plat = 'ios';
 try { if (plat) localStorage.setItem('os2loja', plat); else if (q === 'nao') localStorage.removeItem('os2loja'); } catch (e) { }
-window.PrumoLoja = { on: !!plat, plat };  // o core.js passa-o para OS.Loja
+window.PrumoLoja = { on: !!plat, plat };
+// v3.66: quem já abriu a app fica marcado neste navegador (cookie sem dados pessoais): o endereço principal abre a app e não a página de apresentação
+try { document.cookie = 'prumo_app=1; Max-Age=31536000; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { }  // o core.js passa-o para OS.Loja
 if (plat) document.documentElement.classList.add('loja', 'loja-' + plat);
 })();
