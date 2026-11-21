@@ -56,14 +56,14 @@ const sugsHtml = SPY.map((q, i) => `<button type="button" data-i="${i}">${esc(q.
 
 // um dia com o Prumo
 const DIA = [
-  { h: '07:00', t: 'Plano do dia', p: 'Abres o Prumo e já sabes: aula às 9, entrega amanhã, treino às 20:30.', luz: 'rgba(244,217,160,.22)' },
-  { h: '09:00', t: 'Aulas', p: 'A agenda avisa antes e regista a presença em cada aula.', luz: 'rgba(244,217,160,.16)' },
-  { h: '13:00', t: 'Almoço', p: 'Registas a refeição em segundos. Calorias e proteína somam sozinhas.', luz: 'rgba(244,217,160,.12)' },
-  { h: '14:30', t: 'Bloco de foco', p: 'Uma pendência de cada vez, com tempo marcado e música para concentrar.', luz: 'rgba(224,38,58,.10)' },
-  { h: '17:40', t: 'Um café', p: 'Pagaste? O atalho do iPhone regista o gasto sem abrir o app.', luz: 'rgba(224,38,58,.14)' },
-  { h: '20:30', t: 'Treino', p: 'Séries, cargas da última vez e descanso cronometrado.', luz: 'rgba(224,38,58,.18)' },
-  { h: '22:45', t: 'Desligar', p: 'Lês 20 páginas, o hábito fica marcado e o sono começa a contar.', luz: 'rgba(163,25,42,.14)' },
-  { h: '23:30', t: 'O dia fecha', p: 'O Dominus soma a experiência do dia. Amanhã continuas de onde ficaste.', luz: 'rgba(163,25,42,.08)' }
+  { h: '07:00', t: 'Plano do dia', p: 'Abres o Prumo e já sabes: aula às 9, entrega amanhã, treino às 20:30.', luz: 'rgba(252,231,209,.22)' },
+  { h: '09:00', t: 'Aulas', p: 'A agenda avisa antes e regista a presença em cada aula.', luz: 'rgba(252,231,209,.16)' },
+  { h: '13:00', t: 'Almoço', p: 'Registas a refeição em segundos. Calorias e proteína somam sozinhas.', luz: 'rgba(252,231,209,.12)' },
+  { h: '14:30', t: 'Bloco de foco', p: 'Uma pendência de cada vez, com tempo marcado e música para concentrar.', luz: 'rgba(252,231,209,.10)' },
+  { h: '17:40', t: 'Um café', p: 'Pagaste? O atalho do iPhone regista o gasto sem abrir o app.', luz: 'rgba(252,231,209,.09)' },
+  { h: '20:30', t: 'Treino', p: 'Séries, cargas da última vez e descanso cronometrado.', luz: 'rgba(252,231,209,.08)' },
+  { h: '22:45', t: 'Desligar', p: 'Lês 20 páginas, o hábito fica marcado e o sono começa a contar.', luz: 'rgba(0,0,0,.18)' },
+  { h: '23:30', t: 'O dia fecha', p: 'O Dominus soma a experiência do dia. Amanhã continuas de onde ficaste.', luz: 'rgba(0,0,0,.25)' }
 ];
 const marcasHtml = DIA.map(d => `<button type="button">${d.h}</button>`).join('');
 
@@ -114,6 +114,8 @@ const rep = {
   DATA: JSON.stringify(DATA).replace(/</g, '\\u003c')
 };
 let html = fs.readFileSync(path.join(HERE, 'pagina.html'), 'utf8').replace(/\{\{([A-Z0-9]+)\}\}/g, (m, k) => { if (!(k in rep)) throw new Error('falta ' + k); return rep[k]; });
+// destaques dos títulos: cada palavra num bloco (o fundo cobre as letras inteiras sem tapar as linhas vizinhas)
+html = html.replace(/<(h[12])([^>]*)>([\s\S]*?)<\/\1>/g, (m, t, at, inner) => `<${t}${at}>` + inner.replace(/<em>([^<]+)<\/em>/g, (x, w) => { if (/[À-ÿ]/.test(w)) throw new Error('destaque com acento (o acento ficaria fora do bloco): ' + w); return '<em>' + w.trim().split(/\s+/).map(p => `<span class="w">${p}</span>`).join(' ') + '</em>'; }) + `</${t}>`);
 fs.writeFileSync(path.join(out, 'inicio.html'), html);
 // imagens e vídeos
 const dst = path.join(out, 'inicio'); fs.mkdirSync(dst, { recursive: true });

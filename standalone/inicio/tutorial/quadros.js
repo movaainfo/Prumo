@@ -8,7 +8,8 @@ const F = spec.fontes;
 const d64 = (f, t) => `data:${t};base64,` + fs.readFileSync(f).toString('base64');
 const css = `@font-face{font-family:"Bodoni Moda";src:url(${d64(F + '/bodoni-moda.woff2', 'font/woff2')}) format("woff2");font-weight:400 900}
 @font-face{font-family:"Geist";src:url(${d64(F + '/e09adcd0ca.woff2', 'font/woff2')}) format("woff2");font-weight:400 700}
-*{box-sizing:border-box;margin:0}html,body{width:${spec.w}px;height:${spec.h}px;overflow:hidden}body{font-family:Geist,sans-serif;color:#F4D9A0}`;
+@font-face{font-family:"Anton";src:url(${d64(F + '/anton-latin.woff2', 'font/woff2')}) format("woff2")}
+*{box-sizing:border-box;margin:0}html,body{width:${spec.w}px;height:${spec.h}px;overflow:hidden}body{font-family:Geist,sans-serif;color:#FCE7D1}`;
 (async () => {
   const b = await chromium.launch(), c = await b.newContext({ viewport: { width: spec.w, height: spec.h }, deviceScaleFactor: 1 }), p = await c.newPage();
   for (const it of spec.itens) {
