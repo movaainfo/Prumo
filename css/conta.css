@@ -238,3 +238,5 @@ html.mn-on body{overflow:hidden}
 .adm-rl{margin:0;padding-left:18px;line-height:1.5}
 .adm-ral{border:1px solid var(--accent);border-radius:12px;padding:10px 14px;margin:0 0 12px}
 .adm-ral .adm-rl{margin-top:4px}
+/* v3.64: modo loja (app da Play Store / App Store): sem preços nem compras */
+html.loja .pl-p, html.loja .pl-p + small, html.loja .pl-cupn, html.loja .pl-ctl .seg, html.loja .pl-cup, html.loja [data-act=plAssinar], html.loja [data-act=plMudar], html.loja [data-act=plPortal], html.loja [data-act=plCiclo], html.loja [data-act=plCur]{display:none!important}

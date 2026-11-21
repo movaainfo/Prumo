@@ -53,14 +53,14 @@ const status = c => { if (c.local) return 'Modo pessoal: tens tudo.';
   if (c.acabou) return 'O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados.';
   if (c.semCobranca) return 'As assinaturas abrem em breve: até lá tens tudo do Completo.';
   return ''; };
-const cards = (c, P0) => { const cur = 'EUR', loc = curOf(), ci = OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', L = (P0 && P0.planos) || [], open = !!(P0 && P0.cobranca);
+const cards = (c, P0) => { const loja = !!(OS.Loja && OS.Loja.on), cur = 'EUR', loc = curOf(), ci = OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', L = (P0 && P0.planos) || [], open = !!(P0 && P0.cobranca);
   if (loc !== 'EUR') loadFx();
   return `<div class="pl-ctl"><div class="seg" role="radiogroup" aria-label="Pagamento">${[['mes', 'Mensal'], ['ano', 'Anual · 2 meses grátis']].map(([k, l]) => `<button type="button" class="${ci === k ? 'on' : ''}" data-act="plCiclo" data-v="${k}" aria-pressed="${ci === k}">${l}</button>`).join('')}</div>
     ${c.pago && c.cur && c.cur !== 'EUR' ? `<span class="mut pl-curx">A tua assinatura é paga em ${esc((MOEDAS.find(m => m[0] === c.cur) || [, c.cur])[1])}</span>` : ''}</div>
-  <p class="mut pl-curn">Os preços são em euros, com impostos incluídos.${loc !== 'EUR' ? ' Ao pagar, vês o valor na tua moeda, convertido pelo câmbio do dia (o valor ao lado de cada preço é aproximado).' : ' Se pagares com um cartão noutra moeda, o valor é convertido pelo câmbio do dia.'}</p>
-  ${open && !c.pago && !c.local ? cupBox() : ''}
+  ${loja ? '<p class="mut pl-curn">Nesta versão da app não há compras: aqui vês o teu plano e o que cada um inclui.</p>' : ''}<p class="mut pl-curn"${loja ? ' hidden' : ''}>Os preços são em euros, com impostos incluídos.${loc !== 'EUR' ? ' Ao pagar, vês o valor na tua moeda, convertido pelo câmbio do dia (o valor ao lado de cada preço é aproximado).' : ' Se pagares com um cartão noutra moeda, o valor é convertido pelo câmbio do dia.'}</p>
+  ${open && !c.pago && !c.local && !loja ? cupBox() : ''}
   <div class="pl-g">${[1, 2, 3].map(l => { const p = L.find(x => x.lvl === l), pr = p && p.precos && p.precos[cur], val = pr ? pr[ci] : 0, mine = c.pago && c.lvl === l, top = l === 3;
-    const btn = !open ? `<button class="btn" disabled>${c.admin ? 'Liga o Stripe para abrir' : 'Em breve'}</button>`
+    const btn = loja ? (mine ? `<button class="btn" disabled>${UI.ic('check')}O teu plano</button>` : '') : !open ? `<button class="btn" disabled>${c.admin ? 'Liga o Stripe para abrir' : 'Em breve'}</button>`
       : c.admin || c.local ? `<button class="btn" disabled>Tens tudo</button>`
       : mine ? `<button class="btn" disabled>${UI.ic('check')}O teu plano</button>`
       : c.pago ? `<button class="btn ${top ? 'pri' : ''}" data-act="plMudar" data-id="${ID[l]}">${l > c.lvl ? 'Subir para o ' : 'Mudar para o '}${NOME[l]}</button>`
@@ -83,7 +83,7 @@ OS.forms.plCupao = async (f, v) => { const code = String(v('code') || '').trim()
 A.plCupaoX = () => { OS.ui.plCupao = null; OS.request(); };
 const V0 = () => { const c = PL.cur(); loadPre(); const P0 = PRE;
   const adm = c.admin && P0 && !P0.cobranca ? `<div class="pn"><h3 style="margin:0 0 6px">Abrir as assinaturas (só tu vês isto)</h3><ol class="ai-steps"><li>Cria conta em <b>stripe.com</b> e completa os dados da tua atividade (o Stripe pede a identificação e o IBAN para receberes).</li><li>Em Developers → API keys, copia a <b>chave secreta</b> (começa por <code>sk_live_</code>; para experimentar, <code>sk_test_</code>).</li><li>No Vercel, projeto prumo → Settings → Environment Variables, cria <code>STRIPE_SECRET_KEY</code> com essa chave e faz Redeploy. Cola-a só no Vercel.</li><li>No Stripe, em Settings → Billing → <b>Customer portal</b>, carrega em Guardar (é onde cada pessoa muda o cartão e vê as faturas).</li></ol><p class="mut" style="margin:0">Os preços estão em <code>api/_planos.js</code> (ou na variável <code>NAUTILO_PRECOS</code>). Até ligares o Stripe ninguém fica bloqueado.</p></div>` : '';
-  const man = c.pago ? `<div class="row gap8" style="flex-wrap:wrap;margin-top:12px"><button class="btn sm" data-act="plPortal">${UI.ic('card')}Gerir pagamento e faturas</button>${c.cancelar ? `<button class="btn sm" data-act="plRetomar">Retomar a assinatura</button>` : `<button class="btn sm ghost" data-act="plCancelar">Cancelar a assinatura</button>`}</div>` : '';
+  const man = c.pago && !(OS.Loja && OS.Loja.on) ? `<div class="row gap8" style="flex-wrap:wrap;margin-top:12px"><button class="btn sm" data-act="plPortal">${UI.ic('card')}Gerir pagamento e faturas</button>${c.cancelar ? `<button class="btn sm" data-act="plRetomar">Retomar a assinatura</button>` : `<button class="btn sm ghost" data-act="plCancelar">Cancelar a assinatura</button>`}</div>` : '';
   const intro = OS.ui.plIntro && c.teste ? `<div class="pn pl-intro"><h3>Bem-vindo ao Prumo</h3><p>Tens <b>${dias(c.ate)} dias grátis do plano Completo</b>, sem cartão. Escolhe já o teu plano aqui em baixo ou continua com o teste: avisamos-te antes de acabar e os teus dados ficam sempre guardados.</p><button type="button" class="btn pri" data-act="plIntroOk">Continuar com o teste grátis</button></div>` : '';
   return UI.head('Planos', 'Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres.', '', 'Sistema') + `<div class="pl-page">${intro}
     <div class="pn pln-st"><div class="pn-h"><h3>${UI.ic('star')}O teu plano</h3>${c.lvl ? `<span class="bdg ${c.teste ? 'warn' : 'pos'}">${esc(c.teste ? 'Teste do Completo' : c.n || NOME[c.lvl])}</span>` : '<span class="bdg neg">sem plano</span>'}</div><p style="margin:0">${status(c)}</p>${man}</div>
@@ -93,7 +93,7 @@ OS.views.planos = () => V0();
 
 /* ---------- v3.24: os planos aparecem sozinhos ao entrar (uma vez por conta neste aparelho), durante o teste grátis ---------- */
 const introKey = () => 'os2plIntro:' + ((OS.Acc && OS.Acc.email && OS.Acc.email()) || '');
-const introDue = () => { const c = PL.cur(); if (!(OS.Acc && OS.Acc.on && OS.Acc.email && OS.Acc.email()) || !c.teste || !c.cobranca || c.admin || c.pago || U.ls.get(introKey(), 0)) return false;
+const introDue = () => { const c = PL.cur(); if ((OS.Loja && OS.Loja.on) || !(OS.Acc && OS.Acc.on && OS.Acc.email && OS.Acc.email()) || !c.teste || !c.cobranca || c.admin || c.pago || U.ls.get(introKey(), 0)) return false;
   if (document.getElementById('acc') || (OS.Onb && OS.Onb.isOpen && OS.Onb.isOpen()) || !(window.__noOnb || (OS.one('onb') || {}).done)) return false;
   if (OS.Legal && OS.Legal.pending && OS.Legal.pending()) return false; const m = document.getElementById('modal'); if (m && !m.hidden) return false;
   return !(OS.Lock && OS.Lock.unlocked) || OS.Lock.unlocked(); };

@@ -53,24 +53,30 @@ $BODY
 HTML
 cat > "$OUT/manifest.webmanifest" <<'JSON'
 {
+  "id": "/",
   "name": "Prumo",
   "short_name": "Prumo",
-  "description": "O sistema operativo da tua vida.",
-  "lang": "pt",
+  "description": "O sistema operativo da tua vida: tarefas, hábitos, dinheiro, estudos, treino, dieta, metas e um jogo de evolução pessoal, com uma assistente de IA.",
+  "lang": "pt-PT",
+  "dir": "ltr",
   "start_url": "./#visao",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#130A0B",
   "theme_color": "#130A0B",
+  "categories": ["productivity", "lifestyle", "finance", "health", "education"],
+  "prefer_related_applications": false,
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Gasto rápido", "short_name": "Gasto", "url": "./#gasto", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Registar refeição", "short_name": "Dieta", "url": "./#dieta", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Dominus", "short_name": "Jogo", "url": "./#dominus", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Gasto rápido", "short_name": "Gasto", "url": "./#gasto", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Registar refeição", "short_name": "Dieta", "url": "./#dieta", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Dominus", "short_name": "Jogo", "url": "./#dominus", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
   ]
 }
 JSON
@@ -79,3 +85,5 @@ VER=$(cd "$OUT" && cat $(find . -type f ! -name sw.js | sort) | sha1sum | cut -c
 sed -e "s#__VERSION__#$VER#" -e "s#__FILES__#$FILES#" standalone/sw.js > "$OUT/sw.js"
 cp standalone/_headers standalone/firestore.rules standalone/LANCAR.md "$OUT/"
 echo "dist/ pronto · versão $VER · $(find "$OUT" -type f | wc -l) ficheiros"
+# v3.64: ligação do site à app Android (Play Store): só quando existir lojas/android/assetlinks.json com a impressão digital da chave
+if [ -f lojas/android/assetlinks.json ]; then mkdir -p "$OUT/.well-known"; cp lojas/android/assetlinks.json "$OUT/.well-known/assetlinks.json"; fi

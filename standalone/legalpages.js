@@ -10,7 +10,7 @@ vm.createContext(ctx); vm.runInContext(src, ctx);
 // o selo e o nome do logo (js/marca.js)
 vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', 'marca.js'), 'utf8'), ctx);
 const M = OS.Marca;
-const L = OS.Legal, links = [['planos', 'Planos e preços']].concat(L.DOCS).map(([k, t]) => `<a href="/${k}">${t}</a>`).join('');
+const L = OS.Legal, links = [['planos', 'Planos e preços']].concat(L.DOCS, [['apagar-conta', 'Apagar a conta']]).map(([k, t]) => `<a href="/${k}">${t}</a>`).join('');
 const page = (k, t, body) => `<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${t} · Prumo</title>
 <meta name="description" content="${t} do Prumo."><link rel="icon" href="/icon-192.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <style>:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#070D16;color:#C9D2DD;font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
@@ -38,4 +38,12 @@ ${PL.planos().map(card).join('')}
 <section><h3>Quem vende</h3><p>${L.ident()}.</p></section>
 <section><h3>Contacto</h3><p>Dúvidas, pedidos ou reembolsos: na app, em Definições › Privacidade e termos › Fazer um pedido${L.info.contacto ? `, ou pelo e-mail <b>${esc(L.info.contacto)}</b>` : ''}. Os detalhes estão nos <a href="/termos">Termos de Serviço</a> (secção 9) e na <a href="/privacidade">Política de Privacidade</a>.</p></section>`;
   fs.writeFileSync(path.join(out, 'planos.html'), page('planos', 'Planos e preços', body).replace('<style>', '<style>.pl{max-width:none;border:1px solid rgba(170,195,225,.16);border-radius:14px;padding:14px 16px;margin:0 0 14px}.pl h3{font-size:19px}')); }
-console.log('páginas legais:', ['planos'].concat(L.DOCS.map(d => d[0])).map(d => '/' + d).join(' '));
+// v3.64: apagar a conta (endereço público pedido pela Play Store e pela App Store)
+{ const e = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const body = `<p class="lg-meta">Como apagar a tua conta do Prumo e os teus dados.</p>
+<section><h3>Na app (o mais rápido)</h3><ol><li>Entra no Prumo com a tua conta.</li><li>Abre <b>Definições › Conta e perfis</b>.</li><li>Toca em <b>Apagar a conta</b> e confirma com a tua senha.</li></ol><p>A conta, todos os perfis e os dados de cada um são apagados do servidor na hora. Para apagar só um perfil, usa <b>Apagar este perfil</b> no mesmo sítio.</p></section>
+<section><h3>Sem conseguir entrar</h3><p>Envia um e-mail a partir do endereço da tua conta para <b>${e(L.info.contacto || '')}</b> com o assunto “Apagar a conta”. Confirmamos que és tu e apagamos a conta e os dados em até 30 dias (normalmente no mesmo dia).</p></section>
+<section><h3>O que é apagado e o que fica</h3><ul><li><b>Apagado de imediato:</b> a conta, os perfis, tudo o que registaste, as ligações ao Google e ao banco, as notificações e o ranking.</li><li><b>Cópias de segurança cifradas:</b> desaparecem sozinhas em até 5 semanas.</li><li><b>Pagamentos:</b> as faturas e registos de pagamento ficam no Stripe e connosco pelo prazo que a lei fiscal obriga (até 10 anos em Portugal), sem os teus dados da app.</li><li><b>Pedidos de direitos e prova de aceitação dos termos:</b> até 5 anos, para provar o cumprimento da lei.</li></ul><p>Se tiveres uma assinatura ativa, cancela-a primeiro em <b>Planos</b> para não voltar a ser cobrada.</p></section>
+<section><h3>Quem trata os dados</h3><p>${L.ident()}. Mais pormenores na <a href="/privacidade">Política de Privacidade</a>.</p></section>`;
+  fs.writeFileSync(path.join(out, 'apagar-conta.html'), page('apagar-conta', 'Apagar a conta', body)); }
+console.log('páginas legais:', ['planos', 'apagar-conta'].concat(L.DOCS.map(d => d[0])).map(d => '/' + d).join(' '));
