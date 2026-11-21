@@ -25,7 +25,7 @@ const b64u = b => Buffer.from(b).toString('base64').replace(/\+/g, '-').replace(
 /* ---------- quem pede: sessão válida, perfil desta conta e o dono do Prumo ---------- */
 const accOf = async (t, pid) => { const g = await N.store().get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
   if (!r || r.uid !== t.u || (r.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
-  if (!(r.perfis || []).some(x => x.id === pid)) throw N.err('perfil', 'Este perfil já não existe.', 404); return r; };
+  if (!(r.perfis || []).some(x => x.id === pid)) throw N.err('perfil', 'Este perfil já não existe.', 404); await N.gate(r.email); return r; };
 const readLink = async (uid, pid) => { const g = await N.store().get(linkPath(uid, pid)); if (!g) return { pg: [], eb: [] }; try { return Object.assign({ pg: [], eb: [] }, N.open(await N.userKey(uid), g.buf)); } catch (e) { return { pg: [], eb: [] }; } };
 const writeLink = async (uid, pid, L) => N.store().put(linkPath(uid, pid), N.seal(await N.userKey(uid), L));
 

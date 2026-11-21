@@ -20,10 +20,11 @@ module.exports = N.handler(async (req, res) => {
 
   // confirma que a sessão ainda vale (senha mudada / "sair de todos") e que o perfil é desta conta (guardado 30 s em cada servidor)
   { const k = t.u + '|' + t.v + '|' + pid, c = OKS.get(k);
-    if (!c || Date.now() - c > TTL) { const g = await s.get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
+    if (!c || Date.now() - c.at > TTL) { const g = await s.get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
       if (!r || r.uid !== t.u || (r.tv || 1) !== t.v) return N.send(res, 401, { ok: false, msg: 'A sessão terminou. Entra outra vez.', code: 'sessao' });
       if (!(r.perfis || []).some(x => x.id === pid)) return N.send(res, 404, { ok: false, msg: 'Este perfil já não existe.', code: 'perfil' });
-      OKS.set(k, Date.now()); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); } }
+      OKS.set(k, { at: Date.now(), em: r.email }); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); }
+    await N.gate((OKS.get(k) || {}).em); }   /* v3.62: manutenção */
 
   if (op === 'marca') { const h = await s.head(mark); return N.send(res, 200, { ok: true, m: h ? h.etag : '' }); }
 

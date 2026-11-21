@@ -20,9 +20,9 @@ const sttName = () => env('GROQ_API_KEY') ? 'groq' : env('DEEPGRAM_API_KEY') ? '
 const SEEN = new Map(), DAY = new Map();
 // v3.21: a sessão traz também o plano da conta (o limite de IA por dia, as fotos e o Claude dependem dele)
 const okSession = async req => { const t = await N.readToken(req); if (!t) return null; const c = SEEN.get(t.a);
-  if (c && Date.now() - c.at < 60e3) return c.ok ? Object.assign({}, t, { ef: c.ef }) : null;
-  let ok = false, ef = null; try { const g = await N.store().get('a/' + t.a); if (g) { const r = N.open(await N.accKey(), g.buf); ok = r.uid === t.u && (r.tv || 1) === t.v && !r.verif; ef = P.efetivo(r); } } catch (e) { }
-  SEEN.set(t.a, { ok, ef, at: Date.now() }); if (SEEN.size > 5000) SEEN.delete(SEEN.keys().next().value); return ok ? Object.assign({}, t, { ef }) : null; };
+  if (c && Date.now() - c.at < 60e3) return c.ok ? Object.assign({}, t, { ef: c.ef, em: c.em }) : null;
+  let ok = false, ef = null, r0 = ''; try { const g = await N.store().get('a/' + t.a); if (g) { const r = N.open(await N.accKey(), g.buf); ok = r.uid === t.u && (r.tv || 1) === t.v && !r.verif && !/@nautilo\.test$/i.test(r.email || '') /* v3.62: as contas de teste (sem e-mail confirmado) não usam a IA */; ef = P.efetivo(r); r0 = r.email || ''; } } catch (e) { }
+  SEEN.set(t.a, { ok, ef, em: r0, at: Date.now() }); if (SEEN.size > 5000) SEEN.delete(SEEN.keys().next().value); return ok ? Object.assign({}, t, { ef, em: r0 }) : null; };
 const hasImage = b => (b.contents || []).some(c => (c.parts || []).some(p => { const d = p.inline_data || p.inlineData || p.file_data || p.fileData; return d && !/^audio\//i.test(d.mime_type || d.mimeType || ''); }));
 const perDay = (uid, max = POR_DIA, tag = '') => { const d = new Date().toISOString().slice(0, 10), k = tag + uid + '|' + d, n = (DAY.get(k) || 0) + 1; DAY.set(k, n); if (DAY.size > 20000) DAY.delete(DAY.keys().next().value); return n > max; };
 /* ---------- o ouvido: áudio (WAV 16 kHz em base64) → texto ---------- */
@@ -67,6 +67,7 @@ module.exports = N.handler(async (req, res) => {
   const q = req.query || {}, p = String(q.p || '');
   if (p === 'estado') return N.send(res, 200, { ok: true, google: !!gkey(), claude: !!akey(), stt: sttName(), modelo: env('NAUTILO_CLAUDE_MODEL') || '' });
   const t = await okSession(req); if (!t) return gErr(res, 401, 'A sessão terminou. Entra outra vez na conta.');
+  try { await N.gate(t.em); } catch (e) { return gErr(res, 503, e.message); }   /* v3.62: manutenção */
   const ef = t.ef || { lvl: 3, ia: POR_DIA }; if (!ef.lvl) return gErr(res, 402, 'O teu teste grátis acabou: escolhe um plano em Planos para a IA voltar.');
   const iaDia = Math.min(POR_DIA, ef.ia || POR_DIA);
   if (p === 'stt') { if (req.method !== 'POST') return gErr(res, 405, 'Só POST.'); if (!sttName()) return gErr(res, 501, 'Sem serviço de transcrição no servidor.');

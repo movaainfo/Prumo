@@ -73,6 +73,9 @@
     },
     "api/push.js": {
       "maxDuration": 60
+    },
+    "api/backup.js": {
+      "maxDuration": 300
     }
   },
   "cleanUrls": true,
@@ -80,6 +83,14 @@
     {
       "path": "/api/push?op=cron",
       "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/backup",
+      "schedule": "17 3 * * *"
+    },
+    {
+      "path": "/api/backup?semanal=1",
+      "schedule": "20 4 * * 0"
     }
   ]
 }

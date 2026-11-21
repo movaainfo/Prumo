@@ -101,21 +101,26 @@ const signToken = async (rec, eid) => { const body = b64u(JSON.stringify({ u: re
   return body + '.' + b64u(crypto.createHmac('sha256', await master()).update('sessao:' + body).digest()); };
 const readToken = async req => { const m = String(req.headers.authorization || '').match(/^Bearer ([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)$/); if (!m) return null;
   const sig = crypto.createHmac('sha256', await master()).update('sessao:' + m[1]).digest(), got = unb64u(m[2]);
-  if (got.length !== sig.length || !crypto.timingSafeEqual(got, sig)) return null;
+  if (got.length !== sig.length || !crypto.timingSafeEqual(got, sig)) { sec('token_falso', req); return null; }
   let t; try { t = JSON.parse(unb64u(m[1]).toString()); } catch (e) { return null; }
   if (!t || !/^[a-f0-9]{24}$/.test(t.u || '') || !/^[a-f0-9]{40}$/.test(t.a || '') || !(t.x > Date.now() / 1000)) return null;
   return t; };
 
 /* ---------- pedidos HTTP ---------- */
-const OK_ORIGIN = /^https:\/\/(oceanum|nautilo|prumo)(-[a-z0-9-]+)?\.vercel\.app$/;
+const OK_ORIGIN = /^https:\/\/(prumo-vida|nautilo-app|oceanum-rho|(prumo|nautilo|oceanum)-movaa|prumo-movaa-info|prumo-git-[a-z0-9-]{1,60}-movaa-info|prumo-[a-z0-9]{9}-movaa-info)\.vercel\.app$/;
 const extraOrigins = () => String(process.env.NAUTILO_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
 const allowed = req => { const o = req.headers.origin || '', site = req.headers['sec-fetch-site'] || '', ref = ((req.headers.referer || '').match(/^https?:\/\/[^/]+/) || [''])[0];
   const good = x => OK_ORIGIN.test(x) || extraOrigins().includes(x) || (process.env.NAUTILO_STORE_DIR && /^http:\/\/localhost(:\d+)?$/.test(x));
   return o ? good(o) : (site === 'same-origin' || good(ref)); };
 const HITS = new Map();
+// v3.62: registo de segurança (aparece nos registos do Vercel como "SEC {...}"): o endereço vai em hash com sal do dia, nunca em claro
+const ipOf = req => String((req && req.headers && (req.headers['x-real-ip'] || req.headers['x-forwarded-for'])) || (req && req.socket && req.socket.remoteAddress) || '').split(',')[0].trim();
+const ipTag = req => crypto.createHash('sha256').update('ip|' + new Date().toISOString().slice(0, 10) + '|' + ipOf(req)).digest('hex').slice(0, 12);
+const sec = (type, req, extra) => { try { console.warn('SEC ' + JSON.stringify(Object.assign({ t: type, ip: ipTag(req), p: String((req && req.url) || '').split('?')[0].slice(0, 60), ua: String((req && req.headers && req.headers['user-agent']) || '').slice(0, 60) }, extra || {}))); } catch (e) { } };
 // travão simples por endereço (em cada instância do servidor): n pedidos por janela
-const limit = (req, key, n, ms) => { const ip = String(req.headers['x-forwarded-for'] || (req.socket && req.socket.remoteAddress) || '').split(',')[0].trim(), k = key + '|' + ip, now = Date.now();
-  const h = (HITS.get(k) || []).filter(t => now - t < ms); h.push(now); HITS.set(k, h); if (HITS.size > 5000) HITS.delete(HITS.keys().next().value); return h.length > n; };
+const limit = (req, key, n, ms) => { const ip = ipOf(req), k = key + '|' + ip, now = Date.now();
+  const h = (HITS.get(k) || []).filter(t => now - t < ms); h.push(now); HITS.set(k, h); if (HITS.size > 5000) HITS.delete(HITS.keys().next().value);
+  if (h.length === n + 1) sec('limite', req, { k: String(key).split('|')[0] }); return h.length > n; };
 const body = async req => { if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body)) return req.body;
   const ct = req.headers['content-type'] || '', form = /x-www-form-urlencoded/i.test(ct), mb = (ct.match(/multipart\/form-data;\s*boundary="?([^";]+)"?/i) || [])[1];
   // o Formulário dos Atalhos do iPhone pode chegar como multipart: só os campos de texto
@@ -127,14 +132,38 @@ const body = async req => { if (req.body && typeof req.body === 'object' && !Buf
 const send = (res, status, obj) => { res.statusCode = status; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Content-Type-Options', 'nosniff'); res.end(JSON.stringify(obj)); };
 // anyOrigin: aceita pedidos de fora da app (o atalho do iPhone, que se autentica pela chave); open: não precisa da base de dados
 const handler = (fn, o = {}) => async (req, res) => {
-  if (!o.anyOrigin && !allowed(req)) return send(res, 403, { ok: false, msg: 'Pedido recusado.' });
+  if (!o.anyOrigin && !allowed(req)) { sec('origem', req, { o: String(req.headers.origin || req.headers.referer || '').slice(0, 80) }); return send(res, 403, { ok: false, msg: 'Pedido recusado.' }); }
   if (req.method === 'OPTIONS') { res.statusCode = 204; return res.end(); }
   if (!o.open && !store()) return send(res, 503, { ok: false, msg: 'A base de dados das contas ainda não está ligada.' });
   try { await fn(req, res); }
-  catch (e) { const st = e.status && e.status >= 400 && e.status < 600 ? e.status : 500; send(res, st, { ok: false, msg: st === 500 ? 'O servidor não conseguiu fazer isto agora. Tenta outra vez.' : e.message, code: e.code }); if (st === 500) console.error('nautilo', e.code || '', e.message); } };
+  catch (e) { const st = e.status && e.status >= 400 && e.status < 600 ? e.status : 500; send(res, st, Object.assign({ ok: false, msg: st === 500 ? 'O servidor não conseguiu fazer isto agora. Tenta outra vez.' : e.message, code: e.code }, e.ate ? { ate: e.ate } : {})); if (st === 500) console.error('nautilo', e.code || '', e.message); } };
+
+/* ---------- v3.62: manutenção — janela semanal de madrugada (ataque de teste, cópia de segurança e revisão) e ligada à mão pela administração ----------
+   Durante a manutenção só a conta de administração (e as contas de teste @nautilo.test do ataque semanal) usam o servidor; as outras veem o ecrã de manutenção.
+   Janela: NAUTILO_MANUT = "dia hh:mm minutos" na hora de Lisboa (0 = domingo). Por omissão "0 04:00 90" (domingo 04:00–05:30; 01:00–02:30 em Brasília). "off" desliga. */
+const isAdminEmail = e => String(process.env.NAUTILO_ADMIN || '').toLowerCase().split(',').map(x => x.trim()).filter(Boolean).includes(String(e || '').toLowerCase());
+const isTeste = e => /@nautilo\.test$/i.test(String(e || ''));
+const JANELA = () => { const v = String(process.env.NAUTILO_MANUT || '0 04:00 90').trim(); if (v === 'off') return null; const m = /^([0-6])\s+(\d{1,2}):(\d{2})\s+(\d{1,3})$/.exec(v); return m ? { d: +m[1], st: +m[2] * 60 + +m[3], dur: +m[4] } : null; };
+const lisboa = t => { const p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(t)).forEach(x => { p[x.type] = x.value; });
+  return { wd: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday), min: +p.hour * 60 + +p.minute }; };
+// quando acaba a janela semanal em que estamos (0 = fora dela) e quando começa a próxima
+const janela = t => { const J = JANELA(); if (!J) return { ate: 0, prox: 0 }; const L = lisboa(t); let since = ((L.wd - J.d + 7) % 7) * 1440 + L.min - J.st; if (since < 0) since += 7 * 1440;
+  const ate = since < J.dur ? t + (J.dur - since) * 60e3 : 0; return { ate, prox: t + (7 * 1440 - since) * 60e3 - (t % 60e3) }; };
+let MANC = null;
+const manut = async (o = {}) => { const now = o.now || Date.now(), w = janela(now); let ate = w.ate, motivo = ate ? 'semanal' : '';
+  if (!MANC || now - MANC.at > 30e3 || o.fresh) { let m = null; try { const s = store(); const g = s && await s.get('cfg/manutencao'); m = g ? JSON.parse(g.buf.toString()) : null; } catch (e) { } MANC = { at: now, m }; }
+  const m = MANC.m || {};
+  if (m.off > now && motivo) { ate = 0; motivo = ''; }                       // a administração cancelou a janela desta semana
+  if (m.ate > now && m.ate > ate) { ate = m.ate; motivo = motivo || 'manual'; }
+  return { on: ate > now, ate, motivo, prox: w.prox }; };
+const setManut = async v => { await store().put('cfg/manutencao', Buffer.from(JSON.stringify(v))); MANC = null; };
+// barra quem não é da administração enquanto houver manutenção
+const gate = async email => { if (isAdminEmail(email) || isTeste(email)) return; const m = await manut(); if (!m.on) return;
+  const h = new Date(m.ate).toLocaleTimeString('pt-PT', { timeZone: 'Europe/Lisbon', hour: '2-digit', minute: '2-digit' });
+  throw Object.assign(err('manutencao', `O Prumo está em manutenção (revisão de segurança e cópia de segurança) até às ${h} (hora de Lisboa). Os teus dados estão guardados.`, 503), { ate: m.ate }); };
 
 // chave do atalho do iPhone de um perfil: (conta, perfil, versão) assinados; trocar a versão invalida a chave antiga
 const atalhoTag = async body => crypto.createHmac('sha256', await master()).update('atalho:' + body).digest().subarray(0, 18);
 const atalhoKey = async (eid, pid, n) => { const body = b64u(JSON.stringify({ a: eid, p: pid, n })); return body + '.' + b64u(await atalhoTag(body)); };
 
-module.exports = { allowed, atalhoTag, atalhoKey, unb64u, b64u, store, master, userKey, accKey, seal, open, emailId, normEmail, hashPw, checkPw, newCode, normCode, signToken, readToken, limit, body, send, handler, err, sleep, crypto };
+module.exports = { manut, setManut, gate, janela, isAdminEmail, isTeste, sec, ipTag, OK_ORIGIN, allowed, atalhoTag, atalhoKey, unb64u, b64u, store, master, userKey, accKey, seal, open, emailId, normEmail, hashPw, checkPw, newCode, normCode, signToken, readToken, limit, body, send, handler, err, sleep, crypto };

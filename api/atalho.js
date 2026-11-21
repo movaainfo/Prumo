@@ -13,7 +13,7 @@ const readKey = async k => { const m = String(k || '').match(/^([A-Za-z0-9_-]{10
   if (!g) { try { const x = await N.store().get('x/' + o.a); const to = x && N.open(await N.accKey(), x.buf).to; if (to && /^[a-f0-9]{40}$/.test(to)) g = await N.store().get('a/' + to); } catch (e) { } }
   if (!g) return null; let r; try { r = N.open(await N.accKey(), g.buf); } catch (e) { return null; }
   const p = (r.perfis || []).find(x => x.id === o.p); if (!p || !p.ak || p.ak !== o.n) return null;
-  return { uid: r.uid, pid: o.p }; };
+  return { uid: r.uid, pid: o.p, em: r.email || '' }; };
 // link só de leitura para a agenda (Calendário do iPhone e Google Calendar): não serve para registar gastos
 const calTag = async body => N.crypto.createHmac('sha256', await N.master()).update('agenda:' + body).digest().subarray(0, 18);
 const calKey = async k => { const body = String(k).split('.')[0]; return body + '.' + N.b64u(await calTag(body)); };
@@ -53,6 +53,10 @@ module.exports = N.handler(async (req, res) => {
   const s = N.store(), base = 'i/' + who.uid + '/' + who.pid + '/', key = await N.userKey(who.uid);
   if (b.op === 'ping') return N.send(res, 200, { ok: true, v: 4 });
   const kb = 'k/' + who.uid + '/' + who.pid + '/';
+  // v3.62: em manutenção, as operações da app (buscar, confirmar, agenda, resumo) esperam; o atalho de gastos (e o sono) continua a guardar na caixa,
+  //   e a app junta tudo às contas sozinha quando a manutenção acaba
+  if (['pull', 'ack', 'cal', 'br'].includes(b.op)) await N.gate(who.em);
+  const man = N.isAdminEmail(who.em) ? { on: false } : await N.manut(), espera = man.on ? ' (o Prumo está em manutenção: entra nas contas às ' + new Date(man.ate).toLocaleTimeString('pt-PT', { timeZone: 'Europe/Lisbon', hour: '2-digit', minute: '2-digit' }) + ')' : '';
   // resumo do dia para a Siri (sem script): a app envia o de hoje e o de amanhã; o atalho lê-o em texto
   if (b.op === 'br' && req.method === 'POST') { let j = null; try { j = JSON.parse(String(b.j || '')); } catch (e) { }
     if (!j || typeof j.t !== 'string' || !okDay(j.d)) return N.send(res, 400, { ok: false, msg: 'Resumo inválido.' });
@@ -81,9 +85,9 @@ module.exports = N.handler(async (req, res) => {
   // sono do app Saúde (automação "Despertar"): as amostras "Valor|Início|Fim" seguem para a app, que junta as noites
   if (b.tipo === 'sono') { const sm = String(b.s || '').slice(0, 60000); if (!/\|/.test(sm)) return text(res, 400, 'Sem amostras de sono: confirma o campo s no atalho.');
     await s.put(base + id, N.seal(key, { id, t: new Date().toISOString(), tipo: 'sono', s: sm }), { overwrite: false });
-    return text(res, 200, '✓ Sono enviado para o Prumo'); }
+    return text(res, 200, '✓ Sono enviado para o Prumo' + espera); }
   // gasto novo (do atalho)
   const v = Number(String(b.v || '').replace(/[^0-9,.-]/g, '').replace(',', '.')); if (!(v > 0) || v > 1e7) return text(res, 400, 'Valor inválido');
   await s.put(base + id, N.seal(key, { id, t: new Date().toISOString(), v, d: String(b.d || '').slice(0, 200), c: String(b.c || '').slice(0, 80) }), { overwrite: false });
-  text(res, 200, '✓ ' + String(v).replace('.', ',') + ' € registado no Prumo');
+  text(res, 200, '✓ ' + String(v).replace('.', ',') + ' € registado no Prumo' + espera);
 }, { anyOrigin: true });

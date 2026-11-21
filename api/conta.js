@@ -6,7 +6,8 @@ const N = require('./_nuvem'), P = require('./_planos');
 const MAXP = 5, COLORS = ['#F2C48D', '#7FA9DA', '#3FCF8E', '#E0896A', '#9A8CF5', '#F28CB1', '#5CC8E6', '#F2B544'];
 // administração: só as contas cujo e-mail está em NAUTILO_ADMIN (variável do projeto no Vercel) veem o separador
 const isAdmin = e => String(process.env.NAUTILO_ADMIN || '').toLowerCase().split(',').map(x => x.trim()).filter(Boolean).includes(String(e || '').toLowerCase());
-const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/;
+// v3.62: só os caracteres normais de um e-mail (nada de < > " ' ` que pudessem virar código numa página)
+const EMAIL = /^[\p{L}\p{N}._%+-]{1,64}@[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,62}[\p{L}\p{N}])?(?:\.[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,62}[\p{L}\p{N}])?)*\.\p{L}{2,24}$/u;
 // aceitação dos termos: versão (data) + o que a pessoa confirmou + quando (prova do consentimento, LGPD art. 8 / RGPD art. 7)
 const TV = /^\d{4}-\d{2}-\d{2}$/;
 const termsOf = b => { if (!TV.test(String(b.termos || '')) || b.saude !== true || b.idade !== true) throw N.err('termos', 'Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.', 400);
@@ -51,9 +52,11 @@ const change = async (eid, fn) => { for (let i = 0; i < 5; i++) { const a = awai
     const out = await fn(a.rec); if (out === false) return a.rec;
     try { await writeAcc(eid, a.rec, a.etag); return a.rec; } catch (e) { if (e.code !== 'conflict') throw e; await N.sleep(80 + Math.random() * 200); } }
   throw N.err('ocupado', 'A conta está a ser alterada noutro aparelho. Tenta outra vez.', 409); };
+const USO_OK = new Map();
 const session = async req => { const t = await N.readToken(req); if (!t) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   const a = await readAcc(t.a); if (!a || a.rec.uid !== t.u || (a.rec.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   if (a.rec.verif && !VPEND.has(req._op)) throw N.err('verificar', 'Confirma primeiro o teu e-mail com o código que te enviámos.', 403);
+  await N.gate(a.rec.email);   /* v3.62: manutenção (a administração passa) */
   return { t, eid: t.a, rec: a.rec }; };
 const needPw = async (rec, pw) => { if (!(await N.checkPw(pw, rec.pw))) throw N.err('senha', 'A senha não está certa.', 403); };
 // senha temporária fácil de ditar: 3 grupos de 4 (sem letras que se confundem)
@@ -179,6 +182,10 @@ const pagErr = (e, onde) => { if (!(e && e.stripe)) return e; console.error('nau
 const OPS = {
   async registar(req, b) {
     if (N.limit(req, 'registar', 6, 3600e3)) throw N.err('limite', 'Muitas contas criadas a partir daqui. Tenta mais tarde.', 429);
+    // v3.62: armadilha para robôs: o campo "site" fica escondido na app; só um robô o preenche
+    await N.gate(N.normEmail(b.email));
+    if (b.site) { N.sec('robo_registo', req); throw N.err('limite', 'Muitas contas criadas a partir daqui. Tenta mais tarde.', 429); }
+    if (TESTE.test(String(b.email || '').trim()) && N.limit(req, 'registar-teste', 3, 3600e3)) throw N.err('limite', 'Muitas contas de teste criadas a partir daqui.', 429);
     const email = N.normEmail(b.email), senha = String(b.senha || ''), nome = cleanName(b.nome, 40);
     if (!EMAIL.test(email)) throw N.err('email', 'Esse e-mail não parece válido.', 400);
     if (senha.length < 8) throw N.err('senha', 'A senha precisa de pelo menos 8 caracteres.', 400);
@@ -213,11 +220,12 @@ const OPS = {
   async entrar(req, b) {
     if (N.limit(req, 'entrar', 30, 600e3)) throw N.err('limite', 'Muitas tentativas. Espera uns minutos.', 429);
     const email = N.normEmail(b.email), eid = await N.emailId(email), a = await readAcc(eid);
-    if (!a) { await N.hashPw('x'); throw N.err('credenciais', 'E-mail ou senha errados.', 401); }
-    if (a.rec.bloq > Date.now()) throw N.err('bloqueada', `Muitas tentativas erradas. Tenta daqui a ${Math.ceil((a.rec.bloq - Date.now()) / 60000)} min.`, 429);
+    if (!a) { await N.hashPw('x'); N.sec('login_desconhecido', req); throw N.err('credenciais', 'E-mail ou senha errados.', 401); }
+    if (a.rec.bloq > Date.now()) { N.sec('login_bloqueada', req, { c: eid.slice(0, 8) }); } if (a.rec.bloq > Date.now()) throw N.err('bloqueada', `Muitas tentativas erradas. Tenta daqui a ${Math.ceil((a.rec.bloq - Date.now()) / 60000)} min.`, 429);
     if (!(await N.checkPw(String(b.senha || ''), a.rec.pw))) {
-      await change(eid, r => { r.falhas = (r.falhas || 0) + 1; if (r.falhas >= 8) { r.bloq = Date.now() + 15 * 60e3; r.falhas = 0; } }).catch(() => { });
-      throw N.err('credenciais', 'E-mail ou senha errados.', 401); }
+      let lk = 0; await change(eid, r => { r.falhas = (r.falhas || 0) + 1; if (r.falhas >= 8) { r.bloq = Date.now() + 15 * 60e3; r.falhas = 0; lk = 1; } }).catch(() => { });
+      N.sec(lk ? 'conta_trancada' : 'login_falhou', req, { c: eid.slice(0, 8) }); throw N.err('credenciais', 'E-mail ou senha errados.', 401); }
+    await N.gate(email);   /* v3.62: em manutenção só a administração entra */
     const rec = await change(eid, r => { r.falhas = 0; r.bloq = 0; r.ult = Date.now(); r.logins = (r.logins || 0) + 1; }).catch(() => a.rec);
     return { token: await N.signToken(rec, eid), conta: pub(rec) }; },
 
@@ -270,10 +278,10 @@ const OPS = {
   async cupao(req, b) { const s = await session(req); if (!P.cobranca()) throw N.err('cobranca', 'As assinaturas ainda não estão abertas.', 503);
     if (N.limit(req, 'cupao|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitas tentativas. Tenta daqui a pouco.', 429);
     const c = await cupaoDe(b.code); if (!c) throw N.err('cupao', 'Esse código de desconto não é válido ou já expirou.', 404); return { cupao: c }; },
-  async adminCupoes(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); if (!P.cobranca()) return { cupoes: [], cobranca: false };
+  async adminCupoes(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })(); if (!P.cobranca()) return { cupoes: [], cobranca: false };
     const L = await cLoad(), live = await P.stripe('promotion_codes', { limit: 100 }, 'GET').catch(() => null), by = {}; ((live && live.data) || []).forEach(x => { by[x.id] = x; });
     return { cobranca: true, cupoes: L.map(c => { const x = by[c.promo] || {}; return Object.assign({}, c, { usos: x.times_redeemed != null ? x.times_redeemed : c.usos || 0, ativo: x.active != null ? !!x.active && !(c.expira && c.expira < Date.now()) : !!c.ativo }); }).reverse() }; },
-  async adminCupaoCriar(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); if (!P.cobranca()) throw N.err('cobranca', 'Liga primeiro o Stripe.', 400);
+  async adminCupaoCriar(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })(); if (!P.cobranca()) throw N.err('cobranca', 'Liga primeiro o Stripe.', 400);
     const code = cNorm(b.code); if (!CODE_RX.test(code)) throw N.err('code', 'O código tem de ter 3 a 30 letras, números ou hífenes (ex.: LANCAMENTO20).', 400);
     const pct = Math.round(+b.pct * 100) / 100; if (!(pct > 0 && pct <= 100)) throw N.err('pct', 'O desconto tem de ser entre 1% e 100%.', 400);
     const dur = ['once', 'repeating', 'forever'].includes(b.dur) ? b.dur : 'once', meses = dur === 'repeating' ? Math.max(1, Math.min(36, Math.round(+b.meses || 0))) : 0;
@@ -288,7 +296,7 @@ const OPS = {
       const c = { code, pct, dur, meses, planos: todos ? [] : planos, max, expira, novos: !!b.novos, promo: pc.id, coupon: cp.id, criado: Date.now(), ativo: true };
       const L = await cLoad(); L.push(c); await cSave(L); return { cupao: c }; }
     catch (e) { if (e.stripe) { console.error('nautilo stripe cupao', e.status || '', String(e.message || '').slice(0, 200)); throw N.err('stripe', /already exists|já existe/i.test(e.message || '') ? 'Já existe um código com esse nome no Stripe.' : 'O Stripe recusou o código: ' + String(e.message || '').slice(0, 140), 400); } throw e; } },
-  async adminCupaoFim(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+  async adminCupaoFim(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })();
     const L = await cLoad(), c = L.find(x => x.promo === b.promo); if (!c) throw N.err('cupao', 'Código desconhecido.', 404);
     await P.stripe('promotion_codes/' + c.promo, { active: 'false' }).catch(e => { throw N.err('stripe', 'O Stripe não desativou o código agora.', 502); }); c.ativo = false; c.fim = Date.now(); await cSave(L); return { ok: 1 }; },
   // v3.29: o resumo do mês por e-mail (plano Completo; a pessoa liga em Relatórios). A app manda os números já calculados e traduzidos; um por mês
@@ -313,13 +321,13 @@ const OPS = {
     const r = await mailRaw(s.rec.email, T.tit + ': ' + T.mes, txt, html); if (!r.ok) throw N.err('envio', 'Não consegui enviar o e-mail agora. Tenta mais tarde.', 502);
     await change(s.eid, x => { x.resumos = (x.resumos || []).filter(k => k !== ref).concat(ref).slice(-24); }); return { enviado: 1 }; },
   // v3.24: e-mail de teste para a própria conta de administração (mostra o que o Brevo/Resend respondeu)
-  async adminTesteEmail(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+  async adminTesteEmail(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })();
     if (!mailOn()) throw N.err('email', 'Ainda não há serviço de e-mail ligado (BREVO_API_KEY ou RESEND_API_KEY no Vercel).', 400);
     if (N.limit(req, 'testeEmail|' + s0.rec.uid, 6, 3600e3)) throw N.err('limite', 'Já fizeste muitos testes. Tenta daqui a uma hora.', 429);
     const r = await mailSend(s0.rec.email, s0.rec.nome || '', '123456'); return { enviado: !!r.ok, via: r.via, st: r.st, msg: r.msg || '', para: s0.rec.email, de: String(process.env.NAUTILO_EMAIL_DE || '').replace(/^.*<([^>]+)>.*$/, '$1').trim() }; },
   // a administração escolhe o plano da conta: um plano grátis (por uns dias ou sem fim) ou vazio = Automático (teste e depois o que a pessoa assinar)
   //   não pede a senha (como o Spotify): não apaga nada e desfaz-se com outro toque
-  async adminPlano(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+  async adminPlano(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })();
     const email = N.normEmail(b.email), eid = await N.emailId(email), a = await readAcc(eid); if (!a) throw N.err('conta', 'Essa conta não existe.', 404);
     const pl = b.plano ? P.byId(b.plano) : null; if (b.plano && !pl) throw N.err('plano', 'Plano desconhecido.', 400); const dias = Math.max(0, Math.min(3650, +b.dias || 0));
     if (isAdmin(email)) throw N.err('admin', 'A conta de administração tem sempre tudo.', 400);
@@ -329,6 +337,14 @@ const OPS = {
   // contas que já existiam (ou termos novos): aceitar uma vez
   async termos(req, b) { const s = await session(req), t = termsOf(b); const rec = await change(s.eid, r => { r.termos = t; }); return { conta: pub(rec) }; },
   // quem é o responsável e como contactar (para a Política de Privacidade); sem sessão
+  // v3.62: estado da manutenção (público): a app mostra o ecrã de manutenção a quem não é da administração
+  async manut() { const m = await N.manut(); return { manut: { on: m.on, ate: m.ate, motivo: m.motivo, prox: m.prox } }; },
+  async adminManutencao(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
+    const now = Date.now(), min = Math.max(5, Math.min(24 * 60, Math.round(+b.min || 60)));
+    if (b.acao === 'ligar') await N.setManut({ ate: now + min * 60e3, por: s0.rec.email, em: now });
+    else if (b.acao === 'desligar') { const m = await N.manut({ fresh: true }); await N.setManut({ ate: 0, off: m.motivo === 'semanal' ? m.ate : 0, em: now }); }
+    else throw N.err('acao', 'Ação desconhecida.', 400);
+    N.sec('manutencao_' + b.acao, req); const m = await N.manut({ fresh: true }); return { manut: { on: m.on, ate: m.ate, motivo: m.motivo, prox: m.prox } }; },
   async publico() { return { responsavel: String(process.env.NAUTILO_RESPONSAVEL || '').slice(0, 120), contacto: String(process.env.NAUTILO_CONTACTO || '').slice(0, 120) }; },
   // pedidos dos titulares (LGPD art. 18 / RGPD art. 15–22): ficam cifrados para a administração responder
   async pedido(req, b) { const s = await session(req); if (N.limit(req, 'pedido|' + s.rec.uid, 5, 864e5)) throw N.err('limite', 'Já fizeste vários pedidos hoje. Responderemos a todos.', 429);
@@ -336,7 +352,7 @@ const OPS = {
     const id = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 14) + '-' + N.crypto.randomBytes(3).toString('hex');
     await N.store().put('p/' + id, N.seal(await N.accKey(), { id, uid: s.rec.uid, email: s.rec.email, nome: s.rec.nome || '', tipo, msg: String(b.msg || '').slice(0, 3000), at: new Date().toISOString(), estado: 'novo', prio: P.efetivo(s.rec).lvl >= 3 && !isAdmin(s.rec.email) ? 1 : 0 }), { overwrite: false });
     return { protocolo: id }; },
-  async pedidoFeito(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); const id = String(b.id || ''); if (!/^\d{14}-[a-f0-9]{6}$/.test(id)) throw N.err('id', 'Pedido desconhecido.', 400);
+  async pedidoFeito(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })(); const id = String(b.id || ''); if (!/^\d{14}-[a-f0-9]{6}$/.test(id)) throw N.err('id', 'Pedido desconhecido.', 400);
     const st = N.store(), key = await N.accKey(), g = await st.get('p/' + id); if (!g) throw N.err('id', 'Pedido desconhecido.', 404); const p = N.open(key, g.buf);
     p.estado = b.estado === 'novo' ? 'novo' : 'respondido'; p.feito = new Date().toISOString(); await st.put('p/' + id, N.seal(key, p), { ifMatch: g.etag }); return { pedido: p }; },
 
@@ -375,11 +391,12 @@ const OPS = {
 
   async recuperar(req, b) {
     if (N.limit(req, 'recuperar', 10, 3600e3)) throw N.err('limite', 'Muitas tentativas. Tenta mais tarde.', 429);
+    await N.gate(N.normEmail(b.email));
     const email = N.normEmail(b.email), eid = await N.emailId(email), a = await readAcc(eid), nova = String(b.nova || '');
     if (nova.length < 8) throw N.err('senha', 'A nova senha precisa de pelo menos 8 caracteres.', 400);
     if (!a) { await N.hashPw('x'); throw N.err('credenciais', 'E-mail ou código de recuperação errados.', 401); }
     if (a.rec.bloq > Date.now()) throw N.err('bloqueada', `Muitas tentativas erradas. Tenta daqui a ${Math.ceil((a.rec.bloq - Date.now()) / 60000)} min.`, 429);
-    if (!(await N.checkPw(N.normCode(b.codigo), a.rec.rc))) { await change(eid, r => { r.falhas = (r.falhas || 0) + 1; if (r.falhas >= 8) { r.bloq = Date.now() + 15 * 60e3; r.falhas = 0; } }).catch(() => { }); throw N.err('credenciais', 'E-mail ou código de recuperação errados.', 401); }
+    if (!(await N.checkPw(N.normCode(b.codigo), a.rec.rc))) { N.sec('recuperar_falhou', req, { c: eid.slice(0, 8) }); await change(eid, r => { r.falhas = (r.falhas || 0) + 1; if (r.falhas >= 8) { r.bloq = Date.now() + 15 * 60e3; r.falhas = 0; } }).catch(() => { }); throw N.err('credenciais', 'E-mail ou código de recuperação errados.', 401); }
     const code = N.newCode(), pw = await N.hashPw(nova), rc = await N.hashPw(N.normCode(code));
     const rec = await change(eid, r => { r.pw = pw; r.rc = rc; r.tv = (r.tv || 1) + 1; r.falhas = 0; r.bloq = 0; });
     return { token: await N.signToken(rec, eid), conta: pub(rec), recuperacao: code }; },
@@ -397,21 +414,24 @@ const OPS = {
 
   // tempo de uso: a app manda os minutos que esteve aberta e visível (por dia); fica num ficheiro à parte da conta
   async uso(req, b) { const t = await N.readToken(req); if (!t) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
+    { const k = t.u + '|' + t.v, c = USO_OK.get(k); if (!c || Date.now() - c > 120e3) { const a = await readAcc(t.a); if (!a || a.rec.uid !== t.u || (a.rec.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401); USO_OK.set(k, Date.now()); if (USO_OK.size > 3000) USO_OK.delete(USO_OK.keys().next().value); } }
+    if (N.limit(req, 'uso|' + t.u, 30, 60e3)) throw N.err('limite', 'Devagar.', 429);
     const min = Math.max(0, Math.min(30, Math.round(Number(b.min) || 0))), day = /^\d{4}-\d{2}-\d{2}$/.test(b.dia || '') ? b.dia : new Date().toISOString().slice(0, 10), s = N.store(), p = 'u/' + t.u, key = await N.accKey();
     for (let i = 0; i < 4; i++) { const g = await s.get(p); let u = { dias: {}, ult: 0, a: t.a }; try { if (g) u = N.open(key, g.buf); } catch (e) { }
       u.dias = u.dias || {}; if (u.tot == null) u.tot = Object.values(u.dias).reduce((a, x) => a + (Number(x) || 0), 0);
-      u.dias[day] = (u.dias[day] || 0) + min; u.tot += min; u.ult = Date.now(); u.a = t.a;
+      const add = Math.max(0, Math.min(min, 1440 - (u.dias[day] || 0)));   // v3.62: um dia tem no máximo 1440 minutos
+      u.dias[day] = (u.dias[day] || 0) + add; u.tot += add; u.ult = Date.now(); u.a = t.a;
       // presença: "abrir" marca a entrada no app; "fim" quando a app sai do ecrã; o resto é sinal de que está a ser usada
       if (b.ev === 'abrir') u.ab = u.ult; u.on = b.ev === 'fim' ? 0 : 1;
       // tempo de uso de cada perfil (para o ranking); o primeiro perfil herda o histórico que já havia
       const pf = typeof b.pf === 'string' && /^[a-z0-9_-]{1,40}$/i.test(b.pf) ? b.pf : ''; u.pf = u.pf && typeof u.pf === 'object' ? u.pf : {};
-      if (pf && (pf in u.pf || Object.keys(u.pf).length < 12)) { if (u.pf[pf] == null) u.pf[pf] = Object.keys(u.pf).length ? 0 : u.tot - min; u.pf[pf] += min; }
+      if (pf && (pf in u.pf || Object.keys(u.pf).length < 12)) { if (u.pf[pf] == null) u.pf[pf] = Object.keys(u.pf).length ? 0 : u.tot - min; u.pf[pf] += add; }
       const ks = Object.keys(u.dias).sort(); ks.slice(0, Math.max(0, ks.length - 90)).forEach(k => delete u.dias[k]);
       try { await s.put(p, N.seal(key, u), g ? { ifMatch: g.etag } : { overwrite: false }); return { ok2: true }; } catch (e) { if (e.code !== 'conflict' && e.code !== 'exists') throw e; await N.sleep(60 + Math.random() * 150); } }
     return { ok2: false }; },
 
   // o separador de administração aberto pergunta isto a cada 20 s: só a presença e o uso (sem reler as contas)
-  async adminVivo(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+  async adminVivo(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })();
     if (N.limit(req, 'admv|' + s0.rec.uid, 400, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
     const s = N.store(), key = await N.accKey(), Us = await s.list('u/'), vivo = {};
     let i = 0; await Promise.all(Array.from({ length: Math.min(16, Us.length) }, async () => { while (i < Us.length) { const x = Us[i++]; try { const g = await s.get(x.pathname); if (!g) continue; const u = N.open(key, g.buf);
@@ -419,7 +439,7 @@ const OPS = {
     return { vivo, at: Date.now() }; },
 
   // separador de administração (só para quem está em NAUTILO_ADMIN): quem tem conta, quem entrou, quanto usa. Nunca mostra senhas nem dados.
-  async admin(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+  async admin(req) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })();
     const s = N.store(), key = await N.accKey(), [A, Us] = await Promise.all([s.list('a/'), s.list('u/')]);
     // lê aos poucos (16 de cada vez) para aguentar milhares de contas sem estourar a base de dados
     const pool = async (L, f) => { let i = 0; await Promise.all(Array.from({ length: Math.min(16, L.length) }, async () => { while (i < L.length) { const x = L[i++]; try { await f(x); } catch (e) { } } })); };
@@ -440,7 +460,7 @@ const OPS = {
   // v3.20: o administrador repõe o cofre de Senhas de uma conta (também a dele) quando a senha mestra se perdeu.
   // O cofre está cifrado no aparelho com a senha mestra, que ninguém conhece: não dá para a mudar sem ela, por isso o cofre fica vazio
   // e a pessoa cria uma senha mestra nova na próxima vez (as senhas que lá estavam perdem-se: era isso que as protegia).
-  async adminCofre(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+  async adminCofre(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })(); await needPw(s0.rec, b.senha);
     const email = N.normEmail(b.email); if (!email) throw N.err('email', 'Falta o e-mail da conta.', 400);
     const eid = await N.emailId(email), a = await readAcc(eid); if (!a) throw N.err('conta', 'Essa conta já não existe.', 404);
     const L = (a.rec.perfis || []).filter(p => !b.pid || p.id === b.pid); if (!L.length) throw N.err('perfil', 'Esse perfil já não existe.', 404);
@@ -450,7 +470,7 @@ const OPS = {
     return { email, perfis: L.map(p => p.nome) }; },
 
   // o administrador apaga a conta de outra pessoa (com a sua própria senha; não dá para apagar a própria conta por aqui nem outra conta de administrador)
-  async adminApagar(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+  async adminApagar(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })(); await needPw(s0.rec, b.senha);
     const email = N.normEmail(b.email); if (!email) throw N.err('email', 'Falta o e-mail da conta.', 400);
     if (email === N.normEmail(s0.rec.email)) throw N.err('propria', 'A tua própria conta apaga-se em Definições › Conta.', 400);
     if (isAdmin(email)) throw N.err('admin', 'Não dá para apagar outra conta de administrador.', 403);
@@ -462,7 +482,7 @@ const OPS = {
   // v2.97 · o administrador repõe a senha de login de outra pessoa (com a sua própria senha). A pessoa entra com a senha temporária e tem logo de escolher outra;
   // as sessões dela terminam e ela vê um aviso ao entrar. Os dados não mudam (a chave da conta não depende da senha) e o cofre de Senhas também não
   // (está cifrado no aparelho dela com a senha mestra, que ninguém conhece).
-  async adminSenha(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+  async adminSenha(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })(); await needPw(s0.rec, b.senha);
     const email = N.normEmail(b.email); if (!email) throw N.err('email', 'Falta o e-mail da conta.', 400);
     if (email === N.normEmail(s0.rec.email)) throw N.err('propria', 'A tua própria senha muda-se em Definições › Conta.', 400);
     if (isAdmin(email)) throw N.err('admin', 'Não dá para repor a senha de outra conta de administrador.', 403);
@@ -474,7 +494,7 @@ const OPS = {
 
   // v2.97 · o administrador muda o e-mail de uma conta: a conta passa inteira para o novo e-mail (perfis, dados, ranking, Google, atalhos), nada se perde.
   // A conta fica guardada pelo novo e-mail; as sessões terminam e a pessoa entra com o novo e-mail e a mesma senha.
-  async adminEmail(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403); await needPw(s0.rec, b.senha);
+  async adminEmail(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })(); await needPw(s0.rec, b.senha);
     const de = N.normEmail(b.email), para = N.normEmail(b.novo);
     if (!de) throw N.err('email', 'Falta o e-mail da conta.', 400); if (!EMAIL.test(para)) throw N.err('email', 'O novo e-mail não parece válido.', 400);
     if (de === para) throw N.err('email', 'O novo e-mail é igual ao atual.', 400);
@@ -515,7 +535,7 @@ const OPS = {
     return { lista, foco: FOCO, hoje: today }; },
 
   // o administrador escolhe quem pode usar o Spotify (ele e mais até SP_MAX contas): o Spotify só deixa 5 contas por app
-  async adminSpotify(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) throw N.err('admin', 'Sem acesso.', 403);
+  async adminSpotify(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) (N.sec('admin_negado', req), 0) || (() => { throw N.err('admin', 'Sem acesso.', 403); })();
     let L = await spList(); const email = N.normEmail(b.email);
     if (email && !isAdmin(email)) { if (b.on) { if (!L.includes(email)) { if (L.length >= SP_MAX) throw N.err('cheio', `Já há ${SP_MAX} contas com o Spotify. Tira uma antes de dar a outra.`, 400); if (!(await readAcc(await N.emailId(email)))) throw N.err('conta', 'Essa conta não existe.', 404); L = L.concat(email); } } else L = L.filter(x => x !== email);
       await N.store().put(SPK, N.seal(await N.accKey(), { emails: L, at: Date.now() })); SPC.at = 0; }

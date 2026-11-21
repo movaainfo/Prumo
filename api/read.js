@@ -3,7 +3,7 @@
 // Segurança: só endereços públicos http(s) (nada de IPs internos), no máximo 5 redirecionamentos, 8 s e 3 MB;
 // nunca devolve o HTML do site, só texto; só responde à própria app.
 const dns = require('dns').promises, net = require('net');
-const OK = /^https:\/\/(oceanum|nautilo|prumo)(-[a-z0-9-]+)?\.vercel\.app$/;
+const OK = /^https:\/\/(prumo-vida|nautilo-app|oceanum-rho|(prumo|nautilo|oceanum)-movaa|prumo-movaa-info|prumo-git-[a-z0-9-]{1,60}-movaa-info|prumo-[a-z0-9]{9}-movaa-info)\.vercel\.app$/;
 const CACHE = new Map(), HITS = new Map();
 const UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
 const privado = ip => { if (net.isIPv4(ip)) { const [a, b] = ip.split('.').map(Number); return a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224; }
@@ -17,13 +17,21 @@ const seguro = async u => { let url; try { url = new URL(u); } catch (e) { retur
   if (net.isIP(h)) return privado(h) ? null : url;
   try { const r = await dns.lookup(h, { all: true }); if (!r.length || r.some(a => privado(a.address))) return null; } catch (e) { return null; }
   return url; };
+// v3.62: a ligação usa só o endereço que foi verificado (o lookup corre no momento de ligar): sem "DNS rebinding" para a rede interna
+const http = require('http'), https = require('https'), zlib = require('zlib');
+const lookupSeguro = (host, o, cb) => { if (typeof o === 'function') { cb = o; o = {}; }
+  dns.lookup(host, { all: true }).then(L => { if (!L.length || L.some(a => privado(a.address))) return cb(Object.assign(new Error('endereço não permitido'), { code: 'EPRIV' }));
+    if (o && o.all) return cb(null, L); cb(null, L[0].address, L[0].family); }, e => cb(e)); };
+const umPedido = (url, opt) => new Promise((ok, ko) => { const lib = url.protocol === 'https:' ? https : http;
+  const rq = lib.request(url, { method: opt.method || 'GET', lookup: lookupSeguro, timeout: 8000, headers: Object.assign({ 'User-Agent': UA, 'Accept-Language': 'pt-PT,pt;q=0.9,en;q=0.6', Accept: 'text/html,application/xhtml+xml,*/*;q=0.8', 'Accept-Encoding': 'gzip, deflate, br' }, opt.headers || {}) }, r => {
+    const enc = String(r.headers['content-encoding'] || '').toLowerCase(), st = enc === 'gzip' ? r.pipe(zlib.createGunzip()) : enc === 'deflate' ? r.pipe(zlib.createInflate()) : enc === 'br' ? r.pipe(zlib.createBrotliDecompress()) : r;
+    const parts = []; let n = 0, fim = false; const acabar = () => { if (fim) return; fim = true; ok({ status: r.statusCode, loc: r.headers.location || '', ct: String(r.headers['content-type'] || ''), text: Buffer.concat(parts).toString('utf8') }); };
+    st.on('data', c => { n += c.length; if (n > 3e6) { r.destroy(); acabar(); return; } parts.push(c); }); st.on('end', acabar); st.on('error', e => parts.length ? acabar() : ko(e)); });
+  rq.on('timeout', () => rq.destroy(new Error('demorou demasiado'))); rq.on('error', ko); if (opt.body) rq.write(opt.body); rq.end(); });
 const pedir = async (u, opt = {}) => { let url = await seguro(u); if (!url) throw new Error('endereço não permitido');
-  for (let i = 0; i < 6; i++) { const ac = new AbortController(), to = setTimeout(() => ac.abort(), 8000);
-    let r; try { r = await fetch(url, { redirect: 'manual', signal: ac.signal, method: opt.method || 'GET', body: opt.body, headers: Object.assign({ 'User-Agent': UA, 'Accept-Language': 'pt-PT,pt;q=0.9,en;q=0.6', Accept: 'text/html,application/xhtml+xml,*/*;q=0.8' }, opt.headers || {}) }); }
-    finally { clearTimeout(to); }
-    if (r.status >= 300 && r.status < 400 && r.headers.get('location')) { url = await seguro(new URL(r.headers.get('location'), url).href); if (!url) throw new Error('redirecionamento não permitido'); continue; }
-    const rd = r.body.getReader(), parts = []; let n = 0; for (;;) { const { done, value } = await rd.read(); if (done) break; n += value.length; if (n > 3e6) { try { rd.cancel(); } catch (e) { } break; } parts.push(value); }
-    return { url: url.href, status: r.status, ct: r.headers.get('content-type') || '', text: Buffer.concat(parts.map(p => Buffer.from(p))).toString('utf8') }; }
+  for (let i = 0; i < 6; i++) { const r = await umPedido(url, opt);
+    if (r.status >= 300 && r.status < 400 && r.loc) { url = await seguro(new URL(r.loc, url).href); if (!url) throw new Error('redirecionamento não permitido'); opt = Object.assign({}, opt, { method: 'GET', body: undefined }); continue; }
+    return { url: url.href, status: r.status, ct: r.ct, text: r.text }; }
   throw new Error('demasiados redirecionamentos'); };
 // links do Google Notícias: o id é base64; os antigos trazem o endereço lá dentro, os novos pedem-no ao Google
 const googleNews = async u => { const m = /news\.google\.com\/(?:rss\/)?articles\/([A-Za-z0-9_-]+)/.exec(u); if (!m) return u; const id = m[1];
