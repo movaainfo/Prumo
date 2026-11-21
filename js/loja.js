@@ -5,13 +5,14 @@
 (() => {
 'use strict';
 let plat = '';
-try { plat = localStorage.getItem('os2loja') || ''; } catch (e) { }
+// o Chrome do telemóvel partilha o armazenamento com a app Android: a marca guardada só conta dentro da app (ecrã inteiro), nunca num separador do navegador
+const app = (() => { try { return matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches || !!navigator.standalone; } catch (e) { return false; } })();
+try { plat = app ? localStorage.getItem('os2loja') || '' : ''; } catch (e) { }
 const q = (location.search.match(/[?&]loja=(android|ios|nao)\b/) || [])[1];
 if (q === 'nao') plat = ''; else if (q) plat = q;
 else if (/^android-app:\/\//.test(document.referrer || '')) plat = 'android';
 else if (/PrumoApp\/ios/.test(navigator.userAgent || '')) plat = 'ios';
 try { if (plat) localStorage.setItem('os2loja', plat); else if (q === 'nao') localStorage.removeItem('os2loja'); } catch (e) { }
-window.OS = window.OS || {};
-OS.Loja = { on: !!plat, plat };
+window.PrumoLoja = { on: !!plat, plat };  // o core.js passa-o para OS.Loja
 if (plat) document.documentElement.classList.add('loja', 'loja-' + plat);
 })();

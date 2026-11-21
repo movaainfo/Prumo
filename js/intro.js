@@ -114,7 +114,7 @@ const I = window.PrumoIntro = {
   mode, setMode: v => lsSet('nau:intro', v), state: () => st,
   // o que vem depois (o ecrã do código, a app) espera pelo fim da intro e por um instante do ecrã de carregamento
   wait: cb => { if (st === 'playing' || st === 'waiting') { waiters.push(cb); return; } const left = endAt ? endAt + HOLD - Date.now() : 0; if (left > 0) setTimeout(cb, left); else cb(); },
-  sound: snd, setSound: on => lsSet('nau:introSom', !!on), audio: () => (MUS ? (playing && !MUS.paused ? 'running' : 'suspended') : null), audioTime: () => (MUS ? MUS.currentTime : -1), audioSrc: () => (MUS ? MUS.currentSrc || MUS.src : ''),
+  sound: snd, setSound: on => lsSet('nau:introSom', !!on), audio: () => (MUS ? (playing && !MUS.paused ? 'running' : 'suspended') : null), audioTime: () => (MUS ? MUS.currentTime : -1), audioSrc: () => (MUS ? (/^blob:/.test(MUS.currentSrc || MUS.src) && MUS.dataset.fonte ? MUS.dataset.fonte : MUS.currentSrc || MUS.src) : ''), audioBlob: () => !!(MUS && /^blob:/.test(MUS.currentSrc || MUS.src)),
   // gesture: chamada a partir de um toque (Definições › Ver a intro agora): o som pode começar já
   play: (o = {}) => { if (st === 'playing' || st === 'waiting') return false; const P = getParts(); if (!P) return false;
     EL = build(P); st = 'waiting'; document.documentElement.classList.add('intro-on'); document.body.appendChild(EL);
@@ -126,7 +126,7 @@ const I = window.PrumoIntro = {
       // a música vem num ficheiro que vai com o app (som/intro.mp3, gerado por standalone/gensom.js); fica já a carregar
       // v3.64: o ficheiro vem inteiro para a memória antes de tocar (no telemóvel, tocar "aos pedaços" pela rede fazia o som parar a meio)
       try { MUS = new Audio(); MUS.preload = 'auto'; MUS.setAttribute('playsinline', ''); URLM = '';
-        const net = new URL('som/intro.mp3', document.baseURI).href;
+        const net = new URL('som/intro.mp3', document.baseURI).href; MUS.dataset.fonte = net;
         READY = fetch(net, { cache: 'force-cache' }).then(r => r.ok ? r.blob() : Promise.reject(new Error('som ' + r.status))).then(b => { if (!MUS || !b || b.size < 1000) throw new Error('som vazio'); URLM = URL.createObjectURL(b); MUS.src = URLM; try { MUS.load(); } catch (e) { } })
           .catch(() => { if (!MUS) return; URLM = net; MUS.src = net; try { MUS.load(); } catch (e) { } });
         // se o sistema parar o som sozinho a meio da intro (falta de dados, outra app), volta ao ponto certo uma vez
@@ -135,7 +135,7 @@ const I = window.PrumoIntro = {
       } catch (e) { MUS = null; URLM = ''; }
       // reserva: se o ficheiro falhar, grava-se aqui mesmo (js/introsom.js) num WAV em memória
       if (MUS && S && S.render && S.wav && window.URL && URL.createObjectURL) MUS.addEventListener('error', () => { if (!MUS || playing || (URLM && URLM.indexOf('blob:') === 0)) return; URLM = '';
-        READY = S.render(44100).then(b => { if (!MUS) return; URLM = URL.createObjectURL(S.wav(b)); MUS.src = URLM; try { MUS.load(); } catch (e) { } }).catch(() => { READY = null; }); }, { once: true });
+        READY = S.render(44100).then(b => { if (!MUS) return; MUS.dataset.fonte = 'sintetizado'; URLM = URL.createObjectURL(S.wav(b)); MUS.src = URLM; try { MUS.load(); } catch (e) { } }).catch(() => { READY = null; }); }, { once: true });
     }
     // sem som: começa logo. Vindo de um toque (Definições): a música começa já, e a imagem com ela.
     if (!MUS) { begin(); return true; }

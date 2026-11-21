@@ -63,7 +63,6 @@ cat > "$OUT/manifest.webmanifest" <<'JSON'
   "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
-  "orientation": "any",
   "background_color": "#130A0B",
   "theme_color": "#130A0B",
   "categories": ["productivity", "lifestyle", "finance", "health", "education"],

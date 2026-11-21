@@ -1,116 +1,428 @@
 [
  {
-  "p": "Ataque",
-  "name": "Ataque XSS guardado: nenhum código malicioso corre nem entra no ecrã em 188 páginas",
+  "p": "Planos",
+  "name": "Conta nova: 14 dias grátis do plano Completo, sem cartão",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796452816956}"
+ },
+ {
+  "p": "Planos",
+  "name": "Página pública \"Planos e preços\" (para o Stripe): os 3 planos em euros (outras moedas convertidas do euro), cancelamento e reembolso",
+  "pass": true,
+  "info": "39760"
+ },
+ {
+  "p": "Planos",
+  "name": "Os três planos com os preços só em euros (5,99 · 11,99 · 19,99 por mês; anual = 10 meses)",
+  "pass": true,
+  "info": "{\"ok\":true,\"planos\":[{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"ia\":20,\"perfis\":1,\"precos\":{\"EUR\":{\"mes\":599,\"ano\":5990}}},{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"ia\":150,\"perfis\":3,\"precos\":{\"EUR\":{"
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado, mas sem o Stripe ligado: continua com tudo (não há como pagar ainda)",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"semCobranca\":1,\"testeAcabou\":1795243216956}"
+ },
+ {
+  "p": "Planos",
+  "name": "Com o Stripe ligado e o teste acabado: fica sem plano (a app pede para escolher)",
+  "pass": true,
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795243216956}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: não cria perfis (402)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O teu teste grátis acabou: escolhe um plano em Planos para continuar.\",\"code\":\"plano\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: a IA do servidor responde 402 com a mensagem para escolher um plano",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: 10 logins falsos seguidos trancam a conta 15 min (nem a senha certa entra logo a seguir)",
+  "p": "Planos",
+  "name": "Assinar: abre o pagamento do Stripe com o preço do Essencial (5,99 € por mês), a conta e o regresso ao Prumo",
   "pass": true,
-  "info": "[401,401,401,401,401,401,401,401,429,429] certa:429"
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"befa34590bc0769716d92a47\",\"success_url\":\"http://localhost:8852/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8852/Oceanum/#planos\",\"allow_promotion_codes\":\"true\",\"locale\":\"pt\",\"adaptive_pricing[enabled]\":\"true\",\"line_items[0][q"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: enxurrada de logins do mesmo endereço é travada (429 depois de 30)",
+  "p": "Planos",
+  "name": "A página de pagamento tem o nome e as cores do Prumo (mesmo que a conta do Stripe tenha outro nome)",
   "pass": true,
-  "info": "[401,401,401,401,429,429]"
+  "info": "{\"branding_settings[display_name]\":\"Prumo\",\"branding_settings[background_color]\":\"#F6EFE4\",\"branding_settings[button_color]\":\"#8E1B2A\",\"branding_settings[border_style]\":\"rounded\",\"branding_settings[font_family]\":\"lora\"}"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: robô que preenche o campo escondido do registo é recusado",
+  "p": "Planos",
+  "name": "Se o Stripe ainda não conhecer a marca na página de pagamento, abre o pagamento sem ela",
   "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"Muitas contas criadas a partir daqui. Tenta mais tarde.\",\"code\":\"limite\",\"_st\":429}"
+  "info": "{\"ok\":true,\"url\":\"https://checkout.stripe.test/c/cs_test_4d64ed630cf5\",\"_st\":200}"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: e-mail com código HTML é recusado no registo",
+  "p": "Planos",
+  "name": "Sem métodos de pagamento ativos no Stripe (conta em análise): mensagem clara em português, sem o erro técnico",
   "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"Esse e-mail não parece válido.\",\"code\":\"email\",\"_st\":400}"
+  "info": "{\"ok\":false,\"msg\":\"Os pagamentos ainda estão a ser ativados. Tenta daqui a pouco; o teu teste grátis continua.\",\"code\":\"pagamentos\",\"_st\":503}"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: pedidos de sites de fora (mesmo com nome parecido) são recusados",
+  "p": "Planos",
+  "name": "Sempre em euros: quem usa dólares paga 119,90 € por ano convertidos pelo Stripe na hora (Adaptive Pricing); a libra também fica em euros",
   "pass": true,
-  "info": "403 403"
+  "info": "{\"u\":\"eur\",\"g\":\"eur\"}"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: token forjado não entra; a conta A não lê nem grava os dados da conta B",
+  "p": "Planos",
+  "name": "Antes de pagar, \"confirmar\" não dá o plano",
   "pass": true,
-  "info": "401 404 404"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: línguas inventadas não gastam a IA (só as da lista da app)",
+  "p": "Planos",
+  "name": "Ninguém usa o pagamento de outra conta",
   "pass": true,
-  "info": "400 400"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: a cópia de segurança não abre a quem não é o Vercel",
+  "p": "Planos",
+  "name": "Depois de pagar: plano Essencial (mensal), com a data da renovação",
   "pass": true,
-  "info": "200 403"
+  "info": "{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"perfis\":1,\"ia\":20,\"cobranca\":true,\"pago\":1,\"ate\":1797835217000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}"
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: o atalho de gastos continua a guardar (avisa que entra quando a app voltar) e a app não busca nada enquanto dura",
+  "p": "Planos",
+  "name": "Essencial: só 1 perfil (o segundo pede outro plano)",
   "pass": true,
-  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 06:41)\"},\"p1\":503}"
+  "info": "{\"ok\":false,\"msg\":\"O teu plano (Essencial) tem até 1 perfil. Para mais, muda de plano em Planos.\",\"code\":\"maximo\",\"_st\":402}"
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: a conta de administração continua a usar a app, com o botão flutuante da contagem até ao fim",
+  "p": "Planos",
+  "name": "Essencial: ler fotos com a IA pede o plano Avançado (402)",
   "pass": true,
-  "info": "{\"fab\":\"Manutenção 29:56\",\"cover\":false}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: só a administração liga; ligada, as outras contas não entram nem sincronizam (503) e a administração e as contas de teste continuam",
+  "p": "Planos",
+  "name": "Com assinatura, não abre outra: muda-se de plano",
   "pass": true,
-  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795243319410,\"motivo\":\"manual\",\"prox\":0}}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: a app mostra o ecrã \"O Prumo está em manutenção\" a tapar tudo, com a hora de regresso",
+  "p": "Planos",
+  "name": "Mudar para o Avançado anual: o Stripe recebe o novo preço (119,90 €/ano) e a conta passa a Avançado",
   "pass": true,
-  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 06:41.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797835217000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: desligada pela administração, o ecrã sai sozinho e as contas voltam a funcionar",
+  "p": "Planos",
+  "name": "Cancelar: continua até ao fim do período pago (sem renovar)",
   "pass": true,
-  "info": "true 200"
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"cancelar\":1,\"ate\":1797835217000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas",
+  "p": "Planos",
+  "name": "Retomar a assinatura",
   "pass": true,
-  "info": "200 [{\"id\":\"mwq0g5td-8716954a54\",\"t\":\"2026-11-21T06:11:59.473Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Relatório da semana: a administração gera-o (contas, planos, atividade, segurança com os ataques de hoje, falhas, cópias, saúde) e mais ninguém o vê",
+  "p": "Planos",
+  "name": "Gerir pagamento e faturas: abre o portal do Stripe",
   "pass": true,
-  "info": "{\"st\":200,\"n\":1,\"contas\":{\"total\":3,\"novas\":3,\"porConfirmar\":0,\"teste\":1,\"entraramSemana\":0,\"perfis\":3},\"sec\":{\"login_falhou\":7,\"conta_trancada\":1,\"login_bloqueada\":3,\"login_desconhecido\":30,\"limite\":1,\"robo_registo\":1,\"origem\":2,\"token_falso\":1,\"backup_negado\":1,\"admin_negado\":1,\"manutencao_ligar\":1,\"manutencao_desligar\":1},\"alertas\":4,\"outro\":403}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê",
+  "p": "Planos",
+  "name": "O Prumo configura sozinho o portal do cliente (uma vez): cartão, faturas com NIF e cancelar no fim do período",
   "pass": true,
-  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795241555021,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":0,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":0},\"copia\":\"2026-11-21\"},\"falhas\":[]},\"_st\":200}"
+  "info": "{\"n\":1,\"conf\":[\"bpc_0d4e5ada5677\",\"bpc_0d4e5ada5677\"]}"
  },
  {
-  "p": "Ataque",
-  "name": "Rede instável: sem internet a app funciona e guarda; quando a rede volta (com o servidor a falhar 3 vezes) sincroniza e a tarefa aparece no outro aparelho",
+  "p": "Planos",
+  "name": "Pagou (em euros, mesmo vindo de reais) e fechou a página antes de voltar ao Prumo: o plano ativa sozinho na próxima vez que abre a app",
   "pass": true,
-  "info": "{\"off\":{\"st\":\"sem ligação (guardado neste aparelho)\",\"vis\":true},\"falhas\":3,\"on\":\"sincronizada\",\"there\":true}"
+  "info": "{\"a\":0,\"b\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"pago\":1,\"ate\":1797835217000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}}"
  },
  {
-  "p": "Ataque",
-  "name": "Falhas do app: o servidor aceita o registo da falha (com limite) para o relatório da semana",
+  "p": "Planos",
+  "name": "Administração: tem sempre tudo",
   "pass": true,
-  "info": "{\"ok\":true,\"ok2\":true,\"_st\":200}"
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Administração oferece o Completo por 30 dias (a pessoa vê o aviso)",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797835217522}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: a lista de contas mostra o plano de cada uma",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797835217522}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: com uma oferta, mostra também o que seria no Automático (aqui, sem plano)",
+  "pass": true,
+  "info": "{\"o\":{\"id\":\"completo\",\"ate\":1797835217522},\"a\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795243217218}}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Por fazer: sabe se o Stripe e o e-mail estão ligados (sem mostrar as chaves)",
+  "pass": true,
+  "info": "{\"stripe\":true,\"stripeTeste\":true,\"mail\":\"\",\"mailDe\":false}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin dá o Essencial grátis a quem paga o Avançado: fica com o maior (Avançado pago)",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797835217000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: \"Automático\" tira a escolha (volta ao teste e ao que a pessoa assinou)",
+  "pass": true,
+  "info": "{\"ok\":true,\"email\":\"teoe4bc55e5@teste.pt\",\"plano\":\"\",\"dias\":0,\"agora\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797835217000,\"ciclo\":\"ano\",\"cur\":\"EUR\""
+ },
+ {
+  "p": "Planos",
+  "name": "Só a administração escolhe planos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "A conta de administração não muda de plano (tem sempre tudo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin cria um código de desconto (LANCAMENTO20, −20% no 1.º pagamento): cupão e código promocional no Stripe",
+  "pass": true,
+  "info": "{\"c\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"max\":0,\"expira\":0,\"novos\":false,\"promo\":\"promo_b6b95f21ce62\",\"coupon\":\"cp_7b2a74063572\",\"criado\":1795243217549,\"ativo\":true},\"cp\":{\"percent_off\":\"20\",\"duration\":\"once\",\"name\":\"LANCAMENTO20 · 20%\",\"metadata[app]\":\"prumo\",\"metada"
+ },
+ {
+  "p": "Planos",
+  "name": "Não deixa criar dois códigos ativos com o mesmo nome",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Código só para o Completo, durante 3 meses, com limite de usos, validade e só para a primeira assinatura",
+  "pass": true,
+  "info": "{\"cp\":{\"percent_off\":\"50\",\"duration\":\"repeating\",\"name\":\"SO-COMPLETO · 50%\",\"metadata[app]\":\"prumo\",\"metadata[code]\":\"SO-COMPLETO\",\"duration_in_months\":\"3\",\"applies_to[products][0]\":\"prod_ca66a457303a\"},\"pc\":{\"promotion[type]\":\"coupon\",\"promotion[coupon]\":\"cp_848a2f5d0d1e\",\"code\":\"SO-COMPLETO\",\"meta"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Códigos: a lista com os usos e o estado",
+  "pass": true,
+  "info": "{\"ok\":true,\"cobranca\":true,\"cupoes\":[{\"code\":\"SO-COMPLETO\",\"pct\":50,\"dur\":\"repeating\",\"meses\":3,\"planos\":[\"completo\"],\"max\":2,\"expira\":4102444799000,\"novos\":true,\"promo\":\"promo_864bdcd35fde\",\"coupon\":"
+ },
+ {
+  "p": "Planos",
+  "name": "A pessoa valida o código (sem distinguir maiúsculas): −20%; um código que não existe é recusado",
+  "pass": true,
+  "info": "{\"vz\":{\"ok\":true,\"cupao\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"promo\":\"promo_b6b95f21ce62\",\"novos\":false},\"_st\":200},\"b\":404}"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar com o código: o pagamento abre com o desconto já aplicado",
+  "pass": true,
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"79141f5f092d6c4942fb1c09\",\"success_url\":\"http://localhost:8852/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8852/#planos\",\"locale\":\"pt"
+ },
+ {
+  "p": "Planos",
+  "name": "Um código só do Completo não serve para o Essencial",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Esse código não serve para o plano Essencial.\",\"code\":\"cupao\",\"_st\":400}"
+ },
+ {
+  "p": "Planos",
+  "name": "Código que já chegou ao limite de usos deixa de valer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin desativa o código: deixa de valer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Só a administração cria códigos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Chave real no lugar da de teste: a assinatura de teste deixa de contar e o novo pagamento não usa o cliente de teste",
+  "pass": true,
+  "info": "{\"p\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795243216956},\"f\":\"teoe4bc55e5@teste.pt\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Página Planos: o teu plano (Avançado), os 3 planos com preço (11,99 € por mês) e \"Subir para o Completo\"",
+  "pass": true,
+  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano Avançado Plano Avançado (anual). Renova a 21 de dezembro de 2026. Gerir pagamento e faturas Cancelar a assinatura Mensal Anual · 2 meses grátis Os preços são em euros, com impostos incluídos. Se pagares com u"
+ },
+ {
+  "p": "Planos",
+  "name": "Preços só em euros (sem escolher moeda) e a nota da conversão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Página Planos: no anual mostra o preço do ano (119,90 €) e quanto dá por mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: as paletas exclusivas (Ouro, Aurora, Sakura) aparecem com \"Completo\" e não se aplicam",
+  "pass": true,
+  "info": "{\"n\":9,\"lk\":true,\"cur\":\"selo\",\"x\":true}"
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: os Relatórios (impostos) têm cadeado e levam aos planos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: a Universidade abre (sem cadeado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado e sem plano: as páginas mostram \"Escolhe o teu plano\" com os planos (os dados ficam)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Planos: \"Tens um código de desconto?\" aplica o código e mostra o preço com desconto (−30% no 1.º mês) em cada plano",
+  "pass": true,
+  "info": "{\"on\":true,\"old\":3,\"t\":\"−30% no 1.º mês\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar na app com o código aplicado: o pagamento leva o desconto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Quem usa reais: o preço continua em euros (5,99 €) com o valor aproximado em reais ao lado (≈ R$ 37,14) e a nota da conversão",
+  "pass": true,
+  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Mensal Anual · 2 meses grátis Os preços são em euros, com impostos incluídos. Ao pagar, vês o valor na tua moeda, convertido pelo câmbio do dia (o valor ao lado de cada preço é aproximado). Tens um cód"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar com reais: cobra 5,99 € (o Stripe converte para reais na página de pagamento, em português do Brasil)",
+  "pass": true,
+  "info": "{\"c\":\"eur\",\"v\":\"599\",\"l\":\"pt-BR\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Modo loja (app Android/iPhone): os planos aparecem sem botões de compra, sem código de desconto e sem preços, com a nota \"não há compras\"",
+  "pass": true,
+  "info": "{\"on\":true,\"cls\":true,\"buy\":0,\"cup\":false,\"portal\":false,\"cards\":3,\"t\":\"Sistema PLANOS Os planos do Prumo e o que cada um inclui. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Nesta versão da app não\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Modo loja desliga com ?loja=nao (no site volta a haver compras)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Códigos de desconto: o formulário e a lista com os códigos criados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Contas: cada conta mostra o plano (Completo grátis)",
+  "pass": true,
+  "info": "Completo grátis"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Por fazer: os passos do Stripe em modo de teste e do e-mail (Brevo)",
+  "pass": true,
+  "info": "Por fazer 3 pendentes pendente Chave Google da IA para todos (GEMINI_API_KEY) Para a IA das contas ler fotos (comida, exames, escala) e PDFs. 1) aistudio.google.com/apikey → Create API key. 2) Vercel → projeto prumo → Settings → Environment Variables → nome GEMINI_API_KEY, valor a chave, Production."
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: escolher o plano (Automático, Essencial, Avançado ou Completo grátis), com o atual marcado e sem pedir a senha",
+  "pass": true,
+  "info": "{\"n\":4,\"chk\":\"completo\",\"senha\":false}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: \"Avançado grátis\" durante 3 meses fica na conta da pessoa",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"oferta\":1,\"ate\":1803019241707}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: \"Automático\" devolve a conta ao teste e à assinatura (aqui o teste já acabou: sem plano)",
+  "pass": true,
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795243217218}"
+ },
+ {
+  "p": "Planos",
+  "name": "Completo: as paletas exclusivas (Ouro, Aurora, Sakura) aplicam-se",
+  "pass": true,
+  "info": "ouro,aurora,sakura"
+ },
+ {
+  "p": "Planos",
+  "name": "Relatórios (Completo): o quadro \"Resumo do mês no teu e-mail\" com o botão para ligar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "sem erros de JavaScript (Admin › planos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Atendimento prioritário: os pedidos de quem tem o Completo chegam marcados como prioritários ao Admin (o Avançado não)",
+  "pass": true,
+  "info": "{\"w\":1,\"a\":0}"
+ },
+ {
+  "p": "Planos",
+  "name": "Resumo do mês por e-mail: só no plano Completo (o Avançado recebe 402)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O resumo do mês por e-mail é do plano Completo.\",\"code\":\"plano\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Conta nova em teste grátis: ao entrar aparecem os planos, com os dias grátis e \"Continuar com o teste grátis\"",
+  "pass": true,
+  "info": "{\"h\":\"#planos\",\"t\":\"Bem-vindo ao Prumo\\n\\nTens 14 dias grátis do plano Completo, sem cartão. Escolhe já o teu plano aqui em baixo ou continua com o teste: avisamos-te antes de acabar e os teus dados ficam sempre guardados.\\n\\nContinuar com "
+ },
+ {
+  "p": "Planos",
+  "name": "\"Continuar com o teste grátis\" vai para o Painel e os planos não voltam a abrir sozinhos",
+  "pass": true,
+  "info": "#visao"
  }
 ]

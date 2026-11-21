@@ -13,7 +13,7 @@
   "navigationDividerColorDark": "#130A0B",
   "backgroundColor": "#130A0B",
   "enableNotifications": true,
-  "startUrl": "/#visao",
+  "startUrl": "/?loja=android#visao",
   "iconUrl": "https://prumo-vida.vercel.app/icon-512.png",
   "maskableIconUrl": "https://prumo-vida.vercel.app/icon-maskable-512.png",
   "splashScreenFadeOutDuration": 300,
@@ -21,9 +21,9 @@
   "appVersionName": "1.0.0",
   "appVersionCode": 1,
   "shortcuts": [
-    { "name": "Gasto rápido", "shortName": "Gasto", "url": "/#gasto", "chosenIconUrl": "https://prumo-vida.vercel.app/icon-192.png" },
-    { "name": "Registar refeição", "shortName": "Dieta", "url": "/#dieta", "chosenIconUrl": "https://prumo-vida.vercel.app/icon-192.png" },
-    { "name": "Dominus", "shortName": "Jogo", "url": "/#dominus", "chosenIconUrl": "https://prumo-vida.vercel.app/icon-192.png" }
+    { "name": "Gasto rápido", "shortName": "Gasto", "url": "/?loja=android#gasto", "chosenIconUrl": "https://prumo-vida.vercel.app/icon-192.png" },
+    { "name": "Registar refeição", "shortName": "Dieta", "url": "/?loja=android#dieta", "chosenIconUrl": "https://prumo-vida.vercel.app/icon-192.png" },
+    { "name": "Dominus", "shortName": "Jogo", "url": "/?loja=android#dominus", "chosenIconUrl": "https://prumo-vida.vercel.app/icon-192.png" }
   ],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://prumo-vida.vercel.app/manifest.webmanifest",

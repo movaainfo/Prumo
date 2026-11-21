@@ -22,7 +22,7 @@ O Prumo continua a ser o site (prumo-vida.vercel.app). As apps das lojas são "c
 1. **Conta de programador Google Play** em play.google.com/console: 25 USD, pagos uma vez. Pede documento de identificação. Conta pessoal serve; quando a empresa existir, pode-se transferir a app.
 2. **Gerar a app Android** em **pwabuilder.com**:
    - Escreve `https://prumo-vida.vercel.app` → Start → **Package for stores** → **Android** → Generate.
-   - Em "Package ID" põe `pt.prumo.app`; nome "Prumo"; o resto vem do manifesto (ou usa os valores de `lojas/android/twa-manifest.json`).
+   - Em "Package ID" põe `pt.prumo.app`; nome "Prumo"; **Start URL: `/?loja=android#visao`** (é isto que liga o modo loja sem compras); o resto vem do manifesto (ou usa os valores de `lojas/android/twa-manifest.json`).
    - Signing key: **Create new**. Descarrega o .zip. Lá dentro há o ficheiro `.aab` (é o que vai para a Play), a chave de assinatura (`.keystore`) com as senhas, e um `assetlinks.json`.
    - **Guarda a chave e as senhas num sítio seguro** (por exemplo, no cofre do Prumo e numa cópia offline). Sem elas não dá para publicar atualizações da casca. Nunca as envies no chat.
 3. **Criar a app** na Play Console: nome Prumo, idioma pt-PT, app gratuita.

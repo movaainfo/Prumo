@@ -2716,7 +2716,8 @@ async function futebolTests(b) { cur = 'Futebol'; console.log('\n=== Visão Gera
   ok('Futebol: sem erros na consola', !errs.length, errs.slice(0, 3).join(' | '));
   await ctx.close(); }
 // fotografias do app no telemóvel (para rever o layout): TELSHOTS=rota1,rota2 escolhe as páginas
-async function telShots(b) { cur = 'Telemóvel'; const SH = process.env.SHOTS || ''; if (!SH) return; const { ctx, p, errs } = await newPage(b, PROFILES[+process.env.TELPROF || 0]); await p.goto(BASE); await unlock(p); await sleep(800);
+async function telShots(b) { cur = 'Telemóvel'; const SH = process.env.SHOTS || ''; if (!SH) return; const P0 = PROFILES[+process.env.TELPROF || 0], VP = (process.env.TELVP || '').match(/^(\d+)x(\d+)(?:@([\d.]+))?$/); /* TELVP=440x956@3: capturas para as lojas */
+  const { ctx, p, errs } = await newPage(b, VP ? Object.assign({}, P0, { o: Object.assign({}, P0.o, { viewport: { width: +VP[1], height: +VP[2] }, deviceScaleFactor: +(VP[3] || P0.o.deviceScaleFactor || 1) }) }) : P0); await p.goto(BASE); await unlock(p); await sleep(800);
   const R = (process.env.TELSHOTS || 'visao,hoje,financas,treino,eu,tarefas,definicoes').split(',');
   if (process.env.TELPRE) { await p.evaluate(process.env.TELPRE); await sleep(400); }
   if (process.env.TELEVAL) { const R0 = (process.env.TELSHOTS || '').split(',')[0]; if (R0) { await E(p, r => { location.hash = r; }, R0); await sleep(1500); } console.log('TELEVAL', JSON.stringify(await p.evaluate(process.env.TELEVAL))); }
@@ -4318,6 +4319,13 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
     const fB = (STRIPE.calls.slice(nB).filter(c => c.p === 'checkout/sessions').pop() || { f: {} }).f;
     ok('Assinar com reais: cobra 5,99 € (o Stripe converte para reais na página de pagamento, em português do Brasil)', fB['line_items[0][price_data][currency]'] === 'eur' && fB['line_items[0][price_data][unit_amount]'] === '599' && fB['adaptive_pricing[enabled]'] === 'true' && fB.locale === 'pt-BR', JSON.stringify({ c: fB['line_items[0][price_data][currency]'], v: fB['line_items[0][price_data][unit_amount]'], l: fB.locale }));
     await k2.p.goto(BASE + '#planos').catch(() => { }); await unlock(k2.p).catch(() => { }); await sleep(1200); await E(k2.p, () => { OS.one('profile').cur = 'EUR'; OS.touch('profile'); });
+    // modo loja (app da Play Store / App Store): sem preços, compras, cupões nem portal de pagamento
+    await k2.p.goto(BASE + '?loja=android#planos').catch(() => { }); await unlock(k2.p).catch(() => { }); await sleep(1500); await E(k2.p, () => { OS.UI.closeModal && OS.UI.closeModal(); OS.go('planos'); }); await sleep(800);
+    const lj = await E(k2.p, () => ({ on: !!(OS.Loja && OS.Loja.on), cls: document.documentElement.classList.contains('loja-android'), buy: document.querySelectorAll('#view [data-act=plAssinar]').length, cup: !!document.getElementById('plCupIn'), portal: !!document.querySelector('#view [data-act=plPortal]'), cards: document.querySelectorAll('#view .pl-c').length, t: document.getElementById('view').innerText }));
+    try { await k2.p.screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'planos-loja.png') }); } catch (e) { }
+    ok('Modo loja (app Android/iPhone): os planos aparecem sem botões de compra, sem código de desconto e sem preços, com a nota "não há compras"', lj.on && lj.cls && !lj.buy && !lj.cup && !lj.portal && lj.cards === 3 && /não há compras/.test(lj.t) && !/5,99/.test(lj.t), JSON.stringify(Object.assign({}, lj, { t: lj.t.replace(/\s+/g, ' ').slice(0, 200) })));
+    await k2.p.goto(BASE + '?loja=nao#planos').catch(() => { }); await unlock(k2.p).catch(() => { }); await sleep(1200);
+    ok('Modo loja desliga com ?loja=nao (no site volta a haver compras)', await E(k2.p, () => !(OS.Loja && OS.Loja.on) && !document.documentElement.classList.contains('loja') && !localStorage.getItem('os2loja')));
     await E(k2.p, () => { location.hash = 'definicoes'; }); await sleep(600);
     ok('Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)', await E(k2.p, () => !/Escolhe o teu plano/i.test(document.getElementById('view').innerText) && !!document.getElementById('plSet')));
     await k2.ctx.close();
@@ -4843,8 +4851,8 @@ async function introTests(b) { cur = 'Intro'; console.log('\n=== Intro ao abrir:
   const w = await E(p, () => { const el = document.getElementById('intro'), a = el && el.querySelector('.in-selo').getAnimations()[0]; return { st: PrumoIntro.state(), wait: el && el.classList.contains('in-wait'), tap: el && getComputedStyle(el.querySelector('.in-tapt')).display, t: a ? Math.round(a.currentTime) : -1, code: !!document.getElementById('lkCode') }; });
   ok('Com som: a intro abre em "Toca para começar", parada no primeiro instante, e o ecrã do código espera', w.st === 'waiting' && w.wait && w.tap === 'flex' && w.t === 0 && !w.code, JSON.stringify(w));
   await p.mouse.click(195, 420); await p.waitForFunction(() => PrumoIntro.state() === 'playing', null, { timeout: 3000 }).catch(() => { }); await sleep(400);
-  const w2 = await E(p, () => ({ src: PrumoIntro.audioSrc().replace(/^.*\//, ''), st: PrumoIntro.state(), au: PrumoIntro.audio(), wait: document.getElementById('intro').classList.contains('in-wait'), t: Math.round(document.querySelector('#intro .in-selo').getAnimations()[0].currentTime) }));
-  ok('O toque começa a intro com a música (o ficheiro som/intro.mp3, a tocar) e a animação a andar', w2.st === 'playing' && w2.au === 'running' && w2.src === 'intro.mp3' && !w2.wait && w2.t > 150, JSON.stringify(w2));
+  const w2 = await E(p, () => ({ src: PrumoIntro.audioSrc().replace(/^.*\//, ''), blob: PrumoIntro.audioBlob(), st: PrumoIntro.state(), au: PrumoIntro.audio(), wait: document.getElementById('intro').classList.contains('in-wait'), t: Math.round(document.querySelector('#intro .in-selo').getAnimations()[0].currentTime) }));
+  ok('O toque começa a intro com a música (o ficheiro som/intro.mp3, inteiro na memória antes de tocar, para não parar a meio no telemóvel) e a animação a andar', w2.st === 'playing' && w2.au === 'running' && w2.src === 'intro.mp3' && w2.blob && !w2.wait && w2.t > 150, JSON.stringify(w2));
   await sleep(3000); const w3 = await E(p, () => ({ au: PrumoIntro.audio(), at: +PrumoIntro.audioTime().toFixed(2), vis: Math.round(document.querySelector('#intro .in-selo').getAnimations()[0].currentTime) / 1000 }));
   ok('A música continua a tocar com a imagem (não só o começo): passado o selo, o som vai no mesmo ponto', w3.au === 'running' && w3.at > 2.9 && Math.abs(w3.at - w3.vis) < .6, JSON.stringify(w3));
   const mf = await E(p, async () => { const r = await fetch('som/intro.mp3'); const b = await r.arrayBuffer(); return { s: r.status, n: b.byteLength }; });

@@ -2,7 +2,7 @@
    Camadas: core (dados) → data (domínio) → intel (inteligência) → views (interface) → dominus (jogo) → app (arranque). */
 (() => {
 'use strict';
-const OS = window.OS = { version: '2.0' };
+const OS = window.OS = { version: '2.0', Loja: window.PrumoLoja || { on: false, plat: '' } };  // modo loja (js/loja.js corre antes)
 
 /* ================= UTILITÁRIOS ================= */
 const U = OS.U = {};
