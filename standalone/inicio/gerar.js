@@ -102,9 +102,9 @@ const faqHtml = FAQ.map(([q, r]) => `<details><summary>${esc(q)}<i aria-hidden="
 const tutOk = fs.existsSync(path.join(HERE, 'media', 'tutorial.mp4'));
 let CAPS = []; try { CAPS = JSON.parse(fs.readFileSync(path.join(HERE, 'media', 'tutorial-capitulos.json'), 'utf8')); } catch (e) { }
 const tutHtml = !tutOk ? '' : `<section class="tuto" id="tutorial" aria-label="Tutorial em vídeo"><div class="wrap"><div class="caixa">
-  <div class="rev"><p class="lbl">Em poucos minutos</p><h2>Aprende a usar <em>o Prumo.</em></h2><p class="lead">Um tutorial com narração e legendas: do primeiro registo ao Dominus.</p>
+  <div class="rev"><p class="lbl">Em pouco mais de um minuto</p><h2>Aprende a usar <em>o Prumo.</em></h2><p class="lead">Um tutorial com narração e legendas: do Painel ao Dominus, capítulo a capítulo. Toca num capítulo para saltar para ele.</p>
   <div class="caps">${CAPS.map(c => `<button type="button" data-t="${c.t}">${esc(c.n)}</button>`).join('')}</div></div>
-  <div class="player rev" id="player"><video playsinline preload="none" poster="inicio/tutorial.webp" data-src="inicio/tutorial.mp4" crossorigin="anonymous"><track kind="captions" srclang="pt" label="Português" src="inicio/tutorial.vtt" default></video><button class="play" type="button" aria-label="Ver o tutorial"><span><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></button></div>
+  <div class="player rev" id="player"><video playsinline preload="none" poster="inicio/tutorial.webp" data-src="inicio/tutorial.mp4" aria-label="Tutorial do Prumo, com narração e legendas"></video><button class="play" type="button" aria-label="Ver o tutorial"><span><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></button></div>
 </div></div></section>`;
 
 const DATA = { areas: AREAS.map(([k, t, d]) => ({ k, t, d })), spy: SPY, dia: DIA.map(({ h, t, p, luz }) => ({ h, t, p, luz })), planos: DATAP };

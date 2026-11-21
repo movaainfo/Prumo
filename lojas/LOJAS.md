@@ -41,7 +41,13 @@ O Prumo continua a ser o site (prumo-vida.vercel.app). As apps das lojas são "c
 6. **Conta de demonstração para a revisão**: a Apple pede uma conta para entrar. Cria uma conta normal (não `@nautilo.test`, que é apagada sozinha) com dados de exemplo e põe o e-mail e a senha no campo "Sign-in information" do App Store Connect (não no chat).
 7. **Compras**: ver a secção de pagamentos acima. Sem In-App Purchase, a Apple deverá recusar enquanto os planos pagos existirem.
 
-## Capturas de ecrã
+## Capturas de ecrã (já feitas)
+Estão em `lojas/capturas/`, tiradas da conta de demonstração (pessoa fictícia, sem dados teus):
+- `ios69-*.png` — iPhone 6,9" (1320×2868), para a App Store.
+- `play-*.png` — telemóvel Android (1080×1920), para a Play Store.
+- `ipad13-*.png` — iPad 13" (2064×2752), se publicares também para iPad.
+- Vídeo vertical do tutorial (para a ficha da loja ou redes sociais): `lojas/videos/tutorial-vertical.mp4`.
+
 - Play: no mínimo 2 capturas de telemóvel (ao alto, por exemplo 1080×1920 ou maiores). Recomendado: 4 a 8.
 - Apple: iPhone 6,9" (1320×2868), obrigatório; iPad 13" só se a app for para iPad.
 - Sugestão: usar uma conta de exemplo (não a tua, para não mostrar dados pessoais) e capturar Início, Execução (tarefas e rotina), Dinheiro, Corpo, Dominus e Spyke.

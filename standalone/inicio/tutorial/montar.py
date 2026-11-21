@@ -50,7 +50,8 @@ def camadas(W, H, nome, L):
     sp = {'fontes': fontes, 'saida': tmp, 'w': W, 'h': H, 'itens': []}
     sx, sy, sw, sh = L['ecra']
     sp['itens'].append({'f': nome + '-fundo.png', 'html': f'''<div style="position:absolute;inset:0;background:radial-gradient(45% 60% at {L["brilho"]} ,rgba(224,38,58,.28),transparent 70%),radial-gradient(40% 40% at 90% 0%,rgba(244,217,160,.10),transparent 70%),#120A0B"></div>
-      <div style="position:absolute;left:{L["marca"][0]}px;top:{L["marca"][1]}px;display:flex;align-items:center;gap:14px"><img src="file://{selo}" style="width:{L["marca"][2]}px;height:{L["marca"][2]}px"><b style="font:500 {int(L["marca"][2]*.8)}px/1 'Bodoni Moda'">Prumo</b><span style="margin-left:18px;font:600 {L["lbl"]}px Geist;letter-spacing:.24em;text-transform:uppercase;color:#B9A27F">Como usar o Prumo</span></div>'''})
+      <div style="position:absolute;left:{L["marca"][0]}px;top:{L["marca"][1]}px;display:flex;align-items:center;gap:14px"><img src="file://{selo}" style="width:{L["marca"][2]}px;height:{L["marca"][2]}px"><b style="font:500 {int(L["marca"][2]*.8)}px/1 'Bodoni Moda'">Prumo</b></div>
+      <div style="position:absolute;left:{L["rot"][0]}px;top:{L["rot"][1]}px;width:{L["rot"][2]}px;text-align:{L["rot"][3]};font:600 {L["lbl"]}px Geist;letter-spacing:.24em;text-transform:uppercase;color:#B9A27F">Como usar o Prumo</div>'''})
     r = int(sw * .095); bz = int(sw * .045)
     sp['itens'].append({'f': nome + '-moldura.png', 'transparente': True, 'html': f'''<div style="position:absolute;left:{sx - bz}px;top:{sy - bz}px;width:{sw + 2 * bz}px;height:{sh + 2 * bz}px;border-radius:{r + bz}px;box-shadow:0 0 0 {bz}px #1d1115 inset,0 0 0 {bz + 1}px rgba(244,217,160,.18) inset,0 40px 90px rgba(0,0,0,.55)"></div>
       <div style="position:absolute;left:{sx}px;top:{sy}px;width:{sw}px;height:{sh}px;border-radius:{r}px;box-shadow:0 0 0 {bz + 2}px #1d1115"></div>
@@ -62,10 +63,10 @@ def camadas(W, H, nome, L):
     sj = os.path.join(tmp, nome + '.json'); json.dump(sp, open(sj, 'w'))
     run('node', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'quadros.js'), sj)
 
-H16 = {'ecra': (300, 64, 438, 948), 'brilho': '28% 55%', 'marca': (64, 52, 46), 'lbl': 14,
+H16 = {'ecra': (330, 66, 438, 948), 'brilho': '28% 55%', 'marca': (64, 52, 46), 'lbl': 14, 'rot': (900, 200, 860, 'left'),
        'titulo': lambda c: f'''<div style="position:absolute;left:900px;top:250px;width:900px"><div style="font:600 16px Geist;letter-spacing:.24em;color:#B9A27F">{c["i"] + 1:02d} / {len(caps):02d}</div><div style="margin-top:18px;font:500 112px/0.95 'Bodoni Moda';text-transform:uppercase;color:{'#E0263A' if c['id'] == 'fim' else '#F4D9A0'}">{esc(c["cap"])}</div>{'<div style="margin-top:30px;font:600 30px Geist;color:#F4D9A0">prumo-vida.vercel.app</div>' if c['id'] == 'fim' else ''}</div>''',
        'legenda': lambda g: f'''<div style="position:absolute;left:900px;top:640px;width:860px;padding-left:26px;border-left:3px solid #E0263A;font:500 42px/1.32 Geist;color:#F4D9A0">{esc(g["txt"])}</div>'''}
-V916 = {'ecra': (190, 150, 700, 1515), 'brilho': '50% 40%', 'marca': (60, 50, 50), 'lbl': 15,
+V916 = {'ecra': (190, 150, 700, 1515), 'brilho': '50% 40%', 'marca': (60, 50, 50), 'lbl': 15, 'rot': (500, 72, 520, 'right'),
        'titulo': lambda c: f'''<div style="position:absolute;left:0;right:0;top:1700px;text-align:center;font:600 20px Geist;letter-spacing:.24em;text-transform:uppercase;color:#B9A27F">{c["i"] + 1:02d} · {esc(c["cap"])}</div>''',
        'legenda': lambda g: f'''<div style="position:absolute;left:70px;right:70px;top:1740px;text-align:center;font:600 44px/1.3 Geist;color:#F4D9A0;text-shadow:0 2px 10px rgba(0,0,0,.6)">{esc(g["txt"])}</div>'''}
 
