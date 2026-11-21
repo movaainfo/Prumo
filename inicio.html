@@ -14,7 +14,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preload" href="vendor/fonts/bodoni-moda.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="vendor/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.classList.add('js')</script>
 <script>
 /* quem já usa o Prumo neste navegador vai direto para a app (os dados da app estão aqui) */
 (function () { try { var ls = localStorage, k, i, has = false; for (i = 0; i < ls.length; i++) { k = ls.key(i); if (/^(nau:s|nau:p|os2:)/.test(k)) { has = true; break; } }
@@ -177,8 +178,27 @@ section{position:relative}
 .dom{padding:clamp(90px,12vw,160px) 0;background:radial-gradient(50% 60% at 30% 50%,rgba(252,231,209,.08),transparent 70%),var(--vinho-e);overflow:hidden}
 .dom .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(30px,6vw,90px);align-items:center}
 .carta{perspective:1100px;justify-self:center;width:min(100%,380px);position:relative}
-.carta .in{position:relative;transform-style:preserve-3d;transition:transform .15s ease-out;border-radius:26px}
-.carta img{width:100%;border-radius:26px;box-shadow:0 30px 70px rgba(20,0,3,.6)}
+.carta{transform-style:preserve-3d}
+.carta .frente{position:relative;aspect-ratio:3/4.3;background:var(--creme);color:var(--vinho);display:flex;flex-direction:column;padding:22px;overflow:hidden;box-shadow:0 30px 70px rgba(20,0,3,.6),inset 0 0 0 6px var(--vinho),inset 0 0 0 9px var(--creme),inset 0 0 0 11px var(--vinho)}
+.c-topo{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:2;padding:6px 6px 0}
+.c-niv{display:grid;justify-items:center;line-height:1}.c-niv b{font:400 58px/0.9 var(--disp)}.c-niv i{font:700 11px var(--sans);letter-spacing:.16em;text-transform:uppercase;font-style:normal}
+.c-classe{font:700 12px var(--sans);letter-spacing:.12em;text-transform:uppercase;background:var(--vinho);color:var(--creme);padding:7px 11px;border-radius:999px;margin-top:6px;transition:transform .3s}
+.c-palco{position:relative;flex:1;display:grid;place-items:center;margin:-6px 0 0}
+.c-raios{position:absolute;width:150%;aspect-ratio:1;border-radius:50%;background:repeating-conic-gradient(rgba(101,1,13,.09) 0 9deg,transparent 9deg 18deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 62%);mask:radial-gradient(circle,#000 18%,transparent 62%);animation:gira 40s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.c-heroi{position:relative;z-index:2;width:46%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;animation:respira 1.2s steps(2) infinite;filter:drop-shadow(0 6px 0 rgba(101,1,13,.18))}
+@keyframes respira{50%{transform:translateY(-1.4%)}}
+.c-heroi.troca{animation:poof .45s cubic-bezier(.2,1.6,.3,1)}
+@keyframes poof{0%{transform:scale(.6) translateY(8%);opacity:.2}100%{transform:none;opacity:1}}
+.c-sombra{position:absolute;z-index:1;bottom:9%;width:40%;height:5%;border-radius:50%;background:rgba(101,1,13,.25);filter:blur(2px)}
+.c-nome{position:relative;z-index:2;text-align:center;font:400 46px/1 var(--disp);text-transform:uppercase;letter-spacing:.02em;margin-top:-4px}
+.c-attrs{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;border-top:2px solid rgba(101,1,13,.2);padding-top:10px}
+.c-attrs span{display:grid;justify-items:center}.c-attrs b{font:400 30px/1 var(--disp);transition:transform .3s}.c-attrs b.sobe{animation:salto .5s}.c-attrs i{font:700 10.5px var(--sans);letter-spacing:.1em;text-transform:uppercase;font-style:normal}
+.visuais{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:16px}
+.visuais button{width:46px;height:58px;border-radius:12px;border:0;background:rgba(252,231,209,.1);box-shadow:inset 0 0 0 2px var(--linha);display:grid;place-items:center;padding:4px;transition:transform .2s,background .2s,box-shadow .2s}
+.visuais button img{width:32px;height:48px;image-rendering:pixelated;image-rendering:crisp-edges}
+.visuais button:hover{transform:translateY(-3px)}
+.visuais button[aria-pressed="true"]{background:var(--creme);box-shadow:none}
 .carta .reflexo{position:absolute;inset:0;border-radius:26px;background:radial-gradient(circle at var(--mx,50%) var(--my,30%),rgba(252,231,209,.28),transparent 45%);mix-blend-mode:screen;pointer-events:none}
 .carimbo{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-12deg) scale(2.4);opacity:0;pointer-events:none;font:400 clamp(36px,5.4vw,54px)/1 var(--disp);letter-spacing:.04em;color:var(--vinho);background:var(--creme);padding:10px 22px;border-radius:10px;text-transform:uppercase;white-space:nowrap;box-shadow:0 0 0 4px var(--vinho),0 0 0 7px var(--creme)}
 .carimbo.bate{animation:bate 1.6s cubic-bezier(.2,.9,.2,1) forwards}
@@ -332,6 +352,82 @@ footer nav a{text-decoration:none;color:var(--creme)}footer nav a:hover{text-dec
 footer p{margin:0 0 6px;max-width:70ch}
 @media (max-width:820px){footer .wrap{grid-template-columns:1fr}}
 
+
+/* ---------- letras do título: começam tortas e ficam a prumo ---------- */
+.js .hero h1{opacity:0}.js .hero h1.pronto{opacity:1;transition:opacity .3s}
+.ch{display:inline-block;transform-origin:50% 90%;transition:transform .9s cubic-bezier(.2,1.4,.3,1)}
+.hero h1 .l>span{animation:none;transform:none}
+.torto .ch{transform:rotate(var(--r,0deg)) translateY(var(--y,0px))}
+/* ---------- faixas cruzadas ---------- */
+.faixas{position:relative;height:clamp(150px,18vw,230px);overflow:hidden;margin-top:-1px;background:var(--vinho)}
+.faixa{position:absolute;left:-5%;width:110%;padding:14px 0;white-space:nowrap;overflow:hidden}
+.faixa.f1{top:18%;background:var(--creme);color:var(--vinho);transform:rotate(-3deg);z-index:2;box-shadow:0 12px 30px rgba(20,0,3,.3)}
+.faixa.f2{top:30%;background:var(--vinho-e);color:var(--creme);transform:rotate(2.5deg)}
+.trilho{display:inline-flex;gap:0;will-change:transform}
+.trilho span{font:400 clamp(34px,4.6vw,62px)/1 var(--disp);text-transform:uppercase;letter-spacing:.01em;padding:0 .35em;display:inline-flex;align-items:center;gap:.7em}
+.trilho span::after{content:"";width:.34em;height:.34em;border-radius:50%;background:currentColor;opacity:.75}
+.trilho span.o{color:transparent;-webkit-text-stroke:1.6px currentColor}
+.f1 .trilho span.o{-webkit-text-stroke-color:var(--vinho)}.f2 .trilho span.o{-webkit-text-stroke-color:var(--creme)}
+/* ---------- linha de prumo lateral ---------- */
+.linha-prumo{position:fixed;right:22px;top:90px;bottom:40px;width:30px;z-index:40;color:var(--creme);transition:color .4s,opacity .4s;opacity:0}
+.linha-prumo.vis{opacity:1}
+.linha-prumo.claro-c{color:var(--vinho)}
+.linha-prumo .fio{position:absolute;left:14px;top:0;width:2px;height:var(--p,0%);background:currentColor;border-radius:2px}
+.linha-prumo::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:2px;background:currentColor;opacity:.18}
+.linha-prumo .peso{position:absolute;left:8px;top:var(--p,0%);width:14px;height:22px;transform:translateY(-2px) rotate(var(--ang,0deg));transform-origin:50% 0;background:currentColor;clip-path:polygon(25% 0,75% 0,75% 30%,100% 42%,50% 100%,0 42%,25% 30%)}
+.linha-prumo a{position:absolute;left:9px;width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 2px currentColor;transform:translateY(-6px);background:transparent;transition:background .3s}
+.linha-prumo a.on{background:currentColor}
+.linha-prumo a span{position:absolute;right:22px;top:50%;transform:translate(6px,-50%);white-space:nowrap;font:700 12px var(--sans);letter-spacing:.1em;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;background:currentColor;padding:5px 9px;border-radius:999px}
+.linha-prumo a span b{color:var(--vinho);font-weight:700}.linha-prumo.claro-c a span b{color:var(--creme)}
+.linha-prumo a:hover span,.linha-prumo a:focus-visible span{opacity:1;transform:translate(0,-50%)}
+@media (max-width:900px){.linha-prumo{display:none}}
+/* ---------- telemóvel em 3D com etiquetas ---------- */
+.telw{perspective:1400px}
+.tel{transform:rotateY(var(--ry,0deg)) rotateX(var(--rx,0deg));transition:transform .2s ease-out}
+.etiquetas{position:absolute;inset:0;pointer-events:none;z-index:4}
+.eq{position:absolute;display:flex;align-items:center;gap:10px;font:700 14px/1.25 var(--sans);color:var(--vinho);opacity:0;transform:translateY(10px) scale(.96);transition:opacity .45s,transform .45s cubic-bezier(.2,1.2,.3,1)}
+.eq b{background:var(--creme);padding:10px 14px;border-radius:14px;box-shadow:0 14px 30px rgba(20,0,3,.35);white-space:nowrap}
+.eq i{width:46px;height:2px;background:var(--creme);position:relative}
+.eq i::after{content:"";position:absolute;right:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--creme);box-shadow:0 0 0 5px rgba(252,231,209,.25)}
+.eq.e2{flex-direction:row-reverse}.eq.e2 i::after{right:auto;left:-5px}
+.eq.on{opacity:1;transform:none}
+.eq.e1{left:-170px;top:22%}.eq.e2{right:-120px;top:64%}
+@media (max-width:1240px){.etiquetas{display:none}}
+/* ---------- carta que vira e faíscas ---------- */
+.carta .in{all:unset;display:block;position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.3,1.3,.4,1);border-radius:26px;width:100%}
+.carta .face{display:block;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:26px}
+.carta .face.verso{position:absolute;inset:0;transform:rotateY(180deg);background:var(--creme);color:var(--vinho);padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 30px 70px rgba(20,0,3,.6),inset 0 0 0 6px var(--vinho),inset 0 0 0 9px var(--creme),inset 0 0 0 11px var(--vinho)}
+.verso .vl{font:700 12px var(--sans);letter-spacing:.16em;text-transform:uppercase;margin-top:8px}
+.verso b{font:400 64px/1 var(--disp);text-transform:uppercase}
+.verso .vn{font:700 16px var(--sans)}
+.verso .vb{display:grid;gap:6px;margin-top:6px}.verso .vb i{font:700 13px var(--sans);font-style:normal;letter-spacing:.08em;text-transform:uppercase}
+.verso .vb s{display:block;height:12px;border-radius:99px;background:rgba(101,1,13,.15);position:relative;overflow:hidden}
+.verso .vb s::after{content:"";position:absolute;inset:0;width:var(--v);background:var(--vinho);border-radius:inherit;transition:width .8s}
+.verso .vm{margin-top:auto;font:500 14.5px/1.45 var(--sans);border-top:2px solid rgba(101,1,13,.2);padding-top:12px}
+.faiscas{position:absolute;inset:-30%;width:160%;height:160%;pointer-events:none;z-index:5}
+.vira{text-align:center;font:700 13px var(--sans);letter-spacing:.08em;text-transform:uppercase;margin:14px 0 0;opacity:.8}
+/* ---------- céu do "um dia" ---------- */
+.ceu{position:relative;display:grid;justify-items:center}
+.ceu svg{width:min(360px,70vw);height:auto;overflow:visible;margin-bottom:-74px}
+.ceu .hora{position:relative;z-index:1}
+#astroM{transition:opacity .6s,cx .6s}
+@media (max-width:820px){.ceu{justify-items:center;width:100%}.ceu svg{width:78vw;margin-bottom:-50px}}
+/* ---------- faixas creme que se abrem como janela ---------- */
+.janela{clip-path:inset(var(--ji,0px) var(--jx,0px) round var(--jr,0px));will-change:clip-path}
+/* ---------- foco de luz nos planos ---------- */
+.plano{position:relative;overflow:hidden}
+.plano::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--lx,50%) var(--ly,0%),rgba(252,231,209,.14),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+.plano.destaque::before{background:radial-gradient(260px circle at var(--lx,50%) var(--ly,0%),rgba(101,1,13,.09),transparent 60%)}
+.plano:hover::before{opacity:1}
+/* ---------- cortina de lacre (ao entrar na app) ---------- */
+.cortina{position:fixed;inset:0;z-index:100;background:var(--vinho);clip-path:circle(0 at var(--cx,50%) var(--cy,50%));transition:clip-path .7s cubic-bezier(.7,0,.3,1);display:grid;place-items:center;pointer-events:none}
+.cortina img{width:120px;height:120px;opacity:0;transform:scale(.6);transition:opacity .3s .45s,transform .5s .45s cubic-bezier(.2,1.4,.3,1)}
+.cortina.on{clip-path:circle(150% at var(--cx,50%) var(--cy,50%));pointer-events:auto}
+.cortina.on img{opacity:1;transform:none}
+/* ---------- botões atraídos pelo cursor ---------- */
+.btn{will-change:transform}
+@media (prefers-reduced-motion:reduce){.torto .ch{transform:none}.janela{clip-path:none!important}.trilho{transform:none!important}}
+
 /* ---------- entradas ao rolar (só uma vez, discretas) ---------- */
 .rev{opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
 .rev.vis{opacity:1;transform:none}
@@ -364,6 +460,7 @@ footer p{margin:0 0 6px;max-width:70ch}
   </div>
   <div class="dica" aria-hidden="true"><i></i>Arrasta o prumo</div>
 </section>
+<div class="faixas" aria-hidden="true"><div class="faixa f1"><div class="trilho" id="trilho1"><span>Tarefas</span><span class="o">Dinheiro</span><span>Estudos</span><span class="o">Treino</span><span>Dieta</span><span class="o">Sono</span><span>Metas</span><span class="o">Leituras</span><span>Dominus</span><span class="o">Spyke</span><span>Tarefas</span><span class="o">Dinheiro</span><span>Estudos</span><span class="o">Treino</span><span>Dieta</span><span class="o">Sono</span><span>Metas</span><span class="o">Leituras</span><span>Dominus</span><span class="o">Spyke</span></div></div><div class="faixa f2"><div class="trilho" id="trilho2"><span>Tarefas</span><span class="o">Dinheiro</span><span>Estudos</span><span class="o">Treino</span><span>Dieta</span><span class="o">Sono</span><span>Metas</span><span class="o">Leituras</span><span>Dominus</span><span class="o">Spyke</span><span>Tarefas</span><span class="o">Dinheiro</span><span>Estudos</span><span class="o">Treino</span><span>Dieta</span><span class="o">Sono</span><span>Metas</span><span class="o">Leituras</span><span>Dominus</span><span class="o">Spyke</span></div></div></div>
 
 <section class="dez claro" id="dez" aria-label="Um só lugar">
   <div class="palco">
@@ -387,7 +484,7 @@ footer p{margin:0 0 6px;max-width:70ch}
       <ol class="areas" id="areas"><li class="area"><button type="button"><span class="n">01 / 07</span><h3>Painel</h3><p>O dia num olhar: o que é urgente, o que está sob controlo e a próxima ação.</p></button></li><li class="area"><button type="button"><span class="n">02 / 07</span><h3>Hoje</h3><p>Rotina por horas, tarefas e hábitos. Marcas e segues em frente.</p></button></li><li class="area"><button type="button"><span class="n">03 / 07</span><h3>Dinheiro</h3><p>Gastos, orçamentos, contas e poupança. Cada euro com destino.</p></button></li><li class="area"><button type="button"><span class="n">04 / 07</span><h3>Corpo</h3><p>Treino com séries e cargas, corrida, dieta e sono.</p></button></li><li class="area"><button type="button"><span class="n">05 / 07</span><h3>Metas</h3><p>Só ficam "no ritmo" quando há avanço real.</p></button></li><li class="area"><button type="button"><span class="n">06 / 07</span><h3>Estudos</h3><p>Sessões, avaliações, flashcards e o que estudar hoje.</p></button></li><li class="area"><button type="button"><span class="n">07 / 07</span><h3>Dominus</h3><p>O teu herói ganha força com o que fazes por ti.</p></button></li></ol>
       <div class="telw">
         <div class="rail" id="rail" role="tablist" aria-label="Áreas do app"><button type="button" role="tab" aria-selected="false">Painel</button><button type="button" role="tab" aria-selected="false">Hoje</button><button type="button" role="tab" aria-selected="false">Dinheiro</button><button type="button" role="tab" aria-selected="false">Corpo</button><button type="button" role="tab" aria-selected="false">Metas</button><button type="button" role="tab" aria-selected="false">Estudos</button><button type="button" role="tab" aria-selected="false">Dominus</button></div>
-        <div class="tel" id="tel"><div class="ecra"><video muted playsinline preload="none" poster="inicio/painel.webp" data-src="inicio/painel.mp4" aria-label="Painel no app"></video><video muted playsinline preload="none" poster="inicio/hoje.webp" data-src="inicio/hoje.mp4" aria-label="Hoje no app"></video><video muted playsinline preload="none" poster="inicio/dinheiro.webp" data-src="inicio/dinheiro.mp4" aria-label="Dinheiro no app"></video><video muted playsinline preload="none" poster="inicio/corpo.webp" data-src="inicio/corpo.mp4" aria-label="Corpo no app"></video><video muted playsinline preload="none" poster="inicio/metas.webp" data-src="inicio/metas.mp4" aria-label="Metas no app"></video><video muted playsinline preload="none" poster="inicio/estudos.webp" data-src="inicio/estudos.mp4" aria-label="Estudos no app"></video><video muted playsinline preload="none" poster="inicio/dominus.webp" data-src="inicio/dominus.mp4" aria-label="Dominus no app"></video><div class="ilha"></div><div class="brilho"></div></div></div>
+        <div class="etiquetas" id="etiquetas" aria-hidden="true"><div class="eq e1" data-a="0"><b>Próxima ação sugerida</b><i></i></div><div class="eq e2" data-a="0"><b>8 pontos de atenção</b><i></i></div><div class="eq e1" data-a="1"><b>Hábitos com um toque</b><i></i></div><div class="eq e2" data-a="1"><b>Rotina por horas</b><i></i></div><div class="eq e1" data-a="2"><b>Orçamento por categoria</b><i></i></div><div class="eq e2" data-a="2"><b>Poupança de 43%</b><i></i></div><div class="eq e1" data-a="3"><b>Séries, cargas e descanso</b><i></i></div><div class="eq e2" data-a="3"><b>Corrida de 6,2 km</b><i></i></div><div class="eq e1" data-a="4"><b>No ritmo só com avanço real</b><i></i></div><div class="eq e2" data-a="4"><b>3 metas ativas</b><i></i></div><div class="eq e1" data-a="5"><b>O que estudar hoje</b><i></i></div><div class="eq e2" data-a="5"><b>8,2 h esta semana</b><i></i></div><div class="eq e1" data-a="6"><b>Atributos da tua vida</b><i></i></div><div class="eq e2" data-a="6"><b>Nível, ouro e conquistas</b><i></i></div></div><div class="tel" id="tel"><div class="ecra"><video muted playsinline preload="none" poster="inicio/painel.webp" data-src="inicio/painel.mp4" aria-label="Painel no app"></video><video muted playsinline preload="none" poster="inicio/hoje.webp" data-src="inicio/hoje.mp4" aria-label="Hoje no app"></video><video muted playsinline preload="none" poster="inicio/dinheiro.webp" data-src="inicio/dinheiro.mp4" aria-label="Dinheiro no app"></video><video muted playsinline preload="none" poster="inicio/corpo.webp" data-src="inicio/corpo.mp4" aria-label="Corpo no app"></video><video muted playsinline preload="none" poster="inicio/metas.webp" data-src="inicio/metas.mp4" aria-label="Metas no app"></video><video muted playsinline preload="none" poster="inicio/estudos.webp" data-src="inicio/estudos.mp4" aria-label="Estudos no app"></video><video muted playsinline preload="none" poster="inicio/dominus.webp" data-src="inicio/dominus.mp4" aria-label="Dominus no app"></video><div class="ilha"></div><div class="brilho"></div></div></div>
         <p class="rtexto" id="rtexto" aria-live="polite"></p>
         <p class="legenda">Gravado no app, com uma conta de exemplo.</p>
       </div>
@@ -403,7 +500,7 @@ footer p{margin:0 0 6px;max-width:70ch}
 
 <section class="dom" id="dominus" aria-label="Dominus, o jogo">
   <div class="wrap">
-    <div class="carta rev" id="carta"><div class="in"><img src="inicio/dominus-carta.webp" alt="Carta do herói no Dominus, com nível e atributos" width="760" height="1098" loading="lazy"><div class="reflexo"></div></div><div class="carimbo" id="carimbo">Nível 2</div></div>
+    <div class="carta rev" id="carta"><button class="in" type="button" aria-label="Virar a carta do herói"><span class="face frente"><span class="c-topo"><span class="c-niv"><b id="cNiv">1</b><i>Nível</i></span><span class="c-classe" id="cClasse">Do dia a dia</span></span><span class="c-palco"><span class="c-raios"></span><img class="c-heroi" id="cHeroi" src="inicio/heroi-dia.png" alt="Herói do Dominus em pixel art" width="48" height="72"><span class="c-sombra"></span></span><span class="c-nome">Marta</span><span class="c-attrs"><span><b data-a="corpo">3</b><i>Corpo</i></span><span><b data-a="mente">5</b><i>Mente</i></span><span><b data-a="disc">4</b><i>Disciplina</i></span></span><span class="reflexo"></span></span><span class="face verso"><span class="vl">Ficha do herói</span><b>Marta</b><span class="vn" id="versoN">Nível 1 · Recruta</span><span class="vb"><i>Corpo</i><s style="--v:30%"></s></span><span class="vb"><i>Mente</i><s style="--v:50%"></s></span><span class="vb"><i>Disciplina</i><s style="--v:40%"></s></span><span class="vm">Missão de hoje<br><strong>Rever o capítulo 3 de Estatística</strong> · +20 XP</span></span></button><canvas class="faiscas" id="faiscas"></canvas><div class="carimbo" id="carimbo">Nível 2</div><p class="vira">Toca na carta para a virar</p><div class="visuais" role="group" aria-label="Muda o visual do herói"><button type="button" data-h="dia" data-n="Do dia a dia" aria-pressed="true" aria-label="Visual Do dia a dia"><img src="inicio/heroi-dia.png" alt="" width="48" height="72" loading="lazy"></button><button type="button" data-h="ginasio" data-n="Ginásio" aria-pressed="false" aria-label="Visual Ginásio"><img src="inicio/heroi-ginasio.png" alt="" width="48" height="72" loading="lazy"></button><button type="button" data-h="executivo" data-n="Executivo" aria-pressed="false" aria-label="Visual Executivo"><img src="inicio/heroi-executivo.png" alt="" width="48" height="72" loading="lazy"></button><button type="button" data-h="mago" data-n="Mago" aria-pressed="false" aria-label="Visual Mago"><img src="inicio/heroi-mago.png" alt="" width="48" height="72" loading="lazy"></button><button type="button" data-h="samurai" data-n="Samurai" aria-pressed="false" aria-label="Visual Samurai"><img src="inicio/heroi-samurai.png" alt="" width="48" height="72" loading="lazy"></button><button type="button" data-h="ferro" data-n="Cavaleiro de ferro" aria-pressed="false" aria-label="Visual Cavaleiro de ferro"><img src="inicio/heroi-ferro.png" alt="" width="48" height="72" loading="lazy"></button><button type="button" data-h="dominus" data-n="Dominus" aria-pressed="false" aria-label="Visual Dominus"><img src="inicio/heroi-dominus.png" alt="" width="48" height="72" loading="lazy"></button></div></div>
     <div class="rev">
       <p class="lbl">O jogo da tua vida</p>
       <h2>Cada tarefa feita <em><span class="w">vale</span> <span class="w">pontos.</span></em></h2>
@@ -418,7 +515,7 @@ footer p{margin:0 0 6px;max-width:70ch}
   </div>
 </section>
 
-<section class="spy claro" id="spyke" aria-label="Spyke, o assistente">
+<section class="spy claro janela" id="spyke" aria-label="Spyke, o assistente">
   <div class="wrap">
     <div class="rev">
       <p class="lbl">O teu assistente</p>
@@ -438,13 +535,13 @@ footer p{margin:0 0 6px;max-width:70ch}
 
 <section class="dia" id="dia" aria-label="Um dia com o Prumo">
   <div class="wrap">
-    <div class="topo rev"><div><p class="lbl">Um dia a prumo</p><h2>Do primeiro café<br>ao <em><span class="w">fim</span> <span class="w">do</span> <span class="w">dia.</span></em></h2></div><div class="hora" id="hora" aria-hidden="true">07:00</div></div>
+    <div class="topo rev"><div><p class="lbl">Um dia a prumo</p><h2>Do primeiro café<br>ao <em><span class="w">fim</span> <span class="w">do</span> <span class="w">dia.</span></em></h2></div><div class="ceu" aria-hidden="true"><svg viewBox="0 0 400 210"><path d="M20 200 A180 180 0 0 1 380 200" fill="none" stroke="rgba(252,231,209,.35)" stroke-width="2" stroke-dasharray="4 8"/><g id="astro"><circle r="22" fill="#FCE7D1"/><circle id="astroM" r="22" cx="10" cy="-6" fill="#6E0613" opacity="0"/></g></svg><div class="hora" id="hora">07:00</div></div></div>
     <div class="cena rev" id="cena"><h3 class="t" id="cenaT"></h3><p class="t" id="cenaP"></p></div>
     <div class="linhatempo rev"><label class="sr" for="dial" style="position:absolute;left:-9999px">Hora do dia</label><input type="range" id="dial" min="0" max="7" step="1" value="0" aria-valuetext="07:00"><div class="marcas" id="marcas"><button type="button">07:00</button><button type="button">09:00</button><button type="button">13:00</button><button type="button">14:30</button><button type="button">17:40</button><button type="button">20:30</button><button type="button">22:45</button><button type="button">23:30</button></div></div>
   </div>
 </section>
 
-<section class="priv claro" id="privacidade" aria-label="Privacidade">
+<section class="priv claro janela" id="privacidade" aria-label="Privacidade">
   <div class="wrap">
     <div class="rev">
       <p class="lbl">Privacidade</p>
@@ -481,7 +578,7 @@ footer p{margin:0 0 6px;max-width:70ch}
   </div>
 </section>
 
-<section class="fim claro" aria-label="Começar">
+<section class="fim claro janela" aria-label="Começar">
   <div class="wrap">
     <p class="lbl" style="justify-content:center">Começa hoje</p>
     <h2 class="rev">Põe a tua vida <em><span class="w">a</span> <span class="w">prumo.</span></em></h2>
@@ -493,6 +590,8 @@ footer p{margin:0 0 6px;max-width:70ch}
 </section>
 </main>
 
+<nav class="linha-prumo" id="linhaP" aria-label="Secções da página"><i class="fio" id="linhaFio"></i><b class="peso" id="linhaPeso"></b><a href="#inicio" data-s="inicio" aria-label="Início"><span><b>Início</b></span></a><a href="#dez" data-s="dez" aria-label="Um só lugar"><span><b>Um só lugar</b></span></a><a href="#app" data-s="app" aria-label="O app"><span><b>O app</b></span></a><a href="#tutorial" data-s="tutorial" aria-label="Tutorial"><span><b>Tutorial</b></span></a><a href="#dominus" data-s="dominus" aria-label="Dominus"><span><b>Dominus</b></span></a><a href="#spyke" data-s="spyke" aria-label="Spyke"><span><b>Spyke</b></span></a><a href="#dia" data-s="dia" aria-label="Um dia"><span><b>Um dia</b></span></a><a href="#privacidade" data-s="privacidade" aria-label="Privacidade"><span><b>Privacidade</b></span></a><a href="#planos" data-s="planos" aria-label="Planos"><span><b>Planos</b></span></a><a href="#perguntas" data-s="perguntas" aria-label="Perguntas"><span><b>Perguntas</b></span></a></nav>
+<div class="cortina" id="cortina" aria-hidden="true"><img src="inicio/selo.svg" alt=""></div>
 <footer>
   <div class="wrap">
     <div><a class="brand" href="#inicio"><img src="inicio/selo.svg" alt="" width="28" height="28"><b style="font-size:22px">Prumo</b></a><p style="margin-top:16px">O Prumo é vendido por <b>Ryan da Silva Magalhães</b> (pessoa singular, NIF 337532230, com morada em Rua de Anadia, n.º 25, 5.º DRT, Aradas, 3810-208 Aveiro, Portugal).</p><p>© 2026 Prumo.</p></div>
@@ -510,6 +609,30 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), ease = t => t < .5 ? 4 *
 // entrar na app: fica marcado neste navegador (o endereço principal passa a abrir a app)
 const marca = () => { try { document.cookie = 'prumo_app=1; Max-Age=31536000; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { } };
 $$('[data-app]').forEach(a => a.addEventListener('click', marca));
+
+/* título: cada letra começa torta e fica a prumo quando o prumo desce; o cursor desalinha-as e elas voltam */
+const h1 = $('.hero h1'), FINO = matchMedia('(pointer: fine)').matches;
+h1.setAttribute('aria-label', h1.textContent.replace(/\s+/g, ' ').trim());
+const quebra = el => [...el.childNodes].forEach(n => { if (n.nodeType === 3) { const f = document.createDocumentFragment(); [...n.textContent].forEach(c => { if (c === ' ') f.appendChild(document.createTextNode(' ')); else { const sp = document.createElement('span'); sp.className = 'ch'; sp.textContent = c; sp.setAttribute('aria-hidden', 'true'); f.appendChild(sp); } }); n.replaceWith(f); } else if (n.nodeType === 1) quebra(n); });
+quebra(h1); const CH = $$('.hero h1 .ch'), rnd = i => { const x = Math.sin(i * 91.7 + 3.1) * 10000; return x - Math.floor(x); };
+CH.forEach((c, i) => { c.style.setProperty('--r', (rnd(i) * 44 - 22).toFixed(1) + 'deg'); c.style.setProperty('--y', (rnd(i + 50) * 26 - 13).toFixed(0) + 'px'); });
+if (!REDUZ) { h1.classList.add('torto'); setTimeout(() => { CH.forEach((c, i) => c.style.transitionDelay = (120 + i * 38) + 'ms'); h1.classList.remove('torto'); setTimeout(() => CH.forEach(c => c.style.transitionDelay = ''), 2400); }, 1000); }
+h1.classList.add('pronto');
+let chPos = [], mx = -1e4, my = -1e4, pedL = false;
+const medeCH = () => { chPos = CH.map(c => { const r = c.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2 + scrollY]; }); };
+const letras = () => { pedL = false; CH.forEach((c, i) => { const p = chPos[i]; if (!p) return; const dx = p[0] - mx, dy = p[1] - my, f = Math.max(0, 1 - Math.hypot(dx, dy) / 190); c.style.transform = f > 0 ? `rotate(${((dx > 0 ? 1 : -1) * f * 18).toFixed(1)}deg) translateY(${(-f * 12).toFixed(1)}px)` : ''; }); };
+if (FINO && !REDUZ) { const hs = $('.hero'); setTimeout(medeCH, 3200); addEventListener('resize', () => setTimeout(medeCH, 200)); document.fonts && document.fonts.ready.then(() => setTimeout(medeCH, 3200));
+  hs.addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY + scrollY; if (!pedL) { pedL = true; requestAnimationFrame(letras); } });
+  hs.addEventListener('pointerleave', () => { mx = my = -1e4; requestAnimationFrame(letras); }); }
+
+/* botões atraídos pelo cursor */
+if (FINO && !REDUZ) $$('.btn').forEach(b => { b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(), dx = e.clientX - r.left - r.width / 2, dy = e.clientY - r.top - r.height / 2; b.style.transform = `translate(${(dx * .22).toFixed(1)}px,${(dy * .3).toFixed(1)}px)`; }); b.addEventListener('pointerleave', () => { b.style.transform = ''; }); });
+
+/* cortina de lacre ao entrar na app (cobre a página a partir do sítio onde se tocou) */
+const cortina = $('#cortina');
+const entra = (href, x, y) => { marca(); if (REDUZ) { location.href = href; return; } cortina.style.setProperty('--cx', x + 'px'); cortina.style.setProperty('--cy', y + 'px'); cortina.classList.add('on'); setTimeout(() => { location.href = href; }, 720); };
+$$('[data-app]').forEach(a => a.addEventListener('click', e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); entra(a.getAttribute('href'), e.clientX || innerWidth / 2, e.clientY || innerHeight / 2); }));
+addEventListener('pageshow', e => { if (e.persisted) cortina.classList.remove('on'); });
 
 /* topo sólido ao rolar */
 const top = $('#top'); const onTop = () => top.classList.toggle('solid', scrollY > 40); onTop(); addEventListener('scroll', onTop, { passive: true });
@@ -540,7 +663,7 @@ const vids = $$('#tel video'), areas = $$('#areas .area'), railB = $$('#rail but
 let atual = -1, telVisto = false;
 const liga = v => { if (!v.src && v.dataset.src) { v.src = v.dataset.src; } };
 const mostra = i => { if (i === atual) return; atual = i; vids.forEach((v, j) => { if (j === i) { liga(v); v.classList.add('on'); v.currentTime = 0; if (telVisto) v.play().catch(() => { }); } else { v.classList.remove('on'); v.pause(); } });
-  areas.forEach((a, j) => a.classList.toggle('on', j === i)); railB.forEach((b, j) => { b.classList.toggle('on', j === i); b.setAttribute('aria-selected', j === i); });
+  $$('#etiquetas .eq').forEach(q => q.classList.toggle('on', +q.dataset.a === i)); areas.forEach((a, j) => a.classList.toggle('on', j === i)); railB.forEach((b, j) => { b.classList.toggle('on', j === i); b.setAttribute('aria-selected', j === i); });
   const A = DATA.areas[i]; rtexto.innerHTML = `<b>${A.t}</b>${A.d}`; const rb = railB[i], rl = $('#rail'); if (rb && innerWidth < 900) rl.scrollTo({ left: rb.offsetLeft - (rl.clientWidth - rb.offsetWidth) / 2, behavior: REDUZ ? 'auto' : 'smooth' });
   if (vids[i + 1]) liga(vids[i + 1]); };
 new IntersectionObserver(es => es.forEach(e => { telVisto = e.isIntersecting; const v = vids[atual]; if (!v) return; if (telVisto) v.play().catch(() => { }); else v.pause(); }), { threshold: .25 }).observe($('#tel'));
@@ -560,14 +683,22 @@ if (pl) { const v = pl.querySelector('video'); pl.querySelector('.play').addEven
   $$('.caps button').forEach(b => b.addEventListener('click', () => { if (!v.src) v.src = v.dataset.src; v.controls = true; v.currentTime = +b.dataset.t; v.play().then(() => pl.classList.add('tocando')).catch(() => { }); })); }
 
 /* ---------- Dominus: carta que inclina e experiência a subir ---------- */
-const carta = $('#carta'), cin = carta.querySelector('.in');
-if (!REDUZ) { carta.addEventListener('pointermove', e => { const r = carta.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-    cin.style.transform = `rotateY(${((x - .5) * 16).toFixed(2)}deg) rotateX(${((.5 - y) * 14).toFixed(2)}deg)`; cin.style.setProperty('--mx', (x * 100).toFixed(1) + '%'); cin.style.setProperty('--my', (y * 100).toFixed(1) + '%'); });
-  carta.addEventListener('pointerleave', () => { cin.style.transform = ''; }); }
+const carta = $('#carta'), cin = carta.querySelector('.in'); let virada = false, tY = 0, tX = 0;
+const poe = (lento) => { cin.style.transition = lento ? 'transform .8s cubic-bezier(.3,1.3,.4,1)' : 'transform .15s ease-out'; cin.style.transform = `perspective(1100px) rotateY(${(virada ? 180 : 0) + tY}deg) rotateX(${tX}deg)`; };
+cin.addEventListener('click', () => { virada = !virada; poe(true); });
+if (!REDUZ && FINO) { carta.addEventListener('pointermove', e => { const r = carta.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height; tY = (x - .5) * 16; tX = (.5 - y) * 14; cin.style.setProperty('--mx', (x * 100).toFixed(1) + '%'); cin.style.setProperty('--my', (y * 100).toFixed(1) + '%'); poe(false); });
+  carta.addEventListener('pointerleave', () => { tY = tX = 0; poe(true); }); }
+const cHeroi = $('#cHeroi'), cClasse = $('#cClasse');
+$$('.visuais button').forEach(bt => bt.addEventListener('click', e => { e.stopPropagation(); $$('.visuais button').forEach(x => x.setAttribute('aria-pressed', x === bt)); cHeroi.src = 'inicio/heroi-' + bt.dataset.h + '.png'; cClasse.textContent = bt.dataset.n; cHeroi.classList.remove('troca'); void cHeroi.offsetWidth; cHeroi.classList.add('troca'); if (virada) { virada = false; poe(true); } }));
+const faiscas = $('#faiscas'), fx = faiscas.getContext('2d');
+const explode = () => { if (REDUZ) return; const W = faiscas.width = faiscas.clientWidth * Math.min(2, devicePixelRatio || 1), H = faiscas.height = faiscas.clientHeight * Math.min(2, devicePixelRatio || 1), P = [];
+  for (let i = 0; i < 90; i++) { const a = Math.random() * Math.PI * 2, v = (2 + Math.random() * 7) * (W / 600); P.push({ x: W / 2, y: H * .45, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 3 * (W / 600), r: (2 + Math.random() * 4) * (W / 600), c: Math.random() < .7 ? '#FCE7D1' : '#D9B266', l: 1 }); }
+  const t0 = performance.now(); const passo = now => { const t = (now - t0) / 1000; fx.clearRect(0, 0, W, H); P.forEach(p => { p.vy += .22 * (W / 600); p.vx *= .985; p.x += p.vx; p.y += p.vy; p.l = Math.max(0, 1 - t / 1.4); fx.globalAlpha = p.l; fx.fillStyle = p.c; fx.beginPath(); fx.arc(p.x, p.y, p.r, 0, 7); fx.fill(); }); if (t < 1.4) requestAnimationFrame(passo); else fx.clearRect(0, 0, W, H); }; requestAnimationFrame(passo); };
 let xp = 40, nivel = 1; const xpB = $('#xpBarra'), xpN = $('#xpNum'), xpL = $('#xpNivel'), carimbo = $('#carimbo');
-$$('.feitos button').forEach(b => b.addEventListener('click', () => { const n = +b.dataset.xp, at = document.querySelector(`.attr b[data-a="${b.dataset.a}"]`);
-  at.textContent = +at.textContent + 1; at.classList.remove('sobe'); void at.offsetWidth; at.classList.add('sobe');
-  xp += n; if (xp >= 100) { xp -= 100; nivel++; xpL.textContent = 'Nível ' + nivel; carimbo.textContent = 'Nível ' + nivel; carimbo.classList.remove('bate'); void carimbo.offsetWidth; carimbo.classList.add('bate'); }
+$$('.feitos button').forEach(b => b.addEventListener('click', () => { const n = +b.dataset.xp, at = document.querySelector(`.attr b[data-a="${b.dataset.a}"]`), ca = document.querySelector(`.c-attrs b[data-a="${b.dataset.a}"]`);
+  at.textContent = +at.textContent + 1; at.classList.remove('sobe'); void at.offsetWidth; at.classList.add('sobe'); if (ca) { ca.textContent = at.textContent; ca.classList.remove('sobe'); void ca.offsetWidth; ca.classList.add('sobe'); }
+  xp += n; if (xp >= 100) { xp -= 100; nivel++; xpL.textContent = 'Nível ' + nivel; $('#cNiv').textContent = nivel; carimbo.textContent = 'Nível ' + nivel; carimbo.classList.remove('bate'); void carimbo.offsetWidth; carimbo.classList.add('bate'); explode(); $('#versoN').textContent = 'Nível ' + nivel + ' · Desperto'; }
+  const vb = $$('.verso .vb s'), mapa = { corpo: 0, mente: 1, disc: 2 }; if (vb[mapa[b.dataset.a]]) vb[mapa[b.dataset.a]].style.setProperty('--v', Math.min(100, +at.textContent * 10) + '%');
   xpB.style.setProperty('--w', xp + '%'); xpN.textContent = xp + ' / 100 XP'; }));
 
 /* ---------- Spyke: conversa de exemplo ---------- */
@@ -584,7 +715,9 @@ const CEU = ['#7A0A18', '#740816', '#6E0613', '#690410', '#65010D', '#5A010C', '
 let iDia = -1, mexeu = false;
 const pinta = i => { if (i === iDia) return; iDia = i; const D = DATA.dia[i]; hora.textContent = D.h; dial.setAttribute('aria-valuetext', D.h + ', ' + D.t); cena.classList.add('mud');
   setTimeout(() => { cT.textContent = D.t; cP.textContent = D.p; cena.classList.remove('mud'); }, REDUZ ? 0 : 200); sec.style.background = `radial-gradient(70% 90% at ${10 + i * 11}% 0%, ${D.luz}, transparent 70%), ${CEU[i] || '#65010D'}`;
-  marcas.forEach((m, j) => m.classList.toggle('on', j === i)); };
+  marcas.forEach((m, j) => m.classList.toggle('on', j === i));
+  const t = i / (DATA.dia.length - 1), ax = 200 - 180 * Math.cos(t * Math.PI), ay = 200 - 180 * Math.sin(t * Math.PI), astro = $('#astro'), lua = $('#astroM');
+  astro.style.transition = REDUZ ? 'none' : 'transform .9s cubic-bezier(.3,1.2,.4,1)'; astro.style.transform = `translate(${ax.toFixed(1)}px,${ay.toFixed(1)}px)`; lua.setAttribute('fill', CEU[i] || '#65010D'); lua.style.opacity = i >= DATA.dia.length - 2 ? 1 : 0; };
 dial.addEventListener('input', () => { mexeu = true; pinta(+dial.value); });
 marcas.forEach((m, j) => m.addEventListener('click', () => { mexeu = true; dial.value = j; pinta(j); }));
 pinta(0);
@@ -601,8 +734,10 @@ cofreB.addEventListener('click', () => { cifrado = !cifrado; cofre.classList.tog
 /* ---------- planos: mensal ou anual, valor aproximado na moeda de quem visita ---------- */
 const cicloB = $$('.ciclo button'); let ciclo = 'mes';
 const eur = c => (c / 100).toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
-const pintaP = () => { $$('.plano').forEach(el => { const P = DATA.planos.find(p => p.id === el.dataset.id); el.querySelector('.preco b').textContent = eur(P.p[ciclo]); el.querySelector('.preco span').textContent = ciclo === 'mes' ? 'por mês' : 'por ano';
+const rola = (el, de, para) => { if (REDUZ || de === para) { el.textContent = eur(para); return; } const t0 = performance.now(); const f = now => { const k = Math.min(1, (now - t0) / 650), e = 1 - Math.pow(1 - k, 3); el.textContent = eur(Math.round(de + (para - de) * e)); if (k < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); };
+const pintaP = () => { $$('.plano').forEach(el => { const P = DATA.planos.find(p => p.id === el.dataset.id), pb = el.querySelector('.preco b'), ant = +(pb.dataset.c || P.p[ciclo]); rola(pb, ant, P.p[ciclo]); pb.dataset.c = P.p[ciclo]; el.querySelector('.preco span').textContent = ciclo === 'mes' ? 'por mês' : 'por ano';
     const ax = el.querySelector('.aprox'); ax.textContent = FX ? '≈ ' + (P.p[ciclo] / 100 * FX.r).toLocaleString(FX.loc, { style: 'currency', currency: FX.cur, maximumFractionDigits: FX.cur === 'JPY' ? 0 : 2 }) + ' na tua moeda' : ''; }); };
+if (FINO) $$('.plano').forEach(el => el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); el.style.setProperty('--lx', (e.clientX - r.left) + 'px'); el.style.setProperty('--ly', (e.clientY - r.top) + 'px'); }));
 cicloB.forEach(b => b.addEventListener('click', () => { ciclo = b.dataset.ciclo; cicloB.forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); pintaP(); }));
 let FX = null; const L0 = (navigator.languages && navigator.languages[0]) || navigator.language || 'pt-PT';
 const CUR = /-BR$/i.test(L0) ? 'BRL' : /-US$/i.test(L0) ? 'USD' : /-GB$/i.test(L0) ? 'GBP' : /-CH$/i.test(L0) ? 'CHF' : /-(CA)$/i.test(L0) ? 'CAD' : '';
@@ -615,15 +750,38 @@ $$('details').forEach(d => { const s = d.querySelector('summary'), r = d.querySe
 /* ---------- fim: premir o selo ---------- */
 const selar = $('#selar'), selarP = $('#selarP'); let t0 = 0, raf = 0;
 const solta = () => { cancelAnimationFrame(raf); selar.classList.remove('premido'); if (!t0) return; t0 = 0; selarP.style.transition = 'stroke-dashoffset .35s'; selarP.style.strokeDashoffset = 540; };
-const vai = () => { selar.classList.add('selado'); marca(); setTimeout(() => { location.href = './?app=1&conta=criar'; }, 520); };
+const vai = () => { selar.classList.add('selado'); const r = selar.getBoundingClientRect(); setTimeout(() => entra('./?app=1&conta=criar', r.left + r.width / 2, r.top + r.height / 2), 380); };
 selar.addEventListener('pointerdown', e => { e.preventDefault(); selar.setPointerCapture(e.pointerId); selar.classList.add('premido'); t0 = performance.now(); selarP.style.transition = 'none';
   const tick = () => { const p = clamp((performance.now() - t0) / 900, 0, 1); selarP.style.strokeDashoffset = 540 * (1 - p); if (p >= 1) { t0 = 0; selar.classList.remove('premido'); vai(); return; } raf = requestAnimationFrame(tick); }; raf = requestAnimationFrame(tick); });
 ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => selar.addEventListener(ev, solta));
 selar.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); vai(); } });
 
 /* ---------- um só ciclo de animação para o que segue a rolagem ---------- */
-let pend = false; const quadro = () => { pend = false; dezFrame(); }; const pede = () => { if (!pend) { pend = true; requestAnimationFrame(quadro); } };
+const linhaP = $('#linhaP'), marcos = $$('#linhaP a'), secs = marcos.map(a => document.getElementById(a.dataset.s)), telEl = $('#tel'), vitrine = $('#app'), janelas = $$('.janela');
+const posMarcos = () => { const H = document.documentElement.scrollHeight - innerHeight; marcos.forEach((a, k) => { const sc = secs[k]; if (sc) a.style.top = Math.min(100, Math.max(0, sc.offsetTop / H * 100)).toFixed(2) + '%'; }); };
+posMarcos(); addEventListener('resize', posMarcos); addEventListener('load', posMarcos); setTimeout(posMarcos, 1500);
+let pend = false, ultY = scrollY, vel = 0, ang = 0;
+const quadro = () => { pend = false; dezFrame(); const H = document.documentElement.scrollHeight - innerHeight, pr = H > 0 ? scrollY / H : 0;
+  vel = scrollY - ultY; ultY = scrollY;
+  // linha de prumo: cresce com a página, o peso balança com a velocidade e muda de cor nas faixas claras
+  if (linhaP) { linhaP.style.setProperty('--p', (pr * 100).toFixed(2) + '%'); linhaP.classList.toggle('vis', scrollY > innerHeight * .4);
+    const el = document.elementFromPoint(innerWidth - 40, innerHeight / 2); linhaP.classList.toggle('claro-c', !!(el && el.closest && el.closest('.claro')));
+    let at = -1; secs.forEach((sc, k) => { if (sc && sc.getBoundingClientRect().top <= innerHeight * .5) at = k; }); marcos.forEach((a, k) => a.classList.toggle('on', k === at)); }
+  // telemóvel inclina-se em 3D ao rolar pela vitrine
+  if (telEl && !REDUZ) { const r = vitrine.getBoundingClientRect(), k = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - innerHeight))); telEl.style.setProperty('--ry', ((k - .5) * -22).toFixed(2) + 'deg'); telEl.style.setProperty('--rx', (4 - Math.abs(k - .5) * 6).toFixed(2) + 'deg'); }
+  // faixas creme abrem-se como uma janela
+  if (!REDUZ) janelas.forEach(j => { const r = j.getBoundingClientRect(), k = Math.max(0, Math.min(1, (innerHeight - r.top) / (innerHeight * .75))), e = 1 - Math.pow(1 - k, 3); j.style.setProperty('--ji', ((1 - e) * 7).toFixed(2) + 'vh'); j.style.setProperty('--jx', ((1 - e) * 5).toFixed(2) + 'vw'); j.style.setProperty('--jr', ((1 - e) * 46).toFixed(1) + 'px'); }); };
+const pede = () => { if (!pend) { pend = true; requestAnimationFrame(quadro); } };
 addEventListener('scroll', pede, { passive: true }); addEventListener('resize', pede); quadro();
+/* faixas cruzadas: correm sozinhas, aceleram com a rolagem e mudam de sentido com ela; o peso da linha de prumo balança */
+const tr1 = $('#trilho1'), tr2 = $('#trilho2'); let x1 = 0, x2 = 0, dirF = 1, lastT = performance.now(), vSuave = 0;
+const faixas = now => { const dt = Math.min(.05, (now - lastT) / 1000); lastT = now; vSuave += (Math.abs(vel) - vSuave) * .08; if (vel > 1) dirF = 1; else if (vel < -1) dirF = -1; vel *= .9;
+  const sp = (60 + vSuave * 28) * dirF, w1 = tr1.scrollWidth / 2, w2 = tr2.scrollWidth / 2; x1 -= sp * dt; x2 += sp * dt * .8;
+  if (x1 <= -w1) x1 += w1; if (x1 > 0) x1 -= w1; if (x2 >= 0) x2 -= w2; if (x2 < -w2) x2 += w2;
+  tr1.style.transform = `translate3d(${x1.toFixed(1)}px,0,0)`; tr2.style.transform = `translate3d(${x2.toFixed(1)}px,0,0)`;
+  ang += ((Math.max(-30, Math.min(30, vel * 1.2))) - ang) * .1; if (linhaP) $('#linhaPeso').style.setProperty('--ang', ang.toFixed(1) + 'deg');
+  requestAnimationFrame(faixas); };
+if (!REDUZ) { x2 = -tr2.scrollWidth / 4; requestAnimationFrame(faixas); }
 window.__inicio = { ok: true };
 })();
 </script>
@@ -656,6 +814,11 @@ if (temGL) (async () => {
   const fioMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xFCE7D1) });
   const fio = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, 1, 8), fioMat);
   const piv = new THREE.Group(); scene.add(piv); piv.add(fio); piv.add(bob);
+  // poeira de luz a flutuar no feixe do prumo
+  const NP = 150, pg = new THREE.BufferGeometry(), pp = new Float32Array(NP * 3), pv = new Float32Array(NP);
+  for (let i = 0; i < NP; i++) { pp[i * 3] = (Math.random() - .5) * 2.6; pp[i * 3 + 1] = (Math.random() - .5) * 9; pp[i * 3 + 2] = (Math.random() - .5) * 2; pv[i] = .05 + Math.random() * .18; }
+  pg.setAttribute('position', new THREE.BufferAttribute(pp, 3));
+  const po = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xFCE7D1, size: .035, transparent: true, opacity: .55, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true })); scene.add(po);
   let L = 6, topo = 5, baseX = 2.2;
   const medir = () => { const w = hero.clientWidth, h = hero.clientHeight; R.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
     const halfH = Math.tan(cam.fov * Math.PI / 360) * cam.position.z, halfW = halfH * cam.aspect, mob = w < 820;
@@ -683,6 +846,7 @@ if (temGL) (async () => {
     if (queda > 0) { queda = Math.max(0, queda - dt * .9); }
     const off = queda > 0 ? Math.pow(queda, 2) * 9 : 0;
     piv.rotation.z = ax; piv.rotation.x = az; piv.position.y = topo + off; bob.rotation.y += dt * .35;
+    if (!REDUZ) { const a = pg.attributes.position; for (let i = 0; i < NP; i++) { let y = a.array[i * 3 + 1] + pv[i] * dt; if (y > 4.8) y = -4.8; a.array[i * 3 + 1] = y; a.array[i * 3] += Math.sin(now / 1400 + i) * .0009; } a.needsUpdate = true; po.position.x = piv.position.x + Math.sin(ax) * L * .5; }
     const sx = piv.position.x + Math.sin(ax) * L, w = hero.clientWidth, halfW = Math.tan(cam.fov * Math.PI / 360) * cam.position.z * cam.aspect;
     root.style.setProperty('--bx', ((sx / halfW + 1) / 2 * 100).toFixed(2) + '%');
     R.render(scene, cam); if (svg && !svg.classList.contains('fora')) svg.classList.add('fora');
