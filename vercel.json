@@ -19,6 +19,64 @@
       ]
     },
     {
+      "source": "/",
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "prumo_app"
+        },
+        {
+          "type": "query",
+          "key": "app"
+        },
+        {
+          "type": "query",
+          "key": "loja"
+        },
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*PrumoApp.*"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Prumo-Pagina",
+          "value": "inicio"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        },
+        {
+          "key": "Vary",
+          "value": "Cookie"
+        }
+      ]
+    },
+    {
+      "source": "/inicio(.html)?",
+      "headers": [
+        {
+          "key": "X-Prumo-Pagina",
+          "value": "inicio"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/inicio/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
+    },
+    {
       "source": "/index.html",
       "headers": [
         {
@@ -105,6 +163,31 @@
     {
       "path": "/api/saude",
       "schedule": "7 * * * *"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/",
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "prumo_app"
+        },
+        {
+          "type": "query",
+          "key": "app"
+        },
+        {
+          "type": "query",
+          "key": "loja"
+        },
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*PrumoApp.*"
+        }
+      ],
+      "destination": "/inicio.html"
     }
   ]
 }

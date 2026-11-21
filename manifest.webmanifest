@@ -5,7 +5,7 @@
   "description": "O sistema operativo da tua vida: tarefas, hábitos, dinheiro, estudos, treino, dieta, metas e um jogo de evolução pessoal, com uma assistente de IA.",
   "lang": "pt-PT",
   "dir": "ltr",
-  "start_url": "./#visao",
+  "start_url": "./?app=1#visao",
   "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
