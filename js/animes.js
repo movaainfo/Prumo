@@ -297,7 +297,7 @@ A.anTr = async b => { const k = b.dataset.k, d = DATA['d:' + k] && DATA['d:' + k
 A.anTrailer = b => { const box = document.getElementById('anTrl'); if (!box) return; box.innerHTML = box.innerHTML ? '' : `<div class="an-ytp"><iframe src="https://www.youtube-nocookie.com/embed/${esc(b.dataset.y)}?autoplay=1&playsinline=1&rel=0" title="Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; };
 
 /* ================= páginas ================= */
-const AT = [['', 'Início'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['pursuit', 'Pursuit'], ['ranking', 'Ranking'], ['clas', 'Clãs'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
+const AT = [['', 'Início'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['pursuit', 'Pursuit'], ['ranking', 'Ranking'], ['clas', 'Clãs'], ['comunidade', 'Comunidade'], ['perfil', 'O meu perfil'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
 const P = {};
 V.animes = sub => { const k = sub === 'anime' ? 'anime' : P[sub || ''] ? (sub || '') : '';
   return UI.head('Animes', 'Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.', `<a class="btn pri an-hbtn" href="#animes.pesquisar">${UI.ic('search')}<span>Pesquisar anime</span></a>`, OS.Social ? OS.Social.marca('xs') : 'Parceria')
@@ -460,7 +460,7 @@ A.anCalMine = b => { OS.ui.anCalMine = b.checked ? 1 : 0; OS.request(); };
 /* Melhores do ano: escolhe o ano */
 P.premios = () => OS.Premios ? OS.Premios.view() : '';
 // v3.73: jogos de anime (Pursuit), ranking por pontos e clãs com conversas (js/social.js)
-P.pursuit = () => OS.Social ? OS.Social.hunter() : ''; P.ranking = () => OS.Social ? OS.Social.ranking() : ''; P.clas = () => OS.Social ? OS.Social.clas() : ''; // v3.72: Prémios Prumo (votação de fim de ano) e premiações oficiais
+P.pursuit = () => OS.Social ? OS.Social.hunter() : ''; P.comunidade = () => OS.AnimeSoc ? OS.AnimeSoc.comunidade() : ''; P.perfil = () => OS.AnimeSoc ? OS.AnimeSoc.perfil() : ''; P.ranking = () => OS.Social ? OS.Social.ranking() : ''; P.clas = () => OS.Social ? OS.Social.clas() : ''; // v3.72: Prémios Prumo (votação de fim de ano) e premiações oficiais
 P.melhores = () => { const y0 = new Date().getFullYear(), y = +OS.ui.anY || y0, k = 'b:' + y, L = need(k, y === y0 ? H6 : 72 * 36e5, () => API.best(y), true), f = OS.ui.anBf || '';
   const it = (L || []).filter(x => !f || (f === 'MOVIE' ? x.fmt === 'MOVIE' : x.fmt !== 'MOVIE'));
   const years = []; for (let i = y0; i >= 1960; i--) years.push(i);
@@ -605,6 +605,6 @@ const detail = () => { const k = OS.ui.anK || '', base = itemOf(k);
     ${d && watchL(d.links).length ? `<section class="an-where"><h3>Onde ver</h3><div class="row gap6" style="flex-wrap:wrap">${watchL(d.links).map(l => `<a class="btn sm an-ghost" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${UI.ic('play')}${esc(l.site)}</a>`).join('')}${d.tr ? `<button type="button" class="btn sm an-cta" data-act="anTrailer" data-y="${esc(d.tr)}">${UI.ic('play')}Ver o trailer</button>` : ''}</div><div id="anTrl"></div></section>` : d && d.tr ? `<section class="an-trl"><button type="button" class="btn an-cta" data-act="anTrailer" data-y="${esc(d.tr)}">${UI.ic('play')}Ver o trailer</button><div id="anTrl"></div></section>` : ''}
     ${seas}${epList}
     <dl class="an-meta">${meta.map(([v, l]) => `<div><dt>${l}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
-    ${chars}${music}${rel}${d && d.rec && d.rec.length ? row('Se gostaste, vê também', d.rec) : ''}</div>`; };
+    ${chars}${music}${OS.AnimeSoc ? OS.AnimeSoc.comentarios(x) : ''}${rel}${d && d.rec && d.rec.length ? row('Se gostaste, vê também', d.rec) : ''}</div>`; };
 A.anEpAll = b => { OS.ui.anEpAll = OS.ui.anEpAll === b.dataset.k ? '' : b.dataset.k; OS.request(); };
 })();

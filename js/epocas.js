@@ -60,7 +60,10 @@ const nova = () => { if (EP === 'natal' || EP === 'anonovo') return { k: 's', x:
   if (EP === 'halloween') return { k: 'f', x: rnd(0, W), y: rnd(-60, -6), r: rnd(5, 9), vy: rnd(24, 44), vx: rnd(-18, 18), f: rnd(0, 6), rot: rnd(0, 6), vr: rnd(-2.5, 2.5), c: ['#d9480f', '#e8590c', '#a0522d', '#c99700', '#7f3f00'][Math.random() * 5 | 0] };
   return { k: 'c', x: rnd(0, W), y: rnd(-60, -6), r: rnd(3, 6), vy: rnd(50, 90), vx: rnd(-20, 20), f: rnd(0, 6), rot: rnd(0, 6), vr: rnd(-6, 6), c: ['#ff006e', '#ffbe0b', '#3a86ff', '#8338ec', '#06d6a0', '#fb5607'][Math.random() * 6 | 0] }; };
 const pousa = x => { const i = Math.max(0, Math.min(neve.length - 1, Math.round(x / BIN))), mx = MAXN(); for (let d = -3; d <= 3; d++) { const j = i + d; if (j >= 0 && j < neve.length) neve[j] = Math.min(mx, neve[j] + .55 * Math.exp(-d * d / 3)); } };
-const chao = () => { const tb = document.getElementById('tabbar'); if (tb && getComputedStyle(tb).display !== 'none' && W < 900) { const r = tb.getBoundingClientRect(); return Math.min(H, r.top + r.height * .55); } return H; };
+let CH = { y: 0, x0: 0, x1: 0, at: 0 };
+const chao = () => { if (performance.now() - CH.at < 1000) return CH; const tb = document.getElementById('tabbar'); let o = { y: H, x0: 0, x1: W };
+  if (tb && W < 900 && getComputedStyle(tb).display !== 'none') { const r = tb.getBoundingClientRect(); if (r.height > 20 && r.top < H) { const k = tb.firstElementChild && getComputedStyle(tb).backgroundColor === 'rgba(0, 0, 0, 0)' ? tb.firstElementChild.getBoundingClientRect() : r; o = { y: Math.round(r.top) + 1, x0: Math.max(0, Math.round(r.left + 14)), x1: Math.min(W, Math.round(r.right - 14)) }; } }
+  CH = Object.assign(o, { at: performance.now() }); return CH; };
 // o limpa-neves: entra pela esquerda quando a neve já está alta (ou de vez em quando), empurra a neve e sai pela direita
 const trator = (x, y, t) => { const c = cx; c.save(); c.translate(x, y); c.fillStyle = '#5b6470'; c.beginPath(); c.moveTo(36, -2); c.lineTo(46, -2); c.lineTo(50, -20); c.lineTo(40, -22); c.closePath(); c.fill();
   c.fillStyle = '#f2b33d'; c.fillRect(-28, -18, 50, 12); c.fillRect(-22, -36, 24, 19); c.fillStyle = '#bfe3ff'; c.fillRect(-18, -32, 16, 11); c.fillStyle = '#f2b33d'; c.fillRect(22, -16, 16, 6);
@@ -71,11 +74,11 @@ const coelhoDraw = (o, t) => { const c = cx, hop = Math.abs(Math.sin(o.ph)) * 22
   c.fillStyle = '#ffb3c6'; c.beginPath(); c.ellipse(18, -37, 1.4, 6.5, .2, 0, 7); c.fill(); c.fillStyle = '#1b1b1f'; c.beginPath(); c.arc(17, -23, 1.5, 0, 7); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.arc(-15, -12, 5, 0, 7); c.fill(); c.restore(); };
 const morcegoDraw = (b, t) => { const c = cx, a = Math.sin(t * 14 + b.f) * .7; c.save(); c.translate(b.x, b.y); c.scale(b.s, b.s); c.fillStyle = '#1b1b1f'; c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(-10, -12 * a - 4, -24, -6 * a); c.quadraticCurveTo(-16, 2, -12, 6); c.quadraticCurveTo(-6, 2, 0, 6); c.quadraticCurveTo(6, 2, 12, 6); c.quadraticCurveTo(16, 2, 24, -6 * a); c.quadraticCurveTo(10, -12 * a - 4, 0, 0); c.fill(); c.beginPath(); c.ellipse(0, 2, 4, 6, 0, 0, 7); c.fill(); c.restore(); };
 const explode = (x, y, cores, n = 46, v = 150) => { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = rnd(v * .35, v); fogos.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rnd(.9, 1.6), t: 0, c: cores[Math.random() * cores.length | 0], r: rnd(1.3, 2.6) }); } };
-const passo = now => { RAF = requestAnimationFrame(passo); if (document.hidden) return; if (now - ult < 33) return; const dt = Math.min(.08, (now - ult) / 1000); ult = now; const t = now / 1000, c = cx; c.clearRect(0, 0, W, H); const G = chao();
+const passo = now => { RAF = requestAnimationFrame(passo); if (document.hidden) return; if (now - ult < 33) return; const dt = Math.min(.08, (now - ult) / 1000); ult = now; const t = now / 1000, c = cx; c.clearRect(0, 0, W, H); const CHO = chao(), G = CHO.y, X0 = CHO.x0, X1 = CHO.x1;
   while (P.length < N()) P.push(nova());
   P.forEach((p, i) => { p.f += dt; p.y += p.vy * dt; p.x += (p.vx + Math.sin(p.f * 1.3) * 12) * dt; if (p.rot != null) p.rot += p.vr * dt;
     const gi = Math.max(0, Math.min(neve.length - 1, Math.round(p.x / BIN)));
-    if (p.k === 's' && p.y >= G - neve[gi] - 1) { pousa(p.x); P[i] = nova(); return; } if (p.y > H + 12 || p.x < -30 || p.x > W + 30) { P[i] = nova(); return; }
+    if (p.k === 's' && p.x >= X0 && p.x <= X1 && p.y >= G - neve[gi] - 1 && p.y < G + 6) { pousa(p.x); P[i] = nova(); return; } if (p.y > H + 12 || p.x < -30 || p.x > W + 30) { P[i] = nova(); return; }
     c.globalAlpha = p.a || .9;
     if (p.k === 's') { c.fillStyle = '#fff'; c.beginPath(); c.arc(p.x, p.y, p.r, 0, 7); c.fill(); }
     else if (p.k === 'f') { c.save(); c.translate(p.x, p.y); c.rotate(p.rot); c.fillStyle = p.c; c.beginPath(); c.moveTo(0, -p.r); c.quadraticCurveTo(p.r, 0, 0, p.r); c.quadraticCurveTo(-p.r, 0, 0, -p.r); c.fill(); c.restore(); }
@@ -84,10 +87,11 @@ const passo = now => { RAF = requestAnimationFrame(passo); if (document.hidden) 
   if (EP === 'natal' || EP === 'anonovo') { // a neve acumulada e o limpa-neves
     for (let i = 1; i < neve.length - 1; i++) neve[i] = neve[i] * .985 + (neve[i - 1] + neve[i + 1]) * .0075;
     const mx = Math.max(...neve), pv = !!cfg().ver; if (!plow && (mx > MAXN() * .8 || (t > (prox.plow || 0) && mx > (pv ? 1 : 6)))) { plow = { x: -70, monte: 0 }; prox.plow = t + (pv ? 25 : 90); NPLOW++; }
-    if (plow) { plow.x += 70 * dt; for (let i = 0; i < neve.length; i++) { const x = i * BIN; if (x < plow.x + 44 && neve[i] > 1.5) { plow.monte = Math.min(26, plow.monte + neve[i] * .02); neve[i] = 1.5; } } if (plow.x > W + 90) plow = null; }
-    c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(0, G); for (let i = 0; i < neve.length; i++) c.lineTo(i * BIN, G - neve[i]); c.lineTo(W, G); c.lineTo(W, H); c.lineTo(0, H); c.closePath(); c.fill();
-    c.strokeStyle = 'rgba(150,185,220,.55)'; c.lineWidth = 1.2; c.beginPath(); for (let i = 0; i < neve.length; i++) c.lineTo(i * BIN, G - neve[i]); c.stroke();
-    if (plow) { const gy = G - 1.5; if (plow.monte > 1) { c.fillStyle = '#fff'; c.beginPath(); c.ellipse(plow.x + 52, gy, plow.monte * .9, plow.monte * .55, 0, Math.PI, 0); c.fill(); } trator(plow.x, gy, t); }
+    if (plow) { if (plow.x < X0 - 70) plow.x = X0 - 70; plow.x += 70 * dt; for (let i = 0; i < neve.length; i++) { const x = i * BIN; if (x < plow.x + 44 && neve[i] > 1.5) { plow.monte = Math.min(26, plow.monte + neve[i] * .02); neve[i] = 1.5; } } if (plow.x > X1 + 90) plow = null; }
+    c.save(); c.beginPath(); c.rect(X0, 0, X1 - X0, H); c.clip(); const i0 = Math.floor(X0 / BIN), i1 = Math.ceil(X1 / BIN), base = G < H - 4 ? G + 2 : H;
+    c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(X0, base); for (let i = i0; i <= i1 && i < neve.length; i++) c.lineTo(i * BIN, G - neve[i]); c.lineTo(X1, base); c.closePath(); c.fill();
+    c.strokeStyle = 'rgba(150,185,220,.55)'; c.lineWidth = 1.2; c.beginPath(); for (let i = i0; i <= i1 && i < neve.length; i++) c.lineTo(i * BIN, G - neve[i]); c.stroke();
+    if (plow) { const gy = G - 1.5; if (plow.monte > 1) { c.fillStyle = '#fff'; c.beginPath(); c.ellipse(plow.x + 52, gy, plow.monte * .9, plow.monte * .55, 0, Math.PI, 0); c.fill(); } trator(plow.x, gy, t); } c.restore();
     if (EP === 'anonovo' && t > (prox.fogo || 0)) { prox.fogo = t + rnd(.9, 2.2); explode(rnd(W * .15, W * .85), rnd(H * .12, H * .4), [['#ffd34d', '#fff'], ['#ff4d5e', '#ffc2c8'], ['#5cb8ff', '#d6ecff'], ['#4dd88a', '#dbffe9'], ['#ff8ad8', '#ffe0f4']][Math.random() * 5 | 0]); } }
   if (EP === 'pascoa') { if (!coelho && t > (prox.coelho || 0)) { const dir = Math.random() < .5 ? 1 : -1; coelho = { x: dir > 0 ? -40 : W + 40, y: G - 2, dir, ph: 0 }; prox.coelho = t + rnd(25, 45); }
     if (coelho) { coelho.x += coelho.dir * 60 * dt; coelho.ph += dt * 6; coelhoDraw(coelho, t); if (coelho.x < -60 || coelho.x > W + 60) coelho = null; } }
@@ -97,9 +101,10 @@ const passo = now => { RAF = requestAnimationFrame(passo); if (document.hidden) 
 
 /* ---------- ligar e desligar ---------- */
 let gar = null, mascote = null, TIM = 0;
-const desliga = () => { cancelAnimationFrame(RAF); RAF = 0; if (cv) { cv.remove(); cv = null; } if (gar) { gar.remove(); gar = null; } if (mascote) { mascote.remove(); mascote = null; } clearTimeout(TIM); document.documentElement.removeAttribute('data-epoca'); document.querySelectorAll('.ep-ovo').forEach(e => e.remove()); EP = ''; P = []; fogos = []; morcegos = []; plow = null; coelho = null; };
-const garlanda = () => { const top = document.getElementById('top'); if (!top || !GAR[EP]) return; gar = document.createElement('div'); gar.className = 'ep-gar'; gar.setAttribute('aria-hidden', 'true');
-  gar.style.setProperty('--g1', GAR[EP](0)); gar.style.setProperty('--g2', GAR[EP](1)); top.appendChild(gar); };
+const desliga = () => { if (MO) { MO.disconnect(); MO = null; } cancelAnimationFrame(RAF); RAF = 0; if (cv) { cv.remove(); cv = null; } if (gar) { gar.remove(); gar = null; } if (mascote) { mascote.remove(); mascote = null; } clearTimeout(TIM); document.documentElement.removeAttribute('data-epoca'); document.querySelectorAll('.ep-ovo').forEach(e => e.remove()); EP = ''; P = []; fogos = []; morcegos = []; plow = null; coelho = null; };
+let MO = null; const garlanda = () => { const top = document.getElementById('top'); if (!top || !GAR[EP]) return; gar = document.createElement('div'); gar.className = 'ep-gar'; gar.setAttribute('aria-hidden', 'true');
+  gar.style.setProperty('--g1', GAR[EP](0)); gar.style.setProperty('--g2', GAR[EP](1)); top.appendChild(gar);
+  if (MO) MO.disconnect(); MO = new MutationObserver(() => { if (gar && !top.contains(gar)) top.appendChild(gar); }); MO.observe(top, { childList: true }); };
 // os personagens que passam de vez em quando (tocáveis)
 const personagem = () => { clearTimeout(TIM); if (!EP || quieto()) return; const espera = { natal: [60, 120], anonovo: [60, 120], halloween: [25, 50] }[EP]; if (!espera) return;
   TIM = setTimeout(() => { if (document.hidden || !EP) return personagem(); if (mascote) mascote.remove(); mascote = document.createElement('button'); mascote.type = 'button';
@@ -118,7 +123,7 @@ const esconde = () => { if (EP !== 'pascoa') return; document.querySelectorAll('
   b.addEventListener('click', ev => { ev.stopPropagation(); const o = ovos(); o.n++; U.ls.set('os2ovos', o); const r = b.getBoundingClientRect(); explode(r.left + r.width / 2, r.top + r.height / 2, c.concat(['#fff']), 30, 120); UI.toast(`Encontraste um ovo! Já tens ${o.n}.`, 'pos'); b.remove(); });
   if (getComputedStyle(v).position === 'static') v.style.position = 'relative'; v.appendChild(b); };
 const liga = () => { const e = atual(); if (e === EP && (cv || !e)) return; desliga(); if (!e) return; EP = e; document.documentElement.setAttribute('data-epoca', e); garlanda();
-  if (!quieto()) { cv = document.createElement('canvas'); cv.className = 'ep-cv'; cv.setAttribute('aria-hidden', 'true'); document.body.appendChild(cv); cx = cv.getContext('2d'); tamanho(); ult = performance.now(); prox = { plow: performance.now() / 1000 + (cfg().ver ? 5 : 50) }; RAF = requestAnimationFrame(passo); personagem(); }
+  if (!quieto()) { cv = document.createElement('canvas'); cv.className = 'ep-cv'; cv.setAttribute('aria-hidden', 'true'); document.body.appendChild(cv); cx = cv.getContext('2d'); tamanho(); P = Array.from({ length: N() }, () => { const p = nova(); p.y = rnd(-20, H * .95); return p; }); ult = performance.now(); prox = { plow: performance.now() / 1000 + (cfg().ver ? 5 : 50) }; RAF = requestAnimationFrame(passo); personagem(); }
   setTimeout(esconde, 800); };
 addEventListener('resize', () => { if (cv) tamanho(); });
 // tocar num espaço vazio: um efeito da festa
