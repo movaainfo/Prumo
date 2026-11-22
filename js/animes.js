@@ -297,7 +297,7 @@ A.anTr = async b => { const k = b.dataset.k, d = DATA['d:' + k] && DATA['d:' + k
 A.anTrailer = b => { const box = document.getElementById('anTrl'); if (!box) return; box.innerHTML = box.innerHTML ? '' : `<div class="an-ytp"><iframe src="https://www.youtube-nocookie.com/embed/${esc(b.dataset.y)}?autoplay=1&playsinline=1&rel=0" title="Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; };
 
 /* ================= páginas ================= */
-const AT = [['', 'Início'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
+const AT = [['', 'Início'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
 const P = {};
 V.animes = sub => { const k = sub === 'anime' ? 'anime' : P[sub || ''] ? (sub || '') : '';
   return UI.head('Animes', 'Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.', `<a class="btn pri an-hbtn" href="#animes.pesquisar">${UI.ic('search')}<span>Pesquisar anime</span></a>`, 'Eu')
@@ -458,6 +458,7 @@ P.calendario = () => { const W = need('week', 30 * 6e4, API.week), only = !!OS.u
 A.anCalMine = b => { OS.ui.anCalMine = b.checked ? 1 : 0; OS.request(); };
 
 /* Melhores do ano: escolhe o ano */
+P.premios = () => OS.Premios ? OS.Premios.view() : ''; // v3.72: Prémios Prumo (votação de fim de ano) e premiações oficiais
 P.melhores = () => { const y0 = new Date().getFullYear(), y = +OS.ui.anY || y0, k = 'b:' + y, L = need(k, y === y0 ? H6 : 72 * 36e5, () => API.best(y), true), f = OS.ui.anBf || '';
   const it = (L || []).filter(x => !f || (f === 'MOVIE' ? x.fmt === 'MOVIE' : x.fmt !== 'MOVIE'));
   const years = []; for (let i = y0; i >= 1960; i--) years.push(i);

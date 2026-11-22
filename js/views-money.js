@@ -117,8 +117,47 @@ OS.forms.saldoIni = f => { const t = U.today(), val = n => { const el = f.elemen
     if (Object.keys(patch).length) { OS.upd('accounts', a.id, patch); k++; } });
   const nn = (f.elements.nn || {}).value, nv = val('nv'); if (nn && nn.trim()) { const nm = nn.trim(), b = L.bank(nm); OS.add('accounts', { name: b ? (nm.replace(new RegExp(b[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), '').trim() || 'Conta à ordem') : nm, inst: b ? b[0] : '', type: nm.toLowerCase() === 'dinheiro' ? 'Dinheiro' : 'Conta à ordem', currency: (f.elements.nc || {}).value || 'EUR', opening: nv || 0, openDate: t, openSet: true }); k++; }
   UI.toast(k ? `Saldos guardados (${k} conta${k === 1 ? '' : 's'}). A partir de hoje, os movimentos somam e tiram a estes valores.` : 'Escreve o valor de hoje numa conta (ou o nome de uma conta nova).', k ? 'pos' : 'warn'); };
+/* ---------- v3.71: Contas como uma carteira (os cartões das contas a sair do bolso, o saldo total e as contas em cartões) ---------- */
+const WAL_SHORT = { 'Nubank': 'nu', 'Inter': 'inter', 'C6 Bank': 'C6', 'Caixa Geral de Depósitos': 'CGD', 'Millennium BCP': 'BCP', 'Novo Banco': 'NB', 'Banco do Brasil': 'BB', 'Caixa Econômica Federal': 'CAIXA', 'Itaú': 'itaú', 'Mercado Pago': 'MP', 'XP Investimentos': 'XP', 'Trading 212': 'T212', 'Crédito Agrícola': 'CA', 'Banco CTT': 'CTT', 'BTG Pactual': 'BTG' };
+const WAL_TIPO = { 'Conta à ordem': '#3A3F4B', 'Poupança': '#2F6B4F', 'Reserva': '#7A5C1E', 'Dinheiro': '#4E6B2F', 'Cartão de crédito': '#2A2A33', 'Corretora': '#2B4A7A' };
+const walCor = a => { const b = L.bank(a.inst); return (b && b[1]) || a.color || WAL_TIPO[a.type] || '#3A3F4B'; };
+const walLuz = h => { const m = String(h).replace('#', '').match(/^([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i); if (!m) return 0; const [r, g, b] = m.slice(1).map(x => parseInt(x, 16) / 255); return .2126 * r + .7152 * g + .0722 * b; };
+const walNome = a => { const b = L.bank(a.inst); return b ? (WAL_SHORT[b[0]] || b[0]) : (a.name || a.type || 'Conta'); };
+const walSigla = a => { const b = L.bank(a.inst); if (b && WAL_SHORT[b[0]]) return WAL_SHORT[b[0]]; const n = String((b && b[0]) || a.name || '?').trim(); const w = n.split(/\s+/).filter(Boolean); return (w.length > 1 ? w.slice(0, 3).map(x => x[0]).join('') : n.slice(0, 4)).toUpperCase(); };
+const walHide = () => !!OS.ui.walHide, walV = (txt) => walHide() ? '<span class="wl-x">••••••</span>' : txt;
+const walSpark = a => { const t = U.today(), P = [28, 24, 20, 16, 12, 8, 4, 0].map(k => Fin.accBal(a, U.addDays(t, -k))), mn = Math.min(...P), mx = Math.max(...P), r = mx - mn || 1;
+  const pts = P.map((v, i) => [i / (P.length - 1) * 100, 28 - (v - mn) / r * 24]), d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' '), up = P[P.length - 1] >= P[0];
+  return `<svg class="wl-sp ${up ? 'up' : 'dn'}" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true"><path d="${d}"/></svg>`; };
+const walCarteira = () => { const L0 = Fin.accounts(), tot = Fin.cashTotal(), cards = L0.slice().sort((x, y) => Math.abs(Fin.accBalE(y)) - Math.abs(Fin.accBalE(x))).slice(0, 3).reverse();
+  const ym = U.ym(U.today()), m = Fin.month(ym), cd = Fin.cardDebt(), rs = Fin.reserve();
+  return `<section class="wl" aria-label="Carteira">
+    <div class="wl-h"><h2>Carteira</h2><a class="wl-mes" href="#financas.transacoes">${UI.ic('cal')}${esc(U.fmtYML ? U.fmtYML(ym) : ym)}</a></div>
+    <div class="wl-bolso">
+      <div class="wl-cartoes">${cards.map((a, i) => { const c = walCor(a), esc2 = walLuz(c) > .62; return `<button type="button" class="wl-c" style="--c:${c};--i:${3 - cards.length + i};color:${esc2 ? '#141414' : '#fff'}" data-edit="accounts:${a.id}" aria-label="${esc(L.accLabel(a))}"><b>${esc(walNome(a))}</b><span class="mono">${walV(U.money(Fin.accBal(a), a.currency))}</span></button>`; }).join('')}</div>
+      <div class="wl-frente">
+        <div class="wl-tot"><small>${UI.ic('wallet')}Saldo total</small><b class="mono">${walV(U.eur(tot))}</b><span class="wl-mesv">${walHide() ? 'Este mês: valores escondidos' : `Este mês: <i class="pos">+${U.eur(m.inc, { dec: 0 })}</i> · <i class="neg">−${U.eur(m.exp, { dec: 0 })}</i>`}</span></div>
+        <div class="wl-chips"><a class="wl-chip" href="#financas.contas" title="Cartões de crédito em dívida">${UI.ic('card')}<span class="mono">${walV(U.eur(cd))}</span></a><a class="wl-chip" href="#financas.contas" title="Reservas">${UI.ic('coin')}<span class="mono">${walV(U.eur(rs))}</span></a></div>
+        <div class="wl-acoes"><button type="button" class="wl-tx" data-new="transactions">${UI.ic('plus')}Transação</button><a class="wl-bt" href="#financas.recorrentes" aria-label="Contas a pagar e recorrentes">${UI.ic('cal')}</a><button type="button" class="wl-bt${walHide() ? ' off' : ''}" data-act="walOlho" aria-pressed="${walHide()}" aria-label="${walHide() ? 'Mostrar os valores' : 'Esconder os valores'}">${UI.ic('eye')}</button></div>
+      </div>
+    </div>
+  </section>`; };
+const walContas = () => { const L0 = Fin.accounts();
+  return `<section class="wl-sec"><div class="wl-sh"><h3>Contas</h3><a href="#financas.contas" data-act="walTodas">Ver todas ${UI.ic('right')}</a></div>
+    <div class="wl-rail" id="wlRail">${L0.map(a => { const c = walCor(a), b = Fin.accBal(a); return `<button type="button" class="wl-ac" data-edit="accounts:${a.id}"><span class="wl-lg" style="background:${c};color:${walLuz(c) > .62 ? '#141414' : '#fff'}">${esc(walSigla(a))}</span><span class="wl-ai"><small>${esc(L.accLabel(a))}</small>${walSpark(a)}<span class="wl-sl"><i>Saldo</i><b class="mono ${b < 0 ? 'neg' : 'pos'}">${walV(U.money(b, a.currency))}</b></span></span></button>`; }).join('')}
+      <button type="button" class="wl-ac wl-add" data-new="accounts">${UI.ic('plus')}<span>Adicionar conta</span></button></div>
+    ${L0.length > 1 ? `<div class="wl-dots" aria-hidden="true">${L0.concat([0]).map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</div>` : ''}</section>`; };
+const walUltimas = () => { const T = U.sortBy(OS.all('transactions').filter(t => t.date <= U.today()), t => t.date + (t._c || ''), -1).slice(0, 6);
+  return `<section class="wl-sec"><div class="wl-sh"><h3>Últimas transações</h3><a href="#financas.transacoes">Ver todas ${UI.ic('right')}</a></div>
+    ${T.length ? `<div class="wl-tl">${T.map(t => { const v = txSign(t), tr = t.type === 'Transferência'; return `<button type="button" class="wl-t" data-edit="transactions:${t.id}"><span class="wl-ti ${tr ? 'tr' : v >= 0 ? 'in' : 'out'}">${UI.ic(tr ? 'swap' : v >= 0 ? 'arrowDown' : 'arrowUp')}</span><span class="wl-tt"><b>${esc(t.desc || t.cat || t.type)}</b><small>${esc([U.fmtDS ? U.fmtDS(t.date) : t.date, accN(t.account)].filter(Boolean).join(' · '))}</small></span><span class="mono wl-tv ${tr ? 'mut' : v >= 0 ? 'pos' : ''}">${walV(tr ? U.eur(U.num(t.amount)) : U.eur(v, { sign: true }))}</span></button>`; }).join('')}</div>` : `<p class="mut" style="margin:0">Ainda sem movimentos. Toca em Transação para registar o primeiro.</p>`}</section>`; };
+A.walOlho = () => OS.setUI('walHide', !OS.ui.walHide);
+A.walTodas = () => { requestAnimationFrame(() => { const d = document.getElementById('wlTabela'); if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }); };
+// pontos do carrossel acompanham o deslizar
+document.addEventListener('scroll', e => { const r = e.target; if (!r || r.id !== 'wlRail') return; const w = r.querySelector('.wl-ac'); if (!w) return; const i = Math.round(r.scrollLeft / (w.offsetWidth + 12)); r.parentNode.querySelectorAll('.wl-dots i').forEach((d, k) => d.classList.toggle('on', k === i)); }, true);
 FIN.contas = () => {
   const acc = OS.all('accounts');
+  if (acc.length) return walCarteira() + walContas() + walUltimas() + `<details class="pn wl-tab" id="wlTabela"><summary><b>Todas as contas (tabela, saldo inicial e bancos)</b></summary>` + FIN.contasTabela(acc) + `</details>`;
+  return FIN.contasTabela(acc); };
+FIN.contasTabela = acc => {
   return `<div class="row between"><div class="kpis grow">${UI.kpi('Disponível', U.eur(Fin.liquid()))}${UI.kpi('Reservas', U.eur(Fin.reserve()))}${UI.kpi('Cartões (em dívida)', U.eur(Fin.cardDebt()), '', { tone: Fin.cardDebt() ? 'warn' : '' })}${UI.kpi('Total em contas', U.eur(Fin.cashTotal()))}</div></div>
   <div class="row gap8">${UI.addBtn('accounts', 'Nova conta')}${UI.addBtn('transactions', 'Transferência', { type: 'Transferência' }, '')}</div>
   ${FIN.saldoIni()}

@@ -77,6 +77,7 @@ Ex.start = (opt = {}) => {
 };
 Ex.editRoutine = rid => { const r = rid && OS.get('routines', rid); W = { mode: 'routine', rid: r ? r.id : '', title: r ? r.name : '', items: r ? U.clone(Array.isArray(r.items) ? r.items : []).filter(it => OS.get('exercises', it.ex)).map(it => Object.assign({ rest: 90, note: '' }, it, { sets: (it.sets && it.sets.length ? it.sets : [{}]).map(s => newSet(s)) })) : [] }; open(); };
 Ex.live = () => W && W.mode === 'live' ? W : null;
+Ex.abrir = () => { if (W && W.mode === 'live') open(); }; // v3.72: a barra da atividade em curso abre o treino
 const open = () => { if (!W) return; shown = true; draw(); host().hidden = false; document.body.classList.add('noscroll'); pill().hidden = true; clearInterval(tick); tick = setInterval(onTick, 1000); };
 const close = () => { shown = false; host().hidden = true; document.body.classList.remove('noscroll'); updPill(); };
 const updPill = () => { const p = pill(); if (W && W.mode === 'live' && !shown) { p.hidden = false; p.innerHTML = `${UI.ic('dumbbell')}<span>${esc(W.title || 'Treino')}</span><b class="mono" data-wk-el>${U.mmss(elapsed())}</b>`; } else p.hidden = true; if (!(W && W.mode === 'live')) clearInterval(tick); };

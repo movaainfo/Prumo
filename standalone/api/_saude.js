@@ -23,7 +23,9 @@ const run = async (o = {}) => { const r = await check(), s = N.store(); let H = 
   if (alerta) { const para = String(process.env.NAUTILO_ADMIN || '').split(',').map(x => x.trim()).filter(Boolean);
     for (const e of para) await o.mail(e, 'Prumo · a base de dados está com problemas', `A verificação de saúde do Prumo falhou duas vezes seguidas.\n\nÚltimo erro: ${r.err || '—'}\nTempo: ${r.ms} ms\n\nVê em Administração › Saúde do servidor.`, `<p>A verificação de saúde do Prumo <b>falhou duas vezes seguidas</b>.</p><p>Último erro: ${String(r.err || '—').replace(/[<>&]/g, '')}<br>Tempo: ${r.ms} ms</p><p>Vê em Administração › Saúde do servidor.</p>`).catch(() => { }); }
   try { await require('./_visitas').compactar(2); } catch (e) { } // v3.69: junta os contadores do dia num só ficheiro
-  if (o.mail) { try { await require('./_erros').vigiar({ mail: o.mail }); } catch (e) { } } // v3.70: erro novo ou pico de erros → e-mail
+  if (o.mail) { try { await require('./_erros').vigiar({ mail: o.mail }); } catch (e) { } }
+  // v3.72: Prémios Prumo de anime — em dezembro, se ainda não houver nomeados do ano, são escolhidos a partir dos dados do MyAnimeList
+  if (o.mail && new Date().getUTCMonth() === 11) { try { const Pm = require('./premios'), a = Pm.ano0(); if (!(await Pm.edicao(a))) { const cats = await Pm.gerar(a); if (cats.length >= 3) await N.store().put('aw/' + a + '/edicao.json', Buffer.from(JSON.stringify({ cats, at: Date.now(), auto: 1 }))); } } catch (e) { console.error('premios', e.message); } } // v3.70: erro novo ou pico de erros → e-mail
   console.log('saude ' + JSON.stringify({ ok: r.ok, ms: r.ms, err: r.err || '' })); return { r, H }; };
 const resumo = H => { const L = (H && H.h) || [], ok = L.filter(x => x.ok).length, ms = L.length ? Math.round(L.reduce((a, x) => a + (x.ms || 0), 0) / L.length) : 0;
   return { n: L.length, ok, pct: L.length ? Math.round(ok / L.length * 100) : null, ms, ultima: L[L.length - 1] || null, falhas: L.filter(x => !x.ok).slice(-5) }; };

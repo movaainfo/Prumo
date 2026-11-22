@@ -427,3 +427,35 @@ html.lite-x .an-ov{transition:none}html.lite-x .an-dots button.on::after{animati
 .an-eph{margin:18px 0 10px;font-size:15px;font-weight:800;color:var(--an-tx)}
 .an .btn.an-jw{background:transparent;border:1px solid var(--an-ln);color:var(--an-tx);font-weight:700}
 .an-epsec>.an-epr,.an-epsec>.an-epn{align-self:stretch;max-width:100%;min-width:0}
+/* v3.72: Prémios Prumo e outras premiações */
+.pr{display:grid;gap:16px}
+.pr-adm{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:10px 12px;border-radius:12px;background:var(--pn2)}.pr-adm small{color:var(--mut);margin-right:4px}
+.pr-hero{padding:22px;border-radius:22px;background:radial-gradient(120% 120% at 0% 0%,rgba(212,160,23,.28),transparent 55%),linear-gradient(140deg,#2a1608,#120a04);color:#FBE7B0;box-shadow:inset 0 0 0 1px rgba(212,160,23,.35)}
+.pr-hero b{display:block;font:400 clamp(28px,7vw,40px)/1 var(--display,var(--serif));letter-spacing:.01em;color:#FFD86B;text-transform:uppercase}
+.pr-hero p{margin:10px 0 12px;color:#F6DDB0;max-width:60ch}
+.pr-cat h3{margin:0 0 4px}.pr-noms{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:10px}
+.pr-nom{position:relative;display:grid;gap:4px;align-content:start;padding:8px;border-radius:14px;border:1px solid var(--line,rgba(255,255,255,.1));background:var(--pn2);color:var(--tx);cursor:pointer;text-align:left;font:inherit}
+.pr-nom img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;background:var(--pn)}
+.pr-nom b{font-size:13px;line-height:1.25}.pr-nom small{font-size:11.5px;color:var(--mut)}
+.pr-nom.on{border-color:#D4A017;box-shadow:0 0 0 2px #D4A017}.pr-nom:disabled{cursor:default}
+.pr-nom:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pr-meu{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;background:#D4A017;color:#1a1000;font:700 11px var(--sans)}.pr-meu svg{width:13px;height:13px}
+.pr-res{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.pr-res li{display:grid;grid-template-columns:26px 44px minmax(0,1fr) auto;gap:10px;align-items:center}
+.pr-res img,.pr-res li>i{width:44px;height:58px;object-fit:cover;border-radius:8px;background:var(--pn2)}
+.pr-res b{font-size:14px}.pr-res small{display:block;color:var(--mut);font-size:12px}
+.pr-pos{font:800 15px var(--sans);color:var(--mut);text-align:center}.pr-res li.w .pr-pos{color:#D4A017}.pr-res li.w b{color:#FFD86B}
+.pr-bar{display:block;height:6px;border-radius:3px;background:var(--pn2);margin-top:5px;overflow:hidden}.pr-bar i{display:block;height:100%;background:linear-gradient(90deg,#D4A017,#FFD86B)}
+.pr-res em{font-style:normal;font-weight:700;font-variant-numeric:tabular-nums}
+.pr-sec h3{margin:6px 0 4px}
+.pr-out summary{cursor:pointer;display:grid;gap:2px}.pr-out summary small{color:var(--mut)}
+.pr-ol{list-style:none;margin:12px 0 8px;padding:0;display:grid;gap:6px}.pr-ol li{display:grid;grid-template-columns:minmax(120px,40%) 1fr;gap:10px;font-size:13.5px}.pr-ol span{color:var(--mut)}
+.pr-src{font-size:13px}
+.pr-cer{text-align:center}.pr-cer small{color:var(--mut)}.pr-cer h2{margin:6px 0 2px;font:400 30px/1.05 var(--display,var(--serif));text-transform:uppercase;color:#FFD86B}
+.pr-cer-e{margin:10px 0 14px;color:var(--tx2);font-style:italic}
+.pr-cer-w{display:flex;gap:14px;align-items:center;justify-content:center;text-align:left;padding:14px;border-radius:18px;background:radial-gradient(circle at 30% 30%,rgba(212,160,23,.3),transparent 60%),var(--pn2);animation:prRev .7s cubic-bezier(.2,1.4,.4,1) both}
+.pr-cer-w img{width:84px;height:112px;object-fit:cover;border-radius:12px;box-shadow:0 0 0 2px #D4A017,0 10px 30px rgba(212,160,23,.35)}
+.pr-cer-w b{display:block;font-size:19px;color:#FFD86B}.pr-cer-w small{display:block}.pr-cer-w span{display:block;margin-top:6px;font-weight:700}
+@keyframes prRev{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:none}}
+.pr-cer-l{list-style:none;margin:14px auto 0;padding:0;max-width:380px;display:grid;gap:6px;text-align:left}.pr-cer-l li{display:grid;grid-template-columns:34px 1fr auto;gap:8px;font-size:14px}.pr-cer-l span{color:var(--mut)}.pr-cer-l i{font-style:normal;font-weight:700}
+@media (prefers-reduced-motion:reduce){.pr-cer-w{animation:none}}

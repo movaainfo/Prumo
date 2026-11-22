@@ -1,854 +1,2960 @@
 [
  {
-  "p": "Extras",
-  "name": "B3: botão \"Importar da B3\" nos Movimentos",
+  "p": "Geral",
+  "name": "os 86 formulários gravam",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "B3: painel com os passos da Área do Investidor",
+  "p": "Geral",
+  "name": "gasto rápido fica guardado depois de recarregar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "B3: lê Negociação + Movimentação + Posição (9 movimentos; liquidação e atualização ficam de fora)",
+  "p": "Geral",
+  "name": "exportar e importar devolve tudo",
   "pass": true,
-  "info": "{\"n\":9,\"liq\":true,\"upd\":true,\"err\":\"\"}"
+  "info": "2 movimentos"
  },
  {
-  "p": "Extras",
-  "name": "B3: conferência com a posição aparece",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Extras",
-  "name": "B3: PETR4 criado como Ação, PETR4.SA, BRL, corretora BTG Pactual",
-  "pass": true,
-  "info": "PETR4.SA|Ação|BRL|BTG Pactual|12"
- },
- {
-  "p": "Extras",
-  "name": "B3: desdobro calculado (10 − 4 = 6 → 12 ações)",
-  "pass": true,
-  "info": "PETR4.SA|Ação|BRL|BTG Pactual|12 fator 2"
- },
- {
-  "p": "Extras",
-  "name": "B3: MXRF11 é FII, BOVA11 é ETF, Tesouro Selic 2029 no Tesouro Direto",
-  "pass": true,
-  "info": "{\"pe\":\"PETR4.SA|Ação|BRL|BTG Pactual|12\",\"mx\":\"FII\",\"bo\":\"ETF\",\"td\":\"Tesouro Selic 2029\",\"jcp\":\"1.2/0.18\",\"sp\":\"2\",\"rend\":1}"
- },
- {
-  "p": "Extras",
-  "name": "B3: JCP guardado bruto com os 15% retidos (1,02 líquido → 1,20 bruto)",
-  "pass": true,
-  "info": "1.2/0.18"
- },
- {
-  "p": "Extras",
-  "name": "B3: importar outra vez não duplica nada e a conferência bate",
-  "pass": true,
-  "info": "{\"f\":0,\"d\":9}"
- },
- {
-  "p": "Extras",
-  "name": "Ficheiros: Universidade → Materiais tem \"Guardar ficheiros\" em cada disciplina",
+  "p": "Geral",
+  "name": "atalho: verificação da ligação",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Ficheiros: sem a Parte 5, explica como a colar (com botão para copiar)",
+  "p": "Geral",
+  "name": "atalho: o Google falha à 1.ª e a app tenta de novo · \"18, uber\" → 18 € · Uber",
+  "pass": true,
+  "info": "1 encontrados"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho de uma pergunta: \"99 pizza 2 pessoas\" → 99 € · Pizza 2 pessoas",
+  "pass": true,
+  "info": "[99]"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: gasto enviado entra nas Finanças com categoria",
+  "pass": true,
+  "info": "[[8.5,\"Uber para a faculdade\",\"Transporte\"],[99,\"Pizza 2 pessoas\",\"Alimentação\"],[18,\"Uber\",\"Transporte\"]]"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: não duplica",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Ficheiros: \"Verificar\" deteta a Parte 5",
+  "p": "Geral",
+  "name": "jogo: herói criado",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Ficheiros: PDF de 7 MB enviado em 4 partes para Universidade/Contabilidade ZZ no Drive",
+  "p": "Geral",
+  "name": "jogo: treinos que fazem avançar uma meta de corpo sobem o Corpo (e o herói) e mostram parabéns",
   "pass": true,
-  "info": "Resumo cap 3|PDF|uni|7340032|F1 {\"n\":4,\"pasta\":\"Universidade/Contabilidade ZZ\"}"
+  "info": "herói 2 → 4 · Corpo 0 → 3 · SUBISTE DE NÍVEL\n4\nBRONZE\nRyan\nGLADIADOR"
  },
  {
-  "p": "Extras",
-  "name": "Ficheiros: aparece na disciplina com Abrir / descarregar / apagar",
+  "p": "Geral",
+  "name": "jogo: baú com 2 recompensas à escolha",
   "pass": true,
-  "info": ""
+  "info": "2 opções"
  },
  {
-  "p": "Extras",
-  "name": "Ficheiros: \"Abrir\" abre o ficheiro no Google Drive",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Extras",
-  "name": "Ficheiros: cada curso tem \"Guardar PDFs / ficheiros\"",
+  "p": "Geral",
+  "name": "jogo: escolher recompensa guarda-a",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Ficheiros: \"Atualizar lista\" recupera do Drive o que foi guardado noutro aparelho (na disciplina certa)",
+  "p": "Geral",
+  "name": "jogo: marcos em 5 pilares (com o Espírito)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Ficheiros: apagar tira da lista e manda para o lixo do Drive",
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Definições → Script Google lista a Parte 5 (ficheiros na nuvem)",
+  "p": "Geral",
+  "name": "abre sem internet",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Parte 5: código válido com op_fup, op_fdl, op_frm, op_fls",
+  "p": "Geral",
+  "name": "atualização: aparece \"A atualizar o Prumo…\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Metas: meta com categoria própria (\"Pessoal\") aparece",
+  "p": "Geral",
+  "name": "atualização: depois mostra \"Atualizado\" e a versão nova",
+  "pass": true,
+  "info": "Atualizado · versão 9.9 · 22/11/2026 · Contas como uma carteira: os cartões das "
+ },
+ {
+  "p": "Geral",
+  "name": "modo de segurança (?seguro) limpa a cache e liga o modo leve",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "sem erros de JavaScript (extras)",
+  "p": "Geral",
+  "name": "iPhone: engrenagem das Definições visível no topo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Investimentos → Visão: \"Tudo o que tens investido\" junta mercado e imóveis",
+  "p": "Geral",
+  "name": "iPhone: tocar na engrenagem abre as Definições",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Investimentos → Visão: gráficos por classe, setor, país e moeda",
+  "p": "Geral",
+  "name": "iPhone: \"Definições\" nos atalhos de \"Tudo\" (barra de baixo), visível sem rolar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Investimentos: separadores Imóveis e Renda passiva",
+  "p": "Geral",
+  "name": "iPhone: tocar em Definições (em \"Tudo\") abre as Definições e fecha o painel",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Carteira: divisão por setor com % e imóveis incluídos",
+  "p": "Geral",
+  "name": "iPhone: barra de baixo com Painel, Hoje, Registar, a IA e Tudo (sem os botões a flutuar por cima)",
+  "pass": true,
+  "info": "{\"items\":[\"Painel\",\"Hoje\",\"Spyke\",\"Tudo\"],\"add\":true,\"fabs\":[]}"
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: \"Tudo\" mostra todas as áreas do menu em ícones, por grupo",
+  "pass": true,
+  "info": "{\"g\":[\"Visão Geral\",\"Execução\",\"Eu\",\"Fé\",\"Dinheiro\",\"Estudos\",\"Corpo\",\"Carreira\",\"Direção\"],\"n\":41,\"nav\":41}"
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: tocar numa área abre-a e fecha \"Tudo\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Carteira: divisão por país (EUA, Irlanda, Portugal)",
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Imóveis: capital próprio, rendimento líquido, cash flow e rentabilidade",
-  "pass": true,
-  "info": "{\"eq\":100000,\"noi\":9450,\"cf\":2250,\"gy\":0.054,\"realIn\":6300}"
- },
- {
-  "p": "Extras",
-  "name": "Imóveis: o real das Finanças (rendas ligadas ao imóvel) aparece",
+  "p": "Geral",
+  "name": "iPhone: depois do código aparece \"Ativar o Face ID?\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Património líquido inclui o imóvel (valor − crédito)",
+  "p": "Geral",
+  "name": "iPhone: \"Ativar Face ID\" regista o rosto",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Renda passiva: por mês, despesas cobertas, liberdade financeira e fontes",
+  "p": "Geral",
+  "name": "iPhone: ao bloquear aparece \"Desbloquear com Face ID\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Dinheiro → Relatórios: mensal, trimestral e anual com prazos",
+  "p": "Geral",
+  "name": "iPhone: em modo de teste o Face ID só abre pelo botão (o automático é testado à parte)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Relatório anual: anexos A, F, G, H, J e simulação do imposto",
+  "p": "Geral",
+  "name": "iPhone: entrar com o Face ID abre a app",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "IRS: salário bruto, retenções e rendas (anexo F) somados",
-  "pass": true,
-  "info": "{\"aG\":15000,\"aW\":1200,\"fG\":10800,\"fD\":300,\"j\":[\"G01:EUA:146\",\"G20:Irlanda:25\"],\"e\":1,\"acc\":\"Lituânia\",\"hab\":540,\"sau\":90,\"rc\":10538,\"jp\":0}"
- },
- {
-  "p": "Extras",
-  "name": "IRS: vendas no anexo J com código (G01 ações, G20 ETF) e país",
-  "pass": true,
-  "info": "G01:EUA:146 G20:Irlanda:25"
- },
- {
-  "p": "Extras",
-  "name": "IRS: deduções (rendas 15% até ao limite, saúde 15%) e contas no estrangeiro (Revolut → Lituânia)",
-  "pass": true,
-  "info": "{\"aG\":15000,\"aW\":1200,\"fG\":10800,\"fD\":300,\"j\":[\"G01:EUA:146\",\"G20:Irlanda:25\"],\"e\":1,\"acc\":\"Lituânia\",\"hab\":540,\"sau\":90,\"rc\":10538,\"jp\":0}"
- },
- {
-  "p": "Extras",
-  "name": "IRS: rendimento coletável com dedução específica (sem IRS Jovem fora do prazo)",
-  "pass": true,
-  "info": "{\"aG\":15000,\"aW\":1200,\"fG\":10800,\"fD\":300,\"j\":[\"G01:EUA:146\",\"G20:Irlanda:25\"],\"e\":1,\"acc\":\"Lituânia\",\"hab\":540,\"sau\":90,\"rc\":10538,\"jp\":0}"
- },
- {
-  "p": "Extras",
-  "name": "IRS Jovem: 6.º ano de rendimentos = 50% isento (até 55 × IAS)",
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Relatório: tabelas para descarregar em CSV (para o contabilista)",
+  "p": "Geral",
+  "name": "Tablet horiz: sem convite nem botão de Face ID",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Relatório: descarregar o relatório completo (para PDF)",
+  "p": "Geral",
+  "name": "Tablet horiz: Definições dizem \"só no iPhone\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Relatório mensal enxuto: resumo, receitas e despesas, investimentos e impostos do mês",
+  "p": "Geral",
+  "name": "Computador: sem convite nem botão de Face ID",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Relatórios gerados sozinhos quando o mês, o trimestre e o ano fecham (Arquivo)",
-  "pass": true,
-  "info": "{\"k\":3,\"per\":\"a,m,q\"}"
- },
- {
-  "p": "Extras",
-  "name": "Arquivo lista os relatórios novos",
+  "p": "Geral",
+  "name": "Computador: Definições dizem \"só no iPhone\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Definições → Impostos: país dos relatórios, IRS Jovem, dependentes, englobamento",
+  "p": "Geral",
+  "name": "sync: o tablet envia os seus dados para o Google",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "País: a app guarda quando mudaste de país (Portugal → Brasil hoje)",
-  "pass": true,
-  "info": "[[\"\",\"PT\"],[\"2026-11-22\",\"BR\"]]"
- },
- {
-  "p": "Extras",
-  "name": "Brasil: relatório anual no formato do IRPF (fichas, bens e direitos, completa x simplificada) em reais",
-  "pass": true,
-  "info": "[true,true,true,true,true,true,true,\"(R$)\\nMACA\\tAção\\tTrading 212\\tEUA\\t6\\tUS$ 900,00\\tR$ 5.344,23\\nMUND\\tETF\\tXTB\\tIrlanda\\t15\\t€ 1500,00\\tR$ 9.788,85\\nTotal aplicado\\tR$ \"]"
- },
- {
-  "p": "Extras",
-  "name": "Brasil: salário da conta em reais fica em reais; rendas em euros passam a reais (carnê-leão)",
-  "pass": true,
-  "info": "{\"pj\":5000,\"irrf\":300,\"inss\":500,\"pf\":35240,\"k\":6,\"carne\":true,\"best\":\"simplificada\"}"
- },
- {
-  "p": "Extras",
-  "name": "Brasil: DARF e carnê-leão vencem no último dia útil do mês",
+  "p": "Geral",
+  "name": "limpeza: \"18, uber\" passa a \"Uber\"",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Brasil: relatório deste mês com carnê-leão, DARF da renda variável e IR retido",
+  "p": "Geral",
+  "name": "sync: o iPhone liga-se com o código e recebe os dados do tablet",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Os relatórios que já passaram ficam como estavam (ano anterior continua no formato do IRS, em euros)",
+  "p": "Geral",
+  "name": "código de ligação aceite em qualquer formato (link, código, codificado, com espaços)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "O mês passado (já arquivado) continua no formato de Portugal",
-  "pass": true,
-  "info": "[true,false,true,[\"to), em formato pronto para a declaração de IRPF (Brasil). Seguem o país que escolhest\"]]"
- },
- {
-  "p": "Extras",
-  "name": "Arquivo: cada relatório mostra o país com que foi gerado",
+  "p": "Geral",
+  "name": "sync: a configuração do atalho também passa para o iPhone",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Relatórios: o topo segue o Brasil (\"Completo (IRPF)\", prazos do Brasil); o mês já fechado continua em euros",
-  "pass": true,
-  "info": "[true,true,true,true,true,true,true]pleto (IRPF)\nReceitas e despesas\nInvestimentos\nArquivo\nMensal · resumido\nout 26\nEntrou\n€ 900\nSaiu\n€ 0\nPoupado\n+€ 900,00\n\nReceitas, despesas, poupança, investimentos e o que guardar para impostos.\n\nAbrir relatório\nTrimestral · completo\n3.º trimestre 2026\nEntrou\n€ 2700\nSaiu\n€ 0\nPoupado\n+€ 2700,00\n\nTudo do mês, mais mês a mês, subcategorias, contas, investimentos completos e IRS acumulado.\n\nAbrir relatório\nAnual · declaração de IRPF\nAno 2026\nEntrou\nR$ 39.440\nSaiu\nR$ 0\nPoupado\n+R$ 39.439,86\n\nIRPF 2027: a restituir ~R$ 2.357 (estimativa), com todas as fichas.\n\nAbrir relatório\nPróximos prazos\n30/11/"
- },
- {
-  "p": "Extras",
-  "name": "Períodos que fecharam antes da mudança de país são gerados no país de então (Portugal)",
-  "pass": true,
-  "info": "a:PT,m:PT,q:PT"
- },
- {
-  "p": "Extras",
-  "name": "Definições → Impostos no Brasil: país, dependentes (sem campos do IRS português)",
+  "p": "Geral",
+  "name": "sync: o computador liga-se com o código e recebe os dados",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Outro país: relatório completo de receitas, despesas e investimentos (sem formato fiscal português ou brasileiro)",
+  "p": "Geral",
+  "name": "sync: o que registas no computador aparece no tablet e no iPhone",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Movimento de salário com bruto, retenção e Segurança Social",
+  "p": "Geral",
+  "name": "sem erros de JavaScript (computador)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Empresa: preço de longo prazo, retornos e dividendos por ano",
+  "p": "Geral",
+  "name": "sync: o que registas no iPhone aparece no tablet",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Empresa: últimos trimestres e escolha 5/10 anos nas demonstrações",
+  "p": "Geral",
+  "name": "sync: apagar num aparelho apaga no outro",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Empresa: 10 anos de demonstrações financeiras",
+  "p": "Geral",
+  "name": "sync: gasto do atalho entra uma só vez e aparece nos dois aparelhos",
+  "pass": true,
+  "info": "tablet 1 · iPhone 1"
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (2 aparelhos)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Empresa: a história completa (fundação, fundadores, linha do tempo, crises, líderes, fontes)",
+  "p": "Geral",
+  "name": "Android: sem botão de biometria e registo antigo apagado",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Empresa: tudo sobre a empresa (modelo, segmentos, concorrentes, cenários, tese)",
+  "p": "Geral",
+  "name": "Android: nenhum pedido biométrico ao abrir",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Empresa: história e dossiê ficam guardados (não gasta IA outra vez)",
+  "p": "Geral",
+  "name": "\"Entrar direto\": abre sem pedir código",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Entrevista: mais de 500 perguntas em 37 capítulos (mente e emoções, perdas, valores, identidade, sentidos, cartas…)",
+  "p": "Geral",
+  "name": "cadeado volta a pedir o código",
   "pass": true,
-  "info": "{\"n\":537,\"parts\":37}"
+  "info": ""
  },
  {
-  "p": "Extras",
-  "name": "A evolução vive no Painel: o antigo Longo prazo abre o Painel na secção \"A tua evolução\", e o menu já não tem \"Minha Evolução\"",
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "biblioteca: mais de 500 exercícios com imagens e 60 alongamentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "base de alimentos: mais de 700 alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exercícios antigos ligados às imagens",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: abre a lista para escolher exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: 2 exercícios no treino em curso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: série feita fica verde e o descanso começa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: volume calculado ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino em curso sobrevive a fechar a app (botão flutuante)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino em curso retomado com as séries",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tipo de série: aquecimento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "terminar: treino guardado com as séries feitas",
+  "pass": true,
+  "info": "{\"n\":1,\"sets\":[{\"t\":\"N\",\"kg\":60,\"reps\":10},{\"t\":\"N\",\"kg\":62.5,\"reps\":8}],\"title\":\"Treino\",\"dur\":1}"
+ },
+ {
+  "p": "Geral",
+  "name": "terminar: resumo com volume e dicas de dieta e alongamento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina criada a partir do treino",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina: abre com as cargas da última vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "recorde detetado no treino seguinte",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "nova rotina guardada com exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha do exercício com animação 3D e como fazer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "histórico em cartões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino já não tem mapa nem peso (passaram para o Corpo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: separadores visão, desafios, mapa e peso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "altura guardada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "formulário de bioimpedância com análise segmentar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bioimpedância: faixas de referência e IMC",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bioimpedância: aviso de diferença entre braços",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "metabolismo medido usado nas metas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: procurar encontra o alimento certo primeiro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: 200 g de frango = macros certas",
+  "pass": true,
+  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Pequeno-almoço\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"ih0onnicugd\",\"_c\":1795332064045,\"_u\":1795332064045,\"_s\":0}"
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: porção típica (unidade)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: refeições com fotos dos alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeição fixa criada com 2 alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeição fixa adicionada com um toque",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: sem IA mostra só o botão para Definições → Spyke (sem passos nem chave aqui)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: a IA identifica os alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: corrigir gramas reescala as calorias e regista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: produtos reais com marca e foto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: refeição guarda a foto do produto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "país: botão na página inicial",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: ao tocar no alimento escolhe-se a marca",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: regista o alimento com a marca escolhida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "país: muda para Brasil",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: mudam conforme o país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas certas: nos ovos só aparecem ovos (nada de massa ou salsichas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas certas: na batata frita não aparece batata palha nem chips",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fast food conforme o país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeições já guardadas com marca de outro país ficam iguais",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fast food de outro país não aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alimentos sem emojis: todos com foto real",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alimentos agrupados: cada alimento uma vez, com as variantes lá dentro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cada alimento tem a sua foto (sem repetir)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cada alimento tem descrição",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao tocar no arroz aparecem as opções (cozido / cru) e as marcas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "regista com a opção e a marca escolhidas",
+  "pass": true,
+  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Pequeno-almoço\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"l8rng6idazo\",\"_c\":1795332085476,\"_u\":1795332085476,\"_s\":0}"
+ },
+ {
+  "p": "Geral",
+  "name": "biblioteca de alimentos com fotos e descrições",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: passo das fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: resultado completo (gordura, magra, metabolismo, visceral)",
+  "pass": true,
+  "info": "{\"bf\":17.1,\"lean\":67.1,\"bmr\":1820,\"vis\":8,\"look\":true,\"ai\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: análise com onde melhorar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: estimativa sem fotos também funciona",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "vídeos escolhidos para os exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: vídeo da execução toca dentro da app",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: vários vídeos bons para escolher",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: alterna entre vídeo e animação 3D",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: animação 3D (ou recurso) aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: modo fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fechar a ficha para o vídeo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: abre na animação 3D com botão do vídeo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "animação certa: extensão de pernas na cadeira extensora (não agachamento)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: em Portugal usa € e 28% de imposto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: inflação de Portugal vem do Eurostat e entra no simulador",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: crédito ao consumo do BCE como taxa do empréstimo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: empréstimo em Portugal mostra TAN e TAEG com Imposto do Selo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: no Brasil usa R$, juros ao mês e CET com IOF",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: custo efetivo de um crédito sem juros é 0%",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: no Brasil a taxa do crédito pessoal vem do BCB, ao mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: comparar taxas com produtos do Brasil (poupança isenta, CDI)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: CDI e LCI/LCA (90% do CDI) atualizados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: cada país guarda os seus valores",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: painel do assistente com sugestões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: sem chave mostra o cartão único do Spyke (IA)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: responde com veredicto, riscos e passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: a IA recebe a simulação, as regras do país e as finanças",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: \"Testar\" aplica o cenário (e ignora campos inventados)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: sem ligação usa os valores de referência e avisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: cotação ao vivo do script (Yahoo) na carteira",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: variação do dia calculada ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: renda fixa rende sozinha (3% ao ano)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: rentabilidade com histórico (TWR, TIR, volatilidade, Sharpe)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: risco (nota 1–7, VaR, CVaR, stress, correlação)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: pesquisar ativo no mercado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: página do ativo com gráfico, estatísticas e notícias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: importar CSV da corretora",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: venda a descoberto (ganha quando o preço cai, perde quando sobe)",
+  "pass": true,
+  "info": "{\"qty\":-10,\"avg\":10,\"cost\":-100,\"value\":-120,\"pl\":-20,\"ret\":-0.2,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":-20,\"exposure\":120,\"short\":true,\"lev\":null,\"price\":12,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-10-23\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: opções com multiplicador e CFD alavancado (margem + resultado)",
+  "pass": true,
+  "info": "[{\"qty\":2,\"avg\":3,\"cost\":600,\"value\":800,\"pl\":200,\"ret\":0.3333333333333333,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":200,\"exposure\":800,\"short\":false,\"lev\":null,\"price\":4,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-11-12\"},{\"qty\":10,\"avg\":100,\"cost\":100,\"value\":200,\"pl\":100,\"ret\":1,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":100,\"exposure\":1100,\"short\":false,\"lev\":11,\"price\":110,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-11-12\"}]"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: caixa em dólares convertida ao câmbio",
   "pass": false,
-  "info": "{\"h\":\"#visao\",\"evo\":true,\"pat\":false,\"gm\":true,\"la\":true,\"pa\":true,\"ev\":true,\"nav\":[]}"
+  "info": "101.91082802547771"
  },
  {
-  "p": "Extras",
-  "name": "Painel › A tua evolução: evolução por área (dinheiro, estudos, desporto, carreira) sem repetir as metas do Painel",
+  "p": "Geral",
+  "name": "todos os tipos: desdobramento, bonificação, transferências, amortização e JCP líquido",
+  "pass": true,
+  "info": "{\"qty\":200,\"avg\":4.76,\"cost\":952,\"value\":1000,\"pl\":48,\"ret\":0.05042016806722689,\"realized\":0,\"divs\":85,\"gross\":100,\"taxW\":15,\"fees\":0,\"total\":133,\"exposure\":1000,\"short\":false,\"lev\":null,\"price\":5,\"stale\":false,\"hasPrice\":true,\"first\":\"2025-10-18\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: formulário com os novos movimentos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Minha Evolução: o Spyke analisa a evolução (nota, por área, foco para 30 dias)",
-  "pass": true,
-  "info": "0\nComeça hoje o teu dia 1 de foco\n0 pontos hoje · faltam 70\nDomingo, 22 de novembro\nBoa madrugada, Ryan\n\nCUMPRE O BÁSICO COM EXCELÊNCIA. ↻\n\n0 para atenção · Próxima ação: Revisão semanal\n\nnov 2026\nHoj"
- },
- {
-  "p": "Extras",
-  "name": "Decisões: \"Pensar com o Spyke\" no topo da página",
+  "p": "Geral",
+  "name": "alertas: dispara quando o preço passa o alvo (e só esse)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "Decisões: o Spyke organiza o que escrevi (alternativas) e analisa: pontos fortes e fracos com peso, o que pesa mais, sobre o que escrevi",
-  "pass": true,
-  "info": "{\"ok\":true,\"alts\":\"Aceitar|Não aceitar\",\"an\":true,\"t\":true,\"id\":\"8rbkiba5gtd\"}"
- },
- {
-  "p": "Extras",
-  "name": "Decisões: \"Usar estes pesos\" aplica os pesos sugeridos à matriz",
+  "p": "Geral",
+  "name": "alertas: painel no Mercado com estado",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Extras",
-  "name": "sem erros de JavaScript (extras 2)",
+  "p": "Geral",
+  "name": "comparar: gráfico e tabela de rentabilidade, volatilidade e correlação",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Conta nova: 14 dias grátis do plano Completo, sem cartão",
-  "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796527883756}"
- },
- {
-  "p": "Planos",
-  "name": "Página pública \"Planos e preços\" (para o Stripe): os 3 planos em euros (outras moedas convertidas do euro), cancelamento e reembolso",
-  "pass": true,
-  "info": "39760"
- },
- {
-  "p": "Planos",
-  "name": "Os três planos com os preços só em euros (5,99 · 11,99 · 19,99 por mês; anual = 10 meses)",
-  "pass": true,
-  "info": "{\"ok\":true,\"planos\":[{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"ia\":20,\"perfis\":1,\"precos\":{\"EUR\":{\"mes\":599,\"ano\":5990}}},{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"ia\":150,\"perfis\":3,\"precos\":{\"EUR\":{"
- },
- {
-  "p": "Planos",
-  "name": "Teste acabado, mas sem o Stripe ligado: continua com tudo (não há como pagar ainda)",
-  "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"semCobranca\":1,\"testeAcabou\":1795318283756}"
- },
- {
-  "p": "Planos",
-  "name": "Com o Stripe ligado e o teste acabado: fica sem plano (a app pede para escolher)",
-  "pass": true,
-  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795318283756}"
- },
- {
-  "p": "Planos",
-  "name": "Sem plano: não cria perfis (402)",
-  "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"O teu teste grátis acabou: escolhe um plano em Planos para continuar.\",\"code\":\"plano\",\"_st\":402}"
- },
- {
-  "p": "Planos",
-  "name": "Sem plano: a IA do servidor responde 402 com a mensagem para escolher um plano",
+  "p": "Geral",
+  "name": "impostos BR: day trade detetado (20%) e prejuízo acumulado",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Assinar: abre o pagamento do Stripe com o preço do Essencial (5,99 € por mês), a conta e o regresso ao Prumo",
-  "pass": true,
-  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"823e564a156529b8937f1143\",\"success_url\":\"http://localhost:8806/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8806/Oceanum/#planos\",\"allow_promotion_codes\":\"true\",\"locale\":\"pt\",\"adaptive_pricing[enabled]\":\"true\",\"line_items[0][q"
- },
- {
-  "p": "Planos",
-  "name": "A página de pagamento tem o nome e as cores do Prumo (mesmo que a conta do Stripe tenha outro nome)",
-  "pass": true,
-  "info": "{\"branding_settings[display_name]\":\"Prumo\",\"branding_settings[background_color]\":\"#F6EFE4\",\"branding_settings[button_color]\":\"#8E1B2A\",\"branding_settings[border_style]\":\"rounded\",\"branding_settings[font_family]\":\"lora\"}"
- },
- {
-  "p": "Planos",
-  "name": "Se o Stripe ainda não conhecer a marca na página de pagamento, abre o pagamento sem ela",
-  "pass": true,
-  "info": "{\"ok\":true,\"url\":\"https://checkout.stripe.test/c/cs_test_3b318e76eda7\",\"_st\":200}"
- },
- {
-  "p": "Planos",
-  "name": "Sem métodos de pagamento ativos no Stripe (conta em análise): mensagem clara em português, sem o erro técnico",
-  "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"Os pagamentos ainda estão a ser ativados. Tenta daqui a pouco; o teu teste grátis continua.\",\"code\":\"pagamentos\",\"_st\":503}"
- },
- {
-  "p": "Planos",
-  "name": "Sempre em euros: quem usa dólares paga 119,90 € por ano convertidos pelo Stripe na hora (Adaptive Pricing); a libra também fica em euros",
-  "pass": true,
-  "info": "{\"u\":\"eur\",\"g\":\"eur\"}"
- },
- {
-  "p": "Planos",
-  "name": "Antes de pagar, \"confirmar\" não dá o plano",
+  "p": "Geral",
+  "name": "investimentos: impostos (mais-valias PT a 28%)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Ninguém usa o pagamento de outra conta",
+  "p": "Geral",
+  "name": "IA investimentos: questionário de perfil (adequação)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Depois de pagar: plano Essencial (mensal), com a data da renovação",
-  "pass": true,
-  "info": "{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"perfis\":1,\"ia\":20,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}"
- },
- {
-  "p": "Planos",
-  "name": "Essencial: só 1 perfil (o segundo pede outro plano)",
-  "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"O teu plano (Essencial) tem até 1 perfil. Para mais, muda de plano em Planos.\",\"code\":\"maximo\",\"_st\":402}"
- },
- {
-  "p": "Planos",
-  "name": "Essencial: ler fotos com a IA pede o plano Avançado (402)",
+  "p": "Geral",
+  "name": "IA investimentos: resposta com mestres, divergência e verificação em 2 passos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Com assinatura, não abre outra: muda-se de plano",
+  "p": "Geral",
+  "name": "IA investimentos: condicionada pelo regulamento, mestres, perfil, risco e factos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Mudar para o Avançado anual: o Stripe recebe o novo preço (119,90 €/ano) e a conta passa a Avançado",
-  "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
- },
- {
-  "p": "Planos",
-  "name": "Cancelar: continua até ao fim do período pago (sem renovar)",
-  "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"cancelar\":1,\"ate\":1797910284000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
- },
- {
-  "p": "Planos",
-  "name": "Retomar a assinatura",
+  "p": "Geral",
+  "name": "empresas: perfil, o que faz (traduzido), donos, gestão e analistas",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Gerir pagamento e faturas: abre o portal do Stripe",
+  "p": "Geral",
+  "name": "empresas: demonstrações financeiras e múltiplos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "O Prumo configura sozinho o portal do cliente (uma vez): cartão, faturas com NIF e cancelar no fim do período",
-  "pass": true,
-  "info": "{\"n\":1,\"conf\":[\"bpc_55382c417141\",\"bpc_55382c417141\"]}"
- },
- {
-  "p": "Planos",
-  "name": "Pagou (em euros, mesmo vindo de reais) e fechou a página antes de voltar ao Prumo: o plano ativa sozinho na próxima vez que abre a app",
-  "pass": true,
-  "info": "{\"a\":0,\"b\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}}"
- },
- {
-  "p": "Planos",
-  "name": "Administração: tem sempre tudo",
+  "p": "Geral",
+  "name": "empresas: preço justo de Graham (12,00) e preço-teto de Bazin (11,67)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Administração oferece o Completo por 30 dias (a pessoa vê o aviso)",
-  "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797910284390}"
- },
- {
-  "p": "Planos",
-  "name": "Admin: a lista de contas mostra o plano de cada uma",
-  "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797910284390}"
- },
- {
-  "p": "Planos",
-  "name": "Admin: com uma oferta, mostra também o que seria no Automático (aqui, sem plano)",
-  "pass": true,
-  "info": "{\"o\":{\"id\":\"completo\",\"ate\":1797910284390},\"a\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795318284052}}"
- },
- {
-  "p": "Planos",
-  "name": "Admin › Por fazer: sabe se o Stripe e o e-mail estão ligados (sem mostrar as chaves)",
-  "pass": true,
-  "info": "{\"strava\":true,\"oura\":true,\"revenuecat\":true,\"stripe\":true,\"stripeTeste\":true,\"mail\":\"\",\"mailDe\":false}"
- },
- {
-  "p": "Planos",
-  "name": "Admin dá o Essencial grátis a quem paga o Avançado: fica com o maior (Avançado pago)",
-  "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
- },
- {
-  "p": "Planos",
-  "name": "Admin: \"Automático\" tira a escolha (volta ao teste e ao que a pessoa assinou)",
-  "pass": true,
-  "info": "{\"ok\":true,\"email\":\"teo97372bbf@teste.pt\",\"plano\":\"\",\"dias\":0,\"agora\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"ano\",\"cur\":\"EUR\""
- },
- {
-  "p": "Planos",
-  "name": "Só a administração escolhe planos",
+  "p": "Geral",
+  "name": "empresas: relatório da IA com pesquisa web, fontes e a carteira",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "A conta de administração não muda de plano (tem sempre tudo)",
+  "p": "Geral",
+  "name": "tarefas: barra de projetos filtra pelo projeto",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Admin cria um código de desconto (LANCAMENTO20, −20% no 1.º pagamento): cupão e código promocional no Stripe",
-  "pass": true,
-  "info": "{\"c\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"max\":0,\"expira\":0,\"novos\":false,\"promo\":\"promo_898c6eb7777a\",\"coupon\":\"cp_9014e6c1ae65\",\"criado\":1795318284424,\"ativo\":true},\"cp\":{\"percent_off\":\"20\",\"duration\":\"once\",\"name\":\"LANCAMENTO20 · 20%\",\"metadata[app]\":\"prumo\",\"metada"
- },
- {
-  "p": "Planos",
-  "name": "Não deixa criar dois códigos ativos com o mesmo nome",
+  "p": "Geral",
+  "name": "tarefas: captura rápida dentro do projeto e com #projeto",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Código só para o Completo, durante 3 meses, com limite de usos, validade e só para a primeira assinatura",
-  "pass": true,
-  "info": "{\"cp\":{\"percent_off\":\"50\",\"duration\":\"repeating\",\"name\":\"SO-COMPLETO · 50%\",\"metadata[app]\":\"prumo\",\"metadata[code]\":\"SO-COMPLETO\",\"duration_in_months\":\"3\",\"applies_to[products][0]\":\"prod_4a1878e300d7\"},\"pc\":{\"promotion[type]\":\"coupon\",\"promotion[coupon]\":\"cp_3025a1ecfa19\",\"code\":\"SO-COMPLETO\",\"meta"
- },
- {
-  "p": "Planos",
-  "name": "Admin › Códigos: a lista com os usos e o estado",
-  "pass": true,
-  "info": "{\"ok\":true,\"cobranca\":true,\"cupoes\":[{\"code\":\"SO-COMPLETO\",\"pct\":50,\"dur\":\"repeating\",\"meses\":3,\"planos\":[\"completo\"],\"max\":2,\"expira\":4102444799000,\"novos\":true,\"promo\":\"promo_4b65f177b7e9\",\"coupon\":"
- },
- {
-  "p": "Planos",
-  "name": "A pessoa valida o código (sem distinguir maiúsculas): −20%; um código que não existe é recusado",
-  "pass": true,
-  "info": "{\"vz\":{\"ok\":true,\"cupao\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"promo\":\"promo_898c6eb7777a\",\"novos\":false},\"_st\":200},\"b\":404}"
- },
- {
-  "p": "Planos",
-  "name": "Assinar com o código: o pagamento abre com o desconto já aplicado",
-  "pass": true,
-  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"9729b049c27f51a1a585362b\",\"success_url\":\"http://localhost:8806/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8806/#planos\",\"locale\":\"pt"
- },
- {
-  "p": "Planos",
-  "name": "Um código só do Completo não serve para o Essencial",
-  "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"Esse código não serve para o plano Essencial.\",\"code\":\"cupao\",\"_st\":400}"
- },
- {
-  "p": "Planos",
-  "name": "Código que já chegou ao limite de usos deixa de valer",
+  "p": "Geral",
+  "name": "tarefas: vista por projeto",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Admin desativa o código: deixa de valer",
+  "p": "Geral",
+  "name": "eu: retrato com idade, origem e aniversário próximo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Só a administração cria códigos",
+  "p": "Geral",
+  "name": "eu: linha do tempo por anos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Chave real no lugar da de teste: a assinatura de teste deixa de contar e o novo pagamento não usa o cliente de teste",
+  "p": "Geral",
+  "name": "eu: entrevista com mais de 200 perguntas, uma de cada vez (as respostas antigas mantêm-se)",
   "pass": true,
-  "info": "{\"p\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795318283756},\"f\":\"teo97372bbf@teste.pt\"}"
+  "info": "{\"n\":537,\"q\":\"Quem eram os teus avós do lado da mãe? O que sabes da vida deles?\"}"
  },
  {
-  "p": "Planos",
-  "name": "Página Planos: o teu plano (Avançado), os 3 planos com preço (11,99 € por mês) e \"Subir para o Completo\"",
-  "pass": true,
-  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano Avançado Plano Avançado (anual). Renova a 22 de dezembro de 2026. Gerir pagamento e faturas Cancelar a assinatura Mensal Anual · 2 meses grátis Os preços são em euros, com impostos incluídos. Se pagares com u"
- },
- {
-  "p": "Planos",
-  "name": "Preços só em euros (sem escolher moeda) e a nota da conversão",
+  "p": "Geral",
+  "name": "eu: depois de responder, a IA faz perguntas de seguimento sobre essa história",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Página Planos: no anual mostra o preço do ano (119,90 €) e quanto dá por mês",
+  "p": "Geral",
+  "name": "eu: \"Saltar\" passa à pergunta seguinte",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Avançado: as paletas exclusivas (Ouro, Aurora, Sakura) aparecem com \"Completo\" e não se aplicam",
+  "p": "Geral",
+  "name": "eu: o livro é escrito capítulo a capítulo, só com as partes que têm material",
   "pass": true,
-  "info": "{\"n\":9,\"lk\":true,\"cur\":\"selo\",\"x\":true}"
+  "info": "{\"book\":1,\"ch\":[\"Raízes\",\"Os primeiros anos\",\"Uma nova vida em Portugal\"],\"todo\":0,\"stats\":\"3 capítulos408 palavras≈ 1 página\"}"
  },
  {
-  "p": "Planos",
-  "name": "Avançado: os Relatórios (impostos) têm cadeado e levam aos planos",
+  "p": "Geral",
+  "name": "eu: cada capítulo recebe só o seu material e a regra de não inventar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Avançado: a Universidade abre (sem cadeado)",
+  "p": "Geral",
+  "name": "eu: atualizar reescreve só o capítulo que mudou e respeita o que escrevi",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Teste acabado e sem plano: as páginas mostram \"Escolhe o teu plano\" com os planos (os dados ficam)",
+  "p": "Geral",
+  "name": "leituras: pesquisar livro e marcar já li / tenho na estante",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Planos: \"Tens um código de desconto?\" aplica o código e mostra o preço com desconto (−30% no 1.º mês) em cada plano",
+  "p": "Geral",
+  "name": "leituras: também mangás (AniList), à frente das edições noutra língua, com autor e volumes",
   "pass": true,
-  "info": "{\"on\":true,\"old\":3,\"t\":\"−30% no 1.º mês\"}"
+  "info": "Kaguya-sama: Love is War Kaguya-sama: Love is War Kaguya-sama wa Kokurasetai Mangá · Aka Akasaka · 2015 · 28 volumes HQ / Mangá Romance Quero ler Estou a ler Já li Desisti Tenho"
  },
  {
-  "p": "Planos",
-  "name": "Assinar na app com o código aplicado: o pagamento leva o desconto",
+  "p": "Geral",
+  "name": "leituras: resenha e desafio literário que conta o livro lido",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Quem usa reais: o preço continua em euros (5,99 €) com o valor aproximado em reais ao lado (≈ R$ 37,14) e a nota da conversão",
-  "pass": true,
-  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Mensal Anual · 2 meses grátis Os preços são em euros, com impostos incluídos. Ao pagar, vês o valor na tua moeda, convertido pelo câmbio do dia (o valor ao lado de cada preço é aproximado). Tens um cód"
- },
- {
-  "p": "Planos",
-  "name": "Assinar com reais: cobra 5,99 € (o Stripe converte para reais na página de pagamento, em português do Brasil)",
-  "pass": true,
-  "info": "{\"c\":\"eur\",\"v\":\"599\",\"l\":\"pt-BR\"}"
- },
- {
-  "p": "Planos",
-  "name": "Modo loja (app Android/iPhone): os planos aparecem sem botões de compra, sem código de desconto e sem preços, com a nota \"não há compras\"",
-  "pass": true,
-  "info": "{\"on\":true,\"cls\":true,\"buy\":0,\"cup\":false,\"portal\":false,\"cards\":3,\"t\":\"Sistema PLANOS Os planos do Prumo e o que cada um inclui. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Nesta versão da app não\"}"
- },
- {
-  "p": "Planos",
-  "name": "Modo loja desliga com ?loja=nao (no site volta a haver compras)",
+  "p": "Geral",
+  "name": "cursos e certificações",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)",
+  "p": "Geral",
+  "name": "floresta: página abre com temporizador e 34 espécies",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Admin › Códigos de desconto: o formulário e a lista com os códigos criados",
+  "p": "Geral",
+  "name": "floresta: árvore cresce até ao fim, dá moedas e regista estudo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Admin › Contas: cada conta mostra o plano (Completo grátis)",
-  "pass": true,
-  "info": "Completo grátis"
- },
- {
-  "p": "Planos",
-  "name": "Admin › Por fazer: os passos do Stripe em modo de teste e do e-mail (Brevo)",
-  "pass": true,
-  "info": "Por fazer 3 pendentes pendente Chave Google da IA para todos (GEMINI_API_KEY) Para a IA das contas ler fotos (comida, exames, escala) e PDFs. 1) aistudio.google.com/apikey → Create API key. 2) Vercel → projeto prumo → Settings → Environment Variables → nome GEMINI_API_KEY, valor a chave, Production."
- },
- {
-  "p": "Planos",
-  "name": "Admin › conta: escolher o plano (Automático, Essencial, Avançado ou Completo grátis), com o atual marcado e sem pedir a senha",
-  "pass": true,
-  "info": "{\"n\":4,\"chk\":\"completo\",\"senha\":false}"
- },
- {
-  "p": "Planos",
-  "name": "Admin › conta: \"Avançado grátis\" durante 3 meses fica na conta da pessoa",
-  "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"oferta\":1,\"ate\":1803094308648}"
- },
- {
-  "p": "Planos",
-  "name": "Admin › conta: \"Automático\" devolve a conta ao teste e à assinatura (aqui o teste já acabou: sem plano)",
-  "pass": true,
-  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795318284052}"
- },
- {
-  "p": "Planos",
-  "name": "Completo: as paletas exclusivas (Ouro, Aurora, Sakura) aplicam-se",
-  "pass": true,
-  "info": "ouro,aurora,sakura"
- },
- {
-  "p": "Planos",
-  "name": "Relatórios (Completo): o quadro \"Resumo do mês no teu e-mail\" com o botão para ligar",
+  "p": "Geral",
+  "name": "floresta: sair do Prumo mata a árvore",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "sem erros de JavaScript (Admin › planos)",
+  "p": "Geral",
+  "name": "floresta: a minha floresta e catálogo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Atendimento prioritário: os pedidos de quem tem o Completo chegam marcados como prioritários ao Admin (o Avançado não)",
+  "p": "Geral",
+  "name": "universidade: calculadora diz quanto precisas no exame",
   "pass": true,
-  "info": "{\"w\":1,\"a\":0}"
+  "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Resumo do mês por e-mail: só no plano Completo (o Avançado recebe 402)",
+  "p": "Geral",
+  "name": "universidade: plano até ao exame vai para as tarefas",
   "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"O resumo do mês por e-mail é do plano Completo.\",\"code\":\"plano\",\"_st\":402}"
+  "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Conta nova em teste grátis: ao entrar aparecem os planos, com os dias grátis e \"Continuar com o teste grátis\"",
+  "p": "Geral",
+  "name": "universidade: flashcards da IA e repetição espaçada",
   "pass": true,
-  "info": "{\"h\":\"#planos\",\"t\":\"Bem-vindo ao Prumo\\n\\nTens 14 dias grátis do plano Completo, sem cartão. Escolhe já o teu plano aqui em baixo ou continua com o teste: avisamos-te antes de acabar e os teus dados ficam sempre guardados.\\n\\nContinuar com "
+  "info": ""
  },
  {
-  "p": "Planos",
-  "name": "\"Continuar com o teste grátis\" vai para o Painel e os planos não voltam a abrir sozinhos",
+  "p": "Geral",
+  "name": "universidade: simulado da IA corrigido (20/20)",
   "pass": true,
-  "info": "#visao"
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: visão com contagem decrescente e mapa de estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: banco de questões, desempenho e recomendações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: adicionar padel e registar jogo com estatísticas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: treinos específicos e auxílios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: corrida preenche-se sozinha com a aba Corrida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "visão geral: frase forte e verdade do dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "hábitos: só se marca o dia de hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "trabalho: horário e folgas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: pendências por prioridade",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: som para concentrar (chuva, mar, lareira, ruído castanho) feito no aparelho, começa ao carregar em Começar, com atalhos para Spotify, Apple Music, YouTube Music e Deezer",
+  "pass": true,
+  "info": "{\"fs0\":{\"esc\":true,\"vol\":true,\"apps\":[\"Spotify\",\"Apple Music\",\"YouTube Music\",\"Deezer\"]},\"fs1\":{\"toca\":\"chuva\",\"barra\":true}}"
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: no fim do tempo pergunta se terminaste",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: \"ainda não\" acrescenta tempo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: sair sem código certo não deixa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: código certo sai e grava o histórico",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: o som pára quando o bloco acaba; o Spotify mostra playlists de concentração ou um link teu, num tocador que não recomeça quando o ecrã muda",
+  "pass": true,
+  "info": "{\"a\":\"\",\"pls\":[\"Focus Piano\",\"Focus Jazz\",\"Deep Focus Lo-fi Beats\"],\"s1\":\"https://open.spotify.com/embed/playlist/37i9dQZF1DWZIOAPKUdaKS?utm_source=prumo&theme=0\",\"s2\":\"https://open.spotify.com/embed/album/4aawyAB9vmqN3uQ7FjRGTy?utm_source=prumo&theme=0\",\"gone\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: \"anota…\" cria tarefa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: abre páginas por voz",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: resumo do dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: separa urgente e promoções (sem IA)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: urgente aparece no Control Room",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "google script completo é JavaScript válido",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "script em 7 partes: 1 e 2 = núcleo, 3 a 7 = ficheiros das novidades; cada parte é JavaScript válido e juntas dão o código completo",
+  "pass": true,
+  "info": "{\"n\":7,\"ok\":[true,true,true,true,true,true,true],\"len\":[13275,12303,10110,10652,3903,2798,3325],\"same\":true,\"key1\":true,\"core\":25503,\"addon\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "script em 7 partes: cada parte tem menos de 15 mil caracteres (não é cortada ao colar no telemóvel)",
+  "pass": true,
+  "info": "13275 + 12303 + 10110 + 10652 + 3903 + 2798 + 3325"
+ },
+ {
+  "p": "Geral",
+  "name": "script: a Parte 4 (Outlook) liga-se às outras e responde",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "script: só com as partes 1 e 2 responde versão 10; com a Parte 3 num ficheiro novo responde versão 12 (sem apagar nada)",
+  "pass": true,
+  "info": "{\"ok\":true,\"v\":10} → {\"ok\":true,\"v\":12} | {\"ok\":true,\"v\":12} | {\"ok\":false,\"msg\":\"Chave errada\"} | function | function | function | function"
+ },
+ {
+  "p": "Geral",
+  "name": "script: novidades futuras entram num ficheiro novo (function op_nome) sem mexer na Parte 3",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "nome Náutilo no Google: a Parte 3 renomeia o ficheiro de dados, as cópias, a folha, a pasta e os calendários (uma só vez, pelo código interno)",
+  "pass": true,
+  "info": "Náutilo · dados.json|Náutilo · Ficheiros|Náutilo · Gastos do atalho|Náutilo|Náutilo · Trabalho|Náutilo · cópia 2026-10-16|Náutilo · cópia 2026-10-17"
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: memória guarda o que lhe dizes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: rotina de voz corre os passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: balanço da noite",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "modo Comando abre com os painéis",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "modo Comando: o X fecha e o botão fica no canto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: eventos dos e-mails no calendário",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: apagar projeto deixa as tarefas sem projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: data da avaliação move o plano de estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: turno e folga no mesmo dia não coexistem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: oportunidade submetida cria candidatura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: aba no menu, versículo do dia com o texto da Bíblia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: versículo do dia com explicação e aplicação para hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: Bíblia completa (66 livros, 31 102 versículos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: palavra para hoje sem IA, escolhida pelo estado de alma",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: palavra da IA usa o dia real (avaliações, alertas) e o texto vem da Bíblia instalada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: ir para uma passagem escrita por extenso (Romanos 8:28)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: destacar versículo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: leitor diminui a letra (A−) até 12px, barra sempre visível",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: modo grifar (versículo inteiro e só palavras selecionadas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: nota escrita dentro do texto e guardada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: pesquisa de palavras em toda a Bíblia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: devocional guarda sozinho e mostra a passagem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: reflexão da IA sobre a leitura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: pedidos de oração e respondidas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: plano de leitura com o dia de hoje e progresso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: sinais de crise mostram contactos de ajuda",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: versículo do dia na página Hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: notícias do mundo com fontes e hora",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: \"O essencial agora\" feito pela IA só com as manchetes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: temas (economia)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: tema próprio por pesquisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: \"+ País\" cria um separador com as notícias desse país, traduzidas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: notícias novas aparecem marcadas ao atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: o atalho abre a corrida já preenchida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: corrida guardada com ritmo 5:58 /km",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: não regista a mesma corrida duas vezes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: a Corrida só mostra as corridas (o guia do relógio saiu)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: instruções em Definições → Atalhos do iPhone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alongamentos com fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina guiada de alongamentos registada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "meta de calorias sobe nos dias de treino",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: calendário de disciplina na visão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: o calendário de disciplina é automático (sem marcar dias à mão, o passado não se muda)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: registar um treino marca o dia sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desafio: começa e marca o dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desafio automático conta os dias em que foste",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "meta do corpo com progresso e ritmo semanal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "visão do corpo: treino, dieta, corrida e recomendações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (corpo)",
+  "pass": false,
+  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8808' has been blocked by CORS policy: No 'Access-Control-Allow"
+ },
+ {
+  "p": "Geral",
+  "name": "manifesto sem orientação forçada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "todos os ficheiros da cache offline existem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "finanças: saldo da conta = abertura + receitas − despesas − transferências (1279,50 €)",
+  "pass": true,
+  "info": "{\"a\":1279.5,\"c\":100,\"inc\":500,\"exp\":1119.5,\"fut\":true,\"up\":true}"
+ },
+ {
+  "p": "Áreas",
+  "name": "finanças: transferência entra na conta de destino (100 €)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "finanças: mês soma receitas e despesas (despesa futura ainda não conta no saldo)",
+  "pass": true,
+  "info": "{\"a\":1279.5,\"c\":100,\"inc\":500,\"exp\":1119.5,\"fut\":true,\"up\":true}"
+ },
+ {
+  "p": "Áreas",
+  "name": "finanças: despesa agendada aparece nos próximos pagamentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "finanças: compra em 3 parcelas cria 3 movimentos de 100 € em meses seguidos",
+  "pass": true,
+  "info": "[[100,1,3,\"2026-11\"],[100,2,3,\"2026-12\"],[100,3,3,\"2027-01\"]]"
+ },
+ {
+  "p": "Áreas",
+  "name": "finanças: recorrente aparece antes de pagar e desaparece depois de pago",
+  "pass": true,
+  "info": "{\"before\":true,\"paid\":true,\"after\":false}"
+ },
+ {
+  "p": "Áreas",
+  "name": "finanças: pagar 200 € de uma dívida de 1000 € deixa 800 € (património igual)",
+  "pass": true,
+  "info": "{\"bal\":800,\"nwDelta\":0}"
+ },
+ {
+  "p": "Áreas",
+  "name": "finanças: orçamento soma o gasto da categoria no mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "tarefas: \"Rever balanço @Universidade !1 amanhã\" → título, prioridade 1, amanhã, área",
+  "pass": true,
+  "info": "[\"Rever balanço\",\"1\",true,\"Universidade\",\"Próxima\"]"
+ },
+ {
+  "p": "Áreas",
+  "name": "tarefas: concluir tarefa diária marca a data e cria a de amanhã",
+  "pass": true,
+  "info": "{\"done\":true,\"next\":true}"
+ },
+ {
+  "p": "Áreas",
+  "name": "tarefas: prazo passado conta como atrasada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "próxima ação: prioridade 1 com prazo hoje vem antes da prioridade 4",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "hábitos: 3 dias seguidos = sequência de 3",
+  "pass": true,
+  "info": "{\"streak\":3,\"wkend\":false,\"auto\":true,\"past\":true}"
+ },
+ {
+  "p": "Áreas",
+  "name": "hábitos: \"dias úteis\" não conta ao sábado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "hábitos: automático (registar um gasto) marca-se sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "hábitos: não deixa marcar dias passados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "metas: manual 5 de 10 = 50%",
+  "pass": true,
+  "info": "[0.5,0.5,0.25,\"Atrás do ritmo\"]"
+ },
+ {
+  "p": "Áreas",
+  "name": "metas: 2 de 4 passos = 50%",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "metas: meta ligada a uma conta segue o saldo (100 de 400 = 25%)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "metas: atrás do ritmo é detetado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "universidade: média ponderada 40%×12 + 60%×16 = 14,4",
+  "pass": true,
+  "info": "{\"avg\":14.4,\"due1\":true,\"r1\":true,\"next\":true}"
+ },
+ {
+  "p": "Áreas",
+  "name": "universidade: revisão de ontem está para hoje e a seguinte é a 7 dias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "calendário: evento semanal repete-se daqui a 7 dias",
+  "pass": true,
+  "info": "{\"ev0\":true,\"ev7\":true,\"shift\":true,\"exam\":true}"
+ },
+ {
+  "p": "Áreas",
+  "name": "calendário: turnos e avaliações aparecem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "decisões: filtro Alpha (24 h, 3 dias, passado)",
+  "pass": true,
+  "info": "[\"Responde às 5 perguntas\",\"Esperar 24 h\",\"Filtro passado\",\"Esperar 3 dias\",\"Filtro passado\"]"
+ },
+ {
+  "p": "Áreas",
+  "name": "segurança: mudar o código pede o atual e 6 números (só números, também no perfil pessoal)",
+  "pass": true,
+  "info": "[\"O código atual não está certo.\",\"O novo código tem de ter 6 números.\",null,null,\"Código incorreto.\",6,null]"
+ },
+ {
+  "p": "Áreas",
+  "name": "segurança: depois de mudar, o novo código entra e o antigo não",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "segurança: o código nunca fica guardado em texto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "v3.20: na conta do dono não há escudo (pode tirar prints e copiar em Senhas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "segurança: 5 códigos errados bloqueiam 30 s (mesmo com o certo)",
+  "pass": true,
+  "info": "[\"Código errado 5 vezes. Espera 30 s.\",\"Muitas tentativas. Espera 30 s.\"]"
+ },
+ {
+  "p": "Áreas",
+  "name": "clima: frase com cidade, graus, sensação e chuva",
+  "pass": true,
+  "info": "Em Aveiro estão 18 graus, sensação de 14, chuva fraca. Máxima de 21 e mínima de 13, 70% de probabilidade de chuva: leva guarda-chuva."
+ },
+ {
+  "p": "Áreas",
+  "name": "clima: amanhã e ícone sem emojis",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "mudança: recuperar recusa endereço errado e aceita o do script (tira as aspas da chave)",
+  "pass": true,
+  "info": "{\"bad\":null,\"ok\":true,\"done\":1}"
+ },
+ {
+  "p": "Áreas",
+  "name": "todas as 191 páginas: cada botão tem função",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "todas as páginas: cada formulário tem função",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "todas as páginas: \"editar\" aponta para dados que existem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "todas as páginas: sem \"undefined\", \"NaN\" ou \"[object Object]\" no ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "IA unificada: nenhuma página tem o cartão antigo \"Ligar a IA\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "IA unificada: o cartão do Spyke aparece onde a IA faz falta",
+  "pass": true,
+  "info": "universidade.flashcards, universidade.simulados, universidade.questoes, trabalho.foto"
+ },
+ {
+  "p": "Áreas",
+  "name": "IA unificada: a página do Spyke tem o cérebro (IA) com os passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "IA unificada: ligar uma vez liga a app inteira",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Áreas",
+  "name": "sem erros de JavaScript (áreas)",
+  "pass": false,
+  "info": "consola: Access to fetch at 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt-PT&dt=t&q=As%20tyranny%20engulfs%20the%20Clover%20Kingdom%2C%20"
+ },
+ {
+  "p": "Novidades",
+  "name": "Face ID: ao abrir a app o Face ID começa sozinho e entra",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Face ID: não pergunta \"Ativar o Face ID?\" outra vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Face ID: se cancelares fica o botão e uma mensagem calma (sem repetir sozinho)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Face ID: não fica a pedir em ciclo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Face ID: tocar no botão entra",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "sem erros de JavaScript (Face ID)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: começa a ouvir sozinho ao entrar (ponto no microfone do topo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: sem dizer o nome dele não responde (só \"Spyke, …\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: com o nome responde logo",
+  "pass": true,
+  "info": "São 07:24."
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: conversa seguida (depois de responder volta a ouvir sozinho)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: \"Spike, bom dia\" dá o resumo do dia (escrito \"Spike\", como o iPhone ouve)",
+  "pass": true,
+  "info": "Bom dia, Ryan. Hoje é domingo, 22 de novembro. A agenda está livre de compromiss"
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: \"Bom dia, Spike\" (nome no fim) também dá o resumo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: só \"Spike\" não fala nada (som e fica à espera do pedido)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: o pedido logo a seguir ao nome (sem repetir o nome) é executado",
+  "pass": true,
+  "info": "São 07:24."
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: com uma pausa depois do nome (\"Spike… que dia é hoje\") faz o pedido",
+  "pass": true,
+  "info": "Hoje é domingo, 22 de novembro."
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: depois de responder, sem o nome volta a ignorar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: fora da conversa ignora o que não é para ele",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: \"Spyke, …\" funciona sempre",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: frase sem \"fim\" é apanhada pela pausa (iPhone)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: o eco da própria voz não conta como pedido",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: o iPhone fecha o microfone e ele reabre sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: \"para de ouvir\" desliga e não reabre",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: tocar no microfone volta a ouvir",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: enquanto fala o microfone descansa (não ouve a própria voz nem corta o som)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: acabou de falar e volta a ouvir sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: com \"Interromper por voz\" ligado, dizer \"Spyke\" enquanto fala interrompe e ouve",
+  "pass": true,
+  "info": "Sim?"
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: ao sair da app o microfone desliga e ao voltar liga sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "palmas: duas palmas chamam o Spyke",
+  "pass": true,
+  "info": "{\"two\":1,\"one\":0,\"voice\":0,\"far\":0,\"soft9\":1,\"soft1\":0}"
+ },
+ {
+  "p": "Novidades",
+  "name": "palmas: uma palma sozinha não chama",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "palmas: voz ou música contínua não chamam",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "palmas: palmas muito afastadas não contam",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "palmas: a sensibilidade muda o que conta (máxima ouve palmas fracas, mínima não)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "Spyke: página explica o limite do iPhone com a app fechada e como não pedir o microfone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "sem erros de JavaScript (Spyke a ouvir)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "floresta: quando o iPhone apaga o 3D, ele refaz-se sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "floresta: se o 3D falhar mostra \"A abrir o 3D…\" (não fica preso no erro)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "floresta: tenta outra vez sozinha e volta a mostrar a árvore 3D",
+  "pass": true,
+  "info": "{\"ok\":true,\"fail\":false,\"why\":\"\"}"
+ },
+ {
+  "p": "Novidades",
+  "name": "sem erros de JavaScript (Floresta)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "decisões: o Spyke analisa (prós, contras, riscos, perguntas, para onde apontam os dados)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "decisões: \"Preencher a matriz\" estima só o que está vazio",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "decisões: perguntas ao Spyke ficam guardadas na decisão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "decisões: próximo passo vira tarefa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "jornal: mostra os segundos enquanto espera",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "jornal: sem resposta desiste, explica e oferece \"Tentar outra vez\" (sem ficar em ciclo)",
+  "pass": true,
+  "info": "Visão geral\nJORNAL\n\nAs notícias mais importantes do mundo e de cada país, em tempo real. Atualiza sozinho ao longo do di"
+ },
+ {
+  "p": "Novidades",
+  "name": "sem erros de JavaScript (decisões e jornal)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "script antigo: o Jornal explica que o script é antigo e leva a Definições → Script Google",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "estado do Spyke: mostra o que falta (script, notícias, e-mail) e leva a Definições → Script Google (sem partes para copiar no Spyke)",
+  "pass": true,
+  "info": "{\"bad\":4,\"guide\":true,\"noCopy\":true}"
+ },
+ {
+  "p": "Novidades",
+  "name": "estado do Spyke: depois de atualizar o script fica tudo verde (IA, script, notícias)",
+  "pass": true,
+  "info": "{\"ok\":[\"Cérebro (IA)\",\"Script Google\",\"Notícias\"],\"guide\":false}"
+ },
+ {
+  "p": "Novidades",
+  "name": "script atualizado: o Jornal mostra as notícias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "sem erros de JavaScript (estado do Spyke)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "script v10: Definições → Script Google pede a Parte 3, num ficheiro novo (sem apagar as partes 1 e 2)",
+  "pass": true,
+  "info": "[\"p3\"]"
+ },
+ {
+  "p": "Novidades",
+  "name": "script v10: o botão copia a Parte 3 (com o doGet novo e sem repetir a chave)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "sem erros de JavaScript (Parte 3)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "e-mail: abre o e-mail inteiro dentro da app (até ao fim, com anexos)",
+  "pass": true,
+  "info": "Proposta de estágio\nAna RH\nana@empresa.pt · 22/11, 07:25\npara ryan@x.pt\nOlá Ryan,\n\nSegue a proposta completa do estágio com todos os detalhes do contrato e a pa"
+ },
+ {
+  "p": "Novidades",
+  "name": "e-mail: nada abre fora da app",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "e-mail formatado: num quadro isolado, sem scripts (o código malicioso de um e-mail não corre)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "LinkedIn: nenhum botão leva ao Gmail",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "LinkedIn: \"Abrir\" abre o e-mail dentro da app (sem Responder nem Gmail)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "LinkedIn: tocar na própria notificação também abre o leitor",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "jornal: a notícia abre dentro da app com o texto completo do jornal",
+  "pass": true,
+  "info": "Jornal de Notícias · agora Notícia aberta pelo jornal TEXTO DE JORNAL DE NOTÍCIAS Primeiro parágrafo da notícia completa, com os factos principais do que aconteceu hoje em Aveiro e no resto do país. Segundo parágrafo com as declarações dos envolvidos e o contexto do que levou a esta situação inesper"
+ },
+ {
+  "p": "Novidades",
+  "name": "jornal: texto do jornal entra só como texto (sem código a correr)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "jornal: se o script não devolve uma secção, a app não fica a pedir tudo sem parar",
+  "pass": true,
+  "info": "1 pedidos"
+ },
+ {
+  "p": "Novidades",
+  "name": "jornal: jornal que bloqueia → o Spyke escreve a notícia completa com as fontes, dentro da app",
+  "pass": true,
+  "info": "Público · há 1 min Notícia de jornal fechado NOTÍCIA COMPLETA ESCRITA PELO SPYKE A PARTIR DE PESQUISA NA INTERNET O Spyke escreveu o primeiro parágrafo. Segundo parágrafo escrito. Terceiro parágrafo escrito. Fontes consultadas: publico.pt · rtp.pt Spyke, lê-me Se mesmo assim quiseres, abrir no site "
+ },
+ {
+  "p": "Novidades",
+  "name": "agenda Google pelo script: os eventos aparecem no Calendário",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "agenda Google: o Spyke consegue marcar eventos na agenda Google",
+  "pass": true,
+  "info": "{\"k\":\"k\",\"op\":\"ce\",\"t\":\"Dentista\",\"d\":\"2026-11-27\",\"h\":\"10:00\"}"
+ },
+ {
+  "p": "Novidades",
+  "name": "sem erros de JavaScript (leitores)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Novidades",
+  "name": "nome da app: Prumo no ecrã principal, no título e no manifesto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Aparelho novo: abre o ecrã da conta (criar conta ou entrar) e não o código pessoal",
+  "pass": true,
+  "info": "{\"gate\":true,\"lock\":false,\"mode\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Criar conta sem aceitar os termos: não cria (as três caixas são obrigatórias)",
+  "pass": true,
+  "info": "{\"gate\":true,\"msg\":\" Please check this box if you want to proceed.\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Criar conta: \"O que é isto?\" em cada caixa explica em linguagem simples (sem marcar a caixa)",
+  "pass": true,
+  "info": "{\"open\":true,\"t\":\"Sono, treino, alimentação, peso e a tua religião são \\\"dados sensíveis\\\" na lei (RGPD na Europa, LGPD no Brasil), por isso temos de te pedir autorização à parte. Servem só para o Pru"
+ },
+ {
+  "p": "Contas",
+  "name": "Criar conta: mostra o código de recuperação (só uma vez)",
+  "pass": true,
+  "info": "XALA-2RCW-SDY3-X6TZ"
+ },
+ {
+  "p": "Contas",
+  "name": "Depois pede o primeiro perfil, já com o nome",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfil novo: o código são 6 casinhas com teclado numérico (só números)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Só aceita números: as letras não entram e as casas acendem pelo que foi escrito",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ao 6.º número passa sozinho para a casa seguinte (Repete o código)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Códigos diferentes: avisa e não cria",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfis como na Netflix: \"Quem está a usar\", a bolinha do perfil e \"Adicionar perfil\"",
+  "pass": true,
+  "info": "{\"n\":1,\"name\":\"Ana\",\"av\":\"🌊\",\"add\":true,\"title\":\"Quem está a usar o Prumo?\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Escolher o perfil abre o mesmo ecrã de bloqueio, com o nome do perfil e \"Trocar de perfil\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã do código numa conta geral: 6 casinhas, teclado numérico e sem botão (entra sozinho)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Código errado: entra sozinho ao 6.º número, diz \"incorreto\" e limpa as casas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfil novo começa limpo: nada do Ryan (sem disciplinas, candidaturas, contactos, metas), com o nome do perfil",
+  "pass": true,
+  "info": "{\"subj\":0,\"apps\":0,\"contacts\":0,\"goals\":0,\"short\":\"Ana\",\"uni\":\"\",\"hab\":6,\"acc\":2,\"bub\":true,\"mova\":\"O meu negócio\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "A bolinha do perfil aparece na barra de cima",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
+  "pass": true,
+  "info": "20 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~foco,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+ },
+ {
+  "p": "Contas",
+  "name": "Senha errada: mensagem clara",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Noutro aparelho (computador): entra com a mesma conta e vê os mesmos dados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sincroniza nos dois sentidos em segundos (computador → telemóvel)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Segundo perfil na mesma conta: dados separados (não vê as tarefas da Ana)",
+  "pass": true,
+  "info": "{\"t\":[],\"short\":\"Bruno\",\"p\":\"Bruno\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Conta e perfis: blocos fechados com seta; abertos mostram e-mail, perfis, sincronização, senha, sair e apagar a conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: escolher um personagem do Dominus (heróis e, à medida que os derrotas, monstros e chefes) passa a ser a bolinha do perfil",
+  "pass": true,
+  "info": "{\"n\":12,\"ok\":true,\"unl\":true,\"img\":\"data:image/png;base64,\",\"bub\":true,\"modal\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: uma foto tua fica cortada em quadrado (160 px, leve) e guardada no perfil, em todos os aparelhos",
+  "pass": true,
+  "info": "[{\"jpg\":true,\"len\":1991,\"prev\":true},{\"w\":160,\"h\":160,\"jpg\":true}]"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã \"Quem está a usar\": o perfil aparece com a foto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Gerir perfis › Editar: tirar a foto volta ao emoji",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta de administração: aparece o separador \"Admin\" no fim do menu (ou em \"Mais\", se não couber)",
+  "pass": true,
+  "info": "{\"adm\":true,\"nav\":\"Admin\",\"shown\":true,\"side\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: lista as contas (e-mail, nome, perfis), último acesso, última entrada e minutos por dia, sem senhas",
+  "pass": true,
+  "info": "{\"r\":[\"ana teste ana@exemplo.pt ana bruno\"],\"contas\":true,\"ana\":true,\"hoje\":true,\"kpi\":4,\"senha\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração arrumada: \"Precisa de ti\" em cima e 6 separadores (Contas, Visitas, Vendas, Pedidos, Servidor, Ajustes), a abrir em Contas",
+  "pass": true,
+  "info": "{\"n\":6,\"sel\":\"Contas1\",\"al\":true,\"lista\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração › Visitas: visitantes por dia, funil (visitantes → cliques → registos → pagamentos), origens, países e aparelhos",
+  "pass": true,
+  "info": "{\"t\":\"Visitas\\n7 dias\\n14 dias\\n30 dias\\n0\\nvisitantes na página\\n0\\nvisitas à página\\n3\\npessoas a abrir o app\\n1\\nregistos\\n0\\npagamentos\\n0%\\nvisitantes que se registam\\n16\\n17\\n18\\n19\\n20\\n21\\n22\\n\\nvisitantes\\nregistos\\n\\nVisitantes\\n0\\nCliques em Começar\\n0\\n—\\nRegistos\\n1\\n—\\nPagamentos\\n0\\n—"
+ },
+ {
+  "p": "Contas",
+  "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
+  "pass": true,
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"44900f08b68de9b3693173cd\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-22T07:25:53.092Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+ },
+ {
+  "p": "Contas",
+  "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
+  "pass": true,
+  "info": "{\"ult\":1795332370367,\"ent\":1,\"dias\":{\"2026-11-22\":46}}"
+ },
+ {
+  "p": "Contas",
+  "name": "Tocar numa conta mostra o detalhe: perfis, criada, última entrada, último acesso e o gráfico dos 30 dias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal (aparelho que já tinha o Prumo): igual a antes, sem ecrã de conta nem bolinha",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sair da conta limpa este aparelho e volta ao ecrã de entrar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Esqueci a senha: o código de recuperação muda a senha e dá um código novo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Com a senha mudada, os outros aparelhos pedem para entrar outra vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Atalho de gastos do iPhone numa conta sem script: o link do perfil regista e o gasto entra nas finanças desse perfil",
+  "pass": true,
+  "info": "✓ 12,4 € registado no Prumo / 403"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Atalhos do iPhone mostra o link do perfil (sem pedir o script Google)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sono numa conta: o atalho do app Saúde envia para o link do perfil (tipo=sono) e a noite entra no Painel",
+  "pass": true,
+  "info": "{\"lk\":true,\"r1\":\"✓ Sono enviado para o Prumo\",\"sl\":[{\"d\":\"2026-11-22\",\"m\":450,\"src\":\"saude\"}]}"
+ },
+ {
+  "p": "Contas",
+  "name": "Jornal numa conta sem script: as notícias vêm do servidor do Prumo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta nova: pergunta o nome da IA uma vez, e a IA já está ligada sem chave nenhuma",
+  "pass": true,
+  "info": "{\"ask\":true,\"key\":\"nautilo-servidor\",\"own\":\"\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Nome da IA: \"Luna\" (é ela) — chama-se por voz pelo nome e o texto fica no feminino",
+  "pass": true,
+  "info": "{\"n\":\"Luna\",\"f\":true,\"w1\":true,\"w2\":false,\"t\":\"Cérebro da Luna · fala com a Luna\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições: o separador e os blocos usam o nome da IA (sem \"Spyke\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar (servidor do Prumo → IA grátis): responde, e o pedido leva o nome dela",
+  "pass": true,
+  "info": "Olá! Aqui é a tua IA. · {\"model\":\"openai\",\"messages\":[{\"role\":\"user\",\"content\":\"Diz olá à Luna\"}],\"temperature\":0.4,\"private\":true,\"referrer\":\"nautilo\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar: pedidos em JSON (decisões, resumos, tutor) também funcionam",
+  "pass": true,
+  "info": "{\"ok\":true,\"resposta\":\"feito\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "IA de reserva numa conta: se a ligação do aparelho falhar (\"Failed to fetch\", limite da grátis), responde pelo servidor do Prumo (api/ia?p=livre)",
+  "pass": true,
+  "info": "{\"t\":\"Olá! Aqui é a tua IA.\",\"direct\":1,\"eng\":\"reserva\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Modelos: o que respondeu bem passa à frente e o sobrecarregado fica 10 min de lado",
+  "pass": true,
+  "info": "{\"L\":[\"gemini-3.5-flash\",\"gemini-flash-lite-latest\"],\"mins\":10}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fotos sem a chave Google: mensagem clara a explicar como ligar (sem ficar a carregar)",
+  "pass": true,
+  "info": "A IA não respondeu (Ler fotos, PDFs e voz precisa da IA do Google. Liga a tua chave grátis em Definições › Spyke › Cérebro.)."
+ },
+ {
+  "p": "Contas",
+  "name": "A IA do servidor só responde a quem tem sessão numa conta",
+  "pass": true,
+  "info": "401"
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal: Definições tem \"Conta Prumo\" para guardar o Prumo numa conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ao guardar numa conta nova, o código de recuperação da senha aparece uma vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Guardar na conta: este aparelho passa a usar a conta com o mesmo código e os mesmos dados; o perfil continua o do Ryan (marcos e textos dele)",
+  "pass": true,
+  "info": "{\"on\":true,\"pub\":false,\"ps\":true,\"t\":true,\"g\":true,\"short\":\"Ryan\",\"leg\":100,\"who\":\"o Ryan (brasileiro)\",\"bub\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta sem administração: sem o separador \"Admin\" e o servidor recusa a lista de contas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Noutro aparelho: entra na conta do Ryan e aparece tudo o que estava no Prumo pessoal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Outro aparelho no modo pessoal: \"Entrar na conta neste aparelho\" leva ao ecrã de entrar, com o e-mail (os dados pessoais deste aparelho saem)",
+  "pass": true,
+  "info": "{\"has\":true,\"em\":\"ryan@exemplo.pt\",\"keys\":[],\"meta\":null,\"tasks\":0}"
+ },
+ {
+  "p": "Contas",
+  "name": "O servidor recusa criar conta sem a aceitação dos termos",
+  "pass": true,
+  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.\",\"code\":\"term"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã de entrar: Termos, Privacidade, Cookies e Acessibilidade abrem por cima (LGPD e RGPD, ANPD e CNPD) e fecham com Esc",
+  "pass": true,
+  "info": "{\"open\":true,\"t\":\"Política de Privacidade\",\"lgpd\":true,\"tabs\":6}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta que ainda não aceitou esta versão: ao entrar, pede para aceitar os termos uma vez",
+  "pass": true,
+  "info": "{\"termos\":true,\"boxes\":3}"
+ },
+ {
+  "p": "Contas",
+  "name": "Aceitar fica guardado na conta (versão e data) e segue para os perfis",
+  "pass": true,
+  "info": "{\"still\":true,\"t\":\"2026-11-21\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Depois de aceitar não volta a pedir (nem ao recarregar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Privacidade e termos: os 6 documentos, o que aceitaste e quando",
+  "pass": true,
+  "info": "{\"tab\":true,\"docs\":6,\"ac\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
+  "pass": true,
+  "info": "20261122072646-a4675e"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
+  "pass": true,
+  "info": "{\"id\":\"20261122072646-a4675e\",\"uid\":\"32b823531b76d063a72b0368\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: marcar o pedido como respondido; o que falta configurar (chave da IA, Stripe e e-mail) só para o administrador; o Gmail já não está pendente (chave do Google verificada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Contas públicas mostram as mesmas fotos dos alimentos",
+  "pass": true,
+  "info": "{\"pub\":true,\"pin\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque XSS guardado: nenhum código malicioso corre nem entra no ecrã em 189 páginas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: 10 logins falsos seguidos trancam a conta 15 min (nem a senha certa entra logo a seguir)",
+  "pass": true,
+  "info": "[401,401,401,401,401,401,401,401,429,429] certa:429"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: enxurrada de logins do mesmo endereço é travada (429 depois de 30)",
+  "pass": true,
+  "info": "[401,401,401,401,429,429]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: robô que preenche o campo escondido do registo é recusado",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Muitas contas criadas a partir daqui. Tenta mais tarde.\",\"code\":\"limite\",\"_st\":429}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: e-mail com código HTML é recusado no registo",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Esse e-mail não parece válido.\",\"code\":\"email\",\"_st\":400}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: pedidos de sites de fora (mesmo com nome parecido) são recusados",
+  "pass": true,
+  "info": "403 403"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: token forjado não entra; a conta A não lê nem grava os dados da conta B",
+  "pass": true,
+  "info": "401 404 404"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: línguas inventadas não gastam a IA (só as da lista da app)",
+  "pass": true,
+  "info": "400 400"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: a cópia de segurança não abre a quem não é o Vercel",
+  "pass": true,
+  "info": "200 403"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: o atalho de gastos continua a guardar (avisa que entra quando a app voltar) e a app não busca nada enquanto dura",
+  "pass": true,
+  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 07:57)\"},\"p1\":503}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: a conta de administração continua a usar a app, com o botão flutuante da contagem até ao fim",
+  "pass": true,
+  "info": "{\"fab\":\"Manutenção 29:56\",\"cover\":false}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: só a administração liga; ligada, as outras contas não entram nem sincronizam (503) e a administração e as contas de teste continuam",
+  "pass": true,
+  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795334252018,\"motivo\":\"manual\",\"prox\":0}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: a app mostra o ecrã \"O Prumo está em manutenção\" a tapar tudo, com a hora de regresso",
+  "pass": true,
+  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 07:57.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: desligada pela administração, o ecrã sai sozinho e as contas voltam a funcionar",
+  "pass": true,
+  "info": "true 200"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas",
+  "pass": true,
+  "info": "200 [{\"id\":\"mwril5v9-249a99bbdf\",\"t\":\"2026-11-22T07:27:32.085Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Relatório da semana: a administração gera-o (contas, planos, atividade, segurança com os ataques de hoje, falhas, cópias, saúde) e mais ninguém o vê",
+  "pass": true,
+  "info": "{\"st\":200,\"n\":1,\"contas\":{\"total\":6,\"novas\":6,\"porConfirmar\":0,\"teste\":1,\"entraramSemana\":3,\"perfis\":7},\"sec\":{\"login_falhou\":8,\"admin_negado\":2,\"conta_trancada\":1,\"login_bloqueada\":3,\"login_desconhecido\":30,\"limite\":1,\"robo_registo\":1,\"origem\":2,\"token_falso\":1,\"backup_negado\":1,\"manutencao_ligar\":1,\"manutencao_desligar\":1},\"alertas\":4,\"outro\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê",
+  "pass": true,
+  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795332487699,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":0,\"ler\":1,\"apagar\":0,\"chave\":0,\"contas\":0},\"copia\":\"2026-11-22\"},\"falhas\":[]},\"_st\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Visitas: a página conta visitas e visitantes únicos do dia (o mesmo aparelho 2 vezes = 1), origem (Google, Instagram), país e cliques; robôs e pedidos estranhos não contam; só a administração vê",
+  "pass": true,
+  "info": "{\"st\":200,\"t\":{\"visitas\":3,\"unicos\":2,\"app\":4,\"cliques\":1,\"registos\":6,\"pagamentos\":0,\"conversao\":300},\"antes\":{\"visitas\":0,\"unicos\":0,\"app\":4,\"cliques\":0,\"registos\":6,\"pagamentos\":0,\"conversao\":0},\"o\":[[\"direto\",4],[\"Google\",1],[\"Instagram\",1]],\"p\":[[\"??\",4],[\"BR\",1],[\"PT\",1]],\"bot\":{\"ok\":true,\"ok2\":false},\"mau\":{\"ok\":true,\"ok2\":false},\"outro\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Visitas: os contadores do dia juntam-se num só ficheiro (_dia.json), sem perder nem contar nada a dobrar",
+  "pass": true,
+  "info": "{\"fs1\":1,\"fs2\":[\"_dia.json\"],\"v\":3,\"v2\":4}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus: o servidor só conta o tipo de ameaça bloqueada (sem nomes nem conteúdos) e só a administração vê",
+  "pass": true,
+  "info": "{\"a3\":{\"ok\":true,\"ok2\":false,\"_st\":200},\"av\":{\"ok\":true,\"av\":{\"f_macro\":2},\"_st\":200},\"n\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › ficheiros: apanha EICAR, programas disfarçados, nomes invertidos, macros, ZIP com programas, bombas ZIP, PDFs com código, SVG com código; deixa passar CSV, PNG, XLSX e PDF limpos",
+  "pass": true,
+  "info": "[\"eicar\",\"prog\",\"prog\",\"nome\",\"macro\",\"zipprog\",\"bomba\",\"pdfjs\",\"disf\",\"svg\",null,null,null,null]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › links: bancos e lojas imitados, truque do @, programas, javascript: são perigosos; encurtados, sem cadeado, letras estrangeiras e IPs pedem cuidado; os sites verdadeiros abrem sem perguntas",
+  "pass": true,
+  "info": "[]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › na app: o ficheiro EICAR é parado antes de chegar à app (aviso e caixa limpa), o CSV limpo passa, e as caixas criadas na hora também são verificadas",
+  "pass": true,
+  "info": "{\"i1\":{\"got\":[],\"modal\":\"Teste bem-sucedido\\n\\nteste-eicar.txt\\n\\nÉ o ficheiro de teste EICAR: o antivírus está a funcionar.\\n\\nO ficheiro de teste foi apanhado e não entrou na app.\\n\\nPercebi\",\"val\":\"\"},\"i2\":[\"extrato.csv\"],\"fc\":true,\"i3\":{\"got\":[],\"modal\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › links na app: tocar num link perigoso mostra o aviso e não abre; um site verdadeiro abre logo; nos e-mails os links perigosos ficam desligados e marcados",
+  "pass": true,
+  "info": "{\"l1\":{\"nav\":[],\"modal\":\"Este link parece perigoso\\n\\nhttp://paypa1.com/login\\n\\nImita o nome \\\"paypal\\\" trocando letras por números.\\nA ligação não é segura (sem cadeado, http).\\n\\nSe veio num e-mail ou mensagem a pedir dados, senhas ou pagamentos, o mais seguro é não abrir e ir ao site escrevendo o endereço tu mesmo.\\n\\nAbrir mesmo assim\\nNão abrir\"},\"l2\":{\"nav\":[\"avBom\"],\"modal\":false},\"em\":{\"m"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › Definições: separador \"Antivírus e proteção\" com o estado, o histórico das ameaças, o botão de teste e o que fazer no telemóvel e no computador",
+  "pass": true,
+  "info": "{\"t\":\"Sistema\\nDEFINIÇÕES\\n\\nO antivírus do Prumo e tudo o que protege os teus dados.\\n\\nGeral\\nConta e perfis\\nE-mail\\nLigações\\nAtalhos do iPhone\\nSpyke (assistente)\\nImpostos\\nAntivírus e proteção\\nPrivacidade e term\",\"on\":true,\"tab\":true,\"hist\":true,\"nota\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: as falhas da app aparecem agrupadas (mensagem, onde, quantas vezes) com as novas assinaladas; só a administração vê",
+  "pass": true,
+  "info": "{\"st\":200,\"g\":{\"k\":\"TypeError: falha de teste 172150 @ teste.js:1:1\",\"n\":4,\"dias\":1,\"prim\":\"2026-11-22\",\"ult\":\"2026-11-22\",\"hoje\":4,\"novo\":true},\"n\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: um erro novo que se repete manda e-mail à administração (no máximo um a cada 6 horas)",
+  "pass": true,
+  "info": "{\"v1\":{\"alerta\":true,\"novos\":[[\"TypeError: falha de teste 172150 @ teste.js:1:1\",4]],\"tApp\":4,\"tSrv\":0},\"v2\":{\"alerta\":false,\"novos\":[[\"ReferenceError: outra 4cbb82 @ b.js:2:2\",3]],\"tApp\":3,\"tSrv\":0},\"mails\":[\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro novo a repetir-se\"]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: /api/saude?ping=1 responde 200 a um monitor externo (sem dados de ninguém) e a verificação completa continua só para o Vercel",
+  "pass": true,
+  "info": "{\"pg\":{\"st\":200,\"j\":{\"ok\":true,\"ms\":0}},\"cr\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Readwise: a chave errada é recusada; a certa traz os livros e destaques para as Leituras (página e nota nas citações), junta ao livro que já existe, ignora artigos e apagados, e não duplica",
+  "pass": true,
+  "info": "{\"mau\":\"recusada O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.\",\"rw\":{\"st\":{\"tok\":\"rwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"last\":\"2026-11-22T07:28:16.314Z\",\"livros\":1,\"dest\":2,\"at\":1795332496369},\"pz\":1,\"pq\":[[\"Tu tornas-te\",\"\",\"\",false],[\"O essencial \",\"12\",\"a melhor\",true]],\"ha\":{\"capa\":\"https://exemplo.pt/h.jpg\",\"st\":\"A ler\",\"q\":1,\"f\":\"Ebook\"},\"art\":false,\"again\":{\"nl\":0,\"nd\":0},\"painel\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Strava: o endereço de autorização leva um state assinado (um state mexido é recusado); ao voltar, a autorização fica guardada cifrada (nunca em texto) e renova-se sozinha",
+  "pass": true,
+  "info": "{\"e0\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"}},\"ini\":\"http://localhost:8808/lgmock/strava/authorize?client_id=4242&redirect_uri=http%3A%2F%2Floc\",\"falso\":400,\"cb\":200,\"cbt\":\" Strava ligado · Prumo :root{color-scheme:dark}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#65010D;color:#FCE7D1;font:16px/1.55 sy\",\"d1\":\"200 \",\"e1\":{\"pronto\":true,\"ligado\":true,\"quem\":\"Marta Teste\",\"desde\":\"2026-11"
+ },
+ {
+  "p": "Ataque",
+  "name": "Oura: sono (só a noite principal), prontidão, atividade e treinos; cada renovação guarda logo o refresh token novo (a Oura só aceita cada um uma vez)",
+  "pass": true,
+  "info": "{\"o1\":200,\"o2\":200,\"ren\":{\"strava\":1,\"oura\":2},\"sono\":1}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Strava e Oura na app: corridas, treinos, sono, prontidão e passos entram sem duplicar; nada disto chega à IA (contexto do Spyke, procura e áreas)",
+  "pass": true,
+  "info": "{\"sv\":[[8.12,2580,151]],\"svw\":[\"Volta de bicicleta\",\"Ginásio\"],\"ouS\":[[\"2026-11-21\",420]],\"ouR\":1,\"ou\":[[77,11234]],\"dup\":1,\"ia\":{\"runs\":1,\"wk\":0,\"sl\":0,\"ou\":0},\"ctxSv\":false,\"fa\":false,\"ra\":false,\"cards\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Strava: desligar avisa o Strava e apaga a autorização; sem sessão válida nada passa",
+  "pass": true,
+  "info": "{\"sa\":200,\"sair\":[\"strava\"],\"e2\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":true,\"quem\":\"\",\"desde\":\"2026-11-22T07:28:17.145Z\"}},\"outro\":401}"
+ },
+ {
+  "p": "Ataque",
+  "name": "RevenueCat: sem a senha certa é recusado; uma compra dá o plano (confirmado no RevenueCat, não no que o aviso diz); o mesmo aviso não conta duas vezes; compras de teste não contam; ao expirar o plano sai",
+  "pass": true,
+  "info": "{\"rid\":\"p_3ad3\",\"sem\":401,\"errada\":401,\"h1\":{\"_st\":200,\"ok\":true},\"p1\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":false,\"pago\":1,\"ate\":1797924499693,\"ciclo\":\"mes\",\"loja\":\"play_store\"},\"h2\":{\"_st\":200,\"ok\":true,\"repetido\":1},\"n1\":1,\"n2\":1,\"p3\":\"avancado\",\"p4\":\"completo\",\"p5\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796542099611},\"h6\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Contas como carteira: os 3 cartões das contas a sair do bolso, saldo total, cartões em dívida e reservas, contas em cartões com gráfico, últimas transações; o olho esconde os valores",
+  "pass": true,
+  "info": "{\"wl\":{\"cartoes\":[\"inter\",\"nu\",\"C6\"],\"tot\":\"€ 6128,71\",\"chips\":2,\"contas\":4,\"sp\":4,\"ult\":5,\"add\":true,\"tabela\":true},\"esc\":{\"x\":15,\"tot\":\"••••••\"}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Rede instável: sem internet a app funciona e guarda; quando a rede volta (com o servidor a falhar 3 vezes) sincroniza e a tarefa aparece no outro aparelho",
+  "pass": true,
+  "info": "{\"off\":{\"st\":\"sem ligação (guardado neste aparelho)\",\"vis\":true},\"falhas\":3,\"on\":\"sincronizada\",\"there\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Falhas do app: o servidor aceita o registo da falha (com limite) para o relatório da semana",
+  "pass": true,
+  "info": "{\"ok\":true,\"ok2\":true,\"_st\":200}"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Página inicial: título, frase principal e botões para criar conta",
+  "pass": true,
+  "info": "{\"t\":\"Prumo · A tua vida, a prumo\",\"h1\":\"A TUA VIDA, A PRUMO.\",\"cta\":6}"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Página inicial: os 3 planos com os preços certos (5,99 €, 11,99 €, 19,99 € por mês)",
+  "pass": true,
+  "info": "5,99 € | 11,99 € | 19,99 €"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Página inicial: perguntas frequentes, quem vende no rodapé (nome e NIF), 7 vídeos do app e o tutorial",
+  "pass": true,
+  "info": "{\"faq\":7,\"vids\":7,\"tut\":true}"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Planos: o anual mostra 59,90 €, 119,90 € e 199,90 € (os números rolam até ao valor)",
+  "pass": true,
+  "info": "59,90 € | 119,90 € | 199,90 €"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Spyke de exemplo: tocar numa pergunta mostra a resposta com os números da conta de demonstração",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Página inicial",
+  "name": "Dominus de exemplo: cumprir metas dá experiência, sobe atributos e passa ao nível 2 com o carimbo",
+  "pass": true,
+  "info": "{\"n\":\"Nível 2\",\"w\":\"60%\",\"disc\":\"6\",\"bate\":true}"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Um dia a prumo: arrastar o prumo muda a hora e a cena (17:40, o atalho do iPhone)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Página inicial",
+  "name": "Privacidade: o texto passa a cifra (como fica guardado no servidor)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Página inicial",
+  "name": "Dez apps: ao rolar, as apps juntam-se no selo do Prumo (10 → 1)",
+  "pass": true,
+  "info": "{\"o\":1,\"n\":\"1\"}"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Vitrine: o telemóvel carrega e mostra o vídeo da primeira área quando aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Página inicial",
+  "name": "Página inicial: sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Página inicial",
+  "name": "Premir o selo: abre a app já em \"Criar conta\" e o navegador fica marcado (o endereço principal passa a abrir a app)",
+  "pass": true,
+  "info": "http://localhost:8808/Oceanum/?app=1&conta=criar"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Estatística de visitas (sem cookies): a página avisa a visita (aparelho e origem), o clique no selo e a abertura da app; não manda nada pessoal",
+  "pass": true,
+  "info": "[{\"op\":\"visita\",\"p\":\"inicio\",\"r\":\"direto\",\"d\":\"pc\",\"l\":\"pt-PT\"},{\"op\":\"visita\",\"p\":\"cta\",\"c\":\"selo\"},{\"op\":\"visita\",\"p\":\"app\",\"r\":\"direto\",\"d\":\"pc\",\"l\":\"pt-PT\"}]"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Quem já usa a app neste navegador: a página inicial passa direto para a app",
+  "pass": true,
+  "info": "http://localhost:8808/Oceanum/?app=1"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Página inicial no telemóvel: sem deslocamento para o lado em toda a página",
+  "pass": true,
+  "info": "excede 0px"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Entrada: a primeira coisa da app manda para a página inicial só quem ainda não usa o Prumo (sem marca, sem ?app/?loja, fora da app instalada e sem dados)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Página inicial",
+  "name": "Entrada: quem chega sem nada vai para a página inicial; com a marca, ?app, a app das lojas, a app instalada ou dados guardados abre a app",
+  "pass": true,
+  "info": "[true,false,false,false,false,false]"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Service worker: a página inicial e os vídeos dela vão sempre à rede e nunca substituem a cópia da app",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Página inicial",
+  "name": "App instalada abre a app (start_url com ?app=1), não a página inicial",
+  "pass": true,
+  "info": "./?app=1#visao"
+ },
+ {
+  "p": "Página inicial",
+  "name": "Definições: \"Aprender a usar o Prumo\" abre o tutorial em vídeo",
+  "pass": true,
+  "info": "inicio/tutorial.mp4"
  }
 ]
