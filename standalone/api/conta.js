@@ -238,16 +238,17 @@ const OPS = {
   // assinar: abre o pagamento do Stripe (cartão, Apple Pay, Google Pay…) e volta ao Prumo
   async checkout(req, b) { const s = await session(req); if (!P.cobranca()) throw N.err('cobranca', 'As assinaturas ainda não estão abertas.', 503);
     const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : 'mes', loc = String(b.cur || '').toUpperCase(); if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
+    const brl = loc === 'BRL' && !!(pl.precos.BRL) && P.brasil(req);
     const e = P.efetivo(s.rec); if (e.pago) throw N.err('ja', 'Já tens uma assinatura: muda de plano na página Planos.', 409);
     if (N.limit(req, 'checkout|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
     const volta = voltaDe(req, b.volta), prod = await produto(pl.id).catch(e => { throw pagErr(e, 'produto'); }), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus;
     let desc = null; if (b.cupao) { desc = await cupaoDe(b.cupao); if (!desc) throw N.err('cupao', 'Esse código de desconto não é válido ou já expirou.', 400); if (desc.planos.length && !desc.planos.includes(pl.id)) throw N.err('cupao', 'Esse código não serve para o plano ' + pl.n + '.', 400); }
     const ses = await sesCria(Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: loc === 'BRL' ? 'pt-BR' : loc === 'EUR' ? 'pt' : 'auto',
-      // cobra-se sempre em euros (o preço do dono); quem paga noutra moeda vê o valor convertido pelo Stripe (Adaptive Pricing), com o câmbio e a taxa do lado dele
-      adaptive_pricing: { enabled: 'true' },
-      line_items: { 0: { quantity: 1, price_data: { currency: 'eur', unit_amount: pl.precos.EUR[ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: prod } } },
+      // no Brasil cobra-se em reais (preço próprio); no resto, em euros (o preço do dono) e quem paga noutra moeda vê o valor convertido pelo Stripe (Adaptive Pricing)
+      adaptive_pricing: { enabled: brl ? 'false' : 'true' },
+      line_items: { 0: { quantity: 1, price_data: { currency: brl ? 'brl' : 'eur', unit_amount: brl ? pl.precos.BRL[ciclo] : pl.precos.EUR[ciclo], recurring: { interval: ciclo === 'ano' ? 'year' : 'month' }, product: prod } } },
       branding_settings: marca(volta),
-      metadata: { uid: s.rec.uid, plano: pl.id, ciclo }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo, app: 'prumo' } } }, cus ? { customer: cus } : { customer_email: s.rec.email },
+      metadata: { uid: s.rec.uid, plano: pl.id, ciclo, cur: brl ? 'BRL' : 'EUR' }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo, cur: brl ? 'BRL' : 'EUR', app: 'prumo' } } }, cus ? { customer: cus } : { customer_email: s.rec.email },
       // com um código já aplicado no Prumo vai o desconto (o Stripe não deixa juntar com "tenho um código" na página dele)
       desc ? { discounts: { 0: { promotion_code: desc.promo } }, allow_promotion_codes: undefined } : {}), true).catch(e => { if (desc && e.stripe && /first.time|first-time|customer.*not eligible|primeira/i.test(e.message || '')) throw N.err('cupao', 'Esse código é só para quem assina pela primeira vez.', 400); throw pagErr(e, 'checkout'); });
     await change(s.eid, r => { r.pend = { cs: ses.id, at: Date.now(), modo: P.modo() }; });

@@ -99,7 +99,7 @@
   "p": "Geral",
   "name": "atualização: depois mostra \"Atualizado\" e a versão nova",
   "pass": true,
-  "info": "Atualizado · versão 9.9 · 22/11/2026 · Temas das festas: o app veste-se durante "
+  "info": "Atualizado · versão 9.9 · 22/11/2026 · No Brasil, os planos passam a ter preço p"
  },
  {
   "p": "Geral",
@@ -477,7 +477,7 @@
   "p": "Geral",
   "name": "dieta: 200 g de frango = macros certas",
   "pass": true,
-  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Almoço\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"74kj1ewbzni\",\"_c\":1795355538750,\"_u\":1795355538750,\"_s\":0}"
+  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Almoço\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"uxaso3x7kf0\",\"_c\":1795357011996,\"_u\":1795357011996,\"_s\":0}"
  },
  {
   "p": "Geral",
@@ -627,7 +627,7 @@
   "p": "Geral",
   "name": "regista com a opção e a marca escolhidas",
   "pass": true,
-  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Almoço\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"j2w4y5wcg7v\",\"_c\":1795355560219,\"_u\":1795355560219,\"_s\":0}"
+  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Almoço\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"cnzem8x80wj\",\"_c\":1795357033363,\"_u\":1795357033363,\"_s\":0}"
  },
  {
   "p": "Geral",
@@ -1551,7 +1551,7 @@
   "p": "Geral",
   "name": "sem erros de JavaScript (corpo)",
   "pass": false,
-  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8824' has been blocked by CORS policy: No 'Access-Control-Allow"
+  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8827' has been blocked by CORS policy: No 'Access-Control-Allow"
  },
  {
   "p": "Geral",
@@ -1587,7 +1587,7 @@
   "p": "Contas",
   "name": "Criar conta: mostra o código de recuperação (só uma vez)",
   "pass": true,
-  "info": "6S7F-6EY4-EBV5-96G2"
+  "info": "D79S-2TLL-CMCR-VAWU"
  },
  {
   "p": "Contas",
@@ -1659,7 +1659,7 @@
   "p": "Contas",
   "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
   "pass": true,
-  "info": "20 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~foco,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+  "info": "19 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~foco,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
  },
  {
   "p": "Contas",
@@ -1743,13 +1743,13 @@
   "p": "Contas",
   "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
   "pass": true,
-  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"7ca2d56eb0417e075af8cf9d\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-22T13:54:54.852Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"adc8f75a7c0f14c7f848c1c1\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-22T14:19:25.711Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
  },
  {
   "p": "Contas",
   "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
   "pass": true,
-  "info": "{\"ult\":1795355712094,\"ent\":1,\"dias\":{\"2026-11-22\":45}}"
+  "info": "{\"ult\":1795357182978,\"ent\":1,\"dias\":{\"2026-11-22\":46}}"
  },
  {
   "p": "Contas",
@@ -1935,13 +1935,13 @@
   "p": "Contas",
   "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
   "pass": true,
-  "info": "20261122135547-98f4f8"
+  "info": "20261122142016-2cc97b"
  },
  {
   "p": "Contas",
   "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
   "pass": true,
-  "info": "{\"id\":\"20261122135547-98f4f8\",\"uid\":\"6a521ab07d10a29042d7caf1\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+  "info": "{\"id\":\"20261122142016-2cc97b\",\"uid\":\"d9a5f21177f3933cc73fcc38\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
  },
  {
   "p": "Contas",
@@ -2085,7 +2085,7 @@
   "p": "Animes",
   "name": "Animes › Temporada: a estação atual com todos os animes e o próximo episódio",
   "pass": true,
-  "info": "{\"h\":\"Outono 2026\",\"n\":4,\"t\":\"8,0 Cyberpunk: Edgerunners 2 Série na internet · 10 episódios · 2026 Ação · Drama Cyberpunk: Edgerunners 2 Ep. 8 · ter 13:55 8,5 The Apothecary Diaries Season 3 Série · 12 episódios · 2026 Drama · Mistério Uma farmacêutica resolve mistérios no palácio. The Apothecary Di"
+  "info": "{\"h\":\"Outono 2026\",\"n\":4,\"t\":\"8,0 Cyberpunk: Edgerunners 2 Série na internet · 10 episódios · 2026 Ação · Drama Cyberpunk: Edgerunners 2 Ep. 8 · ter 14:20 8,5 The Apothecary Diaries Season 3 Série · 12 episódios · 2026 Drama · Mistério Uma farmacêutica resolve mistérios no palácio. The Apothecary Di"
  },
  {
   "p": "Animes",
@@ -2265,7 +2265,7 @@
   "p": "Ataque",
   "name": "Manutenção: o atalho de gastos continua a guardar (avisa que entra quando a app voltar) e a app não busca nada enquanto dura",
   "pass": true,
-  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 14:27)\"},\"p1\":503}"
+  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 14:51)\"},\"p1\":503}"
  },
  {
   "p": "Ataque",
@@ -2277,13 +2277,13 @@
   "p": "Ataque",
   "name": "Manutenção: só a administração liga; ligada, as outras contas não entram nem sincronizam (503) e a administração e as contas de teste continuam",
   "pass": true,
-  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795357628843,\"motivo\":\"manual\",\"prox\":0}}"
+  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795359098335,\"motivo\":\"manual\",\"prox\":0}}"
  },
  {
   "p": "Ataque",
   "name": "Manutenção: a app mostra o ecrã \"O Prumo está em manutenção\" a tapar tudo, com a hora de regresso",
   "pass": true,
-  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 14:27.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
+  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 14:51.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
  },
  {
   "p": "Ataque",
@@ -2295,7 +2295,7 @@
   "p": "Ataque",
   "name": "Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas",
   "pass": true,
-  "info": "200 [{\"id\":\"mwrwi7jk-83b9cd3c6a\",\"t\":\"2026-11-22T13:57:08.912Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
+  "info": "200 [{\"id\":\"mwrxdpf6-3f2dbb78a0\",\"t\":\"2026-11-22T14:21:38.418Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
  },
  {
   "p": "Ataque",
@@ -2307,7 +2307,7 @@
   "p": "Ataque",
   "name": "Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê",
   "pass": true,
-  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":0,\"ultima\":{\"t\":1795355864706,\"ok\":true,\"ms\":0,\"passos\":{\"escrever\":0,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":0},\"copia\":\"2026-11-22\"},\"falhas\":[]},\"_st\":200}"
+  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795357334186,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":1,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":0},\"copia\":\"2026-11-22\"},\"falhas\":[]},\"_st\":200}"
  },
  {
   "p": "Ataque",
@@ -2361,13 +2361,13 @@
   "p": "Ataque",
   "name": "Erros e quedas: as falhas da app aparecem agrupadas (mensagem, onde, quantas vezes) com as novas assinaladas; só a administração vê",
   "pass": true,
-  "info": "{\"st\":200,\"g\":{\"k\":\"TypeError: falha de teste 46275a @ teste.js:1:1\",\"n\":4,\"dias\":1,\"prim\":\"2026-11-22\",\"ult\":\"2026-11-22\",\"hoje\":4,\"novo\":true},\"n\":403}"
+  "info": "{\"st\":200,\"g\":{\"k\":\"TypeError: falha de teste 7b5e7a @ teste.js:1:1\",\"n\":4,\"dias\":1,\"prim\":\"2026-11-22\",\"ult\":\"2026-11-22\",\"hoje\":4,\"novo\":true},\"n\":403}"
  },
  {
   "p": "Ataque",
   "name": "Erros e quedas: um erro novo que se repete manda e-mail à administração (no máximo um a cada 6 horas)",
   "pass": true,
-  "info": "{\"v1\":{\"alerta\":true,\"novos\":[[\"TypeError: falha de teste 46275a @ teste.js:1:1\",4]],\"tApp\":4,\"tSrv\":0},\"v2\":{\"alerta\":false,\"novos\":[[\"ReferenceError: outra 36b5a3 @ b.js:2:2\",3]],\"tApp\":3,\"tSrv\":0},\"mails\":[\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro novo a repetir-se\"]}"
+  "info": "{\"v1\":{\"alerta\":true,\"novos\":[[\"TypeError: falha de teste 7b5e7a @ teste.js:1:1\",4]],\"tApp\":4,\"tSrv\":0},\"v2\":{\"alerta\":false,\"novos\":[[\"ReferenceError: outra f64dbd @ b.js:2:2\",3]],\"tApp\":3,\"tSrv\":0},\"mails\":[\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro novo a repetir-se\"]}"
  },
  {
   "p": "Ataque",
@@ -2379,13 +2379,13 @@
   "p": "Ataque",
   "name": "Readwise: a chave errada é recusada; a certa traz os livros e destaques para as Leituras (página e nota nas citações), junta ao livro que já existe, ignora artigos e apagados, e não duplica",
   "pass": true,
-  "info": "{\"mau\":\"recusada O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.\",\"rw\":{\"st\":{\"tok\":\"rwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"last\":\"2026-11-22T13:57:53.219Z\",\"livros\":1,\"dest\":2,\"at\":1795355873280},\"pz\":1,\"pq\":[[\"Tu tornas-te\",\"\",\"\",false],[\"O essencial \",\"12\",\"a melhor\",true]],\"ha\":{\"capa\":\"https://exemplo.pt/h.jpg\",\"st\":\"A ler\",\"q\":1,\"f\":\"Ebook\"},\"art\":false,\"again\":{\"nl\":0,\"nd\":0},\"painel\":true}}"
+  "info": "{\"mau\":\"recusada O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.\",\"rw\":{\"st\":{\"tok\":\"rwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"last\":\"2026-11-22T14:22:22.751Z\",\"livros\":1,\"dest\":2,\"at\":1795357342794},\"pz\":1,\"pq\":[[\"Tu tornas-te\",\"\",\"\",false],[\"O essencial \",\"12\",\"a melhor\",true]],\"ha\":{\"capa\":\"https://exemplo.pt/h.jpg\",\"st\":\"A ler\",\"q\":1,\"f\":\"Ebook\"},\"art\":false,\"again\":{\"nl\":0,\"nd\":0},\"painel\":true}}"
  },
  {
   "p": "Ataque",
   "name": "Strava: o endereço de autorização leva um state assinado (um state mexido é recusado); ao voltar, a autorização fica guardada cifrada (nunca em texto) e renova-se sozinha",
   "pass": true,
-  "info": "{\"e0\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"}},\"ini\":\"http://localhost:8824/lgmock/strava/authorize?client_id=4242&redirect_uri=http%3A%2F%2Floc\",\"falso\":400,\"cb\":200,\"cbt\":\" Strava ligado · Prumo :root{color-scheme:dark}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#65010D;color:#FCE7D1;font:16px/1.55 sy\",\"d1\":\"200 \",\"e1\":{\"pronto\":true,\"ligado\":true,\"quem\":\"Marta Teste\",\"desde\":\"2026-11"
+  "info": "{\"e0\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"}},\"ini\":\"http://localhost:8827/lgmock/strava/authorize?client_id=4242&redirect_uri=http%3A%2F%2Floc\",\"falso\":400,\"cb\":200,\"cbt\":\" Strava ligado · Prumo :root{color-scheme:dark}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#65010D;color:#FCE7D1;font:16px/1.55 sy\",\"d1\":\"200 \",\"e1\":{\"pronto\":true,\"ligado\":true,\"quem\":\"Marta Teste\",\"desde\":\"2026-11"
  },
  {
   "p": "Ataque",
@@ -2403,13 +2403,13 @@
   "p": "Ataque",
   "name": "Strava: desligar avisa o Strava e apaga a autorização; sem sessão válida nada passa",
   "pass": true,
-  "info": "{\"sa\":200,\"sair\":[\"strava\"],\"e2\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":true,\"quem\":\"\",\"desde\":\"2026-11-22T13:57:54.048Z\"}},\"outro\":401}"
+  "info": "{\"sa\":200,\"sair\":[\"strava\"],\"e2\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":true,\"quem\":\"\",\"desde\":\"2026-11-22T14:22:23.610Z\"}},\"outro\":401}"
  },
  {
   "p": "Ataque",
   "name": "RevenueCat: sem a senha certa é recusado; uma compra dá o plano (confirmado no RevenueCat, não no que o aviso diz); o mesmo aviso não conta duas vezes; compras de teste não contam; ao expirar o plano sai",
   "pass": true,
-  "info": "{\"rid\":\"p_ac37\",\"sem\":401,\"errada\":401,\"h1\":{\"_st\":200,\"ok\":true},\"p1\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":false,\"pago\":1,\"ate\":1797947876619,\"ciclo\":\"mes\",\"loja\":\"play_store\"},\"h2\":{\"_st\":200,\"ok\":true,\"repetido\":1},\"n1\":1,\"n2\":1,\"p3\":\"avancado\",\"p4\":\"completo\",\"p5\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796565476516},\"h6\":200}"
+  "info": "{\"rid\":\"p_055d\",\"sem\":401,\"errada\":401,\"h1\":{\"_st\":200,\"ok\":true},\"p1\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":false,\"pago\":1,\"ate\":1797949346297,\"ciclo\":\"mes\",\"loja\":\"play_store\"},\"h2\":{\"_st\":200,\"ok\":true,\"repetido\":1},\"n1\":1,\"n2\":1,\"p3\":\"avancado\",\"p4\":\"completo\",\"p5\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796566946193},\"h6\":200}"
  },
  {
   "p": "Ataque",
@@ -2421,7 +2421,7 @@
   "p": "Ataque",
   "name": "Atividade em curso: o treino aparece numa barra no topo (rotina, exercício de agora, descanso a contar, séries por exercício, kcal); tocar abre o treino; o fim do descanso fica marcado para avisar com a app fechada; o bloco de foco também aparece e a barra sai quando acaba",
   "pass": true,
-  "info": "{\"t1\":{\"on\":true,\"t\":\"0:59 Upper Completo Agachamento com barra +0 kcal\",\"segs\":[\"m\",\"\"],\"pv\":[{\"at\":1795355943079,\"t\":\"Descanso acabou\",\"b\":\"Bora para a próxima série.\",\"u\":\"#treino\",\"g\":\"descanso\"}],\"nome\":\"Agachamento com barra\"},\"t2\":{\"ecra\":true,\"barra\":false},\"t3\":{\"foco\":\"5:00 Bloco de foco · Estudo Resumo do capítulo 3 1/2\",\"fim\":true,\"pv\":[]}}"
+  "info": "{\"t1\":{\"on\":true,\"t\":\"0:59 Upper Completo Agachamento com barra +0 kcal\",\"segs\":[\"m\",\"\"],\"pv\":[{\"at\":1795357412743,\"t\":\"Descanso acabou\",\"b\":\"Bora para a próxima série.\",\"u\":\"#treino\",\"g\":\"descanso\"}],\"nome\":\"Agachamento com barra\"},\"t2\":{\"ecra\":true,\"barra\":false},\"t3\":{\"foco\":\"5:00 Bloco de foco · Estudo Resumo do capítulo 3 1/2\",\"fim\":true,\"pv\":[]}}"
  },
  {
   "p": "Ataque",
@@ -2451,13 +2451,13 @@
   "p": "Ataque",
   "name": "Clãs: criar (nome verificado), entrar com o código, conversa do clã só para membros, lista de conversas, denunciar (a administração vê e apaga a mensagem) e bloquear (deixa de poder falar e de pedir amizade)",
   "pass": true,
-  "info": "{\"cl\":200,\"cod\":\"4Z5QXG\",\"feio\":400,\"ent\":200,\"mc\":true,\"fora\":403,\"lc\":1,\"den\":200,\"dn0\":403,\"dl\":1,\"apg\":200,\"lc2\":0,\"dmB\":403,\"pedB\":403}"
+  "info": "{\"cl\":200,\"cod\":\"497XQH\",\"feio\":400,\"ent\":200,\"mc\":true,\"fora\":403,\"lc\":1,\"den\":200,\"dn0\":403,\"dl\":1,\"apg\":200,\"lc2\":0,\"dmB\":403,\"pedB\":403}"
  },
  {
   "p": "Ataque",
   "name": "Pursuit: antes das 20h não se marca; às 20h saem pistas do anime (sem dizer o nome); um Hunter por pessoa e por dia; às 22h fecha e quem acertou ganha 100, 90… pela ordem; quem errou não ganha; ranking de animes com os pontos",
   "pass": true,
-  "info": "{\"h0\":\"espera\",\"m0\":400,\"f1\":\"aberto\",\"pistas\":[\"É uma série com 64 episódios e estreou na primavera de 2009.\",\"Géneros: Action, Adventure, Drama; temas: Military, Shounen.\",\"É baseado num mangá.\",\"O estúdio de animação é Bones.\",\"O título (em japonês romanizado) começa por \\\"K\\\" e tem 3 palavras.\"],\"full\":\"7010\",\"okB\":200,\"okC\":200,\"errA\":200,\"dup\":409,\"f2\":\"fechado\",\"res\":[{\"id\":\"0654700e54809fee726c0cfa-9db75303dd78\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795355899920,\"pts\":100},{\"id\":\"a972bd9b8d0f4ccd10ab41e5-28fe92897291\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795355899955,\"pts\":90}],\"rk\":[{\"id\":\"0654700e54809fee726c0cfa-9db75303dd78\",\"nome\":\"A\",\"p\":100,\"user\":\"\",\"av\":0,\"pos\":1,\"eu\":false},{\"id\":"
+  "info": "{\"h0\":\"espera\",\"m0\":400,\"f1\":\"aberto\",\"pistas\":[\"É uma série com 64 episódios e estreou na primavera de 2009.\",\"Géneros: Action, Adventure, Drama; temas: Military, Shounen.\",\"É baseado num mangá.\",\"O estúdio de animação é Bones.\",\"O título (em japonês romanizado) começa por \\\"K\\\" e tem 3 palavras.\"],\"full\":\"7012\",\"okB\":200,\"okC\":200,\"errA\":200,\"dup\":409,\"f2\":\"fechado\",\"res\":[{\"id\":\"a4fc9815f448dc8d15719b32-cc85a7d5f782\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795357369337,\"pts\":100},{\"id\":\"81859b2112aff26c38fcdcaa-2d42adfaa4f5\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795357369371,\"pts\":90}],\"rk\":[{\"id\":\"a4fc9815f448dc8d15719b32-cc85a7d5f782\",\"nome\":\"A\",\"p\":100,\"user\":\"\",\"av\":0,\"pos\":1,\"eu\":false},{\"id\":"
  },
  {
   "p": "Ataque",
@@ -2469,7 +2469,7 @@
   "p": "Ataque",
   "name": "Parceria: sem nome escrito volta a PHANTOM",
   "pass": true,
-  "info": "{\"ok\":true,\"parceiro\":{\"nome\":\"PHANTOM\",\"site\":\"\",\"at\":1795355909776},\"_st\":200}"
+  "info": "{\"ok\":true,\"parceiro\":{\"nome\":\"PHANTOM\",\"site\":\"\",\"at\":1795357379303},\"_st\":200}"
  },
  {
   "p": "Ataque",
@@ -2493,13 +2493,13 @@
   "p": "Ataque",
   "name": "Perfil dos animes: o @ escolhe-se uma vez e não muda, é único e há nomes reservados; foto e fundo próprios (verificados pela IA) e servidos a quem os vê",
   "pass": true,
-  "info": "{\"u1\":{\"ok\":true,\"user\":\"ana_71dcf4\",\"_st\":200},\"u2\":409,\"u3\":409,\"u4\":400,\"u5\":400,\"im\":200,\"fu\":200,\"mau\":400,\"eu\":{\"id\":\"bd9442d1e172bdb3a102a9dd-8cf0c3ac8451\",\"nome\":\"A\",\"cod\":\"BZ872B\",\"user\":\"ana_71dcf4\",\"av\":1795355928884,\"fu\":1795355928888,\"pts\":0,\"mudo\":0},\"g\":200}"
+  "info": "{\"u1\":{\"ok\":true,\"user\":\"ana_19f1c3\",\"_st\":200},\"u2\":409,\"u3\":409,\"u4\":400,\"u5\":400,\"im\":200,\"fu\":200,\"mau\":400,\"eu\":{\"id\":\"01f73ea989999e8baed8e010-77e4f8d4b5e6\",\"nome\":\"A\",\"cod\":\"UMBAK5\",\"user\":\"ana_19f1c3\",\"av\":1795357398767,\"fu\":1795357398773,\"pts\":0,\"mudo\":0},\"g\":200}"
  },
  {
   "p": "Ataque",
   "name": "Comentários nos animes: a IA tapa os spoilers (só vê quem quiser) e barra ofensas; gostos nos comentários e no anime; com o @ e a foto; denunciar e a administração apaga; ninguém apaga o comentário dos outros",
   "pass": true,
-  "info": "{\"c1\":{\"id\":\"d0c0714c1c09\",\"de\":\"bd9442d1e172bdb3a102a9dd-8cf0c3ac8451\",\"nome\":\"A\",\"user\":\"ana_71dcf4\",\"av\":1795355928884,\"t\":\"A animação é incrível, um dos melhores de sempre.\",\"at\":1795355928896,\"sp\":false,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c2\":{\"id\":\"14392427ea1b\",\"de\":\"0b9fa382525de66f8d4cf9ce-2b357a524c53\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"t\":\"Não acredito que o Hughes morre no episódio 10\",\"at\":1795355928901,\"sp\":true,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c3\":true,\"gc\":1,\"ga\":{\"ok\":true,\"gostos\":1,\"gostei\":true,\"_st\":200},\"ga2\":{\"ok\":true,\"gostos\":2,\"gostei\":true,\"_st\":200},\"n\":2,\"dn\":20"
+  "info": "{\"c1\":{\"id\":\"7f235916faa5\",\"de\":\"01f73ea989999e8baed8e010-77e4f8d4b5e6\",\"nome\":\"A\",\"user\":\"ana_19f1c3\",\"av\":1795357398767,\"t\":\"A animação é incrível, um dos melhores de sempre.\",\"at\":1795357398785,\"sp\":false,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c2\":{\"id\":\"b5ae74497bd2\",\"de\":\"440fb0eb7be7692c7080ce48-73f3b084798c\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"t\":\"Não acredito que o Hughes morre no episódio 10\",\"at\":1795357398793,\"sp\":true,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c3\":true,\"gc\":1,\"ga\":{\"ok\":true,\"gostos\":1,\"gostei\":true,\"_st\":200},\"ga2\":{\"ok\":true,\"gostos\":2,\"gostei\":true,\"_st\":200},\"n\":2,\"dn\":20"
  },
  {
   "p": "Ataque",
@@ -2511,13 +2511,13 @@
   "p": "Ataque",
   "name": "Na app: no menu do perfil arrasta-se para o perfil dos animes (com o @); a primeira vez nos Animes escolhe-se Competição e/ou Diversão e o início mostra o que interessa; a Comunidade com as 5 opções e as indicações",
   "pass": true,
-  "info": "{\"ui\":{\"cards\":2,\"ap\":\"Prumo & PHANTOM A @ana_71dcf4 0 pontos 0 clãs Editar perfil dos animes\",\"bv\":true,\"dq\":true,\"cu\":true},\"ind\":true}"
+  "info": "{\"ui\":{\"cards\":2,\"ap\":\"Prumo & PHANTOM A @ana_19f1c3 0 pontos 0 clãs Editar perfil dos animes\",\"bv\":true,\"dq\":true,\"cu\":true},\"ind\":true}"
  },
  {
   "p": "Ataque",
   "name": "Temas das festas: cada festa vale a época toda (Natal de 1/12 a 6/1, Halloween de 15/10 a 2/11, Páscoa nas 2 semanas antes até à segunda-feira, Carnaval, junho, passagem de ano) e sai quando acaba; Natal com luzes no topo, neve que acumula e o limpa-neves; nas Definições liga-se, desliga-se e vê-se cada tema",
   "pass": true,
-  "info": "{\"datas\":{\"natal1\":\"natal\",\"natal\":\"natal\",\"reis\":\"natal\",\"fimNatal\":\"\",\"anonovo\":\"anonovo\",\"hall\":\"halloween\",\"finados\":\"halloween\",\"hoje\":\"\",\"pascoa\":\"pascoa\",\"pascoaFim\":\"pascoa\",\"depoisPascoa\":\"\",\"carnaval\":\"carnaval\",\"junho\":\"junho\"},\"s1\":{\"EP\":\"natal\",\"neve\":1.4887363061019059,\"plow\":true,\"nplow\":1,\"P\":70,\"cv\":true,\"gar\":true},\"top\":true,\"attr\":\"natal\",\"pn\":true}"
+  "info": "{\"datas\":{\"natal1\":\"natal\",\"natal\":\"natal\",\"reis\":\"natal\",\"fimNatal\":\"\",\"anonovo\":\"anonovo\",\"hall\":\"halloween\",\"finados\":\"halloween\",\"hoje\":\"\",\"pascoa\":\"pascoa\",\"pascoaFim\":\"pascoa\",\"depoisPascoa\":\"\",\"carnaval\":\"carnaval\",\"junho\":\"junho\"},\"s1\":{\"EP\":\"natal\",\"neve\":1.2613746423127667,\"plow\":true,\"nplow\":1,\"P\":70,\"cv\":true,\"gar\":true},\"top\":true,\"attr\":\"natal\",\"pn\":true}"
  },
  {
   "p": "Ataque",
