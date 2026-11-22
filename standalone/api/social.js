@@ -1,9 +1,9 @@
-// PRUMO · Clãs, amigos e conversas + ranking de animes e o jogo Hunter (função do Vercel, v3.73).
+// PRUMO · Clãs, amigos e conversas + ranking de animes e o jogo Pursuit (função do Vercel, v3.73).
 // Cada pessoa é um perfil (conta + perfil). Amigos por código (PR-XXXXXX); clãs com código de convite; conversas no clã e a dois (só entre amigos).
 // Antes de aparecer, cada mensagem passa pelas regras (sem links, contactos pessoais nem palavras ofensivas) e pela IA, que barra insultos,
 // assédio, ódio, ameaças, conteúdo sexual, burlas e pedidos de dados pessoais. Quem tiver 3 mensagens barradas numa hora fica 1 hora sem escrever.
 // Denunciar e bloquear; a administração vê as denúncias. Tudo cifrado no armazenamento (AES-256-GCM).
-// Ranking de animes: pontos ganhos nos jogos. HUNTER: todos os dias às 20h (hora de Lisboa) há pistas de um anime ao calhas; marca-se "Hunter"
+// Ranking de animes: pontos ganhos nos jogos. PURSUIT: todos os dias às 20h (hora de Lisboa) há pistas de um anime ao calhas; marca-se "Pursuit"
 // na página do anime que se acha que é (uma vez por dia); às 22h fecha e quem acertou ganha pontos pela ordem (1.º 100, 2.º 90… mínimo 10).
 'use strict';
 const N = require('./_nuvem');
@@ -66,7 +66,7 @@ const claPub = c => ({ id: c.id, nome: c.nome, desc: c.desc, cor: c.cor, cod: c.
 /* ---------- ranking de animes ---------- */
 const PTS = 'so/pts.json';
 const somaPts = async (L) => mudar(PTS, {}, T => { L.forEach(([id, nome, p]) => { const o = T[id] = T[id] || { p: 0, nome }; o.p += p; o.nome = nome || o.nome; }); });
-/* ---------- Hunter ---------- */
+/* ---------- Pursuit ---------- */
 const lisboa = (t = Date.now()) => { const p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(t)).forEach(x => { p[x.type] = x.value; }); return { d: `${p.year}-${p.month}-${p.day}`, min: +p.hour * 60 + +p.minute }; };
 const H_ABRE = () => +(process.env.NAUTILO_HUNTER_ABRE || 1200), H_FECHA = () => +(process.env.NAUTILO_HUNTER_FECHA || 1320); // minutos depois da meia-noite (Lisboa): 20:00 e 22:00
 const jk = async p => { for (let i = 0; i < 3; i++) { try { const r = await fetch(JK() + p, { headers: { accept: 'application/json', 'user-agent': 'Prumo/1.0' }, signal: AbortSignal.timeout(10000) }); if (r.status === 429) { await sleep(1200); continue; } if (!r.ok) throw new Error('Jikan ' + r.status); return await r.json(); } catch (e) { if (i === 2) throw e; await sleep(700); } } };
@@ -80,24 +80,24 @@ const pistasDe = a => { const P0 = [], ger = (a.genres || []).map(g => g.name).s
   return P0; };
 // o anime do dia: um dos 200 mais populares, escolhido pela data (o mesmo para todos) sem repetir nos últimos 60 dias
 const escolher = async d => { let top = (await ler('so/htop', null)).v;
-  if (!top || Date.now() - top.at > 7 * 864e5 || !top.L.length) { const L = []; for (let pg = 1; pg <= 8; pg++) { try { const j = await jk('top/anime?filter=bypopularity&page=' + pg); (j.data || []).forEach(x => { if (x && x.mal_id && x.rating && !/Rx|R\+/.test(x.rating)) L.push(x.mal_id); }); } catch (e) { break; } await sleep(450); } if (L.length) { top = { L, at: Date.now() }; await gravar('so/htop', top); } }
-  if (!top || !top.L.length) throw N.err('hunter', 'O MyAnimeList não respondeu. O Hunter de hoje sai daqui a pouco.', 502);
+  if (!top || Date.now() - top.at > 7 * 864e5 || !top.L.length) { const L = []; for (let pg = 1; pg <= 8; pg++) { try { const j = await jk('top/anime?filter=bypopularity&page=' + pg); if (!(j.data || []).length) break; (j.data || []).forEach(x => { if (x && x.mal_id && x.rating && !/Rx|R\+/.test(x.rating)) L.push(x.mal_id); }); } catch (e) { break; } await sleep(450); } if (L.length) { top = { L, at: Date.now() }; await gravar('so/htop', top); } }
+  if (!top || !top.L.length) throw N.err('hunter', 'O MyAnimeList não respondeu. O Pursuit de hoje sai daqui a pouco.', 502);
   const hist = (await ler('so/hhist', { L: [] })).v.L || [], h = N.crypto.createHmac('sha256', await N.master()).update('hunter:' + d).digest(); let i = h.readUInt32BE(0) % top.L.length, n = 0;
   while (hist.includes(top.L[i]) && n++ < top.L.length) i = (i + 1) % top.L.length;
   return top.L[i]; };
 const desafio = async () => { const L = lisboa(), d = L.d, P0 = 'so/h/' + d; let { v } = await ler(P0, null);
-  if (!v && L.min >= H_ABRE()) { const mal = await escolher(d), a = ((await jk('anime/' + mal + '/full')) || {}).data || {}; if (!a.mal_id) throw N.err('hunter', 'O Hunter de hoje sai daqui a pouco.', 502);
+  if (!v && L.min >= H_ABRE()) { const mal = await escolher(d), a = ((await jk('anime/' + mal + '/full')) || {}).data || {}; if (!a.mal_id) throw N.err('hunter', 'O Pursuit de hoje sai daqui a pouco.', 502);
     v = { dia: d, mal: String(a.mal_id), titulo: a.title_english || a.title, img: ((a.images || {}).webp || {}).large_image_url || ((a.images || {}).jpg || {}).image_url || '', pistas: pistasDe(a), fechado: false };
     try { await gravar(P0, v, { overwrite: false }); await mudar('so/hhist', { L: [] }, o => { o.L = (o.L || []).concat(+v.mal).slice(-60); }); } catch (e) { v = (await ler(P0, v)).v; } }
   if (v && !v.fechado && L.min >= H_FECHA()) v = await fechar(P0, v);
   return { L, v }; };
-const fechar = async (P0, v0) => { const L = await N.store().list(P0 + '/g/'), G = [];
+const fechar = async (P0, v0) => { const L = await N.store().list('so/hg/' + v0.dia + '/'), G = [];
   for (const b of L) { const g = (await ler(b.pathname, null)).v; if (g) G.push(g); }
   const certos = G.filter(g => g.mal === v0.mal).sort((a, b) => a.at - b.at), res = certos.map((g, i) => ({ id: g.id, nome: g.nome, at: g.at, pts: Math.max(10, 100 - 10 * i) }));
   let ganhei = false; const v = await mudar(P0, v0, o => { if (o.fechado) return false; o.fechado = true; o.res = res.slice(0, 100); o.total = G.length; ganhei = true; });
   if (ganhei && res.length) await somaPts(res.map(r => [r.id, r.nome, r.pts])); return v; };
 const hunterVer = async (eu) => { const { L, v } = await desafio(), abre = H_ABRE(), fecha = H_FECHA(), m = L.min;
-  const fase = !v ? 'espera' : v.fechado ? 'fechado' : 'aberto', meu = v && eu ? (await ler('so/h/' + v.dia + '/g/' + eu, null)).v : null;
+  const fase = !v ? 'espera' : v.fechado ? 'fechado' : 'aberto', meu = v && eu ? (await ler('so/hg/' + v.dia + '/' + eu, null)).v : null;
   const visiveis = !v ? [] : v.fechado ? v.pistas : v.pistas.slice(0, Math.min(v.pistas.length, 3 + (m >= abre + 40 ? 1 : 0) + (m >= abre + 80 ? 1 : 0)));
   const ontem = fase === 'espera' ? (await ler('so/h/' + lisboa(Date.now() - 864e5).d, null)).v : null;
   const min0 = Math.floor(Date.now() / 6e4) * 6e4, abreAt = min0 - (m - abre) * 6e4, fechaAt = min0 - (m - fecha) * 6e4;
@@ -157,7 +157,7 @@ const OPS = {
     const t = String(b.texto || '').replace(/\s+$/g, '').slice(0, 1000).trim(); if (!t) throw N.err('msg', 'Escreve alguma coisa.', 400);
     if (N.limit(req, 'msg|' + c.eu, 30, 60e3)) throw N.err('limite', 'Estás a escrever depressa demais. Espera um pouco.', 429);
     const m = await moderar(t); N.count('chat:' + (m.ok ? 'ok' : 'barrada'));
-    if (!m.ok) { if (N.limit(req, 'barr|' + c.eu, 3, 3600e3)) await mudar(P(c.eu), null, p => { p.mudo = Date.now() + 36e5; }); return { barrada: true, motivo: m.motivo }; }
+    if (!m.ok) { let mudo = 0; await mudar(P(c.eu), null, p => { const h = Date.now(); p.barr = (p.barr || []).filter(t => h - t < 36e5).concat(h); if (p.barr.length >= 3) { p.mudo = h + 36e5; p.barr = []; mudo = p.mudo; } }); return { barrada: true, motivo: m.motivo, mudo }; }
     const msg = { id: N.crypto.randomBytes(6).toString('hex'), de: c.eu, nome: v.nome, t, at: Date.now() };
     await mudar('so/m/' + cv.k + '/' + dia(), [], L => { L.push(msg); if (L.length > 2000) L.splice(0, L.length - 2000); });
     await gravar('so/u/' + cv.k, { at: msg.at, de: c.eu, nome: v.nome, t: t.slice(0, 80) }).catch(() => { });
@@ -173,13 +173,13 @@ const OPS = {
   async rankAnime(c, b) { const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).map(([id, o]) => ({ id, nome: o.nome, p: o.p })).sort((a, b2) => b2.p - a.p); const i = L.findIndex(x => x.id === c.eu);
     return { lista: L.slice(0, 100).map((x, k) => Object.assign(x, { pos: k + 1, eu: x.id === c.eu })), eu: i >= 0 ? Object.assign({ pos: i + 1 }, L[i]) : null, total: L.length }; },
   async hunter(c, b) { return { hunter: await hunterVer(c.eu) }; },
-  async hunterMarcar(c, b) { const { L, v } = await desafio(); if (!v || v.fechado) throw N.err('hunter', v ? 'O Hunter de hoje já fechou.' : 'O Hunter de hoje ainda não começou (20h).', 400);
+  async hunterMarcar(c, b) { const { L, v } = await desafio(); if (!v || v.fechado) throw N.err('hunter', v ? 'O Pursuit de hoje já fechou.' : 'O Pursuit de hoje ainda não começou (20h).', 400);
     const mal = String(b.mal || '').replace(/\D/g, ''); if (!mal) throw N.err('hunter', 'Anime desconhecido.', 400); const v0 = await perfil(c.eu, c.nome);
-    try { await gravar('so/h/' + v.dia + '/g/' + c.eu, { id: c.eu, nome: v0.nome, mal, titulo: String(b.titulo || '').slice(0, 120), at: Date.now() }, { overwrite: false }); } catch (e) { throw N.err('hunter', 'Já marcaste o teu Hunter de hoje.', 409); }
+    try { await gravar('so/hg/' + v.dia + '/' + c.eu, { id: c.eu, nome: v0.nome, mal, titulo: String(b.titulo || '').slice(0, 120), at: Date.now() }, { overwrite: false }); } catch (e) { if (e.code === 'exists' || e.status === 409 || /exist|precondition/i.test(e.message || '')) throw N.err('hunter', 'Já marcaste o teu Pursuit de hoje.', 409); throw e; }
     return { ok2: true, hunter: await hunterVer(c.eu) }; } };
-const PARC = 'cfg/parceiro.json';
-const parceiro = async () => { try { const g = await N.store().get(PARC); return g ? JSON.parse(g.buf.toString()) : { nome: '' }; } catch (e) { return { nome: '' }; } };
-OPS.adminParceiro = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const nome = String(b.nome || '').replace(/\s+/g, ' ').trim().slice(0, 30), site = String(b.site || '').trim().slice(0, 200);
+const PARC = 'cfg/parceiro.json', PARC0 = 'PHANTOM'; // v3.73: a empresa parceira dos Animes
+const parceiro = async () => { try { const g = await N.store().get(PARC); return g ? JSON.parse(g.buf.toString()) : { nome: PARC0 }; } catch (e) { return { nome: PARC0 }; } };
+OPS.adminParceiro = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const nome = String(b.nome || '').replace(/\s+/g, ' ').trim().slice(0, 30) || PARC0, site = String(b.site || '').trim().slice(0, 200);
   if (site && !/^https:\/\/[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(site)) throw N.err('admin', 'O site tem de começar por https://', 400);
   const o = { nome, site, at: Date.now() }; await N.store().put(PARC, Buffer.from(JSON.stringify(o))); return { parceiro: o }; };
 module.exports = N.handler(async (req, res) => {

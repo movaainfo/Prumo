@@ -54,6 +54,8 @@ const YTMOCK = { calls: [] }; process.env.YT_FEED = 'http://localhost:' + PORT +
 const WMOCK = { ev: [], sum: {}, calls: [] }; process.env.ESPN_SITE = 'http://localhost:' + PORT + '/espnmock/'; process.env.ESPN_VIVO_MS = '1';
 // MyAnimeList (Jikan) simulado para o servidor (api/anime)
 const JKMOCK = { calls: [], down: false }; process.env.JIKAN_BASE = 'http://localhost:' + PORT + '/jkmock/';
+// v3.73: moderação das conversas simulada (a IA barra "idiota completo")
+const MODM = { n: 0 }; process.env.NAUTILO_MOD_MOCK = 'http://localhost:' + PORT + '/modmock';
 const BKM = { reset() { this.auth = []; this.jwt = []; this.ebAuth = []; this.del = []; this.txp = []; this.ct = []; this.pgDel = []; this.cuid = ''; },
   W_ITEM: 'aaaaaaaa-2222-4b2b-9c3d-123456789abc', X_ITEM: 'bbbbbbbb-3333-4b2b-9c3d-123456789abc',
   PG_ITEM: '0b7c2c3e-1111-4a2b-9c3d-123456789abc',
@@ -147,8 +149,13 @@ const srv = http.createServer((req, res) => {
     if (/\/seasons\/\d{4}\//.test(u.pathname)) { const s = u.pathname.split('/').pop(), base = { winter: 100, spring: 200, summer: 300, fall: 400 }[s] || 500, G = [[1, 'Action'], [22, 'Romance'], [4, 'Comedy'], [10, 'Fantasy'], [8, 'Drama'], [30, 'Sports'], [36, 'Slice of Life']];
       return res.end(JSON.stringify({ pagination: { has_next_page: false }, data: Array.from({ length: 10 }, (_, i) => ({ mal_id: base + i, title: (i % 3 ? 'Anime ' : 'Serie ') + s + ' ' + i + (i % 4 === 0 ? ' Season 2' : ''), title_english: 'Show ' + s + ' ' + i + (i % 4 === 0 ? ' Season 2' : ''), type: i === 9 ? 'Movie' : 'TV', score: 7 + (i % 5) * .4, members: 20000 + i * 15000, year: 2026, season: s,
         images: { webp: { image_url: 'https://cdn.myanimelist.net/' + (base + i) + '.webp' } }, genres: [{ mal_id: G[i % 7][0], name: G[i % 7][1] }, { mal_id: G[(i + 2) % 7][0], name: G[(i + 2) % 7][1] }], themes: [] })) })); }
+    // v3.73: Hunter (os mais populares e a ficha completa de cada anime)
+    if (/\/top\/anime$/.test(u.pathname)) { const pg = +u.query.page || 1; return res.end(JSON.stringify({ data: pg > 1 ? [] : Array.from({ length: 25 }, (_, i) => ({ mal_id: 7000 + i, title: 'Popular ' + i, rating: i === 3 ? 'Rx - Hentai' : 'PG-13 - Teens 13 or older' })) })); }
+    { const mf = u.pathname.match(/\/anime\/(\d+)\/full$/); if (mf) return res.end(JSON.stringify({ data: { mal_id: +mf[1], title: 'Kyoudai Senshi ' + mf[1], title_english: 'Brother Warriors ' + mf[1], type: 'TV', episodes: 64, year: 2009, season: 'spring', source: 'Manga', genres: [{ name: 'Action' }, { name: 'Adventure' }, { name: 'Drama' }], themes: [{ name: 'Military' }], demographics: [{ name: 'Shounen' }], studios: [{ name: 'Bones' }], images: { webp: { large_image_url: 'https://cdn.myanimelist.net/h' + mf[1] + '.webp' } } } })); }
     if (/\/themes$/.test(u.pathname)) return res.end(JSON.stringify({ data: { openings: ['1: "Yuusha" by YOASOBI (eps 1-16)'], endings: ['1: "Anytime Anywhere" by milet (eps 1-28)'] } }));
     return res.end(JSON.stringify({ data: /frieren/i.test(decodeURIComponent(u.path)) ? [{ mal_id: 52991, title: 'Sousou no Frieren', title_english: "Frieren: Beyond Journey's End", images: { jpg: { large_image_url: 'https://cdn.myanimelist.net/x.jpg' } }, type: 'TV', episodes: 28, score: 9.3, members: 1000000, year: 2023, season: 'fall', airing: false, status: 'Finished Airing', genres: [{ name: 'Adventure' }], studios: [{ name: 'Madhouse' }] }] : [] })); }
+  if (u.pathname === '/modmock') { let raw = ''; req.on('data', c => raw += c); req.on('end', () => { MODM.n++; let t = ''; try { t = JSON.parse(raw).t || ''; } catch (e) { } res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(/idiota completo/i.test(t) ? '{"ok":false,"motivo":"Isto é um insulto dirigido a alguém.","tipo":"insulto"}' : '{"ok":true}'); }); return; }
   if (u.pathname.startsWith('/espnmock/')) { WMOCK.calls.push(u.path); res.writeHead(200, { 'Content-Type': 'application/json' });
     if (/all\/scoreboard/.test(u.pathname)) return res.end(JSON.stringify({ events: WMOCK.ev }));
     if (/all\/summary/.test(u.pathname)) return res.end(JSON.stringify(WMOCK.sum[u.query.event] || {})); return res.end('{}'); }
@@ -186,7 +193,7 @@ const srv = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify(body)); }
   if (u.pathname.startsWith('/rssmock/')) { const q = u.query.q || '', n = (k) => `<item><title>${k} - Jornal Teste</title><link>https://exemplo.pt/${encodeURIComponent(k)}</link><pubDate>${new Date().toUTCString()}</pubDate><source url="https://exemplo.pt">Jornal Teste</source><description></description></item>`;
     res.writeHead(200, { 'Content-Type': 'application/rss+xml' }); return res.end(`<?xml version="1.0"?><rss><channel>${[1, 2, 3].map(i => n((q ? 'Pesquisa ' : 'Notícia da conta ') + i)).join('')}</channel></rss>`); }
-  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua|futebol|banco|anime|push|backup|saude|liga|revenuecat|premios)$/);
+  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua|futebol|banco|anime|push|backup|saude|liga|revenuecat|premios|social)$/);
   if (am) { const fn = ACCAPI(am[1]); if (!fn) { res.writeHead(404); return res.end(); } req.query = u.query;
     if (process.env.DEBUGAPI) { const t0 = Date.now(), id = Math.random().toString(36).slice(2, 7); let op = ''; const oe = req.emit; req.emit = function (ev, ch) { if (ev === 'data' && !op) op = String(ch).slice(0, 40); return oe.apply(this, arguments); };
       INFL.set(id, () => am[1] + ' ' + op + ' ' + (Date.now() - t0) + 'ms'); res.on('finish', () => { INFL.delete(id); if (Date.now() - t0 > 2500) console.log('    [api lenta]', am[1], op, Date.now() - t0, 'ms'); }); }
@@ -672,12 +679,75 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     const sR = { 'nau:s': JSON.stringify({ t: R1.tok, e: R1.email, n: '', perfis: [{ id: R1.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(R1.pid), 'nau:pd': JSON.stringify(R1.pid), 'nau:owner': JSON.stringify(R1.email) };
     const k = await newPage(b, PROFILES[0], sR); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k.p.route(/cdn\.myanimelist\.net/, rt => rt.fulfill({ status: 200, contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="3" height="4"/>' }));
     await k.p.goto(BASE); await unlock(k.p).catch(() => { }); await sleep(600); await E(k.p, () => { location.hash = 'animes.premios'; }); await k.p.waitForSelector('.pr-hero', { timeout: 8000 }).catch(() => { }); await sleep(800);
-    const ui = await E(k.p, () => { const v = document.getElementById('view').innerText; return { hero: /Prémios Prumo 2026/.test(v), cer: !!document.querySelector('[data-act=prCerimonia]'), crun: /Crunchyroll Anime Awards 2026/.test(v) && /My Hero Academia FINAL SEASON/.test(v), res: document.querySelectorAll('.pr-res li.w').length }; });
+    const ui = await E(k.p, () => { const v = document.getElementById('view').innerText; return { hero: /Prémios Prumo 2026/i.test(v), cer: !!document.querySelector('[data-act=prCerimonia]'), crun: /Crunchyroll Anime Awards 2026/.test(v) && /My Hero Academia FINAL SEASON/.test(v), res: document.querySelectorAll('.pr-res li.w').length }; });
     if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'premios.png'), fullPage: false }); } catch (e) { } }
     await k.p.click('[data-act=prCerimonia]').catch(() => { }); await sleep(800); const cer = await E(k.p, () => { const m = document.getElementById('modal'); return m && !m.hidden ? m.innerText.replace(/\s+/g, ' ') : ''; });
     if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'premios-cerimonia.png') }); } catch (e) { } }
-    ok('Prémios na app: separador Prémios com os resultados, a cerimónia ("e o prémio vai para…") e os vencedores oficiais da Crunchyroll e de outras premiações', ui.hero && ui.cer && ui.crun && ui.res >= 8 && /E o prémio vai para/.test(cer) && /Anime do Ano/.test(cer) && /66,7|66.7/.test(cer), JSON.stringify({ ui, cer: cer.slice(0, 200) }));
+    ok('Prémios na app: separador Prémios com os resultados, a cerimónia ("e o prémio vai para…") e os vencedores oficiais da Crunchyroll e de outras premiações', ui.hero && ui.cer && ui.crun && ui.res >= 8 && /E o prémio vai para/.test(cer) && /Anime do Ano/i.test(cer) && /66,7|66.7/.test(cer), JSON.stringify({ ui, cer: cer.slice(0, 200) }));
     await k.ctx.close(); }
+  // v3.73: clãs, amigos e conversas (cada mensagem passa pelas regras e pela IA), denúncias, Hunter e ranking de animes; a parceria na tela de Jogos
+  { const so = (R, body) => api('social', Object.assign({ p: R.pid }, body), { tok: R.tok }), E0 = process.env.NAUTILO_HUNTER_ABRE, F0 = process.env.NAUTILO_HUNTER_FECHA;
+    const A1 = await reg(), B1 = await reg(), C1 = await reg(), ADM = { tok: ad.token, pid: adp.perfil && adp.perfil.id };
+    const ea = await so(A1, { op: 'eu' }), eb = await so(B1, { op: 'eu' }), ec = await so(C1, { op: 'eu' });
+    const semTok = await api('social', { op: 'eu', p: A1.pid }), alheio = await so({ tok: A1.tok, pid: B1.pid }, { op: 'eu' });
+    const cedo = await so(A1, { op: 'enviar', conv: 'd-' + eb.eu.id, texto: 'olá' });
+    const ped = await so(A1, { op: 'amigoPedir', cod: 'PR-' + eb.eu.cod }), pb = await so(B1, { op: 'eu' }); await so(B1, { op: 'amigoResp', id: ea.eu.id, aceitar: true });
+    const bom = await so(A1, { op: 'enviar', conv: 'd-' + eb.eu.id, texto: 'Olá! Já viste o último episódio de Frieren?' });
+    const lnk = await so(A1, { op: 'enviar', conv: 'd-' + eb.eu.id, texto: 'vê isto em www.site-estranho.com' }), tel = await so(A1, { op: 'enviar', conv: 'd-' + eb.eu.id, texto: 'liga-me para o 912 345 678' });
+    const ofn = await so(A1, { op: 'enviar', conv: 'd-' + eb.eu.id, texto: 'és um idiota completo' }), mudo = await so(A1, { op: 'enviar', conv: 'd-' + eb.eu.id, texto: 'olá outra vez' });
+    const lb = await so(B1, { op: 'msgs', conv: 'd-' + ea.eu.id });
+    ok('Amigos e conversa a dois: só entre amigos (pedido por código e aceite); links, telefones e insultos (regras e IA) são barrados e não chegam ao amigo; depois de 3 barradas fica 1 hora sem escrever; sem sessão ou com perfil de outra conta não entra',
+      semTok._st === 401 && alheio._st === 404 && cedo._st === 403 && ped._st === 200 && !ped.amigos && pb.pedidos.some(x => x.id === ea.eu.id) && bom.msg && lnk.barrada && /Links/.test(lnk.motivo) && tel.barrada && /telefone/.test(tel.motivo) && ofn.barrada && /insulto/.test(ofn.motivo) && mudo._st === 403
+      && lb.msgs.length === 1 && /Frieren/.test(lb.msgs[0].t) && MODM.n >= 1, JSON.stringify({ semTok: semTok._st, alheio: alheio._st, cedo: cedo._st, ped: ped._st, bom: !!bom.msg, lnk: lnk.motivo, tel: tel.motivo, ofn: ofn.motivo, mudo: mudo._st, lb: (lb.msgs || []).length, mod: MODM.n }).slice(0, 500));
+    const cl = await so(B1, { op: 'claCriar', nome: 'Akatsuki do Prumo', desc: 'Só animes bons', cor: '#3D7BF7' }), feio = await so(C1, { op: 'claCriar', nome: 'Clã dos idiota completo' });
+    const ent = await so(C1, { op: 'claEntrar', cod: 'cl-' + cl.cla.cod.toLowerCase() }), mc = await so(C1, { op: 'enviar', conv: 'c-' + cl.cla.id, texto: 'Boa noite, clã!' }), fora = await so(A1, { op: 'msgs', conv: 'c-' + cl.cla.id });
+    const lc = await so(B1, { op: 'msgs', conv: 'c-' + cl.cla.id }), cvs = await so(B1, { op: 'conversas' });
+    const den = await so(B1, { op: 'denunciar', conv: 'c-' + cl.cla.id, mid: lc.msgs[0].id, motivo: 'teste' }), dn0 = await so(B1, { op: 'adminDenuncias' }), dl = await so(ADM, { op: 'adminDenuncias' });
+    const apg = await so(ADM, { op: 'adminApagar', ref: dl.denuncias[0].ref }), lc2 = await so(B1, { op: 'msgs', conv: 'c-' + cl.cla.id });
+    const blq = await so(B1, { op: 'bloquear', id: ea.eu.id }), dmB = await so(A1, { op: 'enviar', conv: 'd-' + eb.eu.id, texto: 'ainda aqui?' }), pedB = await so(A1, { op: 'amigoPedir', cod: eb.eu.cod });
+    ok('Clãs: criar (nome verificado), entrar com o código, conversa do clã só para membros, lista de conversas, denunciar (a administração vê e apaga a mensagem) e bloquear (deixa de poder falar e de pedir amizade)',
+      !!cl.cla && /^[A-Z2-9]{6}$/.test(cl.cla.cod) && feio._st === 400 && ent.cla && ent.cla.n === 2 && mc.msg && fora._st === 403 && lc.msgs.length === 1 && cvs.conversas.some(c => c.conv === 'c-' + cl.cla.id && c.ult && /Boa noite/.test(c.ult.t))
+      && den._st === 200 && dn0._st === 403 && dl.denuncias.length === 1 && /Boa noite/.test(dl.denuncias[0].t) && apg._st === 200 && lc2.msgs.length === 0 && blq._st === 200 && dmB._st === 403 && pedB._st === 403,
+      JSON.stringify({ cl: cl._st, cod: cl.cla && cl.cla.cod, feio: feio._st, ent: ent._st, mc: !!mc.msg, fora: fora._st, lc: (lc.msgs || []).length, den: den._st, dn0: dn0._st, dl: (dl.denuncias || []).length, apg: apg._st, lc2: (lc2.msgs || []).length, dmB: dmB._st, pedB: pedB._st }).slice(0, 500));
+    // Hunter: antes das 20h ainda não dá; às 20h saem as pistas; cada pessoa marca um anime uma vez; às 22h os que acertaram ganham pontos pela ordem
+    process.env.NAUTILO_HUNTER_ABRE = '1439'; process.env.NAUTILO_HUNTER_FECHA = '1440';
+    const h0 = await so(A1, { op: 'hunter' }), m0 = await so(A1, { op: 'hunterMarcar', mal: '1', titulo: 'X' });
+    process.env.NAUTILO_HUNTER_ABRE = '0'; const c0 = JKMOCK.calls.length, h1 = await so(A1, { op: 'hunter' }), full = JKMOCK.calls.slice(c0).map(c => (c.match(/\/anime\/(\d+)\/full/) || [])[1]).filter(Boolean)[0];
+    const okB = await so(B1, { op: 'hunterMarcar', mal: full, titulo: 'Brother Warriors' }); await sleep(30); const okC = await so(C1, { op: 'hunterMarcar', mal: full, titulo: 'Brother Warriors' }), errA = await so(A1, { op: 'hunterMarcar', mal: '7001', titulo: 'Popular 1' }), dup = await so(B1, { op: 'hunterMarcar', mal: '7002', titulo: 'Outro' });
+    const hB = await so(B1, { op: 'hunter' });
+    process.env.NAUTILO_HUNTER_FECHA = '0'; const h2 = await so(A1, { op: 'hunter' }), hb2 = await so(B1, { op: 'hunter' }), rk = await so(C1, { op: 'rankAnime' }), h3 = await so(C1, { op: 'hunter' });
+    const P1 = h1.hunter || {}, P2 = h2.hunter || {}, R0 = (rk.lista || []);
+    ok('Pursuit: antes das 20h não se marca; às 20h saem pistas do anime (sem dizer o nome); um Hunter por pessoa e por dia; às 22h fecha e quem acertou ganha 100, 90… pela ordem; quem errou não ganha; ranking de animes com os pontos',
+      h0.hunter.fase === 'espera' && m0._st === 400 && P1.fase === 'aberto' && P1.pistas.length >= 3 && !P1.pistas.join(' ').includes('Brother') && /Bones/.test(P1.pistas.join(' ')) && !!full && !/^700[3]$/.test(full) && okB._st === 200 && okC._st === 200 && errA._st === 200 && dup._st === 409
+      && hB.hunter.meu && hB.hunter.meu.certo === undefined && !hB.hunter.resposta && P2.fase === 'fechado' && P2.resposta.titulo === 'Brother Warriors ' + full && P2.res.length === 2 && P2.res[0].pts === 100 && P2.res[1].pts === 90 && P2.meu.certo === false && hb2.hunter.meu.certo === true
+      && R0[0].id === eb.eu.id && R0[0].p === 100 && R0[1].p === 90 && rk.eu && rk.eu.pos === 2 && h3.hunter.res.length === 2,
+      JSON.stringify({ h0: h0.hunter && h0.hunter.fase, m0: m0._st, f1: P1.fase, pistas: P1.pistas, full, okB: okB._st, okC: okC._st, errA: errA._st, dup: dup._st, f2: P2.fase, res: P2.res, rk: R0.slice(0, 3) }).slice(0, 700));
+    // a parceria: o nome é escrito pela administração e aparece em todo o lado (público)
+    const p0 = await api('social?op=parceiro', null, { get: true }), pn = await so(B1, { op: 'adminParceiro', nome: 'Hackers' }), pa = await so(ADM, { op: 'adminParceiro', nome: 'Otaku Lab', site: 'https://otakulab.example' }), pg = await api('social?op=parceiro', null, { get: true });
+    const sR = { 'nau:s': JSON.stringify({ t: C1.tok, e: C1.email, n: '', perfis: [{ id: C1.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(C1.pid), 'nau:pd': JSON.stringify(C1.pid), 'nau:owner': JSON.stringify(C1.email) };
+    const k = await newPage(b, PROFILES[0], sR); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k.p.route(/cdn\.myanimelist\.net/, rt => rt.fulfill({ status: 200, contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="3" height="4"/>' }));
+    await k.p.goto(BASE); await unlock(k.p).catch(() => { }); await sleep(600); await E(k.p, () => { location.hash = 'jogos'; }); await k.p.waitForSelector('.pc-hero', { timeout: 8000 }).catch(() => { }); await sleep(1500);
+    const jg = await E(k.p, () => { const v = document.getElementById('view'), t = v.innerText, side = (document.getElementById('side') || document.body).innerText; const grp = [...document.querySelectorAll('#side .nav-g, #side section, #side details')].map(g => g.innerText.replace(/\s+/g, ' ')).find(x => /Animes/.test(x)) || '';
+      return { hero: !!v.querySelector('.pc-hero .pc-big'), nome: /Otaku Lab/.test(t), hu: /Pursuit/.test(t), rk: /Ranking de animes/.test(t) && /100/.test(t), dom: /Dominus/.test(t) && /Floresta/.test(t), grp: grp.slice(0, 80), eu: [...document.querySelectorAll('#side *')].some(e => e.children.length === 0 && /^Eu$/.test(e.textContent.trim())) }; });
+    if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'jogos.png'), fullPage: true }); } catch (e) { } }
+    await E(k.p, () => { location.hash = 'animes.pursuit'; }); await sleep(1500); const hu = await E(k.p, () => { const t = document.getElementById('view').innerText; return { res: /Quem acertou/.test(t) && /\+90/.test(t), meu: /Ganhaste 90 pontos/.test(t), mk: !!document.querySelector('.phead .pc-mk'), cred: /SuperAnimes/.test(t) }; });
+    if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'hunter.png'), fullPage: false }); } catch (e) { } }
+    await E(k.p, () => { location.hash = 'animes.clas'; }); await k.p.waitForSelector('.so-ci', { timeout: 8000 }).catch(() => { }); await sleep(500);
+    await k.p.click('.so-ci').catch(() => { }); await k.p.waitForSelector('#soTxt', { timeout: 8000 }).catch(() => { }); await sleep(800);
+    await k.p.fill('#soTxt', 'Mensagem do teste pela app'); await k.p.press('#soTxt', 'Enter'); await sleep(1500);
+    await k.p.fill('#soTxt', 'és um idiota completo'); await k.p.press('#soTxt', 'Enter'); await sleep(1500);
+    const ch = await E(k.p, () => ({ n: document.querySelectorAll('#soMsgs .so-m').length, meu: [...document.querySelectorAll('#soMsgs .so-m.eu p')].map(p => p.textContent), toast: (document.querySelector('.toast, #toast') || {}).innerText || '', nota: /passa pela IA/.test(document.getElementById('view').innerText) }));
+    if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'cla-conversa.png'), fullPage: false }); } catch (e) { } }
+    const lcB = await so(B1, { op: 'msgs', conv: 'c-' + cl.cla.id });
+    ok('Parceria na app: tela de Jogos com "Prumo & Otaku Lab" em destaque (a administração escreve o nome; outras contas não), o Pursuit e o ranking; Animes fora do "Eu"; Pursuit com os resultados; conversa do clã a enviar pela app e a IA a barrar o insulto',
+      p0.nome === 'PHANTOM' && pn._st === 403 && pa._st === 200 && pg.nome === 'Otaku Lab' && jg.hero && jg.nome && jg.hu && jg.rk && jg.dom && !/^Eu\b/.test(jg.grp) && hu.res && hu.meu && hu.mk && hu.cred && ch.meu.includes('Mensagem do teste pela app') && !ch.meu.some(t => /idiota/.test(t)) && ch.nota && lcB.msgs.some(m => /pela app/.test(m.t)) && !lcB.msgs.some(m => /idiota/.test(m.t)),
+      JSON.stringify({ p0: p0.nome, pn: pn._st, pa: pa._st, pg, jg, hu, ch, lcB: (lcB.msgs || []).map(m => m.t) }).slice(0, 700));
+    const pz = await so(ADM, { op: 'adminParceiro', nome: '' }); ok('Parceria: sem nome escrito volta a PHANTOM', pz.parceiro && pz.parceiro.nome === 'PHANTOM', JSON.stringify(pz).slice(0, 120));
+    if (process.env.SHOTS) { try { await E(k.p, () => { Object.keys(localStorage).filter(x => /parceiro/.test(x)).forEach(x => localStorage.removeItem(x)); }); await k.p.reload(); await unlock(k.p).catch(() => { }); await sleep(600); await E(k.p, () => { location.hash = 'jogos'; }); await sleep(1800);
+      await k.p.screenshot({ path: path.join(process.env.SHOTS, 'jogos-phantom.png'), fullPage: false }); await k.p.setViewportSize({ width: 1280, height: 860 }); await sleep(600); await k.p.screenshot({ path: path.join(process.env.SHOTS, 'jogos-phantom-pc.png'), fullPage: false });
+      await E(k.p, () => { location.hash = 'animes.pursuit'; }); await sleep(1200); await k.p.screenshot({ path: path.join(process.env.SHOTS, 'pursuit-pc.png'), fullPage: false }); } catch (e) { console.log('shots', e.message); } }
+    await k.ctx.close();
+    if (E0 == null) delete process.env.NAUTILO_HUNTER_ABRE; else process.env.NAUTILO_HUNTER_ABRE = E0; if (F0 == null) delete process.env.NAUTILO_HUNTER_FECHA; else process.env.NAUTILO_HUNTER_FECHA = F0; }
   // rede instável e sem internet (com conta): o que se faz sem rede fica guardado e sincroniza quando volta, mesmo com o servidor a falhar pelo caminho
   { const R = await reg(), sR = { 'nau:s': JSON.stringify({ t: R.tok, e: R.email, n: '', perfis: [{ id: R.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(R.pid), 'nau:pd': JSON.stringify(R.pid), 'nau:owner': JSON.stringify(R.email) };
     const k = await newPage(b, PROFILES[0], sR); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; window.__accPut = 300; }); await k.p.goto(BASE); await unlock(k.p).catch(() => { });
@@ -3348,7 +3418,7 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
   const oc = await E(p, () => { const c = [...document.querySelectorAll('[data-oa]')].find(x => /Animes/.test(x.innerText)); return c ? { on: c.classList.contains('on') || c.getAttribute('aria-pressed') === 'true', k: c.dataset.oa } : null; });
   ok('Animes: no registo (escolher as abas) aparece desligada para a pessoa ligar', !!oc && !oc.on, JSON.stringify(oc));
   await p.click('[data-oa="animes"]'); await sleep(200); await p.click('[data-onb="guardarAreas"]'); await sleep(500);
-  ok('Animes: ligar no registo põe a aba no menu (em Eu)', await E(p, () => !OS.Areas.hidden().has('animes') && !!document.querySelector('#side a[href="#animes"]') && OS.NAV.find(g => g[0] === 'Eu')[1].some(x => x[0] === 'animes')));
+  ok('Animes: ligar no registo põe a aba no menu (no grupo próprio da parceria, fora do Eu)', await E(p, () => !OS.Areas.hidden().has('animes') && !!document.querySelector('#side a[href="#animes"]') && OS.NAV.find(g => g[0] === 'Parceria')[1].some(x => x[0] === 'animes') && !OS.NAV.find(g => g[0] === 'Eu')[1].some(x => x[0] === 'animes')));
   await E(p, () => { location.hash = 'animes'; }); await p.waitForFunction(() => document.querySelectorAll('#view .an-pc').length > 2, null, { timeout: 15000 }).catch(() => { }); await sleep(400);
   const ini = await E(p, () => ({ hero: !!document.querySelector('#view .an-hero .an-hb'), t: document.getElementById('view').innerText.replace(/\s+/g, ' '), rows: [...document.querySelectorAll('#view .an-row h3')].map(h => h.innerText) }));
   ok('Animes › Início: destaque com a faixa, a temporada e o que está em alta', ini.hero && ini.rows.some(r => /Outono|Inverno|Primavera|Verão/.test(r)) && ini.rows.includes('Em alta agora') && /Começa a tua lista/.test(ini.t), JSON.stringify(ini.rows));

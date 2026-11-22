@@ -6,6 +6,7 @@ html = open(f'{src}/index.html').read()
 html = re.sub(r'<link rel="stylesheet" href="(css/[^"]+)">', lambda m: '<style>\n' + open(f'{src}/{m.group(1)}').read() + '\n</style>', html)
 html = re.sub(r'<script src="(js/[^"]+)"></script>', lambda m: '<script>\n' + open(f'{src}/{m.group(1)}').read().replace('</script', '<\\/script') + '\n</script>', html)
 html = html.replace('href="icons/', 'href="')
+html = html.replace('icons/phantom-', 'phantom-')   # v3.73: as imagens da PHANTOM ficam na raiz, como os ícones
 open(f'{out}/index.html', 'w').write(html)
 man = open(f'{src}/manifest.webmanifest').read().replace('icons/', '')
 open(f'{out}/manifest.webmanifest', 'w').write(man)

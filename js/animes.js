@@ -194,7 +194,7 @@ const imgS = (u, sz) => { u = String(u || ''); const s = sz === 's'; if (sz === 
 const srcset = u => { const m = imgS(u, 'm'); return m && m !== u ? ` srcset="${esc(m)} 230w, ${esc(u)} 460w"` : ''; };
 const SIZES = ' sizes="(max-width:520px) 42vw, (max-width:860px) 24vw, 190px"';
 const cover = (x, cls) => x.img ? `<img class="an-img ${cls || ''}" src="${esc(/an-dp|\blg\b/.test(cls || '') ? x.img : imgS(x.img, /\bxs\b/.test(cls || '') ? 's' : 'm'))}"${cls ? '' : srcset(x.img) + SIZES} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<span class="an-img an-img0 ${cls || ''}" aria-hidden="true">${esc(String(x.t || '?').slice(0, 2).toUpperCase())}</span>`;
-const colOf = x => /^#[0-9a-f]{6}$/i.test(x.col || '') ? x.col : '#ff640a';
+const colOf = x => /^#[0-9a-f]{6}$/i.test(x.col || '') ? x.col : '#E8203A';
 const subOf = x => [fmtN(x.fmt), x.eps ? x.eps + (x.eps === 1 ? ' episódio' : ' episódios') : '', x.y || ''].filter(Boolean).join(' · ');
 const poster = (x, o) => { o = o || {}; x = keep(x); const m = mine(x), k = kOf(x), p = m && m.status === 'A ver' && (m.eps || x.eps) ? Math.min(100, Math.round((m.ep || 0) / (m.eps || x.eps) * 100)) : 0;
   return `<button type="button" class="an-pc${o.cls ? ' ' + o.cls : ''}" data-act="anOpen" data-k="${esc(k)}" style="--c:${colOf(x)}" aria-label="${esc(x.t)}">
@@ -297,10 +297,10 @@ A.anTr = async b => { const k = b.dataset.k, d = DATA['d:' + k] && DATA['d:' + k
 A.anTrailer = b => { const box = document.getElementById('anTrl'); if (!box) return; box.innerHTML = box.innerHTML ? '' : `<div class="an-ytp"><iframe src="https://www.youtube-nocookie.com/embed/${esc(b.dataset.y)}?autoplay=1&playsinline=1&rel=0" title="Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; };
 
 /* ================= páginas ================= */
-const AT = [['', 'Início'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
+const AT = [['', 'Início'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['pursuit', 'Pursuit'], ['ranking', 'Ranking'], ['clas', 'Clãs'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
 const P = {};
 V.animes = sub => { const k = sub === 'anime' ? 'anime' : P[sub || ''] ? (sub || '') : '';
-  return UI.head('Animes', 'Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.', `<a class="btn pri an-hbtn" href="#animes.pesquisar">${UI.ic('search')}<span>Pesquisar anime</span></a>`, 'Eu')
+  return UI.head('Animes', 'Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.', `<a class="btn pri an-hbtn" href="#animes.pesquisar">${UI.ic('search')}<span>Pesquisar anime</span></a>`, OS.Social ? OS.Social.marca('xs') : 'Parceria')
     + UI.tabs('animes', AT, k === 'anime' ? '' : k) + `<div class="an${k === '' || k === 'anime' ? ' an-top0' : ''}">${(k === 'anime' ? detail : P[k])()}</div>`; };
 
 /* destaque em carrossel (muda sozinho; pára quando tocas ou passas o rato; sem animação para quem a desliga) */
@@ -458,7 +458,9 @@ P.calendario = () => { const W = need('week', 30 * 6e4, API.week), only = !!OS.u
 A.anCalMine = b => { OS.ui.anCalMine = b.checked ? 1 : 0; OS.request(); };
 
 /* Melhores do ano: escolhe o ano */
-P.premios = () => OS.Premios ? OS.Premios.view() : ''; // v3.72: Prémios Prumo (votação de fim de ano) e premiações oficiais
+P.premios = () => OS.Premios ? OS.Premios.view() : '';
+// v3.73: jogos de anime (Pursuit), ranking por pontos e clãs com conversas (js/social.js)
+P.pursuit = () => OS.Social ? OS.Social.hunter() : ''; P.ranking = () => OS.Social ? OS.Social.ranking() : ''; P.clas = () => OS.Social ? OS.Social.clas() : ''; // v3.72: Prémios Prumo (votação de fim de ano) e premiações oficiais
 P.melhores = () => { const y0 = new Date().getFullYear(), y = +OS.ui.anY || y0, k = 'b:' + y, L = need(k, y === y0 ? H6 : 72 * 36e5, () => API.best(y), true), f = OS.ui.anBf || '';
   const it = (L || []).filter(x => !f || (f === 'MOVIE' ? x.fmt === 'MOVIE' : x.fmt !== 'MOVIE'));
   const years = []; for (let i = y0; i >= 1960; i--) years.push(i);
@@ -597,7 +599,7 @@ const detail = () => { const k = OS.ui.anK || '', base = itemOf(k);
       <div class="an-dc">${cover(x, 'an-dp')}<div class="an-dt"><a class="an-back" href="#animes">${UI.ic('left')}Animes</a><h2>${esc(x.t)}</h2>${x.ro || x.na ? `<p class="an-alt">${esc([x.ro, x.na].filter(Boolean).join(' · '))}</p>` : ''}
         <div class="an-dm">${x.sc ? `<span class="an-dsc">${UI.ic('star')}<b>${scT(x.sc)}</b><small>nota da comunidade</small></span>` : ''}${rk ? `<span class="an-drk">${rk.rank}.º mais bem avaliado de sempre</span>` : rky ? `<span class="an-drk">${rky.rank}.º mais bem avaliado de ${rky.y}</span>` : ''}</div>
         <p class="an-hm">${meta.slice(0, 4).map(r => esc(r[0])).join(' · ')}</p>${nt ? `<p class="an-hn">${esc(nt)}</p>` : ''}<div class="an-gen">${(x.gen || []).map(g => `<span>${esc(gN(g))}</span>`).join('')}</div></div></div></section>
-    <div class="an-pad">${mineBox}
+    <div class="an-pad">${OS.Social ? OS.Social.noAnime(x) : ''}${mineBox}
     ${d && d.desc ? (() => { const at = tr ? '' : autoTr(d.desc), auto = !tr && at !== d.desc, orig = OS.ui.anOrig === k, txt = tr || (auto && !orig ? at : d.desc);
       return `<section class="an-syn"><div class="an-rh"><h3>Sinopse</h3>${tr || auto ? '' : langName() ? `<button type="button" class="btn xs an-ghost" data-act="anTr" data-k="${kk}" ${TRB ? 'disabled' : ''}>${TRB === k ? 'A traduzir…' : 'Traduzir com a IA'}</button>` : ''}</div><p>${esc(txt).replace(/\n/g, '<br>')}</p>${tr ? '<small>Traduzido pela IA.</small>' : auto ? `<small>Tradução automática. <button type="button" class="an-lnk" data-act="anOrig" data-k="${esc(k)}">${orig ? 'Ver a tradução' : 'Ver o original'}</button></small>` : ''}</section>`; })() : !d ? (errBox('d:' + k) || loading('A buscar os detalhes…')) : ''}
     ${d && watchL(d.links).length ? `<section class="an-where"><h3>Onde ver</h3><div class="row gap6" style="flex-wrap:wrap">${watchL(d.links).map(l => `<a class="btn sm an-ghost" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${UI.ic('play')}${esc(l.site)}</a>`).join('')}${d.tr ? `<button type="button" class="btn sm an-cta" data-act="anTrailer" data-y="${esc(d.tr)}">${UI.ic('play')}Ver o trailer</button>` : ''}</div><div id="anTrl"></div></section>` : d && d.tr ? `<section class="an-trl"><button type="button" class="btn an-cta" data-act="anTrailer" data-y="${esc(d.tr)}">${UI.ic('play')}Ver o trailer</button><div id="anTrl"></div></section>` : ''}
