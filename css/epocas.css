@@ -1,0 +1,25 @@
+/* PRUMO — temas das festas (v3.75): a camada de animação (canvas), a grinalda no topo e os personagens que passam. */
+.ep-cv{position:fixed;inset:0;z-index:35;pointer-events:none}
+.ep-gar{position:absolute;left:0;right:0;top:100%;height:40px;pointer-events:none;background:var(--g1) repeat-x 0 0/120px auto;z-index:1}
+.ep-gar::after{content:'';position:absolute;inset:0;background:var(--g2) repeat-x 0 0/120px auto;opacity:0}
+html[data-epoca=natal] .ep-gar::after,html[data-epoca=anonovo] .ep-gar::after{animation:epPisca 1.4s steps(1) infinite}
+@keyframes epPisca{50%{opacity:1}}
+/* Pai Natal no trenó, de um lado ao outro do céu */
+.ep-santa{position:fixed;left:0;z-index:36;width:clamp(150px,22vw,220px);border:0;padding:0;background:none;cursor:pointer;animation:epVoa 15s linear forwards;filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}
+.ep-santa svg{display:block;width:100%;height:auto;animation:epBalanca 1.6s ease-in-out infinite}
+@keyframes epVoa{from{transform:translateX(-240px)}to{transform:translateX(calc(100vw + 40px))}}
+@keyframes epBalanca{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+/* Halloween: o fantasma a flutuar e o monstro a espreitar por baixo */
+.ep-fan{position:fixed;left:0;z-index:36;width:56px;border:0;padding:0;background:none;cursor:pointer;opacity:.92;animation:epFlutua 13s ease-in-out forwards}
+.ep-fan svg{display:block;width:100%;height:auto;animation:epBalanca 2.2s ease-in-out infinite}
+@keyframes epFlutua{0%{transform:translateX(-80px);opacity:0}10%{opacity:.92}90%{opacity:.92}100%{transform:translateX(calc(100vw + 60px));opacity:0}}
+.ep-mon{position:fixed;left:14px;bottom:0;z-index:36;width:84px;border:0;padding:0;background:none;cursor:pointer;animation:epEspreita 7s ease-in-out forwards}
+.ep-mon svg{display:block;width:100%;height:auto}
+@keyframes epEspreita{0%,100%{transform:translateY(100%)}25%,70%{transform:translateY(calc(-1 * (env(safe-area-inset-bottom,0px) + 34px)))}45%{transform:translateY(calc(-1 * (env(safe-area-inset-bottom,0px) + 30px))) rotate(-4deg)}}
+html[data-epoca=halloween] body::after{content:'';position:fixed;top:0;right:0;width:150px;height:150px;z-index:34;pointer-events:none;opacity:.55;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Cg fill='none' stroke='%23d8d8e0' stroke-width='1'%3E%3Cpath d='M150 0 L40 110 M150 0 L80 150 M150 0 L0 60 M150 0 L120 150 M150 0 L0 20'/%3E%3Cpath d='M128 0 Q132 18 150 22 M100 0 Q108 38 150 46 M70 0 Q84 62 150 74 M40 0 Q58 88 150 104 M14 0 Q34 112 150 132'/%3E%3C/g%3E%3C/svg%3E") no-repeat top right/contain}
+.ep-santa.fora,.ep-fan.fora,.ep-mon.fora{opacity:0;transition:opacity .5s}
+/* Páscoa: os ovos escondidos pelas páginas */
+.ep-ovo{position:absolute;z-index:3;width:28px;height:36px;border:0;padding:0;background:none;cursor:pointer;transform:rotate(var(--r,0deg));filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));transition:transform .2s}
+.ep-ovo:hover,.ep-ovo:focus-visible{transform:rotate(var(--r,0deg)) scale(1.15)}.ep-ovo svg{width:100%;height:100%;display:block}
+@media (prefers-reduced-motion:reduce){.ep-santa,.ep-fan,.ep-mon{display:none}}

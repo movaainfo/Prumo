@@ -197,5 +197,5 @@ OS.on && OS.on('ready', () => { parcLoad(); setTimeout(() => { if (conta() && U.
 // insígnia no menu: Pursuit a decorrer e ainda não marcaste
 const badge = () => { const h = S.h; return h && h.fase === 'aberto' && !h.meu ? [1, 'neg'] : null; };
 OS.on && OS.on('render', () => { const r = OS.route(); if (r.base === 'animes' && r.sub === 'pursuit') U.ls.set('oc_hunter_on', 1); if (!(r.base === 'animes' && r.sub === 'clas') && (OS.ui.soConv || OS.ui.soCla)) { OS.ui.soConv = ''; OS.ui.soCla = ''; } });
-OS.Social = { marca, nome: pNome, hunter: hunterView, ranking: rankView, clas: clasView, noAnime, badge, parceiro: () => Object.assign({}, PARC), _S: S };
+OS.Social = { marca, nome: pNome, hunter: hunterView, ranking: rankView, clas: clasView, noAnime, badge, parceiro: () => Object.assign({}, PARC), _S: S, call, conta, eu, rank, hora, ePh };
 })();

@@ -56,6 +56,8 @@ const WMOCK = { ev: [], sum: {}, calls: [] }; process.env.ESPN_SITE = 'http://lo
 const JKMOCK = { calls: [], down: false }; process.env.JIKAN_BASE = 'http://localhost:' + PORT + '/jkmock/';
 // v3.73: moderação das conversas simulada (a IA barra "idiota completo")
 const MODM = { n: 0 }; process.env.NAUTILO_MOD_MOCK = 'http://localhost:' + PORT + '/modmock';
+// v3.74: a IA das fotos simulada (categorias, descrição e o que apagar)
+const FOTM = { n: 0 }; process.env.NAUTILO_FOTOS_MOCK = 'http://localhost:' + PORT + '/fotomock';
 const BKM = { reset() { this.auth = []; this.jwt = []; this.ebAuth = []; this.del = []; this.txp = []; this.ct = []; this.pgDel = []; this.cuid = ''; },
   W_ITEM: 'aaaaaaaa-2222-4b2b-9c3d-123456789abc', X_ITEM: 'bbbbbbbb-3333-4b2b-9c3d-123456789abc',
   PG_ITEM: '0b7c2c3e-1111-4a2b-9c3d-123456789abc',
@@ -154,6 +156,9 @@ const srv = http.createServer((req, res) => {
     { const mf = u.pathname.match(/\/anime\/(\d+)\/full$/); if (mf) return res.end(JSON.stringify({ data: { mal_id: +mf[1], title: 'Kyoudai Senshi ' + mf[1], title_english: 'Brother Warriors ' + mf[1], type: 'TV', episodes: 64, year: 2009, season: 'spring', source: 'Manga', genres: [{ name: 'Action' }, { name: 'Adventure' }, { name: 'Drama' }], themes: [{ name: 'Military' }], demographics: [{ name: 'Shounen' }], studios: [{ name: 'Bones' }], images: { webp: { large_image_url: 'https://cdn.myanimelist.net/h' + mf[1] + '.webp' } } } })); }
     if (/\/themes$/.test(u.pathname)) return res.end(JSON.stringify({ data: { openings: ['1: "Yuusha" by YOASOBI (eps 1-16)'], endings: ['1: "Anytime Anywhere" by milet (eps 1-28)'] } }));
     return res.end(JSON.stringify({ data: /frieren/i.test(decodeURIComponent(u.path)) ? [{ mal_id: 52991, title: 'Sousou no Frieren', title_english: "Frieren: Beyond Journey's End", images: { jpg: { large_image_url: 'https://cdn.myanimelist.net/x.jpg' } }, type: 'TV', episodes: 28, score: 9.3, members: 1000000, year: 2023, season: 'fall', airing: false, status: 'Finished Airing', genres: [{ name: 'Adventure' }], studios: [{ name: 'Madhouse' }] }] : [] })); }
+  if (u.pathname === '/fotomock') { let raw = ''; req.on('data', c => raw += c); req.on('end', () => { FOTM.n++; let n = 1; try { n = JSON.parse(raw).n || 1; } catch (e) { } res.writeHead(200, { 'Content-Type': 'application/json' });
+    const K = [['Comida e bebida', ['pizza', 'jantar'], 'Uma pizza no jantar', false, ''], ['Memes e imagens da internet', ['meme', 'gato'], 'Um meme de um gato', true, 'Meme recebido'], ['Paisagens e viagens', ['praia', 'mar'], 'Praia ao pôr do sol', false, '']];
+    res.end(JSON.stringify(Array.from({ length: n }, (_, i) => { const k = K[i % 3]; return { i, cat: k[0], tags: k[1], desc: k[2], apagar: k[3], motivo: k[4] }; }))); }); return; }
   if (u.pathname === '/modmock') { let raw = ''; req.on('data', c => raw += c); req.on('end', () => { MODM.n++; let t = ''; try { t = JSON.parse(raw).t || ''; } catch (e) { } res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(/idiota completo/i.test(t) ? '{"ok":false,"motivo":"Isto é um insulto dirigido a alguém.","tipo":"insulto"}' : '{"ok":true}'); }); return; }
   if (u.pathname.startsWith('/espnmock/')) { WMOCK.calls.push(u.path); res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -748,6 +753,63 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
       await E(k.p, () => { location.hash = 'animes.pursuit'; }); await sleep(1200); await k.p.screenshot({ path: path.join(process.env.SHOTS, 'pursuit-pc.png'), fullPage: false }); } catch (e) { console.log('shots', e.message); } }
     await k.ctx.close();
     if (E0 == null) delete process.env.NAUTILO_HUNTER_ABRE; else process.env.NAUTILO_HUNTER_ABRE = E0; if (F0 == null) delete process.env.NAUTILO_HUNTER_FECHA; else process.env.NAUTILO_HUNTER_FECHA = F0; }
+  // v3.74: círculos da semana no Corpo e Fotos (iguais e parecidas juntas, desfocadas, escuras, capturas, a IA por categorias, pesquisa, ver e apagar)
+  { const R = await reg(), sR = { 'nau:s': JSON.stringify({ t: R.tok, e: R.email, n: '', perfis: [{ id: R.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(R.pid), 'nau:pd': JSON.stringify(R.pid), 'nau:owner': JSON.stringify(R.email) };
+    const k = await newPage(b, PROFILES[0], sR); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k.p.goto(BASE); await unlock(k.p).catch(() => { }); await sleep(800);
+    const an = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), t = OS.U.today(), seg = OS.U.monday(t);
+      OS.add('workouts', { date: t, title: 'Upper', dur: 55, items: [] }); OS.add('workouts', { date: seg, title: 'Bicicleta', dur: 70, items: [], src: 'strava', notes: 'Bicicleta (Strava)' }); OS.add('runs', { date: t, km: 5, time: '30:00' });
+      OS.add('runplan', { wday: 2, type: 'Rodagem', km: 6, mins: 40, active: true }); OS.add('runplan', { wday: 5, type: 'Longo', km: 10, mins: 60, active: true });
+      const sp = OS.add('sports', { key: 'natacao', level: 'Iniciante', freq: 2, since: t }); OS.add('sportlog', { sport: sp.id, date: t, kind: 'Treino', mins: 45 });
+      const f = OS.one('fit'); OS.setOne && OS.setOne('fit', Object.assign({}, f, { split: { 1: 'Push', 3: 'Pull', 5: 'Pernas' } }));
+      location.hash = 'corpo'; await w(900); const v = document.querySelector('.ane'); const D = OS.Aneis.dados();
+      return { pn: !!v, txt: v ? v.innerText.replace(/\s+/g, ' ') : '', rings: v ? v.querySelectorAll('.ane-i').length : 0, mods: D.L.map(x => x.n + ':' + Math.round(x.feito) + '/' + Math.round(x.plano)) }; });
+    if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'aneis.png'), clip: { x: 0, y: 0, width: 430, height: 900 } }); } catch (e) { } }
+    ok('Corpo: círculos da semana por modalidade (feito por fora, planeado por baixo): musculação, corrida (plano de corrida), natação (frequência do desporto), bicicleta do Strava, e o total',
+      an.pn && an.rings >= 4 && an.mods.some(m => /^Corrida:30\/100$/.test(m)) && an.mods.some(m => /^Natação:45\/90$/.test(m)) && an.mods.some(m => /^Bicicleta:70\//.test(m)) && an.mods.some(m => /^Musculação:55\/1\d\d$/.test(m)) && /Total da semana/.test(an.txt), JSON.stringify(an).slice(0, 500));
+    // Fotos: imagens feitas no aparelho de teste
+    await E(k.p, () => { location.hash = 'fotos'; }); await sleep(600);
+    const fo = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms));
+      const faz = async (nome, desenha, tipo = 'image/jpeg', W = 800, H = 600, quando = Date.now()) => { const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); desenha(g, W, H); const bl = await new Promise(r => c.toBlob(r, tipo, .9)); return new File([bl], nome, { type: tipo, lastModified: quando }); };
+      const padrao = (sh = 0, br = 0) => (g, W, H) => { let s = 7; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280; g.fillStyle = `rgb(${200 + br},${190 + br},${170 + br})`; g.fillRect(0, 0, W, H); for (let i = 0; i < 90; i++) { g.fillStyle = `hsl(${Math.floor(rnd() * 360)},70%,${Math.floor(30 + rnd() * 40 + br / 3)}%)`; g.fillRect(rnd() * W + sh, rnd() * H, 40 + rnd() * 120, 40 + rnd() * 120); } };
+      const agora = Date.now(), velha = agora - 90 * 864e5;
+      const L = [await faz('IMG_0001.jpg', padrao(), 'image/jpeg', 800, 600, agora - 6e4), await faz('IMG_0001 copia.jpg', padrao(), 'image/jpeg', 800, 600, agora - 5e4), await faz('IMG_0002.jpg', padrao(6, 8), 'image/jpeg', 800, 600, agora - 4e4),
+        await faz('IMG_0003.jpg', (g, W, H) => { const gr = g.createLinearGradient(0, 0, W, H); gr.addColorStop(0, '#8aa'); gr.addColorStop(1, '#cba'); g.fillStyle = gr; g.fillRect(0, 0, W, H); }, 'image/jpeg', 800, 600, agora - 3e6),
+        await faz('IMG_0004.jpg', (g, W, H) => { g.fillStyle = '#060606'; g.fillRect(0, 0, W, H); g.fillStyle = '#111'; g.fillRect(40, 40, 50, 50); }, 'image/jpeg', 800, 600, agora - 9e6),
+        await faz('Screenshot 2026-08-01 at 10.00.png', padrao(30, -40), 'image/png', 590, 1278, velha)];
+      await OS.Fotos.importar(L); await w(400); const A0 = OS.Fotos.analisar(); const v = document.getElementById('view').innerText;
+      return { n: OS.Fotos.estado.L.length, iguais: A0.sug.iguais.length, parecidas: A0.sug.parecidas.length, desf: A0.sug.desfocadas.map(x => x.nome), esc: A0.sug.escuras.map(x => x.nome), cap: A0.sug.capturas.map(x => x.nome), grupos: A0.grupos.map(g => g.tipo + ':' + g.L.length), sugUI: /Fotos iguais/.test(v) && /Podes libertar/.test(v) }; });
+    if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'fotos.png'), fullPage: true }); } catch (e) { } }
+    ok('Fotos: escolher várias fotos lê-as no aparelho e junta as iguais e as parecidas (fica a mais nítida), encontra as desfocadas, as escuras e as capturas de ecrã antigas, e mostra quanto se pode libertar',
+      fo.n === 6 && fo.iguais >= 1 && fo.grupos.some(g => /^(iguais|parecidas):[23]$/.test(g)) && fo.desf.includes('IMG_0003.jpg') && fo.esc.includes('IMG_0004.jpg') && fo.cap.some(x => /Screenshot/.test(x)) && fo.sugUI, JSON.stringify(fo).slice(0, 500));
+    // a IA separa por categorias; pesquisar; ver uma foto e apagá-la; apagar um grupo de iguais
+    await k.p.evaluate(() => { localStorage.setItem('oc_fotos_ia', '1'); try { OS.U.ls.set('oc_fotos_ia', 1); } catch (e) { } window.confirm = () => true; });
+    const ia = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)); await OS.act.foIA(); await w(300); const A0 = OS.Fotos.analisar(); return { cats: Object.keys(A0.cats), comIA: OS.Fotos.estado.L.filter(x => x.ia).length, sugIA: OS.Fotos.estado.L.filter(x => x.ia && x.ia.apagar).length }; });
+    await k.p.fill('#foQ', 'pizza'); await sleep(700); const pq = await E(k.p, () => ({ t: document.getElementById('view').innerText.match(/\d+ fotos? para "pizza"/), n: document.querySelectorAll('.fo-g .fo-c').length }));
+    await k.p.fill('#foQ', ''); await sleep(500); await E(k.p, () => { location.hash = 'fotos.s:iguais'; }); await sleep(700);
+    const n0 = await E(k.p, () => OS.Fotos.estado.L.length); await k.p.click('[data-act=foGrupo]').catch(() => { }); await sleep(800); const n1 = await E(k.p, () => OS.Fotos.estado.L.length);
+    await E(k.p, () => { location.hash = 'fotos.todas'; }); await sleep(600); await k.p.click('.fo-g .fo-c').catch(() => { }); await sleep(800);
+    const vv = await E(k.p, () => ({ modal: !!document.querySelector('.fo-v img'), info: (document.querySelector('.fo-vd') || {}).innerText || '' }));
+    if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'fotos-ver.png') }); } catch (e) { } }
+    await k.p.click('[data-act=foApagarUma]').catch(() => { }); await sleep(800); const n2 = await E(k.p, () => OS.Fotos.estado.L.length);
+    await k.p.reload(); await unlock(k.p).catch(() => { }); await sleep(600); await E(k.p, () => { location.hash = 'fotos'; }); await sleep(1200); const n3 = await E(k.p, () => (OS.Fotos.estado.L || []).length);
+    ok('Fotos com a IA (miniaturas): categorias e o que mostra cada foto, sugestões da IA para apagar, pesquisa pelo conteúdo ("pizza"), ver a foto em grande com a informação, apagar um grupo de iguais e uma foto; ficam guardadas no aparelho',
+      ia.cats.includes('Comida e bebida') && ia.comIA === 6 && ia.sugIA >= 1 && FOTM.n >= 1 && !!pq.t && pq.n >= 1 && n1 < n0 && vv.modal && /\d+×\d+/.test(vv.info) && n2 === n1 - 1 && n3 === n2,
+      JSON.stringify({ ia, pq, n0, n1, n2, n3, vv: vv.info.slice(0, 120), fm: FOTM.n }).slice(0, 500));
+    await k.ctx.close(); }
+  // v3.75: temas das festas (épocas inteiras, não só o dia), Natal com neve a acumular e o limpa-neves, e as outras festas
+  { const k = await newPage(b, PROFILES[0]); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k.p.goto(BASE); await unlock(k.p).catch(() => { }); await sleep(700);
+    const ep = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), d = (y, m, dd, h = 12) => OS.Epocas.deHoje(new Date(y, m, dd, h));
+      const datas = { natal1: d(2026, 11, 1), natal: d(2026, 11, 20), reis: d(2027, 0, 6), fimNatal: d(2027, 0, 7), anonovo: d(2026, 11, 31, 21), hall: d(2026, 9, 20), finados: d(2026, 10, 2), hoje: d(2026, 10, 22), pascoa: d(2027, 2, 20), pascoaFim: d(2027, 2, 29), depoisPascoa: d(2027, 2, 31), carnaval: d(2027, 1, 5), junho: d(2026, 5, 13) };
+      OS.act.epVer({ dataset: { v: 'natal' } }); await w(9000); const s1 = OS.Epocas.estado(), top = !!document.querySelector('#top .ep-gar'), attr = document.documentElement.dataset.epoca;
+      location.hash = 'definicoes'; await w(700); const pn = (document.getElementById('epSet') || {}).innerText || '';
+      return { datas, s1, top, attr, pn: /Temas das festas/.test(pn) && /Halloween/.test(pn) }; });
+    if (process.env.SHOTS) { try { await E(k.p, () => { location.hash = 'hoje'; }); await sleep(3000); await k.p.screenshot({ path: path.join(process.env.SHOTS, 'natal.png') }); } catch (e) { } }
+    const D = ep.datas;
+    ok('Temas das festas: cada festa vale a época toda (Natal de 1/12 a 6/1, Halloween de 15/10 a 2/11, Páscoa nas 2 semanas antes até à segunda-feira, Carnaval, junho, passagem de ano) e sai quando acaba; Natal com luzes no topo, neve que acumula e o limpa-neves; nas Definições liga-se, desliga-se e vê-se cada tema',
+      D.natal1 === 'natal' && D.natal === 'natal' && D.reis === 'natal' && D.fimNatal === '' && D.anonovo === 'anonovo' && D.hall === 'halloween' && D.finados === 'halloween' && D.hoje === '' && D.pascoa === 'pascoa' && D.pascoaFim === 'pascoa' && D.depoisPascoa === '' && D.carnaval === 'carnaval' && D.junho === 'junho'
+      && ep.s1.EP === 'natal' && ep.s1.cv && ep.top && ep.attr === 'natal' && ep.s1.P > 10 && (ep.s1.neve > 0.5 || ep.s1.nplow >= 1) && ep.s1.nplow >= 1 && ep.pn, JSON.stringify(ep).slice(0, 600));
+    for (const [v, f] of [['halloween', 'halloween.png'], ['pascoa', 'pascoa.png']]) { await E(k.p, x => OS.act.epVer({ dataset: { v: x } }), v); await sleep(2500); if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, f) }); } catch (e) { } } }
+    await E(k.p, () => OS.act.epVer({ dataset: { v: '' } })); await k.ctx.close(); }
   // rede instável e sem internet (com conta): o que se faz sem rede fica guardado e sincroniza quando volta, mesmo com o servidor a falhar pelo caminho
   { const R = await reg(), sR = { 'nau:s': JSON.stringify({ t: R.tok, e: R.email, n: '', perfis: [{ id: R.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(R.pid), 'nau:pd': JSON.stringify(R.pid), 'nau:owner': JSON.stringify(R.email) };
     const k = await newPage(b, PROFILES[0], sR); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; window.__accPut = 300; }); await k.p.goto(BASE); await unlock(k.p).catch(() => { });
