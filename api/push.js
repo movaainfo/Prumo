@@ -38,7 +38,7 @@ const items = (L, max) => (Array.isArray(L) ? L : []).filter(x => x && +x.at > 0
   .filter(x => x.t && x.at > Date.now() - 36e5 && x.at < Date.now() + 16 * 864e5).sort((a, b) => a.at - b.at).slice(0, max);
 const av = o => { const r = {}; Object.keys(o || {}).slice(0, 12).forEach(k => { if (/^[a-z]{2,5}$/.test(k)) r[k] = o[k] ? 1 : 0; }); return r; };
 const PARTS = {
-  rot: d => items(d, 320), foco: d => items(d, 6),
+  rot: d => items(d, 320), foco: d => items(d, 6), vivo: d => items(d, 4), // v3.72: fim do descanso no treino e de outros tempos em curso
   fut: d => ({ teams: (Array.isArray(d && d.teams) ? d.teams : []).slice(0, 40).map(t => ({ id: str(t.id, 20).replace(/\D/g, ''), n: str(t.n, 60) })).filter(t => t.id), comps: (Array.isArray(d && d.comps) ? d.comps : []).slice(0, 30).map(c => ({ slug: str(c.slug, 40).replace(/[^a-z0-9._-]/g, ''), n: str(c.n, 60) })).filter(c => c.slug), av: av(d && d.av) }),
   sp: d => ({ teams: (Array.isArray(d && d.teams) ? d.teams : []).slice(0, 60).map(t => ({ lg: str(t.lg, 12).replace(/[^a-z0-9]/g, ''), id: str(t.id, 20).replace(/[^\w-]/g, ''), n: str(t.n, 60), t: str(t.t, 12).replace(/\D/g, '') })).filter(t => t.lg && t.id), bell: (Array.isArray(d && d.bell) ? d.bell : []).filter(k => ['f1', 'motogp', 'mma'].includes(k)), av: av(d && d.av) }),
   inv: d => (Array.isArray(d) ? d : []).slice(0, 80).map(a => ({ id: str(a.id, 40), s: str(a.s, 24).replace(/[^A-Za-z0-9.=^_-]/g, ''), k: str(a.k, 8).replace(/[^a-z]/g, ''), v: +a.v || 0, r: a.r === 'diario' ? 'diario' : 'uma', n: str(a.n, 80), on: a.on ? 1 : 0 })).filter(a => a.s && a.id && ['acima', 'abaixo', 'queda', 'subida'].includes(a.k)),
@@ -165,7 +165,7 @@ const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.f
   if (!U.length) return { ok: true, n: 0 };
   const S = await load(STP), st = S.v; st.sent = st.sent || {}; st.ev = st.ev || {}; const before = JSON.stringify(st), out = [];
   // lembretes (rotina, bloco de foco): os que estão na hora e ainda não foram (até 10 min de atraso)
-  U.forEach(([uk, x]) => ['rot', 'foco'].forEach(part => { if (!x.cat[part]) return; (x[part] || []).forEach(it => { if (it.at > now + 30e3 || it.at < now - 10 * 6e4) return;
+  U.forEach(([uk, x]) => ['rot', 'foco', 'vivo'].forEach(part => { if (!x.cat[part === 'vivo' ? 'foco' : part]) return; (x[part] || []).forEach(it => { if (it.at > now + 30e3 || it.at < now - 10 * 6e4) return;
     const k = uk + '|' + part + '|' + (it.g || '') + '|' + it.at; if (st.sent[k]) return; st.sent[k] = now; out.push({ uk, m: { t: it.t, b: it.b, u: it.u, g: it.g || part }, ttl: 1800 }); }); }));
   try { await sports(U, st, now, out); } catch (e) { console.error('push desportos', e.message); }
   if (o.force || new Date(now).getUTCMinutes() % 5 === 0) { try { await prices(U, st, now, out); } catch (e) { console.error('push preços', e.message); } }

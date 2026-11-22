@@ -377,6 +377,16 @@ const OPS = {
     return { proximo: j.nextPageCursor ? cut(j.nextPageCursor, 300) : null, livros: (Array.isArray(j.results) ? j.results : []).slice(0, 2000).map(x => ({ id: +x.user_book_id || 0, t: cut(x.readable_title || x.title, 300), a: cut(x.author, 200), cat: cut(x.category, 20),
       capa: /^https:\/\//.test(String(x.cover_image_url || '')) ? cut(x.cover_image_url, 500) : '', src: cut(x.source, 30),
       d: (Array.isArray(x.highlights) ? x.highlights : []).filter(h => h && !h.is_deleted).slice(0, 3000).map(h => ({ id: +h.id || 0, t: cut(h.text, 4000), n: cut(h.note, 2000), loc: Number.isFinite(+h.location) ? +h.location : null, lt: cut(h.location_type, 12), at: cut(h.highlighted_at, 30) })) })) }; },
+  // v3.72: Discord — entrega uma mensagem no canal da pessoa (o endereço do webhook vem da app e não fica guardado)
+  async discord(req, b) { await session(req); if (N.limit(req, 'discord', 40, 3600e3)) throw N.err('limite', 'Muitas mensagens para o Discord. Tenta daqui a pouco.', 429);
+    const url = String(b.url || '').trim(); if (!/^https:\/\/(?:(?:ptb|canary)\.)?discord(?:app)?\.com\/api\/webhooks\/\d{5,25}\/[\w-]{20,120}$/.test(url)) throw N.err('discord', 'Esse endereço não é um webhook do Discord.', 400);
+    const limpa = (x, n) => String(x || '').replace(/@(everyone|here)/gi, '@​$1').replace(/<@[!&]?\d+>/g, '').slice(0, n);
+    const corpo = { username: 'Prumo', allowed_mentions: { parse: [] }, embeds: [{ title: limpa(b.titulo, 200), description: limpa(b.texto, 1500), color: Math.max(0, Math.min(0xffffff, +b.cor || 0x9b1b30)) }] };
+    const base = process.env.DISCORD_BASE ? url.replace(/^https:\/\/[^/]+/, String(process.env.DISCORD_BASE).replace(/\/+$/, '')) : url;
+    let r; try { r = await fetch(base + '?wait=false', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(corpo), signal: AbortSignal.timeout(10000) }); } catch (e) { throw N.err('discord', 'O Discord não respondeu agora.', 502); }
+    if (r.status === 404 || r.status === 401) throw N.err('discord', 'O Discord não encontrou esse webhook (foi apagado?). Cria outro e liga de novo.', 400);
+    if (r.status === 429) throw N.err('limite', 'O Discord pediu para esperar um pouco.', 429);
+    if (!r.ok) throw N.err('discord', 'O Discord não aceitou a mensagem (' + r.status + ').', 502); N.count('discord'); return { ok2: true }; },
   // v3.71: o id com que a app das lojas entra no RevenueCat (não diz o e-mail a ninguém)
   async rcId(req) { const s = await session(req); return { id: 'p_' + s.eid, ativo: require('./revenuecat').pronto() }; },
   async adminVisitas(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
