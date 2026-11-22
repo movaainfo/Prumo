@@ -78,7 +78,7 @@ A.fsPl = b => { set({ pl: b.dataset.id, meu: '' }); OS.request(); };
 OS.forms = OS.forms || {}; OS.forms.fsMeu = (f) => { const u = String(new FormData(f).get('u') || '').trim(); if (u && !spId(u)) { UI.toast('Esse link não é de uma playlist, álbum ou música do Spotify.', 'neg'); return; } set({ meu: u }); UI.toast(u ? 'A tua música fica no bloco.' : 'Voltaste às playlists do Prumo.', 'pos'); OS.request(); };
 document.addEventListener('input', e => { if (e.target && e.target.matches && e.target.matches('[data-fsvol]')) { const v = +e.target.value; set({ vol: v }); if (M && AC) M.gain.setTargetAtTime(v * .5, AC.currentTime, .1); } });
 // começa com o toque em "Começar" (o iPhone só deixa tocar som depois de um toque) e pára ao fechar
-OS.on('ready', () => { const g = A.fbGo; if (g && !g.__fs) { A.fbGo = function () { const r = g.apply(this, arguments); if (document.documentElement.classList.contains('fb-on')) { tocar(); sync(true); } return r; }; A.fbGo.__fs = 1; }
+OS.on('ready', () => { const g = A.fbGo; if (g && !g.__fs) { A.fbGo = function () { const ja = !!TOCA; tocar(); const r = g.apply(this, arguments); if (document.documentElement.classList.contains('fb-on')) sync(true); else if (!ja) parar(false); return r; }; A.fbGo.__fs = 1; }
   const cl = A.fbClose; if (cl && !cl.__fs) { A.fbClose = function () { sync(false); return cl.apply(this, arguments); }; A.fbClose.__fs = 1; } });
 document.addEventListener('visibilitychange', () => { if (!document.hidden && AC && AC.state === 'suspended' && TOCA) AC.resume().catch(() => { }); });
 OS.FocoSom = { escolha, barra, sync, tocar, parar, estado: () => ({ toca: TOCA, cfg: cfg(), sp: !!SP }), spId };

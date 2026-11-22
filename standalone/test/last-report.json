@@ -1,218 +1,854 @@
 [
  {
-  "p": "Ataque",
-  "name": "Ataque XSS guardado: nenhum código malicioso corre nem entra no ecrã em 189 páginas",
+  "p": "Extras",
+  "name": "B3: botão \"Importar da B3\" nos Movimentos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: 10 logins falsos seguidos trancam a conta 15 min (nem a senha certa entra logo a seguir)",
+  "p": "Extras",
+  "name": "B3: painel com os passos da Área do Investidor",
   "pass": true,
-  "info": "[401,401,401,401,401,401,401,401,429,429] certa:429"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: enxurrada de logins do mesmo endereço é travada (429 depois de 30)",
+  "p": "Extras",
+  "name": "B3: lê Negociação + Movimentação + Posição (9 movimentos; liquidação e atualização ficam de fora)",
   "pass": true,
-  "info": "[401,401,401,401,429,429]"
+  "info": "{\"n\":9,\"liq\":true,\"upd\":true,\"err\":\"\"}"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: robô que preenche o campo escondido do registo é recusado",
+  "p": "Extras",
+  "name": "B3: conferência com a posição aparece",
   "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"Muitas contas criadas a partir daqui. Tenta mais tarde.\",\"code\":\"limite\",\"_st\":429}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: e-mail com código HTML é recusado no registo",
+  "p": "Extras",
+  "name": "B3: PETR4 criado como Ação, PETR4.SA, BRL, corretora BTG Pactual",
   "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"Esse e-mail não parece válido.\",\"code\":\"email\",\"_st\":400}"
+  "info": "PETR4.SA|Ação|BRL|BTG Pactual|12"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: pedidos de sites de fora (mesmo com nome parecido) são recusados",
+  "p": "Extras",
+  "name": "B3: desdobro calculado (10 − 4 = 6 → 12 ações)",
   "pass": true,
-  "info": "403 403"
+  "info": "PETR4.SA|Ação|BRL|BTG Pactual|12 fator 2"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: token forjado não entra; a conta A não lê nem grava os dados da conta B",
+  "p": "Extras",
+  "name": "B3: MXRF11 é FII, BOVA11 é ETF, Tesouro Selic 2029 no Tesouro Direto",
   "pass": true,
-  "info": "401 404 404"
+  "info": "{\"pe\":\"PETR4.SA|Ação|BRL|BTG Pactual|12\",\"mx\":\"FII\",\"bo\":\"ETF\",\"td\":\"Tesouro Selic 2029\",\"jcp\":\"1.2/0.18\",\"sp\":\"2\",\"rend\":1}"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: línguas inventadas não gastam a IA (só as da lista da app)",
+  "p": "Extras",
+  "name": "B3: JCP guardado bruto com os 15% retidos (1,02 líquido → 1,20 bruto)",
   "pass": true,
-  "info": "400 400"
+  "info": "1.2/0.18"
  },
  {
-  "p": "Ataque",
-  "name": "Ataque: a cópia de segurança não abre a quem não é o Vercel",
+  "p": "Extras",
+  "name": "B3: importar outra vez não duplica nada e a conferência bate",
   "pass": true,
-  "info": "200 403"
+  "info": "{\"f\":0,\"d\":9}"
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: o atalho de gastos continua a guardar (avisa que entra quando a app voltar) e a app não busca nada enquanto dura",
+  "p": "Extras",
+  "name": "Ficheiros: Universidade → Materiais tem \"Guardar ficheiros\" em cada disciplina",
   "pass": true,
-  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 03:40)\"},\"p1\":503}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: a conta de administração continua a usar a app, com o botão flutuante da contagem até ao fim",
+  "p": "Extras",
+  "name": "Ficheiros: sem a Parte 5, explica como a colar (com botão para copiar)",
   "pass": true,
-  "info": "{\"fab\":\"Manutenção 29:56\",\"cover\":false}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: só a administração liga; ligada, as outras contas não entram nem sincronizam (503) e a administração e as contas de teste continuam",
+  "p": "Extras",
+  "name": "Ficheiros: \"Verificar\" deteta a Parte 5",
   "pass": true,
-  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795318858361,\"motivo\":\"manual\",\"prox\":0}}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: a app mostra o ecrã \"O Prumo está em manutenção\" a tapar tudo, com a hora de regresso",
+  "p": "Extras",
+  "name": "Ficheiros: PDF de 7 MB enviado em 4 partes para Universidade/Contabilidade ZZ no Drive",
   "pass": true,
-  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 03:40.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
+  "info": "Resumo cap 3|PDF|uni|7340032|F1 {\"n\":4,\"pasta\":\"Universidade/Contabilidade ZZ\"}"
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: desligada pela administração, o ecrã sai sozinho e as contas voltam a funcionar",
+  "p": "Extras",
+  "name": "Ficheiros: aparece na disciplina com Abrir / descarregar / apagar",
   "pass": true,
-  "info": "true 200"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas",
+  "p": "Extras",
+  "name": "Ficheiros: \"Abrir\" abre o ficheiro no Google Drive",
   "pass": true,
-  "info": "200 [{\"id\":\"mwr9f81p-f649263f66\",\"t\":\"2026-11-22T03:10:58.429Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Relatório da semana: a administração gera-o (contas, planos, atividade, segurança com os ataques de hoje, falhas, cópias, saúde) e mais ninguém o vê",
+  "p": "Extras",
+  "name": "Ficheiros: cada curso tem \"Guardar PDFs / ficheiros\"",
   "pass": true,
-  "info": "{\"st\":200,\"n\":1,\"contas\":{\"total\":3,\"novas\":3,\"porConfirmar\":0,\"teste\":1,\"entraramSemana\":0,\"perfis\":3},\"sec\":{\"login_falhou\":7,\"conta_trancada\":1,\"login_bloqueada\":3,\"login_desconhecido\":30,\"limite\":1,\"robo_registo\":1,\"origem\":2,\"token_falso\":1,\"backup_negado\":1,\"admin_negado\":1,\"manutencao_ligar\":1,\"manutencao_desligar\":1},\"alertas\":4,\"outro\":403}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê",
+  "p": "Extras",
+  "name": "Ficheiros: \"Atualizar lista\" recupera do Drive o que foi guardado noutro aparelho (na disciplina certa)",
   "pass": true,
-  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795317093829,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":1,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":0},\"copia\":\"2026-11-22\"},\"falhas\":[]},\"_st\":200}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Visitas: a página conta visitas e visitantes únicos do dia (o mesmo aparelho 2 vezes = 1), origem (Google, Instagram), país e cliques; robôs e pedidos estranhos não contam; só a administração vê",
+  "p": "Extras",
+  "name": "Ficheiros: apagar tira da lista e manda para o lixo do Drive",
   "pass": true,
-  "info": "{\"st\":200,\"t\":{\"visitas\":3,\"unicos\":2,\"app\":2,\"cliques\":1,\"registos\":3,\"pagamentos\":0,\"conversao\":150},\"antes\":{\"visitas\":0,\"unicos\":0,\"app\":2,\"cliques\":0,\"registos\":3,\"pagamentos\":0,\"conversao\":0},\"o\":[[\"direto\",2],[\"Google\",1],[\"Instagram\",1]],\"p\":[[\"??\",2],[\"BR\",1],[\"PT\",1]],\"bot\":{\"ok\":true,\"ok2\":false},\"mau\":{\"ok\":true,\"ok2\":false},\"outro\":403}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Visitas: os contadores do dia juntam-se num só ficheiro (_dia.json), sem perder nem contar nada a dobrar",
+  "p": "Extras",
+  "name": "Definições → Script Google lista a Parte 5 (ficheiros na nuvem)",
   "pass": true,
-  "info": "{\"fs1\":1,\"fs2\":[\"_dia.json\"],\"v\":3,\"v2\":4}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Antivírus: o servidor só conta o tipo de ameaça bloqueada (sem nomes nem conteúdos) e só a administração vê",
+  "p": "Extras",
+  "name": "Parte 5: código válido com op_fup, op_fdl, op_frm, op_fls",
   "pass": true,
-  "info": "{\"a3\":{\"ok\":true,\"ok2\":false,\"_st\":200},\"av\":{\"ok\":true,\"av\":{\"f_macro\":2},\"_st\":200},\"n\":403}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Antivírus › ficheiros: apanha EICAR, programas disfarçados, nomes invertidos, macros, ZIP com programas, bombas ZIP, PDFs com código, SVG com código; deixa passar CSV, PNG, XLSX e PDF limpos",
+  "p": "Extras",
+  "name": "Metas: meta com categoria própria (\"Pessoal\") aparece",
   "pass": true,
-  "info": "[\"eicar\",\"prog\",\"prog\",\"nome\",\"macro\",\"zipprog\",\"bomba\",\"pdfjs\",\"disf\",\"svg\",null,null,null,null]"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Antivírus › links: bancos e lojas imitados, truque do @, programas, javascript: são perigosos; encurtados, sem cadeado, letras estrangeiras e IPs pedem cuidado; os sites verdadeiros abrem sem perguntas",
+  "p": "Extras",
+  "name": "sem erros de JavaScript (extras)",
   "pass": true,
-  "info": "[]"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Antivírus › na app: o ficheiro EICAR é parado antes de chegar à app (aviso e caixa limpa), o CSV limpo passa, e as caixas criadas na hora também são verificadas",
+  "p": "Extras",
+  "name": "Investimentos → Visão: \"Tudo o que tens investido\" junta mercado e imóveis",
   "pass": true,
-  "info": "{\"i1\":{\"got\":[],\"modal\":\"Teste bem-sucedido\\n\\nteste-eicar.txt\\n\\nÉ o ficheiro de teste EICAR: o antivírus está a funcionar.\\n\\nO ficheiro de teste foi apanhado e não entrou na app.\\n\\nPercebi\",\"val\":\"\"},\"i2\":[\"extrato.csv\"],\"fc\":true,\"i3\":{\"got\":[],\"modal\":true}}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Antivírus › links na app: tocar num link perigoso mostra o aviso e não abre; um site verdadeiro abre logo; nos e-mails os links perigosos ficam desligados e marcados",
+  "p": "Extras",
+  "name": "Investimentos → Visão: gráficos por classe, setor, país e moeda",
   "pass": true,
-  "info": "{\"l1\":{\"nav\":[],\"modal\":\"Este link parece perigoso\\n\\nhttp://paypa1.com/login\\n\\nImita o nome \\\"paypal\\\" trocando letras por números.\\nA ligação não é segura (sem cadeado, http).\\n\\nSe veio num e-mail ou mensagem a pedir dados, senhas ou pagamentos, o mais seguro é não abrir e ir ao site escrevendo o endereço tu mesmo.\\n\\nAbrir mesmo assim\\nNão abrir\"},\"l2\":{\"nav\":[\"avBom\"],\"modal\":false},\"em\":{\"m"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Antivírus › Definições: separador \"Antivírus e proteção\" com o estado, o histórico das ameaças, o botão de teste e o que fazer no telemóvel e no computador",
+  "p": "Extras",
+  "name": "Investimentos: separadores Imóveis e Renda passiva",
   "pass": true,
-  "info": "{\"t\":\"Sistema\\nDEFINIÇÕES\\n\\nO antivírus do Prumo e tudo o que protege os teus dados.\\n\\nGeral\\nConta e perfis\\nE-mail\\nLigações\\nAtalhos do iPhone\\nSpyke (assistente)\\nImpostos\\nAntivírus e proteção\\nPrivacidade e term\",\"on\":true,\"tab\":true,\"hist\":true,\"nota\":true}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Erros e quedas: as falhas da app aparecem agrupadas (mensagem, onde, quantas vezes) com as novas assinaladas; só a administração vê",
+  "p": "Extras",
+  "name": "Carteira: divisão por setor com % e imóveis incluídos",
   "pass": true,
-  "info": "{\"st\":200,\"g\":{\"k\":\"TypeError: falha de teste 85516d @ teste.js:1:1\",\"n\":4,\"dias\":1,\"prim\":\"2026-11-22\",\"ult\":\"2026-11-22\",\"hoje\":4,\"novo\":true},\"n\":403}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Erros e quedas: um erro novo que se repete manda e-mail à administração (no máximo um a cada 6 horas)",
+  "p": "Extras",
+  "name": "Carteira: divisão por país (EUA, Irlanda, Portugal)",
   "pass": true,
-  "info": "{\"v1\":{\"alerta\":true,\"novos\":[[\"TypeError: falha de teste 85516d @ teste.js:1:1\",4]],\"tApp\":4,\"tSrv\":0},\"v2\":{\"alerta\":false,\"novos\":[[\"ReferenceError: outra 804848 @ b.js:2:2\",3]],\"tApp\":3,\"tSrv\":0},\"mails\":[\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro novo a repetir-se\"]}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Erros e quedas: /api/saude?ping=1 responde 200 a um monitor externo (sem dados de ninguém) e a verificação completa continua só para o Vercel",
+  "p": "Extras",
+  "name": "Imóveis: capital próprio, rendimento líquido, cash flow e rentabilidade",
   "pass": true,
-  "info": "{\"pg\":{\"st\":200,\"j\":{\"ok\":true,\"ms\":0}},\"cr\":403}"
+  "info": "{\"eq\":100000,\"noi\":9450,\"cf\":2250,\"gy\":0.054,\"realIn\":6300}"
  },
  {
-  "p": "Ataque",
-  "name": "Readwise: a chave errada é recusada; a certa traz os livros e destaques para as Leituras (página e nota nas citações), junta ao livro que já existe, ignora artigos e apagados, e não duplica",
+  "p": "Extras",
+  "name": "Imóveis: o real das Finanças (rendas ligadas ao imóvel) aparece",
   "pass": true,
-  "info": "{\"mau\":\"recusada O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.\",\"rw\":{\"st\":{\"tok\":\"rwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"last\":\"2026-11-22T03:11:42.472Z\",\"livros\":1,\"dest\":2,\"at\":1795317102501},\"pz\":1,\"pq\":[[\"Tu tornas-te\",\"\",\"\",false],[\"O essencial \",\"12\",\"a melhor\",true]],\"ha\":{\"capa\":\"https://exemplo.pt/h.jpg\",\"st\":\"A ler\",\"q\":1,\"f\":\"Ebook\"},\"art\":false,\"again\":{\"nl\":0,\"nd\":0},\"painel\":true}}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Strava: o endereço de autorização leva um state assinado (um state mexido é recusado); ao voltar, a autorização fica guardada cifrada (nunca em texto) e renova-se sozinha",
+  "p": "Extras",
+  "name": "Património líquido inclui o imóvel (valor − crédito)",
   "pass": true,
-  "info": "{\"e0\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"}},\"ini\":\"http://localhost:8803/lgmock/strava/authorize?client_id=4242&redirect_uri=http%3A%2F%2Floc\",\"falso\":400,\"cb\":200,\"cbt\":\" Strava ligado · Prumo :root{color-scheme:dark}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#65010D;color:#FCE7D1;font:16px/1.55 sy\",\"d1\":\"200 \",\"e1\":{\"pronto\":true,\"ligado\":true,\"quem\":\"Marta Teste\",\"desde\":\"2026-11"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Oura: sono (só a noite principal), prontidão, atividade e treinos; cada renovação guarda logo o refresh token novo (a Oura só aceita cada um uma vez)",
+  "p": "Extras",
+  "name": "Renda passiva: por mês, despesas cobertas, liberdade financeira e fontes",
   "pass": true,
-  "info": "{\"o1\":200,\"o2\":200,\"ren\":{\"strava\":1,\"oura\":2},\"sono\":1}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Strava e Oura na app: corridas, treinos, sono, prontidão e passos entram sem duplicar; nada disto chega à IA (contexto do Spyke, procura e áreas)",
+  "p": "Extras",
+  "name": "Dinheiro → Relatórios: mensal, trimestral e anual com prazos",
   "pass": true,
-  "info": "{\"sv\":[[8.12,2580,151]],\"svw\":[\"Volta de bicicleta\",\"Ginásio\"],\"ouS\":[[\"2026-11-21\",420]],\"ouR\":1,\"ou\":[[77,11234]],\"dup\":1,\"ia\":{\"runs\":1,\"wk\":0,\"sl\":0,\"ou\":0},\"ctxSv\":false,\"fa\":false,\"ra\":false,\"cards\":true}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "Strava: desligar avisa o Strava e apaga a autorização; sem sessão válida nada passa",
+  "p": "Extras",
+  "name": "Relatório anual: anexos A, F, G, H, J e simulação do imposto",
   "pass": true,
-  "info": "{\"sa\":200,\"sair\":[\"strava\"],\"e2\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":true,\"quem\":\"\",\"desde\":\"2026-11-22T03:11:43.341Z\"}},\"outro\":401}"
+  "info": ""
  },
  {
-  "p": "Ataque",
-  "name": "RevenueCat: sem a senha certa é recusado; uma compra dá o plano (confirmado no RevenueCat, não no que o aviso diz); o mesmo aviso não conta duas vezes; compras de teste não contam; ao expirar o plano sai",
+  "p": "Extras",
+  "name": "IRS: salário bruto, retenções e rendas (anexo F) somados",
   "pass": true,
-  "info": "{\"rid\":\"p_ff59\",\"sem\":401,\"errada\":401,\"h1\":{\"_st\":200,\"ok\":true},\"p1\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":false,\"pago\":1,\"ate\":1797909105827,\"ciclo\":\"mes\",\"loja\":\"play_store\"},\"h2\":{\"_st\":200,\"ok\":true,\"repetido\":1},\"n1\":1,\"n2\":1,\"p3\":\"avancado\",\"p4\":\"completo\",\"p5\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796526705728},\"h6\":200}"
+  "info": "{\"aG\":15000,\"aW\":1200,\"fG\":10800,\"fD\":300,\"j\":[\"G01:EUA:146\",\"G20:Irlanda:25\"],\"e\":1,\"acc\":\"Lituânia\",\"hab\":540,\"sau\":90,\"rc\":10538,\"jp\":0}"
  },
  {
-  "p": "Ataque",
-  "name": "Rede instável: sem internet a app funciona e guarda; quando a rede volta (com o servidor a falhar 3 vezes) sincroniza e a tarefa aparece no outro aparelho",
+  "p": "Extras",
+  "name": "IRS: vendas no anexo J com código (G01 ações, G20 ETF) e país",
+  "pass": true,
+  "info": "G01:EUA:146 G20:Irlanda:25"
+ },
+ {
+  "p": "Extras",
+  "name": "IRS: deduções (rendas 15% até ao limite, saúde 15%) e contas no estrangeiro (Revolut → Lituânia)",
+  "pass": true,
+  "info": "{\"aG\":15000,\"aW\":1200,\"fG\":10800,\"fD\":300,\"j\":[\"G01:EUA:146\",\"G20:Irlanda:25\"],\"e\":1,\"acc\":\"Lituânia\",\"hab\":540,\"sau\":90,\"rc\":10538,\"jp\":0}"
+ },
+ {
+  "p": "Extras",
+  "name": "IRS: rendimento coletável com dedução específica (sem IRS Jovem fora do prazo)",
+  "pass": true,
+  "info": "{\"aG\":15000,\"aW\":1200,\"fG\":10800,\"fD\":300,\"j\":[\"G01:EUA:146\",\"G20:Irlanda:25\"],\"e\":1,\"acc\":\"Lituânia\",\"hab\":540,\"sau\":90,\"rc\":10538,\"jp\":0}"
+ },
+ {
+  "p": "Extras",
+  "name": "IRS Jovem: 6.º ano de rendimentos = 50% isento (até 55 × IAS)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Relatório: tabelas para descarregar em CSV (para o contabilista)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Relatório: descarregar o relatório completo (para PDF)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Relatório mensal enxuto: resumo, receitas e despesas, investimentos e impostos do mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Relatórios gerados sozinhos quando o mês, o trimestre e o ano fecham (Arquivo)",
+  "pass": true,
+  "info": "{\"k\":3,\"per\":\"a,m,q\"}"
+ },
+ {
+  "p": "Extras",
+  "name": "Arquivo lista os relatórios novos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Definições → Impostos: país dos relatórios, IRS Jovem, dependentes, englobamento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "País: a app guarda quando mudaste de país (Portugal → Brasil hoje)",
+  "pass": true,
+  "info": "[[\"\",\"PT\"],[\"2026-11-22\",\"BR\"]]"
+ },
+ {
+  "p": "Extras",
+  "name": "Brasil: relatório anual no formato do IRPF (fichas, bens e direitos, completa x simplificada) em reais",
+  "pass": true,
+  "info": "[true,true,true,true,true,true,true,\"(R$)\\nMACA\\tAção\\tTrading 212\\tEUA\\t6\\tUS$ 900,00\\tR$ 5.344,23\\nMUND\\tETF\\tXTB\\tIrlanda\\t15\\t€ 1500,00\\tR$ 9.788,85\\nTotal aplicado\\tR$ \"]"
+ },
+ {
+  "p": "Extras",
+  "name": "Brasil: salário da conta em reais fica em reais; rendas em euros passam a reais (carnê-leão)",
+  "pass": true,
+  "info": "{\"pj\":5000,\"irrf\":300,\"inss\":500,\"pf\":35240,\"k\":6,\"carne\":true,\"best\":\"simplificada\"}"
+ },
+ {
+  "p": "Extras",
+  "name": "Brasil: DARF e carnê-leão vencem no último dia útil do mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Brasil: relatório deste mês com carnê-leão, DARF da renda variável e IR retido",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Os relatórios que já passaram ficam como estavam (ano anterior continua no formato do IRS, em euros)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "O mês passado (já arquivado) continua no formato de Portugal",
+  "pass": true,
+  "info": "[true,false,true,[\"to), em formato pronto para a declaração de IRPF (Brasil). Seguem o país que escolhest\"]]"
+ },
+ {
+  "p": "Extras",
+  "name": "Arquivo: cada relatório mostra o país com que foi gerado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Relatórios: o topo segue o Brasil (\"Completo (IRPF)\", prazos do Brasil); o mês já fechado continua em euros",
+  "pass": true,
+  "info": "[true,true,true,true,true,true,true]pleto (IRPF)\nReceitas e despesas\nInvestimentos\nArquivo\nMensal · resumido\nout 26\nEntrou\n€ 900\nSaiu\n€ 0\nPoupado\n+€ 900,00\n\nReceitas, despesas, poupança, investimentos e o que guardar para impostos.\n\nAbrir relatório\nTrimestral · completo\n3.º trimestre 2026\nEntrou\n€ 2700\nSaiu\n€ 0\nPoupado\n+€ 2700,00\n\nTudo do mês, mais mês a mês, subcategorias, contas, investimentos completos e IRS acumulado.\n\nAbrir relatório\nAnual · declaração de IRPF\nAno 2026\nEntrou\nR$ 39.440\nSaiu\nR$ 0\nPoupado\n+R$ 39.439,86\n\nIRPF 2027: a restituir ~R$ 2.357 (estimativa), com todas as fichas.\n\nAbrir relatório\nPróximos prazos\n30/11/"
+ },
+ {
+  "p": "Extras",
+  "name": "Períodos que fecharam antes da mudança de país são gerados no país de então (Portugal)",
+  "pass": true,
+  "info": "a:PT,m:PT,q:PT"
+ },
+ {
+  "p": "Extras",
+  "name": "Definições → Impostos no Brasil: país, dependentes (sem campos do IRS português)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Outro país: relatório completo de receitas, despesas e investimentos (sem formato fiscal português ou brasileiro)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Movimento de salário com bruto, retenção e Segurança Social",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Empresa: preço de longo prazo, retornos e dividendos por ano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Empresa: últimos trimestres e escolha 5/10 anos nas demonstrações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Empresa: 10 anos de demonstrações financeiras",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Empresa: a história completa (fundação, fundadores, linha do tempo, crises, líderes, fontes)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Empresa: tudo sobre a empresa (modelo, segmentos, concorrentes, cenários, tese)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Empresa: história e dossiê ficam guardados (não gasta IA outra vez)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Entrevista: mais de 500 perguntas em 37 capítulos (mente e emoções, perdas, valores, identidade, sentidos, cartas…)",
+  "pass": true,
+  "info": "{\"n\":537,\"parts\":37}"
+ },
+ {
+  "p": "Extras",
+  "name": "A evolução vive no Painel: o antigo Longo prazo abre o Painel na secção \"A tua evolução\", e o menu já não tem \"Minha Evolução\"",
   "pass": false,
-  "info": "{\"off\":{\"st\":\"sem ligação (guardado neste aparelho)\",\"vis\":true},\"falhas\":3,\"on\":\"sincronizada\",\"there\":false}"
+  "info": "{\"h\":\"#visao\",\"evo\":true,\"pat\":false,\"gm\":true,\"la\":true,\"pa\":true,\"ev\":true,\"nav\":[]}"
  },
  {
-  "p": "Ataque",
-  "name": "Falhas do app: o servidor aceita o registo da falha (com limite) para o relatório da semana",
+  "p": "Extras",
+  "name": "Painel › A tua evolução: evolução por área (dinheiro, estudos, desporto, carreira) sem repetir as metas do Painel",
   "pass": true,
-  "info": "{\"ok\":true,\"ok2\":true,\"_st\":200}"
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Minha Evolução: o Spyke analisa a evolução (nota, por área, foco para 30 dias)",
+  "pass": true,
+  "info": "0\nComeça hoje o teu dia 1 de foco\n0 pontos hoje · faltam 70\nDomingo, 22 de novembro\nBoa madrugada, Ryan\n\nCUMPRE O BÁSICO COM EXCELÊNCIA. ↻\n\n0 para atenção · Próxima ação: Revisão semanal\n\nnov 2026\nHoj"
+ },
+ {
+  "p": "Extras",
+  "name": "Decisões: \"Pensar com o Spyke\" no topo da página",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "Decisões: o Spyke organiza o que escrevi (alternativas) e analisa: pontos fortes e fracos com peso, o que pesa mais, sobre o que escrevi",
+  "pass": true,
+  "info": "{\"ok\":true,\"alts\":\"Aceitar|Não aceitar\",\"an\":true,\"t\":true,\"id\":\"8rbkiba5gtd\"}"
+ },
+ {
+  "p": "Extras",
+  "name": "Decisões: \"Usar estes pesos\" aplica os pesos sugeridos à matriz",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Extras",
+  "name": "sem erros de JavaScript (extras 2)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Conta nova: 14 dias grátis do plano Completo, sem cartão",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796527883756}"
+ },
+ {
+  "p": "Planos",
+  "name": "Página pública \"Planos e preços\" (para o Stripe): os 3 planos em euros (outras moedas convertidas do euro), cancelamento e reembolso",
+  "pass": true,
+  "info": "39760"
+ },
+ {
+  "p": "Planos",
+  "name": "Os três planos com os preços só em euros (5,99 · 11,99 · 19,99 por mês; anual = 10 meses)",
+  "pass": true,
+  "info": "{\"ok\":true,\"planos\":[{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"ia\":20,\"perfis\":1,\"precos\":{\"EUR\":{\"mes\":599,\"ano\":5990}}},{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"ia\":150,\"perfis\":3,\"precos\":{\"EUR\":{"
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado, mas sem o Stripe ligado: continua com tudo (não há como pagar ainda)",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"semCobranca\":1,\"testeAcabou\":1795318283756}"
+ },
+ {
+  "p": "Planos",
+  "name": "Com o Stripe ligado e o teste acabado: fica sem plano (a app pede para escolher)",
+  "pass": true,
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795318283756}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: não cria perfis (402)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O teu teste grátis acabou: escolhe um plano em Planos para continuar.\",\"code\":\"plano\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: a IA do servidor responde 402 com a mensagem para escolher um plano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar: abre o pagamento do Stripe com o preço do Essencial (5,99 € por mês), a conta e o regresso ao Prumo",
+  "pass": true,
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"823e564a156529b8937f1143\",\"success_url\":\"http://localhost:8806/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8806/Oceanum/#planos\",\"allow_promotion_codes\":\"true\",\"locale\":\"pt\",\"adaptive_pricing[enabled]\":\"true\",\"line_items[0][q"
+ },
+ {
+  "p": "Planos",
+  "name": "A página de pagamento tem o nome e as cores do Prumo (mesmo que a conta do Stripe tenha outro nome)",
+  "pass": true,
+  "info": "{\"branding_settings[display_name]\":\"Prumo\",\"branding_settings[background_color]\":\"#F6EFE4\",\"branding_settings[button_color]\":\"#8E1B2A\",\"branding_settings[border_style]\":\"rounded\",\"branding_settings[font_family]\":\"lora\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Se o Stripe ainda não conhecer a marca na página de pagamento, abre o pagamento sem ela",
+  "pass": true,
+  "info": "{\"ok\":true,\"url\":\"https://checkout.stripe.test/c/cs_test_3b318e76eda7\",\"_st\":200}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem métodos de pagamento ativos no Stripe (conta em análise): mensagem clara em português, sem o erro técnico",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Os pagamentos ainda estão a ser ativados. Tenta daqui a pouco; o teu teste grátis continua.\",\"code\":\"pagamentos\",\"_st\":503}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sempre em euros: quem usa dólares paga 119,90 € por ano convertidos pelo Stripe na hora (Adaptive Pricing); a libra também fica em euros",
+  "pass": true,
+  "info": "{\"u\":\"eur\",\"g\":\"eur\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Antes de pagar, \"confirmar\" não dá o plano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Ninguém usa o pagamento de outra conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Depois de pagar: plano Essencial (mensal), com a data da renovação",
+  "pass": true,
+  "info": "{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"perfis\":1,\"ia\":20,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Essencial: só 1 perfil (o segundo pede outro plano)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O teu plano (Essencial) tem até 1 perfil. Para mais, muda de plano em Planos.\",\"code\":\"maximo\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Essencial: ler fotos com a IA pede o plano Avançado (402)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Com assinatura, não abre outra: muda-se de plano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Mudar para o Avançado anual: o Stripe recebe o novo preço (119,90 €/ano) e a conta passa a Avançado",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Cancelar: continua até ao fim do período pago (sem renovar)",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"cancelar\":1,\"ate\":1797910284000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Retomar a assinatura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Gerir pagamento e faturas: abre o portal do Stripe",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "O Prumo configura sozinho o portal do cliente (uma vez): cartão, faturas com NIF e cancelar no fim do período",
+  "pass": true,
+  "info": "{\"n\":1,\"conf\":[\"bpc_55382c417141\",\"bpc_55382c417141\"]}"
+ },
+ {
+  "p": "Planos",
+  "name": "Pagou (em euros, mesmo vindo de reais) e fechou a página antes de voltar ao Prumo: o plano ativa sozinho na próxima vez que abre a app",
+  "pass": true,
+  "info": "{\"a\":0,\"b\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}}"
+ },
+ {
+  "p": "Planos",
+  "name": "Administração: tem sempre tudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Administração oferece o Completo por 30 dias (a pessoa vê o aviso)",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797910284390}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: a lista de contas mostra o plano de cada uma",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797910284390}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: com uma oferta, mostra também o que seria no Automático (aqui, sem plano)",
+  "pass": true,
+  "info": "{\"o\":{\"id\":\"completo\",\"ate\":1797910284390},\"a\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795318284052}}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Por fazer: sabe se o Stripe e o e-mail estão ligados (sem mostrar as chaves)",
+  "pass": true,
+  "info": "{\"strava\":true,\"oura\":true,\"revenuecat\":true,\"stripe\":true,\"stripeTeste\":true,\"mail\":\"\",\"mailDe\":false}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin dá o Essencial grátis a quem paga o Avançado: fica com o maior (Avançado pago)",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: \"Automático\" tira a escolha (volta ao teste e ao que a pessoa assinou)",
+  "pass": true,
+  "info": "{\"ok\":true,\"email\":\"teo97372bbf@teste.pt\",\"plano\":\"\",\"dias\":0,\"agora\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797910284000,\"ciclo\":\"ano\",\"cur\":\"EUR\""
+ },
+ {
+  "p": "Planos",
+  "name": "Só a administração escolhe planos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "A conta de administração não muda de plano (tem sempre tudo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin cria um código de desconto (LANCAMENTO20, −20% no 1.º pagamento): cupão e código promocional no Stripe",
+  "pass": true,
+  "info": "{\"c\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"max\":0,\"expira\":0,\"novos\":false,\"promo\":\"promo_898c6eb7777a\",\"coupon\":\"cp_9014e6c1ae65\",\"criado\":1795318284424,\"ativo\":true},\"cp\":{\"percent_off\":\"20\",\"duration\":\"once\",\"name\":\"LANCAMENTO20 · 20%\",\"metadata[app]\":\"prumo\",\"metada"
+ },
+ {
+  "p": "Planos",
+  "name": "Não deixa criar dois códigos ativos com o mesmo nome",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Código só para o Completo, durante 3 meses, com limite de usos, validade e só para a primeira assinatura",
+  "pass": true,
+  "info": "{\"cp\":{\"percent_off\":\"50\",\"duration\":\"repeating\",\"name\":\"SO-COMPLETO · 50%\",\"metadata[app]\":\"prumo\",\"metadata[code]\":\"SO-COMPLETO\",\"duration_in_months\":\"3\",\"applies_to[products][0]\":\"prod_4a1878e300d7\"},\"pc\":{\"promotion[type]\":\"coupon\",\"promotion[coupon]\":\"cp_3025a1ecfa19\",\"code\":\"SO-COMPLETO\",\"meta"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Códigos: a lista com os usos e o estado",
+  "pass": true,
+  "info": "{\"ok\":true,\"cobranca\":true,\"cupoes\":[{\"code\":\"SO-COMPLETO\",\"pct\":50,\"dur\":\"repeating\",\"meses\":3,\"planos\":[\"completo\"],\"max\":2,\"expira\":4102444799000,\"novos\":true,\"promo\":\"promo_4b65f177b7e9\",\"coupon\":"
+ },
+ {
+  "p": "Planos",
+  "name": "A pessoa valida o código (sem distinguir maiúsculas): −20%; um código que não existe é recusado",
+  "pass": true,
+  "info": "{\"vz\":{\"ok\":true,\"cupao\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"promo\":\"promo_898c6eb7777a\",\"novos\":false},\"_st\":200},\"b\":404}"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar com o código: o pagamento abre com o desconto já aplicado",
+  "pass": true,
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"9729b049c27f51a1a585362b\",\"success_url\":\"http://localhost:8806/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8806/#planos\",\"locale\":\"pt"
+ },
+ {
+  "p": "Planos",
+  "name": "Um código só do Completo não serve para o Essencial",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Esse código não serve para o plano Essencial.\",\"code\":\"cupao\",\"_st\":400}"
+ },
+ {
+  "p": "Planos",
+  "name": "Código que já chegou ao limite de usos deixa de valer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin desativa o código: deixa de valer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Só a administração cria códigos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Chave real no lugar da de teste: a assinatura de teste deixa de contar e o novo pagamento não usa o cliente de teste",
+  "pass": true,
+  "info": "{\"p\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795318283756},\"f\":\"teo97372bbf@teste.pt\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Página Planos: o teu plano (Avançado), os 3 planos com preço (11,99 € por mês) e \"Subir para o Completo\"",
+  "pass": true,
+  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano Avançado Plano Avançado (anual). Renova a 22 de dezembro de 2026. Gerir pagamento e faturas Cancelar a assinatura Mensal Anual · 2 meses grátis Os preços são em euros, com impostos incluídos. Se pagares com u"
+ },
+ {
+  "p": "Planos",
+  "name": "Preços só em euros (sem escolher moeda) e a nota da conversão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Página Planos: no anual mostra o preço do ano (119,90 €) e quanto dá por mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: as paletas exclusivas (Ouro, Aurora, Sakura) aparecem com \"Completo\" e não se aplicam",
+  "pass": true,
+  "info": "{\"n\":9,\"lk\":true,\"cur\":\"selo\",\"x\":true}"
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: os Relatórios (impostos) têm cadeado e levam aos planos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: a Universidade abre (sem cadeado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado e sem plano: as páginas mostram \"Escolhe o teu plano\" com os planos (os dados ficam)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Planos: \"Tens um código de desconto?\" aplica o código e mostra o preço com desconto (−30% no 1.º mês) em cada plano",
+  "pass": true,
+  "info": "{\"on\":true,\"old\":3,\"t\":\"−30% no 1.º mês\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar na app com o código aplicado: o pagamento leva o desconto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Quem usa reais: o preço continua em euros (5,99 €) com o valor aproximado em reais ao lado (≈ R$ 37,14) e a nota da conversão",
+  "pass": true,
+  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Mensal Anual · 2 meses grátis Os preços são em euros, com impostos incluídos. Ao pagar, vês o valor na tua moeda, convertido pelo câmbio do dia (o valor ao lado de cada preço é aproximado). Tens um cód"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar com reais: cobra 5,99 € (o Stripe converte para reais na página de pagamento, em português do Brasil)",
+  "pass": true,
+  "info": "{\"c\":\"eur\",\"v\":\"599\",\"l\":\"pt-BR\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Modo loja (app Android/iPhone): os planos aparecem sem botões de compra, sem código de desconto e sem preços, com a nota \"não há compras\"",
+  "pass": true,
+  "info": "{\"on\":true,\"cls\":true,\"buy\":0,\"cup\":false,\"portal\":false,\"cards\":3,\"t\":\"Sistema PLANOS Os planos do Prumo e o que cada um inclui. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Nesta versão da app não\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Modo loja desliga com ?loja=nao (no site volta a haver compras)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Códigos de desconto: o formulário e a lista com os códigos criados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Contas: cada conta mostra o plano (Completo grátis)",
+  "pass": true,
+  "info": "Completo grátis"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Por fazer: os passos do Stripe em modo de teste e do e-mail (Brevo)",
+  "pass": true,
+  "info": "Por fazer 3 pendentes pendente Chave Google da IA para todos (GEMINI_API_KEY) Para a IA das contas ler fotos (comida, exames, escala) e PDFs. 1) aistudio.google.com/apikey → Create API key. 2) Vercel → projeto prumo → Settings → Environment Variables → nome GEMINI_API_KEY, valor a chave, Production."
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: escolher o plano (Automático, Essencial, Avançado ou Completo grátis), com o atual marcado e sem pedir a senha",
+  "pass": true,
+  "info": "{\"n\":4,\"chk\":\"completo\",\"senha\":false}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: \"Avançado grátis\" durante 3 meses fica na conta da pessoa",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"oferta\":1,\"ate\":1803094308648}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: \"Automático\" devolve a conta ao teste e à assinatura (aqui o teste já acabou: sem plano)",
+  "pass": true,
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795318284052}"
+ },
+ {
+  "p": "Planos",
+  "name": "Completo: as paletas exclusivas (Ouro, Aurora, Sakura) aplicam-se",
+  "pass": true,
+  "info": "ouro,aurora,sakura"
+ },
+ {
+  "p": "Planos",
+  "name": "Relatórios (Completo): o quadro \"Resumo do mês no teu e-mail\" com o botão para ligar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "sem erros de JavaScript (Admin › planos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Atendimento prioritário: os pedidos de quem tem o Completo chegam marcados como prioritários ao Admin (o Avançado não)",
+  "pass": true,
+  "info": "{\"w\":1,\"a\":0}"
+ },
+ {
+  "p": "Planos",
+  "name": "Resumo do mês por e-mail: só no plano Completo (o Avançado recebe 402)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O resumo do mês por e-mail é do plano Completo.\",\"code\":\"plano\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Conta nova em teste grátis: ao entrar aparecem os planos, com os dias grátis e \"Continuar com o teste grátis\"",
+  "pass": true,
+  "info": "{\"h\":\"#planos\",\"t\":\"Bem-vindo ao Prumo\\n\\nTens 14 dias grátis do plano Completo, sem cartão. Escolhe já o teu plano aqui em baixo ou continua com o teste: avisamos-te antes de acabar e os teus dados ficam sempre guardados.\\n\\nContinuar com "
+ },
+ {
+  "p": "Planos",
+  "name": "\"Continuar com o teste grátis\" vai para o Painel e os planos não voltam a abrir sozinhos",
+  "pass": true,
+  "info": "#visao"
  }
 ]
