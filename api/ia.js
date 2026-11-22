@@ -63,6 +63,21 @@ const free = async b => { const gc = b.generationConfig || {}, json = /json/i.te
     return { status: 200, body: { candidates: [{ content: { role: 'model', parts: [{ text: String(m.content || '') }] }, finishReason: 'STOP' }], modelVersion: 'nautilo-livre' } }; }
   catch (e) { return { status: 504, body: { error: { code: 504, message: 'A IA grátis demorou demasiado. Tenta outra vez.' } } }; } finally { clearTimeout(to); } };
 
+/* ---------- v3.74: Fotos — a IA separa as fotos da galeria por categorias (só miniaturas pequenas; nada fica guardado) ---------- */
+const FCATS = ['Pessoas e selfies', 'Família e amigos', 'Comida e bebida', 'Paisagens e viagens', 'Animais', 'Documentos e recibos', 'Capturas de ecrã', 'Memes e imagens da internet', 'Desporto e treino', 'Casa e objetos', 'Carros e transportes', 'Trabalho e estudo', 'Festas e eventos', 'Arte e criatividade', 'Outros'];
+const FPED = n => `Estas são ${n} fotos da galeria de um telemóvel, pela ordem (0 a ${n - 1}). Para cada uma, responde SÓ com um array JSON: [{"i":0,"cat":"<exatamente uma de: ${FCATS.join(' | ')}>","tags":["até 6 palavras simples, em português de Portugal, do que se vê (objetos, lugar, cores, texto visível)"],"desc":"<frase curta do que mostra>","apagar":false,"motivo":""}].
+"apagar": true só para o que costuma ser descartável: fotos acidentais (bolso, chão, tudo preto ou desfocado), capturas de ecrã sem importância, memes e imagens recebidas, recibos e talões, fotos repetidas de coisas banais. Então "motivo" diz porquê, curto. Nunca sugiras apagar fotos de pessoas, família, animais, viagens ou momentos especiais. Não identifiques pessoas pelo nome nem adivinhes dados pessoais.`;
+const fArr = (txt, n) => { const m = String(txt || '').match(/\[[\s\S]*\]/); if (!m) return null; try { const L = JSON.parse(m[0]); if (!Array.isArray(L)) return null;
+  return L.slice(0, n).map((o, k) => ({ i: Number.isInteger(o.i) ? o.i : k, cat: FCATS.includes(o.cat) ? o.cat : 'Outros', tags: (Array.isArray(o.tags) ? o.tags : []).map(t => String(t).slice(0, 30)).slice(0, 6), desc: String(o.desc || '').slice(0, 160), apagar: !!o.apagar, motivo: String(o.motivo || '').slice(0, 120) })); } catch (e) { return null; } };
+const fotosIA = async L => { const pedido = FPED(L.length), to = () => AbortSignal.timeout(50e3);
+  if (env('NAUTILO_FOTOS_MOCK')) { const r = await fetch(env('NAUTILO_FOTOS_MOCK'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ n: L.length }), signal: to() }); const o = fArr(await r.text(), L.length); if (o) return { r: o, via: 'teste' }; }
+  if (akey()) { const r = await fetch((env('ANTHROPIC_BASE_URL') || 'https://api.anthropic.com') + '/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': akey(), 'anthropic-version': '2023-06-01' }, signal: to(),
+      body: JSON.stringify({ model: env('NAUTILO_FOTOS_MODEL') || 'claude-haiku-5-5', max_tokens: 2000, messages: [{ role: 'user', content: L.map(x => ({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: x.b64 } })).concat([{ type: 'text', text: pedido }]) }] }) });
+    if (r.ok) { const j = await r.json(); const o = fArr(((j.content || []).find(c => c.type === 'text') || {}).text, L.length); if (o) return { r: o, via: 'claude' }; } }
+  if (gkey()) { const r = await fetch(G + 'v1beta/models/' + (env('NAUTILO_FOTOS_GEMINI') || 'gemini-flash-lite-latest') + ':generateContent?key=' + encodeURIComponent(gkey()), { method: 'POST', headers: { 'content-type': 'application/json' }, signal: to(),
+      body: JSON.stringify({ contents: [{ parts: L.map(x => ({ inline_data: { mime_type: 'image/jpeg', data: x.b64 } })).concat([{ text: pedido }]) }], generationConfig: { temperature: 0, maxOutputTokens: 2000, responseMimeType: 'application/json' } }) });
+    if (r.ok) { const j = await r.json(); const o = fArr((((((j.candidates || [])[0] || {}).content || {}).parts || [])[0] || {}).text, L.length); if (o) return { r: o, via: 'gemini' }; } }
+  throw Object.assign(new Error(akey() || gkey() ? 'A IA não conseguiu ver as fotos agora. Tenta daqui a pouco.' : 'A IA de imagens não está ligada neste servidor.'), { status: akey() || gkey() ? 502 : 501 }); };
 module.exports = N.handler(async (req, res) => {
   const q = req.query || {}, p = String(q.p || '');
   if (p === 'estado') return N.send(res, 200, { ok: true, google: !!gkey(), claude: !!akey(), stt: sttName(), modelo: env('NAUTILO_CLAUDE_MODEL') || '' });
@@ -91,6 +106,12 @@ module.exports = N.handler(async (req, res) => {
         last = 'erro ' + r.status; if (r.status < 500 && r.status !== 429) break; }
       catch (e) { last = e.name === 'AbortError' ? 'demorou demasiado' : 'sem resposta'; } finally { clearTimeout(to); } }
     return gErr(res, 502, 'A IA de reserva não respondeu (' + last + ').'); }
+  if (p === 'fotos') { if (req.method !== 'POST') return gErr(res, 405, 'Só POST.');
+    if (ef.lvl < 2) return gErr(res, 402, 'Separar as fotos com a IA está no plano Avançado. As repetidas, as desfocadas e as capturas de ecrã continuam a ser encontradas no aparelho.');
+    if (N.limit(req, 'fo|' + t.u, 20, 60e3) || perDay(t.u, +(env('NAUTILO_FOTOS_DIA') || 75), 'f|')) return gErr(res, 429, 'Chegaste ao limite de fotos com a IA por hoje (600). Amanhã continua de onde ficou.');
+    const b = await N.body(req), L = (Array.isArray(b.imgs) ? b.imgs : []).slice(0, 8).filter(x => x && /^[A-Za-z0-9+/=]{200,90000}$/.test(String(x.b64 || '')));
+    if (!L.length) return gErr(res, 400, 'Sem fotos para ver.');
+    try { const o = await fotosIA(L); N.count('ia_fotos'); return N.send(res, 200, { ok: true, r: o.r, via: o.via }); } catch (e) { return gErr(res, e.status && e.status < 600 ? e.status : 502, e.message || 'A IA não conseguiu ver as fotos agora.'); } }
   if (!OKP.test(p)) return gErr(res, 400, 'Pedido de IA desconhecido.');
   N.count('ia');
   if (N.limit(req, 'ia|' + t.u, POR_MIN, 60e3) || perDay(t.u, iaDia)) return gErr(res, 429, 'Limite de IA por minuto/dia atingido (quota per day). ' + (ef.lvl < 3 ? 'Os planos acima têm mais pedidos por dia.' : 'Tenta daqui a pouco.'));
