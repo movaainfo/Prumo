@@ -935,8 +935,9 @@ async function sharedTests(b) {
     ok('treino: volume calculado ao vivo', await E(p, () => /1\.?100 kg/.test(document.querySelector('#wkLive .wk-stats').innerText)));
     // continua depois de fechar a app
     await p.reload(); await unlock(p); await sleep(800);
-    ok('treino em curso sobrevive a fechar a app (botão flutuante)', await p.isVisible('#wkPill'));
-    await p.click('#wkPill'); await sleep(500);
+    const pilha = await p.isVisible('#aoVivo[data-id=treino]') ? '#aoVivo' : '#wkPill'; // a barra da atividade em curso substitui o botão flutuante
+    ok('treino em curso sobrevive a fechar a app (barra da atividade em curso)', await p.isVisible(pilha));
+    await p.click(pilha); await sleep(500);
     ok('treino em curso retomado com as séries', await E(p, () => document.querySelectorAll('#wkLive .wk-tr.done').length === 2));
     await p.locator('#wkLive [data-w=type]').nth(2).click(); await sleep(200);
     ok('tipo de série: aquecimento', await E(p, () => document.querySelectorAll('#wkLive .wk-sn.tW').length === 1));

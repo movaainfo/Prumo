@@ -10,7 +10,7 @@ const call = async (op, body = {}) => { const S = OS.Acc && OS.Acc.token ? OS.Ac
   let j = null; try { j = await r.json(); } catch (e) { } if (j && j.ok) return j; throw new Error((j && j.msg) || 'O servidor do Prumo não respondeu.'); };
 const carrega = async (forcar) => { if (BUSY || (!forcar && ED && Date.now() - AT < 60e3)) return; BUSY = true; ERR = ''; try { ED = await call('ver'); AT = Date.now(); } catch (e) { ERR = e.message; } BUSY = false; OS.request(); };
 const data = t => new Date(t).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'long' });
-const conta = () => !!(OS.Acc && OS.Acc.on && !OS.Acc.pub);
+const conta = () => !!(OS.Acc && OS.Acc.on && OS.Acc.token && OS.Acc.token()); // qualquer conta com sessão iniciada (todas as contas votam)
 const admin = () => !!(OS.Acc && OS.Acc.adm && OS.Acc.adm());
 A.prVotar = async b => { if (!conta()) { UI.toast('Entra na tua conta Prumo para votar.', 'neg'); return; } const cat = b.dataset.cat, id = b.dataset.id; const antes = Object.assign({}, ED.meus); ED.meus[cat] = id; OS.request();
   try { const j = await call('votar', { ano: ED.ano, cat, id }); ED.meus = j.meus; } catch (e) { ED.meus = antes; UI.toast(e.message, 'neg'); } OS.request(); };
