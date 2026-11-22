@@ -22,7 +22,7 @@ const conta = async (t, pid) => { const k = t.u + '|' + t.v + '|' + pid, c = OKS
   const g = await N.store().get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
   if (!r || r.uid !== t.u || (r.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   const pf = (r.perfis || []).find(x => x.id === pid); if (!pf) throw N.err('perfil', 'Este perfil já não existe.', 404);
-  await N.gate(r.email); const o = { at: Date.now(), nome: String(pf.nome || 'Pessoa').slice(0, 24), adm: N.isAdminEmail(r.email), teste: N.isTeste(r.email) }; OKS.set(k, o); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); return o; };
+  await N.gate(r.email); const o = { at: Date.now(), email: r.email, nome: String(pf.nome || 'Pessoa').slice(0, 24), adm: N.isAdminEmail(r.email), teste: N.isTeste(r.email) }; OKS.set(k, o); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); return o; };
 const P = id => 'so/p/' + id;
 const COD = () => { const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let s = ''; const b = N.crypto.randomBytes(6); for (const x of b) s += A[x % A.length]; return s; };
 const perfil = async (id, nome) => { let { v } = await ler(P(id), null); if (v) return v;
@@ -43,11 +43,11 @@ const PEDIDO = t => `És o moderador das conversas do Prumo, uma app para pessoa
 Bloqueia: insultos ou assédio dirigidos a alguém, ódio ou discriminação, ameaças, conteúdo sexual, incentivo a autolesão, burlas ou spam, pedir ou partilhar dados pessoais (morada, telefone, senhas, documentos). Permite: conversa normal, falar de animes (incluindo violência da história), piadas leves, desabafos.
 Mensagem: """${String(t).replace(/"""/g, '"')}"""`;
 const json1 = s => { const m = String(s || '').match(/\{[\s\S]*?\}/); if (!m) return null; try { const o = JSON.parse(m[0]); return typeof o.ok === 'boolean' ? o : null; } catch (e) { return null; } };
-const ia = async t => { const env = k => String(process.env[k] || '').trim(), to = () => AbortSignal.timeout(6000);
-  try { if (env('NAUTILO_MOD_MOCK')) { const r = await fetch(env('NAUTILO_MOD_MOCK'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t }), signal: to() }); return json1(await r.text()); }
-    if (env('ANTHROPIC_API_KEY')) { const r = await fetch((env('ANTHROPIC_BASE_URL') || 'https://api.anthropic.com') + '/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': env('ANTHROPIC_API_KEY'), 'anthropic-version': '2023-06-01' }, body: JSON.stringify({ model: env('NAUTILO_MOD_MODEL') || 'claude-haiku-5-5', max_tokens: 80, messages: [{ role: 'user', content: PEDIDO(t) }] }), signal: to() });
+const ia = async (t, pedido) => { const env = k => String(process.env[k] || '').trim(), to = () => AbortSignal.timeout(6000), PED = pedido || PEDIDO(t);
+  try { if (env('NAUTILO_MOD_MOCK')) { const r = await fetch(env('NAUTILO_MOD_MOCK'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t, com: !!pedido }), signal: to() }); return json1(await r.text()); }
+    if (env('ANTHROPIC_API_KEY')) { const r = await fetch((env('ANTHROPIC_BASE_URL') || 'https://api.anthropic.com') + '/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': env('ANTHROPIC_API_KEY'), 'anthropic-version': '2023-06-01' }, body: JSON.stringify({ model: env('NAUTILO_MOD_MODEL') || 'claude-haiku-5-5', max_tokens: 80, messages: [{ role: 'user', content: PED }] }), signal: to() });
       if (r.ok) { const j = await r.json(); const o = json1(((j.content || []).find(c => c.type === 'text') || {}).text); if (o) return o; } }
-    if (env('GEMINI_API_KEY')) { const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (env('NAUTILO_MOD_GEMINI') || 'gemini-flash-lite-latest') + ':generateContent?key=' + encodeURIComponent(env('GEMINI_API_KEY')), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: PEDIDO(t) }] }], generationConfig: { temperature: 0, maxOutputTokens: 80, responseMimeType: 'application/json' } }), signal: to() });
+    if (env('GEMINI_API_KEY')) { const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (env('NAUTILO_MOD_GEMINI') || 'gemini-flash-lite-latest') + ':generateContent?key=' + encodeURIComponent(env('GEMINI_API_KEY')), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: PED }] }], generationConfig: { temperature: 0, maxOutputTokens: 80, responseMimeType: 'application/json' } }), signal: to() });
       if (r.ok) { const j = await r.json(); const o = json1((((((j.candidates || [])[0] || {}).content || {}).parts || [])[0] || {}).text); if (o) return o; } }
   } catch (e) { } return null; };
 const AJUDA = ' Se estás a passar por um momento difícil, fala com alguém: SNS 24 (808 24 24 24) em Portugal, CVV (188) no Brasil.';
@@ -65,7 +65,9 @@ const CL = cid => 'so/cl/' + cid;
 const claPub = c => ({ id: c.id, nome: c.nome, desc: c.desc, cor: c.cor, cod: c.cod, n: c.membros.length, membros: c.membros.map(m => ({ id: m.id, nome: m.nome, papel: m.papel })) });
 /* ---------- ranking de animes ---------- */
 const PTS = 'so/pts.json';
-const somaPts = async (L) => mudar(PTS, {}, T => { L.forEach(([id, nome, p]) => { const o = T[id] = T[id] || { p: 0, nome }; o.p += p; o.nome = nome || o.nome; }); });
+const somaPts = async (L) => mudar(PTS, {}, T => { L.forEach(([id, nome, p, x]) => { const o = T[id] = T[id] || { p: 0, nome }; o.p += p; o.nome = nome || o.nome; if (x) { if (x.user) o.user = x.user; if (x.av) o.av = x.av; } }); });
+// o @ e a foto também no ranking (cria a linha com 0 pontos, que não aparece na lista)
+const pubPts = async (id, patch) => mudar(PTS, {}, T => { T[id] = Object.assign(T[id] || { p: 0 }, patch); });
 /* ---------- Pursuit ---------- */
 const lisboa = (t = Date.now()) => { const p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(t)).forEach(x => { p[x.type] = x.value; }); return { d: `${p.year}-${p.month}-${p.day}`, min: +p.hour * 60 + +p.minute }; };
 const H_ABRE = () => +(process.env.NAUTILO_HUNTER_ABRE || 1200), H_FECHA = () => +(process.env.NAUTILO_HUNTER_FECHA || 1320); // minutos depois da meia-noite (Lisboa): 20:00 e 22:00
@@ -93,9 +95,9 @@ const desafio = async () => { const L = lisboa(), d = L.d, P0 = 'so/h/' + d; let
   return { L, v }; };
 const fechar = async (P0, v0) => { const L = await N.store().list('so/hg/' + v0.dia + '/'), G = [];
   for (const b of L) { const g = (await ler(b.pathname, null)).v; if (g) G.push(g); }
-  const certos = G.filter(g => g.mal === v0.mal).sort((a, b) => a.at - b.at), res = certos.map((g, i) => ({ id: g.id, nome: g.nome, at: g.at, pts: Math.max(10, 100 - 10 * i) }));
+  const certos = G.filter(g => g.mal === v0.mal).sort((a, b) => a.at - b.at), res = certos.map((g, i) => ({ id: g.id, nome: g.nome, user: g.user || '', av: g.av || 0, at: g.at, pts: Math.max(10, 100 - 10 * i) }));
   let ganhei = false; const v = await mudar(P0, v0, o => { if (o.fechado) return false; o.fechado = true; o.res = res.slice(0, 100); o.total = G.length; ganhei = true; });
-  if (ganhei && res.length) await somaPts(res.map(r => [r.id, r.nome, r.pts])); return v; };
+  if (ganhei && res.length) await somaPts(res.map(r => [r.id, r.nome, r.pts, { user: r.user, av: r.av }])); return v; };
 const hunterVer = async (eu) => { const { L, v } = await desafio(), abre = H_ABRE(), fecha = H_FECHA(), m = L.min;
   const fase = !v ? 'espera' : v.fechado ? 'fechado' : 'aberto', meu = v && eu ? (await ler('so/hg/' + v.dia + '/' + eu, null)).v : null;
   const visiveis = !v ? [] : v.fechado ? v.pistas : v.pistas.slice(0, Math.min(v.pistas.length, 3 + (m >= abre + 40 ? 1 : 0) + (m >= abre + 80 ? 1 : 0)));
@@ -108,7 +110,8 @@ const hunterVer = async (eu) => { const { L, v } = await desafio(), abre = H_ABR
 const OPS = {
   async eu(c, b) { const v = await perfil(c.eu, c.nome), amigos = await Promise.all((v.amigos || []).map(pub)), pedidos = await Promise.all((v.pedidos || []).map(pub)), clas = [];
     for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (cl) clas.push(claPub(cl)); }
-    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas }; },
+    if (c.nome && v.nome !== c.nome) { v.nome = c.nome; await mudar(P(c.eu), null, p => { p.nome = c.nome; }).catch(() => { }); if (v.user || v.av) pubPts(c.eu, { nome: c.nome }).catch(() => { }); }
+    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas }; },
   async nome(c, b) { const n = String(b.nome || '').replace(/\s+/g, ' ').trim(); if (n.length < 2 || n.length > 24) throw N.err('nome', 'O nome tem de ter entre 2 e 24 letras.', 400);
     const m = await moderar(n); if (!m.ok) throw N.err('nome', 'Esse nome não pode ser usado: ' + m.motivo, 400); await perfil(c.eu, c.nome); await mudar(P(c.eu), null, v => { v.nome = n; }); return { ok2: true, nome: n }; },
   async amigoPedir(c, b) { const cod = String(b.cod || '').toUpperCase().replace(/^PR-?/, '').replace(/[^A-Z0-9]/g, ''); const g = await N.store().get('so/c/' + cod).catch(() => null); if (!g) throw N.err('amigo', 'Não encontrei ninguém com esse código.', 404);
@@ -144,7 +147,7 @@ const OPS = {
     await mudar(CL(cid), null, o => { const eu = o.membros.find(m => m.id === c.eu); if (!eu || !['dono', 'mod'].includes(eu.papel) || quem === o.dono) throw N.err('cla', 'Só quem gere o clã pode tirar pessoas.', 403); o.membros = o.membros.filter(m => m.id !== quem); o.banidos = [...new Set((o.banidos || []).concat(quem))]; });
     await mudar(P(quem), null, p => { p.clas = (p.clas || []).filter(x => x !== cid); }).catch(() => { }); return { ok2: true }; },
   async claVer(c, b) { const cid = String(b.id || ''); const cl = CID.test(cid) && (await ler(CL(cid), null)).v; if (!cl || !cl.membros.some(m => m.id === c.eu)) throw N.err('cla', 'Não és membro deste clã.', 403);
-    const T = (await ler(PTS, {})).v || {}, r = claPub(cl); r.membros = r.membros.map(m => Object.assign(m, { pts: (T[m.id] || {}).p || 0 })).sort((a, b2) => b2.pts - a.pts); r.pts = r.membros.reduce((s, m) => s + m.pts, 0); return { cla: r }; },
+    const T = (await ler(PTS, {})).v || {}, r = claPub(cl); r.membros = r.membros.map(m => Object.assign(m, { pts: (T[m.id] || {}).p || 0, user: (T[m.id] || {}).user || '', av: (T[m.id] || {}).av || 0 })).sort((a, b2) => b2.pts - a.pts); r.pts = r.membros.reduce((s, m) => s + m.pts, 0); return { cla: r }; },
   async conversas(c, b) { const v = await perfil(c.eu, c.nome), out = [];
     for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (!cl) continue; const k = 'c-' + cid, u = (await ler('so/u/' + k, null)).v; out.push({ conv: k, tipo: 'c', nome: cl.nome, cor: cl.cor, ult: u, novas: u && u.at > ((v.lidas || {})[k] || 0) && u.de !== c.eu }); }
     for (const a of v.amigos || []) { const k = 'd-' + [c.eu, a].sort().join('~'), u = (await ler('so/u/' + k, null)).v, p = await pub(a); out.push({ conv: 'd-' + a, tipo: 'd', nome: p.nome, ult: u, novas: u && u.at > ((v.lidas || {})[k] || 0) && u.de !== c.eu }); }
@@ -168,15 +171,89 @@ const OPS = {
   async adminDenuncias(c, b) { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const L = (await N.store().list('so/den/')).slice(-60), out = [];
     for (const x of L.reverse()) { const d = (await ler(x.pathname, null)).v; if (d) out.push(Object.assign({ ref: x.pathname.split('/').pop() }, d)); } return { denuncias: out }; },
   async adminApagar(c, b) { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const ref = String(b.ref || '').replace(/[^0-9a-f-]/g, ''), d = (await ler('so/den/' + ref, null)).v; if (!d) throw N.err('admin', 'Denúncia não encontrada.', 404);
+    if (/^a-\d+$/.test(d.conv)) await mudar(CA(d.conv.slice(2)), { L: [], gl: [] }, o => { const i = o.L.findIndex(x => x.id === d.mid); if (i < 0) return false; o.L.splice(i, 1); }).catch(() => { });
     for (const dd of [dia(Date.now() - 864e5), dia()]) await mudar('so/m/' + d.conv + '/' + dd, [], L => { const i = L.findIndex(x => x.id === d.mid); if (i < 0) return false; L.splice(i, 1); }).catch(() => { });
     if (b.mudo) await mudar(P(d.de), null, p => { p.mudo = Date.now() + 7 * 864e5; }).catch(() => { }); await N.store().del(['so/den/' + ref]); return { ok2: true }; },
-  async rankAnime(c, b) { const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).map(([id, o]) => ({ id, nome: o.nome, p: o.p })).sort((a, b2) => b2.p - a.p); const i = L.findIndex(x => x.id === c.eu);
+  async rankAnime(c, b) { const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).map(([id, o]) => ({ id, nome: o.nome, p: o.p, user: o.user || '', av: o.av || 0 })).sort((a, b2) => b2.p - a.p); const i = L.findIndex(x => x.id === c.eu);
     return { lista: L.slice(0, 100).map((x, k) => Object.assign(x, { pos: k + 1, eu: x.id === c.eu })), eu: i >= 0 ? Object.assign({ pos: i + 1 }, L[i]) : null, total: L.length }; },
   async hunter(c, b) { return { hunter: await hunterVer(c.eu) }; },
   async hunterMarcar(c, b) { const { L, v } = await desafio(); if (!v || v.fechado) throw N.err('hunter', v ? 'O Pursuit de hoje já fechou.' : 'O Pursuit de hoje ainda não começou (20h).', 400);
     const mal = String(b.mal || '').replace(/\D/g, ''); if (!mal) throw N.err('hunter', 'Anime desconhecido.', 400); const v0 = await perfil(c.eu, c.nome);
-    try { await gravar('so/hg/' + v.dia + '/' + c.eu, { id: c.eu, nome: v0.nome, mal, titulo: String(b.titulo || '').slice(0, 120), at: Date.now() }, { overwrite: false }); } catch (e) { if (e.code === 'exists' || e.status === 409 || /exist|precondition/i.test(e.message || '')) throw N.err('hunter', 'Já marcaste o teu Pursuit de hoje.', 409); throw e; }
+    try { await gravar('so/hg/' + v.dia + '/' + c.eu, { id: c.eu, nome: v0.nome, user: v0.user || '', av: v0.av || 0, mal, titulo: String(b.titulo || '').slice(0, 120), at: Date.now() }, { overwrite: false }); } catch (e) { if (e.code === 'exists' || e.status === 409 || /exist|precondition/i.test(e.message || '')) throw N.err('hunter', 'Já marcaste o teu Pursuit de hoje.', 409); throw e; }
     return { ok2: true, hunter: await hunterVer(c.eu) }; } };
+/* ---------- v3.75: perfil dos animes — o @ (escolhido uma vez, não muda), a foto e o fundo ---------- */
+const RESERV = /^(admin|administra|prumo|phantom|superanimes|suporte|equipa|staff|moderador|oficial|sistema)/;
+const imgP = (k, id) => 'so/img/' + k + '/' + id;
+const PEDIMG = `Esta imagem vai ser a foto ou o fundo de um perfil numa app para pessoas a partir dos 16 anos. Responde SÓ com JSON numa linha: {"ok":true} ou {"ok":false,"motivo":"<curto, em português de Portugal>"}. Bloqueia nudez ou conteúdo sexual, violência explícita, ódio (símbolos ou gestos), drogas e documentos ou dados pessoais visíveis. Permite fotos normais, personagens de anime, paisagens e arte.`;
+const iaImg = async b64 => { const env = k => String(process.env[k] || '').trim(), to = () => AbortSignal.timeout(9000);
+  try { if (env('NAUTILO_MOD_MOCK')) { const r = await fetch(env('NAUTILO_MOD_MOCK'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ img: 1, n: b64.length }), signal: to() }); return json1(await r.text()); }
+    if (env('ANTHROPIC_API_KEY')) { const r = await fetch((env('ANTHROPIC_BASE_URL') || 'https://api.anthropic.com') + '/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': env('ANTHROPIC_API_KEY'), 'anthropic-version': '2023-06-01' }, signal: to(),
+        body: JSON.stringify({ model: env('NAUTILO_MOD_MODEL') || 'claude-haiku-5-5', max_tokens: 80, messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } }, { type: 'text', text: PEDIMG }] }] }) });
+      if (r.ok) { const j = await r.json(); const o = json1(((j.content || []).find(c => c.type === 'text') || {}).text); if (o) return o; } }
+    if (env('GEMINI_API_KEY')) { const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (env('NAUTILO_MOD_GEMINI') || 'gemini-flash-lite-latest') + ':generateContent?key=' + encodeURIComponent(env('GEMINI_API_KEY')), { method: 'POST', headers: { 'content-type': 'application/json' }, signal: to(),
+        body: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }, { text: PEDIMG }] }], generationConfig: { temperature: 0, maxOutputTokens: 80, responseMimeType: 'application/json' } }) });
+      if (r.ok) { const j = await r.json(); const o = json1((((((j.candidates || [])[0] || {}).content || {}).parts || [])[0] || {}).text); if (o) return o; } }
+  } catch (e) { } return null; };
+OPS.user = async (c, b) => { const u = String(b.user || '').trim().replace(/^@/, '').toLowerCase();
+  if (!/^[a-z0-9_.]{3,20}$/.test(u) || /^\.|\.$|\.\./.test(u)) throw N.err('user', 'O @ tem de ter 3 a 20 letras, números, _ ou ponto.', 400);
+  if ((RESERV.test(u) && !c.adm) || regras(u.replace(/[._]/g, ' '))) throw N.err('user', 'Esse @ não pode ser usado.', 400);
+  const v = await perfil(c.eu, c.nome); if (v.user) throw N.err('user', 'O teu @ já está escolhido e não muda.', 409);
+  try { await N.store().put('so/at/' + u, Buffer.from(JSON.stringify({ id: c.eu })), { overwrite: false }); } catch (e) { if (e.code === 'exists') throw N.err('user', 'Esse @ já é de outra pessoa.', 409); throw e; }
+  await mudar(P(c.eu), null, p => { p.user = u; }); await pubPts(c.eu, { nome: v.nome, user: u }).catch(() => { }); return { user: u }; };
+OPS.perfilImg = async (c, b) => { const k = b.k === 'fu' ? 'fu' : 'av', max = k === 'fu' ? 380e3 : 140e3; await perfil(c.eu, c.nome);
+  if (b.apagar) { await N.store().del([imgP(k, c.eu)]).catch(() => { }); await mudar(P(c.eu), null, p => { p[k] = 0; }); if (k === 'av') await pubPts(c.eu, { av: 0 }).catch(() => { }); return { [k]: 0 }; }
+  const s64 = String(b.b64 || ''); if (!/^[A-Za-z0-9+/=]{400,}$/.test(s64) || s64.length > max * 1.37) throw N.err('img', 'A imagem é grande demais ou não é válida.', 400);
+  const buf = Buffer.from(s64, 'base64'); if (buf[0] !== 0xFF || buf[1] !== 0xD8) throw N.err('img', 'Envia uma imagem (JPEG).', 400);
+  const m = await iaImg(s64); if (m && m.ok === false) throw N.err('img', 'Esta imagem não pode ser usada: ' + String(m.motivo || 'não cumpre as regras').slice(0, 120), 400);
+  await N.store().put(imgP(k, c.eu), buf); const ver = Date.now(); await mudar(P(c.eu), null, p => { p[k] = ver; }); if (k === 'av') await pubPts(c.eu, { av: ver }).catch(() => { }); return { [k]: ver }; };
+OPS.verPerfil = async (c, b) => { const id = String(b.id || ''); if (!ID.test(id)) throw N.err('perfil', 'Perfil desconhecido.', 400); const v = (await ler(P(id), null)).v; if (!v) throw N.err('perfil', 'Perfil desconhecido.', 404);
+  const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).sort((a, b2) => b2[1].p - a[1].p), pos = L.findIndex(([i]) => i === id);
+  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu) } }; };
+/* ---------- comentários nos animes: a IA barra ofensas e tapa os spoilers (só vê quem quiser) ---------- */
+const CA = mal => 'so/ca/' + mal;
+const malDe = b => { const m = String(b.mal || '').replace(/\D/g, '').slice(0, 9); if (!m) throw N.err('anime', 'Anime desconhecido.', 400); return m; };
+const PEDIDOC = (t, titulo) => `És o moderador dos comentários sobre animes no Prumo (app para pessoas a partir dos 16 anos). Anime: "${String(titulo || '').slice(0, 80).replace(/"/g, "'")}". Responde SÓ com JSON numa linha: {"ok":true,"spoiler":false} ou {"ok":false,"motivo":"<curto, em português de Portugal>"}.
+"spoiler": true quando o comentário conta acontecimentos importantes da história que quem ainda não viu não quer saber (mortes, quem é o vilão, reviravoltas, o final, quem fica com quem). Opiniões ("é incrível", "o episódio 5 é o melhor", "a animação é linda") não são spoiler.
+Bloqueia (ok:false) insultos ou assédio a alguém, ódio, ameaças, conteúdo sexual, burlas, links e dados pessoais.
+Comentário: <<<${String(t).replace(/<<<|>>>/g, '')}>>>`;
+const SPOIL = /\b(morre|morreu|morrem|mata|matou|é o vil[aã]o|era o vil[aã]o|no final|no fim d|o final|trai|traiu|traidor|revela-se|descobre-se que|afinal (é|era)|spoiler)\b/i;
+const moderarCom = async (t, titulo) => { const r = regras(t); if (r) return { ok: false, motivo: r }; const o = await ia(t, PEDIDOC(t, titulo));
+  if (o && o.ok === false) return { ok: false, motivo: String(o.motivo || 'O comentário não cumpre as regras.').slice(0, 160) }; return { ok: true, spoiler: o && typeof o.spoiler === 'boolean' ? o.spoiler || SPOIL.test(t) : SPOIL.test(t) }; };
+const comPub = (x, eu) => ({ id: x.id, de: x.de, nome: x.nome, user: x.user || '', av: x.av || 0, t: x.t, at: x.at, sp: !!x.sp, gostos: (x.g || []).length, gostei: (x.g || []).includes(eu), meu: x.de === eu });
+OPS.comentarios = async (c, b) => { const mal = malDe(b), v = await perfil(c.eu, c.nome), o = (await ler(CA(mal), { L: [], gl: [] })).v || { L: [], gl: [] };
+  return { coms: (o.L || []).filter(x => !(v.bloq || []).includes(x.de)).slice(-120).reverse().map(x => comPub(x, c.eu)), n: (o.L || []).length, gostos: (o.gl || []).length, gostei: (o.gl || []).includes(c.eu) }; };
+OPS.comentar = async (c, b, req) => { const mal = malDe(b), t = String(b.texto || '').trim().slice(0, 800), v = await perfil(c.eu, c.nome); if (t.length < 2) throw N.err('com', 'Escreve um comentário.', 400);
+  if (v.mudo && v.mudo > Date.now()) throw N.err('mudo', 'Estás sem poder escrever por agora (mensagens barradas a mais).', 403);
+  if (N.limit(req, 'com|' + c.eu, 8, 60e3)) throw N.err('limite', 'Estás a comentar depressa demais. Espera um pouco.', 429);
+  const m = await moderarCom(t, b.titulo); N.count('com:' + (m.ok ? (m.spoiler ? 'spoiler' : 'ok') : 'barrado'));
+  if (!m.ok) { let mudo = 0; await mudar(P(c.eu), null, p => { const h = Date.now(); p.barr = (p.barr || []).filter(x => h - x < 36e5).concat(h); if (p.barr.length >= 3) { p.mudo = h + 36e5; p.barr = []; mudo = p.mudo; } }); return { barrada: true, motivo: m.motivo, mudo }; }
+  const x = { id: N.crypto.randomBytes(6).toString('hex'), de: c.eu, nome: v.nome, user: v.user || '', av: v.av || 0, t, at: Date.now(), sp: !!m.spoiler, g: [] };
+  await mudar(CA(mal), { L: [], gl: [] }, o => { o.L = o.L || []; o.L.push(x); if (o.L.length > 600) o.L.splice(0, o.L.length - 600); }); return { com: comPub(x, c.eu) }; };
+OPS.gostarCom = async (c, b) => { const mal = malDe(b), id = String(b.id || ''); let r = null; await mudar(CA(mal), { L: [], gl: [] }, o => { const x = (o.L || []).find(y => y.id === id); if (!x) return false; x.g = x.g || []; const i = x.g.indexOf(c.eu); if (i >= 0) x.g.splice(i, 1); else x.g.push(c.eu); r = comPub(x, c.eu); }); if (!r) throw N.err('com', 'Comentário não encontrado.', 404); return { com: r }; };
+OPS.gostarAnime = async (c, b) => { const mal = malDe(b); let r = null; await mudar(CA(mal), { L: [], gl: [] }, o => { o.gl = o.gl || []; const i = o.gl.indexOf(c.eu); if (i >= 0) o.gl.splice(i, 1); else o.gl.push(c.eu); r = { gostos: o.gl.length, gostei: i < 0 }; }); return r; };
+OPS.apagarCom = async (c, b) => { const mal = malDe(b), id = String(b.id || ''); let ok = false; await mudar(CA(mal), { L: [], gl: [] }, o => { const i = (o.L || []).findIndex(y => y.id === id && (y.de === c.eu || c.adm)); if (i < 0) return false; o.L.splice(i, 1); ok = true; }); if (!ok) throw N.err('com', 'Não podes apagar este comentário.', 403); return { ok2: true }; };
+OPS.denunciarCom = async (c, b) => { const mal = malDe(b), id = String(b.id || ''), o = (await ler(CA(mal), { L: [] })).v || { L: [] }, x = (o.L || []).find(y => y.id === id); if (!x) throw N.err('com', 'Comentário não encontrado.', 404);
+  await gravar('so/den/' + Date.now() + '-' + N.crypto.randomBytes(3).toString('hex'), { conv: 'a-' + mal, mid: x.id, de: x.de, nome: x.nome, t: x.t, por: c.eu, motivo: String(b.motivo || '').slice(0, 200), at: Date.now() }); N.count('com:denuncia'); return { ok2: true }; };
+/* ---------- Comunidade (como na SuperAnimes): indicações, pedidos, sugestões, a equipa e o recrutamento ---------- */
+const TIPOS = { indicacao: 'Indicação', pedido: 'Pedido', sugestao: 'Sugestão', recrutamento: 'Recrutamento' };
+const indPub = (x, eu) => ({ id: x.id, nome: x.nome, user: x.user || '', titulo: x.titulo, texto: x.texto, at: x.at, gostos: (x.g || []).length, gostei: (x.g || []).includes(eu), meu: x.de === eu });
+OPS.com = async (c, b, req) => { const tipo = String(b.tipo || ''); if (!TIPOS[tipo]) throw N.err('com', 'Escolhe o que queres enviar.', 400);
+  const titulo = String(b.titulo || '').replace(/\s+/g, ' ').trim().slice(0, 100), texto = String(b.texto || '').trim().slice(0, 1200);
+  if ((tipo === 'indicacao' && titulo.length < 2) || (tipo !== 'indicacao' && texto.length < 5)) throw N.err('com', tipo === 'indicacao' ? 'Escreve o nome do anime que recomendas.' : 'Escreve um pouco mais.', 400);
+  if (N.limit(req, 'comu|' + c.eu, 6, 3600e3)) throw N.err('limite', 'Já enviaste bastante na última hora. Tenta mais tarde.', 429);
+  const m = await moderar((titulo + ' ' + texto).trim()); if (!m.ok) throw N.err('com', 'Não deu para enviar: ' + m.motivo, 400);
+  const v = await perfil(c.eu, c.nome), rec = { id: N.crypto.randomBytes(6).toString('hex'), tipo, de: c.eu, nome: v.nome, user: v.user || '', titulo, texto, at: Date.now(), g: [] };
+  if (tipo === 'recrutamento') rec.email = c.email || '';
+  await gravar('so/com/' + tipo + '/' + Date.now() + '-' + rec.id, rec);
+  if (tipo === 'indicacao') await mudar('so/ind', { L: [] }, o => { o.L = o.L || []; o.L.push(rec); if (o.L.length > 300) o.L.splice(0, o.L.length - 300); });
+  N.count('comunidade:' + tipo); return { ok2: true, ind: tipo === 'indicacao' ? indPub(rec, c.eu) : undefined }; };
+OPS.indicacoes = async (c, b) => { const o = (await ler('so/ind', { L: [] })).v || { L: [] }; return { L: (o.L || []).slice(-80).reverse().map(x => indPub(x, c.eu)) }; };
+OPS.gostarInd = async (c, b) => { const id = String(b.id || ''); let r = null; await mudar('so/ind', { L: [] }, o => { const x = (o.L || []).find(y => y.id === id); if (!x) return false; x.g = x.g || []; const i = x.g.indexOf(c.eu); if (i >= 0) x.g.splice(i, 1); else x.g.push(c.eu); r = indPub(x, c.eu); }); if (!r) throw N.err('com', 'Indicação não encontrada.', 404); return { ind: r }; };
+OPS.equipa = async () => ({ equipa: ((await ler('so/equipa', { L: [] })).v || { L: [] }).L || [] });
+OPS.adminEquipa = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const L = (Array.isArray(b.L) ? b.L : []).slice(0, 40).map(x => ({ nome: String(x.nome || '').slice(0, 40), papel: String(x.papel || '').slice(0, 60), user: String(x.user || '').replace(/[^a-z0-9_.]/gi, '').slice(0, 20).toLowerCase(), desc: String(x.desc || '').slice(0, 200) })).filter(x => x.nome);
+  await gravar('so/equipa', { L, at: Date.now() }); return { equipa: L }; };
+OPS.adminCom = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const tipo = TIPOS[b.tipo] ? b.tipo : 'sugestao', L = (await N.store().list('so/com/' + tipo + '/')).slice(-60), out = [];
+  for (const x of L.reverse()) { const d = (await ler(x.pathname, null)).v; if (d) out.push({ nome: d.nome, user: d.user, titulo: d.titulo, texto: d.texto, at: d.at, email: d.email || '' }); } return { tipo, L: out }; };
 const PARC = 'cfg/parceiro.json', PARC0 = 'PHANTOM'; // v3.73: a empresa parceira dos Animes
 const parceiro = async () => { try { const g = await N.store().get(PARC); return g ? JSON.parse(g.buf.toString()) : { nome: PARC0 }; } catch (e) { return { nome: PARC0 }; } };
 OPS.adminParceiro = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const nome = String(b.nome || '').replace(/\s+/g, ' ').trim().slice(0, 30) || PARC0, site = String(b.site || '').trim().slice(0, 200);
@@ -184,6 +261,8 @@ OPS.adminParceiro = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem aces
   const o = { nome, site, at: Date.now() }; await N.store().put(PARC, Buffer.from(JSON.stringify(o))); return { parceiro: o }; };
 module.exports = N.handler(async (req, res) => {
   // o nome do parceiro (público, para o app o mostrar antes de entrar na conta)
+  if (req.method === 'GET' && String((req.query || {}).op || '') === 'img') { const q = req.query || {}, k = q.k === 'fu' ? 'fu' : 'av', id = String(q.id || ''); if (!ID.test(id) || N.limit(req, 'simg', 300, 60e3)) return N.send(res, 400, { ok: false });
+    const g = await N.store().get(imgP(k, id)).catch(() => null); if (!g) return N.send(res, 404, { ok: false }); res.statusCode = 200; res.setHeader('content-type', 'image/jpeg'); res.setHeader('cache-control', 'public, max-age=86400'); res.setHeader('x-content-type-options', 'nosniff'); return res.end(g.buf); }
   if (req.method === 'GET' && String((req.query || {}).op || '') === 'parceiro') { if (N.limit(req, 'parc', 60, 60e3)) return N.send(res, 429, { ok: false }); res.setHeader('cache-control', 'public, max-age=300'); const o = await parceiro(); return N.send(res, 200, { ok: true, nome: o.nome || '', site: o.site || '' }); }
   if (req.method !== 'POST') return N.send(res, 405, { ok: false, msg: 'Só POST.' });
   const t = await N.readToken(req); if (!t) return N.send(res, 401, { ok: false, msg: 'Entra na tua conta para usar os clãs.', code: 'sessao' });
