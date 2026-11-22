@@ -1565,3 +1565,16 @@ svg.ig-ch .i{fill:var(--accent);opacity:.55}svg.ig-ch .g{fill:var(--pos,#4ade80)
 .ws-file .ic{width:16px;height:16px;flex:none}
 .ws-pick{margin-top:12px;padding:12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--acc,#c03b3b) 40%,var(--line));background:color-mix(in srgb,var(--acc,#c03b3b) 8%,transparent);display:flex;flex-direction:column;gap:10px}
 .ws-pick .row{flex-wrap:wrap}
+/* v3.71: som no Bloco de foco */
+.fs-sons{display:flex;flex-wrap:wrap;gap:6px}
+.fs-amb{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:12px 0 6px}.fs-vol{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tx2)}.fs-vol input{width:140px}
+.fs-pl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:12px 0 8px}
+.fs-pli{display:grid;gap:2px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line,rgba(255,255,255,.1));background:var(--pn2);color:var(--tx);cursor:pointer;font:inherit}
+.fs-pli small{color:var(--mut);font-size:12px}.fs-pli.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.fs-meu{display:flex;gap:8px;margin:0 0 6px}.fs-meu .field{flex:1;min-width:0}
+.fs-apps{margin-top:12px;display:grid;gap:6px}.fs-apps div{display:flex;flex-wrap:wrap;gap:6px}
+.fs-bar{display:flex;align-items:center;justify-content:center;gap:12px;margin:16px auto 0;font-size:14px;color:var(--tx2)}.fs-bar span{display:inline-flex;align-items:center;gap:6px;font-weight:600}.fs-bar svg{width:16px;height:16px}
+#fsSp{position:fixed;z-index:90;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));width:min(520px,calc(100% - 24px));border-radius:14px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#fsSp iframe{display:block;width:100%;height:80px;border:0}
+html:not(.fb-on) #fsSp{display:none}
+html.fb-on #fblk{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}

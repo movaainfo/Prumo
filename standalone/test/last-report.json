@@ -1,92 +1,218 @@
 [
  {
-  "p": "Línguas",
-  "name": "Dicionários das línguas principais vêm com o app (inglês com mais de 15 mil textos)",
-  "pass": true,
-  "info": "24154"
- },
- {
-  "p": "Línguas",
-  "name": "Estados Unidos: o app passa a inglês (títulos traduzidos)",
-  "pass": true,
-  "info": "{\"h1\":\"Finance\",\"want\":\"Finance\"}"
- },
- {
-  "p": "Línguas",
-  "name": "Estados Unidos: dólares, datas e números à americana, notas de 0 a 100",
-  "pass": true,
-  "info": "{\"lang\":\"en\",\"h1\":\"Finance\",\"cur\":\"USD\",\"eur\":\"$1,234.50\",\"date\":\"Saturday, October 24\",\"d\":\"10/24/2026\",\"g\":\"0–100\",\"html\":\"en\"}"
- },
- {
-  "p": "Línguas",
-  "name": "Traduz frases com números, plurais, ícones e contagens, sem mexer no que a pessoa escreveu",
-  "pass": true,
-  "info": "{\"plural\":\"Do 4 more workouts this week\",\"um\":\"Do 1 more workout this week\",\"icone\":\"Animations\",\"conta\":\"2 of 3\",\"par\":\"Completed (3)\",\"ponto\":\"Experience · 40%\",\"verso\":true,\"casa\":\"Casa de praia\",\"prova\":\"Prova de Matemática\",\"com\":\"comprimida\"}"
- },
- {
-  "p": "Línguas",
-  "name": "Saudação na língua da pessoa (\"Good …, Sam\")",
+  "p": "Ataque",
+  "name": "Ataque XSS guardado: nenhum código malicioso corre nem entra no ecrã em 189 páginas",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Línguas",
-  "name": "Feriados de qualquer país (4 de julho nos EUA)",
+  "p": "Ataque",
+  "name": "Ataque: 10 logins falsos seguidos trancam a conta 15 min (nem a senha certa entra logo a seguir)",
   "pass": true,
-  "info": ""
+  "info": "[401,401,401,401,401,401,401,401,429,429] certa:429"
  },
  {
-  "p": "Línguas",
-  "name": "Páginas principais em inglês quase sem português à vista",
+  "p": "Ataque",
+  "name": "Ataque: enxurrada de logins do mesmo endereço é travada (429 depois de 30)",
   "pass": true,
-  "info": "5 textos"
+  "info": "[401,401,401,401,429,429]"
  },
  {
-  "p": "Línguas",
-  "name": "A IA responde na língua da pessoa",
+  "p": "Ataque",
+  "name": "Ataque: robô que preenche o campo escondido do registo é recusado",
   "pass": true,
-  "info": ""
+  "info": "{\"ok\":false,\"msg\":\"Muitas contas criadas a partir daqui. Tenta mais tarde.\",\"code\":\"limite\",\"_st\":429}"
  },
  {
-  "p": "Línguas",
-  "name": "Definições › País, língua e moeda: escolher espanhol traduz tudo",
+  "p": "Ataque",
+  "name": "Ataque: e-mail com código HTML é recusado no registo",
   "pass": true,
-  "info": ""
+  "info": "{\"ok\":false,\"msg\":\"Esse e-mail não parece válido.\",\"code\":\"email\",\"_st\":400}"
  },
  {
-  "p": "Línguas",
-  "name": "Brasil: português do Brasil e reais",
+  "p": "Ataque",
+  "name": "Ataque: pedidos de sites de fora (mesmo com nome parecido) são recusados",
   "pass": true,
-  "info": "pt-BR R$ 1.234,50"
+  "info": "403 403"
  },
  {
-  "p": "Línguas",
-  "name": "Outra língua qualquer (japonês): a IA do servidor prepara o dicionário aos poucos",
+  "p": "Ataque",
+  "name": "Ataque: token forjado não entra; a conta A não lê nem grava os dados da conta B",
   "pass": true,
-  "info": "{\"t\":24154,\"f\":132}"
+  "info": "401 404 404"
  },
  {
-  "p": "Línguas",
-  "name": "sem erros de JavaScript",
+  "p": "Ataque",
+  "name": "Ataque: línguas inventadas não gastam a IA (só as da lista da app)",
   "pass": true,
-  "info": ""
+  "info": "400 400"
  },
  {
-  "p": "Línguas",
-  "name": "Perfil do Ryan: português de Portugal e euros (mesmo num aparelho em inglês)",
+  "p": "Ataque",
+  "name": "Ataque: a cópia de segurança não abre a quem não é o Vercel",
   "pass": true,
-  "info": ""
+  "info": "200 403"
  },
  {
-  "p": "Línguas",
-  "name": "Aparelho novo em en-US: o ecrã da conta abre em inglês",
+  "p": "Ataque",
+  "name": "Manutenção: o atalho de gastos continua a guardar (avisa que entra quando a app voltar) e a app não busca nada enquanto dura",
   "pass": true,
-  "info": "{\"code\":\"en\",\"tabs\":[\"Log in\",\"Create account\"]}"
+  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 03:40)\"},\"p1\":503}"
  },
  {
-  "p": "Línguas",
-  "name": "Aparelho novo em pt-BR: o ecrã da conta abre em português do Brasil",
+  "p": "Ataque",
+  "name": "Manutenção: a conta de administração continua a usar a app, com o botão flutuante da contagem até ao fim",
   "pass": true,
-  "info": "{\"code\":\"pt-BR\",\"tabs\":[\"Entrar\",\"Criar conta\"]}"
+  "info": "{\"fab\":\"Manutenção 29:56\",\"cover\":false}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: só a administração liga; ligada, as outras contas não entram nem sincronizam (503) e a administração e as contas de teste continuam",
+  "pass": true,
+  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795318858361,\"motivo\":\"manual\",\"prox\":0}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: a app mostra o ecrã \"O Prumo está em manutenção\" a tapar tudo, com a hora de regresso",
+  "pass": true,
+  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 03:40.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: desligada pela administração, o ecrã sai sozinho e as contas voltam a funcionar",
+  "pass": true,
+  "info": "true 200"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas",
+  "pass": true,
+  "info": "200 [{\"id\":\"mwr9f81p-f649263f66\",\"t\":\"2026-11-22T03:10:58.429Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Relatório da semana: a administração gera-o (contas, planos, atividade, segurança com os ataques de hoje, falhas, cópias, saúde) e mais ninguém o vê",
+  "pass": true,
+  "info": "{\"st\":200,\"n\":1,\"contas\":{\"total\":3,\"novas\":3,\"porConfirmar\":0,\"teste\":1,\"entraramSemana\":0,\"perfis\":3},\"sec\":{\"login_falhou\":7,\"conta_trancada\":1,\"login_bloqueada\":3,\"login_desconhecido\":30,\"limite\":1,\"robo_registo\":1,\"origem\":2,\"token_falso\":1,\"backup_negado\":1,\"admin_negado\":1,\"manutencao_ligar\":1,\"manutencao_desligar\":1},\"alertas\":4,\"outro\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê",
+  "pass": true,
+  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795317093829,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":1,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":0},\"copia\":\"2026-11-22\"},\"falhas\":[]},\"_st\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Visitas: a página conta visitas e visitantes únicos do dia (o mesmo aparelho 2 vezes = 1), origem (Google, Instagram), país e cliques; robôs e pedidos estranhos não contam; só a administração vê",
+  "pass": true,
+  "info": "{\"st\":200,\"t\":{\"visitas\":3,\"unicos\":2,\"app\":2,\"cliques\":1,\"registos\":3,\"pagamentos\":0,\"conversao\":150},\"antes\":{\"visitas\":0,\"unicos\":0,\"app\":2,\"cliques\":0,\"registos\":3,\"pagamentos\":0,\"conversao\":0},\"o\":[[\"direto\",2],[\"Google\",1],[\"Instagram\",1]],\"p\":[[\"??\",2],[\"BR\",1],[\"PT\",1]],\"bot\":{\"ok\":true,\"ok2\":false},\"mau\":{\"ok\":true,\"ok2\":false},\"outro\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Visitas: os contadores do dia juntam-se num só ficheiro (_dia.json), sem perder nem contar nada a dobrar",
+  "pass": true,
+  "info": "{\"fs1\":1,\"fs2\":[\"_dia.json\"],\"v\":3,\"v2\":4}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus: o servidor só conta o tipo de ameaça bloqueada (sem nomes nem conteúdos) e só a administração vê",
+  "pass": true,
+  "info": "{\"a3\":{\"ok\":true,\"ok2\":false,\"_st\":200},\"av\":{\"ok\":true,\"av\":{\"f_macro\":2},\"_st\":200},\"n\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › ficheiros: apanha EICAR, programas disfarçados, nomes invertidos, macros, ZIP com programas, bombas ZIP, PDFs com código, SVG com código; deixa passar CSV, PNG, XLSX e PDF limpos",
+  "pass": true,
+  "info": "[\"eicar\",\"prog\",\"prog\",\"nome\",\"macro\",\"zipprog\",\"bomba\",\"pdfjs\",\"disf\",\"svg\",null,null,null,null]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › links: bancos e lojas imitados, truque do @, programas, javascript: são perigosos; encurtados, sem cadeado, letras estrangeiras e IPs pedem cuidado; os sites verdadeiros abrem sem perguntas",
+  "pass": true,
+  "info": "[]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › na app: o ficheiro EICAR é parado antes de chegar à app (aviso e caixa limpa), o CSV limpo passa, e as caixas criadas na hora também são verificadas",
+  "pass": true,
+  "info": "{\"i1\":{\"got\":[],\"modal\":\"Teste bem-sucedido\\n\\nteste-eicar.txt\\n\\nÉ o ficheiro de teste EICAR: o antivírus está a funcionar.\\n\\nO ficheiro de teste foi apanhado e não entrou na app.\\n\\nPercebi\",\"val\":\"\"},\"i2\":[\"extrato.csv\"],\"fc\":true,\"i3\":{\"got\":[],\"modal\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › links na app: tocar num link perigoso mostra o aviso e não abre; um site verdadeiro abre logo; nos e-mails os links perigosos ficam desligados e marcados",
+  "pass": true,
+  "info": "{\"l1\":{\"nav\":[],\"modal\":\"Este link parece perigoso\\n\\nhttp://paypa1.com/login\\n\\nImita o nome \\\"paypal\\\" trocando letras por números.\\nA ligação não é segura (sem cadeado, http).\\n\\nSe veio num e-mail ou mensagem a pedir dados, senhas ou pagamentos, o mais seguro é não abrir e ir ao site escrevendo o endereço tu mesmo.\\n\\nAbrir mesmo assim\\nNão abrir\"},\"l2\":{\"nav\":[\"avBom\"],\"modal\":false},\"em\":{\"m"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › Definições: separador \"Antivírus e proteção\" com o estado, o histórico das ameaças, o botão de teste e o que fazer no telemóvel e no computador",
+  "pass": true,
+  "info": "{\"t\":\"Sistema\\nDEFINIÇÕES\\n\\nO antivírus do Prumo e tudo o que protege os teus dados.\\n\\nGeral\\nConta e perfis\\nE-mail\\nLigações\\nAtalhos do iPhone\\nSpyke (assistente)\\nImpostos\\nAntivírus e proteção\\nPrivacidade e term\",\"on\":true,\"tab\":true,\"hist\":true,\"nota\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: as falhas da app aparecem agrupadas (mensagem, onde, quantas vezes) com as novas assinaladas; só a administração vê",
+  "pass": true,
+  "info": "{\"st\":200,\"g\":{\"k\":\"TypeError: falha de teste 85516d @ teste.js:1:1\",\"n\":4,\"dias\":1,\"prim\":\"2026-11-22\",\"ult\":\"2026-11-22\",\"hoje\":4,\"novo\":true},\"n\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: um erro novo que se repete manda e-mail à administração (no máximo um a cada 6 horas)",
+  "pass": true,
+  "info": "{\"v1\":{\"alerta\":true,\"novos\":[[\"TypeError: falha de teste 85516d @ teste.js:1:1\",4]],\"tApp\":4,\"tSrv\":0},\"v2\":{\"alerta\":false,\"novos\":[[\"ReferenceError: outra 804848 @ b.js:2:2\",3]],\"tApp\":3,\"tSrv\":0},\"mails\":[\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro novo a repetir-se\"]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: /api/saude?ping=1 responde 200 a um monitor externo (sem dados de ninguém) e a verificação completa continua só para o Vercel",
+  "pass": true,
+  "info": "{\"pg\":{\"st\":200,\"j\":{\"ok\":true,\"ms\":0}},\"cr\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Readwise: a chave errada é recusada; a certa traz os livros e destaques para as Leituras (página e nota nas citações), junta ao livro que já existe, ignora artigos e apagados, e não duplica",
+  "pass": true,
+  "info": "{\"mau\":\"recusada O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.\",\"rw\":{\"st\":{\"tok\":\"rwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"last\":\"2026-11-22T03:11:42.472Z\",\"livros\":1,\"dest\":2,\"at\":1795317102501},\"pz\":1,\"pq\":[[\"Tu tornas-te\",\"\",\"\",false],[\"O essencial \",\"12\",\"a melhor\",true]],\"ha\":{\"capa\":\"https://exemplo.pt/h.jpg\",\"st\":\"A ler\",\"q\":1,\"f\":\"Ebook\"},\"art\":false,\"again\":{\"nl\":0,\"nd\":0},\"painel\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Strava: o endereço de autorização leva um state assinado (um state mexido é recusado); ao voltar, a autorização fica guardada cifrada (nunca em texto) e renova-se sozinha",
+  "pass": true,
+  "info": "{\"e0\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"}},\"ini\":\"http://localhost:8803/lgmock/strava/authorize?client_id=4242&redirect_uri=http%3A%2F%2Floc\",\"falso\":400,\"cb\":200,\"cbt\":\" Strava ligado · Prumo :root{color-scheme:dark}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#65010D;color:#FCE7D1;font:16px/1.55 sy\",\"d1\":\"200 \",\"e1\":{\"pronto\":true,\"ligado\":true,\"quem\":\"Marta Teste\",\"desde\":\"2026-11"
+ },
+ {
+  "p": "Ataque",
+  "name": "Oura: sono (só a noite principal), prontidão, atividade e treinos; cada renovação guarda logo o refresh token novo (a Oura só aceita cada um uma vez)",
+  "pass": true,
+  "info": "{\"o1\":200,\"o2\":200,\"ren\":{\"strava\":1,\"oura\":2},\"sono\":1}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Strava e Oura na app: corridas, treinos, sono, prontidão e passos entram sem duplicar; nada disto chega à IA (contexto do Spyke, procura e áreas)",
+  "pass": true,
+  "info": "{\"sv\":[[8.12,2580,151]],\"svw\":[\"Volta de bicicleta\",\"Ginásio\"],\"ouS\":[[\"2026-11-21\",420]],\"ouR\":1,\"ou\":[[77,11234]],\"dup\":1,\"ia\":{\"runs\":1,\"wk\":0,\"sl\":0,\"ou\":0},\"ctxSv\":false,\"fa\":false,\"ra\":false,\"cards\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Strava: desligar avisa o Strava e apaga a autorização; sem sessão válida nada passa",
+  "pass": true,
+  "info": "{\"sa\":200,\"sair\":[\"strava\"],\"e2\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":true,\"quem\":\"\",\"desde\":\"2026-11-22T03:11:43.341Z\"}},\"outro\":401}"
+ },
+ {
+  "p": "Ataque",
+  "name": "RevenueCat: sem a senha certa é recusado; uma compra dá o plano (confirmado no RevenueCat, não no que o aviso diz); o mesmo aviso não conta duas vezes; compras de teste não contam; ao expirar o plano sai",
+  "pass": true,
+  "info": "{\"rid\":\"p_ff59\",\"sem\":401,\"errada\":401,\"h1\":{\"_st\":200,\"ok\":true},\"p1\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":false,\"pago\":1,\"ate\":1797909105827,\"ciclo\":\"mes\",\"loja\":\"play_store\"},\"h2\":{\"_st\":200,\"ok\":true,\"repetido\":1},\"n1\":1,\"n2\":1,\"p3\":\"avancado\",\"p4\":\"completo\",\"p5\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796526705728},\"h6\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Rede instável: sem internet a app funciona e guarda; quando a rede volta (com o servidor a falhar 3 vezes) sincroniza e a tarefa aparece no outro aparelho",
+  "pass": false,
+  "info": "{\"off\":{\"st\":\"sem ligação (guardado neste aparelho)\",\"vis\":true},\"falhas\":3,\"on\":\"sincronizada\",\"there\":false}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Falhas do app: o servidor aceita o registo da falha (com limite) para o relatório da semana",
+  "pass": true,
+  "info": "{\"ok\":true,\"ok2\":true,\"_st\":200}"
  }
 ]

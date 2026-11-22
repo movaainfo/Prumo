@@ -13,7 +13,7 @@ const TV = /^\d{4}-\d{2}-\d{2}$/;
 const termsOf = b => { if (!TV.test(String(b.termos || '')) || b.saude !== true || b.idade !== true) throw N.err('termos', 'Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.', 400);
   return { v: b.termos, at: new Date().toISOString(), saude: true, idade: true }; };
 const planoPub = r => { const e = P.efetivo(r), o = { id: e.id, n: e.n, lvl: e.lvl, perfis: e.perfis, ia: e.ia, cobranca: P.cobranca() };
-  ['admin', 'oferta', 'pago', 'teste', 'cancelar', 'semCobranca', 'acabou', 'contaTeste'].forEach(k => { if (e[k]) o[k] = 1; }); ['ate', 'testeAcabou', 'ciclo', 'cur'].forEach(k => { if (e[k]) o[k] = e[k]; });
+  ['admin', 'oferta', 'pago', 'teste', 'cancelar', 'semCobranca', 'acabou', 'contaTeste'].forEach(k => { if (e[k]) o[k] = 1; }); ['ate', 'testeAcabou', 'ciclo', 'cur', 'loja'].forEach(k => { if (e[k]) o[k] = e[k]; });
   if (P.mesmo(r.plano) && r.plano.cus) o.cliente = 1; return o; };
 const pub = (r, eid) => ({ plano: planoPub(r), verificar: r.verif ? 1 : 0, trocar: !!r.trocar, avisos: (r.avisos || []).slice(-5), email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', pin: p.pin ? 6 : 0, inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
 const cleanName = (s, max) => String(s || '').replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
@@ -352,6 +352,35 @@ const OPS = {
     else throw N.err('acao', 'Ação desconhecida.', 400);
     N.sec('manutencao_' + b.acao, req); const m = await N.manut({ fresh: true }); return { manut: { on: m.on, ate: m.ate, motivo: m.motivo, prox: m.prox } }; },
   // v3.64: falha de JavaScript no aparelho de alguém (sem dados pessoais): conta para o relatório da semana
+  // v3.69: estatística de visitas, própria e sem cookies (ver _visitas.js)
+  async visita(req, b) { return require('./_visitas').registar(req, b); },
+  // v3.70: o antivírus da app avisa quantas ameaças bloqueou (só o tipo, sem nomes nem conteúdos)
+  async antivirus(req, b) { if (N.limit(req, 'antivirus', 30, 3600e3)) return { ok2: false }; const k = String(b.k || '');
+    if (!/^(f_(prog|disf|macro|pdfjs|svg|bomba|eicar|nome|grande|html|zipprog)|l_(aviso|perigo))$/.test(k)) return { ok2: false }; N.count('av:' + k); return { ok2: true }; },
+  async adminAntivirus(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
+    return { av: await require('./_visitas').contar('av:', 30) }; },
+  async adminErros(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
+    return { erros: await require('./_erros').resumo(b.dias) }; },
+  // v3.71: Readwise (livros e destaques). O servidor só passa o pedido ao Readwise com a chave que a app manda (não a guarda) e devolve
+  // só os campos que as Leituras usam. Só para contas com sessão.
+  async readwise(req, b) { await session(req); if (N.limit(req, 'readwise', 80, 3600e3)) throw N.err('limite', 'Muitos pedidos ao Readwise. Tenta daqui a pouco.', 429);
+    const tok = String(b.token || '').trim(); if (!/^[A-Za-z0-9]{20,80}$/.test(tok)) throw N.err('readwise', 'A chave do Readwise não parece certa.', 400);
+    const base = String(process.env.READWISE_BASE || 'https://readwise.io').replace(/\/+$/, ''), H = { authorization: 'Token ' + tok, accept: 'application/json' };
+    const pede = async u => { try { return await fetch(base + u, { headers: H, signal: AbortSignal.timeout(20000) }); } catch (e) { throw N.err('readwise', 'O Readwise não respondeu agora. Tenta daqui a pouco.', 502); } };
+    if (b.teste) { const r = await pede('/api/v2/auth/'); return { ok2: r.status === 204 }; }
+    const q = new URLSearchParams(); if (b.cursor) q.set('pageCursor', String(b.cursor).slice(0, 300)); if (/^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/.test(String(b.desde || ''))) q.set('updatedAfter', b.desde);
+    const r = await pede('/api/v2/export/?' + q);
+    if (r.status === 401 || r.status === 403) throw N.err('readwise', 'O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.', 400);
+    if (r.status === 429) throw N.err('limite', 'O Readwise pediu para esperar um pouco. Tenta daqui a um minuto.', 429);
+    if (!r.ok) throw N.err('readwise', 'O Readwise não respondeu agora. Tenta daqui a pouco.', 502);
+    const j = await r.json().catch(() => ({})), cut = (x, n) => String(x == null ? '' : x).slice(0, n); N.count('readwise');
+    return { proximo: j.nextPageCursor ? cut(j.nextPageCursor, 300) : null, livros: (Array.isArray(j.results) ? j.results : []).slice(0, 2000).map(x => ({ id: +x.user_book_id || 0, t: cut(x.readable_title || x.title, 300), a: cut(x.author, 200), cat: cut(x.category, 20),
+      capa: /^https:\/\//.test(String(x.cover_image_url || '')) ? cut(x.cover_image_url, 500) : '', src: cut(x.source, 30),
+      d: (Array.isArray(x.highlights) ? x.highlights : []).filter(h => h && !h.is_deleted).slice(0, 3000).map(h => ({ id: +h.id || 0, t: cut(h.text, 4000), n: cut(h.note, 2000), loc: Number.isFinite(+h.location) ? +h.location : null, lt: cut(h.location_type, 12), at: cut(h.highlighted_at, 30) })) })) }; },
+  // v3.71: o id com que a app das lojas entra no RevenueCat (não diz o e-mail a ninguém)
+  async rcId(req) { const s = await session(req); return { id: 'p_' + s.eid, ativo: require('./revenuecat').pronto() }; },
+  async adminVisitas(req, b) { const s0 = await session(req); if (!isAdmin(s0.rec.email)) { N.sec('admin_negado', req); throw N.err('admin', 'Sem acesso.', 403); }
+    return { visitas: await require('./_visitas').ler(b.dias) }; },
   async falha(req, b) { if (N.limit(req, 'falha', 20, 3600e3)) return { ok2: false };
     const m = String(b.m || '').replace(/[\u0000-\u001f]/g, ' ').slice(0, 60), at = String(b.at || '').replace(/[^\w.:-]/g, '').slice(0, 40), v = String(b.v || '').replace(/[^\d.]/g, '').slice(0, 8), dev = /^(tel|tablet|pc)$/.test(b.dev) ? b.dev : '?';
     if (!m) return { ok2: false }; N.count('app:' + m.slice(0, 40) + ' @ ' + at.slice(0, 18)); N.count('appv:' + v + ':' + dev); console.warn('FALHA ' + JSON.stringify({ m, at, v, r: String(b.r || '').slice(0, 24), dev })); return { ok2: true }; },
@@ -465,7 +494,7 @@ const OPS = {
     const sl = await spList(); contas.forEach(c => { c.sp = c.admin || sl.includes(N.normEmail(c.email)); });
     return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos, spotify: sl, spMax: SP_MAX, spConf: !!spCid(),
       // o que falta configurar no Vercel (só se diz se está ou não; os valores nunca saem do servidor)
-      cfg: { stripe: require('./_planos').cobranca(), stripeTeste: /^sk_test_/.test(String(process.env.STRIPE_SECRET_KEY || '').trim()), mail: process.env.RESEND_API_KEY ? 'resend' : process.env.BREVO_API_KEY ? 'brevo' : '', mailDe: !!String(process.env.NAUTILO_EMAIL_DE || '').trim() } }; },
+      cfg: { strava: !!(process.env.STRAVA_CLIENT_ID && process.env.STRAVA_CLIENT_SECRET), oura: !!(process.env.OURA_CLIENT_ID && process.env.OURA_CLIENT_SECRET), revenuecat: !!(process.env.REVENUECAT_WEBHOOK_AUTH && process.env.REVENUECAT_API_KEY), stripe: require('./_planos').cobranca(), stripeTeste: /^sk_test_/.test(String(process.env.STRIPE_SECRET_KEY || '').trim()), mail: process.env.RESEND_API_KEY ? 'resend' : process.env.BREVO_API_KEY ? 'brevo' : '', mailDe: !!String(process.env.NAUTILO_EMAIL_DE || '').trim() } }; },
 
   // v3.20: o administrador repõe o cofre de Senhas de uma conta (também a dele) quando a senha mestra se perdeu.
   // O cofre está cifrado no aparelho com a senha mestra, que ninguém conhece: não dá para a mudar sem ela, por isso o cofre fica vazio
@@ -566,3 +595,6 @@ module.exports = N.handler(async (req, res) => {
   N.send(res, 200, Object.assign({ ok: true }, await op(req, b)));
 });
 module.exports.mailRaw = (...a) => mailRaw(...a);
+// v3.71: usados pelo api/revenuecat (compras nas lojas)
+module.exports.existe = async eid => /^[a-f0-9]{40}$/.test(String(eid || '')) && !!(await readAcc(eid));
+module.exports.planoLoja = async (eid, pl) => change(eid, r => { if (pl) r.planoLoja = pl; else delete r.planoLoja; });

@@ -99,6 +99,10 @@ OS.get = (c, id) => { if (!id) return undefined; const a = OS.all(c); if (a.leng
   const i = x.m.get(id); if (i != null && a[i] && a[i].id === id) return a[i];
   const f = a.findIndex(r => r.id === id); if (f >= 0) { delete IDX[c]; return a[f]; } return undefined; };
 OS.find = (c, f) => OS.all(c).filter(f);
+// v3.71: pelas regras do Strava e da Oura, os registos que vêm deles nunca vão para a IA. OS.paraIA(fn) corre fn (síncrona, só de leitura)
+// a ver os dados sem esses registos: é assim que se monta tudo o que a IA lê (contexto do Spyke, consultas, treinador, bioimpedância).
+OS.semIA = r => !!r && (r.src === 'strava' || r.src === 'oura');
+OS.paraIA = fn => { if (OS.__ia) return fn(); const all = OS.all; OS.__ia = 1; OS.all = c => c === 'oura' ? [] : all(c).filter(r => !OS.semIA(r)); try { return fn(); } finally { OS.all = all; OS.__ia = 0; } };
 function pickShard(c) {
   const cap = OS.SHARD[c] || DEF_SHARD, cnt = {};
   OS.all(c).forEach(r => { cnt[r._s || 0] = (cnt[r._s || 0] || 0) + 1; });

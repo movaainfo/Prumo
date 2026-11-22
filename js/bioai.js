@@ -202,7 +202,7 @@ let busy = '';
 BIO.analyse = async id => { const b = OS.get('body', id); if (!b) return; if (!AI.key()) { UI.modal(`<div class="row" style="justify-content:flex-end"><button class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div>${AI.setup('')}`, 'bio-m'); return; }
   const all = U.sortBy(OS.all('body').filter(x => x.bio || n(x.bf)), x => x.date), prev = all.filter(x => x.date < b.date).pop();
   busy = id; OS.request();
-  try { const r = await AI.json([{ text: ASK(ctx(b, prev)) }], .4, { deep: 1 }); if (!r || !r.resumo) throw new Error('resposta vazia');
+  try { const r = await AI.json([{ text: ASK(OS.paraIA(() => ctx(b, prev))) }], .4, { deep: 1 }); if (!r || !r.resumo) throw new Error('resposta vazia');
     OS.upd('body', id, { ai: { at: new Date().toISOString(), resumo: String(r.resumo), nota: Math.round(n(r.nota)) || null, fortes: (r.fortes || []).slice(0, 6).map(String), melhorar: (r.melhorar || []).slice(0, 8).map(x => ({ area: String(x.area || ''), pri: /alta/i.test(x.prioridade) ? 'alta' : /baixa/i.test(x.prioridade) ? 'baixa' : 'media', why: String(x.porque || ''), how: String(x.como || '') })), metas: (r.metas || []).slice(0, 6).map(x => ({ m: String(x.medida || ''), a: String(x.atual ?? ''), t: String(x.alvo ?? ''), p: String(x.prazo || '') })), treino: (r.treino || []).slice(0, 6).map(String), dieta: (r.dieta || []).slice(0, 6).map(String), corrida: (r.corrida || []).slice(0, 4).map(String), evolucao: r.evolucao ? String(r.evolucao) : '' } });
     UI.toast('Análise pronta', 'pos'); }
   catch (e) { UI.toast(e.message, 'neg'); }

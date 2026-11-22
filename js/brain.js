@@ -13,7 +13,7 @@ const cfg = () => Object.assign({}, OS.ONE_DEF.spyke, OS.one('spyke'));
 const who = () => OS.one('profile').short || OS.who();
 const today = () => U.today();
 const cut = (o, n = 6000) => { const s = typeof o === 'string' ? o : JSON.stringify(o); return s.length > n ? s.slice(0, n) + '…' : s; };
-const safe = f => { try { return f(); } catch (e) { return null; } };
+const safe = f => { try { return OS.paraIA ? OS.paraIA(f) : f(); } catch (e) { return null; } }; // v3.71: sem Strava nem Oura
 
 /* ---------- o que o Spyke consegue consultar ---------- */
 const AREAS = ['agenda', 'tarefas', 'financas', 'habitos', 'universidade', 'investimentos', 'emails', 'noticias', 'clima', 'metas', 'treino', 'pessoas', 'decisoes', 'memoria', 'trabalho', 'proximos_passos', 'projetos', 'desporto', 'dieta', 'foco', 'fe', 'leitura', 'evolucao', 'dominus', 'projeto_de_vida', 'sono', 'corpo', 'rotina', 'capital_profissional', 'mundo'];
@@ -76,7 +76,7 @@ const brief1 = (c, r) => { const S = OS.S[c] || {}, o = { area: S.label || c }; 
     const f = (S.fields || []).find(x => x.k === k); let val = Array.isArray(v) ? v.slice(0, 8).join(', ') : v; if (f && f.t === 'rel' && typeof v === 'string') { const t = OS.get(f.c, v); if (t) val = t.name || t.title || v; } else if (typeof v === 'string' && /^[a-z0-9]{8,14}$/.test(v) && !/\d{4}-/.test(v)) { const hit = ['subjects', 'projects', 'goals', 'accounts', 'assets', 'sports', 'people'].map(cc => OS.get(cc, v)).find(Boolean); if (hit) val = hit.name || hit.title || v; }
     o[(f && f.l) || k] = String(val).slice(0, 300); }); return o; };
 const findAll = q => { const w = nrm(q).split(/\s+/).filter(x => x.length > 1); if (!w.length) return 'Diz o que procurar.'; const out = [];
-  Object.keys(OS.D || {}).forEach(c => { if (!Array.isArray(OS.D[c]) || /^(snapshots|reports|files)$/.test(c)) return; OS.D[c].forEach(r => { if (!r || typeof r !== 'object') return; const txt = nrm(Object.keys(r).filter(k => !SKIPK.has(k)).map(k => typeof r[k] === 'object' ? JSON.stringify(r[k]).slice(0, 400) : r[k]).join(' '));
+  Object.keys(OS.D || {}).forEach(c => { if (!Array.isArray(OS.D[c]) || /^(snapshots|reports|files|oura)$/.test(c)) return; OS.D[c].forEach(r => { if (!r || typeof r !== 'object' || (OS.semIA && OS.semIA(r))) return; const txt = nrm(Object.keys(r).filter(k => !SKIPK.has(k)).map(k => typeof r[k] === 'object' ? JSON.stringify(r[k]).slice(0, 400) : r[k]).join(' '));
     const hit = w.filter(x => txt.includes(x)).length; if (hit === w.length || (w.length > 2 && hit >= w.length - 1)) out.push([hit, r.date || r.due || r.doneAt || '', c, r]); }); });
   try { const m = OS.one('me') || {}, Q = {}; try { (OS.Me && OS.Me.qList ? OS.Me.qList() : []).forEach(q => { Q[q.id] = q.q || q.t || q.text; }); } catch (e) { } Object.entries(m.qa || {}).forEach(([k, v]) => { const t = nrm(v) + ' ' + nrm(Q[k]); if (w.every(x => t.includes(x))) out.push([w.length, '', 'biografia', { pergunta: Q[k] || k, resposta: String(v).slice(0, 600) }]); }); } catch (e) { }
   // os objetivos de vida e os marcos do Codex do Dominus também entram na procura
@@ -85,9 +85,10 @@ const findAll = q => { const w = nrm(q).split(/\s+/).filter(x => x.length > 1); 
   if (!out.length) return 'Não encontrei nada na app com "' + q + '".';
   return JSON.stringify(out.sort((a, b) => b[0] - a[0] || String(b[1]).localeCompare(String(a[1]))).slice(0, 30).map(([, , c, r]) => c === 'biografia' ? Object.assign({ area: 'Biografia (entrevista)' }, r) : c === 'vida' || c === 'codex' ? r : brief1(c, r))); };
 const readArea = (c, n) => { const k = Object.keys(OS.D || {}).find(x => x === c) || Object.keys(OS.S).find(x => nrm((OS.S[x] || {}).label) === nrm(c)); if (!k || !Array.isArray(OS.D[k])) return 'Área desconhecida. Existem: ' + Object.keys(OS.D || {}).filter(x => Array.isArray(OS.D[x]) && OS.D[x].length).join(', ');
-  const L = U.sortBy(OS.D[k], r => r.date || r.due || r.doneAt || (r._c ? new Date(r._c).toISOString() : ''), -1).slice(0, Math.min(60, Math.max(1, n)));
-  return JSON.stringify({ area: (OS.S[k] || {}).label || k, total: OS.D[k].length, registos: L.map(r => brief1(k, r)) }); };
-B.findAll = findAll; B.readArea = readArea;
+  if (k === 'oura') return 'Os dados do anel Oura não são partilhados com a IA (regras da Oura).'; const D = OS.D[k].filter(r => !(OS.semIA && OS.semIA(r)));
+  const L = U.sortBy(D, r => r.date || r.due || r.doneAt || (r._c ? new Date(r._c).toISOString() : ''), -1).slice(0, Math.min(60, Math.max(1, n)));
+  return JSON.stringify({ area: (OS.S[k] || {}).label || k, total: D.length, registos: L.map(r => brief1(k, r)) }); };
+B.findAll = q => OS.paraIA(() => findAll(q)); B.readArea = (c, n) => OS.paraIA(() => readArea(c, n));
 
 /* ---------- ferramentas (as mesmas para os dois cérebros) ---------- */
 const did = [];   // o que o Spyke fez nesta resposta (aparece no ecrã)
@@ -131,9 +132,9 @@ const T = [
   { name: 'responder_email', description: 'Escreve uma resposta a um e-mail recebido e guarda-a como rascunho no Gmail dele (não envia).', props: { pessoa: { type: 'string', description: 'nome ou e-mail de quem escreveu' }, instrucao: { type: 'string', description: 'o que ele quer responder' } }, req: ['pessoa', 'instrucao'],
     run: async a => { if (!OS.Mail || !OS.Mail.replyByName) return 'O e-mail não está ligado.'; const r = await OS.Mail.replyByName(String(a.pessoa), String(a.instrucao)); if (r.ok) did.push('Rascunho para ' + r.to); return r.ok ? 'Rascunho guardado no Gmail para ' + r.to + ': ' + String(r.body).slice(0, 300) : r.msg; } },
   { name: 'procurar_na_app', description: 'Procura um texto em TODA a app (tarefas, notas, metas, projetos, pessoas, livros, decisões, movimentos, investimentos, universidade, trabalho, biografia, memória…). Usa quando ele pergunta por algo que não está no resumo.', props: { texto: { type: 'string', description: 'palavras a procurar' } }, req: ['texto'],
-    run: a => cut(findAll(String(a.texto || '')), 6000) },
+    run: a => cut(B.findAll(String(a.texto || '')), 6000) },
   { name: 'ler_area', description: 'Lê os registos mais recentes de qualquer área da app pelo nome da coleção (ex.: notes, books, people, decisions, transactions, assets, invtx, subjects, assessments, sessions, workouts, runs, sportlog, meals, body, shifts, dayoffs, projects, goals, milestones, habits, devos, prayers, trees, opps, applications, contacts, skills, lifeev, reviews_w, reviews_m).', props: { area: { type: 'string', description: 'nome da coleção' }, quantos: { type: 'integer', description: 'quantos registos (até 60)' } }, req: ['area'],
-    run: a => cut(readArea(String(a.area || ''), +a.quantos || 30), 7000) },
+    run: a => cut(B.readArea(String(a.area || ''), +a.quantos || 30), 7000) },
   { name: 'criar_registo', description: 'Cria um registo em qualquer área da app quando ele pede (meta, projeto, bloco da rotina, nota, livro, contacto, treino, sessão de estudo, marco, oportunidade, candidatura, competência, certificação, compromisso…). Campos possíveis por área:\n' + schemaTxt(), props: { colecao: { type: 'string', enum: EDIT, description: 'a área (nome da coleção)' }, campos_json: { type: 'string', description: 'os campos em JSON, com as chaves da lista, ex.: {"title":"Estudar","start":"09:00","end":"11:00","days":["1","3"]}' } }, req: ['colecao', 'campos_json'],
     run: a => { const c = String(a.colecao || ''); if (!okColl(c)) return 'Essa área não existe.'; const def = OS.S[c].defaults ? OS.S[c].defaults() : {}, rec = Object.assign({}, def, clean(c, a.campos_json));
       const miss = OS.S[c].fields.filter(f => f.req && (rec[f.k] == null || rec[f.k] === '' || (Array.isArray(rec[f.k]) && !rec[f.k].length))).map(f => f.l); if (miss.length) return 'Falta: ' + miss.join(', ') + '. Pergunta-lhe e tenta outra vez.';

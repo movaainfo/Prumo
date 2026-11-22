@@ -65,6 +65,7 @@ P[''] = () => { if (B) return `<div class="pn"><b>Tens um bloco em curso.</b><p 
   <div class="pn"><div class="pn-h"><h3>2 · Pendências e tempo de cada uma</h3><span class="mut">${sel.length} escolhidas · ${U.hours(tot)}</span></div>
     <div class="fb-list">${L.map((x, i) => `<label class="fb-it ${isSel(x, i) ? 'on' : ''}"><input type="checkbox" data-fbk="${esc(x.k)}" ${isSel(x, i) ? 'checked' : ''}><span class="fb-n">${i + 1}</span><span class="fb-t"><b>${esc(x.title)}</b><small>${esc([x.kind, x.area, x.why].filter(Boolean).join(' · '))}</small></span><span class="fb-m"><input type="number" min="5" max="120" step="5" inputmode="numeric" data-fbm="${esc(x.k)}" value="${clamp(DR.mins[x.k] || x.mins)}" aria-label="Minutos"><small>min</small></span></label>`).join('') || UI.empty('Sem pendências neste tema. Escolhe outro ou acrescenta uma abaixo.')}</div>
     <form class="fb-add" data-form="fbAdd"><input class="field" name="t" placeholder="Acrescentar pendência (ex.: responder ao e-mail da Joana)" required><input class="field" name="m" type="number" min="5" max="120" step="5" value="15" aria-label="Minutos"><button class="btn">${UI.ic('plus')}Juntar</button></form></div>
+  ${OS.FocoSom ? OS.FocoSom.escolha() : ''}
   <div class="fb-go"><div><b>${sel.length} pendência(s) · ${U.hours(tot)}</b><small>Para sair antes do fim: Face ID ou código.${c.sc ? ' As apps do iPhone ficam bloqueadas pelo modo Foco.' : ''} <a class="acc" href="#definicoes.atalhos">Bloquear apps</a></small></div><button class="btn pri lg" data-act="fbGo" ${sel.length ? '' : 'disabled'}>${UI.ic('focus')}Começar bloco</button></div>`; };
 P.apps = () => { const c = cfg(), ap = c.apps.length ? c.apps.join(', ') : '(escolhe as apps acima)';
   return renNote(c) + `<div class="pn"><p style="margin:0 0 8px"><b>A verdade:</b> o iPhone não deixa nenhuma app web (nem o Safari) fechar ou bloquear outras apps. O que o Prumo faz sozinho: ecrã fechado até acabares, saída só com Face ID ou código, e conta cada vez que sais da app. Para bloquear as outras apps de verdade usa o <b>modo Foco</b> + <b>Atalhos</b> (5 minutos, uma vez só):</p></div>
@@ -131,9 +132,10 @@ const mmss = ms => { const s = Math.max(0, Math.round(Math.abs(ms) / 1000)); ret
 let el = null;
 function draw() {
   if (!el) { el = document.createElement('div'); el.id = 'fblk'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Bloco de foco'); document.body.appendChild(el); }
-  if (!B) { el.hidden = true; el.innerHTML = ''; document.documentElement.classList.remove('fb-on'); return; }
+  if (!B) { el.hidden = true; el.innerHTML = ''; document.documentElement.classList.remove('fb-on'); if (OS.FocoSom) OS.FocoSom.sync(false); return; }
   el.hidden = false; document.documentElement.classList.add('fb-on');
   const it = cur(), n = B.items.length, dn = B.items.filter(x => x.st === 'done').length, up = B.items.filter((x, j) => !x.st && j !== B.i);
+  if (OS.FocoSom) OS.FocoSom.sync(B.phase !== 'end'); // v3.71: som do bloco (pára quando acaba)
   if (B.phase === 'end') { el.innerHTML = `<div class="fb-in fb-end"><div class="fb-big">${UI.ic(B.early ? 'lock' : 'flag')}</div><h2>${B.early ? 'Saíste do bloco' : 'Bloco terminado'}</h2><p class="fb-sub">${dn} de ${n} pendências resolvidas · ${B.mins} min de foco · ${B.leaves} saída(s) da app</p>
     <div class="fb-sum">${B.items.map(x => `<div class="${x.st || 'todo'}"><span>${x.st === 'done' ? '✓' : x.st === 'skip' ? '↷' : '·'}</span>${esc(x.title)}<small>${Math.round(x.used / 6e4)} min</small></div>`).join('')}</div>
     <button class="btn pri lg" data-act="fbClose">Fechar</button></div>`; return; }
@@ -149,6 +151,7 @@ function draw() {
     : B.phase === 'more' ? `<div class="fb-ask"><b>Quanto tempo mais precisas?</b><div class="fb-btns">${[5, 10, 15, 30].map(m => `<button class="btn lg" data-act="fbMore" data-m="${m}">+${m} min</button>`).join('')}</div><button class="btn ghost sm" data-act="fbSkip">Deixar para outro bloco</button></div>`
     : `<div class="fb-ask"><b>Sair do bloco antes do fim?</b><p class="fb-sub">Confirma que és tu.</p>${OS.Lock.bioId() ? `<button class="btn pri lg" data-act="fbBio">Face ID</button><div class="fb-or">ou código</div>` : ''}<form data-form="fbCode" class="fb-code" autocomplete="off"><input id="fbCode" name="c" class="field" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Código de acesso" aria-label="Código de acesso"><button class="btn">Sair</button></form><div class="fb-msg neg" id="fbMsg" role="status"></div><button class="btn ghost" data-act="fbStay">Continuar focado</button></div>`}
     ${up.length ? `<div class="fb-next"><small>A seguir</small>${up.slice(0, 3).map(x => `<div>${esc(x.title)}<span>${x.mins} min</span></div>`).join('')}${up.length > 3 ? `<small>+${up.length - 3}</small>` : ''}</div>` : ''}
+    ${OS.FocoSom ? OS.FocoSom.barra() : ''}
     ${B.apps.length ? `<div class="fb-apps-on">Apps bloqueadas: ${B.apps.map(esc).join(' · ')}</div>` : ''}
     ${B.phase !== 'exit' ? `<button class="fb-exit" data-act="fbExit">${UI.ic('lock')}Sair do bloco</button>` : ''}</div>`;
   tick();

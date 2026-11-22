@@ -45,7 +45,7 @@ const pend = new Set(LS.get('os2syncPend', [])); const savePend = () => LS.set('
 const known = {}; // id → t no servidor
 let queue = {}, waiters = [], timer = 0;
 const flushPut = async () => { timer = 0; const batch = queue, ws = waiters; queue = {}; waiters = []; if (!Object.keys(batch).length) return;
-  try { await call('put', { j: JSON.stringify(batch) }, true); Object.entries(batch).forEach(([id, d]) => { known[id] = d.t; pend.delete(id); }); savePend(); SY.last = Date.now(); SY.err = ''; SY.state = 'sincronizada'; ws.forEach(w => w.ok()); }
+  try { await call('put', { j: JSON.stringify(batch) }, true); Object.entries(batch).forEach(([id, d]) => { known[id] = d.t; pend.delete(id); }); savePend(); SY.last = Date.now(); SY.err = ''; SY.state = pend.size ? 'a enviar alterações…' : 'sincronizada'; ws.forEach(w => w.ok()); }
   catch (e) { SY.err = e.message; SY.state = 'sem ligação (guardado neste aparelho)'; ws.forEach(w => w.ko({ code: 'unavailable' })); setTimeout(() => repushPending(), 15000); }
   try { OS.request(); } catch (e) { } };
 const put = (id, data) => new Promise((ok, ko) => { queue[id] = data; pend.add(id); savePend(); waiters.push({ ok, ko }); clearTimeout(timer); timer = setTimeout(flushPut, 1200); });

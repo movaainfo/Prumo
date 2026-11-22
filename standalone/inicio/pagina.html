@@ -594,6 +594,11 @@ const REDUZ = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const DATA = {{DATA}};
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 // entrar na app: fica marcado neste navegador (o endereço principal passa a abrir a app)
+// estatística de visitas, sem cookies e sem dados pessoais: a página só avisa o servidor, que conta (o IP não fica guardado)
+const aviso = o => { try { fetch('api/conta', { method: 'POST', keepalive: true, credentials: 'omit', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.assign({ op: 'visita' }, o)) }).catch(() => { }); } catch (e) { } };
+(() => { const q = new URLSearchParams(location.search); let r = q.get('utm_source') || q.get('ref') || ''; if (!r && document.referrer) { try { const h = new URL(document.referrer).hostname; if (h !== location.hostname) r = h; } catch (e) { } }
+  aviso({ p: 'inicio', r: r || 'direto', d: innerWidth < 700 ? 'tel' : innerWidth < 1100 ? 'tablet' : 'pc', l: navigator.language || '' }); })();
+const ctaDe = a => /conta=entrar/.test(a.getAttribute('href') || '') ? 'entrar' : a.closest('.planos') ? 'plano' : 'criar';
 const marca = () => { try { document.cookie = 'prumo_app=1; Max-Age=31536000; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { } };
 $$('[data-app]').forEach(a => a.addEventListener('click', marca));
 
@@ -618,7 +623,7 @@ if (FINO && !REDUZ) $$('.btn').forEach(b => { b.addEventListener('pointermove', 
 /* cortina de lacre ao entrar na app (cobre a página a partir do sítio onde se tocou) */
 const cortina = $('#cortina');
 const entra = (href, x, y) => { marca(); if (REDUZ) { location.href = href; return; } cortina.style.setProperty('--cx', x + 'px'); cortina.style.setProperty('--cy', y + 'px'); cortina.classList.add('on'); setTimeout(() => { location.href = href; }, 720); };
-$$('[data-app]').forEach(a => a.addEventListener('click', e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); entra(a.getAttribute('href'), e.clientX || innerWidth / 2, e.clientY || innerHeight / 2); }));
+$$('[data-app]').forEach(a => a.addEventListener('click', e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); aviso({ p: 'cta', c: ctaDe(a) }); entra(a.getAttribute('href'), e.clientX || innerWidth / 2, e.clientY || innerHeight / 2); }));
 addEventListener('pageshow', e => { if (e.persisted) cortina.classList.remove('on'); });
 
 /* topo sólido ao rolar */
@@ -737,7 +742,7 @@ $$('details').forEach(d => { const s = d.querySelector('summary'), r = d.querySe
 /* ---------- fim: premir o selo ---------- */
 const selar = $('#selar'), selarP = $('#selarP'); let t0 = 0, raf = 0;
 const solta = () => { cancelAnimationFrame(raf); selar.classList.remove('premido'); if (!t0) return; t0 = 0; selarP.style.transition = 'stroke-dashoffset .35s'; selarP.style.strokeDashoffset = 540; };
-const vai = () => { selar.classList.add('selado'); const r = selar.getBoundingClientRect(); setTimeout(() => entra('./?app=1&conta=criar', r.left + r.width / 2, r.top + r.height / 2), 380); };
+const vai = () => { aviso({ p: 'cta', c: 'selo' }); selar.classList.add('selado'); const r = selar.getBoundingClientRect(); setTimeout(() => entra('./?app=1&conta=criar', r.left + r.width / 2, r.top + r.height / 2), 380); };
 selar.addEventListener('pointerdown', e => { e.preventDefault(); selar.setPointerCapture(e.pointerId); selar.classList.add('premido'); t0 = performance.now(); selarP.style.transition = 'none';
   const tick = () => { const p = clamp((performance.now() - t0) / 900, 0, 1); selarP.style.strokeDashoffset = 540 * (1 - p); if (p >= 1) { t0 = 0; selar.classList.remove('premido'); vai(); return; } raf = requestAnimationFrame(tick); }; raf = requestAnimationFrame(tick); });
 ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => selar.addEventListener(ev, solta));

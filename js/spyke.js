@@ -78,7 +78,8 @@ S.brief = (d = U.today()) => { const t = U.today(), fut = d > t, h = new Date().
   try { if (OS.Quotes) out.push('E a verdade de hoje: ' + OS.Quotes.truth()); } catch (e) { }
   out.push(fut ? 'Bom dia de trabalho.' : 'Estou aqui se precisares.');
   return out.join(' '); };
-S.ctx = () => { const t = U.today(), L = [], add = (k, v) => { if (v) L.push(k + ': ' + v); };
+S.ctx = () => OS.paraIA(() => ctxIA()); // v3.71: sem Strava nem Oura
+const ctxIA = () => { const t = U.today(), L = [], add = (k, v) => { if (v) L.push(k + ': ' + v); };
   add('Agora', new Date().toLocaleString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) + ' (' + (OS.Pais ? OS.Pais.name(OS.Pais.code(), 'pt') : 'Portugal') + ')');
   const p = OS.one('profile'); add('Utilizador', [p.name || name(), p.city].filter(Boolean).join(', '));
   try { add('Agenda hoje e amanhã', OS.Cal.items(t, U.addDays(t, 1)).filter(x => x.src !== 'task').slice(0, 14).map(x => (x.date === t ? 'hoje' : 'amanhã') + (x.start ? ' ' + x.start : '') + ' ' + x.title).join('; ')); } catch (e) { }
