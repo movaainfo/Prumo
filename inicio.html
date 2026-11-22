@@ -608,7 +608,9 @@ const DATA = {"areas":[{"k":"painel","t":"Painel","d":"O dia num olhar: o que é
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 // entrar na app: fica marcado neste navegador (o endereço principal passa a abrir a app)
 // estatística de visitas, sem cookies e sem dados pessoais: a página só avisa o servidor, que conta (o IP não fica guardado)
-const aviso = o => { try { fetch('api/conta', { method: 'POST', keepalive: true, credentials: 'omit', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.assign({ op: 'visita' }, o)) }).catch(() => { }); } catch (e) { } };
+const PREVER = /[?&]ver=1\b/.test(location.search); // pré-visualização da administração: não conta nas visitas
+if (PREVER) { const pv = document.createElement('a'); pv.href = './?app=1'; pv.id = 'prever'; pv.textContent = 'Pré-visualização · Voltar ao Prumo'; pv.setAttribute('style', 'position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:9999;background:#FCE7D1;color:#65010D;font:700 14px Geist,system-ui,sans-serif;padding:11px 16px;border-radius:999px;box-shadow:0 8px 30px rgba(20,0,3,.45);text-decoration:none'); document.body.appendChild(pv); }
+const aviso = o => { if (PREVER) return; try { fetch('api/conta', { method: 'POST', keepalive: true, credentials: 'omit', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.assign({ op: 'visita' }, o)) }).catch(() => { }); } catch (e) { } };
 (() => { const q = new URLSearchParams(location.search); let r = q.get('utm_source') || q.get('ref') || ''; if (!r && document.referrer) { try { const h = new URL(document.referrer).hostname; if (h !== location.hostname) r = h; } catch (e) { } }
   aviso({ p: 'inicio', r: r || 'direto', d: innerWidth < 700 ? 'tel' : innerWidth < 1100 ? 'tablet' : 'pc', l: navigator.language || '' }); })();
 const ctaDe = a => /conta=entrar/.test(a.getAttribute('href') || '') ? 'entrar' : a.closest('.planos') ? 'plano' : 'criar';
