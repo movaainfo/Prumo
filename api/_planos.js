@@ -2,21 +2,24 @@
 //   Essencial → organizar a vida · Avançado → IA e análises · Completo → tudo, sem limites.
 //   Teste grátis: 14 dias do Completo, a contar da criação da conta (as contas que já existiam contam a partir do lançamento dos planos).
 //   Sem STRIPE_SECRET_KEY no Vercel ninguém fica bloqueado (não haveria como pagar): o app funciona como Completo e a página Planos diz "em breve".
-//   v3.60: os preços são só em euros (o mínimo que o dono recebe). Quem paga noutra moeda vê o valor convertido do euro na página do Stripe
+//   v3.76: no Brasil cobra-se em reais (preço próprio). v3.60: no resto do mundo os preços são só em euros (o mínimo que o dono recebe). Quem paga noutra moeda vê o valor convertido do euro na página do Stripe
 //   (Adaptive Pricing: o câmbio e a taxa de conversão ficam do lado de quem paga) ou, sem isso, o banco dele converte. O dono recebe sempre os euros.
 //   Os preços mudam-se aqui ou com NAUTILO_PRECOS no Vercel (JSON: {"essencial":{"EUR":{"mes":599,"ano":5990}},…}, em cêntimos).
 'use strict';
 const DIA = 864e5, TESTE_DIAS = () => { const v = process.env.NAUTILO_TESTE_DIAS; return v != null && v !== '' && +v >= 0 ? +v : 14; };
 const INICIO = () => process.env.NAUTILO_PLANOS_DESDE || '2026-11-13';
 const BASE = [
-  { id: 'essencial', n: 'Essencial', lvl: 1, ia: 20, perfis: 1, precos: { EUR: { mes: 599, ano: 5990 } } },
-  { id: 'avancado', n: 'Avançado', lvl: 2, ia: 150, perfis: 3, precos: { EUR: { mes: 1199, ano: 11990 } } },
-  { id: 'completo', n: 'Completo', lvl: 3, ia: 400, perfis: 5, precos: { EUR: { mes: 1999, ano: 19990 } } }];
+  { id: 'essencial', n: 'Essencial', lvl: 1, ia: 20, perfis: 1, precos: { EUR: { mes: 599, ano: 5990 }, BRL: { mes: 1990, ano: 19900 } } },
+  { id: 'avancado', n: 'Avançado', lvl: 2, ia: 150, perfis: 3, precos: { EUR: { mes: 1199, ano: 11990 }, BRL: { mes: 3990, ano: 39900 } } },
+  { id: 'completo', n: 'Completo', lvl: 3, ia: 400, perfis: 5, precos: { EUR: { mes: 1999, ano: 19990 }, BRL: { mes: 6990, ano: 69900 } } }];
+// v3.76: no Brasil, preço próprio em reais (mais perto do poder de compra); no resto do mundo, em euros
 // só para as assinaturas que já tinham sido pagas em dólares ou reais antes da 3.60 (o Stripe não muda a moeda de uma assinatura): mudar de plano mantém essa moeda
 const LEGADO = { essencial: { USD: { mes: 699, ano: 6990 }, BRL: { mes: 1990, ano: 19900 } }, avancado: { USD: { mes: 1299, ano: 12990 }, BRL: { mes: 3990, ano: 39900 } }, completo: { USD: { mes: 2199, ano: 21990 }, BRL: { mes: 6990, ano: 69900 } } };
-const MOEDAS = ['EUR'], LIDAS = ['EUR', 'USD', 'BRL'], moeda = c => LIDAS.includes(String(c || '').toUpperCase()) ? String(c).toUpperCase() : 'EUR';
+const MOEDAS = ['EUR', 'BRL'], LIDAS = ['EUR', 'USD', 'BRL'], moeda = c => LIDAS.includes(String(c || '').toUpperCase()) ? String(c).toUpperCase() : 'EUR';
 // o preço a cobrar: em euros; numa assinatura antiga em dólares ou reais, o valor dessa moeda
-const preco = (pl, ciclo, cur) => { cur = moeda(cur); const L = cur !== 'EUR' && LEGADO[pl.id] && LEGADO[pl.id][cur]; return L ? { cur, v: L[ciclo] } : { cur: 'EUR', v: pl.precos.EUR[ciclo] }; };
+const preco = (pl, ciclo, cur) => { cur = moeda(cur); if (cur === 'BRL' && pl.precos.BRL) return { cur: 'BRL', v: pl.precos.BRL[ciclo] }; const L = cur !== 'EUR' && LEGADO[pl.id] && LEGADO[pl.id][cur]; return L ? { cur, v: L[ciclo] } : { cur: 'EUR', v: pl.precos.EUR[ciclo] }; };
+// o preço em reais é para quem está no Brasil (o Vercel diz o país do pedido; sem essa informação, como nos testes, aceita)
+const brasil = req => { const c = String((req && req.headers && req.headers['x-vercel-ip-country']) || '').toUpperCase(); return !c || c === 'BR'; };
 const planos = () => { let o = null; try { o = JSON.parse(process.env.NAUTILO_PRECOS || 'null'); } catch (e) { }
   return BASE.map(p => { const x = o && o[p.id]; if (!x) return p; const pr = JSON.parse(JSON.stringify(p.precos));
     MOEDAS.forEach(c => ['mes', 'ano'].forEach(k => { const v = x[c] && +x[c][k]; if (v > 0 && v < 1e7) pr[c][k] = Math.round(v); })); return Object.assign({}, p, { precos: pr }); }); };
@@ -63,4 +66,4 @@ const fimDe = s => 1000 * (+s.current_period_end || +(((s.items || {}).data || [
 const doStripe = s => ({ sub: s.id, cus: typeof s.customer === 'string' ? s.customer : (s.customer && s.customer.id) || '', estado: s.status || '', ate: fimDe(s), cancelar: !!s.cancel_at_period_end,
   id: (s.metadata && s.metadata.plano) || '', ciclo: (s.metadata && s.metadata.ciclo) || '', modo: s.livemode === true ? 'live' : s.livemode === false ? 'test' : '', cur: String(s.currency || ((((s.items || {}).data || [])[0] || {}).price || {}).currency || '').toUpperCase(), at: Date.now() });
 
-module.exports = { DIA, TESTE_DIAS, planos, byId, cobranca, efetivo, auto, testeAte, isAdmin, stripe, doStripe, ACTIVE, modo, mesmo, MOEDAS, moeda, preco };
+module.exports = { brasil, DIA, TESTE_DIAS, planos, byId, cobranca, efetivo, auto, testeAte, isAdmin, stripe, doStripe, ACTIVE, modo, mesmo, MOEDAS, moeda, preco };
