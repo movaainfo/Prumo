@@ -35,8 +35,12 @@ const efetivo = r => { const now = Date.now(), mk = (id, extra) => { const p = b
   if (isAdmin(r.email)) return mk('completo', { admin: 1 });
   // escolha da administração (plano grátis, por uns dias ou sem fim): manda, salvo se a pessoa pagar um plano maior (fica com o maior)
   const o = r.planoAdm, of = o && byId(o.id) && (!o.ate || o.ate > now) ? o : null;
-  const p = r.plano, pg = p && byId(p.id) && mesmo(p) && ACTIVE.test(p.estado || '') && (p.ate || 0) + 3 * DIA > now ? p : null;
-  if (of && !(pg && byId(pg.id).lvl > byId(of.id).lvl)) return mk(of.id, { oferta: 1, ate: of.ate || 0 });
+  const p = r.plano, pg0 = p && byId(p.id) && mesmo(p) && ACTIVE.test(p.estado || '') && (p.ate || 0) + 3 * DIA > now ? p : null;
+  // v3.71: plano comprado na Play Store / App Store (RevenueCat); se houver dois planos pagos, vale o maior
+  const l = r.planoLoja, pl0 = l && byId(l.id) && (!l.ate || l.ate + DIA > now) ? l : null, lojaGanha = !!pl0 && (!pg0 || byId(pl0.id).lvl > byId(pg0.id).lvl);
+  const pg = lojaGanha ? null : pg0, pl = lojaGanha ? pl0 : null, best = pl || pg;
+  if (of && !(best && byId(best.id).lvl > byId(of.id).lvl)) return mk(of.id, { oferta: 1, ate: of.ate || 0 });
+  if (pl) return mk(pl.id, { pago: 1, loja: pl.loja || 'loja', ate: pl.ate || 0, ciclo: pl.ciclo || 'mes' });
   if (pg) return mk(pg.id, { pago: 1, ate: pg.ate || 0, cancelar: !!pg.cancelar, ciclo: pg.ciclo || 'mes', cur: moeda(pg.cur) });
   const t = testeAte(r); if (t > now) return mk('completo', { teste: 1, ate: t });
   if (TESTE_EMAIL.test(r.email || '')) return mk('completo', { contaTeste: 1 });

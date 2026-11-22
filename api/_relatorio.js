@@ -29,7 +29,7 @@ const gerar = async (o = {}) => { const s = N.store(); if (!s) throw N.err('stor
     D.forEach(d => { const m = +u.dias[d] || 0; if (m > 0) { U.porDia[d].pessoas++; U.porDia[d].min += m; U.minutos += m; any = true; } }); if (any) U.pessoas++; }
   R.uso = U;
   // contadores do servidor (logins, registos, IA, notificações, pagamentos, segurança, erros)
-  const T = {}; for (const d of D) for (const b of await s.list('st/' + d + '/')) { try { const g = await s.get(b.pathname); const o2 = g && JSON.parse(g.buf.toString()); Object.entries(o2 || {}).forEach(([k, v]) => { T[k] = (T[k] || 0) + (+v || 0); }); } catch (e) { } }
+  const T = {}; for (const d of D) { const t = await require('./_visitas').somaDia(s, d, false); Object.entries(t).forEach(([k, v]) => { T[k] = (T[k] || 0) + (+v || 0); }); }
   R.eventos = { logins: T.login || 0, registos: T.registo || 0, ia: (T.ia || 0) + (T.ia_livre || 0), notificacoes: T.push || 0, pagamentos: T.pagamento || 0 };
   R.seguranca = {}; R.erros = {}; R.falhasApp = {}; Object.entries(T).forEach(([k, v]) => { if (k.startsWith('sec:')) R.seguranca[k.slice(4)] = v; else if (k.startsWith('erro:')) R.erros[k.slice(5)] = v; else if (k.startsWith('app:')) R.falhasApp[k.slice(4)] = v; });
   R.falhasApp = Object.fromEntries(Object.entries(R.falhasApp).sort((a, b) => b[1] - a[1]).slice(0, 15));
