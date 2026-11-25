@@ -10,7 +10,7 @@
 'use strict';
 const crypto = require('crypto'), N = require('./_nuvem'), W = require('./_webpush'), F = require('./futebol');
 const PID = /^[a-f0-9]{12}$/, IDX = 'push/idx', STP = 'push/st';
-const CAT0 = { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1 }; // v3.73: jogo = o Pursuit (começo às 20h e resultados às 22h)
+const CAT0 = { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1 }; // v3.73: jogo = o Pursuit (começo às 20h e resultados às 22h) · v3.77: ep = episódios novos dos animes com o sino
 let VK = null; const vapid = async () => VK || (VK = W.vapidFrom(await N.master()));
 const pkey = async () => Buffer.from(crypto.hkdfSync('sha256', await N.master(), Buffer.from('nautilo-v1'), Buffer.from('push'), 32));
 const load = async p => { const g = await N.store().get(p); if (!g) return { v: {}, etag: null }; try { return { v: N.open(await pkey(), g.buf) || {}, etag: g.etag }; } catch (e) { return { v: {}, etag: g.etag }; } };
@@ -42,6 +42,9 @@ const PARTS = {
   fut: d => ({ teams: (Array.isArray(d && d.teams) ? d.teams : []).slice(0, 40).map(t => ({ id: str(t.id, 20).replace(/\D/g, ''), n: str(t.n, 60) })).filter(t => t.id), comps: (Array.isArray(d && d.comps) ? d.comps : []).slice(0, 30).map(c => ({ slug: str(c.slug, 40).replace(/[^a-z0-9._-]/g, ''), n: str(c.n, 60) })).filter(c => c.slug), av: av(d && d.av) }),
   sp: d => ({ teams: (Array.isArray(d && d.teams) ? d.teams : []).slice(0, 60).map(t => ({ lg: str(t.lg, 12).replace(/[^a-z0-9]/g, ''), id: str(t.id, 20).replace(/[^\w-]/g, ''), n: str(t.n, 60), t: str(t.t, 12).replace(/\D/g, '') })).filter(t => t.lg && t.id), bell: (Array.isArray(d && d.bell) ? d.bell : []).filter(k => ['f1', 'motogp', 'mma'].includes(k)), av: av(d && d.av) }),
   inv: d => (Array.isArray(d) ? d : []).slice(0, 80).map(a => ({ id: str(a.id, 40), s: str(a.s, 24).replace(/[^A-Za-z0-9.=^_-]/g, ''), k: str(a.k, 8).replace(/[^a-z]/g, ''), v: +a.v || 0, r: a.r === 'diario' ? 'diario' : 'uma', n: str(a.n, 80), on: a.on ? 1 : 0 })).filter(a => a.s && a.id && ['acima', 'abaixo', 'queda', 'subida'].includes(a.k)),
+  // v3.77: os animes: hu = joga o Pursuit (avisos todos os dias, mesmo sem abrir o jogo); eps = os animes com o sino ligado (AniList e/ou MyAnimeList)
+  an: d => ({ hu: d && d.hu ? 1 : 0, eps: (Array.isArray(d && d.eps) ? d.eps : []).slice(0, 80).map(x => ({ al: Math.floor(+x.al || 0), mal: Math.floor(+x.mal || 0), t: str(x.t, 120) }))
+    .filter(x => x.t && x.al >= 0 && x.mal >= 0 && x.al < 1e7 && x.mal < 1e7 && (x.al || x.mal)) }),
   cat: d => { const r = {}; Object.keys(CAT0).forEach(k => { r[k] = d && d[k] === 0 ? 0 : 1; }); return r; } };
 
 // a sessão vale e o perfil é desta conta (como nos dados)
@@ -158,6 +161,48 @@ const prices = async (U, st, now, out) => { const L = U.filter(([, x]) => x.cat.
     if (!hit) return; const k = 'inv:' + uk + ':' + a.id + (a.r === 'diario' ? ':' + day : ''); if (st.sent[k]) return; st.sent[k] = now;
     out.push({ uk, m: { t: 'Alerta de preço', b: hit + (a.n ? ' — ' + a.n : ''), u: '#investimentos', g: 'inv-' + a.id }, ttl: 3600 }); })); };
 
+/* ---------- v3.77 · Pursuit: avisos todos os dias, pelo servidor (antes só para quem tinha aberto o jogo nesse dia) ---------- */
+// às 20h (Lisboa) quando saem as pistas; 15 minutos antes de fechar a quem ainda não marcou; e os resultados, com o acerto de cada um, a quem jogou
+const lisb = t => { const p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(t)).forEach(x => { p[x.type] = x.value; });
+  return { d: `${p.year}-${p.month}-${p.day}`, min: +p.hour * 60 + +p.minute }; };
+const HU_A = () => +(process.env.NAUTILO_HUNTER_ABRE || 1200), HU_F = () => +(process.env.NAUTILO_HUNTER_FECHA || 1320), hhmm = m => String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+const lerSo = async p => { try { const g = await N.store().get(p); return g ? N.open(await N.accKey(), g.buf) : null; } catch (e) { return null; } };
+const jogadas = async d => { const M = new Map(); try { for (const b of await N.store().list('so/hg/' + d + '/')) { const g = await lerSo(b.pathname); if (!g || !g.id) continue; const i = g.id.lastIndexOf('-'); if (i > 0) M.set(g.id.slice(0, i) + '|' + g.id.slice(i + 1), g); } } catch (e) { } return M; };
+const pursuit = async (U, st, now, out) => { const fans = U.filter(([, x]) => x.cat.jogo && x.an && x.an.hu); if (!fans.length) return;
+  const L = lisb(now), A = HU_A(), F = HU_F(); st.hu = st.hu || {};
+  const msg = (uk, t, b, g) => out.push({ uk, m: { t, b, u: '#animes.pursuit', g }, ttl: 3600 });
+  if (L.min >= A && L.min < A + 20 && st.hu.ab !== L.d) { st.hu.ab = L.d; fans.forEach(([uk]) => msg(uk, 'Pursuit: saíram as pistas de hoje', `Descobre o anime e marca-o até às ${hhmm(F)} de Lisboa. Quem acerta primeiro ganha mais pontos.`, 'hunter')); }
+  const ult = L.min >= F - 15 && L.min < F && st.hu.ul !== L.d, res = L.min >= F + 1 && L.min < F + 40 && st.hu.rs !== L.d; if (!ult && !res) return;
+  const J = await jogadas(L.d);
+  if (ult) { st.hu.ul = L.d; fans.filter(([uk]) => !J.has(uk)).forEach(([uk]) => msg(uk, 'Pursuit: faltam 15 minutos', 'Ainda vais a tempo de marcar o anime de hoje.', 'hunter')); }
+  if (res) { st.hu.rs = L.d; const v = await lerSo('so/h/' + L.d), certos = v ? [...J.values()].filter(g => g.mal === v.mal).sort((a, b) => a.at - b.at).map(g => g.id) : [];
+    fans.filter(([uk]) => J.has(uk)).forEach(([uk]) => { const g = J.get(uk), i = certos.indexOf(g.id);
+      msg(uk, 'Pursuit: saíram os resultados', !v ? 'Vê se acertaste e quantos pontos ganhaste.' : i >= 0 ? `Acertaste: era ${v.titulo}. Ganhaste ${Math.max(10, 100 - 10 * i)} pontos.` : `Não foi desta: era ${v.titulo}. Amanhã há mais, às ${hhmm(A)}.`, 'hunterres'); }); } };
+
+/* ---------- v3.77 · episódios novos dos animes com o sino (horários do AniList) ---------- */
+// A cada 20 minutos o servidor pergunta ao AniList quando sai o próximo episódio de cada anime com o sino (50 de cada vez).
+// No minuto em que sai, avisa quem o segue; se o horário mudar (adiamento), o aviso muda com ele. Se o próximo já passou entre
+// duas consultas, avisa na mesma (até 6 horas depois). Nada da pessoa vai para o AniList: só os números dos animes.
+const ALQ = () => process.env.NAUTILO_ANILIST || 'https://graphql.anilist.co';
+const kAn = e => e.al ? 'a' + e.al : 'm' + e.mal;
+const episodios = async (U, st, now, out, force) => { const fans = U.filter(([, x]) => x.cat.ep && x.an && (x.an.eps || []).length); st.ae = st.ae || {}; if (!fans.length) return;
+  const all = new Map(); fans.forEach(([, x]) => x.an.eps.forEach(e => { const k = kAn(e); if (!all.has(k)) all.set(k, e); }));
+  const avisa = (k, e) => { const sk = 'ep:' + k + ':' + e; if (st.sent[sk]) return; st.sent[sk] = now;
+    fans.forEach(([uk, x]) => { const f = x.an.eps.find(z => kAn(z) === k); if (f) out.push({ uk, m: { t: 'Episódio novo: ' + f.t, b: `Já saiu o episódio ${e}.`, u: '#animes', g: 'ep-' + k }, ttl: 6 * 3600 }); }); };
+  if (force || now - (st.aeAt || 0) >= 20 * 6e4) { st.aeAt = now; const ks = [...all.keys()].slice(0, 300), vistos = new Set();
+    const pede = async (campo, ids) => { for (let i = 0; i < ids.length; i += 50) { try {
+        const r = await fetch(ALQ(), { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, signal: AbortSignal.timeout(8000),
+          body: JSON.stringify({ query: `query($i:[Int]){Page(perPage:50){media(${campo}:$i,type:ANIME){id idMal status nextAiringEpisode{episode airingAt}}}}`, variables: { i: ids.slice(i, i + 50) } }) });
+        if (!r.ok) continue; const j = await r.json();
+        ((((j || {}).data || {}).Page || {}).media || []).forEach(m => ['a' + m.id, m.idMal ? 'm' + m.idMal : ''].forEach(k => { if (!k || !all.has(k) || vistos.has(k)) return; vistos.add(k);
+          const p = st.ae[k], n = m.nextAiringEpisode, at = n ? n.airingAt * 1000 : 0;
+          if (p && p.e && p.at <= now + 6e4 && now - p.at < 6 * 36e5 && (!n || n.episode > p.e)) avisa(k, p.e);   // saiu entre duas consultas
+          if (n && n.episode > 0 && at) st.ae[k] = { e: n.episode, at, chk: now }; else if (p) { p.chk = now; if (m.status !== 'RELEASING') p.fim = 1; } })); } catch (e) { } } };
+    await pede('id_in', ks.filter(k => k[0] === 'a').map(k => +k.slice(1))); await pede('idMal_in', ks.filter(k => k[0] === 'm' && !vistos.has(k)).map(k => +k.slice(1))); }
+  // a cada minuto, sem ir à rede: o que está na hora (com um horário confirmado há menos de 6 horas)
+  Object.entries(st.ae).forEach(([k, p]) => { if (!all.has(k)) { if (now - (p.chk || 0) > 3 * 864e5) delete st.ae[k]; return; }
+    if (p.e && p.at <= now && now - p.at < 6 * 36e5 && now - (p.chk || 0) < 6 * 36e5) avisa(k, p.e); }); };
+
 /* ---------- a tarefa de cada minuto ---------- */
 let LAST = 0;
 const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.force && now - LAST < 40000) return { ok: true, skip: 1 }; LAST = now;
@@ -165,14 +210,17 @@ const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.f
   if (!U.length) return { ok: true, n: 0 };
   const S = await load(STP), st = S.v; st.sent = st.sent || {}; st.ev = st.ev || {}; const before = JSON.stringify(st), out = [];
   // lembretes (rotina, bloco de foco): os que estão na hora e ainda não foram (até 10 min de atraso)
-  U.forEach(([uk, x]) => ['rot', 'foco', 'vivo', 'jogo'].forEach(part => { if (!x.cat[part === 'vivo' ? 'foco' : part]) return; (x[part] || []).forEach(it => { if (it.at > now + 30e3 || it.at < now - 10 * 6e4) return;
+  // v3.77: o Pursuit ('jogo') passou a ser avisado pelo servidor (pursuit), por isso os itens que o app ainda manda ficam de fora
+  U.forEach(([uk, x]) => ['rot', 'foco', 'vivo'].forEach(part => { if (!x.cat[part === 'vivo' ? 'foco' : part]) return; (x[part] || []).forEach(it => { if (it.at > now + 30e3 || it.at < now - 10 * 6e4) return;
     const k = uk + '|' + part + '|' + (it.g || '') + '|' + it.at; if (st.sent[k]) return; st.sent[k] = now; out.push({ uk, m: { t: it.t, b: it.b, u: it.u, g: it.g || part }, ttl: 1800 }); }); }));
   try { await sports(U, st, now, out); } catch (e) { console.error('push desportos', e.message); }
+  try { await pursuit(U, st, now, out); } catch (e) { console.error('push pursuit', e.message); }
+  try { await episodios(U, st, now, out, o.force && o.eps); } catch (e) { console.error('push episódios', e.message); }
   if (o.force || new Date(now).getUTCMinutes() % 5 === 0) { try { await prices(U, st, now, out); } catch (e) { console.error('push preços', e.message); } }
   // limpeza: o que tem mais de 3 dias
   const lim = now - 3 * 864e5; Object.keys(st.sent).forEach(k => { if (st.sent[k] < lim) delete st.sent[k]; }); Object.keys(st.ev).forEach(k => { if ((st.ev[k].at || 0) < lim) delete st.ev[k]; });
   if (JSON.stringify(st) !== before) { try { await save(STP, st, S.etag); } catch (e) { if (e.code !== 'conflict') throw e;
-    await mutate(STP, v => { v.sent = Object.assign(v.sent || {}, st.sent); v.ev = Object.assign(v.ev || {}, st.ev); }); } }
+    await mutate(STP, v => { v.sent = Object.assign(v.sent || {}, st.sent); v.ev = Object.assign(v.ev || {}, st.ev); v.hu = Object.assign(v.hu || {}, st.hu || {}); v.ae = Object.assign(v.ae || {}, st.ae || {}); v.aeAt = Math.max(v.aeAt || 0, st.aeAt || 0); }); } }
   const r = await deliver(I.v, out, o); return { ok: true, msgs: out.length, sent: r.n, gone: r.gone, users: U.length }; };
 
 /* ---------- pedidos do app ---------- */
