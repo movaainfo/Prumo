@@ -3294,7 +3294,12 @@ async function pushTests(b) { cur = 'Notificações'; console.log('\n=== Notific
     const d = crypto.createDecipheriv('aes-128-gcm', Buffer.from(crypto.hkdfSync('sha256', ikm, salt, Buffer.from('Content-Encoding: aes128gcm\0'), 16)), Buffer.from(crypto.hkdfSync('sha256', ikm, salt, Buffer.from('Content-Encoding: nonce\0'), 12)));
     d.setAuthTag(ct.subarray(ct.length - 16)); const pt = Buffer.concat([d.update(ct.subarray(0, ct.length - 16)), d.final()]); return JSON.parse(pt.subarray(0, pt.lastIndexOf(2)).toString()); };
   // os serviços de entrega (FCM) ficam simulados neste processo: o que o servidor envia é decifrado como o telemóvel faria
-  const INB = [], of = global.fetch; global.fetch = async (u, o) => /fcm\.googleapis\.com/.test(String(u)) ? (INB.push(dec(Buffer.from(o.body))), new Response('', { status: 201 })) : of(u, o);
+  // v3.77: o AniList também fica simulado (horários dos episódios): ALR[id] = { episode, airingAt }
+  const ALR = {}, ALQ = [];
+  const INB = [], of = global.fetch; global.fetch = async (u, o) => /fcm\.googleapis\.com/.test(String(u)) ? (INB.push(dec(Buffer.from(o.body))), new Response('', { status: 201 }))
+    : /graphql\.anilist\.co/.test(String(u)) ? (() => { const j = JSON.parse(o.body), ids = j.variables.i || [], mal = /idMal_in/.test(j.query); ALQ.push({ mal, ids });
+      const media = ids.map(i => mal ? Object.values(ALR).find(x => x.idMal === i) : ALR[i]).filter(Boolean).map(x => ({ id: x.id, idMal: x.idMal || null, status: x.status || 'RELEASING', nextAiringEpisode: x.episode ? { episode: x.episode, airingAt: x.airingAt } : null }));
+      return new Response(JSON.stringify({ data: { Page: { media } } }), { status: 200, headers: { 'content-type': 'application/json' } }); })() : of(u, o);
   try {
     const init = await mkAcc(), { ctx, p, errs } = await newPage(b, PROFILES[4], init); await ctx.grantPermissions(['notifications']).catch(() => { });
     await p.addInitScript(S => { window.__pushTest = true; try { Object.defineProperty(Notification, 'permission', { configurable: true, get: () => 'granted' }); Notification.requestPermission = async () => 'granted'; } catch (e) { } const pm = { getSubscription: async () => window.__sub || null, subscribe: async o => { window.__subKey = Array.from(new Uint8Array(o.applicationServerKey));
@@ -3317,6 +3322,32 @@ async function pushTests(b) { cur = 'Notificações'; console.log('\n=== Notific
     await sleep(4500); INB.length = 0;
     let c = await P.cron({ force: true, now: R.at + 5000 });
     ok('Rotina com o app fechado: o servidor envia o lembrete do bloco na hora', INB.some(m => m.t === 'Agora: Treino de teste até ' + R.end && m.u === '#habitos.rotina'), JSON.stringify({ c, INB }).slice(0, 300));
+    // v3.77: Pursuit todos os dias pelo servidor (sem abrir o jogo) e os episódios novos dos animes com o sino
+    { const N0 = require(path.join(ROOT, 'api', '_nuvem.js')), lisb = t => { const q = {}; new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(t)).forEach(x => { q[x.type] = x.value; }); return { d: `${q.year}-${q.month}-${q.day}`, min: +q.hour * 60 + +q.minute }; };
+      await E(p, () => { localStorage.setItem('oc_an_modos', JSON.stringify(['competicao'])); OS.setOne('animeavisos', { L: [{ al: 154587, mal: 52991, t: 'Frieren', img: '' }, { al: 0, mal: 777001, t: 'Só no MAL', img: '' }] }); }); await sleep(4500);
+      const T0 = Date.now() + 2 * 864e5 + 30 * 6e4, L0 = lisb(T0), A0 = process.env.NAUTILO_HUNTER_ABRE, F0 = process.env.NAUTILO_HUNTER_FECHA; process.env.NAUTILO_HUNTER_ABRE = String(L0.min - 2); process.env.NAUTILO_HUNTER_FECHA = String(L0.min + 20);
+      try { INB.length = 0; await P.cron({ force: true, now: T0 }); const ab = INB.filter(m => /Pursuit: saíram as pistas/.test(m.t) && m.u === '#animes.pursuit').length; await P.cron({ force: true, now: T0 + 6e4 }); const ab2 = INB.filter(m => /Pursuit: saíram as pistas/.test(m.t)).length;
+        INB.length = 0; await P.cron({ force: true, now: T0 + 8 * 6e4 }); const ult = INB.some(m => /faltam 15 minutos/.test(m.t));
+        const eu = await (await fetch(BASE + 'api/social', { method: 'POST', headers: { 'content-type': 'application/json', origin: 'http://localhost:' + PORT, authorization: 'Bearer ' + tok }, body: JSON.stringify({ op: 'eu', p: pid }) })).json(), id = eu.eu && eu.eu.id, K = await N0.accKey();
+        await N0.store().put('so/h/' + L0.d, N0.seal(K, { dia: L0.d, mal: '5114', titulo: 'Fullmetal Alchemist: Brotherhood', pistas: [], fechado: false }));
+        await N0.store().put('so/hg/' + L0.d + '/' + id, N0.seal(K, { id, nome: 'A', mal: '5114', titulo: 'Fullmetal Alchemist: Brotherhood', at: T0 + 5 * 6e4 }));
+        INB.length = 0; await P.cron({ force: true, now: T0 + 23 * 6e4 }); const res = INB.find(m => /saíram os resultados/.test(m.t)) || {};
+        ok('Pursuit no telemóvel todos os dias (sem abrir o jogo): às 20h saem as pistas (uma vez só), 15 minutos antes de fechar a quem não jogou e o resultado com o acerto e os pontos',
+          ab === 1 && ab2 === 1 && ult && /Acertaste: era Fullmetal Alchemist: Brotherhood\. Ganhaste 100 pontos\./.test(res.b || ''), JSON.stringify({ ab, ab2, ult, res, id }).slice(0, 400));
+      } finally { if (A0 == null) delete process.env.NAUTILO_HUNTER_ABRE; else process.env.NAUTILO_HUNTER_ABRE = A0; if (F0 == null) delete process.env.NAUTILO_HUNTER_FECHA; else process.env.NAUTILO_HUNTER_FECHA = F0; }
+      // episódios: o servidor vê o horário no AniList e avisa no minuto em que sai; se mudar de hora, o aviso muda; se passou entre duas consultas, avisa na mesma
+      const E0 = Date.now() + 5 * 864e5; ALR[154587] = { id: 154587, idMal: 52991, episode: 8, airingAt: Math.floor((E0 + 10 * 6e4) / 1000) }; ALR[9001] = { id: 9001, idMal: 777001, episode: 3, airingAt: Math.floor((E0 + 15 * 6e4) / 1000) };
+      INB.length = 0; ALQ.length = 0; await P.cron({ force: true, eps: true, now: E0 }); const nada = !INB.some(m => /Episódio novo/.test(m.t)), pediu = ALQ.some(q => !q.mal && q.ids.includes(154587)) && ALQ.some(q => q.mal && q.ids.includes(777001));
+      await P.cron({ force: true, now: E0 + 10 * 6e4 + 20e3 }); const e8 = INB.filter(m => m.t === 'Episódio novo: Frieren' && /episódio 8/.test(m.b)).length;
+      await P.cron({ force: true, now: E0 + 11 * 6e4 }); const e8b = INB.filter(m => m.t === 'Episódio novo: Frieren').length;
+      ALR[9001].airingAt = Math.floor((E0 + 60 * 6e4) / 1000); await P.cron({ force: true, eps: true, now: E0 + 14 * 6e4 }); await P.cron({ force: true, now: E0 + 16 * 6e4 }); const adiado = !INB.some(m => /Só no MAL/.test(m.t));
+      ALR[154587] = { id: 154587, idMal: 52991, episode: 10, airingAt: Math.floor((E0 + 7 * 864e5) / 1000) }; const st0 = INB.length;
+      await P.cron({ force: true, eps: true, now: E0 + 30 * 6e4 }); await P.cron({ force: true, now: E0 + 61 * 6e4 }); const mal3 = INB.some(m => m.t === 'Episódio novo: Só no MAL' && /episódio 3/.test(m.b));
+      ALR[154587].episode = 9; ALR[154587].airingAt = Math.floor((E0 + 70 * 6e4) / 1000); await P.cron({ force: true, eps: true, now: E0 + 62 * 6e4 }); ALR[154587].episode = 10; ALR[154587].airingAt = Math.floor((E0 + 7 * 864e5) / 1000);
+      await P.cron({ force: true, eps: true, now: E0 + 95 * 6e4 }); const e9 = INB.slice(st0).some(m => m.t === 'Episódio novo: Frieren' && /episódio 9/.test(m.b));
+      ok('Episódios novos dos animes com o sino: o app manda os animes, o servidor segue o AniList e avisa na hora (uma vez só), espera quando é adiado e avisa na mesma quando saiu entre duas consultas; também os que só têm o número do MyAnimeList',
+        nada && pediu && e8 === 1 && e8b === 1 && adiado && mal3 && e9, JSON.stringify({ nada, pediu, e8, e8b, adiado, mal3, e9, ALQ: ALQ.length }));
+      await E(p, () => { localStorage.removeItem('oc_an_modos'); OS.setOne('animeavisos', { L: [] }); }); }
     // desligar a categoria Rotina: não envia
     await E(p, () => { OS.request(); }); await sleep(300);
     await p.click('#view .push-cat input[data-k=rot]'); await sleep(4500); INB.length = 0;
@@ -3526,6 +3557,14 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
     const sw = await E(p, async () => { const sc = document.querySelector('#view .an-hs'), t = sc.children.length - 1; sc.scrollTo({ left: t * sc.clientWidth, behavior: 'smooth' }); await new Promise(r => setTimeout(r, 60)); OS.request(); await new Promise(r => setTimeout(r, 1600)); const s2 = document.querySelector('#view .an-hs'); return { t, i: Math.round(s2.scrollLeft / s2.clientWidth), on: [...document.querySelectorAll('#view .an-slide')].findIndex(s => s.classList.contains('on')) }; });
     ok('Animes › Início: passar o destaque não volta ao primeiro quando a página se redesenha a meio', sw.t >= 1 && sw.i === sw.t && sw.on === sw.t, JSON.stringify(sw));
   if (SH) await p.screenshot({ path: SH + '/an-inicio.png', fullPage: true });
+  // v3.77: no telemóvel o carrossel fica no topo (nada debaixo do relógio) e os atalhos de Competição/Diversão vêm por baixo; a sala tem luz e cor
+  { await p.setViewportSize({ width: 393, height: 852 }); await E(p, () => { window.__c0 = OS.Social.conta; OS.Social.conta = () => true; localStorage.setItem('oc_an_modos', JSON.stringify(['competicao', 'diversao'])); location.hash = 'visao'; }); await sleep(300);
+    await E(p, () => { location.hash = 'animes'; }); await sleep(1400);
+    const lay = await E(p, () => { const an = document.querySelector('#view .an'), f = an && an.firstElementChild, dq = document.querySelector('#view .an-pad > .ap-dqs'), hero = document.querySelector('#view .an-hero'), r = hero && hero.getBoundingClientRect();
+      return { first: f && f.className, dq: !!dq, depois: !!(dq && hero && (hero.compareDocumentPosition(dq) & 4)), top: r ? Math.round(r.top) : null, luz: /radial/.test(getComputedStyle(an).backgroundImage), tab: getComputedStyle(document.querySelector('#tabbar .tb-i.on') || document.body).color, linha: (() => { const t = [...document.querySelectorAll('#tabbar .tb-i')].map(x => Math.round(x.getBoundingClientRect().top)); return t.length === 6 && new Set(t).size === 1; })() }; });
+    ok('Animes › Início no telemóvel: o carrossel fica no topo e os atalhos (Competição e Diversão) por baixo dele; sala com luz e cor, separador ativo a vermelho e os 6 botões da barra numa linha só (o selo do Prumo não cai para baixo)', /an-hero/.test(lay.first || '') && lay.depois && lay.top <= 0 && lay.luz && lay.linha, JSON.stringify(lay));
+    if (SH) { await p.screenshot({ path: SH + '/an-inicio-tel.png' }); await p.screenshot({ path: SH + '/an-inicio-tel-todo.png', fullPage: true }); }
+    await E(p, () => { OS.Social.conta = window.__c0; localStorage.removeItem('oc_an_modos'); }); await p.setViewportSize({ width: 1100, height: 900 }); }
   // pesquisar e abrir
   await E(p, () => { location.hash = 'animes.pesquisar'; }); await sleep(300); await p.fill('#view .an-q input[name=q]', 'frieren'); await p.click('#view .an-q button'); await p.waitForFunction(() => document.querySelectorAll('#view .an-grid .an-pc').length > 0, null, { timeout: 15000 }).catch(() => { });
   if (process.env.DEBUGAN) console.log('DEBUGAN', await E(p, () => location.hash + ' | ' + ((document.querySelector('#view .an') || {}).outerHTML || 'sem .an').slice(0, 1500)), errs.slice(0, 5));
@@ -5419,6 +5458,11 @@ async function introTests(b) { cur = 'Intro'; console.log('\n=== Intro ao abrir:
   const mk = async (o = {}, init) => { const c = await RAWCTX(Object.assign({}, PROFILES[0].o, o)); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.addInitScript(([H, init]) => { if (!localStorage.getItem('__seeded')) { localStorage.setItem('os2:one~security', JSON.stringify({ data: { hash: H } })); Object.entries(init || {}).forEach(([k, v]) => localStorage.setItem(k, v)); localStorage.setItem('__seeded', '1'); } window.__noOnb = 1; }, [HASH, init]); return { c, p, errs }; };
   const MUDO = { 'nau:introSom': 'false' };
+  // v3.77: a intro aparece uma vez só, mesmo quando chega uma atualização a seguir (no telemóvel aparecia antes e depois de atualizar)
+  { const { c, p } = await mk({}, MUDO); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(900); const v1 = await E(p, () => !!document.getElementById('intro'));
+    await E(p, () => window.OceanumUpdating && window.OceanumUpdating()); await p.waitForEvent('load', { timeout: 8000 }).catch(() => { }); await sleep(1200);
+    const v2 = await E(p, () => ({ intro: !!document.getElementById('intro'), st: window.PrumoIntro ? PrumoIntro.state() : '' }));
+    ok('Intro uma vez só: depois de uma atualização a versão nova não a mostra outra vez', v1 && !v2.intro && v2.st !== 'playing' && v2.st !== 'waiting', JSON.stringify({ v1, v2 })); await c.close(); }
   // 0) com som (por omissão): sem um toque o áudio não pode começar (iPhone, e este navegador de teste) → "Toca para começar"; o toque começa imagem e som juntos
   let { c, p, errs } = await mk(); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(1100);
   const w = await E(p, () => { const el = document.getElementById('intro'), a = el && el.querySelector('.in-selo').getAnimations()[0]; return { st: PrumoIntro.state(), wait: el && el.classList.contains('in-wait'), tap: el && getComputedStyle(el.querySelector('.in-tapt')).display, t: a ? Math.round(a.currentTime) : -1, code: !!document.getElementById('lkCode') }; });

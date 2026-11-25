@@ -49,11 +49,14 @@ const PTS_TXT = 'Quem acerta primeiro ganha mais: 1.º 100 pontos, 2.º 90, 3.º
 // créditos do jogo (pedido do Prumo): o Pursuit é da SuperAnimes
 const CRED = '<p class="hu-cred">Créditos do Pursuit: <b>SuperAnimes</b>, a maior empresa de animes que já existiu.</p>';
 const lisboa = h => { const l = hora(h.abreAt), f = hora(h.fechaAt); return l === '20:00' ? 'das 20:00 às 22:00' : `das 20:00 às 22:00 de Lisboa (${l} às ${f} na tua hora)`; };
-// notificações: quando começa e quando saem os resultados (só para quem já abriu o Pursuit)
-const agendar = h => { try { if (!OS.Push || !OS.Push.put) return; const L = [];
-  L.push({ at: h.fase === 'espera' ? h.abreAt : h.amanha, t: 'Pursuit: saíram as pistas de hoje', b: 'Descobre o anime e marca-o como Pursuit até às 22h. Quem acerta primeiro ganha mais pontos.', u: '#animes.pursuit', g: 'hunter' });
-  if (h.fase === 'aberto' && h.meu) L.push({ at: h.fechaAt + 90e3, t: 'Pursuit: saíram os resultados', b: 'Vê se acertaste e quantos pontos ganhaste.', u: '#animes.pursuit', g: 'hunterres' });
-  OS.Push.put('jogo', L); } catch (e) { } };
+// v3.77: as notificações do Pursuit (pistas às 20h, 15 minutos antes de fechar e o resultado) saem do servidor todos os dias, mesmo sem abrir o jogo;
+// aqui só se limpam os avisos que as versões anteriores agendavam neste aparelho
+const agendar = () => { try { if (OS.Push && OS.Push.put) OS.Push.put('jogo', []); } catch (e) { } };
+// v3.77: o aviso no telemóvel (às 20h, 15 minutos antes de fechar e o resultado)
+const avisoPush = () => { const P = OS.Push; if (!P) return ''; const cat = ((OS.one('pushcfg') || {}).cat || {}), on = P.on(), w = P.why();
+  if (on && cat.jogo !== 0) return `<p class="hu-push on">${UI.ic('bell')}<span>Recebes um aviso no telemóvel quando saem as pistas, 15 minutos antes de fechar e com o teu resultado.</span></p>`;
+  if (on) return `<p class="hu-push">${UI.ic('bell')}<span>Os avisos do Pursuit estão desligados. Liga-os em Definições › Notificações.</span></p>`;
+  return `<div class="hu-push">${UI.ic('bell')}<span>${w ? esc(P.msg(w)) : 'Liga as notificações para saberes quando saem as pistas, mesmo com o Prumo fechado.'}</span>${w ? '' : '<button type="button" class="btn sm an-cta" data-act="pushOn">Ligar</button>'}</div>`; };
 const proxPista = h => { const n = h.pistas.length; if (h.fase !== 'aberto' || n >= h.total) return 0; return h.abreAt + (n >= 4 ? 80 : 40) * 6e4; };
 const pistasHTML = h => { const prox = proxPista(h), L = h.pistas.map((p, i) => `<li><span class="hu-pn">${i + 1}</span><p>${esc(p)}</p></li>`);
   for (let i = h.pistas.length; i < h.total; i++) L.push(`<li class="off"><span class="hu-pn">${i + 1}</span><p>${i === h.pistas.length && prox ? `Sai às ${hora(prox)} · <span data-ate="${prox}">${dur(prox - agora())}</span>` : 'Ainda por sair'}</p></li>`);
@@ -61,7 +64,7 @@ const pistasHTML = h => { const prox = proxPista(h), L = h.pistas.map((p, i) => 
 const tabRes = (res, me) => res && res.length ? `<ol class="hu-res">${res.map((r, i) => `<li class="${r.id === me ? 'eu' : ''}"><b>${i + 1}.º</b><span>${esc(r.nome)}${r.id === me ? ' (tu)' : ''}</span><small>${hora(r.at)}</small><em>+${r.pts}</em></li>`).join('')}</ol>` : '<p class="mut">Ninguém acertou.</p>';
 const meuId = () => (S.eu && S.eu.eu && S.eu.eu.id) || '';
 const hunterView = () => { if (!conta()) return semConta(); hunter(); eu(); const h = S.h;
-  const topo = `<header class="hu-h">${marca('sm')}<h2>Pursuit</h2><p>Todos os dias às 20h de Lisboa saem pistas de um anime ao calhas. Descobre qual é, abre a página dele e carrega em <b>Marcar como Pursuit</b>. Às 22h fecha. ${PTS_TXT}</p></header>`;
+  const topo = `<header class="hu-h">${marca('sm')}${OS.Parceria ? OS.Parceria.exclusivo() : ''}<h2>Pursuit</h2><p>Todos os dias às 20h de Lisboa saem pistas de um anime ao calhas. Descobre qual é, abre a página dele e carrega em <b>Marcar como Pursuit</b>. Às 22h fecha. ${PTS_TXT}</p></header>`;
   if (!h) return `<section class="hu">${topo}${S.err.h ? erroBox('h') + `<button class="btn an-cta" data-act="huRec">Tentar outra vez</button>` : ld('A abrir o Pursuit de hoje…')}${CRED}</section>`;
   let corpo = '';
   if (h.fase === 'espera') corpo = `<div class="hu-rel"><small>O Pursuit de hoje começa daqui a</small><b data-ate="${h.abreAt}">${dur(h.abreAt - agora())}</b><span>${esc(lisboa(h))}</span></div>
@@ -73,7 +76,7 @@ const hunterView = () => { if (!conta()) return semConta(); hunter(); eu(); cons
     corpo = `<div class="hu-rev">${h.resposta.img ? `<img src="${esc(h.resposta.img)}" alt="" referrerpolicy="no-referrer">` : ''}<div><small>O anime de hoje era</small><b>${esc(h.resposta.titulo)}</b>
         <p class="hu-eu ${win ? 'pos' : h.meu ? 'neg' : ''}">${win ? `Acertaste. Ganhaste ${p} pontos.` : h.meu ? `Marcaste ${esc(h.meu.titulo || 'outro anime')}. Não foi desta.` : 'Não jogaste hoje.'}</p><span>${h.jogadores || 0} ${h.jogadores === 1 ? 'pessoa jogou' : 'pessoas jogaram'}. O próximo começa amanhã às 20h.</span></div></div>
       ${pistasHTML(h)}<h3>Quem acertou</h3>${tabRes(h.res, me)}`; }
-  return `<section class="hu">${topo}${corpo}${erroBox('h')}<p class="mut hu-mais">Mais jogos de anime vêm a caminho. Os pontos de todos contam para o <a href="#animes.ranking">ranking</a>.</p>${CRED}</section>`; };
+  return `<section class="hu">${topo}${corpo}${avisoPush()}${erroBox('h')}<p class="mut hu-mais">Mais jogos de anime vêm a caminho. Os pontos de todos contam para o <a href="#animes.ranking">ranking</a>.</p>${CRED}</section>`; };
 // na página de cada anime: marcar como Pursuit
 const noAnime = x => { if (!conta() || !x) return ''; hunter(); const h = S.h; if (!h || h.fase !== 'aberto') return '';
   if (h.meu) return `<section class="hu-bar"><span>${UI.ic('target')}</span><p>O teu Pursuit de hoje: <b>${esc(h.meu.titulo || 'anime marcado')}</b>. Resultados às 22h.</p><a class="btn sm an-ghost" href="#animes.pursuit">Ver o Pursuit</a></section>`;
@@ -89,7 +92,7 @@ A.huMarcar = async b => { const t = b.dataset.t || 'este anime'; if (!confirm(`M
 const podio = (L, n = 3) => { const t = L.slice(0, n); if (!t.length) return ''; const ord = t.length === 3 ? [t[1], t[0], t[2]] : t;
   return `<div class="rk-pod">${ord.map(x => `<div class="rk-p p${x.pos}${x.eu ? ' eu' : ''}">${OS.AnimeSoc ? OS.AnimeSoc.av(x, 44) : ''}<b>${esc(x.nome)}</b>${x.user ? `<small>@${esc(x.user)}</small>` : ''}<span>${x.p} pts</span><i>${x.pos}</i></div>`).join('')}</div>`; };
 const rankView = () => { if (!conta()) return semConta(); rank(); const r = S.rk;
-  const topo = `<header class="hu-h">${marca('sm')}<h2>Ranking de animes</h2><p>Os pontos ganhos nos jogos de anime (por agora, o Pursuit). Só conta para este ranking, não para o ranking de disciplina do Prumo.</p></header>`;
+  const topo = `<header class="hu-h">${marca('sm')}${OS.Parceria ? OS.Parceria.exclusivo() : ''}<h2>Ranking de animes</h2><p>Os pontos ganhos nos jogos de anime (por agora, o Pursuit). Só conta para este ranking, não para o ranking de disciplina do Prumo.</p></header>`;
   if (!r) return `<section class="hu">${topo}${erroBox('rk') || ld('A buscar o ranking…')}</section>`;
   if (!r.lista.length) return `<section class="hu">${topo}<div class="so-vazio"><b>Ainda ninguém pontuou</b><p>Joga o Pursuit hoje às 20h e aparece aqui em primeiro.</p><a class="btn an-cta" href="#animes.pursuit">Ir para o Pursuit</a></div></section>`;
   return `<section class="hu">${topo}${podio(r.lista)}<ol class="rk-l" start="4">${r.lista.slice(3).map(x => `<li class="${x.eu ? 'eu' : ''}"><b>${x.pos}.º</b><span class="rk-n">${OS.AnimeSoc ? OS.AnimeSoc.av(x, 28) : ''}${esc(x.nome)}${x.user ? ` <small>@${esc(x.user)}</small>` : ''}${x.eu ? ' (tu)' : ''}</span><em>${x.p} pts</em></li>`).join('')}</ol>
@@ -122,7 +125,7 @@ const claView = cid => { const c = S.cla[cid]; if (!c && !S.busy['c' + cid]) { S
 const clasView = () => { if (!conta()) return semConta(); eu(); convs(); const k = convAberta(); if (k) return chatView(k); const cid = claAberto(); if (cid) return claView(cid);
   const d = S.eu; if (!d) return `<section class="hu">${erroBox('eu') || ld('A abrir os clãs…')}</section>`;
   const me = d.eu, cv = S.cv || [];
-  return `<section class="hu"><header class="hu-h">${marca('sm')}<h2>Clãs e conversas</h2><p>Cria um clã, convida amigos e conversa no grupo ou a dois. A IA verifica cada mensagem antes de aparecer.</p></header>
+  return `<section class="hu"><header class="hu-h">${marca('sm')}${OS.Parceria ? OS.Parceria.exclusivo() : ''}<h2>Clãs e conversas</h2><p>Cria um clã, convida amigos e conversa no grupo ou a dois. A IA verifica cada mensagem antes de aparecer.</p></header>
     <div class="so-eu">${OS.AnimeSoc ? OS.AnimeSoc.av(me, 48) : ''}<div><b>${esc(me.nome)}</b>${me.user ? `<small>@${esc(me.user)}</small>` : '<small>Ainda sem @</small>'}<small>${me.pts} pontos no ranking de animes</small></div><div class="row gap6" style="flex-wrap:wrap"><button type="button" class="btn sm an-ghost" data-act="soCopiar" data-v="PR-${esc(me.cod)}">${UI.ic('copy')}O teu código: PR-${esc(me.cod)}</button><button type="button" class="btn sm an-ghost" data-act="apEditar">Perfil dos animes</button></div></div>
     <section class="so-sec"><h3>Conversas</h3>${cv.length ? `<div class="so-cl">${cv.map(c => `<button type="button" class="so-ci${c.novas ? ' nova' : ''}" data-act="soAbrir" data-k="${esc(c.conv)}"><span class="so-av" style="--cl:${esc(c.cor || '#3a3c44')}">${esc((c.nome || '?').slice(0, 1).toUpperCase())}</span><span><b>${esc(c.nome)}</b><small>${c.ult ? esc((c.ult.de === me.id ? 'Tu: ' : c.tipo === 'c' ? c.ult.nome + ': ' : '') + c.ult.t) : c.tipo === 'c' ? 'Clã · ainda sem mensagens' : 'Amigo · ainda sem mensagens'}</small></span>${c.ult ? `<em>${hora(c.ult.at)}</em>` : ''}</button>`).join('')}</div>` : '<p class="mut">Entra num clã ou adiciona um amigo para começares a conversar.</p>'}</section>
     <section class="so-sec"><h3>Os teus clãs</h3>${d.clas.length ? `<div class="so-cards">${d.clas.map(c => `<button type="button" class="so-cc" style="--cl:${esc(c.cor)}" data-act="soCla" data-id="${esc(c.id)}"><b>${esc(c.nome)}</b><small>${c.n} ${c.n === 1 ? 'membro' : 'membros'}</small></button>`).join('')}</div>` : '<p class="mut">Ainda não estás em nenhum clã.</p>'}

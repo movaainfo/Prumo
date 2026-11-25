@@ -99,7 +99,7 @@
   "p": "Geral",
   "name": "atualização: depois mostra \"Atualizado\" e a versão nova",
   "pass": true,
-  "info": "Atualizado · versão 9.9 · 22/11/2026 · No Brasil, os planos passam a ter preço p"
+  "info": "Atualizado · versão 9.9 · 22/11/2026 · Animes: o destaque voltou ao topo no tele"
  },
  {
   "p": "Geral",
@@ -477,7 +477,7 @@
   "p": "Geral",
   "name": "dieta: 200 g de frango = macros certas",
   "pass": true,
-  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Almoço\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"uxaso3x7kf0\",\"_c\":1795357011996,\"_u\":1795357011996,\"_s\":0}"
+  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Almoço\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"ugp9sxybqcy\",\"_c\":1795358885938,\"_u\":1795358885938,\"_s\":0}"
  },
  {
   "p": "Geral",
@@ -627,7 +627,7 @@
   "p": "Geral",
   "name": "regista com a opção e a marca escolhidas",
   "pass": true,
-  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Almoço\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"cnzem8x80wj\",\"_c\":1795357033363,\"_u\":1795357033363,\"_s\":0}"
+  "info": "{\"date\":\"2026-11-22\",\"meal\":\"Almoço\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"0jj6xdyc6ug\",\"_c\":1795358907304,\"_u\":1795358907304,\"_s\":0}"
  },
  {
   "p": "Geral",
@@ -1551,7 +1551,7 @@
   "p": "Geral",
   "name": "sem erros de JavaScript (corpo)",
   "pass": false,
-  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8827' has been blocked by CORS policy: No 'Access-Control-Allow"
+  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8793' has been blocked by CORS policy: No 'Access-Control-Allow"
  },
  {
   "p": "Geral",
@@ -1587,7 +1587,7 @@
   "p": "Contas",
   "name": "Criar conta: mostra o código de recuperação (só uma vez)",
   "pass": true,
-  "info": "D79S-2TLL-CMCR-VAWU"
+  "info": "CQYS-LN4H-TWQF-5SQA"
  },
  {
   "p": "Contas",
@@ -1743,13 +1743,13 @@
   "p": "Contas",
   "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
   "pass": true,
-  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"adc8f75a7c0f14c7f848c1c1\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-22T14:19:25.711Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"3fde6fb8a69a803f6501e65b\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-22T14:50:39.874Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
  },
  {
   "p": "Contas",
   "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
   "pass": true,
-  "info": "{\"ult\":1795357182978,\"ent\":1,\"dias\":{\"2026-11-22\":46}}"
+  "info": "{\"ult\":1795359055311,\"ent\":1,\"dias\":{\"2026-11-22\":45}}"
  },
  {
   "p": "Contas",
@@ -1935,13 +1935,13 @@
   "p": "Contas",
   "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
   "pass": true,
-  "info": "20261122142016-2cc97b"
+  "info": "20261122145125-e23ba7"
  },
  {
   "p": "Contas",
   "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
   "pass": true,
-  "info": "{\"id\":\"20261122142016-2cc97b\",\"uid\":\"d9a5f21177f3933cc73fcc38\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+  "info": "{\"id\":\"20261122145125-e23ba7\",\"uid\":\"e740fe609d36cb633efea6e6\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
  },
  {
   "p": "Contas",
@@ -1962,250 +1962,490 @@
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: começa desligada (só aparece a quem a escolher)",
+  "p": "Fundo",
+  "name": "Tablet deitado: a frase fica no céu (acima do horizonte) e o código em baixo, sem se sobreporem",
+  "pass": true,
+  "info": "{\"q\":273,\"f\":419,\"H\":625}"
+ },
+ {
+  "p": "Fundo",
+  "name": "Botão \"Fundo\" pequeno no canto de cima",
+  "pass": true,
+  "info": "{\"x\":905.609375,\"y\":14,\"width\":80.390625,\"height\":34,\"top\":14,\"right\":986,\"bottom\":48,\"left\":905.609375}"
+ },
+ {
+  "p": "Fundo",
+  "name": "Escolher o fundo: 9 modelos (o Farol marcado), \"Fundo animado\" ligado e \"Da galeria\"",
+  "pass": true,
+  "info": "{\"n\":9,\"gal\":true,\"on\":\"farol\",\"mv\":true}"
+ },
+ {
+  "p": "Fundo",
+  "name": "Fundo animado: Lisboa mexe (carros, barco, água); ao desligar, fica parada",
+  "pass": true,
+  "info": "{\"mv\":{\"n\":38,\"anim\":true},\"st\":{\"anim\":false,\"k\":false}}"
+ },
+ {
+  "p": "Fundo",
+  "name": "Escolher \"Rio de Janeiro\" muda o fundo na hora",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: no perfil pessoal do Ryan já vem ligada (e desligar fica guardado)",
+  "p": "Fundo",
+  "name": "Foto da galeria vira o fundo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: no registo (escolher as abas) aparece desligada para a pessoa ligar",
-  "pass": true,
-  "info": "{\"on\":false,\"k\":\"animes\"}"
- },
- {
-  "p": "Animes",
-  "name": "Animes: ligar no registo põe a aba no menu (no grupo próprio da parceria, fora do Eu)",
+  "p": "Fundo",
+  "name": "Depois de fechar e abrir, o fundo escolhido continua",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Início: destaque com a faixa, a temporada e o que está em alta",
-  "pass": true,
-  "info": "[\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Início: carrossel de destaque (com pontos para mudar) e os novos episódios",
-  "pass": true,
-  "info": "{\"n\":2,\"on\":0} [\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Início: passar o destaque não volta ao primeiro quando a página se redesenha a meio",
-  "pass": true,
-  "info": "{\"t\":1,\"i\":1,\"on\":1}"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Pesquisar: encontra pelo nome (com a nota da comunidade)",
-  "pass": true,
-  "info": "Prumo\n&\nPHANTOM\nANIMES\n\nTodos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.\n\nPesquisar anime\nInício\nPesquisar\nPara ti\nNavegar\nSimulcasts\nCalendário\nCategorias\nMelhor"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Detalhe: título, nota, ranking, géneros em português, sinopse e onde ver (só serviços de streaming do país da conta, também os links antigos em http; sem YouTube nem Hulu em Portugal)",
-  "pass": true,
-  "info": "{\"t\":\"Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões no teu tier. Sinopse PT: A young elf mage reflects on life. Tradução automática. Ver o original Onde ver Crunchyroll Netflix Ver o trailer Temporadas 2 Temp"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Detalhe: a sinopse aparece traduzida sozinha (grátis, com \"Ver o original\")",
+  "p": "Fundo",
+  "name": "Editar perfil: \"Personagem do Dominus\" abre os personagens (e não a galeria de fotos)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Detalhe: as temporadas ficam no mesmo anime (seletor Temporadas, sem a manga) e recomendações",
-  "pass": true,
-  "info": "[\"Temporada 1 2023 · 28 ep.|Frieren: Beyond Journey's End|on\",\"Temporada 2 2026 · 12 ep.|Frieren Season 2\"]"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Detalhe: todos os episódios (28, sem a secção \"Com imagem\" quando só há miniaturas de alguns), personagens com a voz e as aberturas/encerramentos",
-  "pass": true,
-  "info": "Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões no teu tier. Sinopse PT: A young elf mage reflects on life. Tr"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Detalhe: tocar no episódio 2 marca que viste até lá",
+  "p": "Fundo",
+  "name": "Editar perfil: com a lista aberta dá para subir até ao topo do formulário",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: \"Estou a ver\" junta à lista com o episódio 0 e a data de começo",
-  "pass": true,
-  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
- },
- {
-  "p": "Animes",
-  "name": "Animes: tocar outra vez no estado marcado tira da lista (e tocar de novo volta a juntar)",
+  "p": "Fundo",
+  "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: episódio, nota 1–10, favorito, resenha, top 10 e tier ficam guardados",
+  "p": "Planos",
+  "name": "Conta nova: 14 dias grátis do plano Completo, sem cartão",
   "pass": true,
-  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":2023,\"sea\":\"FALL\",\"fmt\":\"TV\",\"eps\":28,\"dur\":24,\"gen\":[\"Adventure\",\"Drama\",\"Fantasy\"],\"stu\":\"Estúdio "
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796568696061}"
  },
  {
-  "p": "Animes",
-  "name": "Animes › Detalhe: mostra o episódio, a nota com o nome e o tier",
+  "p": "Planos",
+  "name": "Página pública \"Planos e preços\" (para o Stripe): os 3 planos em euros e, no Brasil, em reais (outras moedas convertidas do euro), cancelamento e reembolso",
+  "pass": true,
+  "info": "40580"
+ },
+ {
+  "p": "Planos",
+  "name": "Os três planos: em euros (5,99 · 11,99 · 19,99 por mês; anual = 10 meses) e, no Brasil, em reais (19,90 · 39,90 · 69,90)",
+  "pass": true,
+  "info": "{\"ok\":true,\"planos\":[{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"ia\":20,\"perfis\":1,\"precos\":{\"EUR\":{\"mes\":599,\"ano\":5990},\"BRL\":{\"mes\":1990,\"ano\":19900}}},{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"ia\":1"
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado, mas sem o Stripe ligado: continua com tudo (não há como pagar ainda)",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"semCobranca\":1,\"testeAcabou\":1795359096061}"
+ },
+ {
+  "p": "Planos",
+  "name": "Com o Stripe ligado e o teste acabado: fica sem plano (a app pede para escolher)",
+  "pass": true,
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795359096061}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: não cria perfis (402)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O teu teste grátis acabou: escolhe um plano em Planos para continuar.\",\"code\":\"plano\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: a IA do servidor responde 402 com a mensagem para escolher um plano",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: chegar ao último episódio passa para \"Visto\" com a data de fim",
+  "p": "Planos",
+  "name": "Assinar: abre o pagamento do Stripe com o preço do Essencial (5,99 € por mês), a conta e o regresso ao Prumo",
   "pass": true,
-  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"f3779442b936d28787c0a849\",\"success_url\":\"http://localhost:8793/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8793/Oceanum/#planos\",\"allow_promotion_codes\":\"true\",\"locale\":\"pt\",\"adaptive_pricing[enabled]\":\"true\",\"line_items[0][q"
  },
  {
-  "p": "Animes",
-  "name": "Animes › A minha lista: vistos, episódios, horas, nota média e géneros",
+  "p": "Planos",
+  "name": "A página de pagamento tem o nome e as cores do Prumo (mesmo que a conta do Stripe tenha outro nome)",
   "pass": true,
-  "info": "Prumo & PHANTOM ANIMES Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano. Pesquisar anime Início Pesquisar Para ti Navegar Simulcasts Calendário Categorias Melhores do ano Prémios Pursuit Ranking Clãs Comunidade O meu perfil Notícias A minha lista Top 10 e tier list Vistos 1 A ver 0 Quero ver 0 Episódios vistos 28 11 horas a ver anime A tua nota média 9,0 1 com "
+  "info": "{\"branding_settings[display_name]\":\"Prumo\",\"branding_settings[background_color]\":\"#F6EFE4\",\"branding_settings[button_color]\":\"#8E1B2A\",\"branding_settings[border_style]\":\"rounded\",\"branding_settings[font_family]\":\"lora\"}"
  },
  {
-  "p": "Animes",
-  "name": "Animes › Top 10 e tier list: o anime está no tier S e no 1.º lugar",
+  "p": "Planos",
+  "name": "Se o Stripe ainda não conhecer a marca na página de pagamento, abre o pagamento sem ela",
+  "pass": true,
+  "info": "{\"ok\":true,\"url\":\"https://checkout.stripe.test/c/cs_test_9b61509bc0b2\",\"_st\":200}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem métodos de pagamento ativos no Stripe (conta em análise): mensagem clara em português, sem o erro técnico",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Os pagamentos ainda estão a ser ativados. Tenta daqui a pouco; o teu teste grátis continua.\",\"code\":\"pagamentos\",\"_st\":503}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sempre em euros: quem usa dólares paga 119,90 € por ano convertidos pelo Stripe na hora (Adaptive Pricing); a libra também fica em euros",
+  "pass": true,
+  "info": "{\"u\":\"eur\",\"g\":\"eur\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Antes de pagar, \"confirmar\" não dá o plano",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Temporada: a estação atual com todos os animes e o próximo episódio",
-  "pass": true,
-  "info": "{\"h\":\"Outono 2026\",\"n\":4,\"t\":\"8,0 Cyberpunk: Edgerunners 2 Série na internet · 10 episódios · 2026 Ação · Drama Cyberpunk: Edgerunners 2 Ep. 8 · ter 14:20 8,5 The Apothecary Diaries Season 3 Série · 12 episódios · 2026 Drama · Mistério Uma farmacêutica resolve mistérios no palácio. The Apothecary Di"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Temporada: filtrar só os filmes",
+  "p": "Planos",
+  "name": "Ninguém usa o pagamento de outra conta",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Temporada: voltar à temporada anterior (Verão 2026)",
+  "p": "Planos",
+  "name": "Depois de pagar: plano Essencial (mensal), com a data da renovação",
+  "pass": true,
+  "info": "{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"perfis\":1,\"ia\":20,\"cobranca\":true,\"pago\":1,\"ate\":1797951096000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Essencial: só 1 perfil (o segundo pede outro plano)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O teu plano (Essencial) tem até 1 perfil. Para mais, muda de plano em Planos.\",\"code\":\"maximo\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Essencial: ler fotos com a IA pede o plano Avançado (402)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Calendário: os episódios da semana por dia e à hora certa (sem conteúdo adulto)",
-  "pass": true,
-  "info": "Prumo & PHANTOM ANIMES Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano. Pesquisar anime Início Pesquisar Para ti Navegar Simulcasts Calendário Categorias Melhores do ano Prémios Pursuit Ranking Clãs Comunidade O meu perfil Notícias A minha lista Top 10 e tier li"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Melhores do ano: ranking com o 1.º, a nota e os botões",
+  "p": "Planos",
+  "name": "Com assinatura, não abre outra: muda-se de plano",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Melhores do ano: escolher outro ano (2011)",
+  "p": "Planos",
+  "name": "Mudar para o Avançado anual: o Stripe recebe o novo preço (119,90 €/ano) e a conta passa a Avançado",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797951096000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Cancelar: continua até ao fim do período pago (sem renovar)",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"cancelar\":1,\"ate\":1797951096000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Retomar a assinatura",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: \"Quero ver\" num anime do ranking junta à lista",
+  "p": "Planos",
+  "name": "Gerir pagamento e faturas: abre o portal do Stripe",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Navegar: populares com \"Ver mais\" (página seguinte)",
+  "p": "Planos",
+  "name": "O Prumo configura sozinho o portal do cliente (uma vez): cartão, faturas com NIF e cancelar no fim do período",
+  "pass": true,
+  "info": "{\"n\":1,\"conf\":[\"bpc_dbf96f0aa2a9\",\"bpc_dbf96f0aa2a9\"]}"
+ },
+ {
+  "p": "Planos",
+  "name": "Pagou (em reais, no Brasil) e fechou a página antes de voltar ao Prumo: o plano ativa sozinho na próxima vez que abre a app",
+  "pass": true,
+  "info": "{\"a\":0,\"b\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"pago\":1,\"ate\":1797951096000,\"ciclo\":\"mes\",\"cur\":\"BRL\",\"cliente\":1}}"
+ },
+ {
+  "p": "Planos",
+  "name": "Administração: tem sempre tudo",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Categorias: tocar em Ação abre os animes dessa categoria",
+  "p": "Planos",
+  "name": "Administração oferece o Completo por 30 dias (a pessoa vê o aviso)",
   "pass": true,
-  "info": "#animes.navegar  do ano Prémios Pursuit Ranking Clãs Comunidade O meu perfil Notícias A minha lista Top 10 e tier list Ação Populares Novidades Mais bem avaliados A–Z Tudo Séries Filmes Outros Todas as categorias Ação Aventura Comédia Drama Fantasia Romance Ficção científica Quotidiano Mistério Terror Psicológico Desporto Sobrenatural Suspense Mecha Música Garotas mágicas Ecchi 8,0 Navegar Action página 1 Série ·"
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797951096655}"
  },
  {
-  "p": "Animes",
-  "name": "Animes › Notícias: notícias de anime pelo servidor do Prumo",
+  "p": "Planos",
+  "name": "Admin: a lista de contas mostra o plano de cada uma",
   "pass": true,
-  "info": "Prumo\n&\nPHANTOM\nANIMES\n\nTodos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.\n\nPesquisar anime\nInício\nPesquisar\nPara ti\nNavegar\nSimulcasts\nCalendário\nCategorias\nMelhor"
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1797951096655}"
  },
  {
-  "p": "Animes",
-  "name": "Animes › Pesquisar: junta o Kitsu (encontra o que o AniList não tem) e esconde o conteúdo adulto",
+  "p": "Planos",
+  "name": "Admin: com uma oferta, mostra também o que seria no Automático (aqui, sem plano)",
+  "pass": true,
+  "info": "{\"o\":{\"id\":\"completo\",\"ate\":1797951096655},\"a\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795359096329}}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Por fazer: sabe se o Stripe e o e-mail estão ligados (sem mostrar as chaves)",
+  "pass": true,
+  "info": "{\"strava\":true,\"oura\":true,\"revenuecat\":true,\"stripe\":true,\"stripeTeste\":true,\"mail\":\"\",\"mailDe\":false}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin dá o Essencial grátis a quem paga o Avançado: fica com o maior (Avançado pago)",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797951096000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: \"Automático\" tira a escolha (volta ao teste e ao que a pessoa assinou)",
+  "pass": true,
+  "info": "{\"ok\":true,\"email\":\"teof863cde2@teste.pt\",\"plano\":\"\",\"dias\":0,\"agora\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1797951096000,\"ciclo\":\"ano\",\"cur\":\"EUR\""
+ },
+ {
+  "p": "Planos",
+  "name": "Só a administração escolhe planos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Pesquisar: \"Pedir à IA para encontrar\" descobre o anime pelo nome em português",
+  "p": "Planos",
+  "name": "A conta de administração não muda de plano (tem sempre tudo)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Detalhe de um anime que só o Kitsu tinha: o AniList completa (procura pelo nome)",
+  "p": "Planos",
+  "name": "Admin cria um código de desconto (LANCAMENTO20, −20% no 1.º pagamento): cupão e código promocional no Stripe",
+  "pass": true,
+  "info": "{\"c\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"max\":0,\"expira\":0,\"novos\":false,\"promo\":\"promo_cdc562e82d44\",\"coupon\":\"cp_b4f5e3c7f52a\",\"criado\":1795359096677,\"ativo\":true},\"cp\":{\"percent_off\":\"20\",\"duration\":\"once\",\"name\":\"LANCAMENTO20 · 20%\",\"metadata[app]\":\"prumo\",\"metada"
+ },
+ {
+  "p": "Planos",
+  "name": "Não deixa criar dois códigos ativos com o mesmo nome",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › As minhas listas: criar uma lista a partir do anime e vê-la em A minha lista",
+  "p": "Planos",
+  "name": "Código só para o Completo, durante 3 meses, com limite de usos, validade e só para a primeira assinatura",
+  "pass": true,
+  "info": "{\"cp\":{\"percent_off\":\"50\",\"duration\":\"repeating\",\"name\":\"SO-COMPLETO · 50%\",\"metadata[app]\":\"prumo\",\"metadata[code]\":\"SO-COMPLETO\",\"duration_in_months\":\"3\",\"applies_to[products][0]\":\"prod_7685209680ac\"},\"pc\":{\"promotion[type]\":\"coupon\",\"promotion[coupon]\":\"cp_2cac5a4348f8\",\"code\":\"SO-COMPLETO\",\"meta"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Códigos: a lista com os usos e o estado",
+  "pass": true,
+  "info": "{\"ok\":true,\"cobranca\":true,\"cupoes\":[{\"code\":\"SO-COMPLETO\",\"pct\":50,\"dur\":\"repeating\",\"meses\":3,\"planos\":[\"completo\"],\"max\":2,\"expira\":4102444799000,\"novos\":true,\"promo\":\"promo_606c49939735\",\"coupon\":"
+ },
+ {
+  "p": "Planos",
+  "name": "A pessoa valida o código (sem distinguir maiúsculas): −20%; um código que não existe é recusado",
+  "pass": true,
+  "info": "{\"vz\":{\"ok\":true,\"cupao\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"promo\":\"promo_cdc562e82d44\",\"novos\":false},\"_st\":200},\"b\":404}"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar com o código: o pagamento abre com o desconto já aplicado",
+  "pass": true,
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"f59f656b482877527515a755\",\"success_url\":\"http://localhost:8793/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8793/#planos\",\"locale\":\"pt"
+ },
+ {
+  "p": "Planos",
+  "name": "Um código só do Completo não serve para o Essencial",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Esse código não serve para o plano Essencial.\",\"code\":\"cupao\",\"_st\":400}"
+ },
+ {
+  "p": "Planos",
+  "name": "Código que já chegou ao limite de usos deixa de valer",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes › Para ti: a escolha a partir do que viste, a dizer porquê, sem o que já tens na lista",
-  "pass": true,
-  "info": "[\"8,7 Violet Evergarden Série · 12 episódios · 2026 Ação · Drama Violet Evergarden Porque viste Frieren: Beyond Journey's End\",\"8,0 Mushoku Tensei Série · 12 episódios · 2026 Ação · Drama Mushoku Tensei Porque viste Frieren: Beyond Journey's End\"]"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Para ti: os teus géneros, clássicos, joias escondidas e filmes",
-  "pass": true,
-  "info": "Prumo & PHANTOM ANIMES Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano. Pesquisar anime Início Pesquisar Para ti Navegar Simulcasts Calendário Categorias Melhores do ano Prémios Pursuit Ranking Clãs Comunidade O meu perfil Notícias A minha lista Top 10 e tier list Recomendado para ti A partir do que viste e das tuas notas (Frieren: Beyond Journey's End). O que já está na tua lista não aparece: marca Quero ver ou Já vi e as sugestões mudam. A escolha para ti "
- },
- {
-  "p": "Animes",
-  "name": "Animes › Para ti: pedir à IA dá animes reais com o porquê (os da lista ficam de fora)",
-  "pass": true,
-  "info": "Mushishi Série · 12 episódios · 2026 Calmo e contemplativo, como Frieren. Quero ver Já vi 8,6 de 10"
- },
- {
-  "p": "Animes",
-  "name": "Animes › Início: faixa \"Recomendado para ti\"",
+  "p": "Planos",
+  "name": "Admin desativa o código: deixa de valer",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: com o AniList em baixo, a pesquisa usa o MyAnimeList (reserva)",
+  "p": "Planos",
+  "name": "Só a administração cria códigos",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: no telemóvel nada sai do ecrã",
+  "p": "Planos",
+  "name": "Chave real no lugar da de teste: a assinatura de teste deixa de contar e o novo pagamento não usa o cliente de teste",
+  "pass": true,
+  "info": "{\"p\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795359096061},\"f\":\"teof863cde2@teste.pt\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Página Planos: o teu plano (Avançado), os 3 planos com preço (11,99 € por mês) e \"Subir para o Completo\"",
+  "pass": true,
+  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano Avançado Plano Avançado (anual). Renova a 22 de dezembro de 2026. Gerir pagamento e faturas Cancelar a assinatura Mensal Anual · 2 meses grátis Os preços são em euros, com impostos incluídos. Se pagares com u"
+ },
+ {
+  "p": "Planos",
+  "name": "Preços só em euros (sem escolher moeda) e a nota da conversão",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Animes",
-  "name": "Animes: sem erros na consola",
+  "p": "Planos",
+  "name": "Página Planos: no anual mostra o preço do ano (119,90 €) e quanto dá por mês",
   "pass": true,
   "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: as paletas exclusivas (Ouro, Aurora, Sakura) aparecem com \"Completo\" e não se aplicam",
+  "pass": true,
+  "info": "{\"n\":9,\"lk\":true,\"cur\":\"selo\",\"x\":true}"
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: os Relatórios (impostos) têm cadeado e levam aos planos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: a Universidade abre (sem cadeado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado e sem plano: as páginas mostram \"Escolhe o teu plano\" com os planos (os dados ficam)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Planos: \"Tens um código de desconto?\" aplica o código e mostra o preço com desconto (−30% no 1.º mês) em cada plano",
+  "pass": true,
+  "info": "{\"on\":true,\"old\":3,\"t\":\"−30% no 1.º mês\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar na app com o código aplicado: o pagamento leva o desconto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Quem usa reais (Brasil): preço próprio em reais (R$ 19,90 o Essencial), sem conversão do euro, e a nota de que a cobrança é em reais",
+  "pass": true,
+  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Mensal Anual · 2 meses grátis Preços em reais para o Brasil, com impostos incluídos. A cobrança é em reais. Tens um código de desconto? Aplicar Essencial R$ 19,90 /mês Tarefas, hábitos, rotina por hora"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar no Brasil: cobra R$ 19,90 em reais (sem conversão do euro), com a página de pagamento em português do Brasil",
+  "pass": true,
+  "info": "{\"c\":\"brl\",\"v\":\"1990\",\"l\":\"pt-BR\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Modo loja (app Android/iPhone): os planos aparecem sem botões de compra, sem código de desconto e sem preços, com a nota \"não há compras\"",
+  "pass": true,
+  "info": "{\"on\":true,\"cls\":true,\"buy\":0,\"cup\":false,\"portal\":false,\"cards\":3,\"t\":\"Sistema PLANOS Os planos do Prumo e o que cada um inclui. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Nesta versão da app não\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Modo loja desliga com ?loja=nao (no site volta a haver compras)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Códigos de desconto: o formulário e a lista com os códigos criados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Contas: cada conta mostra o plano (Completo grátis)",
+  "pass": true,
+  "info": "Completo grátis"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Por fazer: os passos do Stripe em modo de teste e do e-mail (Brevo)",
+  "pass": true,
+  "info": "Por fazer 3 pendentes pendente Chave Google da IA para todos (GEMINI_API_KEY) Para a IA das contas ler fotos (comida, exames, escala) e PDFs. 1) aistudio.google.com/apikey → Create API key. 2) Vercel → projeto prumo → Settings → Environment Variables → nome GEMINI_API_KEY, valor a chave, Production."
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: escolher o plano (Automático, Essencial, Avançado ou Completo grátis), com o atual marcado e sem pedir a senha",
+  "pass": true,
+  "info": "{\"n\":4,\"chk\":\"completo\",\"senha\":false}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: \"Avançado grátis\" durante 3 meses fica na conta da pessoa",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"oferta\":1,\"ate\":1803135121878}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: \"Automático\" devolve a conta ao teste e à assinatura (aqui o teste já acabou: sem plano)",
+  "pass": true,
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795359096329}"
+ },
+ {
+  "p": "Planos",
+  "name": "Completo: as paletas exclusivas (Ouro, Aurora, Sakura) aplicam-se",
+  "pass": true,
+  "info": "ouro,aurora,sakura"
+ },
+ {
+  "p": "Planos",
+  "name": "Relatórios (Completo): o quadro \"Resumo do mês no teu e-mail\" com o botão para ligar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "sem erros de JavaScript (Admin › planos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Atendimento prioritário: os pedidos de quem tem o Completo chegam marcados como prioritários ao Admin (o Avançado não)",
+  "pass": true,
+  "info": "{\"w\":1,\"a\":0}"
+ },
+ {
+  "p": "Planos",
+  "name": "Resumo do mês por e-mail: só no plano Completo (o Avançado recebe 402)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O resumo do mês por e-mail é do plano Completo.\",\"code\":\"plano\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Conta nova em teste grátis: ao entrar aparecem os planos, com os dias grátis e \"Continuar com o teste grátis\"",
+  "pass": true,
+  "info": "{\"h\":\"#planos\",\"t\":\"Bem-vindo ao Prumo\\n\\nTens 14 dias grátis do plano Completo, sem cartão. Escolhe já o teu plano aqui em baixo ou continua com o teste: avisamos-te antes de acabar e os teus dados ficam sempre guardados.\\n\\nContinuar com "
+ },
+ {
+  "p": "Planos",
+  "name": "\"Continuar com o teste grátis\" vai para o Painel e os planos não voltam a abrir sozinhos",
+  "pass": true,
+  "info": "#visao"
  },
  {
   "p": "Ataque",
@@ -2265,7 +2505,7 @@
   "p": "Ataque",
   "name": "Manutenção: o atalho de gastos continua a guardar (avisa que entra quando a app voltar) e a app não busca nada enquanto dura",
   "pass": true,
-  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 14:51)\"},\"p1\":503}"
+  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 15:23)\"},\"p1\":503}"
  },
  {
   "p": "Ataque",
@@ -2277,13 +2517,13 @@
   "p": "Ataque",
   "name": "Manutenção: só a administração liga; ligada, as outras contas não entram nem sincronizam (503) e a administração e as contas de teste continuam",
   "pass": true,
-  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795359098335,\"motivo\":\"manual\",\"prox\":0}}"
+  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795360980853,\"motivo\":\"manual\",\"prox\":0}}"
  },
  {
   "p": "Ataque",
   "name": "Manutenção: a app mostra o ecrã \"O Prumo está em manutenção\" a tapar tudo, com a hora de regresso",
   "pass": true,
-  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 14:51.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
+  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 15:23.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
  },
  {
   "p": "Ataque",
@@ -2295,25 +2535,25 @@
   "p": "Ataque",
   "name": "Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas",
   "pass": true,
-  "info": "200 [{\"id\":\"mwrxdpf6-3f2dbb78a0\",\"t\":\"2026-11-22T14:21:38.418Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
+  "info": "200 [{\"id\":\"mwryi1z9-60b2c66858\",\"t\":\"2026-11-22T14:53:00.933Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
  },
  {
   "p": "Ataque",
   "name": "Relatório da semana: a administração gera-o (contas, planos, atividade, segurança com os ataques de hoje, falhas, cópias, saúde) e mais ninguém o vê",
   "pass": true,
-  "info": "{\"st\":200,\"n\":1,\"contas\":{\"total\":6,\"novas\":6,\"porConfirmar\":0,\"teste\":1,\"entraramSemana\":3,\"perfis\":7},\"sec\":{\"login_falhou\":8,\"admin_negado\":2,\"conta_trancada\":1,\"login_bloqueada\":3,\"login_desconhecido\":30,\"limite\":1,\"robo_registo\":1,\"origem\":2,\"token_falso\":1,\"backup_negado\":1,\"manutencao_ligar\":1,\"manutencao_desligar\":1},\"alertas\":4,\"outro\":403}"
+  "info": "{\"st\":200,\"n\":1,\"contas\":{\"total\":13,\"novas\":13,\"porConfirmar\":0,\"teste\":1,\"entraramSemana\":3,\"perfis\":12},\"sec\":{\"login_falhou\":8,\"admin_negado\":4,\"conta_trancada\":1,\"login_bloqueada\":3,\"login_desconhecido\":30,\"limite\":1,\"robo_registo\":1,\"origem\":2,\"token_falso\":1,\"backup_negado\":1,\"manutencao_ligar\":1,\"manutencao_desligar\":1},\"alertas\":5,\"outro\":403}"
  },
  {
   "p": "Ataque",
   "name": "Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê",
   "pass": true,
-  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795357334186,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":1,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":0},\"copia\":\"2026-11-22\"},\"falhas\":[]},\"_st\":200}"
+  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795359215936,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":0,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":1},\"copia\":\"2026-11-22\"},\"falhas\":[]},\"_st\":200}"
  },
  {
   "p": "Ataque",
   "name": "Visitas: a página conta visitas e visitantes únicos do dia (o mesmo aparelho 2 vezes = 1), origem (Google, Instagram), país e cliques; robôs e pedidos estranhos não contam; só a administração vê",
   "pass": true,
-  "info": "{\"st\":200,\"t\":{\"visitas\":3,\"unicos\":2,\"app\":4,\"cliques\":1,\"registos\":6,\"pagamentos\":0,\"conversao\":300},\"antes\":{\"visitas\":0,\"unicos\":0,\"app\":4,\"cliques\":0,\"registos\":6,\"pagamentos\":0,\"conversao\":0},\"o\":[[\"direto\",4],[\"Google\",1],[\"Instagram\",1]],\"p\":[[\"??\",4],[\"BR\",1],[\"PT\",1]],\"bot\":{\"ok\":true,\"ok2\":false},\"mau\":{\"ok\":true,\"ok2\":false},\"outro\":403}"
+  "info": "{\"st\":200,\"t\":{\"visitas\":3,\"unicos\":2,\"app\":5,\"cliques\":1,\"registos\":13,\"pagamentos\":1,\"conversao\":650},\"antes\":{\"visitas\":0,\"unicos\":0,\"app\":5,\"cliques\":0,\"registos\":13,\"pagamentos\":1,\"conversao\":0},\"o\":[[\"direto\",5],[\"Google\",1],[\"Instagram\",1]],\"p\":[[\"??\",5],[\"BR\",1],[\"PT\",1]],\"bot\":{\"ok\":true,\"ok2\":false},\"mau\":{\"ok\":true,\"ok2\":false},\"outro\":403}"
  },
  {
   "p": "Ataque",
@@ -2361,13 +2601,13 @@
   "p": "Ataque",
   "name": "Erros e quedas: as falhas da app aparecem agrupadas (mensagem, onde, quantas vezes) com as novas assinaladas; só a administração vê",
   "pass": true,
-  "info": "{\"st\":200,\"g\":{\"k\":\"TypeError: falha de teste 7b5e7a @ teste.js:1:1\",\"n\":4,\"dias\":1,\"prim\":\"2026-11-22\",\"ult\":\"2026-11-22\",\"hoje\":4,\"novo\":true},\"n\":403}"
+  "info": "{\"st\":200,\"g\":{\"k\":\"TypeError: falha de teste ab190d @ teste.js:1:1\",\"n\":4,\"dias\":1,\"prim\":\"2026-11-22\",\"ult\":\"2026-11-22\",\"hoje\":4,\"novo\":true},\"n\":403}"
  },
  {
   "p": "Ataque",
   "name": "Erros e quedas: um erro novo que se repete manda e-mail à administração (no máximo um a cada 6 horas)",
   "pass": true,
-  "info": "{\"v1\":{\"alerta\":true,\"novos\":[[\"TypeError: falha de teste 7b5e7a @ teste.js:1:1\",4]],\"tApp\":4,\"tSrv\":0},\"v2\":{\"alerta\":false,\"novos\":[[\"ReferenceError: outra f64dbd @ b.js:2:2\",3]],\"tApp\":3,\"tSrv\":0},\"mails\":[\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro novo a repetir-se\"]}"
+  "info": "{\"v1\":{\"alerta\":true,\"novos\":[[\"TypeError: falha de teste ab190d @ teste.js:1:1\",4]],\"tApp\":4,\"tSrv\":0},\"v2\":{\"alerta\":false,\"novos\":[[\"ReferenceError: outra 17350b @ b.js:2:2\",3]],\"tApp\":3,\"tSrv\":0},\"mails\":[\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro no"
  },
  {
   "p": "Ataque",
@@ -2379,13 +2619,13 @@
   "p": "Ataque",
   "name": "Readwise: a chave errada é recusada; a certa traz os livros e destaques para as Leituras (página e nota nas citações), junta ao livro que já existe, ignora artigos e apagados, e não duplica",
   "pass": true,
-  "info": "{\"mau\":\"recusada O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.\",\"rw\":{\"st\":{\"tok\":\"rwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"last\":\"2026-11-22T14:22:22.751Z\",\"livros\":1,\"dest\":2,\"at\":1795357342794},\"pz\":1,\"pq\":[[\"Tu tornas-te\",\"\",\"\",false],[\"O essencial \",\"12\",\"a melhor\",true]],\"ha\":{\"capa\":\"https://exemplo.pt/h.jpg\",\"st\":\"A ler\",\"q\":1,\"f\":\"Ebook\"},\"art\":false,\"again\":{\"nl\":0,\"nd\":0},\"painel\":true}}"
+  "info": "{\"mau\":\"recusada O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.\",\"rw\":{\"st\":{\"tok\":\"rwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"last\":\"2026-11-22T14:53:43.941Z\",\"livros\":1,\"dest\":2,\"at\":1795359223984},\"pz\":1,\"pq\":[[\"Tu tornas-te\",\"\",\"\",false],[\"O essencial \",\"12\",\"a melhor\",true]],\"ha\":{\"capa\":\"https://exemplo.pt/h.jpg\",\"st\":\"A ler\",\"q\":1,\"f\":\"Ebook\"},\"art\":false,\"again\":{\"nl\":0,\"nd\":0},\"painel\":true}}"
  },
  {
   "p": "Ataque",
   "name": "Strava: o endereço de autorização leva um state assinado (um state mexido é recusado); ao voltar, a autorização fica guardada cifrada (nunca em texto) e renova-se sozinha",
   "pass": true,
-  "info": "{\"e0\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"}},\"ini\":\"http://localhost:8827/lgmock/strava/authorize?client_id=4242&redirect_uri=http%3A%2F%2Floc\",\"falso\":400,\"cb\":200,\"cbt\":\" Strava ligado · Prumo :root{color-scheme:dark}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#65010D;color:#FCE7D1;font:16px/1.55 sy\",\"d1\":\"200 \",\"e1\":{\"pronto\":true,\"ligado\":true,\"quem\":\"Marta Teste\",\"desde\":\"2026-11"
+  "info": "{\"e0\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"}},\"ini\":\"http://localhost:8793/lgmock/strava/authorize?client_id=4242&redirect_uri=http%3A%2F%2Floc\",\"falso\":400,\"cb\":200,\"cbt\":\" Strava ligado · Prumo :root{color-scheme:dark}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#65010D;color:#FCE7D1;font:16px/1.55 sy\",\"d1\":\"200 \",\"e1\":{\"pronto\":true,\"ligado\":true,\"quem\":\"Marta Teste\",\"desde\":\"2026-11"
  },
  {
   "p": "Ataque",
@@ -2403,13 +2643,13 @@
   "p": "Ataque",
   "name": "Strava: desligar avisa o Strava e apaga a autorização; sem sessão válida nada passa",
   "pass": true,
-  "info": "{\"sa\":200,\"sair\":[\"strava\"],\"e2\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":true,\"quem\":\"\",\"desde\":\"2026-11-22T14:22:23.610Z\"}},\"outro\":401}"
+  "info": "{\"sa\":200,\"sair\":[\"strava\"],\"e2\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":true,\"quem\":\"\",\"desde\":\"2026-11-22T14:53:44.793Z\"}},\"outro\":401}"
  },
  {
   "p": "Ataque",
   "name": "RevenueCat: sem a senha certa é recusado; uma compra dá o plano (confirmado no RevenueCat, não no que o aviso diz); o mesmo aviso não conta duas vezes; compras de teste não contam; ao expirar o plano sai",
   "pass": true,
-  "info": "{\"rid\":\"p_055d\",\"sem\":401,\"errada\":401,\"h1\":{\"_st\":200,\"ok\":true},\"p1\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":false,\"pago\":1,\"ate\":1797949346297,\"ciclo\":\"mes\",\"loja\":\"play_store\"},\"h2\":{\"_st\":200,\"ok\":true,\"repetido\":1},\"n1\":1,\"n2\":1,\"p3\":\"avancado\",\"p4\":\"completo\",\"p5\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796566946193},\"h6\":200}"
+  "info": "{\"rid\":\"p_766f\",\"sem\":401,\"errada\":401,\"h1\":{\"_st\":200,\"ok\":true},\"p1\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":false,\"pago\":1,\"ate\":1797951227435,\"ciclo\":\"mes\",\"loja\":\"play_store\"},\"h2\":{\"_st\":200,\"ok\":true,\"repetido\":1},\"n1\":1,\"n2\":1,\"p3\":\"avancado\",\"p4\":\"completo\",\"p5\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796568827326},\"h6\":200}"
  },
  {
   "p": "Ataque",
@@ -2421,7 +2661,7 @@
   "p": "Ataque",
   "name": "Atividade em curso: o treino aparece numa barra no topo (rotina, exercício de agora, descanso a contar, séries por exercício, kcal); tocar abre o treino; o fim do descanso fica marcado para avisar com a app fechada; o bloco de foco também aparece e a barra sai quando acaba",
   "pass": true,
-  "info": "{\"t1\":{\"on\":true,\"t\":\"0:59 Upper Completo Agachamento com barra +0 kcal\",\"segs\":[\"m\",\"\"],\"pv\":[{\"at\":1795357412743,\"t\":\"Descanso acabou\",\"b\":\"Bora para a próxima série.\",\"u\":\"#treino\",\"g\":\"descanso\"}],\"nome\":\"Agachamento com barra\"},\"t2\":{\"ecra\":true,\"barra\":false},\"t3\":{\"foco\":\"5:00 Bloco de foco · Estudo Resumo do capítulo 3 1/2\",\"fim\":true,\"pv\":[]}}"
+  "info": "{\"t1\":{\"on\":true,\"t\":\"0:59 Upper Completo Agachamento com barra +0 kcal\",\"segs\":[\"m\",\"\"],\"pv\":[{\"at\":1795359293347,\"t\":\"Descanso acabou\",\"b\":\"Bora para a próxima série.\",\"u\":\"#treino\",\"g\":\"descanso\"}],\"nome\":\"Agachamento com barra\"},\"t2\":{\"ecra\":true,\"barra\":false},\"t3\":{\"foco\":\"5:00 Bloco de foco · Estudo Resumo do capítulo 3 1/2\",\"fim\":true,\"pv\":[]}}"
  },
  {
   "p": "Ataque",
@@ -2451,13 +2691,13 @@
   "p": "Ataque",
   "name": "Clãs: criar (nome verificado), entrar com o código, conversa do clã só para membros, lista de conversas, denunciar (a administração vê e apaga a mensagem) e bloquear (deixa de poder falar e de pedir amizade)",
   "pass": true,
-  "info": "{\"cl\":200,\"cod\":\"497XQH\",\"feio\":400,\"ent\":200,\"mc\":true,\"fora\":403,\"lc\":1,\"den\":200,\"dn0\":403,\"dl\":1,\"apg\":200,\"lc2\":0,\"dmB\":403,\"pedB\":403}"
+  "info": "{\"cl\":200,\"cod\":\"ZK3ANB\",\"feio\":400,\"ent\":200,\"mc\":true,\"fora\":403,\"lc\":1,\"den\":200,\"dn0\":403,\"dl\":1,\"apg\":200,\"lc2\":0,\"dmB\":403,\"pedB\":403}"
  },
  {
   "p": "Ataque",
   "name": "Pursuit: antes das 20h não se marca; às 20h saem pistas do anime (sem dizer o nome); um Hunter por pessoa e por dia; às 22h fecha e quem acertou ganha 100, 90… pela ordem; quem errou não ganha; ranking de animes com os pontos",
   "pass": true,
-  "info": "{\"h0\":\"espera\",\"m0\":400,\"f1\":\"aberto\",\"pistas\":[\"É uma série com 64 episódios e estreou na primavera de 2009.\",\"Géneros: Action, Adventure, Drama; temas: Military, Shounen.\",\"É baseado num mangá.\",\"O estúdio de animação é Bones.\",\"O título (em japonês romanizado) começa por \\\"K\\\" e tem 3 palavras.\"],\"full\":\"7012\",\"okB\":200,\"okC\":200,\"errA\":200,\"dup\":409,\"f2\":\"fechado\",\"res\":[{\"id\":\"a4fc9815f448dc8d15719b32-cc85a7d5f782\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795357369337,\"pts\":100},{\"id\":\"81859b2112aff26c38fcdcaa-2d42adfaa4f5\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795357369371,\"pts\":90}],\"rk\":[{\"id\":\"a4fc9815f448dc8d15719b32-cc85a7d5f782\",\"nome\":\"A\",\"p\":100,\"user\":\"\",\"av\":0,\"pos\":1,\"eu\":false},{\"id\":"
+  "info": "{\"h0\":\"espera\",\"m0\":400,\"f1\":\"aberto\",\"pistas\":[\"É uma série com 64 episódios e estreou na primavera de 2009.\",\"Géneros: Action, Adventure, Drama; temas: Military, Shounen.\",\"É baseado num mangá.\",\"O estúdio de animação é Bones.\",\"O título (em japonês romanizado) começa por \\\"K\\\" e tem 3 palavras.\"],\"full\":\"7011\",\"okB\":200,\"okC\":200,\"errA\":200,\"dup\":409,\"f2\":\"fechado\",\"res\":[{\"id\":\"2d549330b8eccf766d8aee75-74d26ab3caf7\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795359249708,\"pts\":100},{\"id\":\"c5e7250119fcf2ecf3de8598-538a705b8603\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795359249741,\"pts\":90}],\"rk\":[{\"id\":\"2d549330b8eccf766d8aee75-74d26ab3caf7\",\"nome\":\"A\",\"p\":100,\"user\":\"\",\"av\":0,\"pos\":1,\"eu\":false},{\"id\":"
  },
  {
   "p": "Ataque",
@@ -2469,7 +2709,7 @@
   "p": "Ataque",
   "name": "Parceria: sem nome escrito volta a PHANTOM",
   "pass": true,
-  "info": "{\"ok\":true,\"parceiro\":{\"nome\":\"PHANTOM\",\"site\":\"\",\"at\":1795357379303},\"_st\":200}"
+  "info": "{\"ok\":true,\"parceiro\":{\"nome\":\"PHANTOM\",\"site\":\"\",\"at\":1795359258768},\"_st\":200}"
  },
  {
   "p": "Ataque",
@@ -2493,13 +2733,13 @@
   "p": "Ataque",
   "name": "Perfil dos animes: o @ escolhe-se uma vez e não muda, é único e há nomes reservados; foto e fundo próprios (verificados pela IA) e servidos a quem os vê",
   "pass": true,
-  "info": "{\"u1\":{\"ok\":true,\"user\":\"ana_19f1c3\",\"_st\":200},\"u2\":409,\"u3\":409,\"u4\":400,\"u5\":400,\"im\":200,\"fu\":200,\"mau\":400,\"eu\":{\"id\":\"01f73ea989999e8baed8e010-77e4f8d4b5e6\",\"nome\":\"A\",\"cod\":\"UMBAK5\",\"user\":\"ana_19f1c3\",\"av\":1795357398767,\"fu\":1795357398773,\"pts\":0,\"mudo\":0},\"g\":200}"
+  "info": "{\"u1\":{\"ok\":true,\"user\":\"ana_851c0c\",\"_st\":200},\"u2\":409,\"u3\":409,\"u4\":400,\"u5\":400,\"im\":200,\"fu\":200,\"mau\":400,\"eu\":{\"id\":\"99c4aede825bedb5d109e829-1826de89560c\",\"nome\":\"A\",\"cod\":\"TAE27S\",\"user\":\"ana_851c0c\",\"av\":1795359270664,\"fu\":1795359270669,\"pts\":0,\"mudo\":0},\"g\":200}"
  },
  {
   "p": "Ataque",
   "name": "Comentários nos animes: a IA tapa os spoilers (só vê quem quiser) e barra ofensas; gostos nos comentários e no anime; com o @ e a foto; denunciar e a administração apaga; ninguém apaga o comentário dos outros",
   "pass": true,
-  "info": "{\"c1\":{\"id\":\"7f235916faa5\",\"de\":\"01f73ea989999e8baed8e010-77e4f8d4b5e6\",\"nome\":\"A\",\"user\":\"ana_19f1c3\",\"av\":1795357398767,\"t\":\"A animação é incrível, um dos melhores de sempre.\",\"at\":1795357398785,\"sp\":false,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c2\":{\"id\":\"b5ae74497bd2\",\"de\":\"440fb0eb7be7692c7080ce48-73f3b084798c\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"t\":\"Não acredito que o Hughes morre no episódio 10\",\"at\":1795357398793,\"sp\":true,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c3\":true,\"gc\":1,\"ga\":{\"ok\":true,\"gostos\":1,\"gostei\":true,\"_st\":200},\"ga2\":{\"ok\":true,\"gostos\":2,\"gostei\":true,\"_st\":200},\"n\":2,\"dn\":20"
+  "info": "{\"c1\":{\"id\":\"4ac8816ed1a8\",\"de\":\"99c4aede825bedb5d109e829-1826de89560c\",\"nome\":\"A\",\"user\":\"ana_851c0c\",\"av\":1795359270664,\"t\":\"A animação é incrível, um dos melhores de sempre.\",\"at\":1795359270677,\"sp\":false,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c2\":{\"id\":\"82cfb9cec39a\",\"de\":\"824d1998212dbec00fe3f148-c3daeaa6c64f\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"t\":\"Não acredito que o Hughes morre no episódio 10\",\"at\":1795359270681,\"sp\":true,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c3\":true,\"gc\":1,\"ga\":{\"ok\":true,\"gostos\":1,\"gostei\":true,\"_st\":200},\"ga2\":{\"ok\":true,\"gostos\":2,\"gostei\":true,\"_st\":200},\"n\":2,\"dn\":20"
  },
  {
   "p": "Ataque",
@@ -2511,13 +2751,13 @@
   "p": "Ataque",
   "name": "Na app: no menu do perfil arrasta-se para o perfil dos animes (com o @); a primeira vez nos Animes escolhe-se Competição e/ou Diversão e o início mostra o que interessa; a Comunidade com as 5 opções e as indicações",
   "pass": true,
-  "info": "{\"ui\":{\"cards\":2,\"ap\":\"Prumo & PHANTOM A @ana_19f1c3 0 pontos 0 clãs Editar perfil dos animes\",\"bv\":true,\"dq\":true,\"cu\":true},\"ind\":true}"
+  "info": "{\"ui\":{\"cards\":2,\"ap\":\"Prumo & PHANTOM A @ana_851c0c 0 pontos 0 clãs Editar perfil dos animes\",\"bv\":true,\"dq\":true,\"cu\":true},\"ind\":true}"
  },
  {
   "p": "Ataque",
   "name": "Temas das festas: cada festa vale a época toda (Natal de 1/12 a 6/1, Halloween de 15/10 a 2/11, Páscoa nas 2 semanas antes até à segunda-feira, Carnaval, junho, passagem de ano) e sai quando acaba; Natal com luzes no topo, neve que acumula e o limpa-neves; nas Definições liga-se, desliga-se e vê-se cada tema",
   "pass": true,
-  "info": "{\"datas\":{\"natal1\":\"natal\",\"natal\":\"natal\",\"reis\":\"natal\",\"fimNatal\":\"\",\"anonovo\":\"anonovo\",\"hall\":\"halloween\",\"finados\":\"halloween\",\"hoje\":\"\",\"pascoa\":\"pascoa\",\"pascoaFim\":\"pascoa\",\"depoisPascoa\":\"\",\"carnaval\":\"carnaval\",\"junho\":\"junho\"},\"s1\":{\"EP\":\"natal\",\"neve\":1.2613746423127667,\"plow\":true,\"nplow\":1,\"P\":70,\"cv\":true,\"gar\":true},\"top\":true,\"attr\":\"natal\",\"pn\":true}"
+  "info": "{\"datas\":{\"natal1\":\"natal\",\"natal\":\"natal\",\"reis\":\"natal\",\"fimNatal\":\"\",\"anonovo\":\"anonovo\",\"hall\":\"halloween\",\"finados\":\"halloween\",\"hoje\":\"\",\"pascoa\":\"pascoa\",\"pascoaFim\":\"pascoa\",\"depoisPascoa\":\"\",\"carnaval\":\"carnaval\",\"junho\":\"junho\"},\"s1\":{\"EP\":\"natal\",\"neve\":1.488201115247573,\"plow\":true,\"nplow\":1,\"P\":70,\"cv\":true,\"gar\":true},\"top\":true,\"attr\":\"natal\",\"pn\":true}"
  },
  {
   "p": "Ataque",

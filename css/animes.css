@@ -459,3 +459,45 @@ html.lite-x .an-ov{transition:none}html.lite-x .an-dots button.on::after{animati
 @keyframes prRev{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:none}}
 .pr-cer-l{list-style:none;margin:14px auto 0;padding:0;max-width:380px;display:grid;gap:6px;text-align:left}.pr-cer-l li{display:grid;grid-template-columns:34px 1fr auto;gap:8px;font-size:14px}.pr-cer-l span{color:var(--mut)}.pr-cer-l i{font-style:normal;font-weight:700}
 @media (prefers-reduced-motion:reduce){.pr-cer-w{animation:none}}
+
+/* v3.77 · luz e cor: a sala deixou de ser preta. Noite violeta por baixo, luz vermelha da PHANTOM por cima, contraluz violeta à direita
+   e um reflexo azul-petróleo mais abaixo; cada cartaz ilumina o chão com a cor da própria capa (--c). O texto fica sempre claro sobre escuro. */
+.an{--an-bg:#0e0b18;--an-c1:#1b1727;--an-c2:#2a2438;--an-ln:#3a3250;--an-mut:#bcb5cf;--an-vi:#9b6bff;--an-ci:#2fd4e0;
+  background:radial-gradient(70% 560px at 0% 0%,rgba(232,32,58,.30),transparent 70%),radial-gradient(60% 640px at 100% 20%,rgba(155,107,255,.26),transparent 70%),
+    radial-gradient(70% 720px at 0% 55%,rgba(47,212,224,.13),transparent 70%),radial-gradient(60% 720px at 100% 85%,rgba(232,32,58,.18),transparent 70%),var(--an-bg);
+  box-shadow:0 0 0 1px #221c33}
+.an-hero{background:var(--an-bg)}
+.an-slide{background:linear-gradient(160deg,color-mix(in srgb,var(--c,#E8203A) 48%,var(--an-bg)),var(--an-bg) 75%)}
+.an-slide::after{content:"";position:absolute;left:-25%;right:-25%;bottom:-60px;height:75%;pointer-events:none;z-index:0;background:radial-gradient(50% 55% at 28% 100%,color-mix(in srgb,var(--c,#E8203A) 42%,transparent),transparent 72%)}
+.an-hb0{background:linear-gradient(120deg,color-mix(in srgb,var(--c,#E8203A) 60%,var(--an-bg)),var(--an-bg))}
+.an-hg{background:linear-gradient(90deg,var(--an-bg) 0%,rgba(14,11,24,.86) 28%,rgba(14,11,24,.3) 62%,rgba(14,11,24,.05)),linear-gradient(0deg,var(--an-bg) 0%,rgba(14,11,24,.4) 22%,transparent 45%)}
+.an-hk{color:var(--an-or2);text-shadow:0 0 18px rgba(232,32,58,.55)}
+.an-hn{box-shadow:0 0 22px rgba(232,32,58,.55)}
+.an .btn.an-cta,.an-hbtn{background:linear-gradient(180deg,#ff3d57,var(--an-or));box-shadow:0 8px 26px -8px rgba(232,32,58,.85),inset 0 1px 0 rgba(255,255,255,.25)}
+.an-dots button.on::after{background:linear-gradient(90deg,var(--an-or),var(--an-or2));box-shadow:0 0 10px rgba(232,32,58,.8)}
+.an-dh{background:color-mix(in srgb,var(--c,#E8203A) 32%,var(--an-bg))}
+.an-dh .an-hg{background:linear-gradient(0deg,var(--an-bg) 0%,rgba(14,11,24,.8) 35%,rgba(14,11,24,.25) 70%,rgba(14,11,24,.1)),linear-gradient(90deg,rgba(14,11,24,.7),transparent 60%)}
+.an-chi img.v{border-color:var(--an-bg)}
+/* títulos das faixas com uma régua de luz (vermelho a violeta) */
+.an-rh h3::before{content:"";align-self:center;flex:none;width:4px;height:1em;border-radius:3px;background:linear-gradient(180deg,var(--an-or2),var(--an-vi));box-shadow:0 0 12px rgba(232,32,58,.65)}
+/* cartazes e cartões largos com o brilho da própria capa */
+.an-pi{box-shadow:0 12px 26px -14px color-mix(in srgb,var(--c,#E8203A) 85%,transparent),0 0 0 1px rgba(255,255,255,.07)}
+.an-wci{box-shadow:0 14px 30px -16px color-mix(in srgb,var(--c,#E8203A) 90%,transparent),0 0 0 1px rgba(255,255,255,.07)}
+@media (hover:hover){.an-pc:hover .an-pi,.an-wci:hover{box-shadow:0 16px 36px -10px color-mix(in srgb,var(--c,#E8203A) 95%,transparent),0 0 0 1px color-mix(in srgb,var(--c,#E8203A) 65%,transparent)}}
+.an-ov{background:linear-gradient(180deg,rgba(32,24,48,.96),rgba(18,14,28,.97))}
+/* caixas iluminadas de cima */
+.an-rank li,.an-air li,.an-gs,.an-me,.an-meta div,.an-hist li,.an-q,.an-tr,.an-tol li,.an-mug a,.an-epi,.an-sea,.an-day,.an-qai{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 65%),var(--an-c1)}
+.an-nw{box-shadow:inset 4px 0 0 var(--an-or),0 10px 24px -18px rgba(232,32,58,.9)}
+.an-ai{background:linear-gradient(135deg,rgba(232,32,58,.24),rgba(155,107,255,.12) 55%,rgba(47,212,224,.06)),var(--an-c1)}
+.an-wel,.an-nw.big{background:linear-gradient(120deg,rgba(232,32,58,.26),rgba(155,107,255,.14) 55%,var(--an-c1) 85%)}
+.an .chip.on{background:linear-gradient(180deg,#ff3d57,var(--an-or));box-shadow:0 4px 16px -6px rgba(232,32,58,.9)}
+.an .field:focus{box-shadow:0 0 0 3px rgba(155,107,255,.25)}
+@media (max-width:640px){
+  .an-slide{background:var(--an-bg)}
+  .an-hpic{background:linear-gradient(160deg,color-mix(in srgb,var(--c,#E8203A) 48%,var(--an-bg)),var(--an-bg) 80%)}
+  .an-hg{background:linear-gradient(180deg,rgba(14,11,24,.55) 0%,transparent 18%),linear-gradient(0deg,var(--an-bg) 0%,rgba(14,11,24,.8) 16%,rgba(14,11,24,.2) 42%,transparent 60%)}
+  .an-subnav a{background:linear-gradient(180deg,#2a2240,#1d1829);border-color:#3e3456}
+  .an-subnav a:active{background:#352b4f}
+}
+@media (min-width:641px){.an-hero .an-hg{background:linear-gradient(90deg,rgba(14,11,24,.92) 0%,rgba(14,11,24,.66) 30%,rgba(14,11,24,.15) 62%,transparent 85%),linear-gradient(0deg,var(--an-bg) 0%,rgba(14,11,24,.3) 22%,transparent 45%)}}
+@media (prefers-reduced-motion:reduce){.an-dots button.on::after{box-shadow:none}}

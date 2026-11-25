@@ -33,8 +33,8 @@ const bg = () => { try { const sp = document.getElementById('splash'), c = sp &&
 const seal = extra => { const s = selo(); return `<div class="seal">${s ? `<img src="${s}" alt="" aria-hidden="true">` : ''}${extra || ''}</div>`; };
 const show = html => { style(); const el = document.createElement('div'); el.className = 'upd'; el.setAttribute('role', 'status'); el.style.background = bg(); el.innerHTML = `<div class="in">${html}</div>`; document.body.appendChild(el); return el; };
 // 1) chegou uma versão nova enquanto a app estava aberta: ecrã curto e recarrega
-// ao atualizar, a intro volta a aparecer na versão nova (antes ficava marcada como "já vista" nesta sessão)
-const reloadNew = () => { try { sessionStorage.removeItem('nau:introOk'); } catch (e) { } location.reload(); };
+// v3.77: a intro aparece uma vez só: se já passou antes de a atualização chegar, a versão nova não a repete (no telemóvel aparecia duas vezes)
+const reloadNew = () => location.reload();
 window.OceanumUpdating = () => { show(seal('<i class="upd-ring"></i>') + '<b>A atualizar o Prumo…</b><small>versão nova encontrada</small>'); setTimeout(reloadNew, 900); };
 // 2) primeira abertura de uma versão nova: confirmação
 const prev = ls.get(KEY);

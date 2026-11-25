@@ -15,9 +15,31 @@ const pal = h => { let i = 0; while (i < K.length - 2 && h >= K[i + 1][0]) i++; 
   return { top: mix(a[1], b[1], t), hz: mix(a[2], b[2], t), seaT: mix(a[3], b[3], t), seaB: mix(a[4], b[4], t), land: mix(a[5], b[5], t), glow: mix(a[6], b[6], t), stars: a[7] + (b[7] - a[7]) * t, beam: a[8] + (b[8] - a[8]) * t, day: h >= 6.5 && h < 19.6 }; };
 const rng = s => { let x = s; return () => { x = (x * 16807) % 2147483647; return x / 2147483647; }; };
 const f = v => Math.round(v * 10) / 10;
+// v3.77 · as estações do ano: cada cena muda com a estação do sítio que mostra (o Rio está no hemisfério sul).
+// gelo (a água congela no inverno e descongela no início da primavera), neve, flores, folhas de outono e calor de verão, de 0 a 1.
+const SUL = { rio: 1 };
+let LUGAR = '';
+const rampa = (x, a, b) => Math.max(0, Math.min(1, (x - a) / (b - a)));
+const FORCA = { inverno: 25, primavera: 78, verao: 200, outono: 300 };   // pré-visualizar uma estação (um dia típico de cada uma)
+const estacao = (lugar, date) => { const d = date || new Date(); let fx = ''; try { fx = localStorage.getItem('nau:est') || ''; } catch (e) { }
+  let x; if (FORCA[fx]) x = FORCA[fx]; else { const dd = SUL[lugar] ? new Date(d.getTime() + 182.5 * 864e5) : d; x = Math.floor((Date.UTC(dd.getFullYear(), dd.getMonth(), dd.getDate()) - Date.UTC(dd.getFullYear(), 0, 0)) / 864e5); }
+  const k = x >= 335 || x < 60 ? 'inverno' : x < 152 ? 'primavera' : x < 244 ? 'verao' : 'outono', frio = lugar === 'aurora' ? 1 : lugar === 'rio' || lugar === 'gize' ? 0 : 1;
+  const gelo = frio * (x >= 335 ? rampa(x, 335, 356) : x < 60 ? 1 : x < 88 ? 1 - rampa(x, 60, 88) : 0);
+  const neve = lugar === 'aurora' ? (x >= 300 ? rampa(x, 300, 325) : x < 110 ? 1 : x < 140 ? 1 - rampa(x, 110, 140) : 0) : frio * (x >= 338 ? rampa(x, 338, 352) : x < 62 ? 1 : x < 76 ? 1 - rampa(x, 62, 76) : 0);
+  const flores = x >= 66 && x < 156 ? Math.min(rampa(x, 66, 90), 1 - rampa(x, 140, 156)) : 0, folhas = x >= 250 && x < 345 ? Math.min(rampa(x, 250, 272), 1 - rampa(x, 325, 345)) : 0;
+  const calor = x >= 150 && x < 250 ? Math.min(rampa(x, 150, 172), 1 - rampa(x, 228, 250)) : 0;
+  return { k, x, gelo: lugar === 'aurora' || lugar === 'paris' || lugar === 'novaiorque' || lugar === 'lisboa' ? 0 : gelo, neve, flores, folhas, calor, nome: { inverno: 'Inverno', primavera: 'Primavera', verao: 'Verão', outono: 'Outono' }[k] }; };
+// as cores mudam um pouco com a estação: o inverno mais frio e pálido, o outono mais quente, o verão mais luminoso, a primavera mais verde
+const tinge = (P, E) => { if (!E) return P; const o = Object.assign({}, P), w = Math.max(E.neve * .7, E.gelo * .5);
+  if (w) { o.land = mix(o.land, '#7E93A8', .22 * w); o.hz = mix(o.hz, '#C5D2DE', .16 * w); o.top = mix(o.top, '#3E5068', .1 * w); }
+  if (E.gelo) { o.seaT = mix(o.seaT, P.day ? '#AFC6D8' : '#2A3A4C', .45 * E.gelo); o.seaB = mix(o.seaB, P.day ? '#8FAAC0' : '#1C2836', .45 * E.gelo); }
+  if (E.folhas) { o.glow = mix(o.glow, '#F2A65A', .22 * E.folhas); o.hz = mix(o.hz, '#D8A46E', .14 * E.folhas); o.land = mix(o.land, '#4A3220', .14 * E.folhas); }
+  if (E.calor && P.day) { o.top = mix(o.top, '#2E6EB0', .18 * E.calor); o.glow = mix(o.glow, '#FFE7B0', .16 * E.calor); o.seaT = mix(o.seaT, '#3F7FA6', .14 * E.calor); }
+  if (E.flores) o.land = mix(o.land, '#30472E', .14 * E.flores);
+  return o; };
 
 // W × H em unidades do ecrã; o: { anim, tall (ecrã de entrada), id }
-const svg = (W, H, o = {}) => { const now = o.date || new Date(), h = now.getHours() + now.getMinutes() / 60, P = pal(h), id = o.id || 'sc', tall = H > W * 1.2;
+const svg = (W, H, o = {}) => { const now = o.date || new Date(), h = now.getHours() + now.getMinutes() / 60, E = estacao('farol', now), P = tinge(pal(h), E), id = o.id || 'sc', tall = H > W * 1.2;
   const hz = H * (tall ? .6 : .64), r = rng(1 + now.getDate() * 31), u = Math.min(W, H * 1.6) / 400, A = !!o.anim, ra = rng(77 + now.getDate());
   // sol de dia, lua de noite, num arco sobre o mar
   const t = P.day ? (h - 6.5) / 13.1 : ((h < 12 ? h + 24 : h) - 19.6) / 10.9, bx = W * (.18 + .64 * t), by = hz - Math.sin(Math.PI * t) * hz * (tall ? .62 : .72) + hz * .06, br = 9 * u;

@@ -59,21 +59,28 @@ OS.on && OS.on('ready', () => { const am = A.accMenu; if (!am || am._ap) return;
 const MODOS = [['competicao', 'Competição', 'trophy', 'Participar de rankings, desafios e jogos.'], ['diversao', 'Diversão', 'gamepad', 'Jogar, explorar funcionalidades e interagir mesmo sem assistir a conteúdos.']];
 const modos = () => U.ls.get('oc_an_modos', null);
 const modosHTML = (sel, acao) => `<div class="ap-modos" role="group" aria-label="Como queres usar os Animes">${MODOS.map(([k, n, ic, d]) => `<button type="button" class="ap-modo${(sel || []).includes(k) ? ' on' : ''}" data-act="${acao}" data-k="${k}" aria-pressed="${(sel || []).includes(k)}"><b>${UI.ic(ic)}${n}</b><span>${d}</span><i aria-hidden="true">${UI.ic('check')}</i></button>`).join('')}</div>`;
-A.apModo = b => { const m = new Set(modos() || []); if (m.has(b.dataset.k)) m.delete(b.dataset.k); else m.add(b.dataset.k); U.ls.set('oc_an_modos', [...m]); OS.request(); };
+A.apSinoTira = b => { const al = +b.dataset.al || 0, mal = +b.dataset.mal || 0, L = ((OS.one('animeavisos') || {}).L || []).filter(a => !((al && a.al === al) || (mal && a.mal === mal))); OS.setOne('animeavisos', { L }); OS.request(); };
+const pushAn = () => { try { if (OS.Push && OS.Push.sync) OS.Push.sync('an'); } catch (e) { } };   // o Pursuit avisa quem tem a Competição
+A.apModo = b => { const m = new Set(modos() || []); if (m.has(b.dataset.k)) m.delete(b.dataset.k); else m.add(b.dataset.k); U.ls.set('oc_an_modos', [...m]); pushAn(); OS.request(); };
 const perfil = () => { if (!conta()) return `<div class="so-vazio"><b>Entra na tua conta Prumo</b><p>O perfil dos animes, os comentários e a comunidade precisam de uma conta.</p></div>`; if (SO().eu) SO().eu();
-  return `<section class="hu">${cartao(meu(), true)}<div class="so-sec"><h3>Como usas os Animes</h3>${modosHTML(modos() || [], 'apModo')}</div><p class="mut">O teu perfil Prumo (o do resto do app) fica à parte: aqui só aparecem o nome, o @, a foto e o fundo.</p></section>`; };
+  const avs = OS.Animes && OS.Animes.avisos ? OS.Animes.avisos() : [];
+  const avH = `<div class="so-sec"><h3>Avisos de episódios novos</h3>${avs.length ? `<ul class="ap-avs">${avs.map(a => `<li>${a.img ? `<img src="${esc(a.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}<b>${esc(a.t)}</b><button type="button" class="btn sm" data-act="apSinoTira" data-al="${+a.al || 0}" data-mal="${+a.mal || 0}">Tirar</button></li>`).join('')}</ul>` : '<p class="mut" style="margin:0">Abre um anime que ainda está a sair e toca no sino para seres avisado quando sair cada episódio.</p>'}</div>`;
+  return `<section class="hu">${cartao(meu(), true)}<div class="so-sec"><h3>Como usas os Animes</h3>${modosHTML(modos() || [], 'apModo')}</div>${avH}<p class="mut">O teu perfil Prumo (o do resto do app) fica à parte: aqui só aparecem o nome, o @, a foto e o fundo.</p></section>`; };
 
 /* ---------- a primeira vez nos Animes: Competição e/ou Diversão ---------- */
 let ESC = null; A.apEsc = b => { ESC = ESC || []; const i = ESC.indexOf(b.dataset.k); if (i >= 0) ESC.splice(i, 1); else ESC.push(b.dataset.k); OS.request(); };
-A.apEscOk = () => { U.ls.set('oc_an_modos', ESC && ESC.length ? ESC : ['competicao', 'diversao']); ESC = null; OS.request(); };
+A.apEscOk = () => { U.ls.set('oc_an_modos', ESC && ESC.length ? ESC : ['competicao', 'diversao']); ESC = null; pushAn(); OS.request(); };
 const boasVindas = () => `<section class="ap-bv"><span class="ap-bvm">${SO().marca ? SO().marca('sm') : ''}</span><h2>Como queres usar os Animes?</h2><p>Escolhe uma ou as duas. Podes mudar quando quiseres em O meu perfil.</p>${modosHTML(ESC || [], 'apEsc')}<button type="button" class="btn an-cta" data-act="apEscOk">${ESC && ESC.length ? 'Continuar' : 'Quero as duas'}</button></section>`;
 // destaque no início dos Animes, conforme o modo
 const destaque = () => { const m = modos() || []; if (!m.length) return ''; const L = [];
   if (m.includes('competicao')) L.push(`<a class="ap-dq" href="#animes.pursuit"><b>${UI.ic('trophy')}Pursuit de hoje</b><span>Às 20h saem as pistas. Quem acerta primeiro ganha mais.</span></a><a class="ap-dq" href="#animes.ranking"><b>${UI.ic('award')}Ranking de animes</b><span>Os pontos de todos os jogos.</span></a>`);
   if (m.includes('diversao')) L.push(`<a class="ap-dq" href="#animes.comunidade"><b>${UI.ic('users')}Comunidade</b><span>Indicações, pedidos, sugestões e a equipa.</span></a><a class="ap-dq" href="#animes.clas"><b>${UI.ic('chat')}Clãs e conversas</b><span>Joga e conversa em grupo.</span></a>`);
   return `<div class="ap-dqs">${L.join('')}</div>`; };
-OS.on && OS.on('ready', () => { const v = OS.views.animes; if (!v || v._ap) return; OS.views.animes = sub => { const h = v(sub); if (sub || !conta()) return h;
-    const i = h.indexOf('<div class="an'); if (i < 0) return h; const extra = modos() ? destaque() : boasVindas(); const j = h.indexOf('>', i) + 1; return h.slice(0, j) + extra + h.slice(j); }; OS.views.animes._ap = 1; });
+// v3.78: a assinatura da parceria no fim de cada página dos Animes
+const assina = h => { const P = OS.Parceria, i = h.lastIndexOf('</div>'); return P && i > 0 ? h.slice(0, i) + P.assinatura() + h.slice(i) : h; };
+OS.on && OS.on('ready', () => { const v = OS.views.animes; if (!v || v._ap) return; OS.views.animes = sub => { const h = v(sub); if (sub || !conta()) return assina(h);
+    // v3.77: os cartões vão por baixo do destaque (o carrossel fica no topo, como antes, e nada fica debaixo do relógio)
+    const i = h.indexOf('<div class="an-pad">'); if (i < 0) return assina(h); const extra = modos() ? destaque() : boasVindas(), j = i + 20; return assina(h.slice(0, j) + extra + h.slice(j)); }; OS.views.animes._ap = 1; });
 
 /* ---------- comentários em cada anime ---------- */
 const CM = {}, VER = new Set(); let DR = '';

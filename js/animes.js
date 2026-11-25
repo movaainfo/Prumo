@@ -31,6 +31,13 @@ const mine = x => x && mineAll().find(a => (x.al && a.al === x.al) || (x.mal && 
 const kOf = x => x.al ? 'a' + x.al : x.mal ? 'm' + x.mal : 'k' + x.ki;
 const pick = x => ({ al: x.al || 0, mal: x.mal || 0, ki: x.ki || 0, t: x.t || '', ro: x.ro || '', img: x.img || '', col: x.col || '', ban: x.ban || '', y: x.y || 0, sea: x.sea || '', fmt: x.fmt || '', eps: x.eps || 0, dur: x.dur || 0, gen: (x.gen || []).slice(0, 6), stu: x.stu || '' });
 OS.Animes = { list: mineAll, watching: () => mineAll().filter(a => a.status === 'A ver') };
+// v3.77: o sino de cada anime: avisa no telemóvel quando sai um episódio novo (o servidor segue os horários do AniList)
+OS.ONE_DEF.animeavisos = { L: [] };   // [{ al, mal, t, img }]
+const sinoL = () => (OS.one('animeavisos') || {}).L || [];
+const sinoOn = x => !!x && sinoL().some(a => (x.al && a.al === x.al) || (x.mal && a.mal === x.mal));
+const sinoPode = x => !!x && (x.st === 'RELEASING' || x.st === 'NOT_YET_RELEASED' || x.st === 'HIATUS' || !!x.next);
+const sinoBtn = x => !sinoPode(x) && !sinoOn(x) ? '' : `<button type="button" class="an-sino${sinoOn(x) ? ' on' : ''}" data-act="anSino" data-k="${esc(kOf(x))}" aria-pressed="${sinoOn(x)}">${UI.ic('bell')}<span>${sinoOn(x) ? 'Vais ser avisado dos episódios novos' : 'Avisar quando sair episódio novo'}</span></button>`;
+OS.Animes.avisos = sinoL;
 
 /* ---------- nomes em português ---------- */
 const SEAS = ['WINTER', 'SPRING', 'SUMMER', 'FALL'], SEN = { WINTER: 'Inverno', SPRING: 'Primavera', SUMMER: 'Verão', FALL: 'Outono' }, SEM = { WINTER: 'jan. a mar.', SPRING: 'abr. a jun.', SUMMER: 'jul. a set.', FALL: 'out. a dez.' };
@@ -233,6 +240,13 @@ const itemOf = k => ITEMS.get(k) || (() => { const m = mineAll().find(a => kOf(a
 // tocar outra vez no estado que já está marcado tira o anime da lista (se já tem nota, resenha, tier, favorito ou episódios, pergunta antes)
 const hasMore = a => !!(+a.nota || String(a.rev || '').trim() || a.fav || a.tier || +a.ep > 0 || LS0().some(l => (l.items || []).includes(kOf(a))));
 const rmAnime = a => { OS.del('animes', a.id); topSave(topL().filter(id => id !== a.id)); UI.toast(`${a.t} saiu da tua lista`, 'pos'); };
+A.anSino = b => { const x = itemOf(b.dataset.k); if (!x) return; const L = sinoL().slice(), on = sinoOn(x);
+  const nv = on ? L.filter(a => !((x.al && a.al === x.al) || (x.mal && a.mal === x.mal))) : L.concat({ al: x.al || 0, mal: x.mal || 0, t: x.t || '', img: x.img || '' }).slice(-80);
+  OS.setOne('animeavisos', { L: nv });
+  if (on) UI.toast('Deixas de ser avisado dos episódios de ' + x.t + '.');
+  else { const P = OS.Push, liga = P && !P.on() && !P.why(); UI.toast(P && P.on() ? 'Vais receber um aviso quando sair cada episódio de ' + x.t + '.' : P && P.why() ? 'Guardado. ' + P.msg(P.why()) : 'Guardado. Liga as notificações para receberes o aviso.', P && P.why() ? 'warn' : '');
+    if (liga) P.enable(); }
+  OS.request(); };
 A.anSet = b => { const x = itemOf(b.dataset.k); if (!x) return; const ex = mine(x);
   if (ex && ex.status === b.dataset.s) return hasMore(ex) ? UI.ask('Tirar da tua lista?', `${esc(ex.t)} sai da tua lista com a tua nota, a resenha, o tier e os episódios vistos.`, 'Tirar', () => rmAnime(ex)) : rmAnime(ex);
   const r = setStatus(x, b.dataset.s); UI.toast(`${x.t}: ${b.dataset.s}`, 'pos'); if (b.dataset.s === 'Visto' && r && !r.nota) UI.toast('Dá-lhe uma nota de 1 a 10 e escreve a tua resenha', 'pos'); };
@@ -297,10 +311,10 @@ A.anTr = async b => { const k = b.dataset.k, d = DATA['d:' + k] && DATA['d:' + k
 A.anTrailer = b => { const box = document.getElementById('anTrl'); if (!box) return; box.innerHTML = box.innerHTML ? '' : `<div class="an-ytp"><iframe src="https://www.youtube-nocookie.com/embed/${esc(b.dataset.y)}?autoplay=1&playsinline=1&rel=0" title="Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; };
 
 /* ================= páginas ================= */
-const AT = [['', 'Início'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['pursuit', 'Pursuit'], ['ranking', 'Ranking'], ['clas', 'Clãs'], ['comunidade', 'Comunidade'], ['perfil', 'O meu perfil'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
+const AT = [['', 'Início'], ['parceria', 'A parceria'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['pursuit', 'Pursuit'], ['ranking', 'Ranking'], ['clas', 'Clãs'], ['comunidade', 'Comunidade'], ['perfil', 'O meu perfil'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
 const P = {};
 V.animes = sub => { const k = sub === 'anime' ? 'anime' : P[sub || ''] ? (sub || '') : '';
-  return UI.head('Animes', 'Todos os animes do mundo: o que estás a ver, já viste ou queres ver, com a tua nota, resenha e tier list. E para descobrir: a temporada, os episódios da semana e os melhores de cada ano.', `<a class="btn pri an-hbtn" href="#animes.pesquisar">${UI.ic('search')}<span>Pesquisar anime</span></a>`, OS.Social ? OS.Social.marca('xs') : 'Parceria')
+  return UI.head('Animes', 'Os Animes do Prumo, em parceria com a ' + (OS.Social && OS.Social.nome ? OS.Social.nome() : 'PHANTOM') + ': todos os animes do mundo, a tua lista, nota e tier list, o Pursuit todas as noites, o ranking, os clãs e a comunidade.', `<a class="btn pri an-hbtn" href="#animes.pesquisar">${UI.ic('search')}<span>Pesquisar anime</span></a>`, OS.Social ? OS.Social.marca('xs') : 'Parceria')
     + UI.tabs('animes', AT, k === 'anime' ? '' : k) + `<div class="an${k === '' || k === 'anime' ? ' an-top0' : ''}">${(k === 'anime' ? detail : P[k])()}</div>`; };
 
 /* destaque em carrossel (muda sozinho; pára quando tocas ou passas o rato; sem animação para quem a desliga) */
@@ -323,19 +337,19 @@ const heroImg = (x, i) => { const mob = x.img || x.ban, bad = x.ban && banBad(x.
   return `<div class="an-hpic">${mob ? `<picture><source media="(max-width:640px)" srcset="${esc(mob)}"><img class="an-hb${desk === x.ban ? '' : ' an-hbc'}" src="${esc(desk)}" alt="" decoding="async" referrerpolicy="no-referrer"${i ? ' loading="lazy"' : ' fetchpriority="high"'}></picture>` : '<div class="an-hb an-hb0"></div>'}<div class="an-hg"></div><button type="button" class="an-hopen" data-act="anOpen" data-k="${esc(kOf(x))}" tabindex="-1" aria-label="${esc(x.t)}: ver detalhes"></button></div>`; };
 // estado na lista (tocar outra vez tira): no telemóvel só o ícone, ao lado do botão laranja
 const bmBtn = (x, m) => `<button type="button" class="btn an-ghost an-bm${m ? ' on' : ''}" data-act="anSet" data-k="${esc(kOf(x))}" data-s="${m ? esc(m.status) : 'Quero ver'}" aria-pressed="${!!m}" title="${m ? esc(m.status) + ': toca para tirar da lista' : 'Quero ver'}">${UI.ic(m ? 'check' : 'mark')}<span class="an-bmt">${m ? esc(m.status) : 'Quero ver'}</span></button>`;
-const heroSlides = L => L.map((x, i) => { x = keep(x); const m = mine(x), nt = nextT(x), ds = x.desc ? autoTr(x.desc) : '';
-  return `<article class="an-slide${i === HI ? ' on' : ''}" data-i="${i}" style="--c:${colOf(x)}" aria-hidden="${i !== HI}"${i !== HI ? ' inert' : ''}>${heroImg(x, i)}
+const heroSlides = (L, o = 0) => L.map((x, j) => { const i = j + o; x = keep(x); const m = mine(x), nt = nextT(x), ds = x.desc ? autoTr(x.desc) : '';
+  return `<article class="an-slide${i === HI ? ' on' : ''}" data-i="${i}" style="--c:${colOf(x)}" aria-hidden="${i !== HI}"${i !== HI ? ' inert' : ''}>${heroImg(x, j)}
     <div class="an-hc"><div class="an-ht"><span class="an-hk">${m && m.status === 'A ver' ? 'Continuas a ver' : 'Em destaque'}</span><h2${x.t.length > 34 ? ' class="lg"' : ''}>${esc(x.t)}</h2>
       <p class="an-hm">${[x.sc ? '★ ' + scT(x.sc) : '', fmtN(x.fmt), x.eps ? x.eps + ' episódios' : '', x.y, (x.gen || []).slice(0, 3).map(gN).join(', ')].filter(Boolean).map(esc).join(' · ')}</p>
       ${ds ? `<p class="an-hd">${esc(ds.slice(0, 260))}${ds.length > 260 ? '…' : ''}</p>` : ''}${nt ? `<p class="an-hn">${esc(nt)}</p>` : ''}
       <div class="an-hb2">${m && m.status === 'A ver' ? `<button type="button" class="btn an-cta" data-act="anEp" data-id="${m.id}" data-d="1">${UI.ic('plus')}Vi o episódio ${(+m.ep || 0) + 1}</button>` : `<button type="button" class="btn an-cta" data-act="anOpen" data-k="${esc(kOf(x))}">${UI.ic('play')}Ver detalhes</button>`}${bmBtn(x, m)}</div></div></div></article>`; }).join('');
 let HOLD = 0, HOLDT = 0;
-const heroOf = L => { if (!L.length) return ''; if (HI >= L.length) HI = 0;
+const heroOf = L => { if (!L.length) return ''; const pp = OS.Parceria ? 1 : 0, nS = L.length + pp; if (HI >= nS) HI = 0;   // v3.78: o primeiro destaque é a parceria Prumo & PHANTOM
   // depois de redesenhar, o carrossel volta ao destaque onde estavas (sem animação)
   // (logo a seguir a pôr a página, antes de a desenhar: não pisca o primeiro destaque)
   if (HI) (window.queueMicrotask || (f => Promise.resolve().then(f)))(() => { const s = document.querySelector('#view .an-hs'); if (s && Math.round(s.scrollLeft / Math.max(1, s.clientWidth)) !== HI) s.scrollLeft = HI * s.clientWidth; });
-  return `<section class="an-hero${Date.now() < HOLD ? ' hold' : ''}" aria-roledescription="carrossel" aria-label="Em destaque"><div class="an-chrome"><a class="an-cb an-cbl" href="#visao" aria-label="Voltar ao Prumo">${OS.Lock && OS.Lock.logo ? OS.Lock.logo(34) : UI.ic('left')}</a><span class="an-cbg"></span><a class="an-cb" href="#animes.lista" aria-label="A minha lista">${UI.ic('mark')}</a><a class="an-cb" href="#animes.pesquisar" aria-label="Pesquisar anime">${UI.ic('search')}</a></div><div class="an-hs">${heroSlides(L)}</div>
-  ${L.length > 1 ? `<button type="button" class="an-har l" data-act="anHero" data-d="-1" aria-label="Anterior">${UI.ic('left')}</button><button type="button" class="an-har r" data-act="anHero" data-d="1" aria-label="Seguinte">${UI.ic('right')}</button><div class="an-dots">${L.map((_, i) => `<button type="button" class="${i === HI ? 'on' : ''}" data-act="anHero" data-i="${i}" aria-label="Destaque ${i + 1}"></button>`).join('')}</div>` : ''}</section>`; };
+  return `<section class="an-hero${Date.now() < HOLD ? ' hold' : ''}" aria-roledescription="carrossel" aria-label="Em destaque"><div class="an-chrome"><a class="an-cb an-cbl" href="#visao" aria-label="Voltar ao Prumo">${OS.Parceria ? OS.Parceria.mini() : OS.Lock && OS.Lock.logo ? OS.Lock.logo(34) : UI.ic('left')}</a><span class="an-cbg"></span><a class="an-cb" href="#animes.lista" aria-label="A minha lista">${UI.ic('mark')}</a><a class="an-cb" href="#animes.pesquisar" aria-label="Pesquisar anime">${UI.ic('search')}</a></div><div class="an-hs">${pp ? OS.Parceria.slide(0, HI === 0) : ''}${heroSlides(L, pp)}</div>
+  ${nS > 1 ? `<button type="button" class="an-har l" data-act="anHero" data-d="-1" aria-label="Anterior">${UI.ic('left')}</button><button type="button" class="an-har r" data-act="anHero" data-d="1" aria-label="Seguinte">${UI.ic('right')}</button><div class="an-dots">${Array.from({ length: nS }, (_, i) => `<button type="button" class="${i === HI ? 'on' : ''}" data-act="anHero" data-i="${i}" aria-label="${pp && !i ? 'A parceria' : 'Destaque ' + (i + 1 - pp)}"></button>`).join('')}</div>` : ''}</section>`; };
 const heroMark = h => { h.querySelectorAll('.an-slide').forEach((s, j) => { const on = j === HI; s.classList.toggle('on', on); s.setAttribute('aria-hidden', !on); s.inert = !on; }); h.querySelectorAll('.an-dots button').forEach((d, j) => d.classList.toggle('on', j === HI)); };
 const reduceM = () => (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) || document.documentElement.classList.contains('lite-x');
 const heroGo = i => { const h = document.querySelector('#view .an-hero'), sc = h && h.querySelector('.an-hs'); if (!sc) return; const n = sc.children.length; if (!n) return; HI = (i + n) % n;
@@ -353,7 +367,7 @@ document.addEventListener('animationend', e => { if (e.animationName !== 'anFill
 P[''] = () => { const S = sNow(), L = mineAll(), sea = need('s:' + S.y + S.s, H6, () => API.season(S), true), tr = need('trend', H6, API.trending, true), rc = need('recent', 15 * 6e4, API.recent, true), cl = need('classics', 24 * 36e5, API.classics, true);
   const watching = U.sortBy(L.filter(a => a.status === 'A ver'), a => -(a._u || 0)), want = L.filter(a => a.status === 'Quero ver'), favs = L.filter(a => a.fav);
   const feat = (tr || []).filter(x => x.ban && x.desc).slice(0, 6), hx = watching.find(a => a.ban), slides = hx ? [fromMine(hx)].concat(feat.filter(x => kOf(x) !== kOf(hx)).slice(0, 5)) : feat.length ? feat : (sea || []).filter(x => x.ban).slice(0, 5);
-  if (HI >= slides.length) HI = 0;
+  if (HI >= slides.length + (OS.Parceria ? 1 : 0)) HI = 0;
   const hero = slides.length ? heroOf(slides) : (tr || sea ? '' : errBox('trend') || loading());
   const cont = watching.length ? row('Continuar a ver', watching.slice(0, 12).map(a => { const t = +a.eps || 0, ep = +a.ep || 0;
       return wide(fromMine(a), { badge: 'E' + (ep + 1), sub: t ? `Episódio ${ep} de ${t}` : `Episódio ${ep}`, p: t ? Math.round(ep / t * 100) : 0, act: `<button type="button" class="an-plus" data-act="anEp" data-id="${a.id}" data-d="1" aria-label="Vi mais um episódio">${UI.ic('plus')}1</button>` }); }), { wide: 1, more: '#animes.lista' }) : '';
@@ -459,6 +473,7 @@ A.anCalMine = b => { OS.ui.anCalMine = b.checked ? 1 : 0; OS.request(); };
 
 /* Melhores do ano: escolhe o ano */
 P.premios = () => OS.Premios ? OS.Premios.view() : '';
+P.parceria = () => OS.Parceria ? '<div class="an-pad">' + OS.Parceria.pagina() + '</div>' : '';
 // v3.73: jogos de anime (Pursuit), ranking por pontos e clãs com conversas (js/social.js)
 P.pursuit = () => OS.Social ? OS.Social.hunter() : ''; P.comunidade = () => OS.AnimeSoc ? OS.AnimeSoc.comunidade() : ''; P.perfil = () => OS.AnimeSoc ? OS.AnimeSoc.perfil() : ''; P.ranking = () => OS.Social ? OS.Social.ranking() : ''; P.clas = () => OS.Social ? OS.Social.clas() : ''; // v3.72: Prémios Prumo (votação de fim de ano) e premiações oficiais
 P.melhores = () => { const y0 = new Date().getFullYear(), y = +OS.ui.anY || y0, k = 'b:' + y, L = need(k, y === y0 ? H6 : 72 * 36e5, () => API.best(y), true), f = OS.ui.anBf || '';
@@ -598,7 +613,7 @@ const detail = () => { const k = OS.ui.anK || '', base = itemOf(k);
   return `<section class="an-dh" style="--c:${colOf(x)}">${x.ban && !banBad(x.ban) ? `<img class="an-hb" src="${esc(x.ban)}" alt="" decoding="async" referrerpolicy="no-referrer">` : '<div class="an-hb an-hb0"></div>'}<div class="an-hg"></div>
       <div class="an-dc">${cover(x, 'an-dp')}<div class="an-dt"><a class="an-back" href="#animes">${UI.ic('left')}Animes</a><h2>${esc(x.t)}</h2>${x.ro || x.na ? `<p class="an-alt">${esc([x.ro, x.na].filter(Boolean).join(' · '))}</p>` : ''}
         <div class="an-dm">${x.sc ? `<span class="an-dsc">${UI.ic('star')}<b>${scT(x.sc)}</b><small>nota da comunidade</small></span>` : ''}${rk ? `<span class="an-drk">${rk.rank}.º mais bem avaliado de sempre</span>` : rky ? `<span class="an-drk">${rky.rank}.º mais bem avaliado de ${rky.y}</span>` : ''}</div>
-        <p class="an-hm">${meta.slice(0, 4).map(r => esc(r[0])).join(' · ')}</p>${nt ? `<p class="an-hn">${esc(nt)}</p>` : ''}<div class="an-gen">${(x.gen || []).map(g => `<span>${esc(gN(g))}</span>`).join('')}</div></div></div></section>
+        <p class="an-hm">${meta.slice(0, 4).map(r => esc(r[0])).join(' · ')}</p>${nt ? `<p class="an-hn">${esc(nt)}</p>` : ''}${sinoBtn(x)}<div class="an-gen">${(x.gen || []).map(g => `<span>${esc(gN(g))}</span>`).join('')}</div></div></div></section>
     <div class="an-pad">${OS.Social ? OS.Social.noAnime(x) : ''}${mineBox}
     ${d && d.desc ? (() => { const at = tr ? '' : autoTr(d.desc), auto = !tr && at !== d.desc, orig = OS.ui.anOrig === k, txt = tr || (auto && !orig ? at : d.desc);
       return `<section class="an-syn"><div class="an-rh"><h3>Sinopse</h3>${tr || auto ? '' : langName() ? `<button type="button" class="btn xs an-ghost" data-act="anTr" data-k="${kk}" ${TRB ? 'disabled' : ''}>${TRB === k ? 'A traduzir…' : 'Traduzir com a IA'}</button>` : ''}</div><p>${esc(txt).replace(/\n/g, '<br>')}</p>${tr ? '<small>Traduzido pela IA.</small>' : auto ? `<small>Tradução automática. <button type="button" class="an-lnk" data-act="anOrig" data-k="${esc(k)}">${orig ? 'Ver a tradução' : 'Ver o original'}</button></small>` : ''}</section>`; })() : !d ? (errBox('d:' + k) || loading('A buscar os detalhes…')) : ''}
