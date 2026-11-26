@@ -74,7 +74,7 @@ const view = () => { const e = E(), a = analise(), t = today(), hasAI = OS.AI &&
   if (a.soc >= 30) ins.push(`<b>${a.soc}%</b> do tempo vai para redes sociais e vídeo: é o tempo mais fácil de cortar (limites de app ajudam).`);
   if (a.pick != null) ins.push(`Pegas no telemóvel <b>${a.pick} vezes por dia</b>${a.pick ? `, uma vez a cada ${Math.max(1, Math.round(16 * 60 / a.pick))} min acordado` : ''}.${a.pick > 100 ? ' Cada interrupção custa foco: deixar o telemóvel noutra divisão quando estudas ajuda.' : ''}`);
   if (a.sono) ins.push(a.sono.mais < a.sono.menos - 10 ? `Nos dias de mais ecrã dormes <b>${hm(a.sono.menos - a.sono.mais)} a menos</b> (${hm(a.sono.mais)} contra ${hm(a.sono.menos)}, em ${a.sono.n} noites).` : `O teu sono parece não mudar com o ecrã (${hm(a.sono.mais)} nos dias de mais ecrã, ${hm(a.sono.menos)} nos outros).`);
-  else ins.push('Com o sono registado (Corpo › Sono), o Prumo mostra se dormes menos nos dias de mais ecrã.');
+  else ins.push('Com o sono registado (o atalho do iPhone em Definições › Atalhos), o Prumo mostra se dormes menos nos dias de mais ecrã.');
   return `<div class="ec">
     <section class="ec-top"><div class="ec-sc ${n[1]}"><b>${a.score}</b><small>saúde digital</small></div><div class="ec-tx"><small>Média dos últimos 7 dias${a.n7 ? '' : ' (do último print)'}</small><h2>${hm(a.m7)} <span>por dia</span></h2><p><span class="ec-nv ${n[1]}">${n[0]}</span> ${n[2]}</p></div></section>
     <div class="pn"><div class="pn-h"><h3>Últimos 14 dias</h3><span class="mut">${a.dentro}/${Math.max(a.n7, 1)} dias dentro da meta${a.seq ? ' · ' + a.seq + (a.seq === 1 ? ' dia seguido' : ' dias seguidos') : ''}</span></div>${barras()}

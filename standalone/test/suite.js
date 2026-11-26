@@ -870,7 +870,7 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     await k.p.click('[data-act=foApagarUma]').catch(() => { }); await sleep(800); const n2 = await E(k.p, () => OS.Fotos.estado.L.length);
     await k.p.reload(); await unlock(k.p).catch(() => { }); await sleep(600); await E(k.p, () => { location.hash = 'fotos'; }); await sleep(1200); const n3 = await E(k.p, () => (OS.Fotos.estado.L || []).length);
     ok('Fotos com a IA (miniaturas): categorias e o que mostra cada foto, sugestões da IA para apagar, pesquisa pelo conteúdo ("pizza"), ver a foto em grande com a informação, apagar um grupo de iguais e uma foto; ficam guardadas no aparelho',
-      ia.cats.includes('Comida e bebida') && ia.comIA === 6 && ia.sugIA >= 1 && FOTM.n >= 1 && !!pq.t && pq.n >= 1 && n1 < n0 && vv.modal && /\d+×\d+/.test(vv.info) && n2 === n1 - 1 && n3 === n2,
+      ia.cats.includes('Comida e bebida') && ia.comIA >= 6 && ia.sugIA >= 1 && FOTM.n >= 1 && !!pq.t && pq.n >= 1 && n1 < n0 && vv.modal && /\d+×\d+/.test(vv.info) && n2 === n1 - 1 && n3 === n2,
       JSON.stringify({ ia, pq, n0, n1, n2, n3, vv: vv.info.slice(0, 120), fm: FOTM.n }).slice(0, 500));
     await k.ctx.close(); }
   // v3.75: perfil dos animes (@ fixo, foto e fundo), comentários com spoilers tapados pela IA, gostos, denúncias e a Comunidade (indicações, pedidos, sugestões, equipa, recrutamento)
@@ -1231,7 +1231,7 @@ async function sharedTests(b) {
     // peso, altura e bioimpedância
     ok('treino já não tem mapa nem peso (passaram para o Corpo)', await E(p, () => { location.hash = 'treino'; return true; }) && (await sleep(300), await E(p, () => !/Mapa corporal|Peso e medidas/.test(document.querySelector('#view .tabs').textContent))));
     await E(p, () => location.hash = 'corpo.peso'); await sleep(500);
-    ok('corpo: separadores visão, desafios, mapa e peso', await E(p, () => [...document.querySelectorAll('#view .tabs a')].map(a => a.textContent).join('|') === 'Visão|Desafios e metas|Mapa corporal|Peso e medidas'));
+    ok('corpo: separadores visão, desafios, mapa, peso e tempo de ecrã', await E(p, () => [...document.querySelectorAll('#view .tabs a')].map(a => a.textContent).join('|') === 'Visão|Desafios e metas|Mapa corporal|Peso e medidas|Tempo de ecrã'));
     await p.fill('#bx_h', '178'); await p.dispatchEvent('#bx_h', 'change'); await sleep(200);
     ok('altura guardada', await E(p, () => OS.one('diet').h === 178));
     await p.click('#view [data-new=body][data-defs]'); await sleep(400);
@@ -1589,6 +1589,29 @@ async function sharedTests(b) {
         ucP.length === 1 && /inline_data/.test(ucP[0]) && pv2.n === 4 && pv2.sub && /Universidade Teste 2026\/2027/.test(pv2.t) && c2.L.length === 4 && c2.L.includes('Feriado municipal|feriado') && c2.L.includes('Exames finais|exames') && !c2.L.some(x => /Férias de Natal/.test(x))
         && c2.fonte === 'Universidade Teste 2026/2027' && /Agora: Aulas do 1\.º semestre até/.test(c2.strip) && /A seguir: Semana de receção daqui a 3 dias/.test(c2.strip) && c2.cal.includes('Semana de receção') && c2.cal.includes('Aulas do 1.º semestre'),
         JSON.stringify({ ai: ucP.length, pv2: { n: pv2.n, sub: pv2.sub }, c2 }).slice(0, 600)); }
+    // v3.80: Corpo › Tempo de ecrã (print do iPhone/Android lido pela IA, ou à mão) e a análise da saúde digital
+    { const dd = n => { const x = new Date(Date.now() + n * 864e5); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+      let ecP = []; await ctx.route(/generativelanguage/, rt => { const b = rt.request().postData() || ''; if (!/Lê os números exatamente como aparecem/.test(b)) return rt.fallback(); ecP.push(b);
+        const o = { periodo: 'semana', dias: [[-6, 400], [-5, 120], [-4, 380], [-3, 100], [-2, 360], [-1, 90], [3, 200]].map(([n, m]) => ({ d: dd(n), min: m })), apps: [{ n: 'Instagram', min: 600, c: 'social' }, { n: 'YouTube', min: 500, c: 'video' }, { n: 'WhatsApp', min: 300, c: 'mensagens' }, { n: 'Notion', min: 200, c: 'produtividade' }], levantamentos: 85, notificacoes: 120 };
+        rt.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(o) }] } }] }) }); });
+      await E(p, () => { location.hash = 'corpo.ecra'; }); await sleep(500);
+      const e0 = await E(p, () => ({ tab: [...document.querySelectorAll('#view .tabs a')].some(a => /Tempo de ecrã/.test(a.textContent) && a.classList.contains('on')), v: document.getElementById('view').innerText }));
+      await p.fill('#view form[data-form=ecMao] input[name=h]', '2'); await p.fill('#view form[data-form=ecMao] input[name=m]', '30'); await p.click('#view form[data-form=ecMao] button'); await sleep(300);
+      await E(p, dd0 => { const add = (d, m) => OS.add('sleep', { date: d, min: m, src: 'teste' }, { silent: true }); [[-5, 360], [-4, 480], [-3, 350], [-2, 470], [-1, 340], [0, 490]].forEach(([n, m]) => add(dd0[n + 6], m)); }, [-6, -5, -4, -3, -2, -1, 0].map(dd));
+      const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
+      await p.setInputFiles('#ecFile', { name: 'tempo-de-ecra.png', mimeType: 'image/png', buffer: PNG }); await p.click('#view [data-act=ecLer]'); await sleep(1500);
+      const e1 = await E(p, () => ({ L: OS.one('ecra').L.map(r => r.min), v: document.getElementById('view').innerText.replace(/\s+/g, ' '), sc: (document.querySelector('.ec-sc b') || {}).textContent, bars: document.querySelectorAll('.ec-b i[style*="height:"]').length, over: document.querySelectorAll('.ec-b.over').length, apps: [...document.querySelectorAll('.ec-apps b')].map(b => b.textContent) }));
+      if (process.env.SHOTS) { try { await p.screenshot({ path: path.join(process.env.SHOTS, 'tempo-ecra.png'), fullPage: true }); } catch (e) { } }
+      ok('tempo de ecrã: separador no Corpo; à mão e pelo print da semana (o dia de hoje escrito à mão fica, datas futuras não entram); média, nível, dias por ano, redes sociais, levantamentos e o sono nos dias de mais ecrã',
+        e0.tab && /Ainda não há tempo de ecrã/.test(e0.v) && ecP.length === 1 && /inline_data/.test(ecP[0]) && e1.L.join(',') === '400,120,380,100,360,90,150' && /3 h 49 por dia/.test(e1.v) && /Moderado/.test(e1.v) && e1.sc === '62'
+        && /58 dias inteiros por ano/.test(e1.v) && /69%/.test(e1.v) && /85 vezes por dia/.test(e1.v) && /dormes 1 h 30 a menos/.test(e1.v) && e1.apps[0] === 'Instagram' && e1.apps.length === 4 && e1.over === 3 && /7 dias lidos|6 dias lidos/.test(e1.v),
+        JSON.stringify({ tab: e0.tab, ai: ecP.length, L: e1.L, sc: e1.sc, over: e1.over, apps: e1.apps, v: e1.v.slice(0, 300) }).slice(0, 700));
+      await p.click('#view .ec-md summary'); await p.fill('#view form[data-form=ecMeta] input[name=h]', '2'); await p.fill('#view form[data-form=ecMeta] input[name=m]', '0'); await p.click('#view form[data-form=ecMeta] button'); await sleep(300);
+      const e2 = await E(p, () => ({ meta: OS.one('ecra').meta, h: (document.querySelector('.ec .pn-h .mut') || {}).textContent || '' }));
+      ok('tempo de ecrã: mudar a meta diária (2 h) recalcula os dias dentro da meta', e2.meta === 120 && /^3\/7 dias dentro da meta/.test(e2.h), JSON.stringify(e2));
+      await E(p, () => { location.hash = 'visao'; }); await sleep(700);
+      const vg = await E(p, () => { const C = [...document.querySelectorAll('#view .vn-c')].map(c => c.innerText.replace(/\s+/g, ' ')); return { ecra: C.find(t => /^Tempo de ecrã/.test(t)) || '', cal: C.find(t => /^Calendário escolar/.test(t)) || '' }; });
+      ok('Visão geral: cartões do tempo de ecrã (média e meta) e do calendário escolar (Agora e A seguir)', /3 h 49/.test(vg.ecra) && /3 de 7 dias/.test(vg.ecra) && /Agora Aulas do 1\.º semestre/.test(vg.cal) && /A seguir Semana de receção/.test(vg.cal), JSON.stringify(vg).slice(0, 400)); }
     // DESPORTO
     await E(p, () => { location.hash = 'desporto.novo'; }); await sleep(400); await p.click('#view .sp-pc[data-k=padel]'); await sleep(400);
     await p.click('#view [data-act=spTab][data-v=registar]'); await sleep(300); await p.selectOption('#view form[data-form=spLog] select[name=res]', 'Vitória'); await p.fill('#view input[name=st_setsG]', '2'); await p.click('#view form[data-form=spLog] button.pri'); await sleep(400);
@@ -4867,6 +4890,21 @@ async function fundoTests(b) { cur = 'Fundo'; console.log('\n=== Ecrã de entrad
   await p.tap('#fdSheet .fd-mv .fd-sw'); await sleep(150);
   await p.tap('#fdSheet [data-fd=rio]'); await sleep(200); await p.tap('#fdSheet [data-fd=x]'); await sleep(200);
   ok('Escolher "Rio de Janeiro" muda o fundo na hora', await E(p, () => OS.Fundo.get() === 'rio' && !document.getElementById('fdSheet') && document.querySelectorAll('.lk-scene svg path').length > 5 && document.querySelectorAll('.lk-scene svg rect').length > 10));
+  // v3.80: as estações em cada fundo (a ria do farol congela no inverno e descongela na primavera) e pré-visualizar cada estação
+  await p.tap('#lkBg'); await p.waitForSelector('#fdSheet'); await sleep(200);
+  const e0 = await E(p, () => [...document.querySelectorAll('#fdSheet .fd-e')].map(b => b.textContent + (b.classList.contains('on') ? '*' : '')));
+  await p.tap('#fdSheet [data-fdest=inverno]'); await sleep(300);
+  const e1 = await E(p, () => { const q = (svg, sel) => { const d = document.createElement('div'); d.innerHTML = svg; return d.querySelector(sel); }, dt = new Date(), F = (k) => OS.Fundo.model(k, 400, 300, { id: 'tt' + k, date: dt }); dt.setHours(12, 0, 0, 0);
+    const inv = OS.Scene.svg(400, 300, { id: 'ti', date: dt }), par = F('paris'), rio = F('rio'); localStorage.setItem('nau:est', 'primavera'); const pri = OS.Scene.svg(400, 300, { id: 'tp', date: dt }), pri2 = F('paris');
+    localStorage.setItem('nau:est', 'outono'); const out = OS.Scene.svg(400, 300, { id: 'to', date: dt }); localStorage.setItem('nau:est', 'verao'); const ver = OS.Scene.svg(400, 300, { id: 'tv', date: dt }), giz = F('gize'); localStorage.setItem('nau:est', 'inverno');
+    return { gelo: !!q(inv, '.sc-gelo > rect') && !q(inv, '.sc-glint') && !!q(inv, '.sc-preso'), neveFarol: !!q(inv, '.sc-est circle'), placas: !!q(pri, '.sc-gelo > path') && !q(pri, '.sc-gelo > rect') && !!q(pri, '.sc-glint'),
+      folhas: !!q(out, '.sc-est ellipse') && !q(out, '.sc-gelo'), calor: !!q(ver, '.sc-est .fd-shim') && !q(ver, '.sc-gelo'), parisNeve: !!q(par, '.sc-est circle'), rioSemNeve: !q(rio, '.sc-est circle'), petalas: !!q(pri2, '.sc-est ellipse'), gizeCalor: !!q(giz, '.sc-est .fd-shim'),
+      est: localStorage.getItem('nau:est'), on: (document.querySelector('#fdSheet .fd-e.on') || {}).textContent }; });
+  await p.tap('#fdSheet [data-fdest=""]'); await sleep(300); const e2 = await E(p, () => ({ est: localStorage.getItem('nau:est'), on: (document.querySelector('#fdSheet .fd-e.on') || {}).textContent || '' }));
+  await p.tap('#fdSheet [data-fd=x]'); await sleep(200);
+  ok('Fundos com as estações: no inverno a ria do farol congela (o barco fica preso, sem reflexos) e neva; na primavera o gelo parte-se em placas; folhas no outono; calor no verão; neve em Paris mas não no Rio; pré-visualizar cada estação e voltar a "Agora"',
+    e0.length === 5 && /^Agora \((Inverno|Primavera|Verão|Outono)\)\*$/.test(e0[0]) && e1.gelo && e1.neveFarol && e1.placas && e1.folhas && e1.calor && e1.parisNeve && e1.rioSemNeve && e1.petalas && e1.gizeCalor && e1.est === 'inverno' && e1.on === 'Inverno' && e2.est === null && /^Agora/.test(e2.on),
+    JSON.stringify({ e0, e1, e2 }).slice(0, 500));
   const png = 'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGNk+M/AwMDAxMDAwMDAAAAhGQIBvZqP7QAAAABJRU5ErkJggg==';
   await p.tap('#lkBg'); await p.waitForSelector('#fdSheet'); await p.setInputFiles('#fdSheet .fd-file', { name: 'praia.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') }); await sleep(1200);
   ok('Foto da galeria vira o fundo', await E(p, () => OS.Fundo.get() === 'foto' && !!document.querySelector('.lk-scene .fd-photo')));

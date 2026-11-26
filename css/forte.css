@@ -428,3 +428,13 @@ body.onb-open{overflow:hidden}
 :is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .fd-anim .fd-fall{transform-box:fill-box;transform-origin:center;animation:fdFall var(--du,12s) linear var(--dl,0s) infinite!important}
 @keyframes fdLine{from{transform:translate(0,0)}to{transform:translate(var(--fx),var(--fy))}}
 @keyframes fdFall{0%{opacity:0;transform:translate(0,0) rotate(0deg)}8%{opacity:.95}90%{opacity:.8}100%{opacity:0;transform:translate(var(--fx),var(--fy)) rotate(540deg)}}
+
+/* v3.80 · as estações também no farol: neve e folhas a cair, o ar a tremer no verão */
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .fd-fall{transform-box:fill-box;transform-origin:center;animation:fdFall var(--du,12s) linear var(--dl,0s) infinite!important}
+:is(#splash:not([hidden]):not(.out),#acc,#fdSheet,.fd-live.fd-on) .sc-anim .fd-shim{animation:fdShim var(--du,2.8s) ease-in-out var(--dl,0s) infinite!important}
+@media (prefers-reduced-motion:reduce){.sc-est .fd-fall{display:none}}
+.fd-est{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 14px}
+.fd-est span{font:12px var(--sans);color:#8A93A0;margin-right:4px}
+.fd-e{font:13px var(--sans);color:#C7BFB2;background:none;border:1px solid rgba(233,227,216,.16);border-radius:999px;padding:6px 12px;cursor:pointer}
+.fd-e.on{border-color:#F2C48D;color:#F5E2C8;background:rgba(242,196,141,.1)}
+.fd-e:focus-visible{outline:2px solid #F2C48D;outline-offset:2px}

@@ -38,6 +38,37 @@ const tinge = (P, E) => { if (!E) return P; const o = Object.assign({}, P), w = 
   if (E.flores) o.land = mix(o.land, '#30472E', .14 * E.flores);
   return o; };
 
+// v3.80 · o que cada estação acrescenta à cena (leve: formas simples; só mexe com o fundo animado)
+//   gelo: a água congela no inverno (uma placa com fendas) e no degelo parte-se em placas soltas, cada vez menos, até desaparecer;
+//   neve: a cair e um véu branco no chão; flores na primavera; folhas a cair no outono; no verão, o ar a tremer no horizonte.
+const camada = (W, H, E, g = {}) => { const out = { gelo: '', resto: '' }; if (!E) return out; const u = g.u || Math.min(W, H * 1.6) / 400, A = !!g.anim, r = rng(g.seed || 991), G = [], R2 = [];
+  if (g.agua && E.gelo > .06) { const [a0, a1] = g.agua, ice = g.day ? '#DCE7F1' : '#566C82', cr = g.day ? '#FFFFFF' : '#93A9BE', hh = a1 - a0;
+    if (E.gelo >= .82) { G.push(`<rect y="${f(a0)}" width="${f(W)}" height="${f(hh)}" fill="${ice}" opacity="${f(.5 + .32 * E.gelo)}"/><rect y="${f(a0)}" width="${f(W)}" height="${f(Math.max(1, 1.2 * u))}" fill="#FFFFFF" opacity=".45"/>`);
+      for (let i = 0; i < 10; i++) { let x = r() * W, y = a0 + hh * (.08 + r() * .88); const p = .35 + (y - a0) / hh; let d = `M${f(x)} ${f(y)}`;
+        for (let k = 0; k < 4; k++) { x += (8 + r() * 26) * u * p * (r() < .5 ? -1 : 1); y += (r() - .5) * 5 * u * p; d += ` L${f(x)} ${f(y)}`; }
+        G.push(`<path d="${d}" fill="none" stroke="${cr}" stroke-width="${f(.7 * u)}" opacity=".6"/>`); }
+      for (let i = 0; i < 6; i++) { const y = a0 + hh * (.15 + r() * .8), w = (30 + r() * 60) * u * (.35 + (y - a0) / hh); G.push(`<ellipse cx="${f(r() * W)}" cy="${f(y)}" rx="${f(w)}" ry="${f(w * .05)}" fill="#FFFFFF" opacity=".22"/>`); } }
+    else { const n = Math.round(34 * E.gelo); for (let i = 0; i < n; i++) { const y = a0 + hh * Math.pow(r(), .85), p = .3 + (y - a0) / hh, w = (14 + r() * 48) * u * p, h = w * (.12 + r() * .08), x = r() * W;
+        G.push(`<path d="M${f(x)} ${f(y)} l${f(w * .3)} ${f(-h * .6)} l${f(w * .5)} ${f(h * .1)} l${f(w * .2)} ${f(h * .7)} l${f(-w * .45)} ${f(h * .4)}Z" fill="${ice}" opacity="${f(.55 + .3 * E.gelo)}"/>`); } } }
+  const chao = g.chao != null ? g.chao : H * .9;
+  if (E.neve > .05) { R2.push(`<rect y="${f(chao)}" width="${f(W)}" height="${f(H - chao)}" fill="#EEF3F8" opacity="${f(.15 * E.neve)}"/>`);
+    const n = Math.round((A ? 46 : 16) * E.neve); for (let i = 0; i < n; i++) { const x = r() * W, s = (.8 + r() * 1.5) * u;
+      R2.push(A ? `<g class="fd-fall" style="--fx:${f((r() - .5) * 60 * u)}px;--fy:${f(H * (1.1 + r() * .3))}px;--du:${f(9 + r() * 10)}s;--dl:-${f(r() * 18)}s"><circle cx="${f(x)}" cy="${f(-6 * u - r() * H * .25)}" r="${f(s)}" fill="#FFFFFF" opacity=".9"/></g>`
+        : `<circle cx="${f(x)}" cy="${f(r() * H * .85)}" r="${f(s * .8)}" fill="#FFFFFF" opacity="${f(.3 + r() * .35)}"/>`); } }
+  if (E.flores > .05 && g.flores !== false && g.chaoAgua) { const n = Math.round((A ? 22 : 16) * E.flores);   // à frente há água: pétalas a cair e a boiar
+    for (let i = 0; i < n; i++) { const s = (1.6 + r() * 1.2) * u, c = ['#F6C6D4', '#FBE1E8', '#F2A9BE'][Math.floor(r() * 3)];
+      if (A && i % 2) R2.push(`<g class="fd-fall" style="--fx:${f(-(30 + r() * 100) * u)}px;--fy:${f(H * (1 + r() * .2))}px;--du:${f(10 + r() * 9)}s;--dl:-${f(r() * 18)}s"><ellipse cx="${f(r() * W * 1.1)}" cy="${f(-6 * u - r() * H * .2)}" rx="${f(s)}" ry="${f(s * .6)}" fill="${c}"/></g>`);
+      else { const x = r() * W, y = chao + r() * Math.max(4 * u, (H - chao) * .8); R2.push(`<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(s)}" ry="${f(s * .4)}" fill="${c}" opacity=".8"/>`); } } }
+  else if (E.flores > .05 && g.flores !== false) { const C = ['#F6C6D4', '#FFFFFF', '#F7D774', '#E9A0C0', '#C9B6F2'], n = Math.round(30 * E.flores), fh = Math.max(4 * u, (H - chao) * .5);
+    for (let i = 0; i < n; i++) { const x = r() * W, y = chao + (.1 + r() * .9) * fh, s = (1.1 + r() * 1.1) * u, c = C[Math.floor(r() * C.length)];
+      R2.push(`<g opacity=".92">${[0, 1, 2, 3, 4].map(k => `<circle cx="${f(x + Math.cos(k * 1.2566) * s)}" cy="${f(y + Math.sin(k * 1.2566) * s)}" r="${f(s * .62)}" fill="${c}"/>`).join('')}<circle cx="${f(x)}" cy="${f(y)}" r="${f(s * .42)}" fill="#F2B84B"/></g>`); } }
+  if (E.folhas > .05 && g.folhas !== false) { const C = ['#D9792B', '#B8452A', '#E3A33B', '#8C4A22'], n = Math.round((A ? 18 : 14) * E.folhas);
+    for (let i = 0; i < n; i++) { const c = C[Math.floor(r() * C.length)], s = (2 + r() * 1.6) * u;
+      if (A) R2.push(`<g class="fd-fall" style="--fx:${f(-(30 + r() * 110) * u)}px;--fy:${f(H * (1 + r() * .2))}px;--du:${f(11 + r() * 10)}s;--dl:-${f(r() * 20)}s"><ellipse cx="${f(r() * W * 1.1)}" cy="${f(-8 * u - r() * H * .2)}" rx="${f(s)}" ry="${f(s * .5)}" fill="${c}"/></g>`);
+      else { const x = r() * W, y = chao + r() * Math.max(4 * u, (H - chao) * .6); R2.push(`<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(s)}" ry="${f(s * .45)}" fill="${c}" opacity=".85" transform="rotate(${Math.round(r() * 180)} ${f(x)} ${f(y)})"/>`); } } }
+  if (E.calor > .1 && g.day && g.calor !== false) { const hz = g.hz || H * .64; R2.push(`<g class="fd-shim">${[18, 12, 7, 3].map(h => `<rect y="${f(hz - h * u * .6)}" width="${f(W)}" height="${f(h * u)}" fill="#FFE7B0" fill-opacity="${f(.06 * E.calor)}"/>`).join('')}</g>`); }
+  if (G.length) out.gelo = `<g class="sc-gelo">${G.join('')}</g>`; if (R2.length) out.resto = `<g class="sc-est" data-est="${E.k}">${R2.join('')}</g>`; return out; };
+
 // W × H em unidades do ecrã; o: { anim, tall (ecrã de entrada), id }
 const svg = (W, H, o = {}) => { const now = o.date || new Date(), h = now.getHours() + now.getMinutes() / 60, E = estacao('farol', now), P = tinge(pal(h), E), id = o.id || 'sc', tall = H > W * 1.2;
   const hz = H * (tall ? .6 : .64), r = rng(1 + now.getDate() * 31), u = Math.min(W, H * 1.6) / 400, A = !!o.anim, ra = rng(77 + now.getDate());
@@ -77,6 +108,9 @@ const svg = (W, H, o = {}) => { const now = o.date || new Date(), h = now.getHou
   const nG = tall ? 7 : 11, grass = A ? Array.from({ length: nG }, (_, i) => { const x = (i + .2 + ra() * .6) * W / nG, y = wallY(x) + .5 * u, h = (12 + ra() * 13) * u; let d = '';
       for (let k = 0; k < 8; k++) { const dx = (k - 3.5) * 1.4 * u, lean = (ra() - .5) * 12 * u, hh = h * (.55 + ra() * .45); d += `M${f(x + dx)} ${f(y)} q${f(lean * .25)} ${f(-hh * .55)} ${f(lean)} ${f(-hh)}`; }
       return `<path class="sc-grass" style="transform-origin:${f(x)}px ${f(y)}px;--du:${f(2.8 + ra() * 2.4)}s;--dl:-${f(ra() * 4)}s" d="${d}" fill="none" stroke="${mix(L, '#000000', .1)}" stroke-width="${f(1.5 * u)}" stroke-linecap="round"/>`; }).join('') : '';
+  // v3.80 · a estação no farol: a ria congela (o barco fica preso no gelo, sem ondas nem espuma), neve nas dunas, no farol e na muralha
+  const frozen = E.gelo > .6, EC = camada(W, H, E, { u, anim: A, day: P.day, hz, agua: [hz + 1, wy - 3 * u], chao: wy - 2 * u, seed: 5 + now.getDate() });
+  const sw = mix('#FFFFFF', P.hz, P.day ? .05 : .45), sop = f(.85 * E.neve), cap = E.neve > .05 ? `<path d="M0 ${f(hz - 7 * u)} Q${f(W * .12)} ${f(hz - 11 * u)} ${f(W * .24)} ${f(hz - 8 * u)} T${f(W * .46)} ${f(hz - 3 * u)}" fill="none" stroke="${sw}" stroke-width="${f(1.6 * u)}" opacity="${sop}"/><path d="M${f(fx - fw * .5)} ${f(fy - 5 * u)} L${f(fx)} ${f(fy - 9 * u)} L${f(fx + fw * .5)} ${f(fy - 5 * u)}" fill="none" stroke="${sw}" stroke-width="${f(1.4 * u)}" opacity="${sop}"/><path d="M0 ${f(wy - 4 * u)} L${f(W * .08)} ${f(wy - 6 * u)} L${f(W * .1)} ${f(wy)} L${f(W * .55)} ${f(wy + 2 * u)} L${f(W * .58)} ${f(wy - 3 * u)} L${f(W)} ${f(wy - 1 * u)}" fill="none" stroke="${sw}" stroke-width="${f(2.6 * u)}" stroke-linejoin="round" opacity="${sop}"/>` : '';
   return `<svg class="scene ${o.anim ? 'sc-anim' : ''}" viewBox="0 0 ${f(W)} ${f(H)}" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
   <defs><linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.top}"/><stop offset="1" stop-color="${P.hz}"/></linearGradient>
     <linearGradient id="${id}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.seaT}"/><stop offset="1" stop-color="${P.seaB}"/></linearGradient>
@@ -88,13 +122,13 @@ const svg = (W, H, o = {}) => { const now = o.date || new Date(), h = now.getHou
   <circle cx="${f(bx)}" cy="${f(by)}" r="${f(br * 9)}" fill="url(#${id}g)"/><circle cx="${f(bx)}" cy="${f(by)}" r="${f(br)}" fill="${P.glow}" opacity="${P.day ? .95 : .9}"/>${P.day ? '' : `<circle cx="${f(bx + br * .35)}" cy="${f(by - br * .2)}" r="${f(br * .85)}" fill="${P.top}" opacity=".35"/>`}
   <g class="sc-cloud">${cloud(W * .22, hz * .38, 70 * u, .35)}${cloud(W * .7, hz * .22, 90 * u, .25)}</g>
   <rect y="${f(hz)}" width="${f(W)}" height="${f(H - hz)}" fill="url(#${id}w)"/><rect y="${f(hz)}" width="${f(W)}" height="${f(Math.max(1, .8 * u))}" fill="${mix(P.hz, '#FFFFFF', .25)}" opacity=".5"/>
-  <g class="sc-glint">${glint}</g>${swell}<path d="${dune}" fill="${L}"/>${pal7}${pier}${beam}${tower}${boat}${gulls}${foam}${wall}${grass}
+  ${frozen ? '' : `<g class="sc-glint">${glint}</g>${swell}`}${EC.gelo}<path d="${dune}" fill="${L}"/>${pal7}${pier}${beam}${tower}${frozen ? boat.replace('<g class="sc-bdrift"><g class="sc-boat">', '<g class="sc-preso"><g>') : boat}${gulls}${frozen ? '' : foam}${wall}${grass}${cap}${EC.resto}
   <rect width="${f(W)}" height="${f(H)}" fill="url(#${id}v)"/></svg>`; };
 
 // grão de filme: um pequeno ruído desenhado uma vez e repetido (fica parado, não pesa)
 let GR = '';
 const grain = () => { if (GR) return GR; try { const c = document.createElement('canvas'); c.width = c.height = 96; const x = c.getContext('2d'), d = x.createImageData(96, 96); for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 26; } x.putImageData(d, 0, 0); GR = c.toDataURL('image/png'); } catch (e) { GR = ''; } return GR; };
-OS.Scene = { svg, pal, grain };
+OS.Scene = { svg, pal, grain, estacao, camada, tinge };
 // o mesmo grão, muito leve, por trás da app inteira (fora do modo leve)
 try { const R = document.documentElement; if (!R.classList.contains('lite')) R.style.setProperty('--grain', `url(${grain()})`); } catch (e) { }
 })();

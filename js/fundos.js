@@ -38,12 +38,19 @@ const ridge = (W, H, y0, amp, n, r, smooth) => { let d = `M0 ${f(H)} L0 ${f(y0)}
   pts.forEach((p, i) => { if (!i) { d += ` L0 ${f(p[1])}`; return; } const q = pts[i - 1]; d += smooth ? ` Q${f((q[0] + p[0]) / 2)} ${f(Math.min(q[1], p[1]) - amp * .25)} ${f(p[0])} ${f(p[1])}` : ` L${f(p[0])} ${f(p[1])}`; });
   return d + ` L${f(W)} ${f(H)}Z`; };
 
+// v3.80 · as estações em cada fundo (o hemisfério conta: no Rio é verão em janeiro). Neve onde neva de verdade (Paris, Nova Iorque,
+// Fuji, a aurora); em Lisboa e no Rio não neva; no deserto de Gizé não há flores nem folhas, só o calor.
+const HZ = { rio: .66, lisboa: .64, paris: .7, aurora: .64, fuji: .62, gize: .68, novaiorque: .64 };
+const estDe = (k, o) => { const E = Object.assign({}, S.estacao ? S.estacao(k, o && o.date) : null); if (!S.estacao) return null; if (k === 'lisboa' || k === 'rio') E.neve = 0; if (k === 'gize') { E.flores = 0; E.folhas = 0; E.neve = 0; } return E; };
+const AGUA = { paris: 1, rio: 1, lisboa: 1, novaiorque: 1, aurora: 1 }, pe = (k, o) => { const P = S.pal(hour(o)); try { return S.tinge ? S.tinge(P, estDe(k, o)) : P; } catch (e) { return P; } };
+const comEst = (k, svg, W, H, o) => { try { if (!HZ[k] || !S.camada) return svg; const E = estDe(k, o), P = k === 'aurora' ? S.pal(23.4) : S.pal(hour(o)), c = S.camada(W, H, E, { anim: ANIM, day: P.day, hz: H * HZ[k], seed: 31 + k.length, chao: H * .9, chaoAgua: !!AGUA[k] });
+    if (!c.resto) return svg; const m = svg.lastIndexOf('v)"/>'), i = m > 0 ? svg.lastIndexOf('<rect', m) : -1; return i > 0 ? svg.slice(0, i) + c.resto + svg.slice(i) : svg.replace('</svg>', c.resto + '</svg>'); } catch (e) { return svg; } };
 const MODELS = {
   // a cena de sempre: o mar visto do forte, com o Farol da Barra
   farol: (W, H, o) => S.svg(W, H, o),
   // v3.2 · lugares do mundo, desenhados à mão (o céu segue a hora; as cores seguem a paleta do app; com o fundo animado, tudo mexe)
   // Rio de Janeiro: o Pão de Açúcar com o bondinho, o Cristo Redentor no Corcovado e a baía de Guanabara
-  rio: (W, H, o) => { const P = S.pal(hour(o)), hz = H * .66, B = base(W, H, o, hz, P), u = B.u, r = B.r, night = !P.day || P.beam > .25, s = Math.min(W, H * 1.25) / 400;
+  rio: (W, H, o) => { const P = pe('rio', o), hz = H * .66, B = base(W, H, o, hz, P), u = B.u, r = B.r, night = !P.day || P.beam > .25, s = Math.min(W, H * 1.25) / 400;
     const land = mix(P.land, P.hz, .1), far = mix(P.land, P.hz, .35);
     const dome = (x, w, h, col) => `<path d="M${f(x)} ${f(hz + 2)}C${f(x)} ${f(hz - h * .95)} ${f(x + w * .22)} ${f(hz - h)} ${f(x + w * .48)} ${f(hz - h)}C${f(x + w * .78)} ${f(hz - h)} ${f(x + w)} ${f(hz - h * .45)} ${f(x + w)} ${f(hz + 2)}Z" fill="${col}"/>`;
     const sx = W * (W > H ? .08 : .02), uw = 70 * s, sw = 95 * s, sh = 118 * s, ux = sx, px = sx + uw * .85, utop = [ux + uw * .48, hz - 52 * s], ptop = [px + sw * .48, hz - sh];
@@ -57,7 +64,7 @@ const MODELS = {
     return wrap(W, H, B.defs, B.sky + B.sun + B.cloud(cx - 40 * s, hz - ch * .82, 70 * s, .32) + B.cloud(W * .35, hz * .3, 90 * u, .25) + birds(W, hz, u, mix(P.land, '#000000', .3), 4)
       + `<path d="${ridge(W, H, hz - 8 * u, 26 * u, 9, r, true)}" fill="${far}"/>` + cor + christ + dome(ux, uw, 52 * s, land) + dome(px, sw, sh, mix(land, '#000000', .1)) + cable + gond + water + lights + boats + B.vig); },
   // Lisboa: a ponte 25 de Abril sobre o Tejo, com os carros a passar, e o Cristo Rei na outra margem
-  lisboa: (W, H, o) => { const P = S.pal(hour(o)), hz = H * .64, B = base(W, H, o, hz, P), u = B.u, r = B.r, night = !P.day || P.beam > .25;
+  lisboa: (W, H, o) => { const P = pe('lisboa', o), hz = H * .64, B = base(W, H, o, hz, P), u = B.u, r = B.r, night = !P.day || P.beam > .25;
     const red = night ? '#9E3B22' : '#C2502C', dk = mix(P.land, P.hz, .2), dy = hz - H * .07, t1 = W * .3, t2 = W * .78, th = H * .3, tw = 5 * u;
     const bank = `<path d="${ridge(W, H, hz + 2, 18 * u, 8, r, true)}" fill="${dk}"/>`;
     const cr = `<g><rect x="${f(W * .07 - 6 * u)}" y="${f(hz - 52 * u)}" width="${f(12 * u)}" height="${f(40 * u)}" fill="${mix(dk, '#000000', .15)}"/><rect x="${f(W * .07 - 1.6 * u)}" y="${f(hz - 66 * u)}" width="${f(3.2 * u)}" height="${f(14 * u)}" fill="${night ? '#F2E6CF' : mix(P.hz, '#FFFFFF', .4)}"/><rect x="${f(W * .07 - 7 * u)}" y="${f(hz - 63 * u)}" width="${f(14 * u)}" height="${f(2 * u)}" fill="${night ? '#F2E6CF' : mix(P.hz, '#FFFFFF', .4)}"/></g>`;
@@ -71,7 +78,7 @@ const MODELS = {
     const sail = ANIM ? `<g class="fd-fly" style="--fx:${f(W * .5)}px;--du:120s;--dl:-40s"><g class="fd-bob"><path d="M${f(W * .1)} ${f(hz + 30 * u)}l${f(16 * u)} 0l${f(-3 * u)} ${f(3.4 * u)}l${f(-10 * u)} 0z" fill="${mix(P.land, '#000000', .3)}"/><path d="M${f(W * .1 + 7 * u)} ${f(hz + 29 * u)}l0 ${f(-17 * u)}l${f(9 * u)} ${f(16 * u)}z" fill="${mix(P.hz, '#FFFFFF', .55)}"/></g></g>` : '';
     return wrap(W, H, B.defs, B.sky + B.sun + B.cloud(W * .55, hz * .28, 90 * u, .28) + birds(W, hz, u, mix(P.land, '#000000', .3), 4) + bank + cr + water + cables + tower(t1) + tower(t2) + deck + cars + sail + B.vig); },
   // Paris: a Torre Eiffel a cintilar à noite (com o farol lá em cima a girar) e o Sena com um barco
-  paris: (W, H, o) => { const P = S.pal(hour(o)), hz = H * .7, B = base(W, H, o, hz, P), u = B.u, r = B.r, night = !P.day || P.beam > .25, s = Math.min(W, H * 1.15) / 400;
+  paris: (W, H, o) => { const P = pe('paris', o), hz = H * .7, B = base(W, H, o, hz, P), u = B.u, r = B.r, night = !P.day || P.beam > .25, s = Math.min(W, H * 1.15) / 400;
     const cx = W * (W > H ? .66 : .56), th = Math.min(215 * s, hz * .86), top = hz - th, col = night ? '#D9A55A' : mix(P.land, '#7A5E44', .35), L = th * .3;
     const tower = `<path d="M${f(cx - L)} ${f(hz)}C${f(cx - L * .62)} ${f(hz - th * .2)} ${f(cx - L * .3)} ${f(hz - th * .48)} ${f(cx - 6 * s)} ${f(top + th * .12)}L${f(cx - 1.4 * s)} ${f(top)}L${f(cx + 1.4 * s)} ${f(top)}L${f(cx + 6 * s)} ${f(top + th * .12)}C${f(cx + L * .3)} ${f(hz - th * .48)} ${f(cx + L * .62)} ${f(hz - th * .2)} ${f(cx + L)} ${f(hz)}L${f(cx + L * .52)} ${f(hz)}Q${f(cx)} ${f(hz - th * .24)} ${f(cx - L * .52)} ${f(hz)}Z" fill="${col}"/>
       <rect x="${f(cx - L * .62)}" y="${f(hz - th * .24)}" width="${f(L * 1.24)}" height="${f(4 * s)}" fill="${col}"/><rect x="${f(cx - L * .3)}" y="${f(hz - th * .5)}" width="${f(L * .6)}" height="${f(3.4 * s)}" fill="${col}"/><rect x="${f(cx - 4 * s)}" y="${f(top + th * .1)}" width="${f(8 * s)}" height="${f(2.6 * s)}" fill="${col}"/>`;
@@ -96,7 +103,7 @@ const MODELS = {
     const shoot = ANIM ? `<g class="fd-shoot" style="--du:13s;--dl:-4s"><path d="M${f(W * .8)} ${f(hz * .12)}l${f(-34 * u)} ${f(14 * u)}" stroke="#FFFFFF" stroke-width="${f(1.2 * u)}" stroke-linecap="round" opacity=".85"/></g>` : '';
     return wrap(W, H, defs, B.sky + aur + shoot + peaks + snow + water + cabins + B.vig); },
   // Monte Fuji: o pagode vermelho, o lago a refletir o monte e as pétalas de cerejeira a cair
-  fuji: (W, H, o) => { const P = S.pal(hour(o)), hz = H * .62, B = base(W, H, o, hz, P), u = B.u, r = B.r, s = Math.min(W, H * 1.3) / 400, cx = W * (W > H ? .56 : .5), fh = 150 * s, fw = 210 * s;
+  fuji: (W, H, o) => { const P = pe('fuji', o), hz = H * .62, B = base(W, H, o, hz, P), u = B.u, r = B.r, s = Math.min(W, H * 1.3) / 400, cx = W * (W > H ? .56 : .5), fh = 150 * s, fw = 210 * s;
     const mtn = (y0, sg, op) => `<path d="M${f(cx - fw)} ${f(y0)}Q${f(cx - fw * .35)} ${f(y0 - sg * fh * .55)} ${f(cx - fw * .12)} ${f(y0 - sg * fh)}L${f(cx + fw * .12)} ${f(y0 - sg * fh)}Q${f(cx + fw * .35)} ${f(y0 - sg * fh * .55)} ${f(cx + fw)} ${f(y0)}Z" fill="${mix(P.land, P.hz, .28)}" opacity="${op}"/>`;
     const snow = `<path d="M${f(cx - fw * .12)} ${f(hz - fh)}L${f(cx + fw * .12)} ${f(hz - fh)}Q${f(cx + fw * .22)} ${f(hz - fh * .8)} ${f(cx + fw * .3)} ${f(hz - fh * .66)}l${f(-10 * s)} ${f(-6 * s)}l${f(-8 * s)} ${f(9 * s)}l${f(-10 * s)} ${f(-7 * s)}l${f(-9 * s)} ${f(10 * s)}l${f(-10 * s)} ${f(-8 * s)}l${f(-9 * s)} ${f(9 * s)}l${f(-8 * s)} ${f(-9 * s)}Q${f(cx - fw * .2)} ${f(hz - fh * .82)} ${f(cx - fw * .12)} ${f(hz - fh)}Z" fill="#F4F6F8" opacity="${P.day ? .95 : .6}"/>`;
     const px = W * (W > H ? .2 : .18), py = H - Math.max(26 * s, (H - hz) * .55), pag = Array.from({ length: 5 }, (_, i) => { const w = (34 - i * 5) * s, y = py - 14 * s - i * 13 * s; return `<rect x="${f(px - w * .32)}" y="${f(y)}" width="${f(w * .64)}" height="${f(11 * s)}" fill="#8E2A1E"/><path d="M${f(px - w * .62)} ${f(y + 1 * s)}Q${f(px)} ${f(y - 5 * s)} ${f(px + w * .62)} ${f(y + 1 * s)}L${f(px + w * .45)} ${f(y - 2.4 * s)}L${f(px - w * .45)} ${f(y - 2.4 * s)}Z" fill="#3A1410"/>`; }).join('') + `<rect x="${f(px - .8 * s)}" y="${f(py - 14 * s - 5 * 13 * s - 10 * s)}" width="${f(1.6 * s)}" height="${f(12 * s)}" fill="#3A1410"/>`;
@@ -105,9 +112,9 @@ const MODELS = {
     const bx = W * .98, by = H * .04, blossom = Array.from({ length: 46 }, () => { const a = Math.PI * (.55 + r() * .5), d = (20 + r() * 110) * s; return `<circle cx="${f(bx + Math.cos(a) * d)}" cy="${f(by + Math.sin(a) * d * .55)}" r="${f((3 + r() * 5) * s)}" fill="${['#F6C6D4', '#F2A9BE', '#FBE1E8'][Math.floor(r() * 3)]}" opacity=".9"/>`; }).join('');
     const branch = `<path d="M${f(W + 4)} ${f(by - 4 * s)}Q${f(bx - 60 * s)} ${f(by + 20 * s)} ${f(bx - 130 * s)} ${f(by + 44 * s)}M${f(bx - 50 * s)} ${f(by + 16 * s)}q${f(-20 * s)} ${f(20 * s)} ${f(-28 * s)} ${f(40 * s)}" fill="none" stroke="#3B2622" stroke-width="${f(3.4 * s)}" stroke-linecap="round"/>`;
     const petals = ANIM ? Array.from({ length: 26 }, () => `<g class="fd-fall" style="--fx:${f(-(40 + r() * 140) * u)}px;--fy:${f(H * (.55 + r() * .5))}px;--du:${f(9 + r() * 9)}s;--dl:-${f(r() * 18)}s"><ellipse cx="${f(bx - r() * 160 * s)}" cy="${f(by + r() * 60 * s)}" rx="${f(2.6 * s)}" ry="${f(1.6 * s)}" fill="#F6C6D4"/></g>`).join('') : '';
-    return wrap(W, H, B.defs, B.sky + B.sun + B.cloud(cx + fw * .5, hz - fh * .7, 80 * s, .3) + B.cloud(cx - fw * .7, hz - fh * .4, 60 * s, .25) + birds(W, hz, u, mix(P.land, '#000000', .3), 3) + mtn(hz + 2, 1, 1) + snow + lake + hill + pag + branch + blossom + petals + B.vig); },
+    return wrap(W, H, B.defs, B.sky + B.sun + B.cloud(cx + fw * .5, hz - fh * .7, 80 * s, .3) + B.cloud(cx - fw * .7, hz - fh * .4, 60 * s, .25) + birds(W, hz, u, mix(P.land, '#000000', .3), 3) + mtn(hz + 2, 1, 1) + snow + lake + (S.camada ? S.camada(W, H, estDe('fuji', o), { u, day: P.day, agua: [hz + 1, H], seed: 17 }).gelo : '') + hill + pag + branch + blossom + petals + B.vig); },
   // Gizé: as três pirâmides e a Esfinge, as dunas e uma caravana de camelos a atravessar o deserto
-  gize: (W, H, o) => { const P = S.pal(hour(o)), hz = H * .68, B = base(W, H, o, hz, P, { big: 11 }), u = B.u, r = B.r, s = Math.min(W, H * 1.3) / 400, night = !P.day;
+  gize: (W, H, o) => { const P = pe('gize', o), hz = H * .68, B = base(W, H, o, hz, P, { big: 11 }), u = B.u, r = B.r, s = Math.min(W, H * 1.3) / 400, night = !P.day;
     const sand = night ? mix(P.land, '#5A4A36', .45) : mix('#C9A46A', P.hz, .25), sand2 = mix(sand, '#000000', .18), lit = night ? mix(sand, '#000000', .1) : mix(sand, '#FFFFFF', .12);
     const pyr = (x, w, h, cap) => `<path d="M${f(x - w / 2)} ${f(hz + 2)}L${f(x)} ${f(hz - h)}L${f(x + w / 2)} ${f(hz + 2)}Z" fill="${sand2}"/><path d="M${f(x)} ${f(hz - h)}L${f(x + w / 2)} ${f(hz + 2)}L${f(x + w * .08)} ${f(hz + 2)}Z" fill="${lit}"/>${cap ? `<path d="M${f(x)} ${f(hz - h)}L${f(x - w * .07)} ${f(hz - h * .86)}L${f(x + w * .07)} ${f(hz - h * .86)}Z" fill="${mix(lit, '#FFFFFF', .35)}"/>` : ''}`;
     const x0 = W * (W > H ? .5 : .42), pyrs = pyr(x0 + 120 * s, 120 * s, 70 * s, 0) + pyr(x0 + 10 * s, 190 * s, 118 * s, 1) + pyr(x0 - 120 * s, 210 * s, 128 * s, 0);
@@ -119,7 +126,7 @@ const MODELS = {
     const heat = P.day ? `<rect class="fd-heat" x="0" y="${f(hz - 3 * u)}" width="${f(W)}" height="${f(6 * u)}" fill="${P.glow}" opacity=".18"/>` : '';
     return wrap(W, H, B.defs, B.sky + B.sun + B.cloud(W * .3, hz * .25, 70 * u, .18) + birds(W, hz, u, mix(P.land, '#000000', .3), 2) + pyrs + heat + `<rect y="${f(hz)}" width="${f(W)}" height="${f(H - hz)}" fill="${sand}"/>` + sph + dunes + cara + wind + B.vig); },
   // Nova Iorque: o skyline de Manhattan com as janelas a acender, a Estátua da Liberdade com a tocha e o ferry
-  novaiorque: (W, H, o) => { const P = S.pal(hour(o)), hz = H * .64, B = base(W, H, o, hz, P, { stars: 40 }), u = B.u, r = B.r, s = Math.min(W, H * 1.2) / 400, night = !P.day || P.beam > .25;
+  novaiorque: (W, H, o) => { const P = pe('novaiorque', o), hz = H * .64, B = base(W, H, o, hz, P, { stars: 40 }), u = B.u, r = B.r, s = Math.min(W, H * 1.2) / 400, night = !P.day || P.beam > .25;
     const col = mix(P.land, P.hz, .1), col2 = mix(P.land, P.hz, .3);
     let b = '', win = '', x = -10 * u;
     while (x < W) { const w = (14 + r() * 26) * u, h = H * (.06 + Math.pow(r(), 1.6) * (W > H ? .16 : .22)), far = r() > .55; b += `<rect x="${f(x)}" y="${f(hz - h)}" width="${f(w)}" height="${f(h + 2)}" fill="${far ? col2 : col}"/>`;
@@ -164,8 +171,8 @@ const F = OS.Fundo = { list: NAMES, get,
   html: (W, H, o = {}) => { const k = get(), p = pid(), mv = !!o.anim && F.anim() && !calmo(), oo = Object.assign({}, o, { anim: mv ? 1 : 0 });
     if (k === 'foto') { if (PH[p]) return `<div class="fd-photo${mv ? ' fd-kb' : ''}" style="background-image:url('${PH[p]}')"></div>`; if (PH[p] == null) loadPhoto(p).then(v => { if (v) F.refresh(); }); return S.svg(W, H, oo); }
     if (k === 'farol') return S.svg(W, H, oo);
-    ANIM = mv; try { return MODELS[k](W, H, oo); } catch (e) { return S.svg(W, H, oo); } finally { ANIM = false; } },
-  model: (k, W, H, o = {}) => (MODELS[k] || MODELS.farol)(W, H, o),
+    ANIM = mv; try { return comEst(k, MODELS[k](W, H, oo), W, H, oo); } catch (e) { return S.svg(W, H, oo); } finally { ANIM = false; } },
+  model: (k, W, H, o = {}) => comEst(MODELS[k] ? k : 'farol', (MODELS[k] || MODELS.farol)(W, H, o), W, H, o),
   set: k => { if (k !== 'foto' && !MODELS[k]) return; LS.set(K(), k); LS.set('nau:bg', k); F.refresh(); OS.request && OS.request(); },
   setPhoto: async file => { const d = await shrink(file), p = pid(); await idb('readwrite', st => st.put(d, p)); PH[p] = d; F.set('foto'); },
   // troca o fundo que está à vista (ecrã de entrada e ecrã da conta), sem recarregar
@@ -186,12 +193,14 @@ document.addEventListener('visibilitychange', () => document.querySelectorAll('.
 /* ---------- escolher: folha com os modelos e a galeria ---------- */
 const close = () => { const s = document.getElementById('fdSheet'); if (s) s.remove(); };
 F.open = () => { close(); const portrait = innerHeight > innerWidth, tw = portrait ? 74 : 112, th = portrait ? 132 : 70, cur = get(), p = pid();
-  const mvT = (k, W, H, o) => { ANIM = F.anim() && !calmo(); try { return MODELS[k](W, H, Object.assign(o, { anim: ANIM ? 1 : 0 })); } finally { ANIM = false; } };
+  const mvT = (k, W, H, o) => { ANIM = F.anim() && !calmo(); try { Object.assign(o, { anim: ANIM ? 1 : 0 }); return comEst(k, MODELS[k](W, H, o), W, H, o); } finally { ANIM = false; } };
+  let fx = ''; try { fx = localStorage.getItem('nau:est') || ''; } catch (e) { } const ag = S.estacao ? S.estacao('farol') : null, EST = [['', 'Agora' + (ag && !fx ? ' (' + ag.nome + ')' : '')], ['inverno', 'Inverno'], ['primavera', 'Primavera'], ['verao', 'Verão'], ['outono', 'Outono']];
   const tile = (k, n) => `<button type="button" class="fd-t${k === cur ? ' on' : ''}" data-fd="${k}" aria-pressed="${k === cur}"><span class="fd-th">${mvT(k, tw * 3, th * 3, { id: 'fdt' + k })}</span><b>${n}</b></button>`;
   const ph = PH[p] ? `<button type="button" class="fd-t${cur === 'foto' ? ' on' : ''}" data-fd="foto" aria-pressed="${cur === 'foto'}"><span class="fd-th" style="background:url('${PH[p]}') center/cover"></span><b>A tua foto</b></button>` : '';
   const el = document.createElement('div'); el.id = 'fdSheet'; el.className = 'fd-sheet'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Escolher o fundo');
   el.innerHTML = `<div class="fd-box"><div class="fd-h"><b>Fundo do ecrã de entrada</b><button type="button" class="fd-x" data-fd="x" aria-label="Fechar">Feito</button></div>
     <label class="fd-mv"><input type="checkbox" data-fdmv ${F.anim() ? 'checked' : ''}><span class="fd-sw" aria-hidden="true"></span><span>Fundo animado <small>o farol a girar, o bondinho do Pão de Açúcar, os carros na ponte, a Torre Eiffel a cintilar, a aurora, as pétalas, a caravana e o ferry</small></span></label>
+    <div class="fd-est" role="group" aria-label="Ver o fundo noutra estação"><span>Estação</span>${EST.map(([k, n]) => `<button type="button" class="fd-e${fx === k ? ' on' : ''}" data-fdest="${k}" aria-pressed="${fx === k}">${n}</button>`).join('')}</div>
     <div class="fd-g" style="--tw:${tw}px;--ar:${tw}/${th}">${NAMES.map(([k, n]) => tile(k, n)).join('')}${ph}
       <label class="fd-t fd-gal"><input type="file" accept="image/*" class="fd-file"><span class="fd-th"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg></span><b>Da galeria</b></label></div>
     <p class="fd-msg" role="status"></p></div>`;
@@ -199,6 +208,7 @@ F.open = () => { close(); const portrait = innerHeight > innerWidth, tw = portra
   el.addEventListener('click', e => { if (e.target === el) return close(); const b = e.target.closest('[data-fd]'); if (!b) return; const k = b.dataset.fd; if (k === 'x') return close();
     F.set(k); el.querySelectorAll('[data-fd]').forEach(x => { if (x.dataset.fd === 'x') return; x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); }); });
   el.querySelector('[data-fdmv]').addEventListener('change', e => F.setAnim(e.target.checked));
+  el.querySelectorAll('[data-fdest]').forEach(b => b.addEventListener('click', () => { try { if (b.dataset.fdest) localStorage.setItem('nau:est', b.dataset.fdest); else localStorage.removeItem('nau:est'); } catch (e) { } F.refresh(); F.open(); }));
   el.querySelector('.fd-file').addEventListener('change', async e => { const file = e.target.files && e.target.files[0]; e.target.value = ''; if (!file) return; const m = el.querySelector('.fd-msg'); m.textContent = 'A preparar a foto…';
     try { await F.setPhoto(file); m.textContent = ''; F.open(); } catch (err) { m.textContent = err.message || 'Não consegui guardar a foto.'; } });
   setTimeout(() => { const b = el.querySelector('.fd-t.on') || el.querySelector('.fd-t'); b && b.focus({ preventScroll: true }); }, 30); };

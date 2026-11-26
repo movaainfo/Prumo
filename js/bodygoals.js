@@ -95,7 +95,7 @@ BG.view = () => { const C = U.sortBy(OS.all('bchal'), c => c.start, -1), on = C.
   ${old.length ? `<div class="sech"><div><h2>Histórico de desafios</h2></div></div><div class="ch-l">${old.slice(0, 12).map(chalCard).join('')}</div>` : ''}`; };
 
 /* ---------- separadores do Corpo ---------- */
-const CT = [['', 'Visão'], ['desafios', 'Desafios e metas'], ['mapa', 'Mapa corporal'], ['peso', 'Peso e medidas']];
+const CT = [['', 'Visão'], ['desafios', 'Desafios e metas'], ['mapa', 'Mapa corporal'], ['peso', 'Peso e medidas'], ['ecra', 'Tempo de ecrã']];
 OS.on('ready', () => { const base = V.corpo; if (!base || base._t) return;
   V.corpo = sub => { const tabs = UI.tabs('corpo', CT, sub || '');
     if (!sub || sub === 'visao') { const h = base(), i = h.indexOf('</header>'); const extra = tabs + BG.panel(true); return i > 0 ? h.slice(0, i + 9) + extra + h.slice(i + 9) : extra + h; }
@@ -103,6 +103,7 @@ OS.on('ready', () => { const base = V.corpo; if (!base || base._t) return;
     if (sub === 'desafios') return head + BG.view();
     if (sub === 'mapa') return head + (OS.BodyMap ? OS.BodyMap.view() : '');
     if (sub === 'peso') return head + (V.treinoPeso ? V.treinoPeso() : '');
+    if (sub === 'ecra') return head + (OS.Ecra ? OS.Ecra.view() : '');
     return head + BG.view(); };
   V.corpo._t = 1;
   const tr = V.treino; if (tr && !tr._t) { V.treino = sub => sub === 'mapa' || sub === 'peso' ? V.corpo(sub) : tr(sub); V.treino._t = 1; } });
