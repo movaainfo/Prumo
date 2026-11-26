@@ -11,14 +11,14 @@ const U = OS.U, UI = OS.UI, A = OS.act = OS.act || {}, esc = U.esc;
 const SO = () => OS.Social || {};
 const nome = () => (SO().nome ? SO().nome() : 'PHANTOM') || 'PHANTOM', ePh = () => /^phantom$/i.test(nome());
 const selo = n => { try { return OS.Lock && OS.Lock.logo ? OS.Lock.logo(n) : ''; } catch (e) { return ''; } };
-const RED = '#E8203A';
+const RED = '#B83444';
 
 /* ---------- o palco: o prumo e a aranha no mesmo fio ---------- */
 // modo: 'intro' (cai e balança), 'slide' (só balança), 'pag' (cai uma vez e balança)
-const palco = modo => `<div class="pp-palco pp-${modo}" aria-hidden="true"><span class="pp-luz"></span><span class="pp-chao"></span>
+const palco = modo => `<div class="pp-palco pp-m-${modo}" aria-hidden="true"><span class="pp-luz"></span><span class="pp-chao"></span>
   <span class="pp-pend pp-p1"><span class="pp-fio"></span><span class="pp-no"></span><span class="pp-peso">${selo(120)}</span></span>
   <i class="pp-e">&amp;</i>
-  <span class="pp-pend pp-p2">${ePh() ? '<img class="pp-ar" src="icons/phantom-aranha.webp" alt="" decoding="async" draggable="false">' : `<span class="pp-fio"></span><span class="pp-pq">${esc(nome().slice(0, 1))}</span>`}</span></div>`;
+  <span class="pp-pend pp-p2">${ePh() ? '<span class="pp-fio pp-fb"></span><img class="pp-ar" src="icons/phantom-aranha.webp" alt="" decoding="async" draggable="false">' : `<span class="pp-fio"></span><span class="pp-pq">${esc(nome().slice(0, 1))}</span>`}</span></div>`;
 const wordmark = () => `<div class="pp-wm"><b class="pp-wp">Prumo</b><i>&amp;</i>${ePh() ? `<img class="pp-wn" src="icons/phantom-nome.webp" alt="${esc(nome())}" decoding="async">` : `<b class="pp-wx">${esc(nome())}</b>`}</div>`;
 // pequeno, para o canto do destaque no telemóvel
 const mini = () => `<span class="pp-mini" aria-hidden="true">${selo(30)}<i>&amp;</i>${ePh() ? '<img src="icons/phantom-icone.webp" alt="" width="30" height="30" decoding="async">' : `<b>${esc(nome().slice(0, 1))}</b>`}</span>`;
@@ -81,6 +81,6 @@ const pagina = () => { numeros(); const n = NUM || {};
 OS.Parceria = { palco, wordmark, mini, exclusivo, assinatura, intro, slide, pagina };
 
 // na primeira entrada nos Animes, a intro
-const verIntro = () => { if ((OS.route && OS.route().view) === 'animes' && !OS.Areas?.hidden?.().has('animes')) setTimeout(() => intro(false), 350); };
+const verIntro = () => { let fora = false; try { fora = OS.Areas && OS.Areas.hidden && OS.Areas.hidden().has('animes'); } catch (e) { } if (OS.route && OS.route().base === 'animes' && !fora) setTimeout(() => intro(false), 350); };
 OS.on && OS.on('ready', () => { verIntro(); window.addEventListener('hashchange', verIntro); });
 })();

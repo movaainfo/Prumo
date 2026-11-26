@@ -95,7 +95,7 @@ const spIc = (sp, big) => `<span class="sp-ic${big ? ' big' : ''}" style="--sc:$
 // cartão de um jogo (equipas): grande para o destaque, normal nas listas
 const gCard = (e, o) => { o = o || {}; const sp = spOf(e.lg), lv = isLive(e), done = e.st === 'post', sc = (x, y) => done && x.w ? ' win' : done && y.w ? ' lose' : '';
   return `<div class="sp-g${lv ? ' live' : ''}${o.big ? ' big' : ''}" style="--sc:${sp ? sp[4] : '#64748b'};--hc:${e.h.c || '#334155'};--ac:${e.a.c || '#334155'}">
-    <div class="sp-gt">${o.lg ? `<span class="sp-gl">${sp ? UI.ic(sp[5]) : ''}${esc(sp ? sp[1] : '')}</span>` : ''}<span class="sp-gs${lv ? ' on' : ''}">${lv ? '<i></i>Ao vivo · ' : ''}${esc(lv || done ? e.det : dayL(e.d))}</span></div>
+    <div class="sp-gt">${o.lg ? `<span class="sp-gl">${sp ? UI.ic(sp[5]) : ''}${esc(e.liga || (sp ? sp[1] : ''))}</span>` : ''}<span class="sp-gs${lv ? ' on' : ''}">${lv ? '<i></i>Ao vivo · ' : ''}${esc(lv || done ? e.det : dayL(e.d))}</span></div>
     ${[[e.a, e.h], [e.h, e.a]].map(([x, y], i) => `<div class="sp-gr${sc(x, y)}${isMine(e.lg, x.id) ? ' me' : ''}">${img(x.logo, 'sp-gi', x.ab || x.n)}<span class="sp-gn"><b>${esc(o.big ? x.n : x.sn)}</b>${x.rec ? `<small>${esc(x.rec)}</small>` : ''}${i ? '<small class="sp-ha">casa</small>' : ''}</span><b class="sp-gp">${esc(e.st === 'pre' ? '' : x.s)}</b></div>`).join('')}
   </div>`; };
 const sec = (t, body, more) => `<section class="sp-sec"><div class="sp-sh"><h3>${t}</h3>${more || ''}</div>${body}</section>`;
@@ -320,15 +320,18 @@ const avPanel = () => { const a = avS(), perm = 'Notification' in window ? Notif
 /* ---------- início: ao vivo, as tuas equipas, os desportos, Olimpíadas ---------- */
 const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), teams = s.teams;
   // ao vivo e a seguir: os quadros de hoje dos desportos de equipa que segues (e das tuas equipas)
-  const lgs = [...new Set(mine.filter(x => x[3] === 'team').map(x => x[0]).concat(teams.map(t => t.lg)))].map(spOf).filter(x => x && x[2] && x[3] === 'team');
+  // v3.78: o Agora a jogar mostra TODOS os jogos ao vivo, de todas as modalidades (não só das que segues), e todo o futebol ao vivo do mundo
+  const lgs = SP.filter(x => x[2] && x[3] === 'team');
   const all = [].concat(...lgs.map(sp => { const j = need('b:' + sp[0] + ':hoje', 2e4, () => API.board(sp)); return j ? (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a) : []; }));
   const schedOf = t => { const sp = spOf(t.lg); return sp && sp[2] ? need('sc:' + t.lg + ':' + t.id, 10 * 6e4, () => API.sched(sp, t.id)) || [] : []; };
   const nextOf = t => schedOf(t).find(e => e.st === 'pre' && e.d > Date.now() - 36e5);
   const nexts = teams.map(nextOf).filter(Boolean).sort((a, b) => a.d - b.d);
-  const mineEv = all.filter(e => isMine(e.lg, e.h.id) || isMine(e.lg, e.a.id)), live = all.filter(isLive).sort((a, b) => (isMine(b.lg, b.h.id) || isMine(b.lg, b.a.id)) - (isMine(a.lg, a.h.id) || isMine(a.lg, a.a.id)));
-  const top = live.length ? live.slice(0, 2) : nexts.slice(0, 1);
+  let fut = []; try { fut = (OS.Futebol && OS.Futebol.vivos ? OS.Futebol.vivos() : []).map(e => Object.assign({}, e, { lg: 'futebol' })); } catch (e) { }
+  const meu = e => e.meu || isMine(e.lg, e.h.id) || isMine(e.lg, e.a.id);
+  const mineEv = all.filter(e => isMine(e.lg, e.h.id) || isMine(e.lg, e.a.id)), live = all.filter(isLive).concat(fut).sort((a, b) => meu(b) - meu(a) || (a.d || 0) - (b.d || 0));
+  const top = live.length ? live : nexts.slice(0, 1);
   const o = olyNext();
-  const hero = `<section class="sp-hero"><div class="sp-hl"><span class="sp-ok">${live.length ? `<span class="sp-gs on"><i></i>${live.length} ${live.length === 1 ? 'jogo' : 'jogos'} ao vivo</span>` : 'Desportos'}</span><h2>${live.length ? 'Agora a jogar' : top.length ? 'A seguir' : 'Tudo o que segues, num só sítio'}</h2>${!top.length ? '<p>Futebol, NBA, Fórmula 1, ténis, UFC e mais: segue as tuas equipas e vê os resultados ao vivo, os próximos jogos e as classificações.</p>' : ''}</div>${top.length ? `<div class="sp-hg">${top.map(e => card(e, { big: 1, lg: 1 })).join('')}</div>` : ''}</section>`;
+  const hero = `<section class="sp-hero"><div class="sp-hl"><span class="sp-ok">${live.length ? `<span class="sp-gs on"><i></i>${live.length} ${live.length === 1 ? 'jogo' : 'jogos'} ao vivo</span>` : 'Desportos'}</span><h2>${live.length ? 'Agora a jogar' : top.length ? 'A seguir' : 'Tudo o que segues, num só sítio'}</h2>${!top.length ? '<p>Futebol, NBA, Fórmula 1, ténis, UFC e mais: segue as tuas equipas e vê os resultados ao vivo, os próximos jogos e as classificações.</p>' : ''}</div>${top.length ? `<div class="sp-hg${top.length > 2 ? ' muitos' : ''}">${top.map(e => card(e, { big: 1, lg: 1 })).join('')}</div>` : ''}${live.length > 2 ? `<p class="sp-hn">${[...new Set(live.map(e => e.lg === 'futebol' ? 'Futebol' : (spOf(e.lg) || [])[1]).filter(Boolean))].join(' · ')}</p>` : ''}</section>`;
   const sports = `<div class="sp-sps">${SP.map(sp => { const on = s.mine.includes(sp[0]); return `<a class="sp-spc${on ? ' on' : ''}" href="${sp[0] === 'futebol' ? '#futebol' : '#esportes.' + sp[0]}" style="--sc:${sp[4]}" title="${esc(sp[6])}">${spIc(sp)}<b>${esc(sp[1])}</b></a>`; }).join('')}</div>`;
   // as tuas equipas: próximo jogo (ou ao vivo) e o último resultado
   const tcards = teams.length ? `<div class="sp-mt">${teams.map(t => { const sp = spOf(t.lg); if (!sp) return ''; const S = schedOf(t), now = Date.now(), sl = e => `${esc(e.a.ab || e.a.sn)} ${esc(e.a.s)} – ${esc(e.h.s)} ${esc(e.h.ab || e.h.sn)}`;

@@ -80,15 +80,29 @@ const pistasDe = a => { const P0 = [], ger = (a.genres || []).map(g => g.name).s
   if (est) P0.push(`O estúdio de animação é ${est}.`);
   const tt = String(a.title || '').trim(), w = tt.split(/\s+/).length; P0.push(`O título (em japonês romanizado) começa por "${tt[0]}" e tem ${w} palavra${w === 1 ? '' : 's'}.`);
   return P0; };
+// v3.78: quando o MyAnimeList (Jikan) não responde, o AniList dá a mesma informação (pelos números do MyAnimeList)
+const ALQ = () => process.env.NAUTILO_ANILIST || 'https://graphql.anilist.co';
+const al = async (query, variables) => { const r = await fetch(ALQ(), { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ query, variables }), signal: AbortSignal.timeout(9000) });
+  if (!r.ok) throw new Error('AniList ' + r.status); const j = await r.json(); if (j.errors && !j.data) throw new Error('AniList'); return j.data || {}; };
+const ALFONTE = { MANGA: 'Manga', LIGHT_NOVEL: 'Light novel', NOVEL: 'Novel', ORIGINAL: 'Original', VISUAL_NOVEL: 'Visual novel', VIDEO_GAME: 'Game', WEB_NOVEL: 'Web novel', DOUJINSHI: 'Doujinshi', ANIME: 'Anime', MULTIMEDIA_PROJECT: 'Original' };
+const alTop = async () => { const L = []; for (let pg = 1; pg <= 4; pg++) { const d = await al('query($p:Int){Page(page:$p,perPage:50){media(type:ANIME,sort:POPULARITY_DESC,isAdult:false){idMal genres}}}', { p: pg });
+    ((d.Page || {}).media || []).forEach(m => { if (m.idMal && !(m.genres || []).includes('Ecchi') && !(m.genres || []).includes('Hentai')) L.push(m.idMal); }); } return L; };
+const alFicha = async mal => { const m = ((await al('query($m:Int){Media(idMal:$m,type:ANIME){idMal title{romaji english} format episodes season seasonYear source genres tags{name rank isMediaSpoiler} studios(isMain:true){nodes{name}} coverImage{extraLarge large}}}', { m: +mal })) || {}).Media;
+  if (!m || !m.idMal) return {};
+  return { mal_id: m.idMal, title: (m.title || {}).romaji || (m.title || {}).english || '', title_english: (m.title || {}).english || '', type: m.format === 'MOVIE' ? 'Movie' : 'TV', episodes: m.episodes || 0, year: m.seasonYear || 0, season: String(m.season || '').toLowerCase(),
+    source: ALFONTE[m.source] || '', genres: (m.genres || []).map(name => ({ name })), themes: (m.tags || []).filter(t => !t.isMediaSpoiler && t.rank >= 70).slice(0, 2).map(t => ({ name: t.name })), demographics: [], studios: (((m.studios || {}).nodes) || []).map(x => ({ name: x.name })),
+    images: { webp: { large_image_url: (m.coverImage || {}).extraLarge || (m.coverImage || {}).large || '' } } }; };
 // o anime do dia: um dos 200 mais populares, escolhido pela data (o mesmo para todos) sem repetir nos últimos 60 dias
 const escolher = async d => { let top = (await ler('so/htop', null)).v;
-  if (!top || Date.now() - top.at > 7 * 864e5 || !top.L.length) { const L = []; for (let pg = 1; pg <= 8; pg++) { try { const j = await jk('top/anime?filter=bypopularity&page=' + pg); if (!(j.data || []).length) break; (j.data || []).forEach(x => { if (x && x.mal_id && x.rating && !/Rx|R\+/.test(x.rating)) L.push(x.mal_id); }); } catch (e) { break; } await sleep(450); } if (L.length) { top = { L, at: Date.now() }; await gravar('so/htop', top); } }
-  if (!top || !top.L.length) throw N.err('hunter', 'O MyAnimeList não respondeu. O Pursuit de hoje sai daqui a pouco.', 502);
+  if (!top || Date.now() - top.at > 7 * 864e5 || !top.L.length) { const L = []; for (let pg = 1; pg <= 8; pg++) { try { const j = await jk('top/anime?filter=bypopularity&page=' + pg); if (!(j.data || []).length) break; (j.data || []).forEach(x => { if (x && x.mal_id && x.rating && !/Rx|R\+/.test(x.rating)) L.push(x.mal_id); }); } catch (e) { break; } await sleep(450); } if (!L.length) { try { (await alTop()).forEach(x => L.push(x)); } catch (e) { } } if (L.length) { top = { L, at: Date.now() }; await gravar('so/htop', top); } }
+  if (!top || !top.L.length) throw N.err('hunter', 'As bases de animes não responderam. O Pursuit de hoje sai daqui a pouco.', 502);
   const hist = (await ler('so/hhist', { L: [] })).v.L || [], h = N.crypto.createHmac('sha256', await N.master()).update('hunter:' + d).digest(); let i = h.readUInt32BE(0) % top.L.length, n = 0;
   while (hist.includes(top.L[i]) && n++ < top.L.length) i = (i + 1) % top.L.length;
   return top.L[i]; };
 const desafio = async () => { const L = lisboa(), d = L.d, P0 = 'so/h/' + d; let { v } = await ler(P0, null);
-  if (!v && L.min >= H_ABRE()) { const mal = await escolher(d), a = ((await jk('anime/' + mal + '/full')) || {}).data || {}; if (!a.mal_id) throw N.err('hunter', 'O Pursuit de hoje sai daqui a pouco.', 502);
+  // (só entre as 20h e as 22h: depois de fechar, sem jogo criado, mostra o de amanhã)
+  if (!v && L.min >= H_ABRE() && L.min < H_FECHA()) { const mal = await escolher(d); let a = {}; try { a = ((await jk('anime/' + mal + '/full')) || {}).data || {}; } catch (e) { }
+    if (!a.mal_id) { try { a = await alFicha(mal); } catch (e) { } } if (!a.mal_id) throw N.err('hunter', 'As bases de animes não responderam. O Pursuit de hoje sai daqui a pouco.', 502);
     v = { dia: d, mal: String(a.mal_id), titulo: a.title_english || a.title, img: ((a.images || {}).webp || {}).large_image_url || ((a.images || {}).jpg || {}).image_url || '', pistas: pistasDe(a), fechado: false };
     try { await gravar(P0, v, { overwrite: false }); await mudar('so/hhist', { L: [] }, o => { o.L = (o.L || []).concat(+v.mal).slice(-60); }); } catch (e) { v = (await ler(P0, v)).v; } }
   if (v && !v.fechado && L.min >= H_FECHA()) v = await fechar(P0, v);
@@ -102,7 +116,7 @@ const hunterVer = async (eu) => { const { L, v } = await desafio(), abre = H_ABR
   const fase = !v ? 'espera' : v.fechado ? 'fechado' : 'aberto', meu = v && eu ? (await ler('so/hg/' + v.dia + '/' + eu, null)).v : null;
   const visiveis = !v ? [] : v.fechado ? v.pistas : v.pistas.slice(0, Math.min(v.pistas.length, 3 + (m >= abre + 40 ? 1 : 0) + (m >= abre + 80 ? 1 : 0)));
   const ontem = fase === 'espera' ? (await ler('so/h/' + lisboa(Date.now() - 864e5).d, null)).v : null;
-  const min0 = Math.floor(Date.now() / 6e4) * 6e4, abreAt = min0 - (m - abre) * 6e4, fechaAt = min0 - (m - fecha) * 6e4;
+  const min0 = Math.floor(Date.now() / 6e4) * 6e4, depois = !v && m >= fecha ? 864e5 : 0, abreAt = min0 - (m - abre) * 6e4 + depois, fechaAt = min0 - (m - fecha) * 6e4 + depois;   // depois das 22h sem jogo: o de amanhã
   return { fase, dia: L.d, abre, fecha, agora: m, abreAt, fechaAt, amanha: abreAt + 864e5, ts: Date.now(), pistas: visiveis, total: v ? v.pistas.length : 5, meu: meu ? { mal: meu.mal, titulo: meu.titulo, at: meu.at, certo: v && v.fechado ? meu.mal === v.mal : undefined } : null,
     resposta: v && v.fechado ? { mal: v.mal, titulo: v.titulo, img: v.img } : null, res: v && v.fechado ? (v.res || []).slice(0, 30) : null, jogadores: v && v.fechado ? v.total : undefined,
     ontem: ontem && ontem.fechado ? { titulo: ontem.titulo, img: ontem.img, res: (ontem.res || []).slice(0, 5) } : null }; };
@@ -111,7 +125,7 @@ const OPS = {
   async eu(c, b) { const v = await perfil(c.eu, c.nome), amigos = await Promise.all((v.amigos || []).map(pub)), pedidos = await Promise.all((v.pedidos || []).map(pub)), clas = [];
     for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (cl) clas.push(claPub(cl)); }
     if (c.nome && v.nome !== c.nome) { v.nome = c.nome; await mudar(P(c.eu), null, p => { p.nome = c.nome; }).catch(() => { }); if (v.user || v.av) pubPts(c.eu, { nome: c.nome }).catch(() => { }); }
-    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas }; },
+    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas }; },
   async nome(c, b) { const n = String(b.nome || '').replace(/\s+/g, ' ').trim(); if (n.length < 2 || n.length > 24) throw N.err('nome', 'O nome tem de ter entre 2 e 24 letras.', 400);
     const m = await moderar(n); if (!m.ok) throw N.err('nome', 'Esse nome não pode ser usado: ' + m.motivo, 400); await perfil(c.eu, c.nome); await mudar(P(c.eu), null, v => { v.nome = n; }); return { ok2: true, nome: n }; },
   async amigoPedir(c, b) { const cod = String(b.cod || '').toUpperCase().replace(/^PR-?/, '').replace(/[^A-Z0-9]/g, ''); const g = await N.store().get('so/c/' + cod).catch(() => null); if (!g) throw N.err('amigo', 'Não encontrei ninguém com esse código.', 404);
@@ -174,7 +188,7 @@ const OPS = {
     if (/^a-\d+$/.test(d.conv)) await mudar(CA(d.conv.slice(2)), { L: [], gl: [] }, o => { const i = o.L.findIndex(x => x.id === d.mid); if (i < 0) return false; o.L.splice(i, 1); }).catch(() => { });
     for (const dd of [dia(Date.now() - 864e5), dia()]) await mudar('so/m/' + d.conv + '/' + dd, [], L => { const i = L.findIndex(x => x.id === d.mid); if (i < 0) return false; L.splice(i, 1); }).catch(() => { });
     if (b.mudo) await mudar(P(d.de), null, p => { p.mudo = Date.now() + 7 * 864e5; }).catch(() => { }); await N.store().del(['so/den/' + ref]); return { ok2: true }; },
-  async rankAnime(c, b) { const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).map(([id, o]) => ({ id, nome: o.nome, p: o.p, user: o.user || '', av: o.av || 0 })).sort((a, b2) => b2.p - a.p); const i = L.findIndex(x => x.id === c.eu);
+  async rankAnime(c, b) { const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).map(([id, o]) => ({ id, nome: o.nome, p: o.p, user: o.user || '', av: o.av || 0, cl: o.cl || '' })).sort((a, b2) => b2.p - a.p); const i = L.findIndex(x => x.id === c.eu);
     return { lista: L.slice(0, 100).map((x, k) => Object.assign(x, { pos: k + 1, eu: x.id === c.eu })), eu: i >= 0 ? Object.assign({ pos: i + 1 }, L[i]) : null, total: L.length }; },
   async hunter(c, b) { return { hunter: await hunterVer(c.eu) }; },
   async hunterMarcar(c, b) { const { L, v } = await desafio(); if (!v || v.fechado) throw N.err('hunter', v ? 'O Pursuit de hoje já fechou.' : 'O Pursuit de hoje ainda não começou (20h).', 400);
@@ -208,9 +222,14 @@ OPS.perfilImg = async (c, b) => { const k = b.k === 'fu' ? 'fu' : 'av', max = k 
   await N.store().put(imgP(k, c.eu), buf); const ver = Date.now(); await mudar(P(c.eu), null, p => { p[k] = ver; }); if (k === 'av') await pubPts(c.eu, { av: ver }).catch(() => { }); return { [k]: ver }; };
 OPS.verPerfil = async (c, b) => { const id = String(b.id || ''); if (!ID.test(id)) throw N.err('perfil', 'Perfil desconhecido.', 400); const v = (await ler(P(id), null)).v; if (!v) throw N.err('perfil', 'Perfil desconhecido.', 404);
   const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).sort((a, b2) => b2[1].p - a[1].p), pos = L.findIndex(([i]) => i === id);
-  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu) } }; };
+  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu) } }; };
 /* ---------- comentários nos animes: a IA barra ofensas e tapa os spoilers (só vê quem quiser) ---------- */
 const CA = mal => 'so/ca/' + mal;
+let NUMS = null;
+const numeros = async () => { if (NUMS && Date.now() - NUMS.at < 10 * 6e4) return NUMS.v; const S = N.store(), cnt = async p => { try { return (await S.list(p)).length; } catch (e) { return 0; } };
+  const pts = (await ler(PTS, { T: {} })).v || {}, T = pts.T || {}, d = lisboa().d;
+  const v = { jogadores: Object.keys(T).filter(k => (T[k] || {}).p > 0).length, hoje: await cnt('so/hg/' + d + '/'), clas: await cnt('so/cl/'), coms: await cnt('so/ca/') };
+  NUMS = { at: Date.now(), v }; return v; };
 const malDe = b => { const m = String(b.mal || '').replace(/\D/g, '').slice(0, 9); if (!m) throw N.err('anime', 'Anime desconhecido.', 400); return m; };
 const PEDIDOC = (t, titulo) => `És o moderador dos comentários sobre animes no Prumo (app para pessoas a partir dos 16 anos). Anime: "${String(titulo || '').slice(0, 80).replace(/"/g, "'")}". Responde SÓ com JSON numa linha: {"ok":true,"spoiler":false} ou {"ok":false,"motivo":"<curto, em português de Portugal>"}.
 "spoiler": true quando o comentário conta acontecimentos importantes da história que quem ainda não viu não quer saber (mortes, quem é o vilão, reviravoltas, o final, quem fica com quem). Opiniões ("é incrível", "o episódio 5 é o melhor", "a animação é linda") não são spoiler.
@@ -235,15 +254,14 @@ OPS.apagarCom = async (c, b) => { const mal = malDe(b), id = String(b.id || '');
 OPS.denunciarCom = async (c, b) => { const mal = malDe(b), id = String(b.id || ''), o = (await ler(CA(mal), { L: [] })).v || { L: [] }, x = (o.L || []).find(y => y.id === id); if (!x) throw N.err('com', 'Comentário não encontrado.', 404);
   await gravar('so/den/' + Date.now() + '-' + N.crypto.randomBytes(3).toString('hex'), { conv: 'a-' + mal, mid: x.id, de: x.de, nome: x.nome, t: x.t, por: c.eu, motivo: String(b.motivo || '').slice(0, 200), at: Date.now() }); N.count('com:denuncia'); return { ok2: true }; };
 /* ---------- Comunidade (como na SuperAnimes): indicações, pedidos, sugestões, a equipa e o recrutamento ---------- */
-const TIPOS = { indicacao: 'Indicação', pedido: 'Pedido', sugestao: 'Sugestão', recrutamento: 'Recrutamento' };
+const TIPOS = { indicacao: 'Indicação', pedido: 'Pedido', sugestao: 'Sugestão', reclamacao: 'Reclamação', recrutamento: 'Recrutamento' };   // v3.78: reclamações (de qualquer parte do app)
 const indPub = (x, eu) => ({ id: x.id, nome: x.nome, user: x.user || '', titulo: x.titulo, texto: x.texto, at: x.at, gostos: (x.g || []).length, gostei: (x.g || []).includes(eu), meu: x.de === eu });
 OPS.com = async (c, b, req) => { const tipo = String(b.tipo || ''); if (!TIPOS[tipo]) throw N.err('com', 'Escolhe o que queres enviar.', 400);
   const titulo = String(b.titulo || '').replace(/\s+/g, ' ').trim().slice(0, 100), texto = String(b.texto || '').trim().slice(0, 1200);
   if ((tipo === 'indicacao' && titulo.length < 2) || (tipo !== 'indicacao' && texto.length < 5)) throw N.err('com', tipo === 'indicacao' ? 'Escreve o nome do anime que recomendas.' : 'Escreve um pouco mais.', 400);
   if (N.limit(req, 'comu|' + c.eu, 6, 3600e3)) throw N.err('limite', 'Já enviaste bastante na última hora. Tenta mais tarde.', 429);
   const m = await moderar((titulo + ' ' + texto).trim()); if (!m.ok) throw N.err('com', 'Não deu para enviar: ' + m.motivo, 400);
-  const v = await perfil(c.eu, c.nome), rec = { id: N.crypto.randomBytes(6).toString('hex'), tipo, de: c.eu, nome: v.nome, user: v.user || '', titulo, texto, at: Date.now(), g: [] };
-  if (tipo === 'recrutamento') rec.email = c.email || '';
+  const v = await perfil(c.eu, c.nome), rec = { id: N.crypto.randomBytes(6).toString('hex'), tipo, de: c.eu, nome: v.nome, user: v.user || '', titulo, texto, at: Date.now(), g: [], orig: b.orig === 'app' ? 'app' : 'animes', email: c.email || '' };
   await gravar('so/com/' + tipo + '/' + Date.now() + '-' + rec.id, rec);
   if (tipo === 'indicacao') await mudar('so/ind', { L: [] }, o => { o.L = o.L || []; o.L.push(rec); if (o.L.length > 300) o.L.splice(0, o.L.length - 300); });
   N.count('comunidade:' + tipo); return { ok2: true, ind: tipo === 'indicacao' ? indPub(rec, c.eu) : undefined }; };
@@ -252,8 +270,53 @@ OPS.gostarInd = async (c, b) => { const id = String(b.id || ''); let r = null; a
 OPS.equipa = async () => ({ equipa: ((await ler('so/equipa', { L: [] })).v || { L: [] }).L || [] });
 OPS.adminEquipa = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const L = (Array.isArray(b.L) ? b.L : []).slice(0, 40).map(x => ({ nome: String(x.nome || '').slice(0, 40), papel: String(x.papel || '').slice(0, 60), user: String(x.user || '').replace(/[^a-z0-9_.]/gi, '').slice(0, 20).toLowerCase(), desc: String(x.desc || '').slice(0, 200) })).filter(x => x.nome);
   await gravar('so/equipa', { L, at: Date.now() }); return { equipa: L }; };
+// v3.78: a caixa da Comunidade na Administração: tudo o que as pessoas enviam (sugestões, reclamações, pedidos, recrutamento, indicações) e as denúncias, com "visto"
+OPS.adminCaixa = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const vis = ((await ler('so/coml', { v: {} })).v || {}).v || {}, out = [];
+  for (const tipo of Object.keys(TIPOS)) { const L = (await N.store().list('so/com/' + tipo + '/')).slice(-60);
+    for (const x of L) { const d = (await ler(x.pathname, null)).v; if (d) out.push({ id: d.id, tipo, nome: d.nome, user: d.user || '', titulo: d.titulo || '', texto: d.texto || '', at: d.at, email: d.email || '', orig: d.orig || 'animes', visto: !!vis[d.id] }); } }
+  out.sort((a, b2) => b2.at - a.at); return { L: out.slice(0, 300), novos: out.filter(x => !x.visto).length }; };
+OPS.adminVisto = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const ids = (Array.isArray(b.ids) ? b.ids : [b.id]).map(x => String(x || '').slice(0, 20)).filter(Boolean).slice(0, 300), on = b.visto !== false;
+  await mudar('so/coml', { v: {} }, o => { o.v = o.v || {}; ids.forEach(i => { if (on) o.v[i] = Date.now(); else delete o.v[i]; }); const ks = Object.keys(o.v); if (ks.length > 3000) ks.sort((a, z) => o.v[a] - o.v[z]).slice(0, ks.length - 3000).forEach(k => delete o.v[k]); }); return { ok2: true }; };
 OPS.adminCom = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const tipo = TIPOS[b.tipo] ? b.tipo : 'sugestao', L = (await N.store().list('so/com/' + tipo + '/')).slice(-60), out = [];
   for (const x of L.reverse()) { const d = (await ler(x.pathname, null)).v; if (d) out.push({ nome: d.nome, user: d.user, titulo: d.titulo, texto: d.texto, at: d.at, email: d.email || '' }); } return { tipo, L: out }; };
+/* ---------- v3.79 · Desafio da semana: o mesmo para todas as contas, escolhido pelo servidor; quem participa entra no ranking ---------- */
+// o progresso vem dos dados de cada um no app (treinos, estudo, km, hábitos, tarefas); o do Pursuit é contado aqui (os acertos da semana)
+const DESAFIOS = [
+  { k: 'treinos', t: 'Semana de ferro', d: 'Regista 4 treinos esta semana.', alvo: 4, un: 'treinos', ic: 'dumbbell' },
+  { k: 'estudo', t: 'Mente afiada', d: 'Faz 5 horas de estudo ou de foco esta semana.', alvo: 5, un: 'horas', ic: 'book' },
+  { k: 'km', t: 'Pé na estrada', d: 'Corre ou caminha 15 km esta semana.', alvo: 15, un: 'km', ic: 'run' },
+  { k: 'habitos', t: 'Sem falhas', d: 'Cumpre todos os hábitos inegociáveis em 5 dias da semana.', alvo: 5, un: 'dias perfeitos', ic: 'check' },
+  { k: 'tarefas', t: 'Caixa vazia', d: 'Conclui 20 tarefas esta semana.', alvo: 20, un: 'tarefas', ic: 'checksq' },
+  { k: 'pursuit', t: 'Caçador de animes', d: 'Acerta 3 vezes no Pursuit esta semana.', alvo: 3, un: 'acertos', ic: 'target' }];
+const semana = (t = Date.now()) => { const L = lisboa(t), [y, m, d] = L.d.split('-').map(Number), dt = new Date(Date.UTC(y, m - 1, d)), dow = (dt.getUTCDay() + 6) % 7, seg = new Date(dt.getTime() - dow * 864e5);
+  const th = new Date(seg.getTime() + 3 * 864e5), y0 = th.getUTCFullYear(), w = 1 + Math.round((th - Date.UTC(y0, 0, 4)) / 864e5 / 7 - ((new Date(Date.UTC(y0, 0, 4)).getUTCDay() + 6) % 7 - 3) / 7);
+  const dias = Array.from({ length: 7 }, (_, i) => new Date(seg.getTime() + i * 864e5).toISOString().slice(0, 10));
+  // fim: domingo às 23:59 de Lisboa (aproximado ao minuto pela diferença entre a hora de Lisboa e a real)
+  const fim = t + ((6 - dow) * 1440 + (1440 - L.min)) * 6e4; return { k: y0 + '-S' + String(w).padStart(2, '0'), dias, fim, ini: fim - 7 * 864e5 }; };
+const desafioDe = async S => { const fx = DESAFIOS.find(x => x.k === process.env.NAUTILO_DESAFIO); if (fx) return fx; const h = N.crypto.createHmac('sha256', await N.master()).update('desafio:' + S.k).digest(), ant = semana(S.ini - 3600e3);
+  const h2 = N.crypto.createHmac('sha256', await N.master()).update('desafio:' + ant.k).digest(), i0 = h2.readUInt32BE(0) % DESAFIOS.length; let i = h.readUInt32BE(0) % DESAFIOS.length; if (i === i0) i = (i + 1) % DESAFIOS.length; return DESAFIOS[i]; };
+const acertosSemana = async (S, eu) => { let n = 0; for (const d of S.dias) { const v = (await ler('so/h/' + d, null)).v; if (!v || !v.fechado) continue; const g = (await ler('so/hg/' + d + '/' + eu, null)).v; if (g && g.mal === v.mal) n++; } return n; };
+const dsPub = (id, o, eu) => ({ id, nome: o.nome, user: o.user || '', av: o.av || 0, v: o.v || 0, at: o.at || 0, eu: id === eu });
+const dsVer = async (c, S, D) => { const o = (await ler('so/ds/' + S.k, { T: {} })).v || { T: {} }, T = o.T || {};
+  const L = Object.entries(T).map(([id, x]) => dsPub(id, x, c.eu)), feitos = L.filter(x => x.at).sort((a, b) => a.at - b.at || b.v - a.v), caminho = L.filter(x => !x.at && x.v > 0).sort((a, b) => b.v - a.v), zero = L.filter(x => !x.at && !x.v);
+  return { sem: S.k, fim: S.fim, desafio: D, feitos: feitos.slice(0, 100), caminho: caminho.slice(0, 100), zero: zero.length, total: L.length, eu: T[c.eu] ? dsPub(c.eu, T[c.eu], c.eu) : null }; };
+OPS.desafio = async (c, b) => { const S = semana(), D = await desafioDe(S);
+  if (D.k === 'pursuit') { const o = (await ler('so/ds/' + S.k, { T: {} })).v || { T: {} }; if ((o.T || {})[c.eu]) { const n = await acertosSemana(S, c.eu); if (n !== o.T[c.eu].v) await mudar('so/ds/' + S.k, { T: {} }, x => { const e = x.T[c.eu]; if (!e) return false; e.v = n; if (n >= D.alvo && !e.at) e.at = Date.now(); }); } }
+  return dsVer(c, S, D); };
+OPS.desafioEntrar = async (c, b) => { const S = semana(), D = await desafioDe(S), v0 = await perfil(c.eu, c.nome);
+  await mudar('so/ds/' + S.k, { T: {} }, x => { x.T = x.T || {}; if (x.T[c.eu]) return false; x.T[c.eu] = { nome: v0.nome, user: v0.user || '', av: v0.av || 0, v: 0, at: 0, upd: Date.now() }; });
+  return OPS.desafio(c, b); };
+OPS.desafioProg = async (c, b, req) => { const S = semana(), D = await desafioDe(S); if (D.k === 'pursuit') return OPS.desafio(c, b);
+  if (N.limit(req, 'dsp|' + c.eu, 40, 3600e3)) throw N.err('limite', 'Espera um pouco.', 429);
+  const v = Math.max(0, Math.min(D.alvo * 10, Math.round((+b.v || 0) * 10) / 10));
+  await mudar('so/ds/' + S.k, { T: {} }, x => { const e = (x.T || {})[c.eu]; if (!e) return false; e.v = v; e.upd = Date.now(); if (v >= D.alvo && !e.at) e.at = Date.now(); if (v < D.alvo && e.at) e.at = 0; });
+  return dsVer(c, S, D); };
+OPS.desafioSair = async (c, b) => { const S = semana(); await mudar('so/ds/' + S.k, { T: {} }, x => { if (!(x.T || {})[c.eu]) return false; delete x.T[c.eu]; }); return OPS.desafio(c, b); };
+// v3.79: a classe de fã (calculada no app pelo que cada um vê) aparece no ranking e no perfil de anime
+const CLASSES = ['Guerreiro Shōnen', 'Estratega do Mistério', 'Coração Shōjo', 'Explorador de Mundos', 'Alma Tranquila', 'Caçador de Sombras', 'Atleta de Sofá', 'Piloto de Mecha'], NIVEIS = ['Novato', 'Iniciado', 'Veterano', 'Lenda', 'Mítico'];
+OPS.classe = async (c, b) => { const nome = String(b.nome || ''), nivel = String(b.nivel || ''); if (!CLASSES.includes(nome) || !NIVEIS.includes(nivel)) throw N.err('classe', 'Classe desconhecida.', 400);
+  const cl = nome + ' · ' + nivel; await perfil(c.eu, c.nome); await mudar(P(c.eu), null, p => { if (!p) return false; p.classe = cl; });
+  await mudar(PTS, {}, T => { if (!T[c.eu]) return false; T[c.eu].cl = cl; }).catch(() => { }); return { classe: cl }; };
 const PARC = 'cfg/parceiro.json', PARC0 = 'PHANTOM'; // v3.73: a empresa parceira dos Animes
 const parceiro = async () => { try { const g = await N.store().get(PARC); return g ? JSON.parse(g.buf.toString()) : { nome: PARC0 }; } catch (e) { return { nome: PARC0 }; } };
 OPS.adminParceiro = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const nome = String(b.nome || '').replace(/\s+/g, ' ').trim().slice(0, 30) || PARC0, site = String(b.site || '').trim().slice(0, 200);
@@ -263,7 +326,10 @@ module.exports = N.handler(async (req, res) => {
   // o nome do parceiro (público, para o app o mostrar antes de entrar na conta)
   if (req.method === 'GET' && String((req.query || {}).op || '') === 'img') { const q = req.query || {}, k = q.k === 'fu' ? 'fu' : 'av', id = String(q.id || ''); if (!ID.test(id) || N.limit(req, 'simg', 300, 60e3)) return N.send(res, 400, { ok: false });
     const g = await N.store().get(imgP(k, id)).catch(() => null); if (!g) return N.send(res, 404, { ok: false }); res.statusCode = 200; res.setHeader('content-type', 'image/jpeg'); res.setHeader('cache-control', 'public, max-age=86400'); res.setHeader('x-content-type-options', 'nosniff'); return res.end(g.buf); }
-  if (req.method === 'GET' && String((req.query || {}).op || '') === 'parceiro') { if (N.limit(req, 'parc', 60, 60e3)) return N.send(res, 429, { ok: false }); res.setHeader('cache-control', 'public, max-age=300'); const o = await parceiro(); return N.send(res, 200, { ok: true, nome: o.nome || '', site: o.site || '' }); }
+  if (req.method === 'GET' && String((req.query || {}).op || '') === 'parceiro') { if (N.limit(req, 'parc', 60, 60e3)) return N.send(res, 429, { ok: false }); res.setHeader('cache-control', 'public, max-age=300'); const o = await parceiro();
+    // v3.78: os números da parceria ao vivo (só contagens, sem nomes), guardados 10 minutos
+    let n; if ((req.query || {}).n) { try { n = await numeros(); } catch (e) { } }
+    return N.send(res, 200, Object.assign({ ok: true, nome: o.nome || '', site: o.site || '' }, n ? { n } : {})); }
   if (req.method !== 'POST') return N.send(res, 405, { ok: false, msg: 'Só POST.' });
   const t = await N.readToken(req); if (!t) return N.send(res, 401, { ok: false, msg: 'Entra na tua conta para usar os clãs.', code: 'sessao' });
   const b = await N.body(req), op = String(b.op || ''), pid = String(b.p || ''); if (!PID.test(pid)) return N.send(res, 400, { ok: false, msg: 'Perfil inválido.' });
@@ -272,4 +338,4 @@ module.exports = N.handler(async (req, res) => {
   const c = await conta(t, pid); c.eu = t.u + '-' + pid; if (!ID.test(c.eu)) return N.send(res, 400, { ok: false, msg: 'Perfil inválido.' });
   return N.send(res, 200, Object.assign({ ok: true }, await OPS[op](c, b, req)));
 });
-module.exports._regras = regras; module.exports._lisboa = lisboa;
+module.exports._regras = regras; module.exports._lisboa = lisboa; module.exports._semana = semana;

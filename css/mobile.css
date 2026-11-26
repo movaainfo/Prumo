@@ -38,8 +38,8 @@
   body.tb-an #tabbar{grid-template-columns:repeat(6,minmax(0,1fr));background:#1d1829;border-color:rgba(155,107,255,.22)} /* v3.77: 6 botões numa linha (o selo do Prumo saltava para baixo da barra) */
   body.tb-an #tabbar .tb-i{font-size:10px}
   body.tb-an #tabbar .tb-i{color:#dcdce1}
-  body.tb-an #tabbar .tb-i.on{color:#ff5a6e;background:rgba(232,32,58,.14)}
-  body.tb-an #tabbar .tb-i.on .ic{color:#ff5a6e}
+  body.tb-an #tabbar .tb-i.on{color:#D86A78;background:rgba(184,52,68,.14)}
+  body.tb-an #tabbar .tb-i.on .ic{color:#D86A78}
   /* o que flutuava por cima do conteúdo passa para a barra de baixo e para "Tudo" */
   #calcFab,#jvFab,#gameFab{display:none!important}
   #view{padding:16px 14px calc(var(--tbh) + 30px + env(safe-area-inset-bottom,0px));gap:20px}

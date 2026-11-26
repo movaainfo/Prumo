@@ -90,12 +90,12 @@ A.huMarcar = async b => { const t = b.dataset.t || 'este anime'; if (!confirm(`M
 
 /* ---------- ranking de animes ---------- */
 const podio = (L, n = 3) => { const t = L.slice(0, n); if (!t.length) return ''; const ord = t.length === 3 ? [t[1], t[0], t[2]] : t;
-  return `<div class="rk-pod">${ord.map(x => `<div class="rk-p p${x.pos}${x.eu ? ' eu' : ''}">${OS.AnimeSoc ? OS.AnimeSoc.av(x, 44) : ''}<b>${esc(x.nome)}</b>${x.user ? `<small>@${esc(x.user)}</small>` : ''}<span>${x.p} pts</span><i>${x.pos}</i></div>`).join('')}</div>`; };
+  return `<div class="rk-pod">${ord.map(x => `<div class="rk-p p${x.pos}${x.eu ? ' eu' : ''}">${OS.AnimeSoc ? OS.AnimeSoc.av(x, 44) : ''}<b>${esc(x.nome)}</b>${x.user ? `<small>@${esc(x.user)}</small>` : ''}${x.cl ? `<em class="rk-cl">${esc(x.cl)}</em>` : ''}<span>${x.p} pts</span><i>${x.pos}</i></div>`).join('')}</div>`; };
 const rankView = () => { if (!conta()) return semConta(); rank(); const r = S.rk;
   const topo = `<header class="hu-h">${marca('sm')}${OS.Parceria ? OS.Parceria.exclusivo() : ''}<h2>Ranking de animes</h2><p>Os pontos ganhos nos jogos de anime (por agora, o Pursuit). Só conta para este ranking, não para o ranking de disciplina do Prumo.</p></header>`;
   if (!r) return `<section class="hu">${topo}${erroBox('rk') || ld('A buscar o ranking…')}</section>`;
   if (!r.lista.length) return `<section class="hu">${topo}<div class="so-vazio"><b>Ainda ninguém pontuou</b><p>Joga o Pursuit hoje às 20h e aparece aqui em primeiro.</p><a class="btn an-cta" href="#animes.pursuit">Ir para o Pursuit</a></div></section>`;
-  return `<section class="hu">${topo}${podio(r.lista)}<ol class="rk-l" start="4">${r.lista.slice(3).map(x => `<li class="${x.eu ? 'eu' : ''}"><b>${x.pos}.º</b><span class="rk-n">${OS.AnimeSoc ? OS.AnimeSoc.av(x, 28) : ''}${esc(x.nome)}${x.user ? ` <small>@${esc(x.user)}</small>` : ''}${x.eu ? ' (tu)' : ''}</span><em>${x.p} pts</em></li>`).join('')}</ol>
+  return `<section class="hu">${topo}${podio(r.lista)}<ol class="rk-l" start="4">${r.lista.slice(3).map(x => `<li class="${x.eu ? 'eu' : ''}"><b>${x.pos}.º</b><span class="rk-n">${OS.AnimeSoc ? OS.AnimeSoc.av(x, 28) : ''}${esc(x.nome)}${x.user ? ` <small>@${esc(x.user)}</small>` : ''}${x.cl ? ` <em class="rk-cl">${esc(x.cl)}</em>` : ''}${x.eu ? ' (tu)' : ''}</span><em>${x.p} pts</em></li>`).join('')}</ol>
     ${r.eu && r.eu.pos > 100 ? `<p class="rk-meu">Estás em ${r.eu.pos}.º de ${r.total}, com ${r.eu.p} pontos.</p>` : !r.eu ? '<p class="mut">Ainda não tens pontos: joga o Pursuit para entrares no ranking.</p>' : ''}</section>`; };
 
 /* ---------- clãs, amigos e conversas ---------- */
@@ -200,5 +200,18 @@ OS.on && OS.on('ready', () => { parcLoad(); setTimeout(() => { if (conta() && U.
 // insígnia no menu: Pursuit a decorrer e ainda não marcaste
 const badge = () => { const h = S.h; return h && h.fase === 'aberto' && !h.meu ? [1, 'neg'] : null; };
 OS.on && OS.on('render', () => { const r = OS.route(); if (r.base === 'animes' && r.sub === 'pursuit') U.ls.set('oc_hunter_on', 1); if (!(r.base === 'animes' && r.sub === 'clas') && (OS.ui.soConv || OS.ui.soCla)) { OS.ui.soConv = ''; OS.ui.soCla = ''; } });
+/* ---------- v3.78 · Definições › Sugestões e reclamações (vão para a caixa da Comunidade na Administração) ---------- */
+let FB = { t: 'sugestao', tx: '', busy: false, ok: '' };
+const fbPanel = () => `<div class="pn" id="fbSet"><div class="pn-h"><h3>${UI.ic('mail')}Sugestões e reclamações</h3></div>
+  <p class="mut" style="margin:0 0 10px;font-size:13px">O que queres que melhore, o que falta ou o que correu mal. Vai direto para a equipa do Prumo.</p>
+  ${!conta() ? '<p class="mut" style="margin:0">Entra na tua conta Prumo para enviar.</p>' : `<div class="row gap8" role="group" aria-label="Tipo"><button type="button" class="chip${FB.t === 'sugestao' ? ' on' : ''}" data-act="fbTipo" data-t="sugestao" aria-pressed="${FB.t === 'sugestao'}">Sugestão</button><button type="button" class="chip${FB.t === 'reclamacao' ? ' on' : ''}" data-act="fbTipo" data-t="reclamacao" aria-pressed="${FB.t === 'reclamacao'}">Reclamação</button></div>
+  <label class="sr-only" for="fbTx">A tua mensagem</label><textarea id="fbTx" class="field" rows="4" maxlength="1200" style="margin:10px 0" placeholder="${FB.t === 'reclamacao' ? 'Conta o que aconteceu (onde e quando), para conseguirmos resolver.' : 'A tua ideia para o Prumo.'}">${esc(FB.tx)}</textarea>
+  ${FB.ok ? `<p class="pos" style="margin:0 0 8px">${esc(FB.ok)}</p>` : ''}<button type="button" class="btn pri" data-act="fbEnviar"${FB.busy ? ' disabled' : ''}>${FB.busy ? 'A enviar…' : 'Enviar'}</button>`}</div>`;
+document.addEventListener('input', e => { if (e.target && e.target.id === 'fbTx') { FB.tx = e.target.value; FB.ok = ''; } });
+A.fbTipo = b => { FB.t = b.dataset.t === 'reclamacao' ? 'reclamacao' : 'sugestao'; OS.request(); };
+A.fbEnviar = async () => { const tx = (document.getElementById('fbTx') || {}).value || FB.tx; if (String(tx).trim().length < 5) { UI.toast('Escreve um pouco mais.', 'warn'); return; }
+  FB.busy = true; OS.request(); try { await call('com', { tipo: FB.t, texto: tx, orig: 'app' }); FB.tx = ''; FB.ok = FB.t === 'reclamacao' ? 'Recebemos a tua reclamação. Obrigado por avisares.' : 'Recebemos a tua sugestão. Obrigado!'; }
+  catch (e) { UI.toast((e && e.message) || 'Não deu para enviar agora.', 'warn'); } FB.busy = false; OS.request(); };
+OS.on('ready', () => { const o = OS.views.definicoes; if (!o || o._fb) return; OS.views.definicoes = sub => { const h = o(sub); return String(sub || '') !== '' ? h : h + fbPanel(); }; OS.views.definicoes._fb = 1; });
 OS.Social = { marca, nome: pNome, hunter: hunterView, ranking: rankView, clas: clasView, noAnime, badge, parceiro: () => Object.assign({}, PARC), _S: S, call, conta, eu, rank, hora, ePh };
 })();

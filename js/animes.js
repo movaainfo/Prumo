@@ -114,6 +114,9 @@ const API = {
   // episódios que saíram nas últimas 48 horas (os novos lançamentos)
   recent: async () => { const t = Math.floor(Date.now() / 1000), d = await gql(`query($a:Int,$b:Int){Page(perPage:50){airingSchedules(airingAt_greater:$a,airingAt_lesser:$b,sort:TIME_DESC){episode airingAt media{${F} isAdult}}}}`, { a: t - 48 * 3600, b: t });
     return ((d.Page && d.Page.airingSchedules) || []).map(s => { const x = s.media && !s.media.isAdult && nAL(s.media); return x ? { at: s.airingAt * 1000, ep: s.episode, x } : null; }).filter(Boolean).sort((a, b) => (b.x.pop || 0) - (a.x.pop || 0)).slice(0, 30); },
+  // v3.79: ao vivo: o que saiu nas últimas 6 horas e o que sai nas próximas 24 (para a contagem ao segundo)
+  upcoming: async () => { const t = Math.floor(Date.now() / 1000), d = await gql(`query($a:Int,$b:Int){Page(perPage:50){airingSchedules(airingAt_greater:$a,airingAt_lesser:$b,sort:TIME){episode airingAt media{${F} isAdult}}}}`, { a: t - 6 * 3600, b: t + 24 * 3600 });
+    return ((d.Page && d.Page.airingSchedules) || []).map(s => { const x = s.media && !s.media.isAdult && nAL(s.media); return x ? { at: s.airingAt * 1000, ep: s.episode, x } : null; }).filter(Boolean); },
   week: async () => { const a = Math.floor(new Date(new Date().setHours(0, 0, 0, 0)).getTime() / 1000), b = a + 7 * 86400, out = [];
     for (let p = 1; p <= 5; p++) { const d = await gql(`query($a:Int,$b:Int,$p:Int){Page(page:$p,perPage:50){pageInfo{hasNextPage} airingSchedules(airingAt_greater:$a,airingAt_lesser:$b,sort:TIME){episode airingAt media{${F} isAdult}}}}`, { a, b, p });
       const P = d.Page || {}; (P.airingSchedules || []).forEach(s => { const x = s.media && !s.media.isAdult && nAL(s.media); if (x) out.push({ at: s.airingAt * 1000, ep: s.episode, x }); }); if (!(P.pageInfo && P.pageInfo.hasNextPage)) break; }
@@ -201,7 +204,7 @@ const imgS = (u, sz) => { u = String(u || ''); const s = sz === 's'; if (sz === 
 const srcset = u => { const m = imgS(u, 'm'); return m && m !== u ? ` srcset="${esc(m)} 230w, ${esc(u)} 460w"` : ''; };
 const SIZES = ' sizes="(max-width:520px) 42vw, (max-width:860px) 24vw, 190px"';
 const cover = (x, cls) => x.img ? `<img class="an-img ${cls || ''}" src="${esc(/an-dp|\blg\b/.test(cls || '') ? x.img : imgS(x.img, /\bxs\b/.test(cls || '') ? 's' : 'm'))}"${cls ? '' : srcset(x.img) + SIZES} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<span class="an-img an-img0 ${cls || ''}" aria-hidden="true">${esc(String(x.t || '?').slice(0, 2).toUpperCase())}</span>`;
-const colOf = x => /^#[0-9a-f]{6}$/i.test(x.col || '') ? x.col : '#E8203A';
+const colOf = x => /^#[0-9a-f]{6}$/i.test(x.col || '') ? x.col : '#B83444';
 const subOf = x => [fmtN(x.fmt), x.eps ? x.eps + (x.eps === 1 ? ' episódio' : ' episódios') : '', x.y || ''].filter(Boolean).join(' · ');
 const poster = (x, o) => { o = o || {}; x = keep(x); const m = mine(x), k = kOf(x), p = m && m.status === 'A ver' && (m.eps || x.eps) ? Math.min(100, Math.round((m.ep || 0) / (m.eps || x.eps) * 100)) : 0;
   return `<button type="button" class="an-pc${o.cls ? ' ' + o.cls : ''}" data-act="anOpen" data-k="${esc(k)}" style="--c:${colOf(x)}" aria-label="${esc(x.t)}">
@@ -313,9 +316,23 @@ A.anTrailer = b => { const box = document.getElementById('anTrl'); if (!box) ret
 /* ================= páginas ================= */
 const AT = [['', 'Início'], ['parceria', 'A parceria'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['pursuit', 'Pursuit'], ['ranking', 'Ranking'], ['clas', 'Clãs'], ['comunidade', 'Comunidade'], ['perfil', 'O meu perfil'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
 const P = {};
+// v3.78: a barra própria dos Animes (computador e tablet): o selo Prumo & PHANTOM, 5 atalhos com ícone e o "Mais" com tudo arrumado por grupos
+// (em vez da fila de separadores em texto). No telemóvel continua a barra de baixo e os botões por cima do destaque.
+const AMAIN = [['', 'Início', 'home'], ['navegar', 'Navegar', 'grid'], ['temporada', 'Simulcasts', 'tv'], ['pursuit', 'Pursuit', 'target'], ['lista', 'A minha lista', 'mark']];
+const AGRP = [['Descobrir', [['recomendados', 'Para ti', 'star', 'Escolhidos pelo que vês'], ['calendario', 'Calendário', 'cal', 'Os episódios da semana'], ['categorias', 'Categorias', 'layers', 'Ação, romance, mistério…'], ['melhores', 'Melhores do ano', 'award', 'Os melhores de cada ano'], ['noticias', 'Notícias', 'news', 'O que se passa nos animes'], ['pesquisar', 'Pesquisar', 'search', 'Em 3 bases de animes']]],
+  ['Jogar', [['pursuit', 'Pursuit', 'target', 'Todas as noites às 20h'], ['ranking', 'Ranking', 'crown', 'Os pontos de todos'], ['premios', 'Prémios', 'gift', 'A votação do ano']]],
+  ['Comunidade', [['clas', 'Clãs e conversas', 'chat', 'Grupos e amigos'], ['comunidade', 'Comunidade', 'users', 'Indicações, pedidos, equipa'], ['perfil', 'O meu perfil', 'user', 'O teu @, foto e fundo'], ['parceria', 'A parceria', 'flag', 'Prumo & PHANTOM']]],
+  ['A minha coleção', [['lista', 'A minha lista', 'mark', 'A ver, quero ver, vistos'], ['tier', 'Top 10 e tier list', 'chart', 'Os teus favoritos'], ['perfil', 'Classe e Recap', 'award', 'Que fã és e o teu ano']]]];
+const anTop = k => { const cur = k === 'anime' ? '' : k, emMais = !AMAIN.some(a => a[0] === cur);
+  return `<nav class="ax-bar" aria-label="Páginas dos Animes"><a class="ax-brand" href="#animes" aria-label="Animes: início">${OS.Parceria ? OS.Parceria.mini() : ''}<b>Animes</b></a>
+    <div class="ax-links">${AMAIN.map(([a, l, ic]) => `<a href="#animes${a ? '.' + a : ''}" class="${a === cur && k !== 'anime' ? 'on' : ''}"${a === cur && k !== 'anime' ? ' aria-current="page"' : ''}>${UI.ic(ic)}<span>${l}</span></a>`).join('')}
+      <details class="ax-mais"><summary class="${emMais && k !== 'anime' && cur ? 'on' : ''}">${UI.ic('dots')}<span>Mais</span></summary><div class="ax-mm">${AGRP.map(([g, L]) => `<section><h4>${g}</h4>${L.map(([a, l, ic, d]) => `<a href="#animes.${a}" class="${a === cur ? 'on' : ''}">${UI.ic(ic)}<span><b>${l}</b><small>${d}</small></span></a>`).join('')}</section>`).join('')}</div></details></div>
+    <div class="ax-r"><a class="ax-i" href="#animes.pesquisar" aria-label="Pesquisar anime">${UI.ic('search')}</a><a class="ax-i" href="#animes.perfil" aria-label="O meu perfil de anime">${UI.ic('user')}</a></div></nav>`; };
+// o painel "Mais" fecha ao tocar fora dele ou ao escolher uma página
+document.addEventListener('click', e => { const d = document.querySelector('#view .ax-mais[open]'); if (d && (!d.contains(e.target) || e.target.closest('.ax-mm a'))) d.removeAttribute('open'); }, true);
 V.animes = sub => { const k = sub === 'anime' ? 'anime' : P[sub || ''] ? (sub || '') : '';
   return UI.head('Animes', 'Os Animes do Prumo, em parceria com a ' + (OS.Social && OS.Social.nome ? OS.Social.nome() : 'PHANTOM') + ': todos os animes do mundo, a tua lista, nota e tier list, o Pursuit todas as noites, o ranking, os clãs e a comunidade.', `<a class="btn pri an-hbtn" href="#animes.pesquisar">${UI.ic('search')}<span>Pesquisar anime</span></a>`, OS.Social ? OS.Social.marca('xs') : 'Parceria')
-    + UI.tabs('animes', AT, k === 'anime' ? '' : k) + `<div class="an${k === '' || k === 'anime' ? ' an-top0' : ''}">${(k === 'anime' ? detail : P[k])()}</div>`; };
+    + `<div class="an${k === '' || k === 'anime' ? ' an-top0' : ''}">${anTop(k)}${(k === 'anime' ? detail : P[k])()}</div>`; };
 
 /* destaque em carrossel (muda sozinho; pára quando tocas ou passas o rato; sem animação para quem a desliga) */
 let HI = 0;
@@ -363,6 +380,26 @@ const holdHero = () => { HOLD = Date.now() + 12000; if (OS.hold) OS.hold(700); c
 ['touchstart', 'pointerdown', 'wheel', 'focusin'].forEach(ev => document.addEventListener(ev, e => { if (e.target && e.target.closest && e.target.closest('#view .an-hero')) holdHero(); }, { passive: true, capture: true }));
 document.addEventListener('animationend', e => { if (e.animationName !== 'anFill') return; const h = e.target && e.target.closest && e.target.closest('#view .an-hero'); if (!h || document.hidden || h.classList.contains('hold') || h.matches(':hover')) return; heroGo(HI + 1); });
 
+/* v3.79 · Ao vivo: os episódios que acabaram de sair (com o ponto vermelho na primeira meia hora) e a contagem ao segundo dos próximos.
+   Primeiro os animes com o sino e os da tua lista. Com o app aberto, quando sai um episódio de um anime com o sino aparece o aviso na hora. */
+const hhmmss = ms => { const s = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + p2(m) : m) + ':' + p2(x); };
+const vivoTxt = at => { const d = at - Date.now(); return d > 0 ? 'Sai daqui a ' + hhmmss(d) : d > -30 * 6e4 ? 'Acabou de sair' : 'Saiu ' + ago(at); };
+const aoVivo = () => { const up = need('upc', 5 * 6e4, API.upcoming, true); if (!up || !up.length) return '';
+  const pri = o => (sinoOn(o.x) ? 2 : 0) + (mine(o.x) ? 1 : 0), now = Date.now();
+  const L = up.filter(o => o.at > now - 6 * 36e5 && o.at < now + 24 * 36e5).sort((a, b) => pri(b) - pri(a) || Math.abs(a.at - now) - Math.abs(b.at - now) || (b.x.pop || 0) - (a.x.pop || 0)).slice(0, 16)
+    .sort((a, b) => (b.at <= now) - (a.at <= now) || (a.at <= now ? b.at - a.at : a.at - b.at));
+  if (!L.length) return '';
+  const nv = L.filter(o => o.at <= now && now - o.at < 30 * 6e4).length;
+  return `<section class="an-row an-live"><div class="an-rh"><h3>${nv ? '<span class="an-lvd" aria-hidden="true"></span>' : ''}Ao vivo e a seguir <small>${nv ? nv + (nv === 1 ? ' episódio acabou de sair' : ' episódios acabaram de sair') : 'os próximos episódios, ao segundo'}</small></h3></div>
+    <div class="an-strip an-lvs">${L.map(o => { const x = keep(o.x), saiu = o.at <= now, novo = saiu && now - o.at < 30 * 6e4;
+      return `<button type="button" class="an-lv${novo ? ' novo' : saiu ? ' saiu' : ''}" data-act="anOpen" data-k="${esc(kOf(x))}" style="--c:${colOf(x)}"><span class="an-lvi">${cover(x, 'an-lvc')}<span class="an-lvb">E${o.ep}</span>${novo ? '<span class="an-lvt"><i></i>Novo</span>' : ''}${sinoOn(x) ? `<span class="an-lvs2" aria-label="Com aviso">${UI.ic('bell')}</span>` : ''}</span>
+        <b>${esc(x.t)}</b><small data-anat="${o.at}">${esc(vivoTxt(o.at))}</small></button>`; }).join('')}</div></section>`; };
+// a contagem anda ao segundo sem redesenhar a página; quando um chega a zero, a página atualiza e (se tem o sino) avisa
+let VIVO_T = 0; const VISTOS = new Set();
+setInterval(() => { if (!/^#animes/.test(location.hash) || document.hidden) return; let virou = false;
+  document.querySelectorAll('#view [data-anat]').forEach(el => { const at = +el.dataset.anat, t = vivoTxt(at); if (el.textContent !== t) { if (at <= Date.now() && /^Sai daqui/.test(el.textContent)) virou = true; el.textContent = t; } });
+  if (virou && Date.now() - VIVO_T > 3000) { VIVO_T = Date.now(); const up = cGet('upc', 864e5) || []; up.forEach(o => { const k = kOf(o.x) + ':' + o.ep; if (o.at <= Date.now() && Date.now() - o.at < 60e3 && sinoOn(o.x) && !VISTOS.has(k)) { VISTOS.add(k); UI.toast('Saiu agora: episódio ' + o.ep + ' de ' + o.x.t, 'pos'); } }); OS.request(); } }, 1000);
+
 /* Início: destaque, continuar a ver, novos episódios, recomendado para ti, simulcasts, em alta, categorias, clássicos, notícias */
 P[''] = () => { const S = sNow(), L = mineAll(), sea = need('s:' + S.y + S.s, H6, () => API.season(S), true), tr = need('trend', H6, API.trending, true), rc = need('recent', 15 * 6e4, API.recent, true), cl = need('classics', 24 * 36e5, API.classics, true);
   const watching = U.sortBy(L.filter(a => a.status === 'A ver'), a => -(a._u || 0)), want = L.filter(a => a.status === 'Quero ver'), favs = L.filter(a => a.fav);
@@ -374,7 +411,7 @@ P[''] = () => { const S = sNow(), L = mineAll(), sea = need('s:' + S.y + S.s, H6
   const fresh0 = (rc || []).map(e => wide(e.x, { badge: 'E' + e.ep, sub: `Episódio ${e.ep} · ${ago(e.at)}` }));
   const SD = seedsOf(), rby = SD.length ? need(recKey(SD), 12 * 36e5, () => API.recs(SD), true) : null, ragg = rby ? recsAgg(rby, SD) : [];
   const subnav = `<nav class="an-subnav" aria-label="Páginas dos animes">${AT.filter(a => a[0]).map(([k, l]) => `<a href="#animes.${k}">${l}</a>`).join('')}</nav>`;
-  return hero + subnav + `<div class="an-pad">` + cont + row('Novos episódios', fresh0.slice(0, 20), { wide: 1, more: '#animes.calendario' })
+  return hero + subnav + `<div class="an-pad">` + cont + aoVivo() + row('Novos episódios', fresh0.slice(0, 20), { wide: 1, more: '#animes.calendario' })
     + (ragg.length ? row('Recomendado para ti', ragg.slice(0, 20).map(c => c.x), { more: '#animes.recomendados', card: x => { const c = ragg.find(z => z.x === x); return { sub: c ? 'Porque viste ' + c.why[0] : '' }; } }) : '')
     + row(`Simulcasts de ${esc(sName(S))} <small>${SEM[S.s]}</small>`, (sea || []).slice(0, 20), { more: '#animes.temporada' })
     + row('Em alta agora', (tr || []).slice(0, 20))

@@ -67,3 +67,15 @@
 @media (max-width:420px){.wl-chips{position:static;display:flex;justify-items:start;margin-top:14px}.wl-tot{max-width:none}.wl-cartoes{left:6%;right:6%}.wl-frente{padding:26px 18px 18px}}
 @media (prefers-reduced-motion:reduce){.wl-c{transition:none}.wl-c:hover{transform:none}}
 .wl .mono,.wl-sec .mono{font-family:var(--sans);font-variant-numeric:tabular-nums;letter-spacing:-.005em}
+/* v3.79 · o banco em cada cartão e o detalhe da conta com os movimentos */
+.wl-c .wl-cn{display:flex;flex-direction:column;gap:4px;min-width:0;max-width:62%;font-size:inherit;opacity:1}.wl-c .wl-cn b{max-width:100%}
+.wl-c .wl-cb{display:block;font-size:11.5px;font-weight:600;opacity:.82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:left}
+.wlx{display:flex;flex-direction:column;gap:12px}
+.wlx-c{position:relative;display:flex;flex-direction:column;gap:4px;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 92%,#fff),var(--c) 45%,color-mix(in srgb,var(--c) 70%,#000));box-shadow:0 18px 40px -20px var(--c),inset 0 1px 0 rgba(255,255,255,.25);min-height:150px}
+.wlx-c .wlx-bk{font-size:12.5px;font-weight:800;letter-spacing:.02em;opacity:.85}.wlx-c>b{font-size:20px}.wlx-c>small{opacity:.8}
+.wlx-sl{display:flex;flex-direction:column;margin-top:auto}.wlx-sl i{font-style:normal;font-size:12px;opacity:.8}.wlx-sl b{font-size:28px;line-height:1.1}
+.wlx-lim{display:block;height:6px;border-radius:99px;background:rgba(255,255,255,.25);overflow:hidden;margin-top:6px}.wlx-lim i{display:block;height:100%;background:currentColor}
+.wlx-m{display:flex;align-items:center;justify-content:center;gap:10px}.wlx-m b{min-width:140px;text-align:center;text-transform:capitalize}
+.wlx-k{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.wlx-k div{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--tx) 5%,transparent)}.wlx-k small{color:var(--mut);font-size:12px}
+.wlx-n{display:flex;align-items:center;gap:6px;margin:0;font-size:12.5px;color:var(--mut)}.wlx-n .ic{width:15px;height:15px}
+.wlx-d{margin:6px 0 2px;font-size:12.5px;color:var(--mut);font-weight:700}

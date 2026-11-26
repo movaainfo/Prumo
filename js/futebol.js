@@ -165,7 +165,7 @@ const req = () => { if (typing(document.activeElement)) { pendR = true; return; 
 document.addEventListener('focusout', e => { if (typing(e.target) && pendR) { pendR = false; setTimeout(() => OS.request(), 150); } });
 const TRY = {}, ERR = {}, PEND = new Set();
 const ensure = (k, isStale, f) => { if (!isStale() || PEND.has(k) || (TRY[k] && Date.now() - TRY[k] < 15e3)) return; TRY[k] = Date.now(); PEND.add(k);
-  f().then(() => { delete ERR[k]; }).catch(e => { ERR[k] = (e && e.message) || 'erro'; }).finally(() => { PEND.delete(k); if (/^#futebol/.test(location.hash)) req(); }); };
+  f().then(() => { delete ERR[k]; }).catch(e => { ERR[k] = (e && e.message) || 'erro'; }).finally(() => { PEND.delete(k); if (/^#(futebol|esportes)/.test(location.hash)) req(); }); };
 const needTeam = t => ensure('t' + t.id, () => !TM[t.id] || Date.now() - TM[t.id].at > (TM[t.id].ev.some(isHot) ? 3e4 : 5 * 6e4), () => loadTeam(t).then(m => pool(m.ev.filter(isHot), 2, e => liveEv(e))));
 const needComp = s => ensure('c' + s, () => !CM[s] || Date.now() - CM[s].at > (CM[s].ev.some(isHot) ? 3e4 : 5 * 6e4), () => loadComp(s));
 const needTable = s => ensure('b' + s, () => !TB[s] || Date.now() - TB[s].at > 10 * 6e4, () => loadTable(s));
@@ -714,5 +714,7 @@ A.fbMatch = b => { const e = evFind(b.dataset.id); if (!e) { UI.toast('A carrega
     if (e.st === 'in') mdT = setTimeout(upd, 15e3); };
   upd(); };
 
-OS.Futebol = { tN, tick, liveN, state: () => ({ TM, CM, TB, SEEN, FEED, WORLD }), loadWorld, loop, _redraw: id => mdRedraw(id), _clearCache: () => MEM.clear(), _sumReset: id => { delete SUM[id]; [...MEM.keys()].forEach(k => { if (k.includes('event=' + id)) MEM.delete(k); }); }, _reset: () => { MEM.clear(); WORLD.at = 0; WORLD.d = ''; WORLD.ids = []; WQ = ''; [TM, CM, TB, TRY, ERR].forEach(o => Object.keys(o).forEach(k => delete o[k])); Object.keys(SEEN).forEach(k => delete SEEN[k]); FEED.splice(0); DISC = {}; SNAP = {}; } };
+// v3.78: todos os jogos de futebol a decorrer agora no mundo (para o Agora a jogar dos Desportos)
+const vivos = () => { needWorld(); const mine = new Set(st().teams.map(t => t.id)); return wEv().filter(e => e.st === 'in').map(e => Object.assign({}, e, { liga: lgN(e.lg, e.lgF), meu: mine.has(e.h.id) || mine.has(e.a.id) })); };
+OS.Futebol = { tN, tick, liveN, vivos, state: () => ({ TM, CM, TB, SEEN, FEED, WORLD }), loadWorld, loop, _redraw: id => mdRedraw(id), _clearCache: () => MEM.clear(), _sumReset: id => { delete SUM[id]; [...MEM.keys()].forEach(k => { if (k.includes('event=' + id)) MEM.delete(k); }); }, _reset: () => { MEM.clear(); WORLD.at = 0; WORLD.d = ''; WORLD.ids = []; WQ = ''; [TM, CM, TB, TRY, ERR].forEach(o => Object.keys(o).forEach(k => delete o[k])); Object.keys(SEEN).forEach(k => delete SEEN[k]); FEED.splice(0); DISC = {}; SNAP = {}; } };
 })();

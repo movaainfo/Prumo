@@ -8,7 +8,7 @@
 'use strict';
 const OS = window.OS, U = OS.U, UI = OS.UI, A = OS.act, { esc } = U;
 const K = 'nau:push';
-OS.ONE_DEF.pushcfg = { cat: { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1 } };
+OS.ONE_DEF.pushcfg = { cat: { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1, festas: 1 } };
 const ls = () => U.ls.get(K, {}) || {};
 const sup = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -36,7 +36,9 @@ const SRC = {
   // v3.77: os animes: o Pursuit todos os dias (a quem tem os Animes e não escolheu só a Diversão) e os animes com o sino
   an: () => { const on = !(OS.Areas && OS.Areas.hidden && OS.Areas.hidden().has('animes')), m = U.ls.get('oc_an_modos', null);
     return { hu: on && (!m || !m.length || m.includes('competicao')) ? 1 : 0, eps: on ? ((OS.one('animeavisos') || {}).L || []).map(a => ({ al: a.al || 0, mal: a.mal || 0, t: a.t || '' })) : [] }; },
-  cat: () => Object.assign({ rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1 }, (OS.one('pushcfg') || {}).cat || {}) };
+  // v3.79: as festas (o país para o calendário do Ano Novo, o dia e mês de anos e o primeiro nome)
+  fe: () => ({ pais: (OS.Country && OS.Country.code && OS.Country.code()) || 'PT', anos: String((OS.one('me') || {}).birth || '').slice(5, 10), nome: String((OS.one('profile') || {}).short || (OS.who && OS.who()) || '').split(' ')[0].slice(0, 40) }),
+  cat: () => Object.assign({ rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1, festas: 1 }, (OS.one('pushcfg') || {}).cat || {}) };
 const PEND = {}, LAST = {}; let PT = 0, HAS = false;
 const flush = async () => { PT = 0; if (!HAS || !tok() || !pid()) return; const d = {};
   Object.keys(PEND).forEach(k => { const j = JSON.stringify(PEND[k]); if (j !== LAST[pid() + k]) d[k] = PEND[k]; delete PEND[k]; });
@@ -72,7 +74,7 @@ const P = OS.Push = {
 
 /* ---------- quando mudam os dados, o servidor fica a saber ---------- */
 OS.on('change', c => { if (!HAS) return; if (c === 'routine') put('rot', SRC.rot()); if (c === 'palerts') put('inv', SRC.inv()); });
-['fut', 'sports', 'pushcfg', 'animeavisos', 'areas'].forEach(k => OS.on('one:' + k, () => { if (!HAS) return; if (k === 'fut') put('fut', SRC.fut()); if (k === 'sports') put('sp', SRC.sp()); if (k === 'pushcfg') put('cat', SRC.cat()); if (k === 'animeavisos' || k === 'areas') put('an', SRC.an()); }));
+['fut', 'sports', 'pushcfg', 'animeavisos', 'areas', 'me', 'profile'].forEach(k => OS.on('one:' + k, () => { if (!HAS) return; if (k === 'me' || k === 'profile') { put('fe', SRC.fe()); return; } if (k === 'fut') put('fut', SRC.fut()); if (k === 'sports') put('sp', SRC.sp()); if (k === 'pushcfg') put('cat', SRC.cat()); if (k === 'animeavisos' || k === 'areas') put('an', SRC.an()); }));
 // ao abrir: este perfil tem aparelhos com notificações? então põe tudo em dia (a rotina olha 14 dias à frente)
 const boot = async () => { if (!tok() || !pid() || navigator.webdriver && !window.__pushTest) return; let sub = null;
   try { if (sup() && perm() === 'granted') { const reg = await navigator.serviceWorker.ready; sub = await reg.pushManager.getSubscription(); } } catch (e) { }
@@ -87,7 +89,7 @@ setInterval(() => { if (HAS && !document.hidden) syncAll(); }, 6 * 36e5);
 document.addEventListener('visibilitychange', () => { if (!document.hidden && HAS) put('rot', SRC.rot()); });
 
 /* ---------- Definições › Notificações ---------- */
-const CATS = [['rot', 'Rotina', 'cada bloco do teu dia, na hora (ou uns minutos antes)'], ['foco', 'Bloco de foco', 'quando acaba o tempo'], ['fut', 'Futebol', 'as tuas equipas e campeonatos: começo, golos, resultado'], ['sp', 'Desportos', 'NBA, NFL, voleibol, F1, MotoGP, MMA…'], ['inv', 'Alertas de preço', 'quando uma ação ou cripto chega ao valor que escolheste'], ['jogo', 'Pursuit', 'todos os dias: quando saem as pistas (20h de Lisboa), 15 minutos antes de fechar e o teu resultado'], ['ep', 'Episódios novos', 'os animes com o sino ligado: avisa quando sai cada episódio']];
+const CATS = [['rot', 'Rotina', 'cada bloco do teu dia, na hora (ou uns minutos antes)'], ['foco', 'Bloco de foco', 'quando acaba o tempo'], ['fut', 'Futebol', 'as tuas equipas e campeonatos: começo, golos, resultado'], ['sp', 'Desportos', 'NBA, NFL, voleibol, F1, MotoGP, MMA…'], ['inv', 'Alertas de preço', 'quando uma ação ou cripto chega ao valor que escolheste'], ['jogo', 'Pursuit', 'todos os dias: quando saem as pistas (20h de Lisboa), 15 minutos antes de fechar e o teu resultado'], ['ep', 'Episódios novos', 'os animes com o sino ligado: avisa quando sai cada episódio'], ['festas', 'Festas e aniversário', 'Feliz Ano Novo (no calendário do teu país), Feliz Natal, Páscoa e os teus parabéns']];
 const panel = () => { const w = P.why(), on = P.on(), cat = SRC.cat();
   return `<div class="pn" id="pushSet" data-open="1"><div class="pn-h"><h3>${UI.ic('bell')}Notificações</h3>${on ? UI.badge('ligadas neste aparelho', 'pos') : ''}</div>
     <p class="mut" style="margin:0 0 10px;font-size:13px">Os avisos do Prumo chegam a este aparelho mesmo com o app fechado: a rotina, o fim do bloco de foco, o futebol e os outros desportos que segues, os alertas de preço, o Pursuit e os episódios novos dos animes com o sino.</p>

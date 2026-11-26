@@ -146,6 +146,12 @@ const srv = http.createServer((req, res) => {
   if (u.pathname === '/ytmock') { YTMOCK.calls.push(u.query.channel_id || ''); const ent = (id, t, h) => `<entry><id>yt:video:${id}</id><yt:videoId>${id}</yt:videoId><title>${t}</title><published>${new Date(Date.now() - h * 36e5).toISOString()}</published></entry>`;
     res.writeHead(200, { 'Content-Type': 'application/atom+xml' }); return res.end(`<?xml version="1.0"?><feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">${ent('mlhrMomnts1', 'MELHORES MOMENTOS: FLAMENGO X PALMEIRAS', 1)}${ent('cazeAoVivo1', 'AO VIVO: FLAMENGO X PALMEIRAS | BRASILEIRÃO 2026 | 37ª RODADA', 2)}${ent('outroJogo01', 'AO VIVO: GRÊMIO X INTERNACIONAL | BRASILEIRÃO 2026', 2)}${ent('tenisMesa01', 'TÊNIS DE MESA (SOM AMBIENTE) &amp; MAIS', 3)}</feed>`); }
   if (u.pathname.startsWith('/pgmock/') || u.pathname.startsWith('/ebmock/')) { let body = ''; req.on('data', c => body += c); req.on('end', () => BKM.handle(req, res, u, body)); return; }
+  // v3.78: o AniList simulado (quando o MyAnimeList não responde, o Pursuit usa-o)
+  if (u.pathname === '/almock') { let body = ''; req.on('data', c => body += c); req.on('end', () => { let j = {}; try { j = JSON.parse(body || '{}'); } catch (e) { } const q = j.query || '', v = j.variables || {}; res.writeHead(200, { 'Content-Type': 'application/json' });
+      if (/POPULARITY_DESC/.test(q)) { const media = Array.from({ length: 12 }, (_, i) => ({ idMal: 8800 + i, genres: i === 2 ? ['Ecchi'] : ['Action'] })); return res.end(JSON.stringify({ data: { Page: { media } } })); }
+      if (/Media\(idMal/.test(q) && v.m) { const Media = { idMal: +v.m, title: { romaji: 'Hagane no Renkin ' + v.m, english: 'Steel Alchemist ' + v.m }, format: 'TV', episodes: 51, season: 'FALL', seasonYear: 2003, source: 'MANGA', genres: ['Action', 'Drama'], tags: [{ name: 'Alchemy', rank: 90, isMediaSpoiler: false }], studios: { nodes: [{ name: 'Studio Bones' }] }, coverImage: { extraLarge: 'https://s4.anilist.co/x.jpg' } };
+        return res.end(JSON.stringify({ data: { Media } })); }
+      res.end('{"data":{}}'); }); return; }
   if (u.pathname.startsWith('/jkmock/')) { JKMOCK.calls.push(u.path); if (JKMOCK.down) { res.writeHead(500); return res.end('{}'); } res.writeHead(200, { 'Content-Type': 'application/json' });
     // v3.72: temporadas de um ano (para os nomeados dos Prémios Prumo)
     if (/\/seasons\/\d{4}\//.test(u.pathname)) { const s = u.pathname.split('/').pop(), base = { winter: 100, spring: 200, summer: 300, fall: 400 }[s] || 500, G = [[1, 'Action'], [22, 'Romance'], [4, 'Comedy'], [10, 'Fantasy'], [8, 'Drama'], [30, 'Sports'], [36, 'Slice of Life']];
@@ -641,6 +647,16 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     await k.p.click('[data-act=walOlho]'); await sleep(400); const esc = await E(k.p, () => ({ x: document.querySelectorAll('#view .wl-x').length, tot: document.querySelector('.wl-tot b').textContent }));
     await k.p.click('[data-act=walOlho]'); await sleep(300);
     ok('Contas como carteira: os 3 cartões das contas a sair do bolso, saldo total, cartões em dívida e reservas, contas em cartões com gráfico, últimas transações; o olho esconde os valores', wl.cartoes.length === 3 && /6\D?128,71/.test(wl.tot.replace(/\s/g, '')) && wl.chips === 2 && wl.contas === 4 && wl.sp === 4 && wl.ult === 5 && wl.add && wl.tabela && esc.x >= 8 && /•/.test(esc.tot), JSON.stringify({ wl, esc }).slice(0, 400));
+    // v3.79: o banco em cada cartão e, ao tocar, o cartão da conta com o saldo e os movimentos do mês (e os meses anteriores)
+    { const cb = await E(k.p, () => [...document.querySelectorAll('#view .wl-c')].map(c => c.innerText.replace(/\s+/g, ' ')));
+      await E(k.p, () => { const c = [...document.querySelectorAll('#view .wl-ac')].find(x => /Nubank/.test(x.innerText) && !/Cartão/.test(x.innerText)); if (c) c.click(); }); await sleep(600);
+      const det = await E(k.p, () => { const m = document.querySelector('#modal .wlx'); return m ? { t: m.innerText.replace(/\s+/g, ' '), n: m.querySelectorAll('.wl-t').length } : null; });
+      if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'carteira-conta.png') }); } catch (e) { } }
+      await E(k.p, () => { const b = document.querySelector('#modal [data-act=walMes]'); if (b) b.click(); }); await sleep(300); const ant = await E(k.p, () => (document.querySelector('#modal .wlx-m b') || {}).textContent || '');
+      await E(k.p, () => OS.UI.closeModal());
+      ok('Carteira: cada cartão mostra o banco e a conta; tocar abre o cartão da conta com o saldo, as entradas e saídas do mês e os movimentos dessa conta, e dá para ver os meses anteriores',
+        cb.some(x => /Nubank|nu/.test(x) && /Conta à ordem|Cartão de crédito/.test(x)) && det && /Nubank/.test(det.t) && /Entradas/.test(det.t) && /Saídas/.test(det.t) && det.n >= 2 && det.n <= 3 && /Salário|Supermercado/.test(det.t) && !/Transportes/.test(det.t) && ant && ant !== (det.t.match(/(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)[^\d]*\d{4}/i) || [''])[0],
+        JSON.stringify({ cb, det, ant }).slice(0, 500)); }
     await k.ctx.close(); }
   // v3.72: atividade em curso (treino, bloco de foco) numa barra no topo e aviso do fim do descanso com a app fechada
   { const R = await reg(), sR = { 'nau:s': JSON.stringify({ t: R.tok, e: R.email, n: '', perfis: [{ id: R.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(R.pid), 'nau:pd': JSON.stringify(R.pid), 'nau:owner': JSON.stringify(R.email) };
@@ -724,7 +740,7 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     process.env.NAUTILO_HUNTER_FECHA = '0'; const h2 = await so(A1, { op: 'hunter' }), hb2 = await so(B1, { op: 'hunter' }), rk = await so(C1, { op: 'rankAnime' }), h3 = await so(C1, { op: 'hunter' });
     const P1 = h1.hunter || {}, P2 = h2.hunter || {}, R0 = (rk.lista || []);
     ok('Pursuit: antes das 20h não se marca; às 20h saem pistas do anime (sem dizer o nome); um Hunter por pessoa e por dia; às 22h fecha e quem acertou ganha 100, 90… pela ordem; quem errou não ganha; ranking de animes com os pontos',
-      h0.hunter.fase === 'espera' && m0._st === 400 && P1.fase === 'aberto' && P1.pistas.length >= 3 && !P1.pistas.join(' ').includes('Brother') && /Bones/.test(P1.pistas.join(' ')) && !!full && !/^700[3]$/.test(full) && okB._st === 200 && okC._st === 200 && errA._st === 200 && dup._st === 409
+      h0.hunter.fase === 'espera' && m0._st === 400 && P1.fase === 'aberto' && P1.pistas.length >= 3 && !P1.pistas.join(' ').includes('Brother') && (P1.pistas.length < 4 || /Bones/.test(P1.pistas.join(' '))) && !!full && !/^700[3]$/.test(full) && okB._st === 200 && okC._st === 200 && errA._st === 200 && dup._st === 409
       && hB.hunter.meu && hB.hunter.meu.certo === undefined && !hB.hunter.resposta && P2.fase === 'fechado' && P2.resposta.titulo === 'Brother Warriors ' + full && P2.res.length === 2 && P2.res[0].pts === 100 && P2.res[1].pts === 90 && P2.meu.certo === false && hb2.hunter.meu.certo === true
       && R0[0].id === eb.eu.id && R0[0].p === 100 && R0[1].p === 90 && rk.eu && rk.eu.pos === 2 && h3.hunter.res.length === 2,
       JSON.stringify({ h0: h0.hunter && h0.hunter.fase, m0: m0._st, f1: P1.fase, pistas: P1.pistas, full, okB: okB._st, okC: okC._st, errA: errA._st, dup: dup._st, f2: P2.fase, res: P2.res, rk: R0.slice(0, 3) }).slice(0, 700));
@@ -748,6 +764,14 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     ok('Parceria na app: tela de Jogos com "Prumo & Otaku Lab" em destaque (a administração escreve o nome; outras contas não), o Pursuit e o ranking; Animes fora do "Eu"; Pursuit com os resultados; conversa do clã a enviar pela app e a IA a barrar o insulto',
       p0.nome === 'PHANTOM' && pn._st === 403 && pa._st === 200 && pg.nome === 'Otaku Lab' && jg.hero && jg.nome && jg.hu && jg.rk && jg.dom && !/^Eu\b/.test(jg.grp) && hu.res && hu.meu && hu.mk && hu.cred && ch.meu.includes('Mensagem do teste pela app') && !ch.meu.some(t => /idiota/.test(t)) && ch.nota && lcB.msgs.some(m => /pela app/.test(m.t)) && !lcB.msgs.some(m => /idiota/.test(m.t)),
       JSON.stringify({ p0: p0.nome, pn: pn._st, pa: pa._st, pg, jg, hu, ch, lcB: (lcB.msgs || []).map(m => m.t) }).slice(0, 700));
+    // v3.78: o MyAnimeList em baixo: o Pursuit vai buscar o anime do dia e as pistas ao AniList (sem anime com ecchi); depois das 22h sem jogo, mostra o de amanhã
+    { const N0 = require(path.join(ROOT, 'api', '_nuvem.js')), dia = (h1.hunter || {}).dia, A0 = process.env.NAUTILO_HUNTER_ABRE, F0 = process.env.NAUTILO_HUNTER_FECHA; process.env.NAUTILO_ANILIST = 'http://localhost:' + PORT + '/almock'; JKMOCK.down = true;
+      await N0.store().del(['so/h/' + dia, 'so/htop']); process.env.NAUTILO_HUNTER_ABRE = '0'; process.env.NAUTILO_HUNTER_FECHA = '1440';
+      const hf = await so(A1, { op: 'hunter' }), PF = hf.hunter || {};
+      await N0.store().del(['so/h/' + dia]); process.env.NAUTILO_HUNTER_FECHA = '0'; const hd = await so(A1, { op: 'hunter' }), PD = hd.hunter || {};
+      JKMOCK.down = false; delete process.env.NAUTILO_ANILIST; if (A0 == null) delete process.env.NAUTILO_HUNTER_ABRE; else process.env.NAUTILO_HUNTER_ABRE = A0; if (F0 == null) delete process.env.NAUTILO_HUNTER_FECHA; else process.env.NAUTILO_HUNTER_FECHA = F0;
+      ok('Pursuit com o MyAnimeList em baixo: o anime do dia e as pistas vêm do AniList; depois das 22h sem jogo criado mostra o de amanhã (sem erro)',
+        PF.fase === 'aberto' && /51 episódios/.test((PF.pistas || []).join(' ')) && /outono de 2003/.test((PF.pistas || []).join(' ')) && PD.fase === 'espera' && PD.abreAt > Date.now() && hd._st === 200, JSON.stringify({ PF: { f: PF.fase, p: PF.pistas }, PD: { f: PD.fase, a: PD.abreAt }, st: hd._st }).slice(0, 500)); }
     const pz = await so(ADM, { op: 'adminParceiro', nome: '' }); ok('Parceria: sem nome escrito volta a PHANTOM', pz.parceiro && pz.parceiro.nome === 'PHANTOM', JSON.stringify(pz).slice(0, 120));
     if (process.env.SHOTS) { try { await E(k.p, () => { Object.keys(localStorage).filter(x => /parceiro/.test(x)).forEach(x => localStorage.removeItem(x)); }); await k.p.reload(); await unlock(k.p).catch(() => { }); await sleep(600); await E(k.p, () => { location.hash = 'jogos'; }); await sleep(1800);
       await k.p.screenshot({ path: path.join(process.env.SHOTS, 'jogos-phantom.png'), fullPage: false }); await k.p.setViewportSize({ width: 1280, height: 860 }); await sleep(600); await k.p.screenshot({ path: path.join(process.env.SHOTS, 'jogos-phantom-pc.png'), fullPage: false });
@@ -819,6 +843,20 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     ok('Comunidade: indicações públicas (com gostos), pedidos, sugestões e candidaturas ao recrutamento só para a administração (com o e-mail da conta), tudo verificado pela IA; a equipa SA editada pela administração',
       i1.ind && i2._st === 200 && i3._st === 200 && i4._st === 400 && li.L.some(x => x.titulo === 'Frieren') && gi.ind.gostos === 1 && naoAdm._st === 403 && ac.L.some(x => /moderar/.test(x.texto) && /@teste\.pt$/.test(x.email)) && ap2.L.some(x => /temporadas/.test(x.texto)) && eq.equipa.length === 2 && eqv.equipa[0].nome === 'Ryan' && eqNao._st === 403,
       JSON.stringify({ i1: i1._st, i2: i2._st, i3: i3._st, i4: i4._st, li: (li.L || []).length, gi: gi.ind && gi.ind.gostos, naoAdm: naoAdm._st, ac: (ac.L || []).length, eq: (eqv.equipa || []).length }).slice(0, 500));
+    // v3.78: tudo o que as pessoas enviam vai para a caixa da Comunidade na Administração (com reclamações de qualquer parte do app e as denúncias), com "visto"
+    { const r1 = await so(B1, { op: 'com', tipo: 'reclamacao', texto: 'O gráfico de gastos não abre no meu telemóvel.', orig: 'app' }), cx = await so(ADM, { op: 'adminCaixa' }), nao = await so(B1, { op: 'adminCaixa' });
+      const x = (cx.L || []).find(y => y.tipo === 'reclamacao' && /gráfico de gastos/.test(y.texto)) || {}, n0 = cx.novos, vi = await so(ADM, { op: 'adminVisto', id: x.id }), cx2 = await so(ADM, { op: 'adminCaixa' }), x2 = (cx2.L || []).find(y => y.id === x.id) || {};
+      ok('Caixa da Comunidade na Administração: sugestões, pedidos, reclamações (também pelo app), recrutamento e indicações juntos, com o e-mail e a origem; marcar como visto; só a administração vê',
+        r1._st === 200 && x.orig === 'app' && /@teste\.pt$/.test(x.email) && ['pedido', 'recrutamento', 'indicacao'].every(t => (cx.L || []).some(y => y.tipo === t)) && vi._st === 200 && x2.visto && cx2.novos === n0 - 1 && nao._st === 403,
+        JSON.stringify({ r1: r1._st, x, n0, n1: cx2.novos, nao: nao._st }).slice(0, 400)); }
+    // v3.79: Desafio da semana: o mesmo para todos; participar põe no ranking; quem completa fica pela ordem; a caminho e quem não começou
+    { process.env.NAUTILO_DESAFIO = 'treinos'; const C2 = await reg();
+      const d0 = await so(A1, { op: 'desafio' }), e1 = await so(A1, { op: 'desafioEntrar' }), e2 = await so(B1, { op: 'desafioEntrar' }), e3 = await so(C2, { op: 'desafioEntrar' });
+      const p1 = await so(A1, { op: 'desafioProg', v: 5 }), p2 = await so(B1, { op: 'desafioProg', v: 2 }), dv = await so(C2, { op: 'desafio' }), nao = await so(B1, { op: 'desafioProg', v: 999 });
+      ok('Desafio da semana: o mesmo desafio para todos; Participar põe no ranking; quem completa fica pela ordem (com o @), quem vai a caminho e quantos ainda não começaram; o progresso tem limite',
+        d0.desafio && d0.desafio.k === 'treinos' && d0.eu === null && /^\d{4}-S\d{2}$/.test(d0.sem) && e1.eu && e1.eu.v === 0 && p1.eu.at > 0 && dv.feitos.length === 1 && dv.feitos[0].nome && dv.caminho.length === 1 && dv.caminho[0].v === 2 && dv.zero === 1 && dv.total === 3 && dv.eu && !dv.eu.at && nao.eu.v <= 40,
+        JSON.stringify({ d0: d0.desafio, sem: d0.sem, p1: p1.eu, dv: { f: dv.feitos.length, c: dv.caminho.length, z: dv.zero, t: dv.total }, nao: nao.eu }).slice(0, 500));
+      delete process.env.NAUTILO_DESAFIO; }
     // na app: o perfil dos animes a arrastar no menu do perfil, a primeira vez nos Animes (Competição e/ou Diversão), a Comunidade
     const sR = { 'nau:s': JSON.stringify({ t: A1.tok, e: A1.email, n: '', perfis: [{ id: A1.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(A1.pid), 'nau:pd': JSON.stringify(A1.pid), 'nau:owner': JSON.stringify(A1.email) };
     const k = await newPage(b, PROFILES[0], sR); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k.p.route(/cdn\.myanimelist\.net|anilist|myanimelist\.net\/|jikan/, rt => rt.fulfill({ status: 200, contentType: 'application/json', body: '{"data":[]}' }));
@@ -829,6 +867,13 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
       location.hash = 'animes.comunidade'; await w(1200); const cu = document.getElementById('view').innerText; return { cards, ap: ap.replace(/\s+/g, ' '), bv, dq, cu: ['Indicações', 'Pedidos', 'Sugestões', 'Equipa SA', 'Recrutamento'].every(x => cu.includes(x)) }; });
     if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'comunidade.png') }); await E(k.p, () => { OS.act.accMenu(); }); await sleep(1200); await E(k.p, () => { const c = document.querySelector('.pf-cs'); if (c) c.scrollLeft = c.clientWidth; }); await sleep(600); await k.p.screenshot({ path: path.join(process.env.SHOTS, 'perfil-animes.png') }); await E(k.p, () => OS.UI.closeModal()); } catch (e) { } }
     await E(k.p, () => OS.act.cuAbrir({ dataset: { k: 'indicacoes' } })); await sleep(1200); const ind = await E(k.p, () => /Frieren/.test(document.getElementById('view').innerText));
+    // v3.79: na Visão geral, o cartão do Desafio da semana com o progresso medido no app (um treino registado conta sozinho)
+    { process.env.NAUTILO_DESAFIO = 'treinos'; await E(k.p, () => { OS.Desafio._S.at = 0; OS.Desafio._S.d = null; location.hash = 'visao'; }); await sleep(2500);
+      const dc = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), c = document.querySelector('#view .ds-c'); const r = { card: !!c, t: c ? c.innerText.replace(/\s+/g, ' ') : '' };
+        OS.add('workouts', { date: OS.U.today(), type: 'Força', min: 45 }); OS.Desafio._S.env = { v: -1, at: 0 }; OS.Desafio._S.at = 0; OS.request(); await w(3500); const c2 = document.querySelector('#view .ds-eu'); r.eu = c2 ? c2.innerText.replace(/\s+/g, ' ') : ''; return r; });
+      if (process.env.SHOTS) await k.p.screenshot({ path: path.join(process.env.SHOTS, 'desafio-visao.png') });
+      const sv = await so(A1, { op: 'desafio' }); delete process.env.NAUTILO_DESAFIO;
+      ok('Desafio da semana na Visão geral: o cartão com o desafio, o tempo que falta e o ranking; o treino registado no app conta sozinho no progresso', dc.card && /Desafio da semana/.test(dc.t) && /Semana de ferro/.test(dc.t) && /acaba daqui a/.test(dc.t) && /completaram/.test(dc.t) && /^\d/.test(dc.eu) && sv.eu && sv.eu.v >= 1, JSON.stringify({ dc, sv: sv.eu }).slice(0, 400)); }
     ok('Na app: no menu do perfil arrasta-se para o perfil dos animes (com o @); a primeira vez nos Animes escolhe-se Competição e/ou Diversão e o início mostra o que interessa; a Comunidade com as 5 opções e as indicações',
       ui.cards === 2 && ui.ap.includes('@' + u) && ui.bv && ui.dq && ui.cu && ind, JSON.stringify({ ui, ind }).slice(0, 400));
     await k.ctx.close(); }
@@ -3348,6 +3393,31 @@ async function pushTests(b) { cur = 'Notificações'; console.log('\n=== Notific
       ok('Episódios novos dos animes com o sino: o app manda os animes, o servidor segue o AniList e avisa na hora (uma vez só), espera quando é adiado e avisa na mesma quando saiu entre duas consultas; também os que só têm o número do MyAnimeList',
         nada && pediu && e8 === 1 && e8b === 1 && adiado && mal3 && e9, JSON.stringify({ nada, pediu, e8, e8b, adiado, mal3, e9, ALQ: ALQ.length }));
       await E(p, () => { localStorage.removeItem('oc_an_modos'); OS.setOne('animeavisos', { L: [] }); }); }
+    // v3.79: as festas: Feliz Ano Novo à meia-noite de cada um (no calendário do país), Feliz Natal, Páscoa e os parabéns (uma vez cada)
+    { await api({ op: 'ligar', sub: { endpoint: SUB.endpoint, keys: { p256dh: SUB.p256dh, auth: SUB.auth } }, tz: 'Europe/Lisbon', lang: 'pt-PT' });
+      const fe = async (d, t) => { await api({ op: 'dados', d: { fe: d } }); INB.length = 0; await P.cron({ force: true, now: Date.parse(t) }); return INB.map(m => m.t + ' | ' + m.b); };
+      const ano = await fe({ pais: 'PT', anos: '07-14', nome: 'Ana Silva' }, '2027-01-01T00:03:00Z'), ano2 = (INB.length = 0, await P.cron({ force: true, now: Date.parse('2027-01-01T00:05:00Z') }), INB.length);
+      const nat = await fe({ pais: 'PT', anos: '07-14', nome: 'Ana' }, '2026-12-25T00:02:00Z'), pas = await fe({ pais: 'PT', anos: '07-14', nome: 'Ana' }, '2027-03-28T08:04:00Z');
+      const anv = await fe({ pais: 'PT', anos: '07-14', nome: 'Ana' }, '2027-07-13T23:03:00Z'), cn = await fe({ pais: 'CN', anos: '', nome: 'Li' }, '2027-02-06T00:03:00Z'), cn1 = await fe({ pais: 'CN', anos: '', nome: 'Li' }, '2028-01-01T00:03:00Z');
+      const ir = await fe({ pais: 'IR', anos: '', nome: 'Sara' }, '2027-03-20T20:27:00Z'), irN = await fe({ pais: 'IR', anos: '', nome: 'Sara' }, '2027-12-25T00:03:00Z');
+      ok('Festas no telemóvel: Feliz Ano Novo à meia-noite (uma vez), Feliz Natal, Páscoa às 9h e os parabéns no dia de anos; na China no Ano Novo Lunar (não a 1 de janeiro); no Irão o Nowruz no equinócio e sem Natal',
+        ano.some(x => /^Feliz Ano Novo! \| Que 2027/.test(x) && /Ana\.$/.test(x)) && ano2 === 0 && nat.some(x => /^Feliz Natal!/.test(x)) && pas.some(x => /^Feliz Páscoa!/.test(x)) && anv.some(x => /^Parabéns, Ana!/.test(x))
+        && cn.some(x => /Ano Novo Lunar/.test(x)) && !cn1.some(x => /Ano Novo/.test(x)) && ir.some(x => /Nowruz/.test(x)) && !irN.some(x => /Natal/.test(x)), JSON.stringify({ ano, ano2, nat, pas, anv, cn, cn1, ir, irN }).slice(0, 700));
+      await api({ op: 'dados', d: { fe: { pais: 'PT', anos: '', nome: '' } } }); }
+    // v3.79: na app: a contagem de 10 segundos pára o app, os fogos e volta; o Ano Novo de cada calendário; o dia de anos com o bolo
+    { const cal = await E(p, () => { const o = OS.one('profile').country; OS.setOne('profile', { country: 'CN' }); const cn = OS.Festas.proximo(Date.parse('2026-11-26T12:00:00Z')); OS.setOne('profile', { country: 'PT' }); const pt = OS.Festas.proximo(Date.parse('2026-11-26T12:00:00Z')); OS.setOne('profile', { country: o || 'PT' });
+        const f = t => { const d = new Date(t); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }; return { cn: f(cn.t), cnc: cn.c, pt: f(pt.t), ptc: pt.c }; });
+      await E(p, () => OS.Festas.festa({ t: Date.now() + 3200, c: 'greg', chave: 'teste:1' }, true)); await sleep(900);
+      const c1 = await E(p, () => ({ on: !!document.getElementById('fxAno'), n: (document.querySelector('#fxAno .fx-n') || {}).textContent, parado: document.body.classList.contains('fx-parado') })); await sleep(3200);
+      const c2 = await E(p, () => (document.querySelector('#fxAno .fx-msg') || {}).textContent || ''); await sleep(7500); const c3 = await E(p, () => !document.getElementById('fxAno') && !document.body.classList.contains('fx-parado'));
+      const hoje = await E(p, () => { const d = new Date(); return String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); });
+      await E(p, h => { OS.setOne('me', { birth: '1999-' + h }); location.hash = 'visao'; OS.request(); }, hoje); await sleep(1500);
+      const an = await E(p, () => ({ bolo: !!document.querySelector('#view .fx-anos'), t: (document.querySelector('#view .fx-anos') || {}).innerText || '', festa: document.body.classList.contains('fx-dia-anos') }));
+      await p.click('#view [data-act=fxSoprar]').catch(() => { }); await sleep(500); const sop = await E(p, () => !!document.querySelector('#view .fx-bolo.soprado'));
+      await E(p, () => { OS.setOne('me', { birth: '' }); location.hash = 'definicoes'; });
+      ok('Ano Novo na app: a contagem de 10 segundos pára o app, rebentam os fogos com Feliz Ano Novo e o app volta; China no Ano Novo Lunar, Portugal a 1 de janeiro; no dia de anos o Painel faz a festa (bolo com velas para soprar)',
+        cal.cn === '2027-2-6' && cal.cnc === 'lunar' && cal.pt === '2027-1-1' && c1.on && /^[1-4]$/.test(c1.n || '') && c1.parado && /Feliz Ano Novo/.test(c2) && c3 && an.bolo && /Parabéns/.test(an.t) && /fazes \d+ anos/.test(an.t) && an.festa && sop,
+        JSON.stringify({ cal, c1, c2, c3, an, sop }).slice(0, 500)); await sleep(600); }
     // desligar a categoria Rotina: não envia
     await E(p, () => { OS.request(); }); await sleep(300);
     await p.click('#view .push-cat input[data-k=rot]'); await sleep(4500); INB.length = 0;
@@ -3458,6 +3528,10 @@ async function esportesTests(b) { cur = 'Desportos'; console.log('\n=== Eu: desp
   await E(p, () => { location.hash = 'esportes'; }); await sleep(1500);
   const hub = await E(p, () => ({ hero: (document.querySelector('#view .sp-hero') || {}).innerText || '', team: (document.querySelector('#view .sp-tc') || {}).innerText || '' }));
   ok('Desportos › Início: o jogo ao vivo em destaque e a tua equipa com o resultado de agora, o próximo jogo e o último', /ao vivo/i.test(hub.hero) && /Boston Celtics[\s\S]*61/.test(hub.hero) && /Boston Celtics/.test(hub.team) && /BOS 61/.test(hub.team) && /Último/.test(hub.team) && /Vitória/.test(hub.team), JSON.stringify(hub).slice(0, 300));
+  // v3.78: o Agora a jogar mostra todos os jogos ao vivo (de todas as modalidades e todo o futebol do mundo), não só os das equipas seguidas
+  { const lv = await E(p, async () => { const f0 = OS.Futebol.vivos; OS.Futebol.vivos = () => [{ id: 'f1', lg: 'bra.1', liga: 'Brasileirão', d: Date.now(), st: 'in', det: "67'", h: { id: '874', n: 'Corinthians', sn: 'Corinthians', s: '1' }, a: { id: '2029', n: 'Palmeiras', sn: 'Palmeiras', s: '0' } }, { id: 'f2', lg: 'por.1', liga: 'Liga Portugal', d: Date.now(), st: 'in', det: "12'", h: { id: '1', n: 'Benfica', sn: 'Benfica', s: '0' }, a: { id: '2', n: 'Porto', sn: 'Porto', s: '0' } }];
+      OS.request(); await new Promise(r => setTimeout(r, 600)); const h = document.querySelector('#view .sp-hero'), t = h ? h.innerText : ''; OS.Futebol.vivos = f0; return { t: t.replace(/\s+/g, ' ').slice(0, 400), n: h ? h.querySelectorAll('.sp-g.live').length : 0, muitos: !!(h && h.querySelector('.sp-hg.muitos')) }; });
+    ok('Desportos › Agora a jogar: todos os jogos ao vivo juntos (NBA e o futebol do mundo, p. ex. Corinthians), a deslizar, com o nome da liga', lv.n >= 3 && /Corinthians/.test(lv.t) && /Brasileirão/.test(lv.t) && /Celtics/.test(lv.t) && lv.muitos && /3 jogos ao vivo|[3-9] jogos ao vivo/.test(lv.t), JSON.stringify(lv)); }
   await E(p, () => { location.hash = 'esportes.f1'; }); await sleep(1200);
   ok('Desportos › Fórmula 1: o próximo Grande Prémio com as sessões e o campeonato de pilotos', await E(p, () => { const t = document.getElementById('view').innerText; return /Grande Prémio de Teste/.test(t) && /Qualificação/.test(t) && /Corrida/.test(t) && /Campeonato de pilotos/.test(t) && /Piloto Um/.test(t); }));
   await E(p, () => { location.hash = 'esportes.olimpiadas'; }); await sleep(500);
@@ -3557,13 +3631,49 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
     const sw = await E(p, async () => { const sc = document.querySelector('#view .an-hs'), t = sc.children.length - 1; sc.scrollTo({ left: t * sc.clientWidth, behavior: 'smooth' }); await new Promise(r => setTimeout(r, 60)); OS.request(); await new Promise(r => setTimeout(r, 1600)); const s2 = document.querySelector('#view .an-hs'); return { t, i: Math.round(s2.scrollLeft / s2.clientWidth), on: [...document.querySelectorAll('#view .an-slide')].findIndex(s => s.classList.contains('on')) }; });
     ok('Animes › Início: passar o destaque não volta ao primeiro quando a página se redesenha a meio', sw.t >= 1 && sw.i === sw.t && sw.on === sw.t, JSON.stringify(sw));
   if (SH) await p.screenshot({ path: SH + '/an-inicio.png', fullPage: true });
+  // v3.79: a classe de fã (pelo que vê) e o Recap do ano em ecrãs a deslizar
+  { const rc = await E(p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), y = new Date().getFullYear(), ids = [];
+      [['Monster', ['Mystery', 'Psychological', 'Drama'], 74, 74, 10, 'Visto', 'Madhouse'], ['Death Note', ['Mystery', 'Supernatural', 'Thriller'], 37, 37, 9, 'Visto', 'Madhouse'], ['Erased', ['Mystery', 'Psychological'], 12, 12, 8, 'Visto', 'A-1 Pictures'], ['Spy x Family', ['Comedy', 'Action'], 10, 25, 7, 'A ver', 'Wit Studio']]
+        .forEach(([t, gen, ep, eps, nota, status, stu], i) => ids.push(OS.add('animes', { t, gen, ep, eps, nota, status, stu, dur: 24, start: y + '-0' + (i + 2) + '-10', end: status === 'Visto' ? y + '-0' + (i + 3) + '-01' : '', mal: 90000 + i }).id));
+      const c = OS.AnimeRecap.classe(); OS.act.arRecap(); await w(400); const el = document.getElementById('arRecap'), n = el ? el.querySelectorAll('.ar-s').length : 0, t0 = el ? el.querySelector('.ar-s.on').innerText : '';
+      const vistos = []; for (let i = 0; i < n; i++) { vistos.push(el.querySelector('.ar-s.on').innerText.replace(/\s+/g, ' ').slice(0, 90)); el.querySelector('.ar-nav.r').click(); await w(150); }
+      OS.act.arFechar(); ids.forEach(id => OS.del('animes', id)); return { c, n, t0, vistos }; });
+    ok('Animes: a classe de fã sai do que vês (aqui Estratega do Mistério, com o nível e a categoria) e o Recap do ano mostra episódios e horas, o género, os teus do ano, o estúdio e a classe',
+      rc.c && rc.c.nome === 'Estratega do Mistério' && rc.c.nivel === 'Iniciado' && rc.n >= 6 && /O teu \d{4} em animes/.test(rc.t0) && rc.vistos.some(v => /episódios/.test(v) && /horas/.test(v)) && rc.vistos.some(v => /Mistério/.test(v)) && rc.vistos.some(v => /Monster/.test(v)) && rc.vistos.some(v => /Madhouse/.test(v)) && rc.vistos.some(v => /Estratega do Mistério/.test(v)), JSON.stringify(rc).slice(0, 700)); }
+  // v3.79: Ao vivo e a seguir: a contagem ao segundo dos próximos episódios (anda sem redesenhar a página)
+  { await p.waitForSelector('#view .an-live [data-anat]', { timeout: 8000 }).catch(() => { }); const a1 = await E(p, () => [...document.querySelectorAll('#view .an-live [data-anat]')].map(x => x.textContent)); await sleep(1300);
+    const a2 = await E(p, () => [...document.querySelectorAll('#view .an-live [data-anat]')].map(x => x.textContent));
+    ok('Animes › Ao vivo e a seguir: os próximos episódios com a contagem ao segundo (e os que acabaram de sair)', a1.length >= 1 && a1.some(t => /^Sai daqui a \d/.test(t)) && JSON.stringify(a1) !== JSON.stringify(a2), JSON.stringify({ a1, a2 })); }
+  // v3.78: no computador/tablet, a barra própria dos Animes em vez da fila de separadores em texto
+  { const tb = await E(p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), bar = document.querySelector('#view .an > .ax-bar'), tabs = document.querySelector('#view > .tabs');
+      const r = { bar: !!bar && !!bar.offsetParent, links: bar ? bar.querySelectorAll('.ax-links > a').length : 0, tabs: !!(tabs && tabs.offsetParent), head: !!((document.querySelector('#view > .phead') || {}).offsetParent) };
+      const sm = bar && bar.querySelector('.ax-mais > summary'); if (sm) sm.click(); await w(300); r.grupos = [...document.querySelectorAll('#view .ax-mm h4')].map(h => h.innerText.trim()); r.itens = document.querySelectorAll('#view .ax-mm a').length; return r; });
+    if (SH) await p.screenshot({ path: SH + '/an-barra-pc.png' });
+    await E(p, () => document.body.click()); await sleep(200); const fechou = await E(p, () => !document.querySelector('#view .ax-mais[open]'));
+    ok('Animes no computador: barra própria (selo das duas casas, 5 atalhos com ícone e o Mais por grupos) em vez da fila de separadores; tocar fora fecha o Mais',
+      tb.bar && tb.links === 5 && !tb.tabs && !tb.head && tb.grupos.length === 4 && /Descobrir/i.test(tb.grupos[0]) && tb.itens >= 14 && fechou, JSON.stringify({ tb, fechou })); }
   // v3.77: no telemóvel o carrossel fica no topo (nada debaixo do relógio) e os atalhos de Competição/Diversão vêm por baixo; a sala tem luz e cor
   { await p.setViewportSize({ width: 393, height: 852 }); await E(p, () => { window.__c0 = OS.Social.conta; OS.Social.conta = () => true; localStorage.setItem('oc_an_modos', JSON.stringify(['competicao', 'diversao'])); location.hash = 'visao'; }); await sleep(300);
     await E(p, () => { location.hash = 'animes'; }); await sleep(1400);
-    const lay = await E(p, () => { const an = document.querySelector('#view .an'), f = an && an.firstElementChild, dq = document.querySelector('#view .an-pad > .ap-dqs'), hero = document.querySelector('#view .an-hero'), r = hero && hero.getBoundingClientRect();
+    const lay = await E(p, () => { const an = document.querySelector('#view .an'), f = an && [...an.children].find(c => getComputedStyle(c).display !== 'none'), dq = document.querySelector('#view .an-pad > .ap-dqs'), hero = document.querySelector('#view .an-hero'), r = hero && hero.getBoundingClientRect();
       return { first: f && f.className, dq: !!dq, depois: !!(dq && hero && (hero.compareDocumentPosition(dq) & 4)), top: r ? Math.round(r.top) : null, luz: /radial/.test(getComputedStyle(an).backgroundImage), tab: getComputedStyle(document.querySelector('#tabbar .tb-i.on') || document.body).color, linha: (() => { const t = [...document.querySelectorAll('#tabbar .tb-i')].map(x => Math.round(x.getBoundingClientRect().top)); return t.length === 6 && new Set(t).size === 1; })() }; });
     ok('Animes › Início no telemóvel: o carrossel fica no topo e os atalhos (Competição e Diversão) por baixo dele; sala com luz e cor, separador ativo a vermelho e os 6 botões da barra numa linha só (o selo do Prumo não cai para baixo)', /an-hero/.test(lay.first || '') && lay.depois && lay.top <= 0 && lay.luz && lay.linha, JSON.stringify(lay));
     if (SH) { await p.screenshot({ path: SH + '/an-inicio-tel.png' }); await p.screenshot({ path: SH + '/an-inicio-tel-todo.png', fullPage: true }); }
+    // v3.78: a parceria Prumo & PHANTOM: o primeiro destaque, o selo das duas casas no canto, a assinatura, a página da parceria e a intro de cinema (uma vez)
+    const pp = await E(p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), s0 = document.querySelector('#view .an-hs > .an-slide');
+      const r = { slide: !!(s0 && s0.classList.contains('pp-slide')), dots: document.querySelectorAll('#view .an-dots button').length, slides: document.querySelectorAll('#view .an-hs > .an-slide').length, ass: !!document.querySelector('#view .an .pp-ass'), mini: !!document.querySelector('#view .an-cbl .pp-mini') };
+      location.hash = 'animes.parceria'; await w(1800); const t = document.getElementById('view').innerText; r.pag = /Dois nomes, o mesmo fio/.test(t) && /O que nasce da parceria/.test(t) && /Pursuit/.test(t); r.viva = !!document.querySelector('#view .pp-viva'); r.ass2 = !!document.querySelector('#view .pp-ass'); return r; });
+    ok('Parceria Prumo & PHANTOM: o primeiro destaque é a parceria, o selo das duas casas no canto, a assinatura no fim e a página da parceria com o que nasce dela e os números ao vivo',
+      pp.slide && pp.dots === pp.slides && pp.ass && pp.mini && pp.pag && pp.viva && pp.ass2, JSON.stringify(pp));
+    if (SH) { await p.screenshot({ path: SH + '/pp-pagina-tel.png' }); await p.screenshot({ path: SH + '/pp-pagina-tel-todo.png', fullPage: true }); }
+    await E(p, () => { window.__ppIntro = 1; localStorage.removeItem('oc_pp_intro'); location.hash = 'visao'; }); await sleep(400); await E(p, () => { location.hash = 'animes'; }); await sleep(1300);
+    if (SH) await p.screenshot({ path: SH + '/pp-intro-a.png' }); await sleep(1700); if (SH) await p.screenshot({ path: SH + '/pp-intro-b.png' });
+    const in1 = await E(p, () => ({ on: !!document.getElementById('ppIntro'), t: (document.getElementById('ppIntro') || {}).innerText || '' }));
+    await p.click('#ppIntro .pp-entrar').catch(() => { }); await sleep(800); const in2 = await E(p, () => !document.getElementById('ppIntro'));
+    await E(p, () => { location.hash = 'visao'; }); await sleep(300); await E(p, () => { location.hash = 'animes'; }); await sleep(1000); const in3 = await E(p, () => !document.getElementById('ppIntro'));
+    ok('Parceria: intro de cinema na primeira entrada nos Animes (o prumo e a aranha no mesmo fio), Entrar fecha e não volta a aparecer', in1.on && /O mesmo fio/.test(in1.t) && in2 && in3, JSON.stringify({ in1, in2, in3 }));
+    await E(p, () => { delete window.__ppIntro; });
+    if (SH) { await p.setViewportSize({ width: 1100, height: 900 }); await E(p, () => { location.hash = 'jogos'; }); await sleep(1200); await p.screenshot({ path: SH + '/jogos-pc.png' }); await p.setViewportSize({ width: 393, height: 852 }); await sleep(300); await p.screenshot({ path: SH + '/jogos-tel.png' }); }
     await E(p, () => { OS.Social.conta = window.__c0; localStorage.removeItem('oc_an_modos'); }); await p.setViewportSize({ width: 1100, height: 900 }); }
   // pesquisar e abrir
   await E(p, () => { location.hash = 'animes.pesquisar'; }); await sleep(300); await p.fill('#view .an-q input[name=q]', 'frieren'); await p.click('#view .an-q button'); await p.waitForFunction(() => document.querySelectorAll('#view .an-grid .an-pc').length > 0, null, { timeout: 15000 }).catch(() => { });
@@ -4316,7 +4426,7 @@ async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis 
   const ad1 = await E(A, () => { const v = document.getElementById('view').innerText, r = [...document.querySelectorAll('.adm-r[data-q]')].map(x => x.dataset.q); return { r, contas: /contas/.test(v), ana: r.some(q => /ana@exemplo\.pt/.test(q) && /bruno/.test(q)), hoje: /Hoje/.test(v), kpi: document.querySelectorAll('.adm-kpi > div').length, senha: /segredo123|novasenha1|\$scrypt|hash/i.test(document.getElementById('view').innerHTML) }; });
   ok('Administração: lista as contas (e-mail, nome, perfis), último acesso, última entrada e minutos por dia, sem senhas', ad1.ana && ad1.hoje && ad1.kpi >= 4 && !ad1.senha, JSON.stringify(ad1));
   const tb = await E(A, () => ({ n: document.querySelectorAll('.adm-tabs [role=tab]').length, sel: (document.querySelector('.adm-tabs [aria-selected=true]') || {}).textContent, al: !!document.querySelector('.adm-alerta'), lista: !!document.querySelector('#admP .adm-r[data-q]') }));
-  ok('Administração arrumada: "Precisa de ti" em cima e 6 separadores (Contas, Visitas, Vendas, Pedidos, Servidor, Ajustes), a abrir em Contas', tb.n === 6 && /Contas/.test(tb.sel) && tb.al && tb.lista, JSON.stringify(tb));
+  ok('Administração arrumada: "Precisa de ti" em cima e 7 separadores (Contas, Visitas, Vendas, Comunidade, Pedidos, Servidor, Ajustes), a abrir em Contas', tb.n === 7 && /Contas/.test(tb.sel) && tb.al && tb.lista, JSON.stringify(tb));
   await A.click('#admT-visitas').catch(() => { }); await A.waitForSelector('.adm-vis .vis-g', { timeout: 10000 }).catch(() => { });
   try { await (await A.$('.adm-vis')).screenshot({ path: path.join(process.env.SHOTS || require('os').tmpdir(), 'admin-visitas.png') }); } catch (e) { }
   const vp = await E(A, () => { const el = document.querySelector('.adm-vis'); return el ? { t: el.innerText, bars: el.querySelectorAll('.vis-g > span').length, fun: el.querySelectorAll('.vis-f > div').length } : null; });

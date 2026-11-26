@@ -26,7 +26,7 @@ const nomeUser = o => `<b>${esc(o.nome || 'Pessoa')}</b>${o.user ? `<small>@${es
 const fundo = o => o && o.fu ? `background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.65)),url('api/social?op=img&k=fu&id=${encodeURIComponent(o.id)}&v=${o.fu}')` : '';
 const cartao = (o, edita) => { if (!o) return `<div class="ap-card ap-ld"><span class="an-sp"></span></div>`;
   return `<div class="ap-card${o.fu ? ' com-fundo' : ''}" style="${fundo(o)}">${o.fu ? '' : '<img class="ap-ar" src="icons/phantom-aranha.webp" alt="" aria-hidden="true">'}<span class="ap-mk">${SO().marca ? SO().marca('xs') : ''}</span>
-    <div class="ap-who">${av(o, 64)}<div>${nomeUser(o)}${o.user ? '' : edita ? '<small class="ap-sem">Ainda sem @</small>' : ''}</div></div>
+    <div class="ap-who">${av(o, 64)}<div>${nomeUser(o)}${o.user ? '' : edita ? '<small class="ap-sem">Ainda sem @</small>' : ''}${o.cl ? `<em class="ap-cl">${esc(o.cl)}</em>` : ''}</div></div>
     <div class="ap-st"><span><b>${o.pts || 0}</b>pontos</span>${o.pos ? `<span><b>${o.pos}.º</b>no ranking</span>` : ''}${o.clas != null ? `<span><b>${o.clas}</b>${o.clas === 1 ? 'clã' : 'clãs'}</span>` : ''}</div>
     ${edita ? `<button type="button" class="btn sm ap-ed" data-act="apEditar">${UI.ic('edit')}Editar perfil dos animes</button>` : ''}</div>`; };
 const meu = () => { const d = euD(); return d && d.eu ? Object.assign({ clas: (d.clas || []).length }, d.eu) : null; };
@@ -65,7 +65,7 @@ A.apModo = b => { const m = new Set(modos() || []); if (m.has(b.dataset.k)) m.de
 const perfil = () => { if (!conta()) return `<div class="so-vazio"><b>Entra na tua conta Prumo</b><p>O perfil dos animes, os comentários e a comunidade precisam de uma conta.</p></div>`; if (SO().eu) SO().eu();
   const avs = OS.Animes && OS.Animes.avisos ? OS.Animes.avisos() : [];
   const avH = `<div class="so-sec"><h3>Avisos de episódios novos</h3>${avs.length ? `<ul class="ap-avs">${avs.map(a => `<li>${a.img ? `<img src="${esc(a.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}<b>${esc(a.t)}</b><button type="button" class="btn sm" data-act="apSinoTira" data-al="${+a.al || 0}" data-mal="${+a.mal || 0}">Tirar</button></li>`).join('')}</ul>` : '<p class="mut" style="margin:0">Abre um anime que ainda está a sair e toca no sino para seres avisado quando sair cada episódio.</p>'}</div>`;
-  return `<section class="hu">${cartao(meu(), true)}<div class="so-sec"><h3>Como usas os Animes</h3>${modosHTML(modos() || [], 'apModo')}</div>${avH}<p class="mut">O teu perfil Prumo (o do resto do app) fica à parte: aqui só aparecem o nome, o @, a foto e o fundo.</p></section>`; };
+  return `<section class="hu">${cartao(meu(), true)}${OS.AnimeRecap ? OS.AnimeRecap.bloco() : ''}<div class="so-sec"><h3>Como usas os Animes</h3>${modosHTML(modos() || [], 'apModo')}</div>${avH}<p class="mut">O teu perfil Prumo (o do resto do app) fica à parte: aqui só aparecem o nome, o @, a foto e o fundo.</p></section>`; };
 
 /* ---------- a primeira vez nos Animes: Competição e/ou Diversão ---------- */
 let ESC = null; A.apEsc = b => { ESC = ESC || []; const i = ESC.indexOf(b.dataset.k); if (i >= 0) ESC.splice(i, 1); else ESC.push(b.dataset.k); OS.request(); };
