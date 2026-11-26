@@ -18,7 +18,7 @@ const RED = '#B83444';
 const palco = modo => `<div class="pp-palco pp-m-${modo}" aria-hidden="true"><span class="pp-luz"></span><span class="pp-chao"></span>
   <span class="pp-pend pp-p1"><span class="pp-fio"></span><span class="pp-no"></span><span class="pp-peso">${selo(120)}</span></span>
   <i class="pp-e">&amp;</i>
-  <span class="pp-pend pp-p2">${ePh() ? '<span class="pp-fio pp-fb"></span><img class="pp-ar" src="icons/phantom-aranha.webp" alt="" decoding="async" draggable="false">' : `<span class="pp-fio"></span><span class="pp-pq">${esc(nome().slice(0, 1))}</span>`}</span></div>`;
+  <span class="pp-pend pp-p2">${ePh() ? '<span class="pp-fio pp-fb"></span><img class="pp-ar" src="icons/phantom-aranha-olho.webp" alt="" decoding="async" draggable="false">' : `<span class="pp-fio"></span><span class="pp-pq">${esc(nome().slice(0, 1))}</span>`}</span></div>`;
 const wordmark = () => `<div class="pp-wm"><b class="pp-wp">Prumo</b><i>&amp;</i>${ePh() ? `<img class="pp-wn" src="icons/phantom-nome.webp" alt="${esc(nome())}" decoding="async">` : `<b class="pp-wx">${esc(nome())}</b>`}</div>`;
 // pequeno, para o canto do destaque no telemóvel
 const mini = () => `<span class="pp-mini" aria-hidden="true">${selo(30)}<i>&amp;</i>${ePh() ? '<img src="icons/phantom-icone.webp" alt="" width="30" height="30" decoding="async">' : `<b>${esc(nome().slice(0, 1))}</b>`}</span>`;
@@ -71,7 +71,7 @@ const pagina = () => { numeros(); const n = NUM || {};
       <div class="pp-acts"><a class="btn an-cta" href="#animes.pursuit">${UI.ic('target')}Jogar o Pursuit</a><button type="button" class="btn an-ghost" data-act="ppIntro">${UI.ic('play')}Ver a intro</button></div></div></header>
     ${viva.length ? `<div class="pp-viva" aria-label="A parceria ao vivo">${viva.map(([v, l]) => `<div><b>${nf(v)}</b><span>${l}</span></div>`).join('')}</div>` : ''}
     <section class="pp-oq"><h2>O que nasce da parceria</h2><div class="pp-grid">${OQUE.map(([k, ic, t, d, c], i) => { const tag = k ? 'a' : 'div';
-      return `<${tag} class="pp-it${i === 0 ? ' big' : ''}"${k ? ` href="#animes.${k}"` : ''}>${i === 0 && ePh() ? '<img class="pp-itar" src="icons/phantom-aranha.webp" alt="" decoding="async">' : ''}<span class="pp-iti">${UI.ic(ic)}</span><b>${t}</b><p>${d}</p>${c ? `<small>${c}</small>` : ''}</${tag}>`; }).join('')}</div></section>
+      return `<${tag} class="pp-it${i === 0 ? ' big' : ''}"${k ? ` href="#animes.${k}"` : ''}>${i === 0 && ePh() ? '<img class="pp-itar" src="icons/phantom-aranha-olho.webp" alt="" decoding="async">' : ''}<span class="pp-iti">${UI.ic(ic)}</span><b>${t}</b><p>${d}</p>${c ? `<small>${c}</small>` : ''}</${tag}>`; }).join('')}</div></section>
     <section class="pp-lt"><h2>O que vem aí</h2><ol>
       <li><b>Todas as noites, 20h</b><span>Um Pursuit novo, com aviso no telemóvel quando saem as pistas e com o teu resultado.</span></li>
       <li><b>Dezembro</b><span>Os Prémios Prumo: a votação dos melhores animes do ano.</span></li>

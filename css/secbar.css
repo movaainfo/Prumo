@@ -1,0 +1,46 @@
+/* PRUMO v3.84 · barra de secção (Leituras e quem mais a usar): atalhos com ícone e o "Mais" por grupos, com as cores do tema */
+.sx-bar{position:relative;z-index:6;display:flex;align-items:center;gap:clamp(10px,2vw,22px);margin:-4px 0 16px;padding:8px 10px 8px 12px;border-radius:20px;
+  background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 16%,transparent),transparent 55%),linear-gradient(180deg,var(--pn2),var(--pn));
+  border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line2));box-shadow:0 14px 34px -22px color-mix(in srgb,var(--accent) 70%,#000)}
+.sx-brand{display:inline-flex;align-items:center;gap:10px;flex:none;color:var(--tx)}
+.sx-brand>.ic{width:34px;height:34px;padding:8px;border-radius:12px;color:var(--ink,#000);background:linear-gradient(145deg,var(--accent2),var(--accent))}
+.sx-brand>b{font:600 20px/1 var(--serif);letter-spacing:.01em}
+.sx-links{display:flex;align-items:center;gap:4px;min-width:0;flex:1}
+.sx-links>a,.sx-mais>summary{display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:8px 13px;border-radius:999px;color:var(--tx2,var(--tx));text-decoration:none;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;list-style:none}
+.sx-mais>summary::-webkit-details-marker{display:none}
+.sx-links>a .ic,.sx-mais>summary .ic{width:17px;height:17px;opacity:.8}
+.sx-links>a:hover,.sx-mais>summary:hover{background:color-mix(in srgb,var(--tx) 7%,transparent);color:var(--tx)}
+.sx-links>a.on,.sx-mais>summary.on{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 34%,transparent),color-mix(in srgb,var(--accent) 16%,transparent));color:var(--tx);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 55%,transparent)}
+.sx-links>a.on .ic,.sx-mais>summary.on .ic{color:var(--accent2);opacity:1}
+.sx-links>a:focus-visible,.sx-mais>summary:focus-visible,.sx-i:focus-visible,.sx-mm a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sx-mais[open]>summary{background:color-mix(in srgb,var(--tx) 10%,transparent);color:var(--tx)}
+.sx-mm{position:absolute;left:0;right:0;top:calc(100% + 8px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 18px;padding:18px;border-radius:20px;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 12%,var(--pn2)),var(--pn) 70%);border:1px solid color-mix(in srgb,var(--accent) 26%,var(--line2));box-shadow:0 30px 70px rgba(0,0,0,.55);animation:sxMm .18s ease both}
+@keyframes sxMm{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.sx-mm section{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sx-mm h4{margin:0 0 6px;padding:0 10px;font-size:12px;font-weight:700;color:var(--accent2);letter-spacing:.02em}
+.sx-mm a{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:12px;color:var(--tx);text-decoration:none;min-width:0}
+.sx-mm a .ic{flex:none;width:18px;height:18px;margin-top:1px;color:var(--mut)}
+.sx-mm a span{display:flex;flex-direction:column;gap:2px;min-width:0}.sx-mm a b{font-size:14px}.sx-mm a small{font-size:12px;color:var(--mut);line-height:1.3}
+.sx-mm a:hover,.sx-mm a.on{background:color-mix(in srgb,var(--accent) 14%,transparent)}.sx-mm a:hover .ic,.sx-mm a.on .ic{color:var(--accent2)}
+.sx-r{display:flex;align-items:center;gap:6px;flex:none}
+.sx-i{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;color:var(--tx);background:color-mix(in srgb,var(--tx) 6%,transparent);box-shadow:inset 0 0 0 1px var(--line2)}
+.sx-i .ic{width:19px;height:19px}.sx-i:hover{background:color-mix(in srgb,var(--tx) 12%,transparent)}
+@media (max-width:1100px){.sx-brand>b{display:none}}
+@media (max-width:900px){.sx-mm{grid-template-columns:repeat(2,minmax(0,1fr))}.sx-x5{display:none!important}}
+/* telemóvel: os atalhos ocupam a largura toda, ícone por cima do nome; o "Mais" abre por baixo numa coluna */
+@media (max-width:640px){
+  .sx-bar{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:25;margin:-6px 0 12px;padding:6px;gap:6px;border-radius:18px}
+  .sx-brand,.sx-r{display:none}
+  .sx-links{gap:2px}
+  .sx-links>a,.sx-mais>summary{flex:1 1 0;min-width:0;flex-direction:column;justify-content:center;gap:3px;min-height:54px;padding:6px 2px;border-radius:14px;font-size:11.5px;font-weight:600}
+  .sx-mais{flex:1 1 0;min-width:0;display:flex}.sx-mais>summary{width:100%}
+  .sx-links>a span,.sx-mais>summary span{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .sx-links>a .ic,.sx-mais>summary .ic{width:19px;height:19px}
+  .sx-mm{grid-template-columns:1fr;max-height:min(70vh,560px);overflow:auto;padding:12px}
+}
+@supports not (color:color-mix(in srgb,red 50%,blue)){
+  .sx-bar{background:var(--pn);border-color:var(--line2)}.sx-links>a.on,.sx-mais>summary.on{background:var(--accentBg);box-shadow:inset 0 0 0 1px var(--accent)}
+  .sx-mm{background:var(--pn2)}.sx-mm a:hover,.sx-mm a.on{background:var(--accentBg)}
+}
+@media (prefers-reduced-motion:reduce){.sx-mm{animation:none}}

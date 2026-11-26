@@ -130,8 +130,15 @@ V.certificacoes = () => { const Cs = OS.all('certs'), f = OS.ui.cef || {}, t = t
 
 /* ================= LEITURAS ================= */
 const LT = [['', 'Estante'], ['parati', 'Para ti'], ['tops', 'Top livros'], ['premios', 'Prémios'], ['top', 'Top 10 da vida'], ['minha', 'Minha estante'], ['buscar', 'Pesquisar livros'], ['desafios', 'Desafios'], ['estatisticas', 'Estatísticas'], ['resenhas', 'Resenhas & citações']];
+// v3.84: a barra das Leituras (como a dos Animes): 5 atalhos com ícone e o resto no "Mais", por grupos
+const lerBar = cur => UI.secBar({ base: 'leituras', nome: 'Leituras', ic: 'book', cur,
+  main: [['', 'Estante', 'book'], ['parati', 'Para ti', 'star'], ['tops', 'Top livros', 'crown'], ['desafios', 'Desafios', 'target'], ['estatisticas', 'Estatísticas', 'chart']],
+  grupos: [['Descobrir', [['parati', 'Para ti', 'star', 'Escolhidos pelo que lês'], ['tops', 'Top livros', 'crown', 'Os mais lidos e votados'], ['premios', 'Prémios', 'gift', 'A votação dos melhores do ano'], ['buscar', 'Pesquisar livros', 'search', 'Todos os livros do mundo']]],
+    ['A minha coleção', [['', 'Estante', 'book', 'A ler, quero ler, lidos'], ['minha', 'Minha estante', 'home', 'Os livros que tens em casa'], ['top', 'Top 10 da vida', 'award', 'Os teus 10 melhores, por ordem']]],
+    ['O meu progresso', [['desafios', 'Desafios', 'target', 'As tuas metas de leitura'], ['estatisticas', 'Estatísticas', 'chart', 'Páginas, ritmo e géneros'], ['resenhas', 'Resenhas & citações', 'note', 'O que escreveste e sublinhaste']]]],
+  dir: `<a class="sx-i" href="#leituras.buscar" aria-label="Pesquisar livros">${UI.ic('search')}</a>` });
 V.leituras = sub => { const k = sub === 'livro' ? 'livro' : LT.some(t => t[0] === (sub || '')) ? (sub || '') : '';
-  return UI.head('Leituras', 'A tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios literários.', `<a class="btn pri" href="#leituras.buscar">${UI.ic('search')}<span>Adicionar livro</span></a>`, 'Estudos') + UI.tabs('leituras', LT, k === 'livro' ? '' : k) + `<div class="bk">${LT_[k]()}</div>`; };
+  return UI.head('Leituras', 'A tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios literários.', `<a class="btn pri" href="#leituras.buscar">${UI.ic('search')}<span>Adicionar livro</span></a>`, 'Estudos') + lerBar(k === 'livro' ? '' : k) + `<div class="bk">${LT_[k]()}</div>`; };
 const LT_ = {};
 LT_.parati = () => OS.LivrosMais ? OS.LivrosMais.paraTi() : '';
 LT_.tops = () => OS.LivrosMais ? OS.LivrosMais.tops() : '';

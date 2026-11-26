@@ -126,3 +126,13 @@ a.pp-it:focus-visible{outline:2px solid #D86A78;outline-offset:2px}
 .vn-pu b{font-size:16px}.vn-pu span{font-size:13px;color:var(--mut)}.vn-pu.on{background:rgba(184,52,68,.2);box-shadow:0 0 0 1px rgba(216,106,120,.5)}
 /* v3.79: o vermelho da PHANTOM adaptado ao Prumo (carmim mais fechado, perto do vinho do selo); o ícone da marca acompanha, sem perder a cor */
 .pp-mini img,.pc-mk .pc-pa img,.vn-pp .pp-mini img{filter:saturate(.72) brightness(.9)}
+
+/* v3.84 · "não dá para ver a aranha": o fundo do destaque e da página da parceria ganha um degradê bem visível (carmim → ameixa → índigo → noite)
+   e o olho da aranha passa de preto a carmim (o preto confundia-se com o fundo escuro); o corpo continua transparente, como no logo. */
+.pp-slide{background:radial-gradient(70% 95% at 0% 100%,rgba(214,58,84,.62),transparent 62%),radial-gradient(55% 80% at 46% 0%,rgba(150,70,220,.42),transparent 70%),linear-gradient(118deg,#6a1232 0%,#4a1450 34%,#2a1858 62%,#171236 100%)!important}
+.pp-cab{background:radial-gradient(70% 95% at 100% 100%,rgba(214,58,84,.5),transparent 62%),radial-gradient(60% 80% at 10% 0%,rgba(150,70,220,.4),transparent 70%),linear-gradient(118deg,#221447 0%,#45124c 45%,#6a1232 100%)}
+.pp-ar{filter:drop-shadow(0 0 1.2px rgba(255,120,138,.95)) drop-shadow(0 0 12px rgba(214,58,84,.7)) drop-shadow(0 14px 18px rgba(0,0,0,.6))}
+@media (max-width:640px){.pp-slide{background:radial-gradient(90% 60% at 0% 100%,rgba(214,58,84,.6),transparent 65%),radial-gradient(70% 50% at 20% 0%,rgba(150,70,220,.4),transparent 70%),linear-gradient(170deg,#2a1450 0%,#45124c 40%,#5e1230 70%,#0e0b18 100%)!important}}
+/* a sombra por cima do destaque (para ler o texto) fica mais leve no slide da parceria: o degradê vê-se */
+.pp-slide .an-hg{background:linear-gradient(90deg,rgba(14,11,24,.5) 0%,rgba(14,11,24,.18) 42%,transparent 66%),linear-gradient(0deg,var(--an-bg) 0%,transparent 24%)!important}
+@media (max-width:640px){.pp-slide .an-hg{background:linear-gradient(0deg,var(--an-bg) 0%,rgba(14,11,24,.5) 30%,transparent 56%)!important}}

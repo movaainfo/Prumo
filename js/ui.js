@@ -63,6 +63,15 @@ UI.ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden
 /* ================= BLOCOS ================= */
 UI.head = (title, sub, actions = '', eyebrow = '') => `<header class="phead"><div class="phead-t">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${title}</h1>${sub ? `<p>${sub}</p>` : ''}</div>${actions ? `<div class="phead-a">${actions}</div>` : ''}</header>`;
 UI.tabs = (base, items, cur) => `<nav class="tabs" aria-label="Secções">${items.map(([k, l]) => `<a href="#${base}${k ? '.' + k : ''}" class="${(cur || '') === k ? 'on' : ''}">${l}</a>`).join('')}</nav>`;
+/* v3.84 · barra de secção (como a dos Animes): poucos atalhos com ícone e o "Mais" com tudo arrumado por grupos, em vez de uma fila de separadores em texto.
+   o = { base, nome, ic, main: [[k, rótulo, ícone]], grupos: [[título, [[k, rótulo, ícone, descrição]]]], cur, dir: html à direita } */
+UI.secBar = o => { const cur = o.cur || '', href = k => '#' + o.base + (k ? '.' + k : ''), emMain = o.main.some(m => m[0] === cur);
+  return `<nav class="sx-bar" aria-label="Páginas de ${esc(o.nome)}"><span class="sx-brand">${UI.ic(o.ic || 'layers')}<b>${esc(o.nome)}</b></span>
+    <div class="sx-links">${o.main.map(([k, l, ic], i) => `<a href="${href(k)}" class="${k === cur ? 'on' : ''}${i >= 4 ? ' sx-x5' : ''}"${k === cur ? ' aria-current="page"' : ''}>${UI.ic(ic)}<span>${esc(l)}</span></a>`).join('')}
+      <details class="sx-mais"><summary class="${!emMain ? 'on' : ''}">${UI.ic('dots')}<span>Mais</span></summary><div class="sx-mm">${o.grupos.map(([g, L]) => `<section><h4>${esc(g)}</h4>${L.map(([k, l, ic, d]) => `<a href="${href(k)}" class="${k === cur ? 'on' : ''}">${UI.ic(ic)}<span><b>${esc(l)}</b>${d ? `<small>${esc(d)}</small>` : ''}</span></a>`).join('')}</section>`).join('')}</div></details></div>
+    ${o.dir ? `<div class="sx-r">${o.dir}</div>` : ''}</nav>`; };
+// o "Mais" fecha ao tocar fora dele ou ao escolher uma página
+document.addEventListener('click', e => { const d = document.querySelector('#view .sx-mais[open]'); if (d && (!d.contains(e.target) || e.target.closest('.sx-mm a'))) d.removeAttribute('open'); }, true);
 UI.sec = (title, actions = '', sub = '') => `<div class="sech"><div><h2>${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>${actions ? `<div class="row gap8">${actions}</div>` : ''}</div>`;
 UI.kpi = (l, v, s = '', o = {}) => `<div class="kpi ${o.cls || ''}"${o.href ? ` data-go="${o.href}" role="link" tabindex="0"` : ''}><span class="kpi-l">${l}</span><span class="kpi-v ${o.tone || ''}">${v}</span>${s ? `<span class="kpi-s">${s}</span>` : ''}</div>`;
 UI.badge = (t, tone = '') => t ? `<span class="bdg ${tone}">${esc(t)}</span>` : '';
