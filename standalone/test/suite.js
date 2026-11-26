@@ -3695,13 +3695,16 @@ async function esportesTests(b) { cur = 'Desportos'; console.log('\n=== Eu: desp
   await p.click('#view .sp-av label:has(input[data-k=pts])'); await sleep(200);
   ok('Desportos › Avisos: desligar os golos, pontos e sets fica guardado', await E(p, () => (OS.one('sports').av || {}).pts === 0 ), '');
   // planos: no Essencial e no Avançado fica o Futebol; o resto dos Desportos é do Completo
+  // v3.86: no Essencial os Desportos (e o Futebol) têm cadeado do Avançado; no Avançado fica o Futebol e o resto é do Completo
   const pl = await E(p, async () => { const o = OS.Plano.cur; OS.Plano.cur = () => ({ id: 'essencial', n: 'Essencial', lvl: 1 }); OS.go('esportes'); await new Promise(r => setTimeout(r, 700));
-    const a = { t: document.getElementById('view').innerText, fut: !!document.querySelector('#view a.btn[href="#futebol"]'), lk: document.querySelectorAll('#view .sp-spc.sp-lk').length };
+    const e1 = !!document.querySelector('#view .pl-lock') && /plano Avançado/.test(document.getElementById('view').innerText); OS.go('futebol'); await new Promise(r => setTimeout(r, 500)); const e2 = !!document.querySelector('#view .pl-lock');
+    OS.Plano.cur = () => ({ id: 'avancado', n: 'Avançado', lvl: 2 }); OS.go('cozinha'); await new Promise(r => setTimeout(r, 300)); OS.go('esportes'); await new Promise(r => setTimeout(r, 700));
+    const a = { ess: e1 && e2, t: document.getElementById('view').innerText, fut: !!document.querySelector('#view a.btn[href="#futebol"]'), lk: document.querySelectorAll('#view .sp-spc.sp-lk').length };
     window.__plO = o; return a; });
   if (process.env.SHOTS) await p.screenshot({ path: process.env.SHOTS + '/sp-essencial.png', fullPage: true });
   Object.assign(pl, await E(p, async () => { const a = {}, o = window.__plO;
     OS.go('esportes.nba'); await new Promise(r => setTimeout(r, 600)); a.nba = !!document.querySelector('#view .pl-lock') && !document.querySelector('#view .sp-g'); a.up = (OS.Push && OS.Push.syncAll) ? 1 : 0; OS.Plano.cur = o; return a; }));
-  ok('Planos: no Essencial os Desportos mostram o Futebol e o resto com cadeado (Completo)', pl.fut && pl.lk >= 10 && /plano Completo/.test(pl.t) && pl.nba, JSON.stringify(pl).slice(0, 300));
+  ok('Planos: no Essencial os Desportos e o Futebol têm cadeado (Avançado); no Avançado os Desportos mostram o Futebol e o resto com cadeado (Completo)', pl.ess && pl.fut && pl.lk >= 10 && /plano Completo/.test(pl.t) && pl.nba, JSON.stringify(pl).slice(0, 300));
   await E(p, () => { window.__spTest = false; });
   const e2 = errs.filter(e => !/Access to fetch at 'https:\/\/(site|sports\.core)\.api\.espn\.com/.test(e));
 
@@ -5183,6 +5186,14 @@ async function planosTests(b) { cur = 'Planos'; console.log('\n=== Planos pagos:
     ok('Avançado: os Relatórios (impostos) têm cadeado e levam aos planos', await E(k.p, () => !!document.querySelector('#view .pl-lock a[href="#planos"]') && /Completo/.test(document.querySelector('#view .pl-lock').innerText)));
     await E(k.p, () => { location.hash = 'universidade'; }); await sleep(500);
     ok('Avançado: a Universidade abre (sem cadeado)', await E(k.p, () => !document.querySelector('#view .pl-lock')));
+    // v3.86: o Avançado é o mais popular (em destaque) e traz a Cozinha, o Mundo, o Dominus, as Fotos, o Futebol e os imports; no Essencial ficam com cadeado
+    { const r = await E(k.p, async () => { const w = ms => new Promise(x => setTimeout(x, ms)), R = ['cozinha', 'mundo', 'dominus', 'fotos', 'futebol', 'financas.banco', 'trabalho.foto'], lk = () => !!document.querySelector('#view .pl-lock'), o = {};
+        location.hash = 'planos'; await w(700); const pop = document.querySelector('#view .pl-c.pop'); o.pop = !!pop && /Avançado/.test(pop.innerText) && /o mais popular/.test(pop.innerText) && /Cozinha/.test(pop.innerText) && /Dominus completo/.test(pop.innerText);
+        o.av = []; for (const h of R) { location.hash = h; await w(350); if (lk()) o.av.push(h); }
+        const c0 = OS.Plano.cur; OS.Plano.cur = () => ({ id: 'essencial', n: 'Essencial', lvl: 1 }); o.es = []; for (const h of R) { location.hash = 'tarefas'; await w(150); location.hash = h; await w(350); if (lk() && /plano Avançado/.test(document.getElementById('view').innerText)) o.es.push(h); }
+        location.hash = 'tarefas'; await w(300); o.tar = !lk(); OS.Plano.cur = c0; return o; });
+      if (process.env.SHOTS) { try { await k.p.setViewportSize({ width: 1280, height: 900 }); await E(k.p, () => { location.hash = 'planos'; }); await sleep(900); await k.p.screenshot({ path: path.join(process.env.SHOTS, 'planos-pop.png') }); await k.p.setViewportSize({ width: 393, height: 852 }); } catch (e) { } }
+      ok('Planos: o Avançado aparece como o mais popular; Cozinha, Mundo, Dominus, Fotos, Futebol, importar extratos e a escala abrem no Avançado e têm cadeado no Essencial (as Tarefas não)', r.pop && r.av.length === 0 && r.es.length === 7 && r.tar, JSON.stringify(r)); }
     await k.ctx.close();
     // sem plano: só o ecrã de escolher plano (e as Definições)
     const k2 = await newPage(b, PROFILES[0], init(z)); await k2.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k2.p.goto(BASE); await unlock(k2.p); await sleep(1800);
@@ -5944,6 +5955,7 @@ async function olharTests(b) { cur = 'Olhar'; console.log('\n=== Capturas: Leitu
     await E(p, () => { [['Princípios', 'Ray Dalio', 'A ler', 608], ['O Pequeno Príncipe', 'Antoine de Saint-Exupéry', 'Lido', 96], ['Dom Casmurro', 'Machado de Assis', 'Quero ler', 256]].forEach(([title, author, status, pages]) => OS.add('books', { title, author, status, pages, curPage: status === 'A ler' ? 120 : 0, added: OS.U.today() })); });
     const go = async (h, ms = 700) => { await E(p, h => { location.hash = h; }, h); await sleep(ms); };
     const shot = async n => { try { await p.screenshot({ path: path.join(SH, 'ol-' + n + '-' + nm + '.png') }); } catch (e) { } };
+    await go('planos', 1500); await shot('planos');
     await go('leituras'); await shot('ler');
     await E(p, () => { const s = document.querySelector('#view .sx-mais > summary'); if (s) s.click(); }); await sleep(350); await shot('lermais'); await E(p, () => document.body.click()); await sleep(200);
     await go('animes', 1500); await E(p, () => scrollTo(0, 0)); await sleep(300); await shot('an');

@@ -1671,3 +1671,7 @@ html.fb-on #fblk{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .ag-ds li{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;border:1px solid var(--line)}.ag-ds li.ar{border-color:var(--accent)}.ag-ds small{font-size:11.5px;color:var(--mut)}.ag-ds span{font-size:12.5px;color:var(--tx2)}
 @media (max-width:600px){.ag-l li{grid-template-columns:1fr;gap:6px}}
 .ag-ds em.ag-an{font-style:normal;font-size:12px;color:var(--tx2);line-height:1.4}
+/* v3.86 · o Avançado em destaque: o plano mais popular */
+.pl-c.pop{position:relative;border-color:var(--farol,#F2C48D);box-shadow:0 0 0 1.5px var(--farol,#F2C48D) inset,0 18px 40px -26px var(--farol,#F2C48D)}
+.bdg.pl-popb{background:var(--farol,#F2C48D);color:#1a1206;font-weight:800}
+@media (min-width:900px){.pl-g .pl-c.pop{transform:translateY(-6px)}}

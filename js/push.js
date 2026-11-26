@@ -29,7 +29,7 @@ const MSG = {
 /* ---------- o que o servidor precisa de saber (cada parte só vai quando muda) ---------- */
 const SRC = {
   rot: () => (OS.Rotina && OS.Rotina.upcoming ? OS.Rotina.upcoming(14) : undefined),
-  fut: () => { const s = OS.one('fut') || {}; return { teams: (s.teams || []).map(t => ({ id: t.id, n: t.n })), comps: (s.comps || []).map(c => ({ slug: c.slug, n: c.n })), av: s.av || {} }; },
+  fut: () => { const s = OS.one('fut') || {}; if (OS.Plano && OS.Plano.can && !OS.Plano.can('futebol')) return { teams: [], comps: [], av: s.av || {} }; return { teams: (s.teams || []).map(t => ({ id: t.id, n: t.n })), comps: (s.comps || []).map(c => ({ slug: c.slug, n: c.n })), av: s.av || {} }; },
   sp: () => { const s = OS.one('sports') || {}; if (OS.Plano && OS.Plano.can && !OS.Plano.can('desportos')) return { teams: [], bell: [], av: s.av || {} }; return { teams: (s.teams || []).map(t => ({ lg: t.lg, id: t.id, n: t.n, t: t.t || '' })), bell: s.bell || [], av: s.av || {} }; },
   inv: () => OS.all('palerts').map(a => ({ id: a.id, s: a.s, k: a.k, v: +a.v || 0, r: a.r, n: a.n || '', on: a.on && !(a.r !== 'diario' && a.firedAt) ? 1 : 0 })),
   foco: () => { const B = U.ls.get('os2fblk', null), it = B && B.items && B.items[B.i]; return B && B.phase === 'run' && B.end > Date.now() ? [{ at: B.end, t: 'Bloco de foco', b: 'Acabou o tempo de: ' + ((it && it.title) || 'esta pendência') + '. Terminaste?', u: '#hoje', g: 'foco' }] : []; },
@@ -39,7 +39,7 @@ const SRC = {
   // v3.79: as festas (o país para o calendário do Ano Novo, o dia e mês de anos e o primeiro nome)
   fe: () => ({ pais: (OS.Country && OS.Country.code && OS.Country.code()) || 'PT', anos: String((OS.one('me') || {}).birth || '').slice(5, 10), nome: String((OS.one('profile') || {}).short || (OS.who && OS.who()) || '').split(' ')[0].slice(0, 40) }),
   // v3.79: a validade da despensa (só o que ainda há em casa e vence nos próximos 30 dias)
-  desp: () => { const t = U.today(), lim = U.addDays(t, 30); return OS.all('pantry').filter(x => x.exp && +x.qty > 0 && x.exp >= t && x.exp <= lim).map(x => ({ n: String(x.name || '').slice(0, 60), e: x.exp })).slice(0, 80); },
+  desp: () => { const t = U.today(), lim = U.addDays(t, 30); if (OS.Plano && OS.Plano.can && !OS.Plano.can('cozinha')) return []; return OS.all('pantry').filter(x => x.exp && +x.qty > 0 && x.exp >= t && x.exp <= lim).map(x => ({ n: String(x.name || '').slice(0, 60), e: x.exp })).slice(0, 80); },
   cat: () => Object.assign({ rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1, festas: 1, desp: 1 }, (OS.one('pushcfg') || {}).cat || {}) };
 const PEND = {}, LAST = {}; let PT = 0, HAS = false;
 const flush = async () => { PT = 0; if (!HAS || !tok() || !pid()) return; const d = {};

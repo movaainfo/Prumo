@@ -11,16 +11,17 @@ const NOME = { 1: 'Essencial', 2: 'Avançado', 3: 'Completo' }, ID = { 1: 'essen
 PL.cur = () => { if (!(OS.Acc && OS.Acc.on)) return { id: 'completo', n: 'Completo', lvl: 3, local: 1 }; const s = OS.Acc.sess && OS.Acc.sess(); return (s && s.plano) || { id: 'completo', n: 'Completo', lvl: 3, porVer: 1 }; };
 PL.lvl = () => +(PL.cur().lvl || 0);
 // funções que dependem do plano (o resto é de todos os planos)
-const CAPS = { fotos: 2, calc: 2, paletas: 2, futebolIA: 2, masmorras: 2, deep: 3, voz: 1, banco: 3, resumoMail: 3, palPro: 3, desportos: 3 };   // desportos: NBA, F1, MotoGP, MMA, ténis…, Olimpíadas e Copa (o Futebol é de todos)   // voz: com a chave da própria pessoa, em qualquer plano
+const CAPS = { fotos: 2, calc: 2, paletas: 2, futebolIA: 2, masmorras: 2, futebol: 2, cozinha: 2, deep: 3, voz: 1, banco: 3, resumoMail: 3, palPro: 3, desportos: 3 };   // desportos: NBA, F1, MotoGP, MMA, ténis…, Olimpíadas e Copa (o Futebol é de todos)   // voz: com a chave da própria pessoa, em qualquer plano
 PL.can = cap => PL.lvl() >= (CAPS[cap] || 1);
 // páginas que dependem do plano
-const ROUTES = { universidade: 2, cursos: 2, certificacoes: 2, aprendizagem: 2, conhecimento: 2, carreira: 2, capital: 2, oportunidades: 2, investimentos: 2, ativos: 2, cotacoes: 2, simuladores: 2, email: 2, decisoes: 2, coach: 2, relatorios: 3 };
+// v3.86: o Essencial fica com o dia a dia; Cozinha, Mundo, Dominus, Fotos, Futebol e Desportos passam para o Avançado
+const ROUTES = { cozinha: 2, compras: 2, mundo: 2, dominus: 2, fotos: 2, futebol: 2, esportes: 2, desporto: 2, universidade: 2, cursos: 2, certificacoes: 2, aprendizagem: 2, conhecimento: 2, carreira: 2, capital: 2, oportunidades: 2, investimentos: 2, ativos: 2, cotacoes: 2, simuladores: 2, email: 2, decisoes: 2, coach: 2, relatorios: 3 };
 const FREE = new Set(['planos', 'definicoes', 'perfil', 'ajuda', 'sobre', 'admin']);   // abrem sempre (mesmo sem plano): escolher plano, conta e dados
 PL.ROUTES = ROUTES; PL.CAPS = CAPS;
 // o que cada plano traz (a página Planos e os cadeados)
 const FEAT = {
-  1: ['Tarefas, hábitos, rotina por horas e agenda', 'Notificações com o app fechado (rotina, bloco de foco)', 'Finanças à mão e importar extratos do banco', 'Treino, dieta, corrida, sono e Cozinha', 'Diário, Fé, leituras, animes e Mundo', 'Futebol: as tuas equipas ao vivo, tabelas e avisos de golo', 'Ranking, dias de foco e Dominus (missões e chefe)', 'Jogos: o Pursuit de anime, o ranking de animes, clãs e conversas (a IA protege cada mensagem)', 'Animes com a PHANTOM: comentários sem spoilers, comunidade e o teu perfil', 'Fotos: as iguais e parecidas juntas, as desfocadas e as capturas para apagar', 'Círculos da semana no Corpo e temas das festas', 'Cofre de senhas, atalhos do iPhone e a agenda no Calendário', 'Escala do trabalho a partir de Excel ou CSV', 'IA: 20 pedidos por dia', '1 perfil'],
-  2: ['Tudo do Essencial', 'IA: 150 pedidos por dia, com fotos e PDFs (comida, exames, escala do trabalho por foto ou PDF)', 'Fotos separadas pela IA em categorias, com pesquisa pelo que aparece nelas', 'E-mail e notícias com IA', 'Universidade, cursos, carreira e oportunidades', 'Investimentos ao vivo e simuladores', 'Calculadora financeira, gráfica e de cálculo', 'Futebol com a análise da IA e "Ver o jogo"', 'Dominus completo (masmorras), cores e fundos', 'Até 3 perfis'],
+  1: ['Tarefas, hábitos, rotina por horas e agenda', 'Notificações com o app fechado (rotina, bloco de foco)', 'Finanças à mão: gastos, contas e orçamento', 'Treino, dieta, corrida e sono', 'Diário, Fé e leituras', 'Animes com a PHANTOM: a tua lista, o Pursuit, desafios da semana, clãs e comentários sem spoilers', 'Ranking e dias de foco', 'Cofre de senhas, atalhos do iPhone e a agenda no Calendário', 'Trabalho: horas, horário e folgas', 'IA: 20 pedidos por dia', '1 perfil'],
+  2: ['Tudo do Essencial', 'IA: 150 pedidos por dia, com fotos e PDFs (comida, exames, escala do trabalho por foto ou PDF)', 'Futebol: as tuas equipas ao vivo, tabelas, avisos de golo, a análise da IA e "Ver o jogo"', 'Dominus completo: missões, chefe, masmorras e o Abismo', 'Cozinha: despensa, lista de compras e receitas com o que tens em casa', 'Mundo: os países, cidades e lugares que já conheces e os que queres conhecer', 'Fotos: as iguais e as desfocadas para apagar, categorias pela IA e pesquisa', 'Importar extratos do banco e a escala do trabalho (Excel, CSV, foto ou PDF)', 'E-mail e notícias com IA', 'Universidade, cursos, carreira e oportunidades', 'Investimentos ao vivo e simuladores', 'Calculadora financeira, gráfica e de cálculo', 'Cores e fundos do app', 'Até 3 perfis'],
   3: ['Tudo do Avançado', 'Desportos completos: NBA, NFL, Fórmula 1, MotoGP, MMA, ténis e mais, com as Olimpíadas e a Copa do Mundo, e avisos de cada jogo', 'O teu banco ligado: os movimentos entram sozinhos (Open Finance)', 'IA: 400 pedidos por dia', 'Relatórios e impostos (IRS e IRPF)', 'O resumo do teu mês no e-mail (se quiseres)', 'Paletas de cores exclusivas: Ouro, Aurora e Sakura', 'Atendimento prioritário: os teus pedidos passam à frente', 'Até 5 perfis: um para cada pessoa da família, cada um com o seu código'] };
 PL.FEAT = FEAT;
 const fmtD = ms => ms ? new Date(ms).toLocaleDateString(OS.loc ? OS.loc() : 'pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
@@ -59,13 +60,13 @@ const cards = (c, P0) => { const loja = !!(OS.Loja && OS.Loja.on), loc = curOf()
     ${c.pago && c.cur && c.cur !== 'EUR' ? `<span class="mut pl-curx">A tua assinatura é paga em ${esc((MOEDAS.find(m => m[0] === c.cur) || [, c.cur])[1])}</span>` : ''}</div>
   ${loja ? '<p class="mut pl-curn">Nesta versão da app não há compras: aqui vês o teu plano e o que cada um inclui.</p>' : ''}<p class="mut pl-curn"${loja ? ' hidden' : ''}>${cur === 'BRL' ? 'Preços em reais para o Brasil, com impostos incluídos. A cobrança é em reais.' : `Os preços são em euros, com impostos incluídos.${loc !== 'EUR' ? ' Ao pagar, vês o valor na tua moeda, convertido pelo câmbio do dia (o valor ao lado de cada preço é aproximado).' : ' Se pagares com um cartão noutra moeda, o valor é convertido pelo câmbio do dia.'}`}</p>
   ${open && !c.pago && !c.local && !loja ? cupBox() : ''}
-  <div class="pl-g">${[1, 2, 3].map(l => { const p = L.find(x => x.lvl === l), pr = p && p.precos && p.precos[cur], val = pr ? pr[ci] : 0, mine = c.pago && c.lvl === l, top = l === 3;
+  <div class="pl-g">${[1, 2, 3].map(l => { const p = L.find(x => x.lvl === l), pr = p && p.precos && p.precos[cur], val = pr ? pr[ci] : 0, mine = c.pago && c.lvl === l, top = l === 3, pop = l === 2;   // v3.86: o Avançado é o plano mais popular (em destaque)
     const btn = loja ? (mine ? `<button class="btn" disabled>${UI.ic('check')}O teu plano</button>` : '') : !open ? `<button class="btn" disabled>${c.admin ? 'Liga o Stripe para abrir' : 'Em breve'}</button>`
       : c.admin || c.local ? `<button class="btn" disabled>Tens tudo</button>`
       : mine ? `<button class="btn" disabled>${UI.ic('check')}O teu plano</button>`
-      : c.pago ? `<button class="btn ${top ? 'pri' : ''}" data-act="plMudar" data-id="${ID[l]}">${l > c.lvl ? 'Subir para o ' : 'Mudar para o '}${NOME[l]}</button>`
-      : `<button class="btn ${top ? 'pri' : ''}" data-act="plAssinar" data-id="${ID[l]}">Assinar o ${NOME[l]}</button>`;
-    return `<section class="pl-c${top ? ' top' : ''}${mine || (!c.pago && c.lvl === l && !c.teste) ? ' mine' : ''}"><div class="pl-ch"><b>${NOME[l]}</b>${top ? '<span class="bdg pos">o mais completo</span>' : ''}</div>
+      : c.pago ? `<button class="btn ${top || pop ? 'pri' : ''}" data-act="plMudar" data-id="${ID[l]}">${l > c.lvl ? 'Subir para o ' : 'Mudar para o '}${NOME[l]}</button>`
+      : `<button class="btn ${top || pop ? 'pri' : ''}" data-act="plAssinar" data-id="${ID[l]}">Assinar o ${NOME[l]}</button>`;
+    return `<section class="pl-c${top ? ' top' : ''}${pop ? ' pop' : ''}${mine || (!c.pago && c.lvl === l && !c.teste) ? ' mine' : ''}"><div class="pl-ch"><b>${NOME[l]}</b>${top ? '<span class="bdg pos">o mais completo</span>' : ''}${pop ? '<span class="bdg pl-popb">o mais popular</span>' : ''}</div>
       ${(() => { const cp = cupOk(ID[l]) && !c.pago ? OS.ui.plCupao : null, dv = cp ? Math.round(val * (100 - cp.pct)) / 100 : 0;
         if (cp && val) return `<div class="pl-p"><s class="pl-old">${money(val, cur)}</s> <b>${money(dv, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small></div><small class="pl-cupn">−${cp.pct}% ${esc(cupDur(cp, ci))}</small>`;
         const ax = val && cur === 'EUR' ? approx(val, loc) : '';
@@ -130,6 +131,8 @@ const paywall = () => UI.head('Escolhe o teu plano', 'O teu teste grátis acabou
 const wrapViews = () => { const V = OS.views; Object.keys(V).forEach(k => { const f = V[k]; if (typeof f !== 'function' || f._pl) return;
     const g = sub => { const l = PL.lvl(); if (!l && !FREE.has(k)) return paywall();
       if (ROUTES[k] && l < ROUTES[k]) return UI.head(titleOf(k), '', '', '') + lock(ROUTES[k], 'Esta página');
+      // v3.86: importar extratos do banco e a escala do trabalho (Excel, CSV, foto ou PDF) passam para o Avançado
+      if (l < 2 && ((k === 'financas' && String(sub || '') === 'banco') || (k === 'trabalho' && String(sub || '') === 'foto'))) return UI.head(titleOf(k), '', '', '') + lock(2, k === 'financas' ? 'Importar extratos do banco' : 'Importar a escala do trabalho');
       if (k === 'dominus' && /^bestiario/.test(String(sub || '')) && !PL.can('masmorras')) return UI.head('Dominus', 'As masmorras', `<a class="btn sm" href="#dominus">${UI.ic('left')}Voltar ao Dominus</a>`, 'Jogo') + lock(2, 'As masmorras');
       return f(sub); };
     g._pl = 1; Object.keys(f).forEach(x => { g[x] = f[x]; }); V[k] = g; }); };
