@@ -1661,3 +1661,12 @@ html.fb-on #fblk{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .ec-reg ul{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:4px}.ec-reg li{display:flex;align-items:center;gap:10px;font-size:13px}.ec-reg li span{min-width:90px;color:var(--tx2)}.ec-reg li small{color:var(--mut)}.ec-reg li .btn{margin-left:auto}
 @media (max-width:600px){.ec-top{flex-direction:column;align-items:flex-start}.ec-ch{gap:3px;height:120px}}
 .vn-big{font-size:17px;font-weight:600;margin:2px 0}
+/* v3.82 · Administração › Agenda */
+.ag-l{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ag-l li{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--pn)}
+.ag-l li.ar{border-color:color-mix(in srgb,var(--pos) 55%,transparent);background:color-mix(in srgb,var(--pos) 7%,var(--pn))}
+.ag-q{display:flex;flex-direction:column;gap:2px}.ag-q b{font-size:14px}.ag-q small{font-size:11.5px;color:var(--mut)}.ag-l li.ar .ag-q b{color:var(--pos)}
+.ag-t b{font-size:14.5px}.ag-t p{margin:3px 0 8px;font-size:13px;color:var(--tx2)}
+.ag-ds{margin-top:18px}.ag-ds h4{margin:0 0 8px;font-size:14px}.ag-ds ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ag-ds li{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;border:1px solid var(--line)}.ag-ds li.ar{border-color:var(--accent)}.ag-ds small{font-size:11.5px;color:var(--mut)}.ag-ds span{font-size:12.5px;color:var(--tx2)}
+@media (max-width:600px){.ag-l li{grid-template-columns:1fr;gap:6px}}

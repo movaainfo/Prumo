@@ -308,3 +308,19 @@ html.loja .pl-p, html.loja .pl-p + small, html.loja .pl-cupn, html.loja .pl-ctl 
 .err-l li.novo{border-left-color:var(--warn,#e0a040)}.err-l li div{min-width:0}.err-l li b{font-size:13.5px;word-break:break-word}.err-l li div small{display:block;color:var(--mut);font-size:11.5px;margin-top:2px}
 .err-l li>span{font-weight:700}.err-l li>small{grid-column:1/-1;font-size:12px}
 .adm-mon{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--pn2)}.adm-mon summary{cursor:pointer}.adm-url{word-break:break-all;font-size:12.5px}
+/* v3.82 · personagens de anime para a foto do perfil */
+.ac-anig{margin:0 0 12px}.ac-anis{display:flex;gap:8px;margin-bottom:6px}.ac-anis input{flex:1;min-width:0}
+.ac-anil{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px;max-height:260px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px}
+.ac-anil button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0;border:0;background:none;cursor:pointer;color:inherit;min-width:0}
+.ac-anil img{width:64px;height:64px;object-fit:cover;object-position:top;border-radius:14px;border:1.5px solid rgba(233,227,216,.18)}
+.ac-anil small{font-size:10.5px;line-height:1.2;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.8}
+.ac-anil button.on img,.ac-anil button:hover img{border-color:var(--farol,#F2C48D)}.ac-anil button.ld{opacity:.5}
+.ac-anil .ac-sub{grid-column:1/-1}
+/* o perfil único no menu do perfil */
+.pf-one{position:relative;overflow:hidden;border-radius:18px;padding:16px;margin:0 0 12px;background:linear-gradient(135deg,#1b1727,#2a1d3a);color:#fff;background-size:cover;background-position:center}
+.pf-one.com-fundo{min-height:150px;display:flex;flex-direction:column;justify-content:flex-end}
+.pf-oh{display:flex;align-items:center;gap:14px;position:relative}.pf-oh .ac-av{flex:none}
+.pf-oh b{display:block;font-size:18px}.pf-oh .pf-at{display:block;font-size:13.5px;font-weight:700;color:#E8A6AE}.pf-oh .pf-sem{display:inline-block;margin-top:2px;font-size:12.5px;font-weight:800;color:#fff;background:#B83444;border:0;border-radius:999px;padding:3px 10px;cursor:pointer}
+.pf-oh small{display:block;font-size:12px;opacity:.75}.pf-cl{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.12)}
+.pf-st{display:flex;gap:16px;margin-top:12px;font-size:12px;opacity:.9}.pf-st b{display:block;font-size:16px}
+.ac-at{display:flex;flex-direction:column;gap:4px}.ac-at .ac-atl{display:flex;align-items:center;gap:6px;font-weight:800}.ac-at small{font-size:12px;opacity:.75}

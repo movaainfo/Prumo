@@ -43,15 +43,21 @@
  },
  {
   "p": "Animes",
-  "name": "Animes: a classe de fã sai do que vês (aqui Estratega do Mistério, com o nível e a categoria) e o Recap do ano mostra episódios e horas, o género, os teus do ano, o estúdio e a classe",
+  "name": "Animes: a classe de fã sai do que vês (aqui Arquiteto das Sombras), o rank de E a SSS pede tudo ao mesmo tempo (SS e SSS também pedem pontos no Pursuit) e há títulos raros por conquistar",
   "pass": true,
-  "info": "{\"c\":{\"k\":\"misterio\",\"nome\":\"Estratega do Mistério\",\"frase\":\"Gostas de pensar antes das personagens.\",\"cor\":\"#6d5dfc\",\"cat\":\"Drama\",\"nivel\":\"Iniciado\",\"eps\":133,\"traços\":[]},\"n\":7,\"t0\":\"&\\n\\nPrumo & PHANTOM\\n\\nO teu 2026 em animes\\n\\nToca para começar.\",\"vistos\":[\"& Prumo & PHANTOM O teu 2026 em animes Toca para começar.\",\"Este ano viste 133 episódios Isso são cerca de 53 horas, mais de 2 dias seguidos.\",\"O teu género Mistério Mistério 33% Psicológico 23% Drama 20%\",\"Os teus 4 do ano 1 Monster 10 2 Death Note 9 3 Erased 8 4 Spy x Family 7\",\"O teu estúdio Madhouse O teu mês mais forte março\",\"Este ano foste Estratega do Mistério Gostas de pensar antes das personagens. Iniciado · ca\",\"4 animes"
+  "info": "{\"c\":{\"nome\":\"Arquiteto das Sombras\",\"nivel\":\"Rank E\",\"rank\":\"Despertado\",\"hib\":false,\"prox\":\"D\"},\"bl\":\"A tua classe de fãEDespertado Arquiteto das SombrasVês a jogada três episódios antes de ela acontecer.133 episódios · 3 séries terminadas · categoria Drama Para o Rank D · Aprendiz80%100/100 episódios\",\"r\":[5,7,1]}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Recap: só abre no fim do ano (antes disso mostra quando abre); com animações (partículas), a contagem dos episódios e horas, o género, os teus 5 com o anime do ano, o mês e o estúdio, o rank, a classe em carta e o cartão final para partilhar",
+  "pass": true,
+  "info": "{\"n\":8,\"t0\":\"& Prumo & PHANTOM apresentam O TEU 2026 EM ANIMES Toca para avançar · segura para parar\",\"fx\":true,\"vistos\":[\"& Prumo & PHANTOM apresentam O TEU 2026 EM ANIMES Toca para avançar · segura para parar\",\"Este ano viste 133 episódios 53 horas de anime Dava 2 dias seguidos, sem dormir Ou 3 voos de Lisboa a Tóquio\",\"O teu género dominante MISTÉRIO Mistério 0 Psicológico 0 Drama 0\",\"Os teus 4 do ano 4 Spy x Family 7 3 Erased 8 2 Death Note 9 O teu anime do ano Monster nota 10\",\"O teu ano, mês a mês J F M A M J J A S O N D Março foi o teu mês O teu estúdio Madhouse\",\"O teu rank de fã E DESPERTADO Para o Rank D · Aprendiz falta: 2 séries terminadas\",\"Este ano, a tua classe é… CLASSE · RANK E Arquiteto das Sombras Vês a jogada três episódios antes de ela acontecer. categoria Drama\",\"Prumo & PHANTOM · Recap 2026 133 episódios 53 horas Mistério género Rank E Despertado Anime do ano Monst"
  },
  {
   "p": "Animes",
   "name": "Animes › Ao vivo e a seguir: os próximos episódios com a contagem ao segundo (e os que acabaram de sair)",
   "pass": true,
-  "info": "{\"a1\":[\"Sai daqui a 59:48\"],\"a2\":[\"Sai daqui a 59:47\"]}"
+  "info": "{\"a1\":[\"Sai daqui a 59:00\"],\"a2\":[\"Sai daqui a 58:59\"]}"
  },
  {
   "p": "Animes",
@@ -159,7 +165,7 @@
   "p": "Animes",
   "name": "Animes › Temporada: a estação atual com todos os animes e o próximo episódio",
   "pass": true,
-  "info": "{\"h\":\"Outono 2026\",\"n\":4,\"t\":\"8,0 Cyberpunk: Edgerunners 2 Série na internet · 10 episódios · 2026 Ação · Drama Cyberpunk: Edgerunners 2 Ep. 8 · sáb 05:50 8,5 The Apothecary Diaries Season 3 Série · 12 episódios · 2026 Drama · Mistério Uma farmacêutica resolve mistérios no palácio. The Apothecary Di"
+  "info": "{\"h\":\"Outono 2026\",\"n\":4,\"t\":\"8,0 Cyberpunk: Edgerunners 2 Série na internet · 10 episódios · 2026 Ação · Drama Cyberpunk: Edgerunners 2 Ep. 8 · sáb 16:42 8,5 The Apothecary Diaries Season 3 Série · 12 episódios · 2026 Drama · Mistério Uma farmacêutica resolve mistérios no palácio. The Apothecary Di"
  },
  {
   "p": "Animes",
@@ -177,7 +183,7 @@
   "p": "Animes",
   "name": "Animes › Calendário: os episódios da semana por dia e à hora certa (sem conteúdo adulto)",
   "pass": true,
-  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Calendário de lançamentos Os episódios novos dos próximos 7 dias, à hora do teu aparelho (a hora a que saem no Japão). Normalmente chegam às plataformas de streaming no mesmo dia. Só os da minha lista Hoje quinta, 26/11 06:50 The Apothecary Diaries Season 3 Episódio 7 de 12 Amanhã sexta, 27/11 06:00 Série Sem Faixa Episódio 3 de 12 Sába"
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Calendário de lançamentos Os episódios novos dos próximos 7 dias, à hora do teu aparelho (a hora a que saem no Japão). Normalmente chegam às plataformas de streaming no mesmo dia. Só os da minha lista Hoje quinta, 26/11 17:42 The Apothecary Diaries Season 3 Episódio 7 de 12 Amanhã sexta, 27/11 16:52 Série Sem Faixa Episódio 3 de 12 Sába"
  },
  {
   "p": "Animes",

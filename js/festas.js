@@ -59,7 +59,9 @@ const vigia = () => { const o = proximo(); if (!o || VISTO === o.chave || U.ls.g
 setInterval(vigia, 1000);
 
 /* ---------- dia de anos ---------- */
-const anos = () => { try { const b = (OS.one('me') || {}).birth || ''; if (!/^\d{4}-\d{2}-\d{2}$/.test(b)) return null; const t = ymd(new Date());
+let PREV_ANOS = 0;   // pré-visualização da administração (até esta hora)
+const anos = () => { try { if (PREV_ANOS > Date.now()) { const b0 = (OS.one('me') || {}).birth || ''; return { idade: /^\d{4}/.test(b0) ? new Date().getFullYear() - +b0.slice(0, 4) : 0, nome: ((OS.one('profile') || {}).short || (OS.who && OS.who()) || '').split(' ')[0], prev: 1 }; }
+  const b = (OS.one('me') || {}).birth || ''; if (!/^\d{4}-\d{2}-\d{2}$/.test(b)) return null; const t = ymd(new Date());
   if (b.slice(5) !== t.slice(5) && !(b.slice(5) === '02-29' && t.slice(5) === '02-28' && new Date(new Date().getFullYear(), 1, 29).getMonth() !== 1)) return null;
   return { idade: new Date().getFullYear() - +b.slice(0, 4), nome: ((OS.one('profile') || {}).short || (OS.who && OS.who()) || '').split(' ')[0] }; } catch (e) { return null; } };
 let VELAS = false;
@@ -78,5 +80,8 @@ OS.on && OS.on('ready', () => { emFesta(); setInterval(emFesta, 6e4); OS.on('one
   try { new MutationObserver(() => { if (document.body.classList.contains('fx-dia-anos')) baloes(); }).observe(document.getElementById('top') || document.body, { childList: true }); } catch (e) { }
   const o = OS.views.visao; if (o && !o._fx) { OS.views.visao = sub => { const h = o(sub), a = anos(); if (!a) return h; const k = '<div class="dash-grid">', i = h.indexOf(k); return i < 0 ? bolo(a) + h : h.slice(0, i) + bolo(a) + h.slice(i); }; OS.views.visao._fx = 1; } });
 
-OS.Festas = { proximo, anos, festa, CAL, NOWRUZ, LUNAR, ROSH };
+// pré-visualizar (Administração › Agenda): a contagem de 10 segundos com os fogos e o dia de anos, sem mexer no que fica guardado
+const preverAno = () => { const p = proximo() || { c: CAL[pais()] || 'greg', t: Date.now() }; const v = VISTO; festa({ t: Date.now() + 10400, c: p.c, chave: '__prev' }, true); VISTO = v; setTimeout(() => { try { localStorage.removeItem('oc_fx___prev'); U.ls.set('oc_fx___prev', 0); } catch (e) { } }, 500); };
+const preverAnos = (min = 3) => { PREV_ANOS = Date.now() + min * 6e4; VELAS = false; emFesta(); confetes(); OS.request && OS.request(); setTimeout(() => { emFesta(); OS.request && OS.request(); }, min * 6e4 + 500); };
+OS.Festas = { proximo, anos, festa, CAL, NOWRUZ, LUNAR, ROSH, NOME, preverAno, preverAnos };
 })();

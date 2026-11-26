@@ -224,6 +224,11 @@ const festas = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.cat.festas
     if (L.min >= 540 && L.min < 550 && L.md === pascoa(L.y) && !SEMNATAL.has(fe.pais)) msg('pascoa', 'Feliz Páscoa!', `Uma Páscoa cheia de recomeços${nm}.`);
     if (L.min < 10 && fe.anos && fe.anos === L.md) msg('anos', fe.nome ? `Parabéns, ${fe.nome}!` : 'Parabéns!', 'Hoje o dia é teu. Que este ano seja incrível.'); }); };
 
+/* ---------- v3.82 · o Recap de animes abre a 1 de dezembro: um aviso às 10h de cada um, só a quem usa os Animes ---------- */
+const recapAviso = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.an || !(x.cat.jogo || x.cat.ep)) return; const L = local(now, x.tz); if (L.md !== '12-01' || L.min < 600 || L.min >= 610) return;
+    const k = 'recap:' + uk + ':' + L.y; if (st.sent[k]) return; st.sent[k] = now;
+    out.push({ uk, m: { t: 'O teu Recap ' + L.y + ' está pronto', b: 'O teu ano em animes: os episódios, o teu anime do ano, o teu rank e a tua classe. Abre e vê.', u: '#animes.perfil', g: 'recap' }, ttl: 12 * 3600 }); }); };
+
 /* ---------- v3.79 · despensa: às 9h de cada um, o que vence hoje, amanhã e daqui a 3 dias (uma mensagem por dia) ---------- */
 const despensa = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.cat.desp || !(x.desp || []).length) return; const L = local(now, x.tz); if (L.min < 540 || L.min >= 550) return;
     const hoje = L.y + '-' + L.md, mais = n => new Date(Date.parse(hoje + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10), k = 'desp:' + uk + ':' + hoje; if (st.sent[k]) return;
@@ -245,6 +250,7 @@ const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.f
   try { await pursuit(U, st, now, out); } catch (e) { console.error('push pursuit', e.message); }
   try { festas(U, st, now, out); } catch (e) { console.error('push festas', e.message); }
   try { despensa(U, st, now, out); } catch (e) { console.error('push despensa', e.message); }
+  try { recapAviso(U, st, now, out); } catch (e) { console.error('push recap', e.message); }
   try { await episodios(U, st, now, out, o.force && o.eps); } catch (e) { console.error('push episódios', e.message); }
   if (o.force || new Date(now).getUTCMinutes() % 5 === 0) { try { await prices(U, st, now, out); } catch (e) { console.error('push preços', e.message); } }
   // limpeza: o que tem mais de 3 dias

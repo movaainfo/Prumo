@@ -20,6 +20,8 @@ const cartoes = () => { const L = [];
     L.push(card(`${OS.Parceria ? OS.Parceria.mini() : ''}<span>Prumo &amp; ${esc(nome)}</span>`, `<a class="vn-pu${pu.on ? ' on' : ''}" href="#animes.pursuit"><b>${esc(pu.t)}</b><span>${esc(pu.s)}</span></a>
       <div class="dc-rows"><div><span>Avisos de episódios</span><b>${av ? av + (av === 1 ? ' anime' : ' animes') : 'nenhum'}</b></div><div><span>A parceria</span><b><a href="#animes.parceria">conhecer</a></b></div></div>`, { cls: 'span4 vn-pp', area: 'animes', act: more('animes', 'Animes') })); }
   L.push(card('Jogos', `<div class="dc-tiles"><a href="#animes.pursuit"><b>Pursuit</b><span>anime do dia</span></a><a href="#dominus"><b>Dominus</b><span>o teu herói</span></a><a href="#jogos"><b>Todos</b><span>e o ranking</span></a></div>`, { cls: 'span4', area: 'jogos', act: more('jogos', 'Jogar') }));
+  // v3.82 · o Recap de animes, só na janela (1 de dezembro a 15 de janeiro)
+  try { const R = OS.AnimeRecap, j = R && R.janela ? R.janela() : null; if (j && j.aberto && animesOn()) L.push(card('O teu Recap ' + j.y, `<div class="dc-sub">O teu ano em animes: os episódios, o anime do ano, o teu rank e a tua classe.</div><button type="button" class="btn ar-go" data-act="arRecap" style="margin-top:10px"><span>${UI.ic('play')}Ver o meu Recap</span></button>`, { cls: 'span4', area: 'animes' })); } catch (e) { }
   // v3.81 · o calendário escolar (Agora / A seguir), o tempo de ecrã da semana e a votação dos Prémios dos livros
   try { const C = OS.UniCal && OS.UniCal.estado ? OS.UniCal.estado() : null, a = C && C.agora[0], pr = C && C.prox[0];
     if (a || pr) { const dd = d => Math.round((U.parse(d) - U.parse(U.today())) / 864e5);
