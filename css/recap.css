@@ -1,7 +1,7 @@
 /* PRUMO — Recap de animes e classe de fã (v3.82): ecrã inteiro, linhas de velocidade e retícula de manga, impactos com onda de choque,
    contagens, o anime do ano com raios de luz, o rank a cair do céu e a carta da classe com brilho holográfico. */
 html.rx-open,html.rx-open body{overflow:hidden}
-.rx{--c1:#1a0b2e;--c2:#3b0a45;position:fixed;inset:0;z-index:9300;color:#fff;overflow:hidden;background:#07050d;touch-action:manipulation;user-select:none;-webkit-user-select:none;font-family:var(--sans)}
+.rx{position:fixed;inset:0;z-index:9300;color:#fff;overflow:hidden;background:#07050d;touch-action:manipulation;user-select:none;-webkit-user-select:none;font-family:var(--sans)}
 .rx-bg{position:absolute;inset:-20%;background:radial-gradient(60% 50% at 70% 25%,color-mix(in srgb,var(--c2) 85%,transparent),transparent 70%),radial-gradient(70% 60% at 15% 85%,color-mix(in srgb,var(--c2) 45%,transparent),transparent 70%),var(--c1);transition:background 1s ease;animation:rxDrift 18s ease-in-out infinite alternate}
 @keyframes rxDrift{from{transform:translate(-2%,-1%) scale(1)}to{transform:translate(2%,1%) scale(1.06)}}
 .rx-lines{position:absolute;inset:-30%;background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.13) 0 .7deg,transparent .7deg 6deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 22%,#000 60%);mask:radial-gradient(circle at 50% 50%,transparent 22%,#000 60%);opacity:.35;animation:rxSpin 60s linear infinite}
@@ -27,10 +27,10 @@ html.rx-open,html.rx-open body{overflow:hidden}
 @keyframes rxShake{10%,90%{transform:translate(-2px,1px)}20%,80%{transform:translate(5px,-3px)}30%,50%,70%{transform:translate(-9px,4px)}40%,60%{transform:translate(9px,-4px)}}
 .rx-rumble{animation:rxRumble .12s linear infinite}
 @keyframes rxRumble{0%{transform:translate(0,0)}25%{transform:translate(1.5px,-1px)}50%{transform:translate(-1.5px,1px)}75%{transform:translate(1px,1.5px)}}
-.rx::after{content:"";position:absolute;inset:0;z-index:6;background:#fff;opacity:0;pointer-events:none}
-.rx.rx-flash::after{animation:rxFlash .45s ease-out}
+.rx-st::after{content:"";position:absolute;inset:0;z-index:6;background:#fff;opacity:0;pointer-events:none}
+.rx-st.rx-flash::after{animation:rxFlash .45s ease-out}
 @keyframes rxFlash{0%{opacity:.85}100%{opacity:0}}
-.rx.rx-flash .rx-lines{animation:rxSpin 60s linear infinite,rxLinesHit .7s ease-out}
+.rx-st.rx-flash .rx-lines{animation:rxSpin 60s linear infinite,rxLinesHit .7s ease-out}
 @keyframes rxLinesHit{0%{opacity:1;transform:scale(1.15)}100%{opacity:.35}}
 /* 0 · abertura */
 .rx-pre{display:flex;align-items:center;gap:10px;margin:0;font-size:14px;font-weight:700;opacity:0;animation:rxUp .7s .15s forwards}.rx-pre img,.rx-pre svg{height:26px;width:auto}
@@ -130,4 +130,50 @@ html.rx-open,html.rx-open body{overflow:hidden}
 .ar-go span{display:flex;align-items:center;gap:6px}
 @keyframes rxPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,113,133,.55)}50%{box-shadow:0 0 0 10px rgba(251,113,133,0)}}
 .ar-lock{margin-top:12px;display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:14px;border:1px dashed rgba(255,255,255,.22);background:rgba(255,255,255,.04)}.ar-lock b{font-size:15px}.ar-lock span{font-size:13px;color:var(--an-mut,#bcb5cf)}.ar-lock .btn{align-self:flex-start;margin-top:6px}
-@media (prefers-reduced-motion:reduce){.rx *,.rx *::after,.rx::after{animation:none!important}.rx .rx-s.on *{opacity:1!important;transform:none!important;filter:none!important}.rx-bars i::after,.rx-ms i{transform:none!important}.ar-go,.rx-banl{animation:none}}
+@media (prefers-reduced-motion:reduce){.rx *,.rx *::after,.rx-st::after{animation:none!important}.rx .rx-s.on *{opacity:1!important;transform:none!important;filter:none!important}.rx-bars i::after,.rx-ms i{transform:none!important}.ar-go,.rx-banl{animation:none}}
+
+/* ===== v3.83 · Recap 2.0: palco de story, posters, letreiros, cortes e modo gravação ===== */
+.rx-st{--c1:#1a0b2e;--c2:#3b0a45;position:absolute;inset:0;overflow:hidden;isolation:isolate}
+.rx-blur{position:absolute;inset:-10%;background:#07050d center/cover no-repeat;filter:blur(40px) saturate(1.3) brightness(.35);opacity:0;transition:opacity .6s}
+@media (min-aspect-ratio:4/5){.rx-st{inset:auto;left:50%;top:50%;height:100vh;width:56.25vh;max-width:100vw;transform:translate(-50%,-50%);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 30px 120px rgba(0,0,0,.6)}.rx-blur{opacity:1}}
+.rx-tt .w2,.rx-big,.rx-gen,.rx-rk b,.rx-rkn,.rx-mx b,.rx-stu b,.rx-sy,.rx-one b{font-family:'Anton',Impact,'Arial Narrow',sans-serif!important;font-weight:400!important;letter-spacing:.005em!important}
+.rx-tt .w1,.rx-tt .w3{font-family:'Anton',Impact,sans-serif;font-weight:400;letter-spacing:.02em}
+.rx-po{position:absolute;inset:-8%;z-index:0;background:center/cover no-repeat;filter:blur(22px) saturate(1.35) brightness(.5);opacity:0;transform:scale(1.08);transition:opacity .8s ease,transform 8s ease}
+.rx-po.on{opacity:.75;transform:scale(1)}
+.rx-po::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--c1) 60%,transparent),color-mix(in srgb,var(--c2) 45%,transparent) 60%,color-mix(in srgb,var(--c1) 85%,transparent))}
+.rx-bg{z-index:0}.rx-lines,.rx-dots{z-index:1}
+/* o mural de posters atrás do número */
+.rx-wall{position:absolute;inset:-30% -40%;z-index:0;display:flex;flex-direction:column;gap:14px;transform:rotate(-14deg);opacity:.32;-webkit-mask:radial-gradient(ellipse at 50% 50%,#000 30%,transparent 72%);mask:radial-gradient(ellipse at 50% 50%,#000 30%,transparent 72%)}
+.rx-wr{display:flex;gap:14px;width:max-content;animation:rxWall 38s linear infinite;animation-direction:normal}
+.rx-wr[style*="--d:-1"]{animation-direction:reverse}
+.rx-wr img{width:min(26vw,150px);aspect-ratio:2/3;object-fit:cover;border-radius:10px;filter:saturate(1.2)}
+@media (min-aspect-ratio:4/5){.rx-wr img{width:min(14.6vh,150px)}}
+@keyframes rxWall{to{transform:translateX(-50%)}}
+.rx-s.on .rx-in{position:relative;z-index:2}
+/* letreiros com o género a correr */
+.rx-mq{position:absolute;inset:0;z-index:0;display:flex;flex-direction:column;justify-content:center;gap:2vh;transform:rotate(-8deg) scale(1.2);opacity:.16;pointer-events:none}
+.rx-mr{display:flex;width:max-content;white-space:nowrap;font:400 clamp(48px,14vw,120px)/1 'Anton',Impact,sans-serif;text-transform:uppercase;color:transparent;-webkit-text-stroke:1.5px #fff;animation:rxWall 26s linear infinite}
+.rx-mr.inv{animation-direction:reverse;color:rgba(255,255,255,.5);-webkit-text-stroke:0}
+@media (min-aspect-ratio:4/5){.rx-mr{font-size:min(7.5vh,120px)}}
+/* o fio da parceria a riscar o ecrã na abertura */
+.rx-fio{position:absolute;left:-10%;right:-10%;top:42%;height:2px;background:linear-gradient(90deg,transparent,#fde047 30%,#fff 50%,#fb7185 70%,transparent);transform:scaleX(0) rotate(-6deg);transform-origin:left;animation:rxFio 1s .15s cubic-bezier(.7,0,.2,1) forwards;box-shadow:0 0 18px rgba(253,224,71,.8)}
+@keyframes rxFio{0%{transform:scaleX(0) rotate(-6deg);opacity:1}70%{transform:scaleX(1) rotate(-6deg);opacity:1}100%{transform:scaleX(1) rotate(-6deg);opacity:0}}
+/* o corte diagonal entre ecrãs */
+.rx-wipe{position:absolute;inset:-20% -60%;z-index:6;pointer-events:none;background:linear-gradient(100deg,transparent 40%,var(--wc,#fff) 40% 60%,transparent 60%);transform:translateX(-120%);opacity:0}
+.rx-wipe.go{animation:rxWipe .55s cubic-bezier(.7,0,.2,1)}
+@keyframes rxWipe{0%{transform:translateX(-110%);opacity:1}100%{transform:translateX(110%);opacity:1}}
+/* som e gravação */
+.rx-som{position:absolute;z-index:8;right:62px;top:calc(env(safe-area-inset-top,0px) + 22px);height:42px;min-width:42px;padding:0 12px;border-radius:21px;border:0;background:rgba(0,0,0,.35);color:#fff;font:700 16px var(--sans);cursor:pointer}
+.rx-recb{align-self:flex-start;margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.5);background:rgba(0,0,0,.25);color:#fff;font:800 14px var(--sans);cursor:pointer;opacity:0;animation:rxUp .6s 2.8s forwards;position:relative;z-index:7}
+.rx-recb svg{width:16px;height:16px}
+.rx.rx-rec .rx-pg,.rx.rx-rec .rx-x,.rx.rx-rec .rx-som,.rx.rx-rec .rx-tap,.rx.rx-rec .rx-recb,.rx.rx-rec .ar-act,.rx.rx-rec .rx-prev{visibility:hidden}
+.rx-cd{position:absolute;inset:0;z-index:9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:rgba(4,3,8,.82);text-align:center}
+.rx-cd p{margin:0;font:800 16px var(--sans);opacity:.85;max-width:24ch}
+.rx-cd b{font:400 160px/1 'Anton',Impact,sans-serif}.rx-cd b.pum{animation:rxPop .5s cubic-bezier(.2,1.8,.4,1)}
+/* a carta que se inclina e brilha ao mexer */
+.rx-cw{perspective:1000px;transform:rotateY(var(--tx,0deg)) rotateX(var(--ty,0deg));transition:transform .18s ease-out;transform-style:preserve-3d}
+.rx-cw .rx-holo{background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.4) calc(var(--hx,50%) - 8%),rgba(120,220,255,.3) var(--hx,50%),rgba(255,120,220,.3) calc(var(--hx,50%) + 6%),transparent 75%)}
+/* o cartão final com os posters em leque */
+.rx-sp{display:flex;justify-content:center;margin:4px 0 6px;height:120px}
+.rx-sp img{width:76px;height:112px;object-fit:cover;border-radius:8px;box-shadow:0 10px 24px rgba(0,0,0,.5);margin:0 -14px;transform:rotate(calc((var(--i) - 2) * 7deg)) translateY(calc(var(--i) * 0px));opacity:0;animation:rxBadge .5s calc(.4s + var(--i) * .12s) cubic-bezier(.2,1.8,.4,1) forwards}
+.rx-sp img:nth-child(1){--r:-14deg}.rx-sum{backdrop-filter:blur(6px)}
