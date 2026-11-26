@@ -229,6 +229,12 @@ const recapAviso = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.an || 
     const k = 'recap:' + uk + ':' + L.y; if (st.sent[k]) return; st.sent[k] = now;
     out.push({ uk, m: { t: 'O teu Recap ' + L.y + ' está pronto', b: 'O teu ano em animes: os episódios, o teu anime do ano, o teu rank e a tua classe. Abre e vê.', u: '#animes.perfil', g: 'recap' }, ttl: 12 * 3600 }); }); };
 
+/* ---------- v3.85 · desafios semanais dos Animes: à segunda às 10h de cada um, um aviso de que há 3 desafios novos (só a quem usa os Animes) ---------- */
+const andesAviso = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.an || !(x.cat.jogo || x.cat.ep)) return; const L = local(now, x.tz), [mo, da] = L.md.split('-').map(Number);
+    if (new Date(Date.UTC(L.y, mo - 1, da)).getUTCDay() !== 1 || L.min < 600 || L.min >= 610) return;
+    const k = 'andes:' + uk + ':' + L.y + '-' + L.md; if (st.sent[k]) return; st.sent[k] = now;
+    out.push({ uk, m: { t: 'Desafios novos nos Animes', b: 'Três desafios para esta semana: um fácil, um médio e um difícil. Cada um dá pontos para o ranking.', u: '#animes.desafios', g: 'andes' }, ttl: 12 * 3600 }); }); };
+
 /* ---------- v3.79 · despensa: às 9h de cada um, o que vence hoje, amanhã e daqui a 3 dias (uma mensagem por dia) ---------- */
 const despensa = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.cat.desp || !(x.desp || []).length) return; const L = local(now, x.tz); if (L.min < 540 || L.min >= 550) return;
     const hoje = L.y + '-' + L.md, mais = n => new Date(Date.parse(hoje + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10), k = 'desp:' + uk + ':' + hoje; if (st.sent[k]) return;
@@ -251,6 +257,7 @@ const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.f
   try { festas(U, st, now, out); } catch (e) { console.error('push festas', e.message); }
   try { despensa(U, st, now, out); } catch (e) { console.error('push despensa', e.message); }
   try { recapAviso(U, st, now, out); } catch (e) { console.error('push recap', e.message); }
+  try { andesAviso(U, st, now, out); } catch (e) { console.error('push andes', e.message); }
   try { await episodios(U, st, now, out, o.force && o.eps); } catch (e) { console.error('push episódios', e.message); }
   if (o.force || new Date(now).getUTCMinutes() % 5 === 0) { try { await prices(U, st, now, out); } catch (e) { console.error('push preços', e.message); } }
   // limpeza: o que tem mais de 3 dias

@@ -1,14 +1,4172 @@
 [
  {
-  "p": "Olhar",
-  "name": "capturas tab (sem erros de JavaScript)",
+  "p": "Geral",
+  "name": "os 86 formulários gravam",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Olhar",
-  "name": "capturas tel (sem erros de JavaScript)",
+  "p": "Geral",
+  "name": "gasto rápido fica guardado depois de recarregar",
   "pass": true,
   "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exportar e importar devolve tudo",
+  "pass": true,
+  "info": "2 movimentos"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: verificação da ligação",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: o Google falha à 1.ª e a app tenta de novo · \"18, uber\" → 18 € · Uber",
+  "pass": true,
+  "info": "1 encontrados"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho de uma pergunta: \"99 pizza 2 pessoas\" → 99 € · Pizza 2 pessoas",
+  "pass": true,
+  "info": "[99]"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: gasto enviado entra nas Finanças com categoria",
+  "pass": true,
+  "info": "[[8.5,\"Uber para a faculdade\",\"Transporte\"],[99,\"Pizza 2 pessoas\",\"Alimentação\"],[18,\"Uber\",\"Transporte\"]]"
+ },
+ {
+  "p": "Geral",
+  "name": "atalho: não duplica",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: herói criado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: treinos que fazem avançar uma meta de corpo sobem o Corpo (e o herói) e mostram parabéns",
+  "pass": true,
+  "info": "herói 2 → 4 · Corpo 0 → 3 · SUBISTE DE NÍVEL\n4\nBRONZE\nRyan\nGLADIADOR"
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: baú com 2 recompensas à escolha",
+  "pass": true,
+  "info": "2 opções"
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: escolher recompensa guarda-a",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jogo: marcos em 5 pilares (com o Espírito)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "abre sem internet",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "atualização: aparece \"A atualizar o Prumo…\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "atualização: depois mostra \"Atualizado\" e a versão nova",
+  "pass": true,
+  "info": "Atualizado · versão 9.9 · 26/11/2026 · Temas que mudam o app inteiro: o Selo, o "
+ },
+ {
+  "p": "Geral",
+  "name": "modo de segurança (?seguro) limpa a cache e liga o modo leve",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: engrenagem das Definições visível no topo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: tocar na engrenagem abre as Definições",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: \"Definições\" nos atalhos de \"Tudo\" (barra de baixo), visível sem rolar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: tocar em Definições (em \"Tudo\") abre as Definições e fecha o painel",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: barra de baixo com Painel, Hoje, Registar, a IA e Tudo (sem os botões a flutuar por cima)",
+  "pass": true,
+  "info": "{\"items\":[\"Painel\",\"Hoje\",\"Spyke\",\"Tudo\"],\"add\":true,\"fabs\":[]}"
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: \"Tudo\" mostra todas as áreas do menu em ícones, por grupo",
+  "pass": true,
+  "info": "{\"g\":[\"Visão Geral\",\"Execução\",\"Eu\",\"Fé\",\"Dinheiro\",\"Estudos\",\"Corpo\",\"Carreira\",\"Direção\"],\"n\":43,\"nav\":43}"
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: tocar numa área abre-a e fecha \"Tudo\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: depois do código aparece \"Ativar o Face ID?\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: \"Ativar Face ID\" regista o rosto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: ao bloquear aparece \"Desbloquear com Face ID\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: em modo de teste o Face ID só abre pelo botão (o automático é testado à parte)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "iPhone: entrar com o Face ID abre a app",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Tablet horiz: sem convite nem botão de Face ID",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Tablet horiz: Definições dizem \"só no iPhone\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Computador: sem convite nem botão de Face ID",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Computador: Definições dizem \"só no iPhone\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o tablet envia os seus dados para o Google",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "limpeza: \"18, uber\" passa a \"Uber\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o iPhone liga-se com o código e recebe os dados do tablet",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "código de ligação aceite em qualquer formato (link, código, codificado, com espaços)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: a configuração do atalho também passa para o iPhone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o computador liga-se com o código e recebe os dados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o que registas no computador aparece no tablet e no iPhone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (computador)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: o que registas no iPhone aparece no tablet",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: apagar num aparelho apaga no outro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sync: gasto do atalho entra uma só vez e aparece nos dois aparelhos",
+  "pass": true,
+  "info": "tablet 1 · iPhone 1"
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (2 aparelhos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Android: sem botão de biometria e registo antigo apagado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "Android: nenhum pedido biométrico ao abrir",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "\"Entrar direto\": abre sem pedir código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cadeado volta a pedir o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "biblioteca: mais de 500 exercícios com imagens e 60 alongamentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "base de alimentos: mais de 700 alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exercícios antigos ligados às imagens",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: abre a lista para escolher exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: 2 exercícios no treino em curso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: série feita fica verde e o descanso começa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: volume calculado ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino em curso sobrevive a fechar a app (barra da atividade em curso)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino em curso retomado com as séries",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tipo de série: aquecimento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "terminar: treino guardado com as séries feitas",
+  "pass": true,
+  "info": "{\"n\":1,\"sets\":[{\"t\":\"N\",\"kg\":60,\"reps\":10},{\"t\":\"N\",\"kg\":62.5,\"reps\":8}],\"title\":\"Ombros & Core\",\"dur\":1}"
+ },
+ {
+  "p": "Geral",
+  "name": "terminar: resumo com volume e dicas de dieta e alongamento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina criada a partir do treino",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina: abre com as cargas da última vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "recorde detetado no treino seguinte",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "nova rotina guardada com exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha do exercício com animação 3D e como fazer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "histórico em cartões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino já não tem mapa nem peso (passaram para o Corpo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: separadores visão, desafios, mapa, peso e tempo de ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "altura guardada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "formulário de bioimpedância com análise segmentar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bioimpedância: faixas de referência e IMC",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bioimpedância: aviso de diferença entre braços",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "metabolismo medido usado nas metas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: procurar encontra o alimento certo primeiro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: 200 g de frango = macros certas",
+  "pass": true,
+  "info": "{\"date\":\"2026-11-26\",\"meal\":\"Lanche\",\"food\":\"Peito de frango · grelhado\",\"pic\":\"https://i.pinimg.com/474x/bc/e8/8d/bce88dae8a51618b59780eb5391fe3a9.jpg\",\"g\":200,\"qty\":1,\"kcal\":318,\"p\":64,\"c\":0,\"f\":5,\"fib\":0,\"id\":\"8roh3qu7uq5\",\"_c\":1795714783565,\"_u\":1795714783565,\"_s\":0}"
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: porção típica (unidade)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "dieta: refeições com fotos dos alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeição fixa criada com 2 alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeição fixa adicionada com um toque",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: sem IA mostra só o botão para Definições → Spyke (sem passos nem chave aqui)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: a IA identifica os alimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "foto: corrigir gramas reescala as calorias e regista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: produtos reais com marca e foto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: refeição guarda a foto do produto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "país: botão na página inicial",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: ao tocar no alimento escolhe-se a marca",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: regista o alimento com a marca escolhida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "país: muda para Brasil",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas: mudam conforme o país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas certas: nos ovos só aparecem ovos (nada de massa ou salsichas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "marcas certas: na batata frita não aparece batata palha nem chips",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fast food conforme o país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "refeições já guardadas com marca de outro país ficam iguais",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fast food de outro país não aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alimentos sem emojis: todos com foto real",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alimentos agrupados: cada alimento uma vez, com as variantes lá dentro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cada alimento tem a sua foto (sem repetir)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cada alimento tem descrição",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao tocar no arroz aparecem as opções (cozido / cru) e as marcas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "regista com a opção e a marca escolhidas",
+  "pass": true,
+  "info": "{\"date\":\"2026-11-26\",\"meal\":\"Lanche\",\"food\":\"Arroz branco tipo 1 (agulha) — Agulha cigala (Cigala)\",\"pic\":\"https://images.openfoodfacts.org/images/products/560/126/003/7109/front_pt.4.200.jpg\",\"g\":100,\"qty\":1,\"kcal\":355,\"p\":7.5,\"c\":78,\"f\":1,\"fib\":2.4,\"id\":\"ztkvtku8b75\",\"_c\":1795714804913,\"_u\":1795714804913,\"_s\":0}"
+ },
+ {
+  "p": "Geral",
+  "name": "biblioteca de alimentos com fotos e descrições",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: passo das fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: resultado completo (gordura, magra, metabolismo, visceral)",
+  "pass": true,
+  "info": "{\"bf\":17.1,\"lean\":67.1,\"bmr\":1820,\"vis\":8,\"look\":true,\"ai\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: análise com onde melhorar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "exame IA: estimativa sem fotos também funciona",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "vídeos escolhidos para os exercícios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "treino: vídeo da execução toca dentro da app",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: vários vídeos bons para escolher",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: alterna entre vídeo e animação 3D",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: animação 3D (ou recurso) aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: modo fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fechar a ficha para o vídeo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ficha: abre na animação 3D com botão do vídeo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "animação certa: extensão de pernas na cadeira extensora (não agachamento)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: em Portugal usa € e 28% de imposto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: inflação de Portugal vem do Eurostat e entra no simulador",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: crédito ao consumo do BCE como taxa do empréstimo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: empréstimo em Portugal mostra TAN e TAEG com Imposto do Selo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: no Brasil usa R$, juros ao mês e CET com IOF",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: custo efetivo de um crédito sem juros é 0%",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: no Brasil a taxa do crédito pessoal vem do BCB, ao mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: comparar taxas com produtos do Brasil (poupança isenta, CDI)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: CDI e LCI/LCA (90% do CDI) atualizados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "simuladores: cada país guarda os seus valores",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: painel do assistente com sugestões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: sem chave mostra o cartão único do Spyke (IA)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: responde com veredicto, riscos e passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: a IA recebe a simulação, as regras do país e as finanças",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA nos simuladores: \"Testar\" aplica o cenário (e ignora campos inventados)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ao vivo: sem ligação usa os valores de referência e avisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: cotação ao vivo do script (Yahoo) na carteira",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: variação do dia calculada ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: renda fixa rende sozinha (3% ao ano)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: rentabilidade com histórico (TWR, TIR, volatilidade, Sharpe)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: risco (nota 1–7, VaR, CVaR, stress, correlação)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: pesquisar ativo no mercado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: página do ativo com gráfico, estatísticas e notícias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: importar CSV da corretora",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: venda a descoberto (ganha quando o preço cai, perde quando sobe)",
+  "pass": true,
+  "info": "{\"qty\":-10,\"avg\":10,\"cost\":-100,\"value\":-120,\"pl\":-20,\"ret\":-0.2,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":-20,\"exposure\":120,\"short\":true,\"lev\":null,\"price\":12,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-10-27\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: opções com multiplicador e CFD alavancado (margem + resultado)",
+  "pass": true,
+  "info": "[{\"qty\":2,\"avg\":3,\"cost\":600,\"value\":800,\"pl\":200,\"ret\":0.3333333333333333,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":200,\"exposure\":800,\"short\":false,\"lev\":null,\"price\":4,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-11-16\"},{\"qty\":10,\"avg\":100,\"cost\":100,\"value\":200,\"pl\":100,\"ret\":1,\"realized\":0,\"divs\":0,\"gross\":0,\"taxW\":0,\"fees\":0,\"total\":100,\"exposure\":1100,\"short\":false,\"lev\":11,\"price\":110,\"stale\":false,\"hasPrice\":true,\"first\":\"2026-11-16\"}]"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: caixa em dólares convertida ao câmbio",
+  "pass": false,
+  "info": "102.05011389521641"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: desdobramento, bonificação, transferências, amortização e JCP líquido",
+  "pass": true,
+  "info": "{\"qty\":200,\"avg\":4.76,\"cost\":952,\"value\":1000,\"pl\":48,\"ret\":0.05042016806722689,\"realized\":0,\"divs\":85,\"gross\":100,\"taxW\":15,\"fees\":0,\"total\":133,\"exposure\":1000,\"short\":false,\"lev\":null,\"price\":5,\"stale\":false,\"hasPrice\":true,\"first\":\"2025-10-22\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "todos os tipos: formulário com os novos movimentos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alertas: dispara quando o preço passa o alvo (e só esse)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alertas: painel no Mercado com estado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "comparar: gráfico e tabela de rentabilidade, volatilidade e correlação",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "impostos BR: day trade detetado (20%) e prejuízo acumulado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "investimentos: impostos (mais-valias PT a 28%)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA investimentos: questionário de perfil (adequação)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA investimentos: resposta com mestres, divergência e verificação em 2 passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "IA investimentos: condicionada pelo regulamento, mestres, perfil, risco e factos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: perfil, o que faz (traduzido), donos, gestão e analistas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: demonstrações financeiras e múltiplos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: preço justo de Graham (12,00) e preço-teto de Bazin (11,67)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "empresas: relatório da IA com pesquisa web, fontes e a carteira",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tarefas: barra de projetos filtra pelo projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tarefas: captura rápida dentro do projeto e com #projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "tarefas: vista por projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: retrato com idade, origem e aniversário próximo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: linha do tempo por anos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: entrevista com mais de 200 perguntas, uma de cada vez (as respostas antigas mantêm-se)",
+  "pass": true,
+  "info": "{\"n\":537,\"q\":\"Quem eram os teus avós do lado da mãe? O que sabes da vida deles?\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "eu: depois de responder, a IA faz perguntas de seguimento sobre essa história",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: \"Saltar\" passa à pergunta seguinte",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: o livro é escrito capítulo a capítulo, só com as partes que têm material",
+  "pass": true,
+  "info": "{\"book\":1,\"ch\":[\"Raízes\",\"Os primeiros anos\",\"Uma nova vida em Portugal\"],\"todo\":0,\"stats\":\"3 capítulos408 palavras≈ 1 página\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "eu: cada capítulo recebe só o seu material e a regra de não inventar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "eu: atualizar reescreve só o capítulo que mudou e respeita o que escrevi",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "leituras: pesquisar livro e marcar já li / tenho na estante",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "leituras: também mangás (AniList), à frente das edições noutra língua, com autor e volumes",
+  "pass": true,
+  "info": "Kaguya-sama: Love is War Kaguya-sama: Love is War Kaguya-sama wa Kokurasetai Mangá · Aka Akasaka · 2015 · 28 volumes HQ / Mangá Romance Quero ler Estou a ler Já li Desisti Tenho"
+ },
+ {
+  "p": "Geral",
+  "name": "leituras: resenha e desafio literário que conta o livro lido",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "cursos e certificações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: página abre com temporizador e 34 espécies",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: árvore cresce até ao fim, dá moedas e regista estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: sair do Prumo mata a árvore",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "floresta: a minha floresta e catálogo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: calculadora diz quanto precisas no exame",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: plano até ao exame vai para as tarefas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: flashcards da IA e repetição espaçada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: simulado da IA corrigido (20/20)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: visão com contagem decrescente e mapa de estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "universidade: banco de questões, desempenho e recomendações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "calendário escolar: o .ics lê-se sem IA (períodos com o último dia certo, tipos pelo título), vês antes de guardar e tiras o que não queres; separador em Universidade › O curso",
+  "pass": true,
+  "info": "{\"nav\":{\"tabs\":\"Disciplinas Horário Calendário escolar Faltas Plano do curso Materiais\",\"on\":\"O curso6\",\"inp\":true},\"pv\":3,\"ai\":0,\"c1\":[\"Férias de Natal|2026-12-21|2027-01-03|ferias\",\"Época de exames, normal|2027-01-10|2027-01-25|exames\"]}"
+ },
+ {
+  "p": "Geral",
+  "name": "calendário escolar por foto: a IA tira as datas (sem datas estragadas nem repetidas), substitui o anterior, aparece no Calendário do Prumo e na Universidade (\"Agora: aulas até… · A seguir: … daqui a 3 dias\")",
+  "pass": true,
+  "info": "{\"ai\":1,\"pv2\":{\"n\":4,\"sub\":true},\"c2\":{\"L\":[\"Aulas do 1.º semestre|aulas\",\"Semana de receção|evento\",\"Feriado municipal|feriado\",\"Exames finais|exames\"],\"fonte\":\"Universidade Teste 2026/2027\",\"strip\":\"Agora: Aulas do 1.º semestre até 16/12 · A seguir: Semana de receção daqui a 3 dias\",\"cal\":[\"Aulas do 1.º semestre\",\"Semana de receção\"]}}"
+ },
+ {
+  "p": "Geral",
+  "name": "tempo de ecrã: separador no Corpo; à mão e pelo print da semana (o dia de hoje escrito à mão fica, datas futuras não entram); média, nível, dias por ano, redes sociais, levantamentos e o sono nos dias de mais ecrã",
+  "pass": true,
+  "info": "{\"tab\":true,\"ai\":1,\"L\":[400,120,380,100,360,90,150],\"sc\":\"62\",\"over\":3,\"apps\":[\"Instagram\",\"YouTube\",\"WhatsApp\",\"Notion\"],\"v\":\"Corpo CORPO Treino, dieta e corrida ligados: o que gastas, o que comes e como o corpo responde. Registar peso Treinar Visão Desafios e metas Mapa corporal Peso e medidas Tempo de ecrã 62 saúde digital Média dos últimos 7 dias 3 h 49 por dia Moderado Acima das 2 h de lazer recomendadas, mas longe dos\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "tempo de ecrã: mudar a meta diária (2 h) recalcula os dias dentro da meta",
+  "pass": true,
+  "info": "{\"meta\":120,\"h\":\"3/7 dias dentro da meta\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "Visão geral: cartões do tempo de ecrã (média e meta) e do calendário escolar (Agora e A seguir)",
+  "pass": true,
+  "info": "{\"ecra\":\"Tempo de ecrã Ver 3 h 49 por dia nos últimos 7 dias · moderado Dentro da meta 3 de 7 dias\",\"cal\":\"Calendário escolar Ver Agora Aulas do 1.º semestre até 16/12/2026 A seguir Semana de receção Quando daqui a 3 dias\"}"
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: adicionar padel e registar jogo com estatísticas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: treinos específicos e auxílios",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desporto: corrida preenche-se sozinha com a aba Corrida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "visão geral: frase forte e verdade do dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "hábitos: só se marca o dia de hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "trabalho: horário e folgas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: pendências por prioridade",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: som para concentrar (chuva, mar, lareira, ruído castanho) feito no aparelho, começa ao carregar em Começar, com atalhos para Spotify, Apple Music, YouTube Music e Deezer",
+  "pass": true,
+  "info": "{\"fs0\":{\"esc\":true,\"vol\":true,\"apps\":[\"Spotify\",\"Apple Music\",\"YouTube Music\",\"Deezer\"]},\"fs1\":{\"toca\":\"chuva\",\"barra\":true}}"
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: no fim do tempo pergunta se terminaste",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: \"ainda não\" acrescenta tempo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: sair sem código certo não deixa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: código certo sai e grava o histórico",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "bloco de foco: o som pára quando o bloco acaba; o Spotify mostra playlists de concentração ou um link teu, num tocador que não recomeça quando o ecrã muda",
+  "pass": true,
+  "info": "{\"a\":\"\",\"pls\":[\"Focus Piano\",\"Focus Jazz\",\"Deep Focus Lo-fi Beats\"],\"s1\":\"https://open.spotify.com/embed/playlist/37i9dQZF1DWZIOAPKUdaKS?utm_source=prumo&theme=0\",\"s2\":\"https://open.spotify.com/embed/album/4aawyAB9vmqN3uQ7FjRGTy?utm_source=prumo&theme=0\",\"gone\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: \"anota…\" cria tarefa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: abre páginas por voz",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: resumo do dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: separa urgente e promoções (sem IA)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: urgente aparece no Control Room",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "google script completo é JavaScript válido",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "script em 7 partes: 1 e 2 = núcleo, 3 a 7 = ficheiros das novidades; cada parte é JavaScript válido e juntas dão o código completo",
+  "pass": true,
+  "info": "{\"n\":7,\"ok\":[true,true,true,true,true,true,true],\"len\":[13275,12303,10110,10652,3903,2798,3325],\"same\":true,\"key1\":true,\"core\":25503,\"addon\":true}"
+ },
+ {
+  "p": "Geral",
+  "name": "script em 7 partes: cada parte tem menos de 15 mil caracteres (não é cortada ao colar no telemóvel)",
+  "pass": true,
+  "info": "13275 + 12303 + 10110 + 10652 + 3903 + 2798 + 3325"
+ },
+ {
+  "p": "Geral",
+  "name": "script: a Parte 4 (Outlook) liga-se às outras e responde",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "script: só com as partes 1 e 2 responde versão 10; com a Parte 3 num ficheiro novo responde versão 12 (sem apagar nada)",
+  "pass": true,
+  "info": "{\"ok\":true,\"v\":10} → {\"ok\":true,\"v\":12} | {\"ok\":true,\"v\":12} | {\"ok\":false,\"msg\":\"Chave errada\"} | function | function | function | function"
+ },
+ {
+  "p": "Geral",
+  "name": "script: novidades futuras entram num ficheiro novo (function op_nome) sem mexer na Parte 3",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "nome Náutilo no Google: a Parte 3 renomeia o ficheiro de dados, as cópias, a folha, a pasta e os calendários (uma só vez, pelo código interno)",
+  "pass": true,
+  "info": "Náutilo · dados.json|Náutilo · Ficheiros|Náutilo · Gastos do atalho|Náutilo|Náutilo · Trabalho|Náutilo · cópia 2026-10-16|Náutilo · cópia 2026-10-17"
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: memória guarda o que lhe dizes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: rotina de voz corre os passos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "spyke: balanço da noite",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "modo Comando abre com os painéis",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "modo Comando: o X fecha e o botão fica no canto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "e-mail: eventos dos e-mails no calendário",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: apagar projeto deixa as tarefas sem projeto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: data da avaliação move o plano de estudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: turno e folga no mesmo dia não coexistem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "ligações: oportunidade submetida cria candidatura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: aba no menu, versículo do dia com o texto da Bíblia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: versículo do dia com explicação e aplicação para hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: Bíblia completa (66 livros, 31 102 versículos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: palavra para hoje sem IA, escolhida pelo estado de alma",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: palavra da IA usa o dia real (avaliações, alertas) e o texto vem da Bíblia instalada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: ir para uma passagem escrita por extenso (Romanos 8:28)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: destacar versículo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: leitor diminui a letra (A−) até 12px, barra sempre visível",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: modo grifar (versículo inteiro e só palavras selecionadas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: nota escrita dentro do texto e guardada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: pesquisa de palavras em toda a Bíblia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: devocional guarda sozinho e mostra a passagem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: reflexão da IA sobre a leitura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: pedidos de oração e respondidas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: plano de leitura com o dia de hoje e progresso",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: sinais de crise mostram contactos de ajuda",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "fé: versículo do dia na página Hoje",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: notícias do mundo com fontes e hora",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: \"O essencial agora\" feito pela IA só com as manchetes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: temas (economia)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: tema próprio por pesquisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: \"+ País\" cria um separador com as notícias desse país, traduzidas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "jornal: notícias novas aparecem marcadas ao atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: o atalho abre a corrida já preenchida",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: corrida guardada com ritmo 5:58 /km",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: não regista a mesma corrida duas vezes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: a Corrida só mostra as corridas (o guia do relógio saiu)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "relógio: instruções em Definições → Atalhos do iPhone",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "alongamentos com fotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "rotina guiada de alongamentos registada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "meta de calorias sobe nos dias de treino",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: calendário de disciplina na visão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: o calendário de disciplina é automático (sem marcar dias à mão, o passado não se muda)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "corpo: registar um treino marca o dia sozinho",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desafio: começa e marca o dia",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "desafio automático conta os dias em que foste",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "meta do corpo com progresso e ritmo semanal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "visão do corpo: treino, dieta, corrida e recomendações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "sem erros de JavaScript (corpo)",
+  "pass": false,
+  "info": "consola: Access to fetch at 'https://script.google.com/macros/s/TESTE/exec' from origin 'http://localhost:8616' has been blocked by CORS policy: No 'Access-Control-Allow"
+ },
+ {
+  "p": "Geral",
+  "name": "manifesto sem orientação forçada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Geral",
+  "name": "todos os ficheiros da cache offline existem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "iPhone: app instalada (a funcionar com a cópia guardada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "iPhone: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "iPhone: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "1.8 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "iPhone: sem erros de JavaScript (atualização)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Android tel: app instalada (a funcionar com a cópia guardada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Android tel: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "Android tel: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "1.7 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "Android tel: sem erros de JavaScript (atualização)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet horiz: app instalada (a funcionar com a cópia guardada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet horiz: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet horiz: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "3.9 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet horiz: sem erros de JavaScript (atualização)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet vert: app instalada (a funcionar com a cópia guardada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet vert: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet vert: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "2.0 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "Tablet vert: sem erros de JavaScript (atualização)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: app instalada (a funcionar com a cópia guardada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "1.7 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: sem erros de JavaScript (atualização)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: mesmo com um ficheiro da instalação a falhar, a versão nova entra",
+  "pass": true,
+  "info": "ficou 9.3"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: se recarregar não chegar, limpa a cópia guardada e entra a nova",
+  "pass": true,
+  "info": "ficou 9.4"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: os dados ficam depois de atualizar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: com um formulário a meio, espera (não perde o que escreves)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: depois de fechar o formulário, atualiza sozinha",
+  "pass": true,
+  "info": "ficou 9.5"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: com rede muito lenta, abre em menos de 5 s com a cópia guardada",
+  "pass": true,
+  "info": "4.4 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: sem internet a app abre na mesma",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cores do app",
+  "name": "Sem escolha, o app abre com a paleta do logo (Selo) já no ecrã do código",
+  "pass": true,
+  "info": "[{\"pal\":\"selo\",\"cur\":\"selo\",\"tc\":\"rgb(19, 10, 11)\"},[18,7,9]]"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Definições: \"Cores do app\" com 6 paletas e a atual marcada",
+  "pass": false,
+  "info": "{\"n\":9,\"on\":\"selo\",\"grp\":true}"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Escolher \"Mar\" volta exatamente ao azul de antes e fica guardado neste perfil",
+  "pass": true,
+  "info": "[[7,13,22],{\"ls\":\"\\\"mar\\\"\",\"last\":\"\\\"mar\\\"\",\"tc\":\"#070D16\",\"on\":\"mar\"}]"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Floresta: fundos verdes; as cores com significado (gastos, avisos) não mudam",
+  "pass": true,
+  "info": "[[10,19,16],\"#E8807A\",\"#E8807A\"]"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Ao voltar a abrir, já abre com a paleta escolhida (sem piscar a azul)",
+  "pass": true,
+  "info": "[\"floresta\",{\"lk\":false,\"sp\":false,\"view\":15803,\"h\":\"#definicoes\"}]"
+ },
+ {
+  "p": "Cores do app",
+  "name": "As cenas do fundo tomam a paleta (sem estragar as ligações #id nem as cores com significado)",
+  "pass": true,
+  "info": "<rect fill=\"#130a0b\"/><use href=\"#abc\"/><path fill=\"url(#def)\"/><i style=\"color:#E8807A\">"
+ },
+ {
+  "p": "Cores do app",
+  "name": "Trocar de paleta é rápido (sem recarregar)",
+  "pass": true,
+  "info": "21 ms"
+ },
+ {
+  "p": "Cores do app",
+  "name": "sem erros JS (cores)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
+  "name": "Ao abrir com versão nova: primeiro a atualização (sem a intro por baixo), depois de atualizar a intro aparece, e depois o app",
+  "pass": true,
+  "info": "{\"v1\":{\"upd\":true,\"intro\":false},\"v2\":{\"intro\":true,\"st\":\"playing\"}}"
+ },
+ {
+  "p": "Intro",
+  "name": "Atualização a meio do uso (a intro já tinha acabado): a versão nova abre sem repetir a intro",
+  "pass": true,
+  "info": "{\"intro\":false,\"st\":\"off\"}"
+ },
+ {
+  "p": "Intro",
+  "name": "Com som: a intro abre em \"Toca para começar\", parada no primeiro instante, e o ecrã do código espera",
+  "pass": true,
+  "info": "{\"st\":\"waiting\",\"wait\":true,\"tap\":\"flex\",\"t\":0,\"code\":false}"
+ },
+ {
+  "p": "Intro",
+  "name": "O toque começa a intro com a música (o ficheiro som/intro.mp3, inteiro na memória antes de tocar, para não parar a meio no telemóvel) e a animação a andar",
+  "pass": true,
+  "info": "{\"src\":\"intro.mp3\",\"blob\":true,\"st\":\"playing\",\"au\":\"running\",\"wait\":false,\"t\":417}"
+ },
+ {
+  "p": "Intro",
+  "name": "A música continua a tocar com a imagem (não só o começo): passado o selo, o som vai no mesmo ponto",
+  "pass": true,
+  "info": "{\"au\":\"running\",\"at\":3.39,\"vis\":3.39}"
+ },
+ {
+  "p": "Intro",
+  "name": "A música vai com o app (som/intro.mp3, guardado para funcionar sem internet)",
+  "pass": true,
+  "info": "{\"s\":200,\"n\":129089}"
+ },
+ {
+  "p": "Intro",
+  "name": "A música: audível no altifalante do telemóvel do princípio ao fim, silêncio antes do golpe, impacto por cima, sem cortes e silêncio no fim",
+  "pass": true,
+  "info": "{\"len\":6.4,\"pk\":0.965,\"bad\":0,\"bed\":[-18,-18,-18,-18,-17,-14,-17,-18,-14],\"gap\":-28,\"imp\":-13,\"before\":-16,\"end\":-117}"
+ },
+ {
+  "p": "Intro",
+  "name": "No fim (com som), o ecrã de carregamento e depois o código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
+  "name": "Em \"Toca para começar\", o botão Saltar salta tudo (sem som)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
+  "name": "Ao abrir, a intro aparece por cima de tudo (e o ecrã do código ainda não)",
+  "pass": true,
+  "info": "{\"intro\":true,\"on\":true,\"code\":false,\"st\":\"playing\",\"n\":83}"
+ },
+ {
+  "p": "Intro",
+  "name": "O selo da intro fica ao centro, maior do que no ecrã de carregamento",
+  "pass": true,
+  "info": "{\"cx\":197,\"w\":144,\"vw\":393}"
+ },
+ {
+  "p": "Intro",
+  "name": "Quando a intro acaba, vê-se o ecrã de carregamento de sempre (com a sua entrada), ainda sem o código",
+  "pass": true,
+  "info": "{\"intro\":false,\"after\":true,\"code\":false,\"sp\":true,\"img\":true}"
+ },
+ {
+  "p": "Intro",
+  "name": "Depois do ecrã de carregamento abre o ecrã do código",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
+  "name": "Recarregar na mesma sessão não repete a intro",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
+  "name": "Definições: \"Intro ao abrir\" com Sempre, Uma vez por dia e Nunca, \"Com som\"/\"Sem som\" e \"Ver a intro agora\"",
+  "pass": true,
+  "info": "{\"n\":3,\"on\":\"sempre\",\"ver\":true,\"som\":2}"
+ },
+ {
+  "p": "Intro",
+  "name": "\"Ver a intro agora\" mostra-a por cima do app já com som (veio de um toque) e um toque salta-a",
+  "pass": true,
+  "info": "[true,true]"
+ },
+ {
+  "p": "Intro",
+  "name": "Escolher \"Nunca\" fica guardado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
+  "name": "sem erros JS (intro)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
+  "name": "Um toque salta a intro e o app segue (ecrã de carregamento, depois o código)",
+  "pass": true,
+  "info": "3169 ms"
+ },
+ {
+  "p": "Intro",
+  "name": "Com \"Nunca\", abre direto no ecrã de carregamento",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Intro",
+  "name": "Com \"reduzir movimento\" no aparelho, a intro não aparece",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Aparelho novo: abre o ecrã da conta (criar conta ou entrar) e não o código pessoal",
+  "pass": true,
+  "info": "{\"gate\":true,\"lock\":false,\"mode\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Criar conta sem aceitar os termos: não cria (as três caixas são obrigatórias)",
+  "pass": true,
+  "info": "{\"gate\":true,\"msg\":\" Please check this box if you want to proceed.\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Criar conta: \"O que é isto?\" em cada caixa explica em linguagem simples (sem marcar a caixa)",
+  "pass": true,
+  "info": "{\"open\":true,\"t\":\"Sono, treino, alimentação, peso e a tua religião são \\\"dados sensíveis\\\" na lei (RGPD na Europa, LGPD no Brasil), por isso temos de te pedir autorização à parte. Servem só para o Pru"
+ },
+ {
+  "p": "Contas",
+  "name": "Criar conta: mostra o código de recuperação (só uma vez)",
+  "pass": true,
+  "info": "L2GR-FWP5-LRF5-66W3"
+ },
+ {
+  "p": "Contas",
+  "name": "Depois pede o primeiro perfil, já com o nome",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfil novo: o código são 6 casinhas com teclado numérico (só números)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Só aceita números: as letras não entram e as casas acendem pelo que foi escrito",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ao 6.º número passa sozinho para a casa seguinte (Repete o código)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Códigos diferentes: avisa e não cria",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfis como na Netflix: \"Quem está a usar\", a bolinha do perfil e \"Adicionar perfil\"",
+  "pass": true,
+  "info": "{\"n\":1,\"name\":\"Ana\",\"av\":\"🌊\",\"add\":true,\"title\":\"Quem está a usar o Prumo?\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Escolher o perfil abre o mesmo ecrã de bloqueio, com o nome do perfil e \"Trocar de perfil\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã do código numa conta geral: 6 casinhas, teclado numérico e sem botão (entra sozinho)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Código errado: entra sozinho ao 6.º número, diz \"incorreto\" e limpa as casas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfil novo começa limpo: nada do Ryan (sem disciplinas, candidaturas, contactos, metas), com o nome do perfil",
+  "pass": true,
+  "info": "{\"subj\":0,\"apps\":0,\"contacts\":0,\"goals\":0,\"short\":\"Ana\",\"uni\":\"\",\"hab\":6,\"acc\":2,\"bub\":true,\"mova\":\"O meu negócio\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "A bolinha do perfil aparece na barra de cima",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
+  "pass": true,
+  "info": "20 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~foco,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+ },
+ {
+  "p": "Contas",
+  "name": "Senha errada: mensagem clara",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Noutro aparelho (computador): entra com a mesma conta e vê os mesmos dados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sincroniza nos dois sentidos em segundos (computador → telemóvel)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Segundo perfil na mesma conta: dados separados (não vê as tarefas da Ana)",
+  "pass": true,
+  "info": "{\"t\":[],\"short\":\"Bruno\",\"p\":\"Bruno\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Conta e perfis: blocos fechados com seta; abertos mostram e-mail, perfis, sincronização, senha, sair e apagar a conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: escolher um personagem do Dominus (heróis e, à medida que os derrotas, monstros e chefes) passa a ser a bolinha do perfil",
+  "pass": true,
+  "info": "{\"n\":12,\"ok\":true,\"unl\":true,\"img\":\"data:image/png;base64,\",\"bub\":true,\"modal\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: uma foto tua fica cortada em quadrado (160 px, leve) e guardada no perfil, em todos os aparelhos",
+  "pass": true,
+  "info": "[{\"jpg\":true,\"len\":1991,\"prev\":true},{\"w\":160,\"h\":160,\"jpg\":true}]"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã \"Quem está a usar\": o perfil aparece com a foto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Gerir perfis › Editar: tirar a foto volta ao emoji",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta de administração: aparece o separador \"Admin\" no fim do menu (ou em \"Mais\", se não couber)",
+  "pass": true,
+  "info": "{\"adm\":true,\"nav\":\"Admin\",\"shown\":true,\"side\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: lista as contas (e-mail, nome, perfis), último acesso, última entrada e minutos por dia, sem senhas",
+  "pass": true,
+  "info": "{\"r\":[\"ana teste ana@exemplo.pt ana bruno\"],\"contas\":true,\"ana\":true,\"hoje\":true,\"kpi\":4,\"senha\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração arrumada: \"Precisa de ti\" em cima e 8 separadores (Contas, Visitas, Vendas, Comunidade, Agenda, Pedidos, Servidor, Ajustes), a abrir em Contas",
+  "pass": true,
+  "info": "{\"n\":8,\"sel\":\"Contas1\",\"al\":true,\"lista\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração › Agenda: o que vai acontecer por ordem (Recap, Prémios dos livros e de anime, temas das festas, Ano Novo, estações), os desafios das próximas 6 semanas e a prévia de cada um só neste aparelho (tema de Natal, contagem do Ano Novo)",
+  "pass": true,
+  "info": "{\"ag\":{\"n\":18,\"ds\":6,\"bt\":19,\"t\":\"O que vai acontecer só neste aparelho; ninguém mais vê as prévias Tudo o que tem data marcada, por ordem. Toca para ver antes de ir ao ar: os temas ficam 10 minutos só aqui, os avisos aparecem só nest\"},\"tm\":\"natal\",\"fx\":{\"on\":true,\"n\":\"10\"}}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração › Visitas: visitantes por dia, funil (visitantes → cliques → registos → pagamentos), origens, países e aparelhos",
+  "pass": true,
+  "info": "{\"t\":\"Visitas\\n7 dias\\n14 dias\\n30 dias\\n0\\nvisitantes na página\\n0\\nvisitas à página\\n3\\npessoas a abrir o app\\n1\\nregistos\\n0\\npagamentos\\n0%\\nvisitantes que se registam\\n20\\n21\\n22\\n23\\n24\\n25\\n26\\n\\nvisitantes\\nregistos\\n\\nVisitantes\\n0\\nCliques em Começar\\n0\\n—\\nRegistos\\n1\\n—\\nPagamentos\\n0\\n—"
+ },
+ {
+  "p": "Contas",
+  "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
+  "pass": true,
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"811252d200ae4cbf0d2d5033\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-26T17:44:40.959Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+ },
+ {
+  "p": "Contas",
+  "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
+  "pass": true,
+  "info": "{\"ult\":1795715102864,\"ent\":1,\"dias\":{\"2026-11-26\":60}}"
+ },
+ {
+  "p": "Contas",
+  "name": "Tocar numa conta mostra o detalhe: perfis, criada, última entrada, último acesso e o gráfico dos 30 dias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal (aparelho que já tinha o Prumo): igual a antes, sem ecrã de conta nem bolinha",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sair da conta limpa este aparelho e volta ao ecrã de entrar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Esqueci a senha: o código de recuperação muda a senha e dá um código novo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Com a senha mudada, os outros aparelhos pedem para entrar outra vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Atalho de gastos do iPhone numa conta sem script: o link do perfil regista e o gasto entra nas finanças desse perfil",
+  "pass": true,
+  "info": "✓ 12,4 € registado no Prumo / 403"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Atalhos do iPhone mostra o link do perfil (sem pedir o script Google)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sono numa conta: o atalho do app Saúde envia para o link do perfil (tipo=sono) e a noite entra no Painel",
+  "pass": true,
+  "info": "{\"lk\":true,\"r1\":\"✓ Sono enviado para o Prumo\",\"sl\":[{\"d\":\"2026-11-26\",\"m\":450,\"src\":\"saude\"}]}"
+ },
+ {
+  "p": "Contas",
+  "name": "Jornal numa conta sem script: as notícias vêm do servidor do Prumo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta nova: pergunta o nome da IA uma vez, e a IA já está ligada sem chave nenhuma",
+  "pass": true,
+  "info": "{\"ask\":true,\"key\":\"nautilo-servidor\",\"own\":\"\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Nome da IA: \"Luna\" (é ela) — chama-se por voz pelo nome e o texto fica no feminino",
+  "pass": true,
+  "info": "{\"n\":\"Luna\",\"f\":true,\"w1\":true,\"w2\":false,\"t\":\"Cérebro da Luna · fala com a Luna\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições: o separador e os blocos usam o nome da IA (sem \"Spyke\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar (servidor do Prumo → IA grátis): responde, e o pedido leva o nome dela",
+  "pass": true,
+  "info": "Olá! Aqui é a tua IA. · {\"model\":\"openai\",\"messages\":[{\"role\":\"user\",\"content\":\"Diz olá à Luna\"}],\"temperature\":0.4,\"private\":true,\"referrer\":\"nautilo\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar: pedidos em JSON (decisões, resumos, tutor) também funcionam",
+  "pass": true,
+  "info": "{\"ok\":true,\"resposta\":\"feito\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "IA de reserva numa conta: se a ligação do aparelho falhar (\"Failed to fetch\", limite da grátis), responde pelo servidor do Prumo (api/ia?p=livre)",
+  "pass": true,
+  "info": "{\"t\":\"Olá! Aqui é a tua IA.\",\"direct\":1,\"eng\":\"reserva\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Modelos: o que respondeu bem passa à frente e o sobrecarregado fica 10 min de lado",
+  "pass": true,
+  "info": "{\"L\":[\"gemini-3.5-flash\",\"gemini-flash-lite-latest\"],\"mins\":10}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fotos sem a chave Google: mensagem clara a explicar como ligar (sem ficar a carregar)",
+  "pass": true,
+  "info": "A IA não respondeu (Ler fotos, PDFs e voz precisa da IA do Google. Liga a tua chave grátis em Definições › Spyke › Cérebro.)."
+ },
+ {
+  "p": "Contas",
+  "name": "A IA do servidor só responde a quem tem sessão numa conta",
+  "pass": true,
+  "info": "401"
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal: Definições tem \"Conta Prumo\" para guardar o Prumo numa conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ao guardar numa conta nova, o código de recuperação da senha aparece uma vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Guardar na conta: este aparelho passa a usar a conta com o mesmo código e os mesmos dados; o perfil continua o do Ryan (marcos e textos dele)",
+  "pass": true,
+  "info": "{\"on\":true,\"pub\":false,\"ps\":true,\"t\":true,\"g\":true,\"short\":\"Ryan\",\"leg\":100,\"who\":\"o Ryan (brasileiro)\",\"bub\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta sem administração: sem o separador \"Admin\" e o servidor recusa a lista de contas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Noutro aparelho: entra na conta do Ryan e aparece tudo o que estava no Prumo pessoal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Outro aparelho no modo pessoal: \"Entrar na conta neste aparelho\" leva ao ecrã de entrar, com o e-mail (os dados pessoais deste aparelho saem)",
+  "pass": true,
+  "info": "{\"has\":true,\"em\":\"ryan@exemplo.pt\",\"keys\":[],\"meta\":null,\"tasks\":0}"
+ },
+ {
+  "p": "Contas",
+  "name": "O servidor recusa criar conta sem a aceitação dos termos",
+  "pass": true,
+  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.\",\"code\":\"term"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã de entrar: Termos, Privacidade, Cookies e Acessibilidade abrem por cima (LGPD e RGPD, ANPD e CNPD) e fecham com Esc",
+  "pass": true,
+  "info": "{\"open\":true,\"t\":\"Política de Privacidade\",\"lgpd\":true,\"tabs\":6}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta que ainda não aceitou esta versão: ao entrar, pede para aceitar os termos uma vez",
+  "pass": true,
+  "info": "{\"termos\":true,\"boxes\":3}"
+ },
+ {
+  "p": "Contas",
+  "name": "Aceitar fica guardado na conta (versão e data) e segue para os perfis",
+  "pass": true,
+  "info": "{\"still\":true,\"t\":\"2026-11-21\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Depois de aceitar não volta a pedir (nem ao recarregar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Privacidade e termos: os 6 documentos, o que aceitaste e quando",
+  "pass": true,
+  "info": "{\"tab\":true,\"docs\":6,\"ac\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
+  "pass": true,
+  "info": "20261126174541-bc6723"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
+  "pass": true,
+  "info": "{\"id\":\"20261126174541-bc6723\",\"uid\":\"a88f26dc0eab59e14a0aee10\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: marcar o pedido como respondido; o que falta configurar (chave da IA, Stripe e e-mail) só para o administrador; o Gmail já não está pendente (chave do Google verificada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Contas públicas mostram as mesmas fotos dos alimentos",
+  "pass": true,
+  "info": "{\"pub\":true,\"pin\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Top 10",
+  "name": "Top 10: separador \"Top 10 da vida\" nas Leituras, com sugestões da estante (4 e 5 estrelas)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Top 10",
+  "name": "Top 10: livros da estante e escritos à mão entram por ordem; pódio com os 3 primeiros; tier list S/A/B/C",
+  "pass": true,
+  "info": "{\"n\":4,\"pod\":3,\"rows\":\"4,0,0,0\",\"li\":4,\"last\":\"4Os LusíadasOs LusíadasLuís de Camões · tier SA língua toda num poema.\\n      \"}"
+ },
+ {
+  "p": "Top 10",
+  "name": "Top 10: as setas mudam a ordem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Top 10",
+  "name": "Top 10: mudar o tier de um livro muda a sua fila",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Top 10",
+  "name": "Top 10: só cabem 10 (o 11.º é recusado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Top 10",
+  "name": "Top 10: no telemóvel nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Top 10",
+  "name": "Top 10: sem erros na consola",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Cozinha no menu Eu, com Despensa, Lista de compras e Receitas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Despensa por lugar (Despensa, Frigorífico) com quanto tens e o estado (acabou, a acabar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "+ e − mudam a quantidade (o arroz em kg sobe meio quilo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Na lista de compras aparece o que acabou ou está a acabar na despensa, com quanto comprar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "\"Comprei\" repõe na despensa até à quantidade ideal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "O que já tens em casa sai da lista do mês (3 pacotes de massa − 1 que tens = 2)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Marcar como comprado na lista põe na despensa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Desmarcar tira da despensa outra vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Receitas que dá para fazer já com o que tens (massa com atum: massa, atum, tomate pelado, cebola)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Com a cebola reposta, a massa com atum passa para \"Dá para fazer já\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "\"Juntar o que falta à lista\" põe os ingredientes na lista de compras",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "\"Fiz esta receita\" tira da despensa o que usaste (massa, atum, tomate, cebola)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "A IA sugere receitas com o que está na despensa (e o que falta)",
+  "pass": true,
+  "info": "{\"model\":\"openai\",\"messages\":[{\"role\":\"system\",\"content\":\"Respondes APENAS com J"
+ },
+ {
+  "p": "Cozinha",
+  "name": "Cozinha no telemóvel: nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Cozinha: aparece também nas contas das outras pessoas (desde a 3.12)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Cozinha",
+  "name": "Cozinha: sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: está dentro de Desportos (em Eu no menu) e abre com as boas-vindas (escolher equipas e campeonatos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: escrever o nome mostra a equipa (com a liga em português)",
+  "pass": true,
+  "info": "Flamengo\nBrasileirão\nVer\nSeguir\nFS\nFlamengo Sub-20\nBrasileirão Sub-20\nVer\nSeguir"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: seleções pelo nome em português (\"Brasil\" encontra a seleção)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: \"Seguir\" guarda a equipa e a seleção",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: a página não se redesenha por cima de quem está a escrever na pesquisa",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Agora: o jogo ao vivo aparece no placar com o minuto e o resultado",
+  "pass": true,
+  "info": "Desportos\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nDesportos\nAtualizar\nAgora\nAo vivo no mundo\nEquipas e seleções\nCampeonatos\nBra"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Agora: quem tem mais probabilidade de ganhar, ao vivo (com a fonte dita)",
+  "pass": true,
+  "info": "Probabilidade de ganhar, ao vivo 89% Flamengo 10% empate Palmeiras 1% Estimativa do Prumo: tabela, forma recente e fator casa, com o resultado e o tempo que falta. É uma estimativa, não uma certeza."
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Agora: próximos jogos e últimos resultados (com V/E/D)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: o menu mostra quantos jogos das tuas equipas estão ao vivo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: golo novo → aviso com quem marcou, o minuto e o resultado",
+  "pass": true,
+  "info": "Golo · Flamengo · Bruno Henrique 70' · Flamengo 2-0 Palmeiras"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: fim do jogo → aviso \"Terminou\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Equipas: cromos com a posição na tabela e a seleção com nome em português",
+  "pass": true,
+  "info": "Flamengo 1.º lugar · Brasileirão · 76 pts 71' 2-0 Palmeiras E V || Brasil Seleção sáb 5/12 17:46 · em casa vs Argentina"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: fotos dos jogadores (Wikipédia, só se o nome bater certo; sem foto fica o número)",
+  "pass": true,
+  "info": "{\"pedro\":true,\"rossi\":true,\"cred\":true}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: plantel por posições, com números, idade, golos e quem está lesionado",
+  "pass": true,
+  "info": "{\"n\":5,\"inj\":true}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: a IA procura o treinador, os lesionados e os castigados (com fontes)",
+  "pass": true,
+  "info": "mpeonato. Pesquisado pela IA nas notícias · Hoje 17:46 · Fontes: ge.globo.com, lance.com.br 1 Pedro 21 golos · 4 assist. 2 Arrascaeta 9 golos · 11 assist. 3 Bruno Henrique 7 golos · 3 assist. Guarda-redes 1 1 A"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › equipa: página da equipa com calendário, resultados e a tabela com a equipa destacada",
+  "pass": true,
+  "info": "Desportos\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nDesportos\nAtualizar\nAgora\nAo vivo no "
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › tabela: zonas com cores diferentes (Libertadores, Sul-Americana, rebaixamento) mesmo quando a ESPN não as marca",
+  "pass": true,
+  "info": "{\"fla\":\"top\",\"pal\":\"top\",\"cap\":\"eu\",\"gre\":\"\",\"juv\":\"rel\",\"leg\":\"Libertadores (fase de grupos)\\nSul-Americana\\nRebaixamento (Z4)\",\"nota\":true}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › tabela ao vivo: o jogo a decorrer já conta (pontos, jogos e o resultado de agora ao lado)",
+  "pass": true,
+  "info": "{\"h\":true,\"f\":\"1 Flamengo 2-0 35 26 1 3 52:30 +44 79\",\"fl\":true,\"fs\":\"2-0\",\"q\":\"0-2\"}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Campeonatos: tocar num campeonato segue-o",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Campeonatos: procurar qualquer campeonato pelo nome",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › campeonato: jogos ao vivo e a classificação por grupos",
+  "pass": true,
+  "info": "Desportos\nFUTEBOL\n\nAs tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo.\n\nDesportos\nAtualizar\nAgora\nAo vivo no mundo\nEquipas e seleções\nCampeonatos\nCam"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a IA analisa e diz quem tem mais probabilidade de ganhar, com as razões",
+  "pass": true,
+  "info": "Análise da IA ao vivo, com pesquisa nas notícias, às 17:46 · confiança alta Placar previsto pela IA no fim do jogo Flamengo 3 × 1 Palmeiras O Flamengo deve ganhar: está a vencer por 2-0 aos 71 minutos e domina o jogo. 92"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a IA pesquisa nas notícias e dá o palpite de resultado, os jogadores-chave, o treinador e os desfalques",
+  "pass": true,
+  "info": "[true,true,true,true,true,true]  Ortiz · Arrascaeta · Pedro Desfalques: Bruno Henrique (lesão) Palmeiras 4-4-2 Treinador: Abel Ferreira Atenção: Um golo cedo do Palmeiras reabre o jogo. É a leitura da IA com os dados e as notícias do jogo, não uma certeza. Fontes: ge.globo.com, lance.com.br."
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a escalação mostra as fotos dos jogadores no campo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: escalações dos dois (titulares no campo, esquema, suplentes e quem entrou)",
+  "pass": true,
+  "info": "{\"n\":2,\"pp\":22} Flamengo 4-3-3 em campo 9 Fla8 10 Pedro 11 Fla10 6 Fla5 7 Fla6 8 Fla7 2 Fla1 3 Fla2 4 Fla3 5 Fla4 1 Fla0 Suplentes 20 Henrique entrou 21 Reserva Treinador: Fili"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo ao vivo: \"Ver o jogo\" encontra a transmissão oficial da CazéTV (a ao vivo, não os melhores momentos nem outro jogo)",
+  "pass": true,
+  "info": "{\"t\":\"Ver o jogo CazéTV · grátis e oficial, no YouTube Ver aqui no Prumo abrir no YouTube AO VIVO: FLAMENGO X PALMEIRAS | BRASILEIRÃO 2026 | 37ª RODADA Onde passa em Portugal Premiere TV paga CazéTV YouTube grátis Canal Desconhecido TV segundo a pesquisa da IA; confirma na programação do canal\",\"tv\""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: \"Onde passa\" vem da pesquisa da IA, com link para o site oficial (Premiere → Globoplay, CazéTV → YouTube) e o resto só com o nome",
+  "pass": true,
+  "info": "[[\"Premiere TV paga\",\"https://globoplay.globo.com/\"],[\"CazéTV YouTube grátis\",\"https://www.youtube.com/@CazeTV/streams\"],[\"Canal Desconhecido TV\",\"\"]]"
+ },
+ {
+  "p": "Futebol",
+  "name": "Ver aqui no Prumo: o vídeo oficial toca dentro do app (YouTube sem cookies) e o botão passa a \"Fechar o vídeo\"",
+  "pass": true,
+  "info": "{\"src\":\"https://www.youtube-nocookie.com/embed/cazeAoVivo1?autoplay=1&playsinline=1&rel=0\",\"btn\":\"Fechar o vídeo\"}"
+ },
+ {
+  "p": "Futebol",
+  "name": "O vídeo não recomeça quando o jogo se atualiza (fica fora da parte que se redesenha)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Fechar o vídeo tira o quadro do YouTube",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: o palpite de placar ao vivo nunca fica abaixo do resultado atual",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: a IA recebe só os dados reais do jogo (resultado, minuto, golos, tabela, forma)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: o palpite de placar da IA fica no placar do jogo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: o cartão amarelo aparece como cartão (o texto \"is shown\" não o torna autogolo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo: lances, estatísticas ao vivo, forma e confronto direto",
+  "pass": true,
+  "info": "Brasileirão 71' Flamengo 2 : 0 Palmeiras Pedro 28' Bruno Henrique 70' Probabilidade de ganhar, ao vivo 99% Flamengo 1% empate Palmeiras 0% Estimativa do Prumo: tabela, forma recente e fator casa, com o resultado e o tempo que falta. É uma estimativa, não uma certeza. Maracanã Ver o jogo CazéTV · grá"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › jogo por começar: escalação provável pelos titulares dos últimos jogos (marcada como provável)",
+  "pass": true,
+  "info": "11 Brasileirão Brasileirão sáb 28/11 · 17:46 Athletico Paranaense faltam 47 h 59 Flamengo Quem tem mais probabilidade de ganhar 22% Athletico-PR 25% empate Flamengo 53% Pelas odds do mercado. É uma estim"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: com odds do mercado, a probabilidade usa as odds (e diz isso)",
+  "pass": true,
+  "info": "Quem tem mais probabilidade de ganhar 22% Athletico-PR 25% empate Flamengo 53% Pelas odds do mercado. É uma estimativa, não uma certeza."
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: o jogo abre mesmo com uma análise guardada por uma versão antiga",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: sem IA (cota gasta e reserva em baixo) a análise aparece na mesma, feita pelo Prumo, com palpite e explicação",
+  "pass": true,
+  "info": "Análise do Prumo feita pelo Prumo com os números do jogo (sem IA), às 17:46 · confiança média A cota grátis da IA do Google acabou por hoje e a IA de reserva não respondeu. Esta análise foi feita pelo Prumo com as odds ou a tabela, a forma, o confronto direto e as escalações. Podes pedir à IA outra "
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Ao vivo no mundo: abre nos jogos a decorrer (com quantos há em cada filtro)",
+  "pass": true,
+  "info": "Ao vivo 1|Todos 3|Terminados 1 · 1"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Ao vivo no mundo: golos com quem marcou, a assistência, a grande penalidade e a expulsão (nomes em português)",
+  "pass": true,
+  "info": "Desportos FUTEBOL As tuas equipas, seleções e campeonatos do mundo: jogos ao vivo, resultados, tabelas e avisos de golo. Desportos Atualizar Agora Ao vivo no mundo Equipas e seleções Campeonatos Ao vivo Todos os jogos de hoje no mundo Todos os campeonatos de clubes e as seleções: golos com quem marcou e quem deu a assistência, cartões vermelhos e o minuto de cada jogo. Atualiza sozinho a cada 15 segundos (última vez às 17:46:47). Toca num jogo para ver todos os lances, as estatísticas e as escalações. Ontem Hoje Amanhã sáb 28/11 dom 29/11 seg 30/11 ter 01/12 qua 02/12 Ao vivo 1 Todos 3 Termina"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Ao vivo no mundo: o servidor lê o resumo só dos jogos com golos (assistências) e aprende as ligas novas",
+  "pass": true,
+  "info": "/espnmock/all/summary?event=991,/espnmock/all/summary?event=993"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Ao vivo no mundo: \"Hoje\" mostra todos os jogos do dia agrupados por prova (a ao vivo primeiro)",
+  "pass": true,
+  "info": "{\"n\":3,\"g\":[\"Jogos amigáveis\",\"Liga Teste, Ronda 3\",\"Women's Super League\"]}"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Ao vivo no mundo: filtrar pelo nome da equipa (em português) esconde o resto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Ao vivo no mundo: o \"hoje\" junta os jogos a decorrer do dia da ESPN (não somem depois da meia-noite)",
+  "pass": true,
+  "info": "/espnmock/all/scoreboard?limit=500 /espnmock/all/scoreboard?limit=500&dates=20261126 /espnmock/all/scoreboard?limit=500"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Ao vivo no mundo: escolher o dia (amanhã) mostra os jogos desse dia, de clubes e seleções",
+  "pass": true,
+  "info": "/espnmock/all/summary?event=993 /espnmock/all/scoreboard?limit=500&dates=20261127"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Ao vivo no mundo: tocar no jogo abre o detalhe com os lances e a assistência",
+  "pass": true,
+  "info": "Jogos amigáveis Jogos amigáveis 38' Singapura 0 : 2 Brasil Ikhsan Fandi 33' Vinícius Júnior 9' assistência Bruno Guimarães Vinícius Júnior (pen.) 15' Estádio Nacional Quem ganha? Pergunta à IA A IA pesquisa as notícias do jogo (escalações prováveis, lesões, castigos), junta a tabela, a forma, os jog"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol › Agora: o jogo ao vivo da seleção que segues aparece mesmo fora da lista da equipa (com a assistência)",
+  "pass": true,
+  "info": "{\"hero\":\"Brasileirão\\n71'\\nFlamengo\\n2\\n:\\n0\\nPalmeiras\\nPedro\\n28'\\nBruno Henrique\\n70'\\nProbabilidade de ganhar, ao vivo\\n99% Flamengo\\n1% empate\\nPalmeiras 0%\\nEstimativa do Prumo: tabela, forma recente e fator casa, com o resultado e o tempo que falta. É uma estimativa, não uma certeza.\\nPalpite da IA: 3×1 · O Flamengo deve ganhar: está a vencer por 2-0 aos 71 minutos e domina o jogo.\\nJogos a"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: golo da seleção (vindo do placar mundial) → aviso com quem marcou e quem deu a assistência",
+  "pass": true,
+  "info": "Golo · Brasil · Vinícius Júnior 21', assistência de Estêvão · Singapura 0-3 Brasil"
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: no telemóvel nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Futebol",
+  "name": "Futebol: sem erros na consola",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: começa desligada (só aparece a quem a escolher)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no perfil pessoal do Ryan já vem ligada (e desligar fica guardado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no registo (escolher as abas) aparece desligada para a pessoa ligar",
+  "pass": true,
+  "info": "{\"on\":false,\"k\":\"animes\"}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: ligar no registo põe a aba no menu (no grupo próprio da parceria, fora do Eu)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: destaque com a faixa, a temporada e o que está em alta",
+  "pass": true,
+  "info": "[\"Ao vivo e a seguir\\nos próximos episódios, ao segundo\",\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: carrossel de destaque (com pontos para mudar) e os novos episódios",
+  "pass": true,
+  "info": "{\"n\":3,\"on\":0} [\"Ao vivo e a seguir\\nos próximos episódios, ao segundo\",\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: passar o destaque não volta ao primeiro quando a página se redesenha a meio",
+  "pass": true,
+  "info": "{\"t\":2,\"i\":2,\"on\":2}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: a classe de fã sai do que vês (aqui Arquiteto das Sombras), o rank de E a SSS pede tudo ao mesmo tempo (SS e SSS também pedem pontos no Pursuit) e há títulos raros por conquistar",
+  "pass": true,
+  "info": "{\"c\":{\"nome\":\"Arquiteto das Sombras\",\"nivel\":\"Rank E\",\"rank\":\"Despertado\",\"hib\":false,\"prox\":\"D\"},\"bl\":\"A tua classe de fãEDespertado Arquiteto das SombrasVês a jogada três episódios antes de ela acontecer.133 episódios · 3 séries terminadas · categoria Drama Para o Rank D · Aprendiz80%100/100 episódios\",\"r\":[5,7,1]}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Recap: só abre no fim do ano (antes disso mostra quando abre); palco de story com som e modo gravação (3, 2, 1); com animações (partículas), a contagem dos episódios e horas, o género, os teus 5 com o anime do ano, o mês e o estúdio, o rank, a classe em carta e o cartão final para partilhar",
+  "pass": true,
+  "info": "{\"n\":8,\"t0\":\"& Prumo & PHANTOM apresentam O TEU 2026 EM ANIMES Toca para avançar · segura para parar Gravar para as redes\",\"fx\":true,\"vistos\":[\"& Prumo & PHANTOM apresentam O TEU 2026 EM ANIMES Toca para avançar · segura para parar Gravar para as redes\",\"Este ano viste 133 episódios 53 horas de anime Dava 2 dias seguidos, sem dormir Ou 3 voos de Lisboa a Tóquio\",\"MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉR\",\"Os teus 4 do ano 4 Spy x Family 7 3 Erased 8 2 Death Note 9 O teu anime do ano Monster nota 10\",\"O teu ano, mês a mês J F M A M J J A S O N D Março foi o teu mês O teu estúdio Madhouse\",\"O teu rank de fã E DESPERTADO Para o Rank D · Aprendiz falta: 2 séries terminadas\",\"Este ano, a tua classe é… CLASSE · RANK E Arquiteto das Sombras Vês a jogada três episódios antes de"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Ao vivo e a seguir: os próximos episódios com a contagem ao segundo (e os que acabaram de sair)",
+  "pass": true,
+  "info": "{\"a1\":[\"Sai daqui a 58:49\"],\"a2\":[\"Sai daqui a 58:48\"]}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes no computador: barra própria (selo das duas casas, 5 atalhos com ícone e o Mais por grupos) em vez da fila de separadores; tocar fora fecha o Mais",
+  "pass": true,
+  "info": "{\"tb\":{\"bar\":true,\"links\":5,\"tabs\":false,\"head\":false,\"grupos\":[\"Descobrir\",\"Jogar\",\"Comunidade\",\"A minha coleção\"],\"itens\":16},\"fechou\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início no telemóvel: o carrossel fica no topo e os atalhos (Competição e Diversão) por baixo dele; sala com luz e cor, separador ativo a vermelho e os 6 botões da barra numa linha só (o selo do Prumo não cai para baixo)",
+  "pass": true,
+  "info": "{\"first\":\"an-hero\",\"dq\":true,\"depois\":true,\"top\":0,\"luz\":true,\"tab\":\"rgb(216, 106, 120)\",\"linha\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Parceria Prumo & PHANTOM: o primeiro destaque é a parceria, o selo das duas casas no canto, a assinatura no fim e a página da parceria com o que nasce dela e os números ao vivo",
+  "pass": true,
+  "info": "{\"slide\":true,\"dots\":3,\"slides\":3,\"ass\":true,\"mini\":true,\"pag\":true,\"viva\":true,\"ass2\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Parceria: intro de cinema na primeira entrada nos Animes (o prumo e a aranha no mesmo fio), Entrar fecha e não volta a aparecer",
+  "pass": true,
+  "info": "{\"in1\":{\"on\":true,\"t\":\"Saltar\\n&\\nPrumo\\n&\\n\\nO mesmo fio.\\n\\nParceria oficial dos Animes do Prumo\\n\\nEntrar\"},\"in2\":true,\"in3\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: encontra pelo nome (com a nota da comunidade)",
+  "pass": true,
+  "info": "&\nAnimes\nInício\nNavegar\nSimulcasts\nPursuit\nA minha lista\nMais\nPesquisar\n\n2 resultados para “frieren”\n\n9,1\nFrieren: Beyond Journey's End\nSérie · 28 episódios · 2023\nAventura · Drama · Fantasia\nUma elfa maga revê a vida.\nFrieren: Beyond Journey's End\nSérie · 28 episódios · 2023\n8,0\nFrieren Season 2\nSé"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: título, nota, ranking, géneros em português, sinopse e onde ver (só serviços de streaming do país da conta, também os links antigos em http; sem YouTube nem Hulu em Portugal)",
+  "pass": true,
+  "info": "{\"t\":\"& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões no teu tier. Sinopse PT: A young elf mage reflects on life. Tradução automática. Ver o origina"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: a sinopse aparece traduzida sozinha (grátis, com \"Ver o original\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: as temporadas ficam no mesmo anime (seletor Temporadas, sem a manga) e recomendações",
+  "pass": true,
+  "info": "[\"Temporada 1 2023 · 28 ep.|Frieren: Beyond Journey's End|on\",\"Temporada 2 2026 · 12 ep.|Frieren Season 2\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: todos os episódios (28, sem a secção \"Com imagem\" quando só há miniaturas de alguns), personagens com a voz e as aberturas/encerramentos",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: tocar no episódio 2 marca que viste até lá",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: \"Estou a ver\" junta à lista com o episódio 0 e a data de começo",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: tocar outra vez no estado marcado tira da lista (e tocar de novo volta a juntar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: episódio, nota 1–10, favorito, resenha, top 10 e tier ficam guardados",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":2023,\"sea\":\"FALL\",\"fmt\":\"TV\",\"eps\":28,\"dur\":24,\"gen\":[\"Adventure\",\"Drama\",\"Fantasy\"],\"stu\":\"Estúdio "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: mostra o episódio, a nota com o nome e o tier",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: chegar ao último episódio passa para \"Visto\" com a data de fim",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › A minha lista: vistos, episódios, horas, nota média e géneros",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Vistos 1 A ver 0 Quero ver 0 Episódios vistos 28 11 horas a ver anime A tua nota média 9,0 1 com nota Os géneros que mais vês Aventura 1 Drama 1 Fantasia 1 A minha fila As minhas listas Histórico Tudo A tua fila está vazia. Marca animes como “Quero ver” ou “Estou a ver”. Pesquisar anime & Uma parceria Prumo & PHANTOM Conhecer a parceria"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Top 10 e tier list: o anime está no tier S e no 1.º lugar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: a estação atual com todos os animes e o próximo episódio",
+  "pass": true,
+  "info": "{\"h\":\"Outono 2026\",\"n\":4,\"t\":\"8,0 Cyberpunk: Edgerunners 2 Série na internet · 10 episódios · 2026 Ação · Drama Cyberpunk: Edgerunners 2 Ep. 8 · sáb 17:47 8,5 The Apothecary Diaries Season 3 Série · 12 episódios · 2026 Drama · Mistério Uma farmacêutica resolve mistérios no palácio. The Apothecary Di"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: filtrar só os filmes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: voltar à temporada anterior (Verão 2026)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Calendário: os episódios da semana por dia e à hora certa (sem conteúdo adulto)",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Calendário de lançamentos Os episódios novos dos próximos 7 dias, à hora do teu aparelho (a hora a que saem no Japão). Normalmente chegam às plataformas de streaming no mesmo dia. Só os da minha lista Hoje quinta, 26/11 18:47 The Apothecary Diaries Season 3 Episódio 7 de 12 Amanhã sexta, 27/11 17:57 Série Sem Faixa Episódio 3 de 12 Sába"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Melhores do ano: ranking com o 1.º, a nota e os botões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Melhores do ano: escolher outro ano (2011)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: \"Quero ver\" num anime do ranking junta à lista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Navegar: populares com \"Ver mais\" (página seguinte)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Categorias: tocar em Ação abre os animes dessa categoria",
+  "pass": true,
+  "info": "#animes.navegar a Garotas mágicas Ecchi 8,0 Navegar Action página 1 Série · 12 episódios · 2026 Ação · Drama Navegar Action página 1 Série · 12 episódios · 2026 8,0 Outro 1 Série · 12 episódios · 2026 Ação · Drama Outro 1 Série · 12 episódios · 2026 Ver mais & Uma parceria Prumo & PHANTOM Conhecer a parceria"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Notícias: notícias de anime pelo servidor do Prumo",
+  "pass": true,
+  "info": "&\nAnimes\nInício\nNavegar\nSimulcasts\nPursuit\nA minha lista\nMais\nNotícias de anime\n\nO que se está a dizer sobre anime, mangá, estreias e streaming, nas últimas 48 horas. Abre no site de cada jornal.\n\nJornal Teste · há 1 min\nPesquisa 1\nJornal Teste · há 1 min\nPesquisa 2\nJornal Teste · há 1 min\nPesquisa "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: junta o Kitsu (encontra o que o AniList não tem) e esconde o conteúdo adulto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: \"Pedir à IA para encontrar\" descobre o anime pelo nome em português",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe de um anime que só o Kitsu tinha: o AniList completa (procura pelo nome)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › As minhas listas: criar uma lista a partir do anime e vê-la em A minha lista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: a escolha a partir do que viste, a dizer porquê, sem o que já tens na lista",
+  "pass": true,
+  "info": "[\"8,7 Violet Evergarden Série · 12 episódios · 2026 Ação · Drama Violet Evergarden Porque viste Frieren: Beyond Journey's End\",\"8,0 Mushoku Tensei Série · 12 episódios · 2026 Ação · Drama Mushoku Tensei Porque viste Frieren: Beyond Journey's End\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: os teus géneros, clássicos, joias escondidas e filmes",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Recomendado para ti A partir do que viste e das tuas notas (Frieren: Beyond Journey's End). O que já está na tua lista não aparece: marca Quero ver ou Já vi e as sugestões mudam. A escolha para ti 8,7 Violet Evergarden Série · 12 episódios · 2026 Ação · Drama Violet Evergarden Porque viste Frieren: Beyond Journey's End 8,0 Mushoku Tensei Série · 12 episódios · 2026 Ação · Drama Mushoku Tensei Porque viste Frieren: Beyond Journey's End Pede à IA Diz o que te apetece ver e a IA escolhe 8 animes a pensar na tua lista (os que já tens fi"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: pedir à IA dá animes reais com o porquê (os da lista ficam de fora)",
+  "pass": true,
+  "info": "Mushishi Série · 12 episódios · 2026 Calmo e contemplativo, como Frieren. Quero ver Já vi 8,6 de 10"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: faixa \"Recomendado para ti\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: com o AniList em baixo, a pesquisa usa o MyAnimeList (reserva)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no telemóvel nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: sem erros na consola",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos: em Eu no menu (no lugar do Futebol, que fica dentro de Desportos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Início: os desportos (com o Futebol), as Olimpíadas e as tuas equipas",
+  "pass": true,
+  "info": "{\"sp\":17,\"fut\":true,\"oly\":true}"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › NBA › Equipas: tocar numa equipa segue-a",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › NBA › Jogos: o jogo ao vivo com o resultado e o próximo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › NBA › Classificação: a conferência com a tua equipa destacada",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Início: o jogo ao vivo em destaque e a tua equipa com o resultado de agora, o próximo jogo e o último",
+  "pass": true,
+  "info": "{\"hero\":\"2 jogos ao vivo\\nAgora a jogar\\nNBA\\nAo vivo · Halftime\\nBoston Celtics\\n11-3\\n61\\nDenver Nuggets\\n7-5\\ncasa\\n49\\nNHL\\nAo vivo · Halftime\\nNew York Rangers\\n11-3\\n1\\nBoston Bruins\\n7-5\\ncasa\\n2\",\"team\":\"Boston Celtics\\nNBA\\nHalftime\\nBOS 61 – 49 DEN\\nÚltimo\\nLAL 100 – 110 BOS\\nVitória\"}"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Agora a jogar: todos os jogos ao vivo juntos (NBA e o futebol do mundo, p. ex. Corinthians), a deslizar, com o nome da liga",
+  "pass": true,
+  "info": "{\"t\":\"4 jogos ao vivo Agora a jogar NBA Ao vivo · Halftime Boston Celtics 11-3 61 Denver Nuggets 7-5 casa 49 NHL Ao vivo · Halftime New York Rangers 11-3 1 Boston Bruins 7-5 casa 2 Brasileirão Ao vivo · 67' PA Palmeiras 0 CO Corinthians casa 1 Liga Portugal Ao vivo · 12' PO Porto 0 BE Benfica casa 0 NBA · NHL · Futebol\",\"n\":4,\"muitos\":true}"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Fórmula 1: o próximo Grande Prémio com as sessões e o campeonato de pilotos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Olimpíadas: a próxima edição com a contagem, o calendário, os desportos de LA 2028 e o quadro de Paris 2024 com o teu país",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Olimpíadas: os próximos Jogos de Inverno (Alpes Franceses 2030) com a contagem",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Copa do Mundo › Masculina: a de 2030 com a contagem e a última edição (campeão e final, com nomes em português)",
+  "pass": true,
+  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nCopa do Mundo\nNFL\nTénis ATP\nTénis WTA\nMMA\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMasculina\nFeminina\nPróxima Copa\nCopa do Mundo 2030\n\n13 de junho a 21 de julho de 2030 · Marrocos, Portugal e Espanha\n\n1294\ndias\n6\nhoras\nJogos do centenário a 8 e 9 de junh"
+ },
+ {
+  "p": "Desportos",
+  "name": "Copa do Mundo › Feminina: Brasil 2027 com a contagem, a campeã de 2023 e as eliminatórias a decorrer",
+  "pass": true,
+  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nCopa do Mundo\nNFL\nTénis ATP\nTénis WTA\nMMA\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMasculina\nFeminina\nPróxima Copa feminina\nCopa do Mundo Feminina 2027\n\n24 de junho a 25 de julho de 2027 · Brasil\n\n209\ndias\n6\nhoras\n32 seleções; a primeira Copa feminina na América do Sul.\nÚltima edição · 2023\nCampeã do mundo\nEspanha\nFinal\nInglaterra\n11-3\n0\nEspanha\n7-5\nca"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos: o voleibol saiu",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Avisos: golo da tua equipa (hóquei) e o jogo que começa daqui a 15 minutos",
+  "pass": true,
+  "info": "[\"Daqui a 15 minutos | Bruins × Leafs · NHL\",\"Golo · Bruins | Rangers 1–2 Bruins\"]"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Avisos: avisa quando o jogo começa (uma vez só)",
+  "pass": true,
+  "info": "[\"Começou | Bruins × Leafs · NHL\",\"Daqui a 15 minutos | Bruins × Leafs · NHL\",\"Golo · Bruins | Rangers 1–2 Bruins\"]"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › MotoGP: o fim de semana com as sessões, o resultado do sprint, o campeonato e o calendário",
+  "pass": true,
+  "info": "Eu\nDESPORTOS\n\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\n\nInício\nFutebol\nNBA\nFórmula 1\nMotoGP\nCopa do Mundo\nNFL\nTénis ATP\nTénis WTA\nMMA\nMLB\nNHL\nWNBA\nGolfe PGA\nBasquetebol universitário\nFutebol americano universitário\nIndyCar\nOlimpíadas\nMotoGP\n\nGrandes Prémios de motos e campeonato\n\nAvisar\nJuntar aos meus\nE"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › MotoGP: com o sino ligado avisa 15 minutos antes da corrida",
+  "pass": true,
+  "info": "[\"Corrida daqui a 15 minutos | MotoGP · Grande Prémio de Portugal\",\"Começou | Bruins × Leafs · NHL\",\"Daqui a 15 minutos | Bruins × Leafs · NHL\",\"Golo · Bruins | Rangers 1–2 Bruins\"]"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Início: painel de avisos (4 escolhas e os últimos avisos), a equipa de hóquei que segues e o banner da Copa do Mundo",
+  "pass": true,
+  "info": "{\"av\":4,\"feed\":4,\"tc\":\"Boston Celtics NBA Halftime BOS 61 – 49 DEN Último LAL 100 – 110 BOS Vitória || Boston Bruins NHL Halftime NYR 1 – 2 BRU Último TOR 2 – 3 BRU Vitória\"}"
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos › Avisos: desligar os golos, pontos e sets fica guardado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Desportos",
+  "name": "Planos: no Essencial os Desportos mostram o Futebol e o resto com cadeado (Completo)",
+  "pass": true,
+  "info": "{\"t\":\"Eu\\nDESPORTOS\\n\\nO futebol e os outros desportos: as equipas que segues, o que está ao vivo, resultados, próximos jogos, classificações e as Olimpíadas.\\n\\nDesportos\\nO teu Futebol\\n\\nNo teu plano tens o Futebol: as tuas equipas ao vivo, as tabelas, os golos e os avisos.\\n\\nAbrir o Futebol\\nO "
+ },
+ {
+  "p": "Desportos",
+  "name": "Desportos: sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Notificações",
+  "name": "Definições: grupo Notificações aberto, com o botão para ligar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Notificações",
+  "name": "Ligar: o aparelho subscreve com a chave do servidor e fica ligado",
+  "pass": true,
+  "info": "{\"on\":true,\"key\":[4,30,184,34,160,167,4,101,117,255,165,192,221,228,170,97,94,217,57,198,113,135,176,30,27,92,46,188,234,119,128,119,53,189,40,97,195,81,127,67,112,20,20,225,193,189,1,153,144,81,27,10"
+ },
+ {
+  "p": "Notificações",
+  "name": "Servidor: guardou este aparelho no perfil",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Notificações",
+  "name": "Enviar um teste: chega ao aparelho (cifrado) com o aviso de que está ligado",
+  "pass": true,
+  "info": "[{\"at\":1795715378826,\"t\":\"Notificações ligadas\",\"b\":\"Vão chegar mesmo com o Prumo fechado.\",\"u\":\"#definicoes\",\"g\":\"teste\"}]"
+ },
+ {
+  "p": "Notificações",
+  "name": "Rotina com o app fechado: o servidor envia o lembrete do bloco na hora",
+  "pass": true,
+  "info": "{\"c\":{\"ok\":true,\"msgs\":1,\"sent\":1,\"gone\":0,\"users\":1},\"INB\":[{\"at\":1795715384144,\"t\":\"Agora: Treino de teste até 18:51\",\"b\":\"Rotina do Prumo\",\"u\":\"#habitos.rotina\",\"g\":\"rt-bjv3fmukmnm\"}]}"
+ },
+ {
+  "p": "Notificações",
+  "name": "Pursuit no telemóvel todos os dias (sem abrir o jogo): às 20h saem as pistas (uma vez só), 15 minutos antes de fechar a quem não jogou e o resultado com o acerto e os pontos",
+  "pass": true,
+  "info": "{\"ab\":1,\"ab2\":1,\"ult\":true,\"res\":{\"at\":1795715388670,\"t\":\"Pursuit: saíram os resultados\",\"b\":\"Acertaste: era Fullmetal Alchemist: Brotherhood. Ganhaste 100 pontos.\",\"u\":\"#animes.pursuit\",\"g\":\"hunterres\"},\"id\":\"282afded253ee27cc5325eee-286ecbdc5384\"}"
+ },
+ {
+  "p": "Notificações",
+  "name": "Episódios novos dos animes com o sino: o app manda os animes, o servidor segue o AniList e avisa na hora (uma vez só), espera quando é adiado e avisa na mesma quando saiu entre duas consultas; também os que só têm o número do MyAnimeList",
+  "pass": true,
+  "info": "{\"nada\":true,\"pediu\":true,\"e8\":1,\"e8b\":1,\"adiado\":true,\"mal3\":true,\"e9\":true,\"ALQ\":12}"
+ },
+ {
+  "p": "Notificações",
+  "name": "Festas no telemóvel: Feliz Ano Novo à meia-noite (uma vez), Feliz Natal, Páscoa às 9h e os parabéns no dia de anos; na China no Ano Novo Lunar (não a 1 de janeiro); no Irão o Nowruz no equinócio e sem Natal",
+  "pass": true,
+  "info": "{\"ano\":[\"Feliz Ano Novo! | Que 2027 seja o teu melhor ano. Bom recomeço, Ana.\"],\"ano2\":0,\"nat\":[\"Feliz Natal! | Um Natal em paz com quem gostas, Ana.\"],\"pas\":[\"Feliz Páscoa! | Uma Páscoa cheia de recomeços, Ana.\"],\"anv\":[\"Parabéns, Ana! | Hoje o dia é teu. Que este ano seja incrível.\"],\"cn\":[\"Feliz Ano Novo Lunar! | Um ano novo cheio de coisas boas, Li.\"],\"cn1\":[],\"ir\":[\"Feliz Nowruz! | Um ano novo cheio de coisas boas, Sara.\"],\"irN\":[]}"
+ },
+ {
+  "p": "Notificações",
+  "name": "Despensa no telemóvel: às 9h avisa o que vence hoje, amanhã e daqui a 3 dias (uma vez por dia)",
+  "pass": true,
+  "info": "{\"d1\":[\"Despensa: há coisas a vencer hoje | Hoje: Leite · Amanhã: Iogurte · Em 3 dias: Queijo\"],\"d2\":0}"
+ },
+ {
+  "p": "Notificações",
+  "name": "Primeiros passos: o Painel mostra o que falta configurar (com o que já está feito riscado) e conta os passos",
+  "pass": true,
+  "info": "{\"p\":\"Boa tarde, Ryan. Faltam 2 passos para o Prumo ficar pronto.\\n5 de 7 feitos\\nEsconder\\nO teu nome\\nComo queres que o Prumo te trate.\\nA tua data de nascimento\\nPara os parabéns e as contas da vida.\\nO teu paí\",\"ok\":5}"
+ },
+ {
+  "p": "Notificações",
+  "name": "Ano Novo na app: a contagem de 10 segundos pára o app, rebentam os fogos com Feliz Ano Novo e o app volta; China no Ano Novo Lunar, Portugal a 1 de janeiro; no dia de anos o Painel faz a festa (bolo com velas para soprar)",
+  "pass": true,
+  "info": "{\"cal\":{\"cn\":\"2027-2-6\",\"cnc\":\"lunar\",\"pt\":\"2027-1-1\",\"ptc\":\"greg\"},\"c1\":{\"on\":true,\"n\":\"3\",\"parado\":true},\"c2\":\"Feliz Ano Novo 2026!\",\"c3\":true,\"an\":{\"bolo\":true,\"t\":\"Parabéns, Ryan!\\n\\nHoje fazes 27 anos. O dia é teu. Que este ano seja o melhor até agora.\\n\\nSoprar as velas\",\"festa\":true,\"passos\":\"Boa tarde, Ryan. Faltam 2 passos para o Prumo ficar pronto.\\n5 de 7 feitos\\nEsconder\\nO teu nome\\nComo queres que o Prumo te trate.\\nA tua data de nascimento\\nPara os parabéns e as contas da vida.\\nO"
+ },
+ {
+  "p": "Notificações",
+  "name": "Desligar a Rotina nas Definições: deixa de enviar os lembretes da rotina",
+  "pass": true,
+  "info": "[]"
+ },
+ {
+  "p": "Notificações",
+  "name": "Desportos: os avisos dizem que chegam mesmo com o Prumo fechado",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Notificações",
+  "name": "Desligar neste aparelho: sai do servidor",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Notificações",
+  "name": "Notificações: sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Notificações",
+  "name": "iPhone sem o Prumo no ecrã principal: explica como instalar para receber notificações",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Fundo",
+  "name": "Tablet deitado: a frase fica no céu (acima do horizonte) e o código em baixo, sem se sobreporem",
+  "pass": true,
+  "info": "{\"q\":285,\"f\":419,\"H\":625}"
+ },
+ {
+  "p": "Fundo",
+  "name": "Botão \"Fundo\" pequeno no canto de cima",
+  "pass": true,
+  "info": "{\"x\":905.609375,\"y\":14,\"width\":80.390625,\"height\":34,\"top\":14,\"right\":986,\"bottom\":48,\"left\":905.609375}"
+ },
+ {
+  "p": "Fundo",
+  "name": "Escolher o fundo: 9 modelos (o Farol marcado), \"Fundo animado\" ligado e \"Da galeria\"",
+  "pass": true,
+  "info": "{\"n\":9,\"gal\":true,\"on\":\"farol\",\"mv\":true}"
+ },
+ {
+  "p": "Fundo",
+  "name": "Fundo animado: Lisboa mexe (carros, barco, água); ao desligar, fica parada",
+  "pass": true,
+  "info": "{\"mv\":{\"n\":78,\"anim\":true},\"st\":{\"anim\":false,\"k\":false}}"
+ },
+ {
+  "p": "Fundo",
+  "name": "Escolher \"Rio de Janeiro\" muda o fundo na hora",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Fundo",
+  "name": "Fundos com as estações: no inverno a ria do farol congela (o barco fica preso, sem reflexos) e neva; na primavera o gelo parte-se em placas; folhas no outono; calor no verão; neve em Paris mas não no Rio; pré-visualizar cada estação e voltar a \"Agora\"",
+  "pass": true,
+  "info": "{\"e0\":[\"*+\",\"inverno\",\"primavera\",\"verao\",\"outono\"],\"e1\":{\"gelo\":true,\"neveFarol\":true,\"placas\":true,\"folhas\":true,\"calor\":true,\"parisNeve\":true,\"rioSemNeve\":true,\"petalas\":true,\"gizeCalor\":true,\"est\":\"inverno\",\"on\":\"inverno\"},\"e2\":{\"est\":null,\"on\":\"\"}}"
+ },
+ {
+  "p": "Fundo",
+  "name": "Foto da galeria vira o fundo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Fundo",
+  "name": "Depois de fechar e abrir, o fundo escolhido continua",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Fundo",
+  "name": "Editar perfil: \"Personagem do Dominus\" abre os personagens (e não a galeria de fotos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Fundo",
+  "name": "Editar perfil: com a lista aberta dá para subir até ao topo do formulário",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Fundo",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Conta nova: 14 dias grátis do plano Completo, sem cartão",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796925027110}"
+ },
+ {
+  "p": "Planos",
+  "name": "Página pública \"Planos e preços\" (para o Stripe): os 3 planos em euros e, no Brasil, em reais (outras moedas convertidas do euro), cancelamento e reembolso",
+  "pass": true,
+  "info": "40580"
+ },
+ {
+  "p": "Planos",
+  "name": "Os três planos: em euros (5,99 · 11,99 · 19,99 por mês; anual = 10 meses) e, no Brasil, em reais (19,90 · 39,90 · 69,90)",
+  "pass": true,
+  "info": "{\"ok\":true,\"planos\":[{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"ia\":20,\"perfis\":1,\"precos\":{\"EUR\":{\"mes\":599,\"ano\":5990},\"BRL\":{\"mes\":1990,\"ano\":19900}}},{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"ia\":1"
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado, mas sem o Stripe ligado: continua com tudo (não há como pagar ainda)",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"semCobranca\":1,\"testeAcabou\":1795715427110}"
+ },
+ {
+  "p": "Planos",
+  "name": "Com o Stripe ligado e o teste acabado: fica sem plano (a app pede para escolher)",
+  "pass": true,
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795715427110}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: não cria perfis (402)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O teu teste grátis acabou: escolhe um plano em Planos para continuar.\",\"code\":\"plano\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: a IA do servidor responde 402 com a mensagem para escolher um plano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar: abre o pagamento do Stripe com o preço do Essencial (5,99 € por mês), a conta e o regresso ao Prumo",
+  "pass": true,
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"4912d99c4edc81c34567c37d\",\"success_url\":\"http://localhost:8616/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8616/Oceanum/#planos\",\"allow_promotion_codes\":\"true\",\"locale\":\"pt\",\"adaptive_pricing[enabled]\":\"true\",\"line_items[0][q"
+ },
+ {
+  "p": "Planos",
+  "name": "A página de pagamento tem o nome e as cores do Prumo (mesmo que a conta do Stripe tenha outro nome)",
+  "pass": true,
+  "info": "{\"branding_settings[display_name]\":\"Prumo\",\"branding_settings[background_color]\":\"#F6EFE4\",\"branding_settings[button_color]\":\"#8E1B2A\",\"branding_settings[border_style]\":\"rounded\",\"branding_settings[font_family]\":\"lora\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Se o Stripe ainda não conhecer a marca na página de pagamento, abre o pagamento sem ela",
+  "pass": true,
+  "info": "{\"ok\":true,\"url\":\"https://checkout.stripe.test/c/cs_test_9d2a5ceff0c0\",\"_st\":200}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sem métodos de pagamento ativos no Stripe (conta em análise): mensagem clara em português, sem o erro técnico",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Os pagamentos ainda estão a ser ativados. Tenta daqui a pouco; o teu teste grátis continua.\",\"code\":\"pagamentos\",\"_st\":503}"
+ },
+ {
+  "p": "Planos",
+  "name": "Sempre em euros: quem usa dólares paga 119,90 € por ano convertidos pelo Stripe na hora (Adaptive Pricing); a libra também fica em euros",
+  "pass": true,
+  "info": "{\"u\":\"eur\",\"g\":\"eur\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Antes de pagar, \"confirmar\" não dá o plano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Ninguém usa o pagamento de outra conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Depois de pagar: plano Essencial (mensal), com a data da renovação",
+  "pass": true,
+  "info": "{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"perfis\":1,\"ia\":20,\"cobranca\":true,\"pago\":1,\"ate\":1798307427000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Essencial: só 1 perfil (o segundo pede outro plano)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O teu plano (Essencial) tem até 1 perfil. Para mais, muda de plano em Planos.\",\"code\":\"maximo\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Essencial: ler fotos com a IA pede o plano Avançado (402)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Com assinatura, não abre outra: muda-se de plano",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Mudar para o Avançado anual: o Stripe recebe o novo preço (119,90 €/ano) e a conta passa a Avançado",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1798307427000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Cancelar: continua até ao fim do período pago (sem renovar)",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"cancelar\":1,\"ate\":1798307427000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Retomar a assinatura",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Gerir pagamento e faturas: abre o portal do Stripe",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "O Prumo configura sozinho o portal do cliente (uma vez): cartão, faturas com NIF e cancelar no fim do período",
+  "pass": true,
+  "info": "{\"n\":1,\"conf\":[\"bpc_3863c1e423d3\",\"bpc_3863c1e423d3\"]}"
+ },
+ {
+  "p": "Planos",
+  "name": "Pagou (em reais, no Brasil) e fechou a página antes de voltar ao Prumo: o plano ativa sozinho na próxima vez que abre a app",
+  "pass": true,
+  "info": "{\"a\":0,\"b\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"pago\":1,\"ate\":1798307427000,\"ciclo\":\"mes\",\"cur\":\"BRL\",\"cliente\":1}}"
+ },
+ {
+  "p": "Planos",
+  "name": "Administração: tem sempre tudo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Administração oferece o Completo por 30 dias (a pessoa vê o aviso)",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1798307427592}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: a lista de contas mostra o plano de cada uma",
+  "pass": true,
+  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1798307427592}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: com uma oferta, mostra também o que seria no Automático (aqui, sem plano)",
+  "pass": true,
+  "info": "{\"o\":{\"id\":\"completo\",\"ate\":1798307427592},\"a\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795715427324}}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Por fazer: sabe se o Stripe e o e-mail estão ligados (sem mostrar as chaves)",
+  "pass": true,
+  "info": "{\"strava\":true,\"oura\":true,\"revenuecat\":true,\"stripe\":true,\"stripeTeste\":true,\"mail\":\"\",\"mailDe\":false}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin dá o Essencial grátis a quem paga o Avançado: fica com o maior (Avançado pago)",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1798307427000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin: \"Automático\" tira a escolha (volta ao teste e ao que a pessoa assinou)",
+  "pass": true,
+  "info": "{\"ok\":true,\"email\":\"teoc03dabd9@teste.pt\",\"plano\":\"\",\"dias\":0,\"agora\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1798307427000,\"ciclo\":\"ano\",\"cur\":\"EUR\""
+ },
+ {
+  "p": "Planos",
+  "name": "Só a administração escolhe planos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "A conta de administração não muda de plano (tem sempre tudo)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin cria um código de desconto (LANCAMENTO20, −20% no 1.º pagamento): cupão e código promocional no Stripe",
+  "pass": true,
+  "info": "{\"c\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"max\":0,\"expira\":0,\"novos\":false,\"promo\":\"promo_35fe973247f6\",\"coupon\":\"cp_c25afb8f73b3\",\"criado\":1795715427611,\"ativo\":true},\"cp\":{\"percent_off\":\"20\",\"duration\":\"once\",\"name\":\"LANCAMENTO20 · 20%\",\"metadata[app]\":\"prumo\",\"metada"
+ },
+ {
+  "p": "Planos",
+  "name": "Não deixa criar dois códigos ativos com o mesmo nome",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Código só para o Completo, durante 3 meses, com limite de usos, validade e só para a primeira assinatura",
+  "pass": true,
+  "info": "{\"cp\":{\"percent_off\":\"50\",\"duration\":\"repeating\",\"name\":\"SO-COMPLETO · 50%\",\"metadata[app]\":\"prumo\",\"metadata[code]\":\"SO-COMPLETO\",\"duration_in_months\":\"3\",\"applies_to[products][0]\":\"prod_b21ee3994971\"},\"pc\":{\"promotion[type]\":\"coupon\",\"promotion[coupon]\":\"cp_f99d207abc13\",\"code\":\"SO-COMPLETO\",\"meta"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Códigos: a lista com os usos e o estado",
+  "pass": true,
+  "info": "{\"ok\":true,\"cobranca\":true,\"cupoes\":[{\"code\":\"SO-COMPLETO\",\"pct\":50,\"dur\":\"repeating\",\"meses\":3,\"planos\":[\"completo\"],\"max\":2,\"expira\":4102444799000,\"novos\":true,\"promo\":\"promo_10d7b9540b47\",\"coupon\":"
+ },
+ {
+  "p": "Planos",
+  "name": "A pessoa valida o código (sem distinguir maiúsculas): −20%; um código que não existe é recusado",
+  "pass": true,
+  "info": "{\"vz\":{\"ok\":true,\"cupao\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"promo\":\"promo_35fe973247f6\",\"novos\":false},\"_st\":200},\"b\":404}"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar com o código: o pagamento abre com o desconto já aplicado",
+  "pass": true,
+  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"f0497dc058458a1b9263aa74\",\"success_url\":\"http://localhost:8616/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8616/#planos\",\"locale\":\"pt"
+ },
+ {
+  "p": "Planos",
+  "name": "Um código só do Completo não serve para o Essencial",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Esse código não serve para o plano Essencial.\",\"code\":\"cupao\",\"_st\":400}"
+ },
+ {
+  "p": "Planos",
+  "name": "Código que já chegou ao limite de usos deixa de valer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin desativa o código: deixa de valer",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Só a administração cria códigos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Chave real no lugar da de teste: a assinatura de teste deixa de contar e o novo pagamento não usa o cliente de teste",
+  "pass": true,
+  "info": "{\"p\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795715427110},\"f\":\"teoc03dabd9@teste.pt\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Página Planos: o teu plano (Avançado), os 3 planos com preço (11,99 € por mês) e \"Subir para o Completo\"",
+  "pass": true,
+  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano Avançado Plano Avançado (anual). Renova a 26 de dezembro de 2026. Gerir pagamento e faturas Cancelar a assinatura Mensal Anual · 2 meses grátis Os preços são em euros, com impostos incluídos. Se pagares com u"
+ },
+ {
+  "p": "Planos",
+  "name": "Preços só em euros (sem escolher moeda) e a nota da conversão",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Página Planos: no anual mostra o preço do ano (119,90 €) e quanto dá por mês",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: as paletas exclusivas (Ouro, Aurora, Sakura) aparecem com \"Completo\" e não se aplicam",
+  "pass": true,
+  "info": "{\"n\":9,\"lk\":true,\"cur\":\"selo\",\"x\":true}"
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: os Relatórios (impostos) têm cadeado e levam aos planos",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Avançado: a Universidade abre (sem cadeado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Teste acabado e sem plano: as páginas mostram \"Escolhe o teu plano\" com os planos (os dados ficam)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Planos: \"Tens um código de desconto?\" aplica o código e mostra o preço com desconto (−30% no 1.º mês) em cada plano",
+  "pass": true,
+  "info": "{\"on\":true,\"old\":3,\"t\":\"−30% no 1.º mês\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar na app com o código aplicado: o pagamento leva o desconto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Quem usa reais (Brasil): preço próprio em reais (R$ 19,90 o Essencial), sem conversão do euro, e a nota de que a cobrança é em reais",
+  "pass": true,
+  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Mensal Anual · 2 meses grátis Preços em reais para o Brasil, com impostos incluídos. A cobrança é em reais. Tens um código de desconto? Aplicar Essencial R$ 19,90 /mês Tarefas, hábitos, rotina por hora"
+ },
+ {
+  "p": "Planos",
+  "name": "Assinar no Brasil: cobra R$ 19,90 em reais (sem conversão do euro), com a página de pagamento em português do Brasil",
+  "pass": true,
+  "info": "{\"c\":\"brl\",\"v\":\"1990\",\"l\":\"pt-BR\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Modo loja (app Android/iPhone): os planos aparecem sem botões de compra, sem código de desconto e sem preços, com a nota \"não há compras\"",
+  "pass": true,
+  "info": "{\"on\":true,\"cls\":true,\"buy\":0,\"cup\":false,\"portal\":false,\"cards\":3,\"t\":\"Sistema PLANOS Os planos do Prumo e o que cada um inclui. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Nesta versão da app não\"}"
+ },
+ {
+  "p": "Planos",
+  "name": "Modo loja desliga com ?loja=nao (no site volta a haver compras)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Códigos de desconto: o formulário e a lista com os códigos criados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Contas: cada conta mostra o plano (Completo grátis)",
+  "pass": true,
+  "info": "Completo grátis"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › Por fazer: os passos do Stripe em modo de teste e do e-mail (Brevo)",
+  "pass": true,
+  "info": "Por fazer 3 pendentes pendente Chave Google da IA para todos (GEMINI_API_KEY) Para a IA das contas ler fotos (comida, exames, escala) e PDFs. 1) aistudio.google.com/apikey → Create API key. 2) Vercel → projeto prumo → Settings → Environment Variables → nome GEMINI_API_KEY, valor a chave, Production."
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: escolher o plano (Automático, Essencial, Avançado ou Completo grátis), com o atual marcado e sem pedir a senha",
+  "pass": true,
+  "info": "{\"n\":4,\"chk\":\"completo\",\"senha\":false}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: \"Avançado grátis\" durante 3 meses fica na conta da pessoa",
+  "pass": true,
+  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"oferta\":1,\"ate\":1803491453926}"
+ },
+ {
+  "p": "Planos",
+  "name": "Admin › conta: \"Automático\" devolve a conta ao teste e à assinatura (aqui o teste já acabou: sem plano)",
+  "pass": true,
+  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795715427324}"
+ },
+ {
+  "p": "Planos",
+  "name": "Completo: as paletas exclusivas (Ouro, Aurora, Sakura) aplicam-se",
+  "pass": true,
+  "info": "ouro,aurora,sakura"
+ },
+ {
+  "p": "Planos",
+  "name": "Relatórios (Completo): o quadro \"Resumo do mês no teu e-mail\" com o botão para ligar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "sem erros de JavaScript (Admin › planos)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Planos",
+  "name": "Atendimento prioritário: os pedidos de quem tem o Completo chegam marcados como prioritários ao Admin (o Avançado não)",
+  "pass": true,
+  "info": "{\"w\":1,\"a\":0}"
+ },
+ {
+  "p": "Planos",
+  "name": "Resumo do mês por e-mail: só no plano Completo (o Avançado recebe 402)",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"O resumo do mês por e-mail é do plano Completo.\",\"code\":\"plano\",\"_st\":402}"
+ },
+ {
+  "p": "Planos",
+  "name": "Conta nova em teste grátis: ao entrar aparecem os planos, com os dias grátis e \"Continuar com o teste grátis\"",
+  "pass": true,
+  "info": "{\"h\":\"#planos\",\"t\":\"Bem-vindo ao Prumo\\n\\nTens 14 dias grátis do plano Completo, sem cartão. Escolhe já o teu plano aqui em baixo ou continua com o teste: avisamos-te antes de acabar e os teus dados ficam sempre guardados.\\n\\nContinuar com "
+ },
+ {
+  "p": "Planos",
+  "name": "\"Continuar com o teste grátis\" vai para o Painel e os planos não voltam a abrir sozinhos",
+  "pass": true,
+  "info": "#visao"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque XSS guardado: nenhum código malicioso corre nem entra no ecrã em 186 páginas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: 10 logins falsos seguidos trancam a conta 15 min (nem a senha certa entra logo a seguir)",
+  "pass": true,
+  "info": "[401,401,401,401,401,401,401,401,429,429] certa:429"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: enxurrada de logins do mesmo endereço é travada (429 depois de 30)",
+  "pass": true,
+  "info": "[401,401,401,401,429,429]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: robô que preenche o campo escondido do registo é recusado",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Muitas contas criadas a partir daqui. Tenta mais tarde.\",\"code\":\"limite\",\"_st\":429}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: e-mail com código HTML é recusado no registo",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Esse e-mail não parece válido.\",\"code\":\"email\",\"_st\":400}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: pedidos de sites de fora (mesmo com nome parecido) são recusados",
+  "pass": true,
+  "info": "403 403"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: token forjado não entra; a conta A não lê nem grava os dados da conta B",
+  "pass": true,
+  "info": "401 404 404"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: línguas inventadas não gastam a IA (só as da lista da app)",
+  "pass": true,
+  "info": "400 400"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: a cópia de segurança não abre a quem não é o Vercel",
+  "pass": true,
+  "info": "200 403"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: o atalho de gastos continua a guardar (avisa que entra quando a app voltar) e a app não busca nada enquanto dura",
+  "pass": true,
+  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 18:21)\"},\"p1\":503}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: a conta de administração continua a usar a app, com o botão flutuante da contagem até ao fim",
+  "pass": true,
+  "info": "{\"fab\":\"Manutenção 29:56\",\"cover\":false}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: só a administração liga; ligada, as outras contas não entram nem sincronizam (503) e a administração e as contas de teste continuam",
+  "pass": true,
+  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795717313053,\"motivo\":\"manual\",\"prox\":0}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: a app mostra o ecrã \"O Prumo está em manutenção\" a tapar tudo, com a hora de regresso",
+  "pass": true,
+  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 18:21.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: desligada pela administração, o ecrã sai sozinho e as contas voltam a funcionar",
+  "pass": true,
+  "info": "true 200"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas",
+  "pass": true,
+  "info": "200 [{\"id\":\"mwxunhn1-38903dea70\",\"t\":\"2026-11-26T17:51:53.101Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Relatório da semana: a administração gera-o (contas, planos, atividade, segurança com os ataques de hoje, falhas, cópias, saúde) e mais ninguém o vê",
+  "pass": true,
+  "info": "{\"st\":200,\"n\":1,\"contas\":{\"total\":15,\"novas\":15,\"porConfirmar\":0,\"teste\":1,\"entraramSemana\":3,\"perfis\":14},\"sec\":{\"login_falhou\":8,\"admin_negado\":4,\"conta_trancada\":1,\"login_bloqueada\":3,\"login_desconhecido\":30,\"limite\":1,\"robo_registo\":1,\"origem\":2,\"token_falso\":1,\"backup_negado\":1,\"manutencao_ligar\":1,\"manutencao_desligar\":1},\"alertas\":5,\"outro\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê",
+  "pass": true,
+  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795715549241,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":0,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":1},\"copia\":\"2026-11-26\"},\"falhas\":[]},\"_st\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Visitas: a página conta visitas e visitantes únicos do dia (o mesmo aparelho 2 vezes = 1), origem (Google, Instagram), país e cliques; robôs e pedidos estranhos não contam; só a administração vê",
+  "pass": true,
+  "info": "{\"st\":200,\"t\":{\"visitas\":3,\"unicos\":2,\"app\":5,\"cliques\":1,\"registos\":15,\"pagamentos\":1,\"conversao\":750},\"antes\":{\"visitas\":0,\"unicos\":0,\"app\":5,\"cliques\":0,\"registos\":15,\"pagamentos\":1,\"conversao\":0},\"o\":[[\"direto\",5],[\"Google\",1],[\"Instagram\",1]],\"p\":[[\"??\",5],[\"BR\",1],[\"PT\",1]],\"bot\":{\"ok\":true,\"ok2\":false},\"mau\":{\"ok\":true,\"ok2\":false},\"outro\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Visitas: os contadores do dia juntam-se num só ficheiro (_dia.json), sem perder nem contar nada a dobrar",
+  "pass": true,
+  "info": "{\"fs1\":1,\"fs2\":[\"_dia.json\"],\"v\":3,\"v2\":4}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus: o servidor só conta o tipo de ameaça bloqueada (sem nomes nem conteúdos) e só a administração vê",
+  "pass": true,
+  "info": "{\"a3\":{\"ok\":true,\"ok2\":false,\"_st\":200},\"av\":{\"ok\":true,\"av\":{\"f_macro\":2},\"_st\":200},\"n\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › ficheiros: apanha EICAR, programas disfarçados, nomes invertidos, macros, ZIP com programas, bombas ZIP, PDFs com código, SVG com código; deixa passar CSV, PNG, XLSX e PDF limpos",
+  "pass": true,
+  "info": "[\"eicar\",\"prog\",\"prog\",\"nome\",\"macro\",\"zipprog\",\"bomba\",\"pdfjs\",\"disf\",\"svg\",null,null,null,null]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › links: bancos e lojas imitados, truque do @, programas, javascript: são perigosos; encurtados, sem cadeado, letras estrangeiras e IPs pedem cuidado; os sites verdadeiros abrem sem perguntas",
+  "pass": true,
+  "info": "[]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › na app: o ficheiro EICAR é parado antes de chegar à app (aviso e caixa limpa), o CSV limpo passa, e as caixas criadas na hora também são verificadas",
+  "pass": true,
+  "info": "{\"i1\":{\"got\":[],\"modal\":\"Teste bem-sucedido\\n\\nteste-eicar.txt\\n\\nÉ o ficheiro de teste EICAR: o antivírus está a funcionar.\\n\\nO ficheiro de teste foi apanhado e não entrou na app.\\n\\nPercebi\",\"val\":\"\"},\"i2\":[\"extrato.csv\"],\"fc\":true,\"i3\":{\"got\":[],\"modal\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › links na app: tocar num link perigoso mostra o aviso e não abre; um site verdadeiro abre logo; nos e-mails os links perigosos ficam desligados e marcados",
+  "pass": true,
+  "info": "{\"l1\":{\"nav\":[],\"modal\":\"Este link parece perigoso\\n\\nhttp://paypa1.com/login\\n\\nImita o nome \\\"paypal\\\" trocando letras por números.\\nA ligação não é segura (sem cadeado, http).\\n\\nSe veio num e-mail ou mensagem a pedir dados, senhas ou pagamentos, o mais seguro é não abrir e ir ao site escrevendo o endereço tu mesmo.\\n\\nAbrir mesmo assim\\nNão abrir\"},\"l2\":{\"nav\":[\"avBom\"],\"modal\":false},\"em\":{\"m"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › Definições: separador \"Antivírus e proteção\" com o estado, o histórico das ameaças, o botão de teste e o que fazer no telemóvel e no computador",
+  "pass": true,
+  "info": "{\"t\":\"Sistema\\nDEFINIÇÕES\\n\\nO antivírus do Prumo e tudo o que protege os teus dados.\\n\\nGeral\\nConta e perfis\\nE-mail\\nLigações\\nAtalhos do iPhone\\nSpyke (assistente)\\nImpostos\\nAntivírus e proteção\\nPrivacidade e term\",\"on\":true,\"tab\":true,\"hist\":true,\"nota\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: as falhas da app aparecem agrupadas (mensagem, onde, quantas vezes) com as novas assinaladas; só a administração vê",
+  "pass": true,
+  "info": "{\"st\":200,\"g\":{\"k\":\"TypeError: falha de teste 1ab887 @ teste.js:1:1\",\"n\":4,\"dias\":1,\"prim\":\"2026-11-26\",\"ult\":\"2026-11-26\",\"hoje\":4,\"novo\":true},\"n\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: um erro novo que se repete manda e-mail à administração (no máximo um a cada 6 horas)",
+  "pass": true,
+  "info": "{\"v1\":{\"alerta\":true,\"novos\":[[\"TypeError: falha de teste 1ab887 @ teste.js:1:1\",4]],\"tApp\":4,\"tSrv\":0},\"v2\":{\"alerta\":false,\"novos\":[[\"ReferenceError: outra 7a5619 @ b.js:2:2\",3]],\"tApp\":3,\"tSrv\":0},\"mails\":[\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro no"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: /api/saude?ping=1 responde 200 a um monitor externo (sem dados de ninguém) e a verificação completa continua só para o Vercel",
+  "pass": true,
+  "info": "{\"pg\":{\"st\":200,\"j\":{\"ok\":true,\"ms\":0}},\"cr\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Readwise: a chave errada é recusada; a certa traz os livros e destaques para as Leituras (página e nota nas citações), junta ao livro que já existe, ignora artigos e apagados, e não duplica",
+  "pass": true,
+  "info": "{\"mau\":\"recusada O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.\",\"rw\":{\"st\":{\"tok\":\"rwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"last\":\"2026-11-26T17:52:38.394Z\",\"livros\":1,\"dest\":2,\"at\":1795715558423},\"pz\":1,\"pq\":[[\"Tu tornas-te\",\"\",\"\",false],[\"O essencial \",\"12\",\"a melhor\",true]],\"ha\":{\"capa\":\"https://exemplo.pt/h.jpg\",\"st\":\"A ler\",\"q\":1,\"f\":\"Ebook\"},\"art\":false,\"again\":{\"nl\":0,\"nd\":0},\"painel\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Strava: o endereço de autorização leva um state assinado (um state mexido é recusado); ao voltar, a autorização fica guardada cifrada (nunca em texto) e renova-se sozinha",
+  "pass": true,
+  "info": "{\"e0\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"}},\"ini\":\"http://localhost:8616/lgmock/strava/authorize?client_id=4242&redirect_uri=http%3A%2F%2Floc\",\"falso\":400,\"cb\":200,\"cbt\":\" Strava ligado · Prumo :root{color-scheme:dark}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#65010D;color:#FCE7D1;font:16px/1.55 sy\",\"d1\":\"200 \",\"e1\":{\"pronto\":true,\"ligado\":true,\"quem\":\"Marta Teste\",\"desde\":\"2026-11"
+ },
+ {
+  "p": "Ataque",
+  "name": "Oura: sono (só a noite principal), prontidão, atividade e treinos; cada renovação guarda logo o refresh token novo (a Oura só aceita cada um uma vez)",
+  "pass": true,
+  "info": "{\"o1\":200,\"o2\":200,\"ren\":{\"strava\":1,\"oura\":2},\"sono\":1}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Strava e Oura na app: corridas, treinos, sono, prontidão e passos entram sem duplicar; nada disto chega à IA (contexto do Spyke, procura e áreas)",
+  "pass": true,
+  "info": "{\"sv\":[[8.12,2580,151]],\"svw\":[\"Volta de bicicleta\",\"Ginásio\"],\"ouS\":[[\"2026-11-21\",420]],\"ouR\":1,\"ou\":[[77,11234]],\"dup\":1,\"ia\":{\"runs\":1,\"wk\":0,\"sl\":0,\"ou\":0},\"ctxSv\":false,\"fa\":false,\"ra\":false,\"cards\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Strava: desligar avisa o Strava e apaga a autorização; sem sessão válida nada passa",
+  "pass": true,
+  "info": "{\"sa\":200,\"sair\":[\"strava\"],\"e2\":{\"strava\":{\"pronto\":true,\"ligado\":false,\"quem\":\"\",\"desde\":\"\"},\"oura\":{\"pronto\":true,\"ligado\":true,\"quem\":\"\",\"desde\":\"2026-11-26T17:52:39.237Z\"}},\"outro\":401}"
+ },
+ {
+  "p": "Ataque",
+  "name": "RevenueCat: sem a senha certa é recusado; uma compra dá o plano (confirmado no RevenueCat, não no que o aviso diz); o mesmo aviso não conta duas vezes; compras de teste não contam; ao expirar o plano sai",
+  "pass": true,
+  "info": "{\"rid\":\"p_2620\",\"sem\":401,\"errada\":401,\"h1\":{\"_st\":200,\"ok\":true},\"p1\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":false,\"pago\":1,\"ate\":1798307561976,\"ciclo\":\"mes\",\"loja\":\"play_store\"},\"h2\":{\"_st\":200,\"ok\":true,\"repetido\":1},\"n1\":1,\"n2\":1,\"p3\":\"avancado\",\"p4\":\"completo\",\"p5\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796925161880},\"h6\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Contas como carteira: os 3 cartões das contas a sair do bolso, saldo total, cartões em dívida e reservas, contas em cartões com gráfico, últimas transações; o olho esconde os valores",
+  "pass": true,
+  "info": "{\"wl\":{\"cartoes\":[\"inter\",\"nu\",\"C6\"],\"tot\":\"€ 6128,71\",\"chips\":2,\"contas\":4,\"sp\":4,\"ult\":5,\"add\":true,\"tabela\":true},\"esc\":{\"x\":15,\"tot\":\"••••••\"}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Carteira: cada cartão mostra o banco e a conta; tocar abre o cartão da conta com o saldo, as entradas e saídas do mês e os movimentos dessa conta, e dá para ver os meses anteriores",
+  "pass": true,
+  "info": "{\"cb\":[\"inter Inter · Conta à ordem € 621,10\",\"nu Nubank · Conta à ordem € 2627,61\",\"C6 C6 · Poupança € 3000,00\"],\"det\":{\"t\":\"Nubank Nubank Conta à ordem Saldo € 2627,61 Novembro 2026 Entradas +€ 1500,00 Saídas −€ 72,39 Movimentos 3 25 nov Streaming Streaming −€ 9,99 20 nov Supermercado Supermercado −€ 62,40 6 nov Salário Salário +€ 1500,00 Nova transação nesta conta Editar a conta\",\"n\":3},\"ant\":\"outubro 2026\"}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Atividade em curso: o treino aparece numa barra no topo (rotina, exercício de agora, descanso a contar, séries por exercício, kcal); tocar abre o treino; o fim do descanso fica marcado para avisar com a app fechada; o bloco de foco também aparece e a barra sai quando acaba",
+  "pass": true,
+  "info": "{\"t1\":{\"on\":true,\"t\":\"0:59 Upper Completo Agachamento com barra +0 kcal\",\"segs\":[\"m\",\"\"],\"pv\":[{\"at\":1795715630264,\"t\":\"Descanso acabou\",\"b\":\"Bora para a próxima série.\",\"u\":\"#treino\",\"g\":\"descanso\"}],\"nome\":\"Agachamento com barra\"},\"t2\":{\"ecra\":true,\"barra\":false},\"t3\":{\"foco\":\"5:00 Bloco de foco · Estudo Resumo do capítulo 3 1/2\",\"fim\":true,\"pv\":[]}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Discord: um endereço que não é webhook é recusado; ligar publica a mensagem de boas-vindas no canal e o treino terminado (sem @everyone e sem menções)",
+  "pass": true,
+  "info": "{\"mau\":400,\"msgs\":[{\"title\":\"O Prumo está ligado a este canal\",\"description\":\"A ligou o Prumo. Os avisos escolhidos vão aparecer aqui.\",\"color\":10165040},{\"title\":\"A terminou o treino\",\"description\":\"**Upper @​everyone** · 52 min · 2 séries · 960 kg de volume\",\"color\":13111342}],\"dc\":{\"pn\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios Prumo: nomeados escolhidos a partir dos animes do ano (por categoria, com aberturas), só a administração abre e revela, um voto por categoria que se pode mudar, resultados com percentagens por ordem",
+  "pass": true,
+  "info": "{\"v0\":\"nomeacao\",\"g\":200,\"cats\":[\"ano:8\",\"acao:6\",\"romance:6\",\"comedia:6\",\"fantasia:6\",\"drama:6\",\"desporto:6\",\"slice:6\",\"continua:6\",\"filme:4\",\"abertura:6\"],\"ab\":\"\\\"Yuusha\\\" by YOASOBI\",\"naoAdm\":403,\"cedo\":400,\"falso\":400,\"sem\":401,\"fase\":\"revelada\",\"ra\":[[\"208\",2,66.7],[\"108\",1,33.3]]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios na app: separador Prémios com os resultados, a cerimónia (\"e o prémio vai para…\") e os vencedores oficiais da Crunchyroll e de outras premiações",
+  "pass": true,
+  "info": "{\"ui\":{\"hero\":true,\"cer\":true,\"crun\":true,\"res\":11},\"cer\":\"Prémios Prumo 2026 · 1 de 11 ANIME DO ANO E o prémio vai para… Show spring 8 Season 2 66.7% dos votos 2.º Show winter 8 Season 2 33.3% 3.º Show summer 8 Season 2 0% 4.º Show fall 8 Season 2 0% 5.º Sho\"}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios dos livros: nomeados por género gerados do Open Library (Livro do Ano, Ficção, Fantasia, Clássico…), só a administração muda a fase, um voto por categoria que se pode mudar, sem conta não vota",
+  "pass": true,
+  "info": "{\"v0\":true,\"g\":200,\"cats\":[\"ano:8\",\"ficcao:6\",\"romance:6\",\"fantasia:6\",\"misterio:6\",\"naoficcao:6\",\"pessoal:6\",\"biografia:6\",\"classico:6\"],\"naoAdm\":403,\"cedo\":400,\"falso\":400,\"sem\":401}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Leituras › Prémios: separadores Para ti, Top livros e Prémios; a votação aberta mostra os nomeados com o meu voto marcado e tocar noutro livro vota nessa categoria",
+  "pass": true,
+  "info": "{\"p0\":{\"tabs\":\"Estante|Para ti|Top livros|Desafios|Estatísticas|Para tiEscolhidos pelo que lês|Top livrosOs mais lidos e votados|PrémiosA votação dos melhores do ano|Pesquisar livrosTodos os livros do mundo|EstanteA ler, quero ler, lidos|Minha estanteOs livros que tens em casa|Top 10 da vidaOs teus 10 melhores, por ordem|DesafiosAs tuas metas de leitura|EstatísticasPáginas, ritmo e géneros|Resenha"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios dos livros revelados: vencedor de cada categoria em destaque, com a percentagem (Livro do Ano: 66,7%)",
+  "pass": true,
+  "info": "{\"w\":\"Livro romance 0 Autor 0 66,7%\",\"n\":9}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Leituras › Para ti: sem livros lidos mostra os mais lidos e os clássicos; com um lido (5 estrelas) recomenda pela autora e pelo género, e \"Quero ler\" põe na estante",
+  "pass": true,
+  "info": "{\"t0\":\"Estudos\\nLEITURAS\\n\\nA tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios l\",\"t1\":\"Estudos\\nLEITURAS\\n\\nA tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios literários.\\n\\nAdicionar livro\\nEstante\\nPara ti\\nTop livros\\nDesaf\",\"add\":\"Quero ler|Autora Teste|/works/OLTauthorAutora0W\",\"q\":[\"/trending/weekly.json \",\"/search.json subject:classic_literature\",\"/search.json author:\\\"Autora Teste\\\"\",\"/search.json subject:fa"
+ },
+ {
+  "p": "Ataque",
+  "name": "Leituras › Top livros: os 10 mais bem avaliados de cada género (escolher Terror mostra o Top Terror) e os mais lidos da semana",
+  "pass": true,
+  "info": "{\"li\":10,\"h\":\"1\\nTop horror 1\\nAutor 0 · 2020 · ★ 4,9\\n2\\nTop horror 2\\nAutor 1 · 2020 · ★ 4,8\\n3\\nTop horror 3\\nAutor 2 · 2020 · ★ 4,7\\n4\\nTop horror 4\\nAutor 3 · 2020 · ★ 4,6\\n5\\nTop horror 5\\nAutor 4 · 2020 · ★ 4,5\\n6\\nTop horror 6\\nAutor 5 · 2020 · ★ 4,4\\n7\\nTop horror 7\\nAutor 6 · 2020 · ★ 4,3\\"
+ },
+ {
+  "p": "Ataque",
+  "name": "Amigos e conversa a dois: só entre amigos (pedido por código e aceite); links, telefones e insultos (regras e IA) são barrados e não chegam ao amigo; depois de 3 barradas fica 1 hora sem escrever; sem sessão ou com perfil de outra conta não entra",
+  "pass": true,
+  "info": "{\"semTok\":401,\"alheio\":404,\"cedo\":403,\"ped\":200,\"bom\":true,\"lnk\":\"Links não são permitidos nas conversas.\",\"tel\":\"Não partilhes números de telefone nas conversas.\",\"ofn\":\"Isto é um insulto dirigido a alguém.\",\"mudo\":403,\"lb\":1,\"mod\":4}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Clãs: criar (nome verificado), entrar com o código, conversa do clã só para membros, lista de conversas, denunciar (a administração vê e apaga a mensagem) e bloquear (deixa de poder falar e de pedir amizade)",
+  "pass": true,
+  "info": "{\"cl\":200,\"cod\":\"MHDTVU\",\"feio\":400,\"ent\":200,\"mc\":true,\"fora\":403,\"lc\":1,\"den\":200,\"dn0\":403,\"dl\":1,\"apg\":200,\"lc2\":0,\"dmB\":403,\"pedB\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Pursuit: antes das 20h não se marca; às 20h saem pistas do anime (sem dizer o nome); um Hunter por pessoa e por dia; às 22h fecha e quem acertou ganha 100, 90… pela ordem; quem errou não ganha; ranking de animes com os pontos",
+  "pass": true,
+  "info": "{\"h0\":\"espera\",\"m0\":400,\"f1\":\"aberto\",\"pistas\":[\"É uma série com 64 episódios e estreou na primavera de 2009.\",\"Géneros: Action, Adventure, Drama; temas: Military, Shounen.\",\"É baseado num mangá.\",\"O estúdio de animação é Bones.\",\"O título (em japonês romanizado) começa por \\\"K\\\" e tem 3 palavras.\"],\"full\":\"7015\",\"okB\":200,\"okC\":200,\"errA\":200,\"dup\":409,\"f2\":\"fechado\",\"res\":[{\"id\":\"7aaefae87ceeea4114c43bb2-d425ddb29ef2\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795715602985,\"pts\":100},{\"id\":\"edbb2039b0a8a3f1c9a22510-3a34d8d7637b\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795715603019,\"pts\":90}],\"rk\":[{\"id\":\"7aaefae87ceeea4114c43bb2-d425ddb29ef2\",\"nome\":\"A\",\"p\":100,\"user\":\"\",\"av\":0,\"cl\":\"\",\"pos\":1,\"eu\":false"
+ },
+ {
+  "p": "Ataque",
+  "name": "Parceria na app: tela de Jogos com \"Prumo & Otaku Lab\" em destaque (a administração escreve o nome; outras contas não), o Pursuit e o ranking; Animes fora do \"Eu\"; Pursuit com os resultados; conversa do clã a enviar pela app e a IA a barrar o insulto",
+  "pass": true,
+  "info": "{\"p0\":\"PHANTOM\",\"pn\":403,\"pa\":200,\"pg\":{\"ok\":true,\"nome\":\"Otaku Lab\",\"site\":\"https://otakulab.example\",\"_st\":200},\"jg\":{\"hero\":true,\"nome\":true,\"hu\":true,\"rk\":true,\"dom\":true,\"grp\":\"\",\"eu\":true},\"hu\":{\"res\":true,\"meu\":true,\"mk\":true,\"cred\":true},\"ch\":{\"n\":1,\"meu\":[\"Mensagem do teste pela app\"],\"toast\":\"A mensagem não foi enviada: Isto é um insulto dirigido a alguém.\",\"nota\":true},\"lcB\":[\"Mensagem do teste pela app\"]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Pursuit com o MyAnimeList em baixo: o anime do dia e as pistas vêm do AniList; depois das 22h sem jogo criado mostra o de amanhã (sem erro)",
+  "pass": true,
+  "info": "{\"PF\":{\"f\":\"aberto\",\"p\":[\"É uma série com 51 episódios e estreou no outono de 2003.\",\"Géneros: Action, Drama; temas: Alchemy.\",\"É baseado num mangá.\",\"O estúdio de animação é Studio Bones.\",\"O título (em japonês romanizado) começa por \\\"H\\\" e tem 4 palavras.\"]},\"PD\":{\"f\":\"espera\",\"a\":1795737600000},\"st\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Parceria: sem nome escrito volta a PHANTOM",
+  "pass": true,
+  "info": "{\"ok\":true,\"parceiro\":{\"nome\":\"PHANTOM\",\"site\":\"\",\"at\":1795715617618},\"_st\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Corpo: círculos da semana por modalidade (feito por fora, planeado por baixo): musculação, corrida (plano de corrida), natação (frequência do desporto), bicicleta do Strava, e o total",
+  "pass": true,
+  "info": "{\"pn\":true,\"txt\":\"Semana 48 A tua semana 23/11 a 29/11 55min / 2 h 45 min Musculação 30min / 1 h 40 min Corrida 45min / 1 h 30 min Natação 1h 10min sem plano Bicicleta Total da semana: 3 h 20 min / 5 h 55 min planeados\",\"rings\":4,\"mods\":[\"Musculação:55/165\",\"Corrida:30/100\",\"Natação:45/90\",\"Bicicleta:70/0\"]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Fotos: escolher várias fotos lê-as no aparelho e junta as iguais e as parecidas (fica a mais nítida), encontra as desfocadas, as escuras e as capturas de ecrã antigas, e mostra quanto se pode libertar",
+  "pass": true,
+  "info": "{\"n\":6,\"iguais\":1,\"parecidas\":1,\"desf\":[\"IMG_0003.jpg\"],\"esc\":[\"IMG_0004.jpg\"],\"cap\":[\"Screenshot 2026-08-01 at 10.00.png\"],\"grupos\":[\"iguais:2\",\"parecidas:2\"],\"sugUI\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Fotos e vídeos: os vídeos entram com a miniatura e a duração; Tirar foto e Gravar vídeo pelo Prumo; o que se partilha da Galeria entra sozinho; o cartão explica como fica automático",
+  "pass": true,
+  "info": "{\"gravou\":true,\"v\":{\"video\":1,\"th\":true},\"sh\":true,\"auto\":true,\"cam\":2,\"vid\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Fotos com a IA (miniaturas): categorias e o que mostra cada foto, sugestões da IA para apagar, pesquisa pelo conteúdo (\"pizza\"), ver a foto em grande com a informação, apagar um grupo de iguais e uma foto; ficam guardadas no aparelho",
+  "pass": true,
+  "info": "{\"ia\":{\"cats\":[\"Comida e bebida\",\"Memes e imagens da internet\",\"Paisagens e viagens\"],\"comIA\":8,\"sugIA\":3},\"pq\":{\"t\":[\"3 fotos para \\\"pizza\\\"\"],\"n\":3},\"n0\":8,\"n1\":7,\"n2\":6,\"n3\":6,\"vv\":\"Uma pizza no jantar\\nComida e bebida\\npizza\\njantar\\n26/11/2026 (data do ficheiro) · 320×240 · 1 KB\\n\\nSugerida para apagar: D\",\"fm\":1}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Perfil dos animes: o @ escolhe-se uma vez e não muda, é único e há nomes reservados; foto e fundo próprios (verificados pela IA) e servidos a quem os vê",
+  "pass": true,
+  "info": "{\"u1\":{\"ok\":true,\"user\":\"ana_67ec2a\",\"_st\":200},\"u2\":409,\"u3\":409,\"u4\":400,\"u5\":400,\"im\":200,\"fu\":200,\"mau\":400,\"eu\":{\"id\":\"0af01ef995b4f7003df276c0-16710d7a8d44\",\"nome\":\"A\",\"cod\":\"NUF977\",\"user\":\"ana_67ec2a\",\"av\":1795715647457,\"fu\":1795715647463,\"cl\":\"\",\"pts\":0,\"mudo\":0},\"g\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Comentários nos animes: a IA tapa os spoilers (só vê quem quiser) e barra ofensas; gostos nos comentários e no anime; com o @ e a foto; denunciar e a administração apaga; ninguém apaga o comentário dos outros",
+  "pass": true,
+  "info": "{\"c1\":{\"id\":\"c413305ed5ef\",\"de\":\"0af01ef995b4f7003df276c0-16710d7a8d44\",\"nome\":\"A\",\"user\":\"ana_67ec2a\",\"av\":1795715647457,\"t\":\"A animação é incrível, um dos melhores de sempre.\",\"at\":1795715647474,\"sp\":false,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c2\":{\"id\":\"895243cdefda\",\"de\":\"9de639b1b7044e05f85ba327-58e9a09b1eac\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"t\":\"Não acredito que o Hughes morre no episódio 10\",\"at\":1795715647478,\"sp\":true,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c3\":true,\"gc\":1,\"ga\":{\"ok\":true,\"gostos\":1,\"gostei\":true,\"_st\":200},\"ga2\":{\"ok\":true,\"gostos\":2,\"gostei\":true,\"_st\":200},\"n\":2,\"dn\":20"
+ },
+ {
+  "p": "Ataque",
+  "name": "Comunidade: indicações públicas (com gostos), pedidos, sugestões e candidaturas ao recrutamento só para a administração (com o e-mail da conta), tudo verificado pela IA; a equipa SA editada pela administração",
+  "pass": true,
+  "info": "{\"i1\":200,\"i2\":200,\"i3\":200,\"i4\":400,\"li\":1,\"gi\":1,\"naoAdm\":403,\"ac\":1,\"eq\":2}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Caixa da Comunidade na Administração: sugestões, pedidos, reclamações (também pelo app), recrutamento e indicações juntos, com o e-mail e a origem; marcar como visto; só a administração vê",
+  "pass": true,
+  "info": "{\"r1\":200,\"x\":{\"id\":\"4f86e5841d78\",\"tipo\":\"reclamacao\",\"nome\":\"A\",\"user\":\"\",\"titulo\":\"\",\"texto\":\"O gráfico de gastos não abre no meu telemóvel.\",\"at\":1795715647533,\"email\":\"atkde7390ae75@teste.pt\",\"orig\":\"app\",\"visto\":false},\"n0\":4,\"n1\":3,\"nao\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Desafio da semana: o mesmo desafio para todos; Participar põe no ranking; quem completa fica pela ordem (com o @), quem vai a caminho e quantos ainda não começaram; o progresso tem limite",
+  "pass": true,
+  "info": "{\"d0\":{\"k\":\"treinos\",\"t\":\"Semana de ferro\",\"d\":\"Regista 4 treinos esta semana.\",\"alvo\":4,\"un\":\"treinos\",\"ic\":\"dumbbell\"},\"sem\":\"2026-S47\",\"p1\":{\"id\":\"0af01ef995b4f7003df276c0-16710d7a8d44\",\"nome\":\"A\",\"user\":\"ana_67ec2a\",\"av\":1795715647457,\"v\":5,\"at\":1795715647641,\"eu\":true},\"dv\":{\"f\":1,\"c\":1,\"z\":1,\"t\":3},\"nao\":{\"id\":\"9de639b1b7044e05f85ba327-58e9a09b1eac\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"v\":40,\"at\":1795715647647,\"eu\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Desafio da semana na Visão geral: o cartão com o desafio, o tempo que falta e o ranking; o treino registado no app conta sozinho no progresso",
+  "pass": true,
+  "info": "{\"dc\":{\"card\":true,\"t\":\"Desafio da semana acaba daqui a 3 dias e 6 h Semana de ferro Regista 4 treinos esta semana. 0/4 treinos 1 completaram · 0 a caminho · 2 ainda não começaram 1 A A 40/4 Ver o ranking todo\",\"eu\":\"1/4 treinos\"},\"sv\":{\"id\":\"0af01ef995b4f7003df276c0-16710d7a8d44\",\"nome\":\"A\",\"user\":\"ana_67ec2a\",\"av\":1795715647457,\"v\":1,\"at\":0,\"eu\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Na app: um perfil só no menu do perfil (foto, nome, @, pontos e clãs); o editor tem o @ (fixo), a foto (tua, do Dominus ou de anime) e o fundo; as fotos de anime só passam do AniList/MyAnimeList; a primeira vez nos Animes escolhe-se Competição e/ou Diversão; a Comunidade com as 5 opções",
+  "pass": true,
+  "info": "{\"ui\":{\"cards\":1,\"car\":false,\"edAt\":\"@ana_67ec2a\",\"edFu\":true,\"edAni\":true,\"aniP\":true,\"px\":400,\"ap\":\"A A @ana_67ec2a atk5098a4dda2@teste.pt 0 pontos 0 clãs\",\"bv\":true,\"dq\":true,\"cu\":true},\"ind\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Temas das festas: cada festa vale a época toda (Natal de 1/12 a 6/1, Halloween de 15/10 a 2/11, Páscoa nas 2 semanas antes até à segunda-feira, Carnaval, junho, passagem de ano) e sai quando acaba; Natal com luzes no topo, neve que acumula e o limpa-neves; nas Definições liga-se, desliga-se e vê-se cada tema",
+  "pass": true,
+  "info": "{\"datas\":{\"natal1\":\"natal\",\"natal\":\"natal\",\"reis\":\"natal\",\"fimNatal\":\"\",\"anonovo\":\"anonovo\",\"hall\":\"halloween\",\"finados\":\"halloween\",\"hoje\":\"\",\"pascoa\":\"pascoa\",\"pascoaFim\":\"pascoa\",\"depoisPascoa\":\"\",\"carnaval\":\"carnaval\",\"junho\":\"junho\"},\"s1\":{\"EP\":\"natal\",\"neve\":1.5916618688988167,\"plow\":true,\"nplow\":1,\"P\":70,\"cv\":true,\"gar\":true},\"top\":true,\"attr\":\"natal\",\"pn\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Rede instável: sem internet a app funciona e guarda; quando a rede volta (com o servidor a falhar 3 vezes) sincroniza e a tarefa aparece no outro aparelho",
+  "pass": true,
+  "info": "{\"off\":{\"st\":\"sem ligação (guardado neste aparelho)\",\"vis\":true},\"falhas\":3,\"on\":\"sincronizada\",\"there\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Falhas do app: o servidor aceita o registo da falha (com limite) para o relatório da semana",
+  "pass": true,
+  "info": "{\"ok\":true,\"ok2\":true,\"_st\":200}"
  }
 ]

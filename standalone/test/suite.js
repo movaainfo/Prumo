@@ -909,6 +909,15 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
         d0.desafio && d0.desafio.k === 'treinos' && d0.eu === null && /^\d{4}-S\d{2}$/.test(d0.sem) && e1.eu && e1.eu.v === 0 && p1.eu.at > 0 && dv.feitos.length === 1 && dv.feitos[0].nome && dv.caminho.length === 1 && dv.caminho[0].v === 2 && dv.zero === 1 && dv.total === 3 && dv.eu && !dv.eu.at && nao.eu.v <= 40,
         JSON.stringify({ d0: d0.desafio, sem: d0.sem, p1: p1.eu, dv: { f: dv.feitos.length, c: dv.caminho.length, z: dv.zero, t: dv.total }, nao: nao.eu }).slice(0, 500));
       delete process.env.NAUTILO_DESAFIO; }
+    // v3.85: Desafios semanais dos Animes: 3 por semana (fácil, médio e difícil), os mesmos para todos, pontos uma vez, bónus com os 3, limite no progresso
+    { const d0 = await so(A1, { op: 'anDesafios' }), L = d0.L || [], cli = L.filter(x => !x.srv), v = {}, big = {}; cli.forEach(x => { v[x.k] = x.alvo; big[x.k] = 99999; });
+      const p1 = await so(A1, { op: 'anDesafiosProg', v }), p2 = await so(A1, { op: 'anDesafiosProg', v }), p3 = await so(B1, { op: 'anDesafiosProg', v: big }), rk = await so(B1, { op: 'anDesafios' });
+      const pts = cli.reduce((t, x) => t + x.pts, 0) + (cli.length === 3 ? d0.bonus : 0), ad = await so(ADM, { op: 'adminDesafios' });
+      ok('Desafios semanais dos Animes: 3 por semana (fácil, médio e difícil, nunca a mesma medida), iguais para todos; completar dá os pontos uma vez (e o bónus com os 3); o progresso tem limite; ranking da semana; a administração vê os das próximas semanas',
+        L.length === 3 && L.map(x => x.n).join() === '0,1,2' && new Set(L.map(x => x.m)).size === 3 && JSON.stringify((rk.L || []).map(x => x.k)) === JSON.stringify(L.map(x => x.k)) && /^\d{4}-S\d{2}$/.test(d0.sem) && (d0.dias || []).length === 7
+        && p1.eu.pts === pts && p2.eu.pts === pts && (p1.novos || []).length === cli.length + (cli.length === 3 ? 1 : 0) && !(p2.novos || []).length && cli.every(x => p3.eu.v[x.k] <= x.alvo * 3) && rk.rank.length >= 2 && rk.rank.some(x => x.eu) && rk.pos >= 1
+        && (ad.semanas || []).length === 6 && ad.semanas.every(w => (w.animes || []).length === 3),
+        JSON.stringify({ L: L.map(x => x.k + ':' + x.m), pts, p1: p1.eu, n1: p1.novos, n2: p2.novos, p3: p3.eu && p3.eu.v, rk: (rk.rank || []).length, ad: (ad.semanas || []).length }).slice(0, 600)); }
     // na app: o perfil dos animes a arrastar no menu do perfil, a primeira vez nos Animes (Competição e/ou Diversão), a Comunidade
     const sR = { 'nau:s': JSON.stringify({ t: A1.tok, e: A1.email, n: '', perfis: [{ id: A1.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(A1.pid), 'nau:pd': JSON.stringify(A1.pid), 'nau:owner': JSON.stringify(A1.email) };
     const k = await newPage(b, PROFILES[0], sR); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; }); await k.p.route(/cdn\.myanimelist\.net|anilist|myanimelist\.net\/|jikan/, rt => rt.fulfill({ status: 200, contentType: 'application/json', body: '{"data":[]}' }));
@@ -928,6 +937,16 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
       if (process.env.SHOTS) await k.p.screenshot({ path: path.join(process.env.SHOTS, 'desafio-visao.png') });
       const sv = await so(A1, { op: 'desafio' }); delete process.env.NAUTILO_DESAFIO;
       ok('Desafio da semana na Visão geral: o cartão com o desafio, o tempo que falta e o ranking; o treino registado no app conta sozinho no progresso', dc.card && /Desafio da semana/.test(dc.t) && /Semana de ferro/.test(dc.t) && /acaba daqui a/.test(dc.t) && /completaram/.test(dc.t) && /^\d/.test(dc.eu) && sv.eu && sv.eu.v >= 1, JSON.stringify({ dc, sv: sv.eu }).slice(0, 400)); }
+    // v3.85: na app, os desafios dos Animes contam sozinhos com o que se vê (o registo diário) e aparecem no início dos Animes, no Mais e na página própria
+    { const ad = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), a = OS.add('animes', { title: 'Teste Desafio', status: 'A ver', ep: 0, eps: 24, gen: ['Action'] });
+        for (let i = 0; i < 3; i++) OS.upd('animes', a.id, { ep: (+OS.get('animes', a.id).ep || 0) + 1 }); OS.upd('animes', a.id, { nota: 8 });
+        const v0 = OS.add('animes', { title: 'Antigo', status: 'Quero ver', ep: 0, eps: 12 }); OS.upd('animes', v0.id, { status: 'Visto', ep: 12 });
+        const lg = JSON.parse(JSON.stringify(OS.AnDesafios._LOG()[OS.U.today()] || {})); OS.AnDesafios._S.at = 0; location.hash = 'animes.desafios'; await w(2800);
+        const vw = document.getElementById('view'), t = vw.innerText.replace(/\s+/g, ' '), cards = vw.querySelectorAll('.ad-pg .ad-c').length;
+        location.hash = 'animes'; await w(1800); return { lg, cards, t: t.slice(0, 300), fx: document.querySelectorAll('#view .ad-fx .ad-c').length, mais: !!document.querySelector('#view .ax-mm a[href="#animes.desafios"]') }; });
+      if (process.env.SHOTS) { try { await E(k.p, () => { location.hash = 'animes.desafios'; }); await sleep(1200); await k.p.screenshot({ path: path.join(process.env.SHOTS, 'an-desafios-tel.png'), fullPage: true }); } catch (e) { } }
+      ok('Desafios dos Animes na app: o registo diário conta os episódios, o anime começado, a nota e o género (o "Já vi" de coisas antigas não conta); página com os 3 desafios, o tempo que falta e o ranking; faixa no início dos Animes e entrada no Mais',
+        ad.lg.e === 3 && ad.lg.n === 1 && ad.lg.s === 1 && ad.lg.f === 0 && (ad.lg.g || []).includes('Action') && ad.cards === 3 && /Desafios da semana/.test(ad.t) && /acaba daqui a/.test(ad.t) && ad.fx === 3 && ad.mais, JSON.stringify(ad).slice(0, 500)); }
     ok('Na app: um perfil só no menu do perfil (foto, nome, @, pontos e clãs); o editor tem o @ (fixo), a foto (tua, do Dominus ou de anime) e o fundo; as fotos de anime só passam do AniList/MyAnimeList; a primeira vez nos Animes escolhe-se Competição e/ou Diversão; a Comunidade com as 5 opções',
       ui.cards === 1 && !ui.car && ui.ap.includes('@' + u) && /pontos/.test(ui.ap) && ui.edAt.includes('@' + u) && ui.edFu && ui.edAni && ui.aniP && ui.px !== 200 && ui.bv && ui.dq && ui.cu && ind, JSON.stringify({ ui, ind }).slice(0, 500));
     await k.ctx.close(); }
@@ -5796,7 +5815,7 @@ async function coresTests(b) { cur = 'Cores do app'; console.log('\n=== Cores do
   await unlock(p);
   await E(p, () => location.hash = 'definicoes'); await sleep(700); await E(p, () => { const el = document.getElementById('palSet'); el && el.classList.remove('shut'); });
   const pn = await E(p, () => { const el = document.getElementById('palSet'); return el && { n: el.querySelectorAll('.pal-c').length, on: (el.querySelector('.pal-c[aria-checked="true"]') || {}).dataset.v, grp: !!el.closest('.set-grp, .fold, .pn') }; });
-  ok('Definições: "Cores do app" com 6 paletas e a atual marcada', pn && pn.n === 6 && pn.on === 'selo', JSON.stringify(pn));
+  ok('Definições: "Cores do app" com 9 paletas e a atual marcada', pn && pn.n === 9 && pn.on === 'selo', JSON.stringify(pn));
   const neg0 = await E(p, () => getComputedStyle(document.documentElement).getPropertyValue('--neg').trim());
   await E(p, () => document.querySelector('#palSet .pal-c[data-v="mar"]').click()); await sleep(400);
   const c1 = await bg(), m1 = await E(p, () => ({ ls: localStorage.getItem('nau:pal:local'), last: localStorage.getItem('nau:pal'), tc: document.querySelector('meta[name=theme-color]').content, on: (document.querySelector('#palSet .pal-c[aria-checked="true"]') || {}).dataset && document.querySelector('#palSet .pal-c[aria-checked="true"]').dataset.v }));

@@ -314,13 +314,13 @@ A.anTr = async b => { const k = b.dataset.k, d = DATA['d:' + k] && DATA['d:' + k
 A.anTrailer = b => { const box = document.getElementById('anTrl'); if (!box) return; box.innerHTML = box.innerHTML ? '' : `<div class="an-ytp"><iframe src="https://www.youtube-nocookie.com/embed/${esc(b.dataset.y)}?autoplay=1&playsinline=1&rel=0" title="Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`; };
 
 /* ================= páginas ================= */
-const AT = [['', 'Início'], ['parceria', 'A parceria'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['pursuit', 'Pursuit'], ['ranking', 'Ranking'], ['clas', 'Clãs'], ['comunidade', 'Comunidade'], ['perfil', 'O meu perfil'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list']];
+const AT = [['', 'Início'], ['parceria', 'A parceria'], ['pesquisar', 'Pesquisar'], ['recomendados', 'Para ti'], ['navegar', 'Navegar'], ['temporada', 'Simulcasts'], ['calendario', 'Calendário'], ['categorias', 'Categorias'], ['melhores', 'Melhores do ano'], ['premios', 'Prémios'], ['pursuit', 'Pursuit'], ['ranking', 'Ranking'], ['clas', 'Clãs'], ['comunidade', 'Comunidade'], ['perfil', 'O meu perfil'], ['noticias', 'Notícias'], ['lista', 'A minha lista'], ['tier', 'Top 10 e tier list'], ['desafios', 'Desafios da semana']];
 const P = {};
 // v3.78: a barra própria dos Animes (computador e tablet): o selo Prumo & PHANTOM, 5 atalhos com ícone e o "Mais" com tudo arrumado por grupos
 // (em vez da fila de separadores em texto). No telemóvel continua a barra de baixo e os botões por cima do destaque.
 const AMAIN = [['', 'Início', 'home'], ['navegar', 'Navegar', 'grid'], ['temporada', 'Simulcasts', 'tv'], ['pursuit', 'Pursuit', 'target'], ['lista', 'A minha lista', 'mark']];
 const AGRP = [['Descobrir', [['recomendados', 'Para ti', 'star', 'Escolhidos pelo que vês'], ['calendario', 'Calendário', 'cal', 'Os episódios da semana'], ['categorias', 'Categorias', 'layers', 'Ação, romance, mistério…'], ['melhores', 'Melhores do ano', 'award', 'Os melhores de cada ano'], ['noticias', 'Notícias', 'news', 'O que se passa nos animes'], ['pesquisar', 'Pesquisar', 'search', 'Em 3 bases de animes']]],
-  ['Jogar', [['pursuit', 'Pursuit', 'target', 'Todas as noites às 20h'], ['ranking', 'Ranking', 'crown', 'Os pontos de todos'], ['premios', 'Prémios', 'gift', 'A votação do ano']]],
+  ['Jogar', [['desafios', 'Desafios da semana', 'flag', '3 novos todas as segundas'], ['pursuit', 'Pursuit', 'target', 'Todas as noites às 20h'], ['ranking', 'Ranking', 'crown', 'Os pontos de todos'], ['premios', 'Prémios', 'gift', 'A votação do ano']]],
   ['Comunidade', [['clas', 'Clãs e conversas', 'chat', 'Grupos e amigos'], ['comunidade', 'Comunidade', 'users', 'Indicações, pedidos, equipa'], ['perfil', 'O meu perfil', 'user', 'O teu @, foto e fundo'], ['parceria', 'A parceria', 'flag', 'Prumo & PHANTOM']]],
   ['A minha coleção', [['lista', 'A minha lista', 'mark', 'A ver, quero ver, vistos'], ['tier', 'Top 10 e tier list', 'chart', 'Os teus favoritos'], ['perfil', 'Classe e Recap', 'award', 'Que fã és e o teu ano']]]];
 const anTop = k => { const cur = k === 'anime' ? '' : k, emMais = !AMAIN.some(a => a[0] === cur);
@@ -411,7 +411,7 @@ P[''] = () => { const S = sNow(), L = mineAll(), sea = need('s:' + S.y + S.s, H6
   const fresh0 = (rc || []).map(e => wide(e.x, { badge: 'E' + e.ep, sub: `Episódio ${e.ep} · ${ago(e.at)}` }));
   const SD = seedsOf(), rby = SD.length ? need(recKey(SD), 12 * 36e5, () => API.recs(SD), true) : null, ragg = rby ? recsAgg(rby, SD) : [];
   const subnav = `<nav class="an-subnav" aria-label="Páginas dos animes">${AT.filter(a => a[0]).map(([k, l]) => `<a href="#animes.${k}">${l}</a>`).join('')}</nav>`;
-  return hero + subnav + `<div class="an-pad">` + cont + aoVivo() + row('Novos episódios', fresh0.slice(0, 20), { wide: 1, more: '#animes.calendario' })
+  return hero + subnav + `<div class="an-pad">` + cont + (OS.AnDesafios ? OS.AnDesafios.faixa() : '') + aoVivo() + row('Novos episódios', fresh0.slice(0, 20), { wide: 1, more: '#animes.calendario' })
     + (ragg.length ? row('Recomendado para ti', ragg.slice(0, 20).map(c => c.x), { more: '#animes.recomendados', card: x => { const c = ragg.find(z => z.x === x); return { sub: c ? 'Porque viste ' + c.why[0] : '' }; } }) : '')
     + row(`Simulcasts de ${esc(sName(S))} <small>${SEM[S.s]}</small>`, (sea || []).slice(0, 20), { more: '#animes.temporada' })
     + row('Em alta agora', (tr || []).slice(0, 20))
@@ -512,7 +512,7 @@ A.anCalMine = b => { OS.ui.anCalMine = b.checked ? 1 : 0; OS.request(); };
 P.premios = () => OS.Premios ? OS.Premios.view() : '';
 P.parceria = () => OS.Parceria ? '<div class="an-pad">' + OS.Parceria.pagina() + '</div>' : '';
 // v3.73: jogos de anime (Pursuit), ranking por pontos e clãs com conversas (js/social.js)
-P.pursuit = () => OS.Social ? OS.Social.hunter() : ''; P.comunidade = () => OS.AnimeSoc ? OS.AnimeSoc.comunidade() : ''; P.perfil = () => OS.AnimeSoc ? OS.AnimeSoc.perfil() : ''; P.ranking = () => OS.Social ? OS.Social.ranking() : ''; P.clas = () => OS.Social ? OS.Social.clas() : ''; // v3.72: Prémios Prumo (votação de fim de ano) e premiações oficiais
+P.desafios = () => OS.AnDesafios ? OS.AnDesafios.pagina() : ''; P.pursuit = () => OS.Social ? OS.Social.hunter() : ''; P.comunidade = () => OS.AnimeSoc ? OS.AnimeSoc.comunidade() : ''; P.perfil = () => OS.AnimeSoc ? OS.AnimeSoc.perfil() : ''; P.ranking = () => OS.Social ? OS.Social.ranking() : ''; P.clas = () => OS.Social ? OS.Social.clas() : ''; // v3.72: Prémios Prumo (votação de fim de ano) e premiações oficiais
 P.melhores = () => { const y0 = new Date().getFullYear(), y = +OS.ui.anY || y0, k = 'b:' + y, L = need(k, y === y0 ? H6 : 72 * 36e5, () => API.best(y), true), f = OS.ui.anBf || '';
   const it = (L || []).filter(x => !f || (f === 'MOVIE' ? x.fmt === 'MOVIE' : x.fmt !== 'MOVIE'));
   const years = []; for (let i = y0; i >= 1960; i--) years.push(i);

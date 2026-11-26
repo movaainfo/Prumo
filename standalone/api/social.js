@@ -297,7 +297,7 @@ const desafioDe = async S => { const fx = DESAFIOS.find(x => x.k === process.env
   const h2 = N.crypto.createHmac('sha256', await N.master()).update('desafio:' + ant.k).digest(), i0 = h2.readUInt32BE(0) % DESAFIOS.length; let i = h.readUInt32BE(0) % DESAFIOS.length; if (i === i0) i = (i + 1) % DESAFIOS.length; return DESAFIOS[i]; };
 // v3.82: a administração vê os desafios das próximas semanas (para conferir antes de irem ao ar)
 OPS.adminDesafios = async c => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const out = []; let t = Date.now();
-  for (let k = 0; k < 6; k++) { const S = semana(t), D = await desafioDe(S); out.push({ sem: S.k, ini: S.dias[0], fim: S.dias[6], desafio: { k: D.k, t: D.t, d: D.d, alvo: D.alvo, un: D.un } }); t = S.fim + 3 * 3600e3; }
+  for (let k = 0; k < 6; k++) { const S = semana(t), D = await desafioDe(S); out.push({ sem: S.k, ini: S.dias[0], fim: S.dias[6], desafio: { k: D.k, t: D.t, d: D.d, alvo: D.alvo, un: D.un }, animes: (await anDesDe(S)).map(x => ({ k: x.k, t: x.t, d: x.d, nv: x.nv, pts: x.pts })) }); t = S.fim + 3 * 3600e3; }
   return { semanas: out }; };
 const acertosSemana = async (S, eu) => { let n = 0; for (const d of S.dias) { const v = (await ler('so/h/' + d, null)).v; if (!v || !v.fechado) continue; const g = (await ler('so/hg/' + d + '/' + eu, null)).v; if (g && g.mal === v.mal) n++; } return n; };
 const dsPub = (id, o, eu) => ({ id, nome: o.nome, user: o.user || '', av: o.av || 0, v: o.v || 0, at: o.at || 0, eu: id === eu });
@@ -316,6 +316,53 @@ OPS.desafioProg = async (c, b, req) => { const S = semana(), D = await desafioDe
   await mudar('so/ds/' + S.k, { T: {} }, x => { const e = (x.T || {})[c.eu]; if (!e) return false; e.v = v; e.upd = Date.now(); if (v >= D.alvo && !e.at) e.at = Date.now(); if (v < D.alvo && e.at) e.at = 0; });
   return dsVer(c, S, D); };
 OPS.desafioSair = async (c, b) => { const S = semana(); await mudar('so/ds/' + S.k, { T: {} }, x => { if (!(x.T || {})[c.eu]) return false; delete x.T[c.eu]; }); return OPS.desafio(c, b); };
+/* ---------- v3.85 · Desafios semanais dos Animes: 3 por semana (fácil, médio, difícil), os mesmos para todas as contas, escolhidos pelo servidor.
+   Contam sozinhos: os episódios, as séries terminadas, as notas, os animes novos, a lista e os géneros vêm do registo diário do app;
+   os do Pursuit (dias jogados e acertos) são contados aqui. Cada desafio completo dá pontos ao ranking dos animes; os 3 dão um bónus. ---------- */
+const ANDS = [
+  [{ k: 'eps8', t: 'Aquecimento', d: 'Vê 8 episódios esta semana.', alvo: 8, un: 'episódios', ic: 'play', m: 'eps' },
+    { k: 'notas2', t: 'Olho crítico', d: 'Dá nota a 2 animes.', alvo: 2, un: 'notas', ic: 'star', m: 'notas' },
+    { k: 'novo1', t: 'Primeiro episódio', d: 'Começa um anime que nunca tinhas visto.', alvo: 1, un: 'anime', ic: 'compass', m: 'novos' },
+    { k: 'pdias3', t: 'Presença no Pursuit', d: 'Joga o Pursuit em 3 dias desta semana.', alvo: 3, un: 'dias', ic: 'target', m: 'pdias' },
+    { k: 'lista3', t: 'Fila cheia', d: 'Junta 3 animes à tua lista de "Quero ver".', alvo: 3, un: 'animes', ic: 'mark', m: 'lista' }],
+  [{ k: 'eps20', t: 'Maratona', d: 'Vê 20 episódios esta semana.', alvo: 20, un: 'episódios', ic: 'tv', m: 'eps' },
+    { k: 'fim1', t: 'Até ao último episódio', d: 'Termina uma série.', alvo: 1, un: 'série', ic: 'flag', m: 'fins' },
+    { k: 'gen3', t: 'Volta aos géneros', d: 'Vê episódios de 3 géneros diferentes.', alvo: 3, un: 'géneros', ic: 'layers', m: 'gens' },
+    { k: 'pac3', t: 'Caçador', d: 'Acerta 3 vezes no Pursuit.', alvo: 3, un: 'acertos', ic: 'target', m: 'pac' },
+    { k: 'dias5', t: 'Todos os dias um pouco', d: 'Vê pelo menos um episódio em 5 dias da semana.', alvo: 5, un: 'dias', ic: 'cal', m: 'dias' }],
+  [{ k: 'eps40', t: 'Noite sem fim', d: 'Vê 40 episódios esta semana.', alvo: 40, un: 'episódios', ic: 'moon', m: 'eps' },
+    { k: 'fim2', t: 'Fecha o arco', d: 'Termina 2 séries.', alvo: 2, un: 'séries', ic: 'trophy', m: 'fins' },
+    { k: 'pac5', t: 'Olho de lince', d: 'Acerta 5 vezes no Pursuit.', alvo: 5, un: 'acertos', ic: 'eye', m: 'pac' },
+    { k: 'dias7', t: 'Sete noites seguidas', d: 'Vê pelo menos um episódio em todos os dias da semana.', alvo: 7, un: 'dias', ic: 'flame', m: 'dias' },
+    { k: 'novo3', t: 'Explorador', d: 'Começa 3 animes que nunca tinhas visto.', alvo: 3, un: 'animes', ic: 'compass', m: 'novos' }]];
+const ANPTS = [15, 30, 60], ANBONUS = 40, ANSRV = new Set(['pdias', 'pac']), ANNIV = ['Fácil', 'Médio', 'Difícil'];
+// um de cada nível, sem repetir a mesma medida (nunca 8, 20 e 40 episódios na mesma semana)
+const anDesDe = async S => { const h = N.crypto.createHmac('sha256', await N.master()).update('andesafio:' + S.k).digest(), out = [], usadas = new Set();
+  ANDS.forEach((L, n) => { let i = h.readUInt16BE(n * 2) % L.length; for (let j = 0; j < L.length && usadas.has(L[i].m); j++) i = (i + 1) % L.length; usadas.add(L[i].m); out.push(Object.assign({ n, nv: ANNIV[n], pts: ANPTS[n] }, L[i])); });
+  return out; };
+const pdiasSemana = async (S, eu) => { let n = 0; for (const d of S.dias) { const g = (await ler('so/hg/' + d + '/' + eu, null)).v; if (g) n++; } return n; };
+const anPub = (id, o, eu) => ({ id, nome: o.nome, user: o.user || '', av: o.av || 0, cl: o.cl || '', pts: o.pts || 0, n: Object.keys(o.ok || {}).length, at: o.at || 0, eu: id === eu });
+const anVer = async (c, S, L) => { const o = (await ler('so/ands/' + S.k, { T: {} })).v || { T: {} }, T = o.T || {};
+  const R = Object.entries(T).map(([id, x]) => anPub(id, x, c.eu)).filter(x => x.pts > 0).sort((a, b) => b.pts - a.pts || a.at - b.at), me = T[c.eu];
+  return { sem: S.k, fim: S.fim, dias: S.dias, bonus: ANBONUS, L: L.map(x => ({ k: x.k, t: x.t, d: x.d, alvo: x.alvo, un: x.un, ic: x.ic, m: x.m, n: x.n, nv: x.nv, pts: x.pts, srv: ANSRV.has(x.m) })),
+    rank: R.slice(0, 100), total: R.length, pos: R.findIndex(x => x.eu) + 1, eu: me ? { v: me.v || {}, ok: me.ok || {}, pts: me.pts || 0, bon: !!me.bon } : { v: {}, ok: {}, pts: 0, bon: false } }; };
+// grava o progresso (o do app chega em b.v; o do Pursuit conta-se aqui); quem completa ganha os pontos uma vez, para sempre
+const anGravar = async (c, S, L, vc) => { const srv = {}; for (const x of L) if (ANSRV.has(x.m) && srv[x.m] == null) srv[x.m] = x.m === 'pac' ? await acertosSemana(S, c.eu) : await pdiasSemana(S, c.eu);
+  const nov = []; let v0 = null;
+  await mudar('so/ands/' + S.k, { T: {} }, o => { o.T = o.T || {}; let e = o.T[c.eu], mudou = false;
+    const val = x => ANSRV.has(x.m) ? srv[x.m] : vc && vc[x.k] != null ? Math.max(0, Math.min(x.alvo * 3, Math.round(+vc[x.k] || 0))) : e && e.v ? e.v[x.k] || 0 : 0;
+    if (!e) { if (!L.some(x => val(x) > 0)) return false; e = o.T[c.eu] = { nome: c.nome, v: {}, ok: {}, pts: 0, at: 0 }; mudou = true; }
+    nov.length = 0;
+    for (const x of L) { const v = val(x); if (e.v[x.k] !== v) { e.v[x.k] = v; mudou = true; } if (v >= x.alvo && !e.ok[x.k]) { e.ok[x.k] = Date.now(); e.pts = (e.pts || 0) + x.pts; e.at = Date.now(); nov.push(x.pts); mudou = true; } }
+    if (!e.bon && L.every(x => e.ok[x.k])) { e.bon = Date.now(); e.pts += ANBONUS; nov.push(ANBONUS); mudou = true; }
+    v0 = e; if (!mudou) return false; e.upd = Date.now(); });
+  if (v0 && v0.cl == null) { const pf = await perfil(c.eu, c.nome); await mudar('so/ands/' + S.k, { T: {} }, o => { const e = (o.T || {})[c.eu]; if (!e) return false; e.nome = pf.nome || e.nome; e.user = pf.user || ''; e.av = pf.av || 0; e.cl = pf.classe || ''; }); }
+  if (nov.length) { const pf = await perfil(c.eu, c.nome); await somaPts([[c.eu, pf.nome, nov.reduce((a, b) => a + b, 0), { user: pf.user, av: pf.av }]]); }
+  return nov; };
+OPS.anDesafios = async (c, b) => { const S = semana(), L = await anDesDe(S); if (L.some(x => ANSRV.has(x.m))) await anGravar(c, S, L, null).catch(() => { }); return anVer(c, S, L); };
+OPS.anDesafiosProg = async (c, b, req) => { if (N.limit(req, 'adp|' + c.eu, 60, 3600e3)) throw N.err('limite', 'Espera um pouco.', 429);
+  const S = semana(), L = await anDesDe(S), vc = {}; L.forEach(x => { if (!ANSRV.has(x.m) && b.v && b.v[x.k] != null) vc[x.k] = b.v[x.k]; });
+  const nov = await anGravar(c, S, L, vc); const r = await anVer(c, S, L); r.novos = nov; return r; };
 // v3.79: a classe de fã (calculada no app pelo que cada um vê) aparece no ranking e no perfil de anime
 // v3.82: as classes novas (9 + 12 híbridas) e os ranks de E a SSS; as antigas continuam a valer para quem ainda não atualizou
 const CLASSES = ['Lâmina do Trovão Carmesim', 'Arquiteto das Sombras', 'Guardião da Flor Eterna', 'Andarilho dos Mil Mundos', 'Monge da Brisa Serena', 'Exorcista da Lua Negra', 'Ás do Último Segundo', 'Piloto do Núcleo Celeste', 'Maestro da Alma Ardente',
