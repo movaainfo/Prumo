@@ -1,434 +1,290 @@
 [
  {
-  "p": "Planos",
-  "name": "Conta nova: 14 dias grátis do plano Completo, sem cartão",
-  "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1796928453212}"
- },
- {
-  "p": "Planos",
-  "name": "Página pública \"Planos e preços\" (para o Stripe): os 3 planos em euros e, no Brasil, em reais (outras moedas convertidas do euro), cancelamento e reembolso",
-  "pass": true,
-  "info": "40568"
- },
- {
-  "p": "Planos",
-  "name": "Os três planos: em euros (5,99 · 11,99 · 19,99 por mês; anual = 10 meses) e, no Brasil, em reais (19,90 · 39,90 · 69,90)",
-  "pass": true,
-  "info": "{\"ok\":true,\"planos\":[{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"ia\":20,\"perfis\":1,\"precos\":{\"EUR\":{\"mes\":599,\"ano\":5990},\"BRL\":{\"mes\":1990,\"ano\":19900}}},{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"ia\":1"
- },
- {
-  "p": "Planos",
-  "name": "Teste acabado, mas sem o Stripe ligado: continua com tudo (não há como pagar ainda)",
-  "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"semCobranca\":1,\"testeAcabou\":1795718853212}"
- },
- {
-  "p": "Planos",
-  "name": "Com o Stripe ligado e o teste acabado: fica sem plano (a app pede para escolher)",
-  "pass": true,
-  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795718853212}"
- },
- {
-  "p": "Planos",
-  "name": "Sem plano: não cria perfis (402)",
-  "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"O teu teste grátis acabou: escolhe um plano em Planos para continuar.\",\"code\":\"plano\",\"_st\":402}"
- },
- {
-  "p": "Planos",
-  "name": "Sem plano: a IA do servidor responde 402 com a mensagem para escolher um plano",
+  "p": "Atualização",
+  "name": "iPhone: app instalada (a funcionar com a cópia guardada)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Assinar: abre o pagamento do Stripe com o preço do Essencial (5,99 € por mês), a conta e o regresso ao Prumo",
+  "p": "Atualização",
+  "name": "iPhone: ao abrir a app depois de publicar, abre logo a versão nova",
   "pass": true,
-  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"045625fad43f87c990ca8c46\",\"success_url\":\"http://localhost:8623/Oceanum/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8623/Oceanum/#planos\",\"allow_promotion_codes\":\"true\",\"locale\":\"pt\",\"adaptive_pricing[enabled]\":\"true\",\"line_items[0][q"
+  "info": "versão 9.1"
  },
  {
-  "p": "Planos",
-  "name": "A página de pagamento tem o nome e as cores do Prumo (mesmo que a conta do Stripe tenha outro nome)",
+  "p": "Atualização",
+  "name": "iPhone: ao voltar à app, atualiza-se sozinha em poucos segundos",
   "pass": true,
-  "info": "{\"branding_settings[display_name]\":\"Prumo\",\"branding_settings[background_color]\":\"#F6EFE4\",\"branding_settings[button_color]\":\"#8E1B2A\",\"branding_settings[border_style]\":\"rounded\",\"branding_settings[font_family]\":\"lora\"}"
+  "info": "1.7 s"
  },
  {
-  "p": "Planos",
-  "name": "Se o Stripe ainda não conhecer a marca na página de pagamento, abre o pagamento sem ela",
-  "pass": true,
-  "info": "{\"ok\":true,\"url\":\"https://checkout.stripe.test/c/cs_test_6c0a68caa46e\",\"_st\":200}"
- },
- {
-  "p": "Planos",
-  "name": "Sem métodos de pagamento ativos no Stripe (conta em análise): mensagem clara em português, sem o erro técnico",
-  "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"Os pagamentos ainda estão a ser ativados. Tenta daqui a pouco; o teu teste grátis continua.\",\"code\":\"pagamentos\",\"_st\":503}"
- },
- {
-  "p": "Planos",
-  "name": "Sempre em euros: quem usa dólares paga 119,90 € por ano convertidos pelo Stripe na hora (Adaptive Pricing); a libra também fica em euros",
-  "pass": true,
-  "info": "{\"u\":\"eur\",\"g\":\"eur\"}"
- },
- {
-  "p": "Planos",
-  "name": "Antes de pagar, \"confirmar\" não dá o plano",
+  "p": "Atualização",
+  "name": "iPhone: sem erros de JavaScript (atualização)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Ninguém usa o pagamento de outra conta",
+  "p": "Atualização",
+  "name": "Android tel: app instalada (a funcionar com a cópia guardada)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Depois de pagar: plano Essencial (mensal), com a data da renovação",
+  "p": "Atualização",
+  "name": "Android tel: ao abrir a app depois de publicar, abre logo a versão nova",
   "pass": true,
-  "info": "{\"id\":\"essencial\",\"n\":\"Essencial\",\"lvl\":1,\"perfis\":1,\"ia\":20,\"cobranca\":true,\"pago\":1,\"ate\":1798310853000,\"ciclo\":\"mes\",\"cur\":\"EUR\",\"cliente\":1}"
+  "info": "versão 9.1"
  },
  {
-  "p": "Planos",
-  "name": "Essencial: só 1 perfil (o segundo pede outro plano)",
+  "p": "Atualização",
+  "name": "Android tel: ao voltar à app, atualiza-se sozinha em poucos segundos",
   "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"O teu plano (Essencial) tem até 1 perfil. Para mais, muda de plano em Planos.\",\"code\":\"maximo\",\"_st\":402}"
+  "info": "2.0 s"
  },
  {
-  "p": "Planos",
-  "name": "Essencial: ler fotos com a IA pede o plano Avançado (402)",
+  "p": "Atualização",
+  "name": "Android tel: sem erros de JavaScript (atualização)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Com assinatura, não abre outra: muda-se de plano",
+  "p": "Atualização",
+  "name": "Tablet horiz: app instalada (a funcionar com a cópia guardada)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Mudar para o Avançado anual: o Stripe recebe o novo preço (119,90 €/ano) e a conta passa a Avançado",
+  "p": "Atualização",
+  "name": "Tablet horiz: ao abrir a app depois de publicar, abre logo a versão nova",
   "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1798310853000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+  "info": "versão 9.1"
  },
  {
-  "p": "Planos",
-  "name": "Cancelar: continua até ao fim do período pago (sem renovar)",
+  "p": "Atualização",
+  "name": "Tablet horiz: ao voltar à app, atualiza-se sozinha em poucos segundos",
   "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"cancelar\":1,\"ate\":1798310853000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
+  "info": "3.9 s"
  },
  {
-  "p": "Planos",
-  "name": "Retomar a assinatura",
+  "p": "Atualização",
+  "name": "Tablet horiz: sem erros de JavaScript (atualização)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Gerir pagamento e faturas: abre o portal do Stripe",
+  "p": "Atualização",
+  "name": "Tablet vert: app instalada (a funcionar com a cópia guardada)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "O Prumo configura sozinho o portal do cliente (uma vez): cartão, faturas com NIF e cancelar no fim do período",
+  "p": "Atualização",
+  "name": "Tablet vert: ao abrir a app depois de publicar, abre logo a versão nova",
   "pass": true,
-  "info": "{\"n\":1,\"conf\":[\"bpc_0da957108f56\",\"bpc_0da957108f56\"]}"
+  "info": "versão 9.1"
  },
  {
-  "p": "Planos",
-  "name": "Pagou (em reais, no Brasil) e fechou a página antes de voltar ao Prumo: o plano ativa sozinho na próxima vez que abre a app",
+  "p": "Atualização",
+  "name": "Tablet vert: ao voltar à app, atualiza-se sozinha em poucos segundos",
   "pass": true,
-  "info": "{\"a\":0,\"b\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"pago\":1,\"ate\":1798310853000,\"ciclo\":\"mes\",\"cur\":\"BRL\",\"cliente\":1}}"
+  "info": "1.8 s"
  },
  {
-  "p": "Planos",
-  "name": "Administração: tem sempre tudo",
+  "p": "Atualização",
+  "name": "Tablet vert: sem erros de JavaScript (atualização)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Administração oferece o Completo por 30 dias (a pessoa vê o aviso)",
-  "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1798310853803}"
- },
- {
-  "p": "Planos",
-  "name": "Admin: a lista de contas mostra o plano de cada uma",
-  "pass": true,
-  "info": "{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":true,\"oferta\":1,\"ate\":1798310853803}"
- },
- {
-  "p": "Planos",
-  "name": "Admin: com uma oferta, mostra também o que seria no Automático (aqui, sem plano)",
-  "pass": true,
-  "info": "{\"o\":{\"id\":\"completo\",\"ate\":1798310853803},\"a\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795718853475}}"
- },
- {
-  "p": "Planos",
-  "name": "Admin › Por fazer: sabe se o Stripe e o e-mail estão ligados (sem mostrar as chaves)",
-  "pass": true,
-  "info": "{\"strava\":true,\"oura\":true,\"revenuecat\":true,\"stripe\":true,\"stripeTeste\":true,\"mail\":\"\",\"mailDe\":false}"
- },
- {
-  "p": "Planos",
-  "name": "Admin dá o Essencial grátis a quem paga o Avançado: fica com o maior (Avançado pago)",
-  "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1798310853000,\"ciclo\":\"ano\",\"cur\":\"EUR\",\"cliente\":1}"
- },
- {
-  "p": "Planos",
-  "name": "Admin: \"Automático\" tira a escolha (volta ao teste e ao que a pessoa assinou)",
-  "pass": true,
-  "info": "{\"ok\":true,\"email\":\"teo89eec465@teste.pt\",\"plano\":\"\",\"dias\":0,\"agora\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"pago\":1,\"ate\":1798310853000,\"ciclo\":\"ano\",\"cur\":\"EUR\""
- },
- {
-  "p": "Planos",
-  "name": "Só a administração escolhe planos",
+  "p": "Atualização",
+  "name": "Computador: app instalada (a funcionar com a cópia guardada)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "A conta de administração não muda de plano (tem sempre tudo)",
+  "p": "Atualização",
+  "name": "Computador: ao abrir a app depois de publicar, abre logo a versão nova",
+  "pass": true,
+  "info": "versão 9.1"
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: ao voltar à app, atualiza-se sozinha em poucos segundos",
+  "pass": true,
+  "info": "2.0 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "Computador: sem erros de JavaScript (atualização)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Admin cria um código de desconto (LANCAMENTO20, −20% no 1.º pagamento): cupão e código promocional no Stripe",
+  "p": "Atualização",
+  "name": "atualização: mesmo com um ficheiro da instalação a falhar, a versão nova entra",
   "pass": true,
-  "info": "{\"c\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"max\":0,\"expira\":0,\"novos\":false,\"promo\":\"promo_a368cf66d7d0\",\"coupon\":\"cp_c938f526d188\",\"criado\":1795718853822,\"ativo\":true},\"cp\":{\"percent_off\":\"20\",\"duration\":\"once\",\"name\":\"LANCAMENTO20 · 20%\",\"metadata[app]\":\"prumo\",\"metada"
+  "info": "ficou 9.3"
  },
  {
-  "p": "Planos",
-  "name": "Não deixa criar dois códigos ativos com o mesmo nome",
+  "p": "Atualização",
+  "name": "atualização: se recarregar não chegar, limpa a cópia guardada e entra a nova",
+  "pass": true,
+  "info": "ficou 9.4"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: os dados ficam depois de atualizar",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Código só para o Completo, durante 3 meses, com limite de usos, validade e só para a primeira assinatura",
-  "pass": true,
-  "info": "{\"cp\":{\"percent_off\":\"50\",\"duration\":\"repeating\",\"name\":\"SO-COMPLETO · 50%\",\"metadata[app]\":\"prumo\",\"metadata[code]\":\"SO-COMPLETO\",\"duration_in_months\":\"3\",\"applies_to[products][0]\":\"prod_159d0006d5dd\"},\"pc\":{\"promotion[type]\":\"coupon\",\"promotion[coupon]\":\"cp_ed175f537b8c\",\"code\":\"SO-COMPLETO\",\"meta"
- },
- {
-  "p": "Planos",
-  "name": "Admin › Códigos: a lista com os usos e o estado",
-  "pass": true,
-  "info": "{\"ok\":true,\"cobranca\":true,\"cupoes\":[{\"code\":\"SO-COMPLETO\",\"pct\":50,\"dur\":\"repeating\",\"meses\":3,\"planos\":[\"completo\"],\"max\":2,\"expira\":4102444799000,\"novos\":true,\"promo\":\"promo_b7f180826f4d\",\"coupon\":"
- },
- {
-  "p": "Planos",
-  "name": "A pessoa valida o código (sem distinguir maiúsculas): −20%; um código que não existe é recusado",
-  "pass": true,
-  "info": "{\"vz\":{\"ok\":true,\"cupao\":{\"code\":\"LANCAMENTO20\",\"pct\":20,\"dur\":\"once\",\"meses\":0,\"planos\":[],\"promo\":\"promo_a368cf66d7d0\",\"novos\":false},\"_st\":200},\"b\":404}"
- },
- {
-  "p": "Planos",
-  "name": "Assinar com o código: o pagamento abre com o desconto já aplicado",
-  "pass": true,
-  "info": "{\"mode\":\"subscription\",\"client_reference_id\":\"96b9946c9d1eb67748a99a02\",\"success_url\":\"http://localhost:8623/#planos?ok={CHECKOUT_SESSION_ID}\",\"cancel_url\":\"http://localhost:8623/#planos\",\"locale\":\"pt"
- },
- {
-  "p": "Planos",
-  "name": "Um código só do Completo não serve para o Essencial",
-  "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"Esse código não serve para o plano Essencial.\",\"code\":\"cupao\",\"_st\":400}"
- },
- {
-  "p": "Planos",
-  "name": "Código que já chegou ao limite de usos deixa de valer",
+  "p": "Atualização",
+  "name": "atualização: com um formulário a meio, espera (não perde o que escreves)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Admin desativa o código: deixa de valer",
+  "p": "Atualização",
+  "name": "atualização: depois de fechar o formulário, atualiza sozinha",
+  "pass": true,
+  "info": "ficou 9.5"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: com rede muito lenta, abre em menos de 5 s com a cópia guardada",
+  "pass": true,
+  "info": "4.5 s"
+ },
+ {
+  "p": "Atualização",
+  "name": "atualização: sem internet a app abre na mesma",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Só a administração cria códigos",
+  "p": "Intro",
+  "name": "Ao abrir com versão nova: primeiro a atualização (sem a intro por baixo), depois de atualizar a intro aparece, e depois o app",
+  "pass": true,
+  "info": "{\"v1\":{\"upd\":true,\"intro\":false},\"v2\":{\"intro\":true,\"st\":\"playing\"}}"
+ },
+ {
+  "p": "Intro",
+  "name": "Atualização a meio do uso (a intro já tinha acabado): a versão nova abre sem repetir a intro",
+  "pass": true,
+  "info": "{\"intro\":false,\"st\":\"off\"}"
+ },
+ {
+  "p": "Intro",
+  "name": "Com som: a intro abre em \"Toca para começar\", parada no primeiro instante, e o ecrã do código espera",
+  "pass": true,
+  "info": "{\"st\":\"waiting\",\"wait\":true,\"tap\":\"flex\",\"t\":0,\"code\":false}"
+ },
+ {
+  "p": "Intro",
+  "name": "O toque começa a intro com a música (o ficheiro som/intro.mp3, inteiro na memória antes de tocar, para não parar a meio no telemóvel) e a animação a andar",
+  "pass": true,
+  "info": "{\"src\":\"intro.mp3\",\"blob\":true,\"st\":\"playing\",\"au\":\"running\",\"wait\":false,\"t\":417}"
+ },
+ {
+  "p": "Intro",
+  "name": "A música continua a tocar com a imagem (não só o começo): passado o selo, o som vai no mesmo ponto",
+  "pass": true,
+  "info": "{\"au\":\"running\",\"at\":3.39,\"vis\":3.39}"
+ },
+ {
+  "p": "Intro",
+  "name": "A música vai com o app (som/intro.mp3, guardado para funcionar sem internet)",
+  "pass": true,
+  "info": "{\"s\":200,\"n\":129089}"
+ },
+ {
+  "p": "Intro",
+  "name": "A música: audível no altifalante do telemóvel do princípio ao fim, silêncio antes do golpe, impacto por cima, sem cortes e silêncio no fim",
+  "pass": true,
+  "info": "{\"len\":6.4,\"pk\":0.965,\"bad\":0,\"bed\":[-18,-19,-17,-18,-17,-15,-17,-17,-13],\"gap\":-30,\"imp\":-14,\"before\":-16,\"end\":-117}"
+ },
+ {
+  "p": "Intro",
+  "name": "No fim (com som), o ecrã de carregamento e depois o código",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Chave real no lugar da de teste: a assinatura de teste deixa de contar e o novo pagamento não usa o cliente de teste",
-  "pass": true,
-  "info": "{\"p\":{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795718853212},\"f\":\"teo89eec465@teste.pt\"}"
- },
- {
-  "p": "Planos",
-  "name": "Página Planos: o teu plano (Avançado), os 3 planos com preço (11,99 € por mês) e \"Subir para o Completo\"",
-  "pass": true,
-  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano Avançado Plano Avançado (anual). Renova a 26 de dezembro de 2026. Gerir pagamento e faturas Cancelar a assinatura Mensal Anual · 2 meses grátis Os preços são em euros, com impostos incluídos. Se pagares com u"
- },
- {
-  "p": "Planos",
-  "name": "Preços só em euros (sem escolher moeda) e a nota da conversão",
+  "p": "Intro",
+  "name": "Em \"Toca para começar\", o botão Saltar salta tudo (sem som)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Página Planos: no anual mostra o preço do ano (119,90 €) e quanto dá por mês",
+  "p": "Intro",
+  "name": "Ao abrir, a intro aparece por cima de tudo (e o ecrã do código ainda não)",
+  "pass": true,
+  "info": "{\"intro\":true,\"on\":true,\"code\":false,\"st\":\"playing\",\"n\":83}"
+ },
+ {
+  "p": "Intro",
+  "name": "O selo da intro fica ao centro, maior do que no ecrã de carregamento",
+  "pass": true,
+  "info": "{\"cx\":197,\"w\":144,\"vw\":393}"
+ },
+ {
+  "p": "Intro",
+  "name": "Quando a intro acaba, vê-se o ecrã de carregamento de sempre (com a sua entrada), ainda sem o código",
+  "pass": true,
+  "info": "{\"intro\":false,\"after\":true,\"code\":false,\"sp\":true,\"img\":true}"
+ },
+ {
+  "p": "Intro",
+  "name": "Depois do ecrã de carregamento abre o ecrã do código",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Avançado: as paletas exclusivas (Ouro, Aurora, Sakura) aparecem com \"Completo\" e não se aplicam",
-  "pass": true,
-  "info": "{\"n\":9,\"lk\":true,\"cur\":\"selo\",\"x\":true}"
- },
- {
-  "p": "Planos",
-  "name": "Avançado: os Relatórios (impostos) têm cadeado e levam aos planos",
+  "p": "Intro",
+  "name": "Recarregar na mesma sessão não repete a intro",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Avançado: a Universidade abre (sem cadeado)",
+  "p": "Intro",
+  "name": "Definições: \"Intro ao abrir\" com Sempre, Uma vez por dia e Nunca, \"Com som\"/\"Sem som\" e \"Ver a intro agora\"",
+  "pass": true,
+  "info": "{\"n\":3,\"on\":\"sempre\",\"ver\":true,\"som\":2}"
+ },
+ {
+  "p": "Intro",
+  "name": "\"Ver a intro agora\" mostra-a por cima do app já com som (veio de um toque) e um toque salta-a",
+  "pass": true,
+  "info": "[true,true]"
+ },
+ {
+  "p": "Intro",
+  "name": "Escolher \"Nunca\" fica guardado",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Planos: o Avançado aparece como o mais popular; Cozinha, Mundo, Dominus, Fotos, Futebol, importar extratos e a escala abrem no Avançado e têm cadeado no Essencial (as Tarefas não)",
-  "pass": true,
-  "info": "{\"pop\":true,\"av\":[],\"es\":[\"cozinha\",\"mundo\",\"dominus\",\"fotos\",\"futebol\",\"financas.banco\",\"trabalho.foto\"],\"tar\":true}"
- },
- {
-  "p": "Planos",
-  "name": "Teste acabado e sem plano: as páginas mostram \"Escolhe o teu plano\" com os planos (os dados ficam)",
+  "p": "Intro",
+  "name": "sem erros JS (intro)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Planos: \"Tens um código de desconto?\" aplica o código e mostra o preço com desconto (−30% no 1.º mês) em cada plano",
+  "p": "Intro",
+  "name": "Um toque salta a intro e o app segue (ecrã de carregamento, depois o código)",
   "pass": true,
-  "info": "{\"on\":true,\"old\":3,\"t\":\"−30% no 1.º mês\"}"
+  "info": "3250 ms"
  },
  {
-  "p": "Planos",
-  "name": "Assinar na app com o código aplicado: o pagamento leva o desconto",
+  "p": "Intro",
+  "name": "Com \"Nunca\", abre direto no ecrã de carregamento",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Planos",
-  "name": "Quem usa reais (Brasil): preço próprio em reais (R$ 19,90 o Essencial), sem conversão do euro, e a nota de que a cobrança é em reais",
-  "pass": true,
-  "info": "Sistema PLANOS Escolhe o plano do teu Prumo. Mudas ou cancelas quando quiseres. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Mensal Anual · 2 meses grátis Preços em reais para o Brasil, com impostos incluídos. A cobrança é em reais. Tens um código de desconto? Aplicar Essencial R$ 19,90 /mês Tarefas, hábitos, rotina por hora"
- },
- {
-  "p": "Planos",
-  "name": "Assinar no Brasil: cobra R$ 19,90 em reais (sem conversão do euro), com a página de pagamento em português do Brasil",
-  "pass": true,
-  "info": "{\"c\":\"brl\",\"v\":\"1990\",\"l\":\"pt-BR\"}"
- },
- {
-  "p": "Planos",
-  "name": "Modo loja (app Android/iPhone): os planos aparecem sem botões de compra, sem código de desconto e sem preços, com a nota \"não há compras\"",
-  "pass": true,
-  "info": "{\"on\":true,\"cls\":true,\"buy\":0,\"cup\":false,\"portal\":false,\"cards\":3,\"t\":\"Sistema PLANOS Os planos do Prumo e o que cada um inclui. O teu plano sem plano O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados. Nesta versão da app não\"}"
- },
- {
-  "p": "Planos",
-  "name": "Modo loja desliga com ?loja=nao (no site volta a haver compras)",
+  "p": "Intro",
+  "name": "Com \"reduzir movimento\" no aparelho, a intro não aparece",
   "pass": true,
   "info": ""
- },
- {
-  "p": "Planos",
-  "name": "Sem plano: as Definições abrem (para exportar os dados ou apagar a conta)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Planos",
-  "name": "Admin › Códigos de desconto: o formulário e a lista com os códigos criados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Planos",
-  "name": "Admin › Contas: cada conta mostra o plano (Completo grátis)",
-  "pass": true,
-  "info": "Completo grátis"
- },
- {
-  "p": "Planos",
-  "name": "Admin › Por fazer: os passos do Stripe em modo de teste e do e-mail (Brevo)",
-  "pass": true,
-  "info": "Por fazer 3 pendentes pendente Chave Google da IA para todos (GEMINI_API_KEY) Para a IA das contas ler fotos (comida, exames, escala) e PDFs. 1) aistudio.google.com/apikey → Create API key. 2) Vercel → projeto prumo → Settings → Environment Variables → nome GEMINI_API_KEY, valor a chave, Production."
- },
- {
-  "p": "Planos",
-  "name": "Admin › conta: escolher o plano (Automático, Essencial, Avançado ou Completo grátis), com o atual marcado e sem pedir a senha",
-  "pass": true,
-  "info": "{\"n\":4,\"chk\":\"completo\",\"senha\":false}"
- },
- {
-  "p": "Planos",
-  "name": "Admin › conta: \"Avançado grátis\" durante 3 meses fica na conta da pessoa",
-  "pass": true,
-  "info": "{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":true,\"oferta\":1,\"ate\":1803494889323}"
- },
- {
-  "p": "Planos",
-  "name": "Admin › conta: \"Automático\" devolve a conta ao teste e à assinatura (aqui o teste já acabou: sem plano)",
-  "pass": true,
-  "info": "{\"id\":\"\",\"n\":\"\",\"lvl\":0,\"perfis\":0,\"ia\":0,\"cobranca\":true,\"acabou\":1,\"testeAcabou\":1795718853475}"
- },
- {
-  "p": "Planos",
-  "name": "Completo: as paletas exclusivas (Ouro, Aurora, Sakura) aplicam-se",
-  "pass": true,
-  "info": "ouro,aurora,sakura"
- },
- {
-  "p": "Planos",
-  "name": "Relatórios (Completo): o quadro \"Resumo do mês no teu e-mail\" com o botão para ligar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Planos",
-  "name": "sem erros de JavaScript (Admin › planos)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Planos",
-  "name": "Atendimento prioritário: os pedidos de quem tem o Completo chegam marcados como prioritários ao Admin (o Avançado não)",
-  "pass": true,
-  "info": "{\"w\":1,\"a\":0}"
- },
- {
-  "p": "Planos",
-  "name": "Resumo do mês por e-mail: só no plano Completo (o Avançado recebe 402)",
-  "pass": true,
-  "info": "{\"ok\":false,\"msg\":\"O resumo do mês por e-mail é do plano Completo.\",\"code\":\"plano\",\"_st\":402}"
- },
- {
-  "p": "Planos",
-  "name": "Conta nova em teste grátis: ao entrar aparecem os planos, com os dias grátis e \"Continuar com o teste grátis\"",
-  "pass": true,
-  "info": "{\"h\":\"#planos\",\"t\":\"Bem-vindo ao Prumo\\n\\nTens 14 dias grátis do plano Completo, sem cartão. Escolhe já o teu plano aqui em baixo ou continua com o teste: avisamos-te antes de acabar e os teus dados ficam sempre guardados.\\n\\nContinuar com "
- },
- {
-  "p": "Planos",
-  "name": "\"Continuar com o teste grátis\" vai para o Painel e os planos não voltam a abrir sozinhos",
-  "pass": true,
-  "info": "#visao"
  }
 ]
