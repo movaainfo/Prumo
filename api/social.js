@@ -295,6 +295,10 @@ const semana = (t = Date.now()) => { const L = lisboa(t), [y, m, d] = L.d.split(
   const fim = t + ((6 - dow) * 1440 + (1440 - L.min)) * 6e4; return { k: y0 + '-S' + String(w).padStart(2, '0'), dias, fim, ini: fim - 7 * 864e5 }; };
 const desafioDe = async S => { const fx = DESAFIOS.find(x => x.k === process.env.NAUTILO_DESAFIO); if (fx) return fx; const h = N.crypto.createHmac('sha256', await N.master()).update('desafio:' + S.k).digest(), ant = semana(S.ini - 3600e3);
   const h2 = N.crypto.createHmac('sha256', await N.master()).update('desafio:' + ant.k).digest(), i0 = h2.readUInt32BE(0) % DESAFIOS.length; let i = h.readUInt32BE(0) % DESAFIOS.length; if (i === i0) i = (i + 1) % DESAFIOS.length; return DESAFIOS[i]; };
+// v3.82: a administração vê os desafios das próximas semanas (para conferir antes de irem ao ar)
+OPS.adminDesafios = async c => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const out = []; let t = Date.now();
+  for (let k = 0; k < 6; k++) { const S = semana(t), D = await desafioDe(S); out.push({ sem: S.k, ini: S.dias[0], fim: S.dias[6], desafio: { k: D.k, t: D.t, d: D.d, alvo: D.alvo, un: D.un } }); t = S.fim + 3 * 3600e3; }
+  return { semanas: out }; };
 const acertosSemana = async (S, eu) => { let n = 0; for (const d of S.dias) { const v = (await ler('so/h/' + d, null)).v; if (!v || !v.fechado) continue; const g = (await ler('so/hg/' + d + '/' + eu, null)).v; if (g && g.mal === v.mal) n++; } return n; };
 const dsPub = (id, o, eu) => ({ id, nome: o.nome, user: o.user || '', av: o.av || 0, v: o.v || 0, at: o.at || 0, eu: id === eu });
 const dsVer = async (c, S, D) => { const o = (await ler('so/ds/' + S.k, { T: {} })).v || { T: {} }, T = o.T || {};
@@ -313,7 +317,11 @@ OPS.desafioProg = async (c, b, req) => { const S = semana(), D = await desafioDe
   return dsVer(c, S, D); };
 OPS.desafioSair = async (c, b) => { const S = semana(); await mudar('so/ds/' + S.k, { T: {} }, x => { if (!(x.T || {})[c.eu]) return false; delete x.T[c.eu]; }); return OPS.desafio(c, b); };
 // v3.79: a classe de fã (calculada no app pelo que cada um vê) aparece no ranking e no perfil de anime
-const CLASSES = ['Guerreiro Shōnen', 'Estratega do Mistério', 'Coração Shōjo', 'Explorador de Mundos', 'Alma Tranquila', 'Caçador de Sombras', 'Atleta de Sofá', 'Piloto de Mecha'], NIVEIS = ['Novato', 'Iniciado', 'Veterano', 'Lenda', 'Mítico'];
+// v3.82: as classes novas (9 + 12 híbridas) e os ranks de E a SSS; as antigas continuam a valer para quem ainda não atualizou
+const CLASSES = ['Lâmina do Trovão Carmesim', 'Arquiteto das Sombras', 'Guardião da Flor Eterna', 'Andarilho dos Mil Mundos', 'Monge da Brisa Serena', 'Exorcista da Lua Negra', 'Ás do Último Segundo', 'Piloto do Núcleo Celeste', 'Maestro da Alma Ardente',
+    'Cavaleiro do Dragão Ancestral', 'Estratega da Guerra Silenciosa', 'Caçador de Demónios Escarlate', 'Detetive do Oculto', 'Herdeiro do Reino Perdido', 'Coração de Primavera', 'Oráculo do Tempo Partido', 'Prodígio Imparável', 'Comandante da Frota Estelar', 'Aventureiro da Estrada Tranquila', 'Herói de Folga', 'Amante da Noite Eterna',
+    'Guerreiro Shōnen', 'Estratega do Mistério', 'Coração Shōjo', 'Explorador de Mundos', 'Alma Tranquila', 'Caçador de Sombras', 'Atleta de Sofá', 'Piloto de Mecha'],
+  NIVEIS = ['Rank E', 'Rank D', 'Rank C', 'Rank B', 'Rank A', 'Rank S', 'Rank SS', 'Rank SSS', 'Novato', 'Iniciado', 'Veterano', 'Lenda', 'Mítico'];
 OPS.classe = async (c, b) => { const nome = String(b.nome || ''), nivel = String(b.nivel || ''); if (!CLASSES.includes(nome) || !NIVEIS.includes(nivel)) throw N.err('classe', 'Classe desconhecida.', 400);
   const cl = nome + ' · ' + nivel; await perfil(c.eu, c.nome); await mudar(P(c.eu), null, p => { if (!p) return false; p.classe = cl; });
   await mudar(PTS, {}, T => { if (!T[c.eu]) return false; T[c.eu].cl = cl; }).catch(() => { }); return { classe: cl }; };
