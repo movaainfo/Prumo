@@ -350,7 +350,7 @@ const anVer = async (c, S, L) => { const o = (await ler('so/ands/' + S.k, { T: {
 const anGravar = async (c, S, L, vc) => { const srv = {}; for (const x of L) if (ANSRV.has(x.m) && srv[x.m] == null) srv[x.m] = x.m === 'pac' ? await acertosSemana(S, c.eu) : await pdiasSemana(S, c.eu);
   const nov = []; let v0 = null;
   await mudar('so/ands/' + S.k, { T: {} }, o => { o.T = o.T || {}; let e = o.T[c.eu], mudou = false;
-    const val = x => ANSRV.has(x.m) ? srv[x.m] : vc && vc[x.k] != null ? Math.max(0, Math.min(x.alvo * 3, Math.round(+vc[x.k] || 0))) : e && e.v ? e.v[x.k] || 0 : 0;
+    const ant = x => e && e.v ? e.v[x.k] || 0 : 0, val = x => ANSRV.has(x.m) ? srv[x.m] : vc && vc[x.k] != null ? Math.max(ant(x), Math.max(0, Math.min(x.alvo * 3, Math.round(+vc[x.k] || 0)))) : ant(x); // o progresso do app nunca desce (um aparelho atrasado não apaga o que outro mandou)
     if (!e) { if (!L.some(x => val(x) > 0)) return false; e = o.T[c.eu] = { nome: c.nome, v: {}, ok: {}, pts: 0, at: 0 }; mudou = true; }
     nov.length = 0;
     for (const x of L) { const v = val(x); if (e.v[x.k] !== v) { e.v[x.k] = v; mudou = true; } if (v >= x.alvo && !e.ok[x.k]) { e.ok[x.k] = Date.now(); e.pts = (e.pts || 0) + x.pts; e.at = Date.now(); nov.push(x.pts); mudou = true; } }

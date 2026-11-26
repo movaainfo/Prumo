@@ -49,7 +49,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && S.
 /* ---------- desenho ---------- */
 const falta = t => { const m = Math.max(0, Math.round((t - Date.now()) / 6e4)), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60); return d ? d + (d === 1 ? ' dia' : ' dias') + (h ? ' e ' + h + ' h' : '') : h ? h + ' h' : m + ' min'; };
 const NV = ['C', 'B', 'S'];
-const desafio = (D, x, mini) => { const v = valor(D, x), ok = !!(D.eu.ok || {})[x.k], p = Math.min(100, Math.round(v / x.alvo * 100));
+const desafio = (D, x, mini) => { const ok = !!(D.eu.ok || {})[x.k], v = ok ? Math.max(valor(D, x), x.alvo) : valor(D, x), p = Math.min(100, Math.round(v / x.alvo * 100));
   return `<article class="ad-c ad-n${x.n}${ok ? ' ok' : ''}"><div class="ad-top"><span class="ad-rk" aria-label="Nível ${esc(x.nv)}">${NV[x.n]}</span><span class="ad-nv">${esc(x.nv)}</span><span class="ad-pts">+${x.pts}</span></div>
     <span class="ad-ic">${UI.ic(ok ? 'check' : x.ic)}</span><h3>${esc(x.t)}</h3>${mini ? '' : `<p>${esc(x.d)}</p>`}
     <div class="ad-pr"><b>${Math.min(v, x.alvo)}<small>/${x.alvo} ${esc(x.un)}</small></b><span class="ad-b" role="progressbar" aria-valuemin="0" aria-valuemax="${x.alvo}" aria-valuenow="${Math.min(v, x.alvo)}"><i style="width:${p}%"></i></span></div>
