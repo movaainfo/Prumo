@@ -4892,18 +4892,18 @@ async function fundoTests(b) { cur = 'Fundo'; console.log('\n=== Ecrã de entrad
   ok('Escolher "Rio de Janeiro" muda o fundo na hora', await E(p, () => OS.Fundo.get() === 'rio' && !document.getElementById('fdSheet') && document.querySelectorAll('.lk-scene svg path').length > 5 && document.querySelectorAll('.lk-scene svg rect').length > 10));
   // v3.80: as estações em cada fundo (a ria do farol congela no inverno e descongela na primavera) e pré-visualizar cada estação
   await p.tap('#lkBg'); await p.waitForSelector('#fdSheet'); await sleep(200);
-  const e0 = await E(p, () => [...document.querySelectorAll('#fdSheet .fd-e')].map(b => b.textContent + (b.classList.contains('on') ? '*' : '')));
+  const e0 = await E(p, () => [...document.querySelectorAll('#fdSheet .fd-e')].map(b => b.dataset.fdest + (b.classList.contains('on') ? '*' : '') + (b.querySelector('small') ? '+' : '')));
   await p.tap('#fdSheet [data-fdest=inverno]'); await sleep(300);
   const e1 = await E(p, () => { const q = (svg, sel) => { const d = document.createElement('div'); d.innerHTML = svg; return d.querySelector(sel); }, dt = new Date(), F = (k) => OS.Fundo.model(k, 400, 300, { id: 'tt' + k, date: dt }); dt.setHours(12, 0, 0, 0);
     const inv = OS.Scene.svg(400, 300, { id: 'ti', date: dt }), par = F('paris'), rio = F('rio'); localStorage.setItem('nau:est', 'primavera'); const pri = OS.Scene.svg(400, 300, { id: 'tp', date: dt }), pri2 = F('paris');
     localStorage.setItem('nau:est', 'outono'); const out = OS.Scene.svg(400, 300, { id: 'to', date: dt }); localStorage.setItem('nau:est', 'verao'); const ver = OS.Scene.svg(400, 300, { id: 'tv', date: dt }), giz = F('gize'); localStorage.setItem('nau:est', 'inverno');
     return { gelo: !!q(inv, '.sc-gelo > rect') && !q(inv, '.sc-glint') && !!q(inv, '.sc-preso'), neveFarol: !!q(inv, '.sc-est circle'), placas: !!q(pri, '.sc-gelo > path') && !q(pri, '.sc-gelo > rect') && !!q(pri, '.sc-glint'),
       folhas: !!q(out, '.sc-est ellipse') && !q(out, '.sc-gelo'), calor: !!q(ver, '.sc-est .fd-shim') && !q(ver, '.sc-gelo'), parisNeve: !!q(par, '.sc-est circle'), rioSemNeve: !q(rio, '.sc-est circle'), petalas: !!q(pri2, '.sc-est ellipse'), gizeCalor: !!q(giz, '.sc-est .fd-shim'),
-      est: localStorage.getItem('nau:est'), on: (document.querySelector('#fdSheet .fd-e.on') || {}).textContent }; });
-  await p.tap('#fdSheet [data-fdest=""]'); await sleep(300); const e2 = await E(p, () => ({ est: localStorage.getItem('nau:est'), on: (document.querySelector('#fdSheet .fd-e.on') || {}).textContent || '' }));
+      est: localStorage.getItem('nau:est'), on: (document.querySelector('#fdSheet .fd-e.on') || {}).dataset.fdest }; });
+  await p.tap('#fdSheet [data-fdest=""]'); await sleep(300); const e2 = await E(p, () => ({ est: localStorage.getItem('nau:est'), on: (document.querySelector('#fdSheet .fd-e.on') || {}).dataset.fdest }));
   await p.tap('#fdSheet [data-fd=x]'); await sleep(200);
   ok('Fundos com as estações: no inverno a ria do farol congela (o barco fica preso, sem reflexos) e neva; na primavera o gelo parte-se em placas; folhas no outono; calor no verão; neve em Paris mas não no Rio; pré-visualizar cada estação e voltar a "Agora"',
-    e0.length === 5 && /^Agora \((Inverno|Primavera|Verão|Outono)\)\*$/.test(e0[0]) && e1.gelo && e1.neveFarol && e1.placas && e1.folhas && e1.calor && e1.parisNeve && e1.rioSemNeve && e1.petalas && e1.gizeCalor && e1.est === 'inverno' && e1.on === 'Inverno' && e2.est === null && /^Agora/.test(e2.on),
+    e0.join(',') === '*+,inverno,primavera,verao,outono' && e1.gelo && e1.neveFarol && e1.placas && e1.folhas && e1.calor && e1.parisNeve && e1.rioSemNeve && e1.petalas && e1.gizeCalor && e1.est === 'inverno' && e1.on === 'inverno' && e2.est === null && e2.on === '',
     JSON.stringify({ e0, e1, e2 }).slice(0, 500));
   const png = 'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGNk+M/AwMDAxMDAwMDAAAAhGQIBvZqP7QAAAABJRU5ErkJggg==';
   await p.tap('#lkBg'); await p.waitForSelector('#fdSheet'); await p.setInputFiles('#fdSheet .fd-file', { name: 'praia.png', mimeType: 'image/png', buffer: Buffer.from(png, 'base64') }); await sleep(1200);
