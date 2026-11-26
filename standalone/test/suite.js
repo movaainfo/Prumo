@@ -53,7 +53,7 @@ const YTMOCK = { calls: [] }; process.env.YT_FEED = 'http://localhost:' + PORT +
 // ESPN simulada para o placar mundial do servidor (api/futebol?vivo=1): todos os jogos do dia e o resumo de cada um (assistências)
 const WMOCK = { ev: [], sum: {}, calls: [] }; process.env.ESPN_SITE = 'http://localhost:' + PORT + '/espnmock/'; process.env.ESPN_VIVO_MS = '1';
 // MyAnimeList (Jikan) simulado para o servidor (api/anime)
-const JKMOCK = { calls: [], down: false }; process.env.JIKAN_BASE = 'http://localhost:' + PORT + '/jkmock/';
+const JKMOCK = { calls: [], down: false }; process.env.JIKAN_BASE = 'http://localhost:' + PORT + '/jkmock/'; process.env.NAUTILO_OL_BASE = 'http://localhost:' + PORT + '/olmock/';
 // v3.73: moderação das conversas simulada (a IA barra "idiota completo")
 const MODM = { n: 0 }; process.env.NAUTILO_MOD_MOCK = 'http://localhost:' + PORT + '/modmock';
 // v3.74: a IA das fotos simulada (categorias, descrição e o que apagar)
@@ -147,6 +147,9 @@ const srv = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/atom+xml' }); return res.end(`<?xml version="1.0"?><feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">${ent('mlhrMomnts1', 'MELHORES MOMENTOS: FLAMENGO X PALMEIRAS', 1)}${ent('cazeAoVivo1', 'AO VIVO: FLAMENGO X PALMEIRAS | BRASILEIRÃO 2026 | 37ª RODADA', 2)}${ent('outroJogo01', 'AO VIVO: GRÊMIO X INTERNACIONAL | BRASILEIRÃO 2026', 2)}${ent('tenisMesa01', 'TÊNIS DE MESA (SOM AMBIENTE) &amp; MAIS', 3)}</feed>`); }
   if (u.pathname.startsWith('/pgmock/') || u.pathname.startsWith('/ebmock/')) { let body = ''; req.on('data', c => body += c); req.on('end', () => BKM.handle(req, res, u, body)); return; }
   // v3.78: o AniList simulado (quando o MyAnimeList não responde, o Pursuit usa-o)
+  // v3.79: o Open Library simulado (nomeados dos Prémios dos livros e o Top livros)
+  if (u.pathname === '/olmock/search.json') { const q = u.query.q || '', s = (q.match(/subject:(\S+)/) || [])[1] || 'x'; res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ docs: Array.from({ length: 8 }, (_, i) => ({ key: '/works/OL' + s.replace(/\W/g, '') + i + 'W', title: 'Livro ' + s + ' ' + i, author_name: ['Autor ' + i], cover_i: 100 + i, first_publish_year: 2025, ratings_average: 4.5 - i / 10 })) })); }
   if (u.pathname === '/almock') { let body = ''; req.on('data', c => body += c); req.on('end', () => { let j = {}; try { j = JSON.parse(body || '{}'); } catch (e) { } const q = j.query || '', v = j.variables || {}; res.writeHead(200, { 'Content-Type': 'application/json' });
       if (/POPULARITY_DESC/.test(q)) { const media = Array.from({ length: 12 }, (_, i) => ({ idMal: 8800 + i, genres: i === 2 ? ['Ecchi'] : ['Action'] })); return res.end(JSON.stringify({ data: { Page: { media } } })); }
       if (/Media\(idMal/.test(q) && v.m) { const Media = { idMal: +v.m, title: { romaji: 'Hagane no Renkin ' + v.m, english: 'Steel Alchemist ' + v.m }, format: 'TV', episodes: 51, season: 'FALL', seasonYear: 2003, source: 'MANGA', genres: ['Action', 'Drama'], tags: [{ name: 'Alchemy', rank: 90, isMediaSpoiler: false }], studios: { nodes: [{ name: 'Studio Bones' }] }, coverImage: { extraLarge: 'https://s4.anilist.co/x.jpg' } };
@@ -205,7 +208,7 @@ const srv = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify(body)); }
   if (u.pathname.startsWith('/rssmock/')) { const q = u.query.q || '', n = (k) => `<item><title>${k} - Jornal Teste</title><link>https://exemplo.pt/${encodeURIComponent(k)}</link><pubDate>${new Date().toUTCString()}</pubDate><source url="https://exemplo.pt">Jornal Teste</source><description></description></item>`;
     res.writeHead(200, { 'Content-Type': 'application/rss+xml' }); return res.end(`<?xml version="1.0"?><rss><channel>${[1, 2, 3].map(i => n((q ? 'Pesquisa ' : 'Notícia da conta ') + i)).join('')}</channel></rss>`); }
-  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua|futebol|banco|anime|push|backup|saude|liga|revenuecat|premios|social)$/);
+  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua|futebol|banco|anime|push|backup|saude|liga|revenuecat|premios|social|livros)$/);
   if (am) { const fn = ACCAPI(am[1]); if (!fn) { res.writeHead(404); return res.end(); } req.query = u.query;
     if (process.env.DEBUGAPI) { const t0 = Date.now(), id = Math.random().toString(36).slice(2, 7); let op = ''; const oe = req.emit; req.emit = function (ev, ch) { if (ev === 'data' && !op) op = String(ch).slice(0, 40); return oe.apply(this, arguments); };
       INFL.set(id, () => am[1] + ' ' + op + ' ' + (Date.now() - t0) + 'ms'); res.on('finish', () => { INFL.delete(id); if (Date.now() - t0 > 2500) console.log('    [api lenta]', am[1], op, Date.now() - t0, 'ms'); }); }
@@ -707,6 +710,47 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'premios-cerimonia.png') }); } catch (e) { } }
     ok('Prémios na app: separador Prémios com os resultados, a cerimónia ("e o prémio vai para…") e os vencedores oficiais da Crunchyroll e de outras premiações', ui.hero && ui.cer && ui.crun && ui.res >= 8 && /E o prémio vai para/.test(cer) && /Anime do Ano/i.test(cer) && /66,7|66.7/.test(cer), JSON.stringify({ ui, cer: cer.slice(0, 200) }));
     await k.ctx.close(); }
+  // v3.80: Prémios Prumo dos livros (nomeados do Open Library por género, um voto por categoria) + Leituras › Para ti e Top livros
+  { const lv = (body, tok) => api('livros', body, tok ? { tok } : {});
+    const v0 = await lv({ op: 'ver' }), g = await lv({ op: 'admin', acao: 'gerar' }, ad.token), cats = g.cats || [], ano = cats.find(c => c.k === 'ano'), fic = cats.find(c => c.k === 'ficcao');
+    const R1 = await reg(), R2 = await reg(), R3 = await reg(), naoAdm = await lv({ op: 'admin', acao: 'abrir' }, R1.tok);
+    await lv({ op: 'admin', acao: 'fechar' }, ad.token); const cedo = await lv({ op: 'votar', cat: 'ano', id: ano ? ano.nom[0].id : 'x' }, R1.tok);
+    await lv({ op: 'admin', acao: 'abrir' }, ad.token); const X = ano.nom[0].id, Y = ano.nom[1].id;
+    await lv({ op: 'votar', cat: 'ano', id: X }, R1.tok); const mud = await lv({ op: 'votar', cat: 'ano', id: Y }, R1.tok); await lv({ op: 'votar', cat: 'ano', id: Y }, R2.tok); await lv({ op: 'votar', cat: 'ano', id: X }, R3.tok);
+    const falso = await lv({ op: 'votar', cat: 'ano', id: 'OL999W' }, R2.tok), semConta = await lv({ op: 'votar', cat: 'ano', id: X });
+    ok('Prémios dos livros: nomeados por género gerados do Open Library (Livro do Ano, Ficção, Fantasia, Clássico…), só a administração muda a fase, um voto por categoria que se pode mudar, sem conta não vota',
+      v0.pronto && v0.cats.length >= 3 && g._st === 200 && cats.length >= 8 && !!fic && fic.nom.length === 6 && /fiction/.test(fic.nom[0].t) && ano.nom.length >= 6 && naoAdm._st === 403 && cedo._st === 400 && mud.meus && mud.meus.ano === Y && falso._st === 400 && semConta._st === 401,
+      JSON.stringify({ v0: v0.pronto, g: g._st, cats: cats.map(c => c.k + ':' + c.nom.length), naoAdm: naoAdm._st, cedo: cedo._st, falso: falso._st, sem: semConta._st }).slice(0, 400));
+    const sR = { 'nau:s': JSON.stringify({ t: R1.tok, e: R1.email, n: '', perfis: [{ id: R1.pid, nome: 'A', lk: HASH }] }), 'nau:p': JSON.stringify(R1.pid), 'nau:pd': JSON.stringify(R1.pid), 'nau:owner': JSON.stringify(R1.email) };
+    const k = await newPage(b, PROFILES[0], sR); await k.p.addInitScript(() => { window.__noOnb = 1; window.__noAsk = 1; });
+    const OLQ = []; await k.ctx.route(/openlibrary\.org\/(search|trending)/, rt => { const u = new URL(rt.request().url()); OLQ.push(u.pathname + ' ' + (u.searchParams.get('q') || '')); const q = u.searchParams.get('q') || 'trend', nm = /author:"([^"]+)"/.exec(q);
+      rt.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ [/trending/.test(u.pathname) ? 'works' : 'docs']: Array.from({ length: 10 }, (_, i) => ({ key: '/works/OLT' + q.replace(/\W/g, '').slice(0, 12) + i + 'W', title: (nm ? 'Obra de ' + nm[1] : /trending/.test(u.pathname) ? 'Tendência' : 'Top ' + q.replace('subject:', '')) + ' ' + (i + 1), author_name: [nm ? nm[1] : 'Autor ' + i], cover_i: 0, first_publish_year: 2020, ratings_average: 4.9 - i / 10 })) }) }); });
+    await k.p.goto(BASE); await unlock(k.p).catch(() => { }); await sleep(600);
+    await E(k.p, () => { location.hash = 'leituras.premios'; }); await k.p.waitForSelector('.lm-nb', { timeout: 8000 }).catch(() => { }); await sleep(300);
+    const p0 = await E(k.p, () => ({ tabs: [...document.querySelectorAll('#view .tabs a, #view .tabs button')].map(x => x.textContent.trim()).join('|'), nb: document.querySelectorAll('.lm-nb').length, on: document.querySelectorAll('.lm-nb.on').length, dis: document.querySelectorAll('.lm-nb:disabled').length, h: (document.querySelector('.lm-ph') || {}).innerText || '' }));
+    await k.p.click('.lm-pc:nth-of-type(3) .lm-nb >> nth=2').catch(() => { }); await sleep(900);
+    const v1 = await lv({ op: 'ver' }, R1.tok), p1 = await E(k.p, () => document.querySelectorAll('.lm-nb.on').length);
+    if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'livros-premios.png') }); } catch (e) { } }
+    ok('Leituras › Prémios: separadores Para ti, Top livros e Prémios; a votação aberta mostra os nomeados com o meu voto marcado e tocar noutro livro vota nessa categoria',
+      /Para ti\|Top livros\|Prémios/.test(p0.tabs) && p0.nb >= 30 && p0.on === 1 && p0.dis === 0 && /Votação aberta/.test(p0.h) && /3 pessoas votaram/.test(p0.h) && Object.keys(v1.meus || {}).length === 2 && p1 === 2, JSON.stringify({ p0, meus: v1.meus, p1 }).slice(0, 400));
+    await lv({ op: 'admin', acao: 'revelar' }, ad.token); await k.p.reload(); await unlock(k.p).catch(() => { }); await sleep(500); await E(k.p, () => { location.hash = 'leituras.premios'; }); await k.p.waitForSelector('.lm-res', { timeout: 8000 }).catch(() => { }); await sleep(200);
+    const p2 = await E(k.p, () => { const w = document.querySelector('.lm-res li.win'); return { w: w ? w.innerText.replace(/\s+/g, ' ') : '', n: document.querySelectorAll('.lm-res li.win').length }; });
+    ok('Prémios dos livros revelados: vencedor de cada categoria em destaque, com a percentagem (Livro do Ano: 66,7%)', p2.n >= 8 && /66,7%/.test(p2.w), JSON.stringify(p2));
+    await E(k.p, () => { location.hash = 'leituras.parati'; }); await sleep(900); await E(k.p, () => OS.request()); await sleep(400);
+    const t0 = await E(k.p, () => document.getElementById('view').innerText);
+    await E(k.p, () => { OS.add('books', { title: 'Livro Lido Teste', author: 'Autora Teste', status: 'Lido', rating: 5, cats: ['Fantasia'], added: OS.U.today() }); location.hash = 'leituras'; setTimeout(() => { location.hash = 'leituras.parati'; }, 50); }); await sleep(1300); await E(k.p, () => OS.request()); await sleep(400);
+    const t1 = await E(k.p, () => document.getElementById('view').innerText);
+    await k.p.click('#view .lm-c [data-act=lmAdd] >> nth=0').catch(() => { }); await sleep(300);
+    const add = await E(k.p, () => { const b = OS.all('books').find(x => /^Obra de Autora Teste/.test(x.title)); return b ? b.status + '|' + b.author + '|' + b.olid : ''; });
+    if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'livros-parati.png') }); } catch (e) { } }
+    ok('Leituras › Para ti: sem livros lidos mostra os mais lidos e os clássicos; com um lido (5 estrelas) recomenda pela autora e pelo género, e "Quero ler" põe na estante',
+      /Mais lidos esta semana/.test(t0) && /Clássicos para começar/.test(t0) && /Porque gostaste de Autora Teste/.test(t1) && /Mais de Fantasia/.test(t1) && /Obra de Autora Teste 1/.test(t1) && /^Quero ler\|Autora Teste\|\/works\//.test(add) && OLQ.some(q => /subject:fantasy/.test(q)),
+      JSON.stringify({ t0: t0.slice(0, 160), t1: t1.slice(0, 220), add, q: OLQ.slice(-4) }).slice(0, 600));
+    await E(k.p, () => { location.hash = 'leituras.tops'; }); await sleep(900); await E(k.p, () => OS.request()); await sleep(300);
+    await k.p.click('#view [data-act=lmGen][data-v=horror]').catch(() => { }); await sleep(900); await E(k.p, () => OS.request()); await sleep(300);
+    const tp = await E(k.p, () => ({ li: document.querySelectorAll('.lm-top li').length, h: (document.querySelector('.lm-top') || {}).innerText || '', t: (document.querySelector('#view .lm-r h3') || {}).textContent || '', on: (document.querySelector('#view .lm-g .chip.on') || {}).textContent || '' }));
+    ok('Leituras › Top livros: os 10 mais bem avaliados de cada género (escolher Terror mostra o Top Terror) e os mais lidos da semana', tp.li === 10 && /Top Terror/.test(tp.t) && tp.on === 'Terror' && /Top horror 1/.test(tp.h) && /★ 4,9/.test(tp.h), JSON.stringify(tp).slice(0, 300));
+    await k.ctx.close(); }
   // v3.73: clãs, amigos e conversas (cada mensagem passa pelas regras e pela IA), denúncias, Hunter e ranking de animes; a parceria na tela de Jogos
   { const so = (R, body) => api('social', Object.assign({ p: R.pid }, body), { tok: R.tok }), E0 = process.env.NAUTILO_HUNTER_ABRE, F0 = process.env.NAUTILO_HUNTER_FECHA;
     const A1 = await reg(), B1 = await reg(), C1 = await reg(), ADM = { tok: ad.token, pid: adp.perfil && adp.perfil.id };
@@ -806,6 +850,14 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     if (process.env.SHOTS) { try { await k.p.screenshot({ path: path.join(process.env.SHOTS, 'fotos.png'), fullPage: true }); } catch (e) { } }
     ok('Fotos: escolher várias fotos lê-as no aparelho e junta as iguais e as parecidas (fica a mais nítida), encontra as desfocadas, as escuras e as capturas de ecrã antigas, e mostra quanto se pode libertar',
       fo.n === 6 && fo.iguais >= 1 && fo.grupos.some(g => /^(iguais|parecidas):[23]$/.test(g)) && fo.desf.includes('IMG_0003.jpg') && fo.esc.includes('IMG_0004.jpg') && fo.cap.some(x => /Screenshot/.test(x)) && fo.sugUI, JSON.stringify(fo).slice(0, 500));
+    // v3.79: vídeos (o 1.º segundo para a miniatura, a duração e ver aqui mesmo), tirar foto e gravar vídeo pelo Prumo, partilhar da Galeria para o Prumo
+    { const vd = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), c = document.createElement('canvas'); c.width = 320; c.height = 240; const g = c.getContext('2d'); let file = null;
+        try { const st = c.captureStream(25), rec = new MediaRecorder(st, { mimeType: 'video/webm' }), parts = []; rec.ondataavailable = e => parts.push(e.data); rec.start(); let f = 0; const iv = setInterval(() => { g.fillStyle = `hsl(${f * 25},70%,50%)`; g.fillRect(0, 0, 320, 240); f++; }, 40); await w(2200); rec.stop(); clearInterval(iv); await w(500); file = new File(parts, 'VID_0001.webm', { type: 'video/webm', lastModified: Date.now() }); } catch (e) { }
+        if (file) { await OS.Fotos.importar([file]); await w(500); } const v = OS.Fotos.estado.L.find(x => x.nome === 'VID_0001.webm');
+        g.fillStyle = '#3a6'; g.fillRect(0, 0, 320, 240); const b2 = await new Promise(r => c.toBlob(r, 'image/jpeg', .9)), cc = await caches.open('prumo-partilha'); await cc.put(new Request(location.origin + '/__partilha/1'), new Response(b2, { headers: { 'content-type': 'image/jpeg', 'x-nome': 'partilhada.jpg', 'x-data': String(Date.now()) } }));
+        document.dispatchEvent(new Event('visibilitychange')); await w(2500); location.hash = 'fotos'; await w(800);
+        return { gravou: !!file, v: v ? { video: v.video, th: !!v.th } : null, sh: OS.Fotos.estado.L.some(x => x.nome === 'partilhada.jpg'), auto: /Para ficar automático/.test(document.getElementById('view').innerText), cam: document.querySelectorAll('#view input[capture]').length, vid: !!document.querySelector('#view .fo-c.vid .fo-dur') }; });
+      ok('Fotos e vídeos: os vídeos entram com a miniatura e a duração; Tirar foto e Gravar vídeo pelo Prumo; o que se partilha da Galeria entra sozinho; o cartão explica como fica automático', (!vd.gravou || (vd.v && vd.v.video === 1 && vd.v.th && vd.vid)) && vd.sh && vd.auto && vd.cam === 2, JSON.stringify(vd)); }
     // a IA separa por categorias; pesquisar; ver uma foto e apagá-la; apagar um grupo de iguais
     await k.p.evaluate(() => { localStorage.setItem('oc_fotos_ia', '1'); try { OS.U.ls.set('oc_fotos_ia', 1); } catch (e) { } window.confirm = () => true; });
     const ia = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)); await OS.act.foIA(); await w(300); const A0 = OS.Fotos.analisar(); return { cats: Object.keys(A0.cats), comIA: OS.Fotos.estado.L.filter(x => x.ia).length, sugIA: OS.Fotos.estado.L.filter(x => x.ia && x.ia.apagar).length }; });
@@ -1512,6 +1564,31 @@ async function sharedTests(b) {
     await E(p, s => { OS.ui.qbS = s; OS.ui.dpS = s; location.hash = 'universidade.questoes'; }, uS); await sleep(400); await p.click('#view form[data-form=qbAI] button'); await sleep(900); await p.click('#view [data-act=qbPlay][data-m=all]'); await sleep(300); await p.click('#view .qz-o >> nth=0'); await p.click('#view [data-act=qzDone]'); await sleep(300); await E(p, () => OS.act.qzX());
     await E(p, () => { location.hash = 'universidade.desempenho'; }); await sleep(400); await p.click('#view [data-act=dpAI]'); await sleep(900);
     ok('universidade: banco de questões, desempenho e recomendações', await E(p, s => OS.all('qbank').some(q => q.subject === s && q.n === 1) && OS.all('qlog').length >= 1 && /Onde tens de melhorar/.test(document.querySelector('#view').textContent) && /Diagnóstico de teste/.test(document.querySelector('#view').textContent), uS));
+    // v3.80: Universidade › Calendário escolar (o .ics lê-se no telemóvel; foto/PDF/Excel passam pela IA)
+    { const dd = n => { const x = new Date(Date.now() + n * 864e5); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); }, ic = n => dd(n).replace(/-/g, '');
+      let ucP = []; await ctx.route(/generativelanguage/, rt => { const b = rt.request().postData() || ''; if (!/calendário escolar \(académico\)/.test(b)) return rt.fallback(); ucP.push(b);
+        const o = { itens: [{ d: dd(3), f: dd(10), t: 'Semana de receção', k: 'evento' }, { d: dd(-5), f: dd(20), t: 'Aulas do 1.º semestre', k: 'aulas' }, { d: '2026-13-45', t: 'Data estragada' }, { d: dd(30), t: 'Feriado municipal', k: 'feriado' }, { d: dd(30), t: 'Feriado municipal' }, { d: dd(40), f: dd(35), t: 'Exames finais' }], nome: 'Universidade Teste 2026/2027' };
+        rt.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(o) }] } }] }) }); });
+      await E(p, () => { location.hash = 'universidade.calendario'; }); await sleep(500);
+      const nav = await E(p, () => { const t = [...document.querySelectorAll('#view .ug-t')].find(x => !x.hidden); return { tabs: t ? t.innerText.replace(/\s+/g, ' ') : '', on: (document.querySelector('#view .ug-b.on') || {}).textContent || '', inp: !!document.getElementById('ucFile') }; });
+      const ICS = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART;VALUE=DATE:${ic(2)}\r\nSUMMARY:Início das aulas\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nDTSTART;VALUE=DATE:${ic(25)}\r\nDTEND;VALUE=DATE:${ic(39)}\r\nSUMMARY:Férias de Natal\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nDTSTART:${ic(45)}T090000Z\r\nDTEND:${ic(60)}T180000Z\r\nSUMMARY:Época de exames\\, normal\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n`;
+      await p.setInputFiles('#ucFile', { name: 'calendario.ics', mimeType: 'text/calendar', buffer: Buffer.from(ICS) }); await p.click('#view [data-act=ucLer]'); await sleep(700);
+      const pv = await E(p, () => ({ n: document.querySelectorAll('.uc-prev .uc-l li').length, t: (document.querySelector('.uc-prev') || {}).innerText || '' }));
+      await p.click('.uc-prev li:has-text("Início das aulas") input[type=checkbox]'); await sleep(200); await p.click('#view [data-act=ucGuardar]'); await sleep(400);
+      const c1 = await E(p, () => OS.one('unical').L.map(x => x.t + '|' + x.d + '|' + x.f + '|' + x.k));
+      ok('calendário escolar: o .ics lê-se sem IA (períodos com o último dia certo, tipos pelo título), vês antes de guardar e tiras o que não queres; separador em Universidade › O curso',
+        /Calendário escolar/.test(nav.tabs) && /O curso/.test(nav.on) && nav.inp && pv.n === 3 && !ucP.length && /Encontrei 3 datas/.test(pv.t) && c1.length === 2 && c1[0] === 'Férias de Natal|' + dd(25) + '|' + dd(38) + '|ferias' && c1[1] === 'Época de exames, normal|' + dd(45) + '|' + dd(60) + '|exames',
+        JSON.stringify({ nav, pv: pv.n, ai: ucP.length, c1 }).slice(0, 500));
+      const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
+      await p.setInputFiles('#ucFile', { name: 'calendario.png', mimeType: 'image/png', buffer: PNG }); await p.click('#view [data-act=ucLer]'); await sleep(1500);
+      const pv2 = await E(p, () => ({ n: document.querySelectorAll('.uc-prev .uc-l li').length, t: (document.querySelector('.uc-prev') || {}).innerText || '', sub: !!(document.getElementById('ucSubst') || {}).checked }));
+      await p.click('#view [data-act=ucGuardar]'); await sleep(400); await E(p, () => { location.hash = 'universidade'; }); await sleep(500);
+      const c2 = await E(p, () => ({ L: OS.one('unical').L.map(x => x.t + '|' + x.k), fonte: OS.one('unical').fonte, strip: (document.querySelector('#view .uc-strip') || {}).innerText || '', cal: OS.Cal.items(OS.U.addDays(OS.U.today(), 5), OS.U.addDays(OS.U.today(), 5)).filter(x => x.src === 'uni').map(x => x.title) }));
+      if (process.env.SHOTS) { try { await E(p, () => { location.hash = 'universidade.calendario'; }); await sleep(400); await p.screenshot({ path: path.join(process.env.SHOTS, 'uni-calendario.png') }); } catch (e) { } }
+      ok('calendário escolar por foto: a IA tira as datas (sem datas estragadas nem repetidas), substitui o anterior, aparece no Calendário do Prumo e na Universidade ("Agora: aulas até… · A seguir: … daqui a 3 dias")',
+        ucP.length === 1 && /inline_data/.test(ucP[0]) && pv2.n === 4 && pv2.sub && /Universidade Teste 2026\/2027/.test(pv2.t) && c2.L.length === 4 && c2.L.includes('Feriado municipal|feriado') && c2.L.includes('Exames finais|exames') && !c2.L.some(x => /Férias de Natal/.test(x))
+        && c2.fonte === 'Universidade Teste 2026/2027' && /Agora: Aulas do 1\.º semestre até/.test(c2.strip) && /A seguir: Semana de receção daqui a 3 dias/.test(c2.strip) && c2.cal.includes('Semana de receção') && c2.cal.includes('Aulas do 1.º semestre'),
+        JSON.stringify({ ai: ucP.length, pv2: { n: pv2.n, sub: pv2.sub }, c2 }).slice(0, 600)); }
     // DESPORTO
     await E(p, () => { location.hash = 'desporto.novo'; }); await sleep(400); await p.click('#view .sp-pc[data-k=padel]'); await sleep(400);
     await p.click('#view [data-act=spTab][data-v=registar]'); await sleep(300); await p.selectOption('#view form[data-form=spLog] select[name=res]', 'Vitória'); await p.fill('#view input[name=st_setsG]', '2'); await p.click('#view form[data-form=spLog] button.pri'); await sleep(400);
@@ -3403,7 +3480,12 @@ async function pushTests(b) { cur = 'Notificações'; console.log('\n=== Notific
       ok('Festas no telemóvel: Feliz Ano Novo à meia-noite (uma vez), Feliz Natal, Páscoa às 9h e os parabéns no dia de anos; na China no Ano Novo Lunar (não a 1 de janeiro); no Irão o Nowruz no equinócio e sem Natal',
         ano.some(x => /^Feliz Ano Novo! \| Que 2027/.test(x) && /Ana\.$/.test(x)) && ano2 === 0 && nat.some(x => /^Feliz Natal!/.test(x)) && pas.some(x => /^Feliz Páscoa!/.test(x)) && anv.some(x => /^Parabéns, Ana!/.test(x))
         && cn.some(x => /Ano Novo Lunar/.test(x)) && !cn1.some(x => /Ano Novo/.test(x)) && ir.some(x => /Nowruz/.test(x)) && !irN.some(x => /Natal/.test(x)), JSON.stringify({ ano, ano2, nat, pas, anv, cn, cn1, ir, irN }).slice(0, 700));
-      await api({ op: 'dados', d: { fe: { pais: 'PT', anos: '', nome: '' } } }); }
+      await api({ op: 'dados', d: { fe: { pais: 'PT', anos: '', nome: '' } } });
+      // v3.79: a validade da despensa: às 9h, o que vence hoje, amanhã e daqui a 3 dias (uma vez por dia)
+      await api({ op: 'dados', d: { desp: [{ n: 'Leite', e: '2027-03-10' }, { n: 'Iogurte', e: '2027-03-11' }, { n: 'Queijo', e: '2027-03-13' }, { n: 'Arroz', e: '2027-06-01' }] } });
+      INB.length = 0; await P.cron({ force: true, now: Date.parse('2027-03-10T09:03:00Z') }); const d1 = INB.filter(m => m.u === '#cozinha').map(m => m.t + ' | ' + m.b); INB.length = 0; await P.cron({ force: true, now: Date.parse('2027-03-10T09:06:00Z') }); const d2 = INB.filter(m => m.u === '#cozinha').length;
+      ok('Despensa no telemóvel: às 9h avisa o que vence hoje, amanhã e daqui a 3 dias (uma vez por dia)', d1.length === 1 && /vencer hoje/.test(d1[0]) && /Hoje: Leite/.test(d1[0]) && /Amanhã: Iogurte/.test(d1[0]) && /Em 3 dias: Queijo/.test(d1[0]) && !/Arroz/.test(d1[0]) && d2 === 0, JSON.stringify({ d1, d2 }));
+      await api({ op: 'dados', d: { desp: [] } }); }
     // v3.79: na app: a contagem de 10 segundos pára o app, os fogos e volta; o Ano Novo de cada calendário; o dia de anos com o bolo
     { const cal = await E(p, () => { const o = OS.one('profile').country; OS.setOne('profile', { country: 'CN' }); const cn = OS.Festas.proximo(Date.parse('2026-11-26T12:00:00Z')); OS.setOne('profile', { country: 'PT' }); const pt = OS.Festas.proximo(Date.parse('2026-11-26T12:00:00Z')); OS.setOne('profile', { country: o || 'PT' });
         const f = t => { const d = new Date(t); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }; return { cn: f(cn.t), cnc: cn.c, pt: f(pt.t), ptc: pt.c }; });
@@ -3412,7 +3494,8 @@ async function pushTests(b) { cur = 'Notificações'; console.log('\n=== Notific
       const c2 = await E(p, () => (document.querySelector('#fxAno .fx-msg') || {}).textContent || ''); await sleep(7500); const c3 = await E(p, () => !document.getElementById('fxAno') && !document.body.classList.contains('fx-parado'));
       const hoje = await E(p, () => { const d = new Date(); return String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); });
       await E(p, h => { OS.setOne('me', { birth: '1999-' + h }); location.hash = 'visao'; OS.request(); }, hoje); await sleep(1500);
-      const an = await E(p, () => ({ bolo: !!document.querySelector('#view .fx-anos'), t: (document.querySelector('#view .fx-anos') || {}).innerText || '', festa: document.body.classList.contains('fx-dia-anos') }));
+      const an = await E(p, () => ({ bolo: !!document.querySelector('#view .fx-anos'), t: (document.querySelector('#view .fx-anos') || {}).innerText || '', festa: document.body.classList.contains('fx-dia-anos'), passos: (document.querySelector('#view .ps-c') || {}).innerText || '', ok: [...document.querySelectorAll('#view .ps-l li.ok')].length }));
+      ok('Primeiros passos: o Painel mostra o que falta configurar (com o que já está feito riscado) e conta os passos', /Falta|Faltam/.test(an.passos) && /data de nascimento/i.test(an.passos) && an.ok >= 1, JSON.stringify({ p: an.passos.slice(0, 200), ok: an.ok }));
       await p.click('#view [data-act=fxSoprar]').catch(() => { }); await sleep(500); const sop = await E(p, () => !!document.querySelector('#view .fx-bolo.soprado'));
       await E(p, () => { OS.setOne('me', { birth: '' }); location.hash = 'definicoes'; });
       ok('Ano Novo na app: a contagem de 10 segundos pára o app, rebentam os fogos com Feliz Ano Novo e o app volta; China no Ano Novo Lunar, Portugal a 1 de janeiro; no dia de anos o Painel faz a festa (bolo com velas para soprar)',
@@ -5568,11 +5651,18 @@ async function introTests(b) { cur = 'Intro'; console.log('\n=== Intro ao abrir:
   const mk = async (o = {}, init) => { const c = await RAWCTX(Object.assign({}, PROFILES[0].o, o)); const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.addInitScript(([H, init]) => { if (!localStorage.getItem('__seeded')) { localStorage.setItem('os2:one~security', JSON.stringify({ data: { hash: H } })); Object.entries(init || {}).forEach(([k, v]) => localStorage.setItem(k, v)); localStorage.setItem('__seeded', '1'); } window.__noOnb = 1; }, [HASH, init]); return { c, p, errs }; };
   const MUDO = { 'nau:introSom': 'false' };
-  // v3.77: a intro aparece uma vez só, mesmo quando chega uma atualização a seguir (no telemóvel aparecia antes e depois de atualizar)
-  { const { c, p } = await mk({}, MUDO); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(900); const v1 = await E(p, () => !!document.getElementById('intro'));
-    await E(p, () => window.OceanumUpdating && window.OceanumUpdating()); await p.waitForEvent('load', { timeout: 8000 }).catch(() => { }); await sleep(1200);
+  // v3.79: ao abrir com versão nova: primeiro a atualização, depois a intro (uma vez), depois o app; a meio do uso, a intro não se repete
+  { const { c, p } = await mk({}, MUDO); let fake = 1; await c.route(/vchk=/, async rt => { if (fake) { fake = 0; return rt.fulfill({ status: 200, contentType: 'text/html', body: '<script>OCEANUM_VERSION={"v": "9.99"}</script>' }); } return rt.continue(); });
+    await p.goto(BASE, { waitUntil: 'domcontentloaded' }); let v1 = { upd: false, intro: false };
+    for (let i = 0; i < 40; i++) { const x = await p.evaluate(() => ({ upd: !!document.querySelector('.upd'), intro: !!document.getElementById('intro') })).catch(() => null); if (!x) { v1.upd = v1.upd || 'recarregou'; break; } v1.intro = v1.intro || x.intro; if (x.upd) { v1.upd = true; break; } await sleep(100); }
+    await p.waitForEvent('load', { timeout: 8000 }).catch(() => { }); await sleep(2200);
     const v2 = await E(p, () => ({ intro: !!document.getElementById('intro'), st: window.PrumoIntro ? PrumoIntro.state() : '' }));
-    ok('Intro uma vez só: depois de uma atualização a versão nova não a mostra outra vez', v1 && !v2.intro && v2.st !== 'playing' && v2.st !== 'waiting', JSON.stringify({ v1, v2 })); await c.close(); }
+    ok('Ao abrir com versão nova: primeiro a atualização (sem a intro por baixo), depois de atualizar a intro aparece, e depois o app', (v1.upd === true && !v1.intro || v1.upd === 'recarregou') && (v2.intro || /playing|waiting|done/.test(v2.st)), JSON.stringify({ v1, v2 }));
+    await c.close(); }
+  { const { c, p } = await mk({}, MUDO); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await p.waitForFunction(() => window.PrumoIntro && !/playing|waiting/.test(PrumoIntro.state()) && !document.getElementById('intro'), null, { timeout: 15000 }).catch(() => { }); await sleep(400);
+    await E(p, () => window.OceanumUpdating && window.OceanumUpdating()); await p.waitForEvent('load', { timeout: 8000 }).catch(() => { }); await sleep(3000);
+    const v3 = await E(p, () => ({ intro: !!document.getElementById('intro'), st: window.PrumoIntro ? PrumoIntro.state() : '' }));
+    ok('Atualização a meio do uso (a intro já tinha acabado): a versão nova abre sem repetir a intro', !v3.intro && v3.st !== 'playing' && v3.st !== 'waiting', JSON.stringify(v3)); await c.close(); }
   // 0) com som (por omissão): sem um toque o áudio não pode começar (iPhone, e este navegador de teste) → "Toca para começar"; o toque começa imagem e som juntos
   let { c, p, errs } = await mk(); await p.goto(BASE, { waitUntil: 'domcontentloaded' }); await sleep(1100);
   const w = await E(p, () => { const el = document.getElementById('intro'), a = el && el.querySelector('.in-selo').getAnimations()[0]; return { st: PrumoIntro.state(), wait: el && el.classList.contains('in-wait'), tap: el && getComputedStyle(el.querySelector('.in-tapt')).display, t: a ? Math.round(a.currentTime) : -1, code: !!document.getElementById('lkCode') }; });

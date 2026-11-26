@@ -149,5 +149,7 @@ const I = window.PrumoIntro = {
 // ao abrir: uma vez por sessão (as recargas da mesma sessão não repetem), conforme a escolha
 const auto = () => { if (window.__noIntro || calm() || ssGet('nau:introOk')) return false; const m = mode(); if (m === 'nunca' || (m === 'dia' && lsGet('nau:introDia') === day())) return false; return true; };
 try { getParts(); } catch (e) { }
-if (auto()) { ssSet('nau:introOk', '1'); lsSet('nau:introDia', day()); I.play(); }
+// v3.79: primeiro a atualização (se houver), depois a intro: espera pela verificação de versão do arranque (no máximo 2,6 s)
+if (auto()) { const go = () => { if (!auto()) return; ssSet('nau:introOk', '1'); lsSet('nau:introDia', day()); I.play(); }, B = window.OceanumBoot;
+  if (B && B.then) { let f = false; const fire = () => { if (f) return; f = true; go(); }; B.then(sv => { if (!sv) fire(); }, fire); setTimeout(() => { if (!f && !document.querySelector('.upd')) fire(); }, 2600); } else go(); }
 })();

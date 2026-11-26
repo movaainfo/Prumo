@@ -54,3 +54,11 @@
 .fo-why{display:flex;gap:6px;align-items:flex-start;margin:0;font-size:13.5px;color:var(--tx2,var(--tx))}.fo-why .ic{width:16px;height:16px;flex:none;margin-top:2px}
 @media (max-width:720px){.fo-res{grid-template-columns:1fr}.fo-v{grid-template-columns:1fr}.fo-vi{max-height:62vh}.fo-vi img{max-height:62vh}.fo-g{grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}.fo-sug,.fo-cats{grid-template-columns:repeat(2,1fr)}}
 @media (prefers-reduced-motion:reduce){.fo-m img,.fo-prog span{transition:none}}
+/* v3.79 · vídeos e o cartão "Para ficar automático" */
+.fo-c.vid img{filter:saturate(1.05)}
+.fo-dur{position:absolute;left:6px;bottom:6px;display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:6px;background:rgba(0,0,0,.72);color:#fff;font:700 11px/1.2 var(--sans);font-style:normal}.fo-dur .ic{width:11px;height:11px}
+.fo-vi video{display:block;max-width:100%;max-height:70vh;margin:0 auto;border-radius:12px;background:#000}
+.fo-auto{margin:16px 0 0;padding:14px 16px;border-radius:16px;background:var(--pn);border:1px dashed var(--line2,var(--line))}
+.fo-auto h4{display:flex;align-items:center;gap:6px;margin:0 0 8px;font-size:14.5px}.fo-auto h4 .ic{width:16px;height:16px}
+.fo-auto ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.45;color:var(--tx2,var(--tx))}
+.fo-esc{position:relative}

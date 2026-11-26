@@ -33,8 +33,10 @@ const bg = () => { try { const sp = document.getElementById('splash'), c = sp &&
 const seal = extra => { const s = selo(); return `<div class="seal">${s ? `<img src="${s}" alt="" aria-hidden="true">` : ''}${extra || ''}</div>`; };
 const show = html => { style(); const el = document.createElement('div'); el.className = 'upd'; el.setAttribute('role', 'status'); el.style.background = bg(); el.innerHTML = `<div class="in">${html}</div>`; document.body.appendChild(el); return el; };
 // 1) chegou uma versão nova enquanto a app estava aberta: ecrã curto e recarrega
-// v3.77: a intro aparece uma vez só: se já passou antes de a atualização chegar, a versão nova não a repete (no telemóvel aparecia duas vezes)
-const reloadNew = () => location.reload();
+// v3.79: a ordem ao abrir é: atualização (se houver) → intro → app. Se a atualização chegar com a intro ainda a meio (ou à espera do toque),
+// a intro volta a aparecer inteira depois de atualizar; se a intro já tinha acabado (atualização a meio do uso), não se repete.
+const introAMeio = () => { try { const I = window.PrumoIntro; return !!(I && I.state && /^(waiting|playing)$/.test(I.state())); } catch (e) { return false; } };
+const reloadNew = () => { try { if (introAMeio()) sessionStorage.removeItem('nau:introOk'); const el = document.getElementById('intro'); if (el) el.remove(); } catch (e) { } location.reload(); };
 window.OceanumUpdating = () => { show(seal('<i class="upd-ring"></i>') + '<b>A atualizar o Prumo…</b><small>versão nova encontrada</small>'); setTimeout(reloadNew, 900); };
 // 2) primeira abertura de uma versão nova: confirmação
 const prev = ls.get(KEY);
@@ -42,7 +44,8 @@ if (VER.v && prev !== VER.v) { ls.set(KEY, VER.v);
   if (prev) { const go = () => { const el = show(`${seal('<i class="upd-ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>')}<b>Atualizado</b><small>versão ${VER.v} · ${VER.date || ''}</small>${(VER.notes || []).length ? `<ul>${VER.notes.slice(0, 4).map(n => `<li>${String(n).replace(/[<&]/g, c => c === '<' ? '&lt;' : '&amp;')}</li>`).join('')}</ul>` : ''}<div class="bar"><i></i></div>`);
       const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }; el.addEventListener('click', close); setTimeout(close, 2600); };
     // se a intro estiver a correr, o aviso entra depois dela (por cima do ecrã de carregamento)
-    const when = () => { const I = window.PrumoIntro; if (I && I.state && /^(waiting|playing)$/.test(I.state())) I.wait(go); else go(); };
+    const when = () => { const depois = () => setTimeout(() => { const I = window.PrumoIntro; if (I && I.state && /^(waiting|playing)$/.test(I.state())) I.wait(go); else go(); }, 120);
+      const B = window.OceanumBoot; if (B && B.then) B.then(depois, depois); else depois(); };
     if (document.readyState === 'loading') addEventListener('DOMContentLoaded', when); else when(); } }
 // 3) atualização automática: ao abrir, ao voltar à app e de 10 em 10 minutos compara a versão desta página com a do servidor.
 //    Se houver uma mais nova, recarrega logo (a app vem sempre da internet primeiro, por isso o recarregar já traz a nova).
@@ -77,5 +80,8 @@ addEventListener('online', () => soon(1000));
 setInterval(() => { if (!document.hidden) window.OceanumCheckUpdate(false); }, 10 * 60000);
 // versão visível no ecrã de abertura
 addEventListener('DOMContentLoaded', () => { const f = document.querySelector('.sp-foot'); if (f && VER.v) f.textContent = 'MIND CONTROL · v' + VER.v; });
+// v3.79: logo ao abrir, antes da intro, vê se há versão nova (no máximo 2,5 s); a intro espera por esta resposta
+window.OceanumBoot = (async () => { try { if (navigator.onLine === false) return '';
+    const sv = await Promise.race([serverVer(), new Promise(r => setTimeout(() => r(''), 2500))]); if (sv && num(sv) > num(VER.v)) { apply(sv); return sv; } return ''; } catch (e) { return ''; } })();
 window.OceanumVersion = VER;
 })();

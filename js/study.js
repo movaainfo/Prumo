@@ -129,10 +129,13 @@ V.certificacoes = () => { const Cs = OS.all('certs'), f = OS.ui.cef || {}, t = t
     ${it.length ? `<div class="g g2">${it.map(card).join('')}</div>` : UI.empty(Cs.length ? 'Nenhuma certificação com estes filtros.' : 'Junta aqui todas as tuas certificações — qualquer uma conta.', UI.addBtn('certs', 'Adicionar certificação', null, ''))}`; };
 
 /* ================= LEITURAS ================= */
-const LT = [['', 'Estante'], ['top', 'Top 10 da vida'], ['minha', 'Minha estante'], ['buscar', 'Pesquisar livros'], ['desafios', 'Desafios'], ['estatisticas', 'Estatísticas'], ['resenhas', 'Resenhas & citações']];
+const LT = [['', 'Estante'], ['parati', 'Para ti'], ['tops', 'Top livros'], ['premios', 'Prémios'], ['top', 'Top 10 da vida'], ['minha', 'Minha estante'], ['buscar', 'Pesquisar livros'], ['desafios', 'Desafios'], ['estatisticas', 'Estatísticas'], ['resenhas', 'Resenhas & citações']];
 V.leituras = sub => { const k = sub === 'livro' ? 'livro' : LT.some(t => t[0] === (sub || '')) ? (sub || '') : '';
   return UI.head('Leituras', 'A tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios literários.', `<a class="btn pri" href="#leituras.buscar">${UI.ic('search')}<span>Adicionar livro</span></a>`, 'Estudos') + UI.tabs('leituras', LT, k === 'livro' ? '' : k) + `<div class="bk">${LT_[k]()}</div>`; };
 const LT_ = {};
+LT_.parati = () => OS.LivrosMais ? OS.LivrosMais.paraTi() : '';
+LT_.tops = () => OS.LivrosMais ? OS.LivrosMais.tops() : '';
+LT_.premios = () => OS.LivrosMais ? OS.LivrosMais.premios() : '';
 const shelfCard = b => `<div class="bk-it" data-act="bkOpen" data-id="${b.id}" role="button" tabindex="0" aria-label="${esc(b.title)}">${cover(b)}${b.status === 'A ler' && +b.pages ? `<span class="bk-pg"><i style="width:${Math.round(prog(b) * 100)}%"></i></span>` : ''}<b>${esc(b.title)}</b><small>${esc((b.author || '').split(',')[0])}</small>${b.rating ? stars(b.rating) : ''}${OWNED(b.own) ? `<span class="bk-own" title="${esc(b.own + ' · ' + (b.format || ''))}">${UI.ic(b.format === 'Ebook' ? 'card' : b.format === 'Audiolivro' ? 'wave' : 'book')}</span>` : ''}</div>`;
 LT_[''] = () => { const B = OS.all('books'), f = OS.ui.bkf || {}, yr = today().slice(0, 4), reading = B.filter(b => b.status === 'A ler');
   const it = B.filter(b => (f.s === 'fav' ? +b.rating >= 5 : !f.s || b.status === f.s) && (!f.c || (b.cats || []).includes(f.c)) && (!f.q || norm(b.title + ' ' + b.author).includes(norm(f.q))));

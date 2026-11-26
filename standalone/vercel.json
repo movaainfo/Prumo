@@ -104,6 +104,9 @@
     },
     "api/saude.js": {
       "maxDuration": 60
+    },
+    "api/livros.js": {
+      "maxDuration": 60
     }
   },
   "cleanUrls": true,

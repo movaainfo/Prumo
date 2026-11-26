@@ -14,9 +14,13 @@ const trimPics = () => caches.open(IMG).then(c => c.keys().then(ks => ks.length 
 // instalar nunca falha: cada ficheiro é guardado à parte (antes, um ficheiro que falhasse no iPhone impedia a versão nova de entrar)
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(V).then(c => Promise.all(SHELL.map(x => fetch(x, { cache: 'no-cache' }).then(r => r.ok ? c.put(x, r) : 0).catch(() => 0))))); });
 // a cópia da app para usar sem internet é guardada logo a seguir (sem atrasar a entrada da versão nova)
-self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V && k !== IMG).map(k => caches.delete(k)))).then(() => self.clients.claim())
+self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V && k !== IMG && k !== 'prumo-partilha').map(k => caches.delete(k)))).then(() => self.clients.claim())
   .then(() => { fetch(SHELLKEY, { cache: 'no-cache', credentials: 'same-origin' }).then(r => r.ok ? caches.open(V).then(c => c.match(SHELLKEY).then(h => h || c.put(SHELLKEY, r))) : 0).catch(() => { }); })); });
 self.addEventListener('fetch', e => {
+  // v3.79: partilhar fotos e vídeos da galeria para o Prumo (Android): ficam guardados aqui e as Fotos arrumam-nos ao abrir
+  if (e.request.method === 'POST' && /\/partilha\/?$/.test(new URL(e.request.url).pathname)) { e.respondWith((async () => { try { const fd = await e.request.formData(), fs = fd.getAll('media').filter(f => f && f.size), c = await caches.open('prumo-partilha'); let i = 0;
+      for (const f of fs) await c.put(new Request(new URL('./__partilha/' + Date.now() + '-' + (i++), self.registration.scope).href), new Response(f, { headers: { 'content-type': f.type || 'application/octet-stream', 'x-nome': encodeURIComponent(f.name || 'partilha'), 'x-data': String(f.lastModified || Date.now()) } })); } catch (er) { }
+    return Response.redirect(new URL('./?app=1#fotos', self.registration.scope).href, 303); })()); return; }
   if (e.request.headers.has('range')) return;   // v3.64: pedidos de áudio/vídeo aos pedaços vão sempre à rede (a cópia inteira fazia o som da intro parar no telemóvel)
   const u = new URL(e.request.url); if (e.request.method !== 'GET') return;
   if (u.searchParams.has('vchk')) return; // verificação de versão: vai sempre à rede

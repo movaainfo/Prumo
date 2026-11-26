@@ -10,7 +10,7 @@
 'use strict';
 const crypto = require('crypto'), N = require('./_nuvem'), W = require('./_webpush'), F = require('./futebol');
 const PID = /^[a-f0-9]{12}$/, IDX = 'push/idx', STP = 'push/st';
-const CAT0 = { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1, festas: 1 }; // v3.73: jogo = o Pursuit (começo às 20h e resultados às 22h) · v3.77: ep = episódios novos dos animes com o sino
+const CAT0 = { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1, festas: 1, desp: 1 }; // v3.73: jogo = o Pursuit (começo às 20h e resultados às 22h) · v3.77: ep = episódios novos dos animes com o sino
 let VK = null; const vapid = async () => VK || (VK = W.vapidFrom(await N.master()));
 const pkey = async () => Buffer.from(crypto.hkdfSync('sha256', await N.master(), Buffer.from('nautilo-v1'), Buffer.from('push'), 32));
 const load = async p => { const g = await N.store().get(p); if (!g) return { v: {}, etag: null }; try { return { v: N.open(await pkey(), g.buf) || {}, etag: g.etag }; } catch (e) { return { v: {}, etag: g.etag }; } };
@@ -47,6 +47,8 @@ const PARTS = {
     .filter(x => x.t && x.al >= 0 && x.mal >= 0 && x.al < 1e7 && x.mal < 1e7 && (x.al || x.mal)) }),
   // v3.79: as festas: o país (para o calendário do Ano Novo), o dia e mês de anos e o primeiro nome (sem o ano de nascimento)
   fe: d => ({ pais: /^[A-Z]{2}$/.test(String(d && d.pais || '')) ? d.pais : 'PT', anos: /^\d{2}-\d{2}$/.test(String(d && d.anos || '')) ? d.anos : '', nome: str(d && d.nome, 40).split(' ')[0] }),
+  // v3.79: a validade das coisas da despensa (nome e data), só as dos próximos 30 dias
+  desp: d => (Array.isArray(d) ? d : []).slice(0, 80).map(x => ({ n: str(x && x.n, 60), e: /^\d{4}-\d{2}-\d{2}$/.test(String(x && x.e || '')) ? x.e : '' })).filter(x => x.n && x.e),
   cat: d => { const r = {}; Object.keys(CAT0).forEach(k => { r[k] = d && d[k] === 0 ? 0 : 1; }); return r; } };
 
 // a sessão vale e o perfil é desta conta (como nos dados)
@@ -222,6 +224,13 @@ const festas = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.cat.festas
     if (L.min >= 540 && L.min < 550 && L.md === pascoa(L.y) && !SEMNATAL.has(fe.pais)) msg('pascoa', 'Feliz Páscoa!', `Uma Páscoa cheia de recomeços${nm}.`);
     if (L.min < 10 && fe.anos && fe.anos === L.md) msg('anos', fe.nome ? `Parabéns, ${fe.nome}!` : 'Parabéns!', 'Hoje o dia é teu. Que este ano seja incrível.'); }); };
 
+/* ---------- v3.79 · despensa: às 9h de cada um, o que vence hoje, amanhã e daqui a 3 dias (uma mensagem por dia) ---------- */
+const despensa = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.cat.desp || !(x.desp || []).length) return; const L = local(now, x.tz); if (L.min < 540 || L.min >= 550) return;
+    const hoje = L.y + '-' + L.md, mais = n => new Date(Date.parse(hoje + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10), k = 'desp:' + uk + ':' + hoje; if (st.sent[k]) return;
+    const de = n => x.desp.filter(i => i.e === mais(n)).map(i => i.n), h = de(0), a = de(1), t = de(3), parte = (l, L2) => L2.length ? l + ': ' + L2.slice(0, 4).join(', ') + (L2.length > 4 ? ' e mais ' + (L2.length - 4) : '') : '';
+    if (!h.length && !a.length && !t.length) return; st.sent[k] = now;
+    out.push({ uk, m: { t: h.length ? 'Despensa: há coisas a vencer hoje' : 'Despensa: validade a chegar', b: [parte('Hoje', h), parte('Amanhã', a), parte('Em 3 dias', t)].filter(Boolean).join(' · '), u: '#cozinha', g: 'desp' }, ttl: 12 * 3600 }); }); };
+
 /* ---------- a tarefa de cada minuto ---------- */
 let LAST = 0;
 const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.force && now - LAST < 40000) return { ok: true, skip: 1 }; LAST = now;
@@ -235,6 +244,7 @@ const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.f
   try { await sports(U, st, now, out); } catch (e) { console.error('push desportos', e.message); }
   try { await pursuit(U, st, now, out); } catch (e) { console.error('push pursuit', e.message); }
   try { festas(U, st, now, out); } catch (e) { console.error('push festas', e.message); }
+  try { despensa(U, st, now, out); } catch (e) { console.error('push despensa', e.message); }
   try { await episodios(U, st, now, out, o.force && o.eps); } catch (e) { console.error('push episódios', e.message); }
   if (o.force || new Date(now).getUTCMinutes() % 5 === 0) { try { await prices(U, st, now, out); } catch (e) { console.error('push preços', e.message); } }
   // limpeza: o que tem mais de 3 dias

@@ -164,4 +164,8 @@ V.cozinha = sub => { const k = TABS.some(t => t[0] === (sub || '')) ? (sub || ''
   const tabs = UI.tabs('cozinha', TABS.map(([v, l]) => [v, v === 'lista' && nd ? `${l} · ${nd}` : l]), k);
   return head + tabs + `<div class="kz">${k === 'lista' ? needBox() + (OS.Compras && OS.Compras.view ? OS.Compras.view(1) : '') : k === 'receitas' ? receitas() : despensa()}</div>`; };
 OS.Cozinha = { stockOf, stockAdd, stockSub, needs, buyOf, recipes, st, R, ING };
+// v3.79: ao abrir o app (uma vez por dia), lembra o que está a vencer na despensa; com as notificações ligadas, o aviso chega às 9h no telemóvel
+OS.on && OS.on('ready', () => setTimeout(() => { try { const k = 'oc_kz_aviso_' + today(); if (U.ls.get(k, 0)) return; const L = all().filter(x => n(x.qty) > 0 && ['vence', 'venceu'].includes(st(x))); if (!L.length) return;
+  U.ls.set(k, 1); const v = L.filter(x => st(x) === 'venceu'), q = L.filter(x => st(x) === 'vence');
+  UI.toast('Despensa: ' + [v.length ? (v.length === 1 ? v[0].name + ' passou a validade' : v.length + ' coisas passaram a validade') : '', q.length ? (q.length === 1 ? q[0].name + ' vence em breve' : q.length + ' coisas vencem em breve') : ''].filter(Boolean).join(' · ') + '.', 'warn'); } catch (e) { } }, 5000));
 })();

@@ -74,7 +74,7 @@ const baloes = () => { const t = document.getElementById('top'); if (!t || t.que
   b.innerHTML = ['#EF476F', '#FFD166', '#4CC9F0', '#06D6A0', '#F72585'].map((c, i) => `<i style="--c:${c};--d:${i * .7}s"></i>`).join(''); t.appendChild(b); };
 const emFesta = () => { const a = anos(); document.body.classList.toggle('fx-dia-anos', !!a); if (!a) return; baloes();
   const k = 'oc_fx_anos_' + ymd(new Date()); if (!U.ls.get(k, 0)) { try { U.ls.set(k, 1); } catch (e) { } setTimeout(confetes, 900); } };
-OS.on && OS.on('ready', () => { emFesta(); setInterval(emFesta, 6e4);
+OS.on && OS.on('ready', () => { emFesta(); setInterval(emFesta, 6e4); OS.on('one:me', emFesta);
   try { new MutationObserver(() => { if (document.body.classList.contains('fx-dia-anos')) baloes(); }).observe(document.getElementById('top') || document.body, { childList: true }); } catch (e) { }
   const o = OS.views.visao; if (o && !o._fx) { OS.views.visao = sub => { const h = o(sub), a = anos(); if (!a) return h; const k = '<div class="dash-grid">', i = h.indexOf(k); return i < 0 ? bolo(a) + h : h.slice(0, i) + bolo(a) + h.slice(i); }; OS.views.visao._fx = 1; } });
 

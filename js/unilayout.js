@@ -4,7 +4,7 @@
 (() => {
 'use strict';
 const U = OS.U, UI = OS.UI, esc = U.esc, V = OS.views, UNI = OS.UNI, UT = OS.UT; if (!UNI || !UT) return;
-const GROUPS = [['', 'Visão geral', 'compass', ['']], ['curso', 'O curso', 'school', ['disciplinas', 'horario', 'presencas', 'plano', 'materiais']],
+const GROUPS = [['', 'Visão geral', 'compass', ['']], ['curso', 'O curso', 'school', ['disciplinas', 'horario', 'calendario', 'presencas', 'plano', 'materiais']],
   ['aval', 'Avaliações', 'cal', ['avaliacoes', 'trabalhos', 'notas', 'exames']], ['estudo', 'Estudar', 'brain', ['sessoes', 'revisoes', 'flashcards', 'simulados', 'questoes', 'erros', 'tutor', 'desempenho']]];
 const KNOWN = () => new Set(GROUPS.flatMap(g => g[3]));
 const groupOf = k => { const g = GROUPS.find(x => x[3].includes(k || '')); return g ? g[0] : 'estudo'; };
