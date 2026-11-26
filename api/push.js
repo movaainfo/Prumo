@@ -10,7 +10,7 @@
 'use strict';
 const crypto = require('crypto'), N = require('./_nuvem'), W = require('./_webpush'), F = require('./futebol');
 const PID = /^[a-f0-9]{12}$/, IDX = 'push/idx', STP = 'push/st';
-const CAT0 = { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1 }; // v3.73: jogo = o Pursuit (começo às 20h e resultados às 22h) · v3.77: ep = episódios novos dos animes com o sino
+const CAT0 = { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1, festas: 1, desp: 1 }; // v3.73: jogo = o Pursuit (começo às 20h e resultados às 22h) · v3.77: ep = episódios novos dos animes com o sino
 let VK = null; const vapid = async () => VK || (VK = W.vapidFrom(await N.master()));
 const pkey = async () => Buffer.from(crypto.hkdfSync('sha256', await N.master(), Buffer.from('nautilo-v1'), Buffer.from('push'), 32));
 const load = async p => { const g = await N.store().get(p); if (!g) return { v: {}, etag: null }; try { return { v: N.open(await pkey(), g.buf) || {}, etag: g.etag }; } catch (e) { return { v: {}, etag: g.etag }; } };
@@ -45,6 +45,10 @@ const PARTS = {
   // v3.77: os animes: hu = joga o Pursuit (avisos todos os dias, mesmo sem abrir o jogo); eps = os animes com o sino ligado (AniList e/ou MyAnimeList)
   an: d => ({ hu: d && d.hu ? 1 : 0, eps: (Array.isArray(d && d.eps) ? d.eps : []).slice(0, 80).map(x => ({ al: Math.floor(+x.al || 0), mal: Math.floor(+x.mal || 0), t: str(x.t, 120) }))
     .filter(x => x.t && x.al >= 0 && x.mal >= 0 && x.al < 1e7 && x.mal < 1e7 && (x.al || x.mal)) }),
+  // v3.79: as festas: o país (para o calendário do Ano Novo), o dia e mês de anos e o primeiro nome (sem o ano de nascimento)
+  fe: d => ({ pais: /^[A-Z]{2}$/.test(String(d && d.pais || '')) ? d.pais : 'PT', anos: /^\d{2}-\d{2}$/.test(String(d && d.anos || '')) ? d.anos : '', nome: str(d && d.nome, 40).split(' ')[0] }),
+  // v3.79: a validade das coisas da despensa (nome e data), só as dos próximos 30 dias
+  desp: d => (Array.isArray(d) ? d : []).slice(0, 80).map(x => ({ n: str(x && x.n, 60), e: /^\d{4}-\d{2}-\d{2}$/.test(String(x && x.e || '')) ? x.e : '' })).filter(x => x.n && x.e),
   cat: d => { const r = {}; Object.keys(CAT0).forEach(k => { r[k] = d && d[k] === 0 ? 0 : 1; }); return r; } };
 
 // a sessão vale e o perfil é desta conta (como nos dados)
@@ -203,6 +207,30 @@ const episodios = async (U, st, now, out, force) => { const fans = U.filter(([, 
   Object.entries(st.ae).forEach(([k, p]) => { if (!all.has(k)) { if (now - (p.chk || 0) > 3 * 864e5) delete st.ae[k]; return; }
     if (p.e && p.at <= now && now - p.at < 6 * 36e5 && now - (p.chk || 0) < 6 * 36e5) avisa(k, p.e); }); };
 
+/* ---------- v3.79 · as festas: Feliz Ano Novo (no calendário do país), Feliz Natal, Páscoa e os parabéns, à meia-noite de cada um ---------- */
+const FLUNAR = { 2026: '02-17', 2027: '02-06', 2028: '01-26', 2029: '02-13', 2030: '02-03', 2031: '01-23', 2032: '02-11' }, FROSH = { 2027: '10-02', 2028: '09-21', 2029: '09-10', 2030: '09-28' };
+const FNOWRUZ = { 2027: '2027-03-20T20:24:00Z', 2028: '2028-03-20T02:17:00Z', 2029: '2029-03-20T08:01:00Z', 2030: '2030-03-20T13:51:00Z', 2031: '2031-03-20T19:41:00Z' };
+const FCAL = { CN: 'lunar', HK: 'lunar', MO: 'lunar', TW: 'lunar', VN: 'lunar', IR: 'nowruz', AF: 'nowruz', ET: 'eth', IL: 'rosh', BD: 'abr', NP: 'abr', LK: 'abr', KH: 'abr' };
+const SEMNATAL = new Set(['IR', 'AF', 'SA', 'YE', 'MV', 'KP']);
+const pascoa = y => { const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), mo = Math.floor((h + l - 7 * m + 114) / 31), dy = ((h + l - 7 * m + 114) % 31) + 1; return String(mo).padStart(2, '0') + '-' + String(dy).padStart(2, '0'); };
+const local = (t, tz) => { const q = {}; try { new Intl.DateTimeFormat('en-GB', { timeZone: tz || 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(t)).forEach(x => { q[x.type] = x.value; }); } catch (e) { return local(t, 'Europe/Lisbon'); } return { y: +q.year, md: q.month + '-' + q.day, min: +q.hour * 60 + +q.minute }; };
+const anoNovo = (c, y) => c === 'lunar' ? FLUNAR[y] : c === 'eth' ? ((y + 1) % 4 === 0 ? '09-12' : '09-11') : c === 'rosh' ? FROSH[y] : c === 'abr' ? '04-14' : c === 'greg' ? '01-01' : '';
+const FTIT = { greg: 'Feliz Ano Novo!', lunar: 'Feliz Ano Novo Lunar!', nowruz: 'Feliz Nowruz!', eth: 'Feliz Enkutatash!', rosh: 'Shaná Tová!', abr: 'Feliz Ano Novo!' };
+const festas = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.cat.festas) return; const fe = x.fe || { pais: 'PT' }, L = local(now, x.tz), c = FCAL[fe.pais] || 'greg', nm = fe.nome ? ', ' + fe.nome : '';
+    const msg = (tipo, t, b) => { const k = 'fe:' + tipo + ':' + uk + ':' + L.y; if (st.sent[k]) return; st.sent[k] = now; out.push({ uk, m: { t, b, u: '#visao', g: 'fe-' + tipo }, ttl: 6 * 3600 }); };
+    const nw = c === 'nowruz' && FNOWRUZ[L.y] ? Date.parse(FNOWRUZ[L.y]) : 0;
+    if (nw ? now >= nw && now - nw < 10 * 6e4 : L.min < 10 && anoNovo(c, L.y) === L.md) msg('ano', FTIT[c], c === 'greg' ? `Que ${L.y} seja o teu melhor ano. Bom recomeço${nm}.` : `Um ano novo cheio de coisas boas${nm}.`);
+    if (L.min < 10 && L.md === '12-25' && !SEMNATAL.has(fe.pais)) msg('natal', 'Feliz Natal!', `Um Natal em paz com quem gostas${nm}.`);
+    if (L.min >= 540 && L.min < 550 && L.md === pascoa(L.y) && !SEMNATAL.has(fe.pais)) msg('pascoa', 'Feliz Páscoa!', `Uma Páscoa cheia de recomeços${nm}.`);
+    if (L.min < 10 && fe.anos && fe.anos === L.md) msg('anos', fe.nome ? `Parabéns, ${fe.nome}!` : 'Parabéns!', 'Hoje o dia é teu. Que este ano seja incrível.'); }); };
+
+/* ---------- v3.79 · despensa: às 9h de cada um, o que vence hoje, amanhã e daqui a 3 dias (uma mensagem por dia) ---------- */
+const despensa = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.cat.desp || !(x.desp || []).length) return; const L = local(now, x.tz); if (L.min < 540 || L.min >= 550) return;
+    const hoje = L.y + '-' + L.md, mais = n => new Date(Date.parse(hoje + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10), k = 'desp:' + uk + ':' + hoje; if (st.sent[k]) return;
+    const de = n => x.desp.filter(i => i.e === mais(n)).map(i => i.n), h = de(0), a = de(1), t = de(3), parte = (l, L2) => L2.length ? l + ': ' + L2.slice(0, 4).join(', ') + (L2.length > 4 ? ' e mais ' + (L2.length - 4) : '') : '';
+    if (!h.length && !a.length && !t.length) return; st.sent[k] = now;
+    out.push({ uk, m: { t: h.length ? 'Despensa: há coisas a vencer hoje' : 'Despensa: validade a chegar', b: [parte('Hoje', h), parte('Amanhã', a), parte('Em 3 dias', t)].filter(Boolean).join(' · '), u: '#cozinha', g: 'desp' }, ttl: 12 * 3600 }); }); };
+
 /* ---------- a tarefa de cada minuto ---------- */
 let LAST = 0;
 const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.force && now - LAST < 40000) return { ok: true, skip: 1 }; LAST = now;
@@ -215,6 +243,8 @@ const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.f
     const k = uk + '|' + part + '|' + (it.g || '') + '|' + it.at; if (st.sent[k]) return; st.sent[k] = now; out.push({ uk, m: { t: it.t, b: it.b, u: it.u, g: it.g || part }, ttl: 1800 }); }); }));
   try { await sports(U, st, now, out); } catch (e) { console.error('push desportos', e.message); }
   try { await pursuit(U, st, now, out); } catch (e) { console.error('push pursuit', e.message); }
+  try { festas(U, st, now, out); } catch (e) { console.error('push festas', e.message); }
+  try { despensa(U, st, now, out); } catch (e) { console.error('push despensa', e.message); }
   try { await episodios(U, st, now, out, o.force && o.eps); } catch (e) { console.error('push episódios', e.message); }
   if (o.force || new Date(now).getUTCMinutes() % 5 === 0) { try { await prices(U, st, now, out); } catch (e) { console.error('push preços', e.message); } }
   // limpeza: o que tem mais de 3 dias

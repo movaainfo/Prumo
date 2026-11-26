@@ -125,7 +125,7 @@ const OPS = {
   async eu(c, b) { const v = await perfil(c.eu, c.nome), amigos = await Promise.all((v.amigos || []).map(pub)), pedidos = await Promise.all((v.pedidos || []).map(pub)), clas = [];
     for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (cl) clas.push(claPub(cl)); }
     if (c.nome && v.nome !== c.nome) { v.nome = c.nome; await mudar(P(c.eu), null, p => { p.nome = c.nome; }).catch(() => { }); if (v.user || v.av) pubPts(c.eu, { nome: c.nome }).catch(() => { }); }
-    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas }; },
+    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas }; },
   async nome(c, b) { const n = String(b.nome || '').replace(/\s+/g, ' ').trim(); if (n.length < 2 || n.length > 24) throw N.err('nome', 'O nome tem de ter entre 2 e 24 letras.', 400);
     const m = await moderar(n); if (!m.ok) throw N.err('nome', 'Esse nome não pode ser usado: ' + m.motivo, 400); await perfil(c.eu, c.nome); await mudar(P(c.eu), null, v => { v.nome = n; }); return { ok2: true, nome: n }; },
   async amigoPedir(c, b) { const cod = String(b.cod || '').toUpperCase().replace(/^PR-?/, '').replace(/[^A-Z0-9]/g, ''); const g = await N.store().get('so/c/' + cod).catch(() => null); if (!g) throw N.err('amigo', 'Não encontrei ninguém com esse código.', 404);
@@ -188,7 +188,7 @@ const OPS = {
     if (/^a-\d+$/.test(d.conv)) await mudar(CA(d.conv.slice(2)), { L: [], gl: [] }, o => { const i = o.L.findIndex(x => x.id === d.mid); if (i < 0) return false; o.L.splice(i, 1); }).catch(() => { });
     for (const dd of [dia(Date.now() - 864e5), dia()]) await mudar('so/m/' + d.conv + '/' + dd, [], L => { const i = L.findIndex(x => x.id === d.mid); if (i < 0) return false; L.splice(i, 1); }).catch(() => { });
     if (b.mudo) await mudar(P(d.de), null, p => { p.mudo = Date.now() + 7 * 864e5; }).catch(() => { }); await N.store().del(['so/den/' + ref]); return { ok2: true }; },
-  async rankAnime(c, b) { const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).map(([id, o]) => ({ id, nome: o.nome, p: o.p, user: o.user || '', av: o.av || 0 })).sort((a, b2) => b2.p - a.p); const i = L.findIndex(x => x.id === c.eu);
+  async rankAnime(c, b) { const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).map(([id, o]) => ({ id, nome: o.nome, p: o.p, user: o.user || '', av: o.av || 0, cl: o.cl || '' })).sort((a, b2) => b2.p - a.p); const i = L.findIndex(x => x.id === c.eu);
     return { lista: L.slice(0, 100).map((x, k) => Object.assign(x, { pos: k + 1, eu: x.id === c.eu })), eu: i >= 0 ? Object.assign({ pos: i + 1 }, L[i]) : null, total: L.length }; },
   async hunter(c, b) { return { hunter: await hunterVer(c.eu) }; },
   async hunterMarcar(c, b) { const { L, v } = await desafio(); if (!v || v.fechado) throw N.err('hunter', v ? 'O Pursuit de hoje já fechou.' : 'O Pursuit de hoje ainda não começou (20h).', 400);
@@ -222,7 +222,7 @@ OPS.perfilImg = async (c, b) => { const k = b.k === 'fu' ? 'fu' : 'av', max = k 
   await N.store().put(imgP(k, c.eu), buf); const ver = Date.now(); await mudar(P(c.eu), null, p => { p[k] = ver; }); if (k === 'av') await pubPts(c.eu, { av: ver }).catch(() => { }); return { [k]: ver }; };
 OPS.verPerfil = async (c, b) => { const id = String(b.id || ''); if (!ID.test(id)) throw N.err('perfil', 'Perfil desconhecido.', 400); const v = (await ler(P(id), null)).v; if (!v) throw N.err('perfil', 'Perfil desconhecido.', 404);
   const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).sort((a, b2) => b2[1].p - a[1].p), pos = L.findIndex(([i]) => i === id);
-  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu) } }; };
+  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu) } }; };
 /* ---------- comentários nos animes: a IA barra ofensas e tapa os spoilers (só vê quem quiser) ---------- */
 const CA = mal => 'so/ca/' + mal;
 let NUMS = null;
@@ -279,6 +279,44 @@ OPS.adminVisto = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.
   await mudar('so/coml', { v: {} }, o => { o.v = o.v || {}; ids.forEach(i => { if (on) o.v[i] = Date.now(); else delete o.v[i]; }); const ks = Object.keys(o.v); if (ks.length > 3000) ks.sort((a, z) => o.v[a] - o.v[z]).slice(0, ks.length - 3000).forEach(k => delete o.v[k]); }); return { ok2: true }; };
 OPS.adminCom = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const tipo = TIPOS[b.tipo] ? b.tipo : 'sugestao', L = (await N.store().list('so/com/' + tipo + '/')).slice(-60), out = [];
   for (const x of L.reverse()) { const d = (await ler(x.pathname, null)).v; if (d) out.push({ nome: d.nome, user: d.user, titulo: d.titulo, texto: d.texto, at: d.at, email: d.email || '' }); } return { tipo, L: out }; };
+/* ---------- v3.79 · Desafio da semana: o mesmo para todas as contas, escolhido pelo servidor; quem participa entra no ranking ---------- */
+// o progresso vem dos dados de cada um no app (treinos, estudo, km, hábitos, tarefas); o do Pursuit é contado aqui (os acertos da semana)
+const DESAFIOS = [
+  { k: 'treinos', t: 'Semana de ferro', d: 'Regista 4 treinos esta semana.', alvo: 4, un: 'treinos', ic: 'dumbbell' },
+  { k: 'estudo', t: 'Mente afiada', d: 'Faz 5 horas de estudo ou de foco esta semana.', alvo: 5, un: 'horas', ic: 'book' },
+  { k: 'km', t: 'Pé na estrada', d: 'Corre ou caminha 15 km esta semana.', alvo: 15, un: 'km', ic: 'run' },
+  { k: 'habitos', t: 'Sem falhas', d: 'Cumpre todos os hábitos inegociáveis em 5 dias da semana.', alvo: 5, un: 'dias perfeitos', ic: 'check' },
+  { k: 'tarefas', t: 'Caixa vazia', d: 'Conclui 20 tarefas esta semana.', alvo: 20, un: 'tarefas', ic: 'checksq' },
+  { k: 'pursuit', t: 'Caçador de animes', d: 'Acerta 3 vezes no Pursuit esta semana.', alvo: 3, un: 'acertos', ic: 'target' }];
+const semana = (t = Date.now()) => { const L = lisboa(t), [y, m, d] = L.d.split('-').map(Number), dt = new Date(Date.UTC(y, m - 1, d)), dow = (dt.getUTCDay() + 6) % 7, seg = new Date(dt.getTime() - dow * 864e5);
+  const th = new Date(seg.getTime() + 3 * 864e5), y0 = th.getUTCFullYear(), w = 1 + Math.round((th - Date.UTC(y0, 0, 4)) / 864e5 / 7 - ((new Date(Date.UTC(y0, 0, 4)).getUTCDay() + 6) % 7 - 3) / 7);
+  const dias = Array.from({ length: 7 }, (_, i) => new Date(seg.getTime() + i * 864e5).toISOString().slice(0, 10));
+  // fim: domingo às 23:59 de Lisboa (aproximado ao minuto pela diferença entre a hora de Lisboa e a real)
+  const fim = t + ((6 - dow) * 1440 + (1440 - L.min)) * 6e4; return { k: y0 + '-S' + String(w).padStart(2, '0'), dias, fim, ini: fim - 7 * 864e5 }; };
+const desafioDe = async S => { const fx = DESAFIOS.find(x => x.k === process.env.NAUTILO_DESAFIO); if (fx) return fx; const h = N.crypto.createHmac('sha256', await N.master()).update('desafio:' + S.k).digest(), ant = semana(S.ini - 3600e3);
+  const h2 = N.crypto.createHmac('sha256', await N.master()).update('desafio:' + ant.k).digest(), i0 = h2.readUInt32BE(0) % DESAFIOS.length; let i = h.readUInt32BE(0) % DESAFIOS.length; if (i === i0) i = (i + 1) % DESAFIOS.length; return DESAFIOS[i]; };
+const acertosSemana = async (S, eu) => { let n = 0; for (const d of S.dias) { const v = (await ler('so/h/' + d, null)).v; if (!v || !v.fechado) continue; const g = (await ler('so/hg/' + d + '/' + eu, null)).v; if (g && g.mal === v.mal) n++; } return n; };
+const dsPub = (id, o, eu) => ({ id, nome: o.nome, user: o.user || '', av: o.av || 0, v: o.v || 0, at: o.at || 0, eu: id === eu });
+const dsVer = async (c, S, D) => { const o = (await ler('so/ds/' + S.k, { T: {} })).v || { T: {} }, T = o.T || {};
+  const L = Object.entries(T).map(([id, x]) => dsPub(id, x, c.eu)), feitos = L.filter(x => x.at).sort((a, b) => a.at - b.at || b.v - a.v), caminho = L.filter(x => !x.at && x.v > 0).sort((a, b) => b.v - a.v), zero = L.filter(x => !x.at && !x.v);
+  return { sem: S.k, fim: S.fim, desafio: D, feitos: feitos.slice(0, 100), caminho: caminho.slice(0, 100), zero: zero.length, total: L.length, eu: T[c.eu] ? dsPub(c.eu, T[c.eu], c.eu) : null }; };
+OPS.desafio = async (c, b) => { const S = semana(), D = await desafioDe(S);
+  if (D.k === 'pursuit') { const o = (await ler('so/ds/' + S.k, { T: {} })).v || { T: {} }; if ((o.T || {})[c.eu]) { const n = await acertosSemana(S, c.eu); if (n !== o.T[c.eu].v) await mudar('so/ds/' + S.k, { T: {} }, x => { const e = x.T[c.eu]; if (!e) return false; e.v = n; if (n >= D.alvo && !e.at) e.at = Date.now(); }); } }
+  return dsVer(c, S, D); };
+OPS.desafioEntrar = async (c, b) => { const S = semana(), D = await desafioDe(S), v0 = await perfil(c.eu, c.nome);
+  await mudar('so/ds/' + S.k, { T: {} }, x => { x.T = x.T || {}; if (x.T[c.eu]) return false; x.T[c.eu] = { nome: v0.nome, user: v0.user || '', av: v0.av || 0, v: 0, at: 0, upd: Date.now() }; });
+  return OPS.desafio(c, b); };
+OPS.desafioProg = async (c, b, req) => { const S = semana(), D = await desafioDe(S); if (D.k === 'pursuit') return OPS.desafio(c, b);
+  if (N.limit(req, 'dsp|' + c.eu, 40, 3600e3)) throw N.err('limite', 'Espera um pouco.', 429);
+  const v = Math.max(0, Math.min(D.alvo * 10, Math.round((+b.v || 0) * 10) / 10));
+  await mudar('so/ds/' + S.k, { T: {} }, x => { const e = (x.T || {})[c.eu]; if (!e) return false; e.v = v; e.upd = Date.now(); if (v >= D.alvo && !e.at) e.at = Date.now(); if (v < D.alvo && e.at) e.at = 0; });
+  return dsVer(c, S, D); };
+OPS.desafioSair = async (c, b) => { const S = semana(); await mudar('so/ds/' + S.k, { T: {} }, x => { if (!(x.T || {})[c.eu]) return false; delete x.T[c.eu]; }); return OPS.desafio(c, b); };
+// v3.79: a classe de fã (calculada no app pelo que cada um vê) aparece no ranking e no perfil de anime
+const CLASSES = ['Guerreiro Shōnen', 'Estratega do Mistério', 'Coração Shōjo', 'Explorador de Mundos', 'Alma Tranquila', 'Caçador de Sombras', 'Atleta de Sofá', 'Piloto de Mecha'], NIVEIS = ['Novato', 'Iniciado', 'Veterano', 'Lenda', 'Mítico'];
+OPS.classe = async (c, b) => { const nome = String(b.nome || ''), nivel = String(b.nivel || ''); if (!CLASSES.includes(nome) || !NIVEIS.includes(nivel)) throw N.err('classe', 'Classe desconhecida.', 400);
+  const cl = nome + ' · ' + nivel; await perfil(c.eu, c.nome); await mudar(P(c.eu), null, p => { if (!p) return false; p.classe = cl; });
+  await mudar(PTS, {}, T => { if (!T[c.eu]) return false; T[c.eu].cl = cl; }).catch(() => { }); return { classe: cl }; };
 const PARC = 'cfg/parceiro.json', PARC0 = 'PHANTOM'; // v3.73: a empresa parceira dos Animes
 const parceiro = async () => { try { const g = await N.store().get(PARC); return g ? JSON.parse(g.buf.toString()) : { nome: PARC0 }; } catch (e) { return { nome: PARC0 }; } };
 OPS.adminParceiro = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const nome = String(b.nome || '').replace(/\s+/g, ' ').trim().slice(0, 30) || PARC0, site = String(b.site || '').trim().slice(0, 200);
@@ -300,4 +338,4 @@ module.exports = N.handler(async (req, res) => {
   const c = await conta(t, pid); c.eu = t.u + '-' + pid; if (!ID.test(c.eu)) return N.send(res, 400, { ok: false, msg: 'Perfil inválido.' });
   return N.send(res, 200, Object.assign({ ok: true }, await OPS[op](c, b, req)));
 });
-module.exports._regras = regras; module.exports._lisboa = lisboa;
+module.exports._regras = regras; module.exports._lisboa = lisboa; module.exports._semana = semana;
