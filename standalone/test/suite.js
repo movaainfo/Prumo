@@ -858,6 +858,21 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
         document.dispatchEvent(new Event('visibilitychange')); await w(2500); location.hash = 'fotos'; await w(800);
         return { gravou: !!file, v: v ? { video: v.video, th: !!v.th } : null, sh: OS.Fotos.estado.L.some(x => x.nome === 'partilhada.jpg'), auto: /Para ficar automático/.test(document.getElementById('view').innerText), cam: document.querySelectorAll('#view input[capture]').length, vid: !!document.querySelector('#view .fo-c.vid .fo-dur') }; });
       ok('Fotos e vídeos: os vídeos entram com a miniatura e a duração; Tirar foto e Gravar vídeo pelo Prumo; o que se partilha da Galeria entra sozinho; o cartão explica como fica automático', (!vd.gravou || (vd.v && vd.v.video === 1 && vd.v.th && vd.vid)) && vd.sh && vd.auto && vd.cam === 2, JSON.stringify(vd)); }
+    // v3.86: no computador, "Ligar uma pasta" importa sozinho as fotos novas (também das subpastas); na app da App Store, a galeria entra sozinha ao abrir
+    { const pa = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), c = document.createElement('canvas'); c.width = 200; c.height = 150; const g = c.getContext('2d');
+        const mk = async (cor, nome, t) => { g.fillStyle = cor; g.fillRect(0, 0, 200, 150); g.fillStyle = '#fff'; g.fillRect(10 + t * 30, 30, 50, 60); const b = await new Promise(r => c.toBlob(r, 'image/jpeg', .9)); return new File([b], nome, { type: 'image/jpeg', lastModified: Date.now() - t * 1000 }); };
+        const fs = [await mk('#c33', 'PASTA_1.jpg', 1), await mk('#33c', 'PASTA_2.jpg', 2)], fh = f => ({ kind: 'file', name: f.name, getFile: async () => f });
+        const sub = { kind: 'directory', name: '2026', values: async function* () { for (const f of fs.slice(1)) yield fh(f); } };
+        const dir = { kind: 'directory', name: 'Fotos iCloud', queryPermission: async () => 'granted', requestPermission: async () => 'granted', values: async function* () { yield fh(fs[0]); yield sub; yield { kind: 'file', name: 'notas.txt', getFile: async () => new File(['x'], 'notas.txt') }; } };
+        window.showDirectoryPicker = async () => dir; await OS.act.foPasta(); await w(1500); const r = { p1: OS.Fotos.estado.L.filter(x => /^PASTA_/.test(x.nome)).length };
+        fs.push(await mk('#3c3', 'PASTA_3.jpg', 3)); await OS.act.foPastaLer(); await w(1500); r.p2 = OS.Fotos.estado.L.filter(x => /^PASTA_/.test(x.nome)).length;
+        location.hash = 'tarefas'; await w(200); location.hash = 'fotos'; await w(800); r.lig = /Pasta ligada: Fotos iCloud/.test(document.getElementById('view').innerText);
+        g.fillStyle = '#963'; g.fillRect(0, 0, 200, 150); const b64 = c.toDataURL('image/jpeg', .9).split(',')[1];
+        window.Capacitor = { isNativePlatform: () => true, getPlatform: () => 'ios', Plugins: { Media: { getMedias: async o => ({ medias: [{ identifier: 'ABC-1/L0/001', creationDate: new Date().toISOString(), data: b64, fullWidth: 4032, fullHeight: 3024 }] }) } } };
+        document.dispatchEvent(new Event('deviceready')); document.dispatchEvent(new Event('visibilitychange')); await w(2500);
+        r.nat = OS.Fotos.estado.L.some(x => x.nat === 'ABC-1/L0/001'); location.hash = 'tarefas'; await w(200); location.hash = 'fotos'; await w(800); r.natTxt = /ligada à galeria/.test(document.getElementById('view').innerText);
+        delete window.Capacitor; if (window.PrumoLoja) delete window.PrumoLoja.fotos; return r; });
+      ok('Fotos automáticas: no computador, a pasta ligada importa sozinha as fotos (também das subpastas) e as novas que aparecem; na app da App Store, as fotos novas da galeria entram sozinhas', pa.p1 === 2 && pa.p2 === 3 && pa.lig && pa.nat && pa.natTxt, JSON.stringify(pa)); }
     // a IA separa por categorias; pesquisar; ver uma foto e apagá-la; apagar um grupo de iguais
     await k.p.evaluate(() => { localStorage.setItem('oc_fotos_ia', '1'); try { OS.U.ls.set('oc_fotos_ia', 1); } catch (e) { } window.confirm = () => true; });
     const ia = await E(k.p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)); await OS.act.foIA(); await w(300); const A0 = OS.Fotos.analisar(); return { cats: Object.keys(A0.cats), comIA: OS.Fotos.estado.L.filter(x => x.ia).length, sugIA: OS.Fotos.estado.L.filter(x => x.ia && x.ia.apagar).length }; });

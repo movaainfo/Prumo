@@ -10,7 +10,7 @@
 'use strict';
 const U = OS.U, UI = OS.UI, A = OS.act = OS.act || {}, V = OS.views, esc = U.esc;
 if (!UI.IP.image) UI.IP.image = 'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15.5 9a1.5 1.5 0 1 0 0-.01';
-const NAT = () => window.PrumoLoja && window.PrumoLoja.fotos;
+const NAT = () => window.PrumoLoja && window.PrumoLoja.fotos, NATA = () => !!(NAT() && NAT().apagar);
 
 /* ---------- base de dados no aparelho ---------- */
 let DBP = null;
@@ -124,7 +124,8 @@ const auto = () => `<div class="fo-auto"><h4>${UI.ic('bolt')}Para ficar automát
   <li><b>Tira e grava pelo Prumo</b> (Tirar foto, Gravar vídeo): entra logo aqui e fica arrumado.</li>
   ${android ? '<li><b>Partilha da Galeria para o Prumo</b>: escolhe as fotos ou vídeos, toca em Partilhar e escolhe Prumo. Entram e arrumam-se sozinhos.</li>' : '<li><b>No Android</b>, com o Prumo instalado, partilha da Galeria para o Prumo e entram sozinhos.</li>'}
   <li><b>A IA arruma sozinha</b>: ${U.ls.get('oc_fotos_ia', 0) ? 'ligada. Cada foto ou vídeo novo é classificado logo.' : `<button type="button" class="btn xs" data-act="foAutoIA">Ligar</button> e cada foto ou vídeo novo é classificado logo.`}</li>
-  <li><b>${iphone ? 'No iPhone' : 'Na app das lojas'}</b>: ${iphone ? 'o Safari não deixa um site ler a galeria sozinho. ' : ''}A app do Prumo para iPhone e Android vai ler as fotos novas sozinha.</li></ul></div>`;
+  ${pastaLi()}
+  <li><b>${NAT() ? 'App do Prumo' : iphone ? 'No iPhone e no iPad' : 'Na app da App Store'}</b>: ${NAT() ? 'ligada à galeria. As fotos novas entram sozinhas sempre que abres a app.' : (iphone ? 'a Apple não deixa um site ler a galeria sozinho. ' : '') + 'Na app do Prumo da App Store as fotos novas da galeria entram sozinhas.'}</li></ul></div>`;
 A.foAutoIA = () => { if (!podeIA()) { UI.toast('Entra na tua conta Prumo para a IA arrumar as fotos.', 'neg'); return; } U.ls.set('oc_fotos_ia', 1); OS.request(); if ((F.L || []).some(x => !x.ia)) A.foIA(); };
 // o que veio partilhado da Galeria (Android): entra e arruma-se
 const partilhas = async () => { try { if (!window.caches) return; const c = await caches.open('prumo-partilha'), ks = await c.keys(); if (!ks.length) return; const fs = [];
@@ -132,7 +133,31 @@ const partilhas = async () => { try { if (!window.caches) return; const c = awai
     if (fs.length) { if (!/^#fotos/.test(location.hash)) location.hash = 'fotos'; await importar(fs); } } catch (e) { } };
 // a app das lojas (quando existir): lê sozinha as fotos e vídeos novos da galeria ao abrir e ao voltar
 const nativas = async () => { try { const N = NAT(); if (!N || !N.novas) return; const desde = U.ls.get('oc_fotos_nat_at', 0), fs = await N.novas(desde); U.ls.set('oc_fotos_nat_at', Date.now()); if (fs && fs.length) await importar(fs, true); } catch (e) { } };
-OS.on && OS.on('ready', () => { setTimeout(() => { partilhas(); nativas(); }, 1500); document.addEventListener('visibilitychange', () => { if (!document.hidden) { partilhas(); nativas(); } }); });
+// v3.86 · no computador (Chrome e Edge): "Ligar uma pasta". Escolhes uma vez a pasta das fotos (a do iCloud, do Google Drive ou do OneDrive
+// no computador, ou outra) e o Prumo importa sozinho as fotos e vídeos novos dessa pasta ao abrir e ao voltar. A autorização fica com o navegador.
+const PASTA = { ok: typeof window.showDirectoryPicker === 'function' && !NAT(), h: null, nome: '', perm: '', busy: false, at: 0, n: 0 };
+const pdb = () => new Promise((res, rej) => { const r = indexedDB.open('prumo-pasta', 1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+const pget = async () => { const d = await pdb(); return new Promise(res => { const q = d.transaction('h').objectStore('h').get('pasta'); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); }); };
+const pset = async v => { try { const d = await pdb(); return await new Promise(res => { try { const t = d.transaction('h', 'readwrite'); if (v) t.objectStore('h').put(v, 'pasta'); else t.objectStore('h').delete('pasta'); t.oncomplete = () => res(); t.onerror = () => res(); } catch (e) { res(); } }); } catch (e) { } };   // se não der para guardar, fica ligada até fechar o Prumo
+const MIDIA = /\.(jpe?g|png|webp|gif|heic|heif|mp4|mov|m4v|webm)$/i;
+// lê a pasta (e até 3 níveis de subpastas); só as que ainda não estão no Prumo, as mais recentes primeiro, até 300 de cada vez
+const lerPasta = async (h, prof = 0, out = []) => { for await (const e of h.values()) { if (out.length >= 5000) break;
+    if (e.kind === 'file' && MIDIA.test(e.name)) { try { out.push(await e.getFile()); } catch (x) { } } else if (e.kind === 'directory' && prof < 3 && !/^\./.test(e.name)) await lerPasta(e, prof + 1, out); }
+  return out; };
+const pasta = async (pedir) => { if (!PASTA.ok || PASTA.busy) return; try { if (!PASTA.h) { const v = await pget(); if (!v) return; PASTA.h = v; PASTA.nome = v.name; }
+    let p = await PASTA.h.queryPermission({ mode: 'read' }); if (p !== 'granted' && pedir) p = await PASTA.h.requestPermission({ mode: 'read' }); PASTA.perm = p;
+    if (p !== 'granted') { OS.request(); return; } if (!pedir && Date.now() - PASTA.at < 60e3) return;
+    PASTA.busy = true; PASTA.at = Date.now(); await carregar(); const tem = new Set((F.L || []).map(f => f.id));
+    const L = (await lerPasta(PASTA.h)).filter(f => !tem.has(idDe(f))).sort((a, b) => (b.lastModified || 0) - (a.lastModified || 0)).slice(0, 300);
+    PASTA.busy = false; if (L.length) { PASTA.n += L.length; await importar(L); } else if (pedir) UI.toast('A pasta não tem fotos novas.', 'pos'); OS.request(); }
+  catch (e) { PASTA.busy = false; if (pedir) UI.toast('Não deu para ler a pasta: ' + (e && e.message || 'erro'), 'neg'); } };
+A.foPasta = async () => { if (!PASTA.ok) { UI.toast('Este navegador não deixa ligar uma pasta. Usa o Chrome ou o Edge no computador.', 'warn'); return; }
+  try { const h = await window.showDirectoryPicker({ id: 'prumo-fotos', mode: 'read' }); PASTA.h = h; PASTA.nome = h.name; await pset(h); PASTA.at = 0; await pasta(true); } catch (e) { if (e && e.name !== 'AbortError') UI.toast('Não deu para ligar a pasta.', 'neg'); } };
+A.foPastaLer = () => pasta(true);
+A.foPastaX = async () => { if (!confirm('Desligar a pasta? As fotos que já entraram ficam no Prumo.')) return; await pset(null); PASTA.h = null; PASTA.nome = ''; PASTA.perm = ''; OS.request(); };
+const pastaLi = () => !PASTA.ok ? '' : PASTA.h ? `<li><b>Pasta ligada: ${esc(PASTA.nome)}</b>. ${PASTA.perm === 'granted' ? 'As fotos novas entram sozinhas sempre que abres o Prumo.' : 'O navegador pede para confirmar:'} <button type="button" class="btn xs" data-act="foPastaLer">${PASTA.perm === 'granted' ? 'Ver agora' : 'Importar as novas'}</button> <button type="button" class="btn xs ghost" data-act="foPastaX">Desligar</button></li>`
+  : `<li><b>No computador: liga uma pasta</b> (a das fotos do iCloud, do Google Drive ou outra). O Prumo importa sozinho as fotos novas dessa pasta. <button type="button" class="btn xs" data-act="foPasta">Ligar uma pasta</button></li>`;
+OS.on && OS.on('ready', () => { setTimeout(() => { partilhas(); nativas(); pasta(false); }, 1500); document.addEventListener('visibilitychange', () => { if (!document.hidden) { partilhas(); nativas(); pasta(false); } }); });
 const barraSel = () => F.modo !== 'sel' ? '' : `<div class="fo-selb" role="toolbar" aria-label="Fotos escolhidas"><b>${F.sel.size} ${F.sel.size === 1 ? 'escolhida' : 'escolhidas'}</b><button class="btn sm" data-act="foSelTudo">Escolher todas</button><button class="btn sm danger" data-act="foApagar" ${F.sel.size ? '' : 'disabled'}>${UI.ic('trash')}Apagar</button><button class="btn sm ghost" data-act="foSelSair">Cancelar</button></div>`;
 const vista = sub => { carregar(); const L = F.L || [];
   if (!F.L) return topo() + `<div class="pn">${F.err || 'A abrir as tuas fotos…'}</div>`;
@@ -159,7 +184,7 @@ const vista = sub => { carregar(); const L = F.L || [];
         ${Object.keys(AN.cats).length ? `<div class="fo-cats">${Object.entries(AN.cats).sort((a, b) => b[1].length - a[1].length).map(([c, C]) => `<a class="fo-cat" href="#fotos.c:${encodeURIComponent(c)}">${monte(C)}<b>${esc(c)}</b><span>${C.length}</span></a>`).join('')}</div>` : `<p class="mut">A IA separa as fotos por categorias (pessoas, comida, viagens, documentos…) e escreve o que mostra cada uma, para pesquisares. Está no plano Avançado.</p>`}</section>
       <section class="fo-sec"><div class="fo-sh"><h3>Recentes</h3><a class="btn sm ghost" href="#fotos.todas">Ver todas</a></div>${grelha(L, 24)}</section>`; }
   return topo() + prog + `<div class="fo-pesq"><input class="field" type="search" placeholder="Pesquisar: praia, cão, recibo, 2024, julho…" aria-label="Pesquisar nas fotos" value="${esc(F.q)}" data-fo="q" id="foQ"><button class="btn sm ${F.modo === 'sel' ? 'pri' : 'ghost'}" data-act="${F.modo === 'sel' ? 'foSelSair' : 'foSelIr'}">${F.modo === 'sel' ? 'Acabar' : 'Escolher'}</button></div>` + barraSel() + corpo + (!q && !sub ? auto() : '')
-    + `<p class="fo-nota">${UI.ic('lock')}As fotos ficam só neste aparelho. ${NAT() ? 'Apagar aqui apaga também da galeria do telemóvel.' : 'Apagar tira a foto do Prumo. Para a apagar da galeria, apaga-a na app Fotos (o navegador não deixa nenhum site apagar fotos da galeria).'}</p>`; };
+    + `<p class="fo-nota">${UI.ic('lock')}As fotos ficam só neste aparelho. ${NATA() ? 'Apagar aqui apaga também da galeria do telemóvel.' : 'Apagar tira a foto do Prumo. Para a apagar da galeria, apaga-a na app Fotos (o navegador não deixa nenhum site apagar fotos da galeria).'}</p>`; };
 V.fotos = sub => vista(sub);
 
 /* ---------- ver uma foto ---------- */
@@ -184,8 +209,8 @@ document.addEventListener('touchend', e => { if (!TX || !F.ver) return; const dx
 const apagar = async ids => { ids = [...new Set(ids)].filter(Boolean); if (!ids.length) return 0; const L = (F.L || []).filter(x => ids.includes(x.id)), n = L.reduce((s, x) => s + x.tam, 0);
   if (NAT() && NAT().apagar) { const nat = L.filter(x => x.nat).map(x => x.nat); if (nat.length) { try { const ok = await NAT().apagar(nat); if (ok === false) return 0; } catch (e) { UI.toast('A galeria não deixou apagar.', 'neg'); return 0; } } }
   await IDB.tirar(ids); largar(ids); F.L = (F.L || []).filter(x => !ids.includes(x.id)); ids.forEach(i => F.sel.delete(i)); analisar(); OS.request();
-  UI.toast(`${ids.length} ${ids.length === 1 ? 'foto apagada' : 'fotos apagadas'} · ${mb(n)}${NAT() ? '' : ' (do Prumo)'}.`, 'pos'); return ids.length; };
-const pergunta = (n, tam) => confirm(`Apagar ${n} ${n === 1 ? 'foto' : 'fotos'} (${mb(tam)})?${NAT() ? '' : '\n\nSaem do Prumo. Na galeria do telemóvel continuam até as apagares na app Fotos.'}`);
+  UI.toast(`${ids.length} ${ids.length === 1 ? 'foto apagada' : 'fotos apagadas'} · ${mb(n)}${NATA() ? '' : ' (do Prumo)'}.`, 'pos'); return ids.length; };
+const pergunta = (n, tam) => confirm(`Apagar ${n} ${n === 1 ? 'foto' : 'fotos'} (${mb(tam)})?${NATA() ? '' : '\n\nSaem do Prumo. Na galeria do telemóvel continuam até as apagares na app Fotos.'}`);
 A.foApagarUma = async b => { const x = (F.L || []).find(f => f.id === b.dataset.id); if (!x || !pergunta(1, x.tam)) return; const i = VER.findIndex(f => f.id === x.id), prox = VER[i + 1] || VER[i - 1]; await apagar([x.id]); VER = VER.filter(f => f.id !== x.id); if (prox && document.querySelector('.fo-v')) verFoto(prox.id); else A.foFechar(); };
 A.foGrupo = async b => { const g = AN.grupos[+b.dataset.i]; if (!g) return; const ids = g.L.filter(x => x.id !== g.fica && !x.manter).map(x => x.id); if (pergunta(ids.length, g.tam)) await apagar(ids); };
 A.foTodos = async b => { const L = (AN.sug[b.dataset.k] || []); if (L.length && pergunta(L.length, L.reduce((s, x) => s + x.tam, 0))) await apagar(L.map(x => x.id)); };

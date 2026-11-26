@@ -33,6 +33,13 @@ O Prumo continua a ser o site (prumo-vida.vercel.app). As apps das lojas são "c
 7. **Teste fechado (obrigatório para contas pessoais novas):** antes de publicar para todos, o Google exige um teste fechado com pelo menos **12 testadores durante 14 dias seguidos**. Carrega o `.aab` em "Teste fechado", junta 12 e-mails de amigos/família (contas Google), e cada um instala pela ligação de teste e mantém a app.
 8. Passados os 14 dias: **Pedir acesso à produção** → responder às perguntas → **Produção → Criar versão** com o mesmo `.aab` → enviar para revisão (normalmente de 1 a 7 dias).
 
+## Galeria automática na app do iPhone (v3.86)
+O Safari e o Prumo no ecrã principal não podem ler a galeria sozinhos (a Apple não deixa). A app da App Store pode: o código do Prumo (`js/galeria.js`) já está pronto e liga-se sozinho quando a casca tem o plugin da galeria. Ao abrir e ao voltar à app, as fotos novas entram nas Fotos do Prumo (na primeira vez, as 300 mais recentes) e há o botão "Galeria toda".
+1. No projeto da casca (Capacitor 8), instalar o plugin: `npm install @capacitor-community/media` e depois `npx cap sync ios`. (Para Capacitor 7: `@capacitor-community/media@8`.)
+2. No `ios/App/App/Info.plist`, juntar a chave `NSPhotoLibraryUsageDescription` com o texto: "O Prumo lê as fotos novas da tua galeria para as arrumar (iguais, desfocadas, capturas e categorias). As fotos ficam só neste aparelho."
+3. Compilar e enviar como de costume. Na primeira vez que a pessoa abre as Fotos, o iPhone pergunta se deixa o Prumo ver as fotos; com "Todas as fotos" fica automático, com "Fotos limitadas" só entram as escolhidas.
+4. No Android a app é a da Play Store (TWA): lá as fotos entram pela partilha da Galeria para o Prumo, que já funciona.
+
 ## App Store (iPhone) — passo a passo
 1. **Apple Developer Program** em developer.apple.com/programs: 99 USD por ano. Como pessoa singular, o nome que aparece na loja é o teu; como empresa, precisa do número D-U-N-S.
 2. **Gerar o projeto iPhone**: no pwabuilder.com → **iOS** → Generate (ou com Capacitor, usando `lojas/ios/capacitor.config.json`). Ambos dão um projeto do **Xcode**.
