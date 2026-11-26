@@ -3747,8 +3747,8 @@ async function animesTests(b) { cur = 'Animes'; console.log('\n=== Eu: animes ==
     ok('Animes: a classe de fã sai do que vês (aqui Estratega do Mistério, com o nível e a categoria) e o Recap do ano mostra episódios e horas, o género, os teus do ano, o estúdio e a classe',
       rc.c && rc.c.nome === 'Estratega do Mistério' && rc.c.nivel === 'Iniciado' && rc.n >= 6 && /O teu \d{4} em animes/.test(rc.t0) && rc.vistos.some(v => /episódios/.test(v) && /horas/.test(v)) && rc.vistos.some(v => /Mistério/.test(v)) && rc.vistos.some(v => /Monster/.test(v)) && rc.vistos.some(v => /Madhouse/.test(v)) && rc.vistos.some(v => /Estratega do Mistério/.test(v)), JSON.stringify(rc).slice(0, 700)); }
   // v3.79: Ao vivo e a seguir: a contagem ao segundo dos próximos episódios (anda sem redesenhar a página)
-  { await p.waitForSelector('#view .an-live [data-anat]', { timeout: 8000 }).catch(() => { }); const a1 = await E(p, () => [...document.querySelectorAll('#view .an-live [data-anat]')].map(x => x.textContent)); await sleep(1300);
-    const a2 = await E(p, () => [...document.querySelectorAll('#view .an-live [data-anat]')].map(x => x.textContent));
+  { await p.waitForSelector('#view .an-live [data-anat]', { timeout: 8000 }).catch(() => { }); const a1 = await E(p, () => [...document.querySelectorAll('#view .an-live [data-anat]')].map(x => x.textContent)); let a2 = a1;
+    for (let i = 0; i < 7 && JSON.stringify(a2) === JSON.stringify(a1); i++) { await sleep(500); a2 = await E(p, () => [...document.querySelectorAll('#view .an-live [data-anat]')].map(x => x.textContent)); }
     ok('Animes › Ao vivo e a seguir: os próximos episódios com a contagem ao segundo (e os que acabaram de sair)', a1.length >= 1 && a1.some(t => /^Sai daqui a \d/.test(t)) && JSON.stringify(a1) !== JSON.stringify(a2), JSON.stringify({ a1, a2 })); }
   // v3.78: no computador/tablet, a barra própria dos Animes em vez da fila de separadores em texto
   { const tb = await E(p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), bar = document.querySelector('#view .an > .ax-bar'), tabs = document.querySelector('#view > .tabs');

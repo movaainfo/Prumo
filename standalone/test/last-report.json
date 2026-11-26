@@ -1,67 +1,283 @@
 [
  {
-  "p": "Fundo",
-  "name": "Tablet deitado: a frase fica no céu (acima do horizonte) e o código em baixo, sem se sobreporem",
-  "pass": true,
-  "info": "{\"q\":285,\"f\":419,\"H\":625}"
- },
- {
-  "p": "Fundo",
-  "name": "Botão \"Fundo\" pequeno no canto de cima",
-  "pass": true,
-  "info": "{\"x\":905.609375,\"y\":14,\"width\":80.390625,\"height\":34,\"top\":14,\"right\":986,\"bottom\":48,\"left\":905.609375}"
- },
- {
-  "p": "Fundo",
-  "name": "Escolher o fundo: 9 modelos (o Farol marcado), \"Fundo animado\" ligado e \"Da galeria\"",
-  "pass": true,
-  "info": "{\"n\":9,\"gal\":true,\"on\":\"farol\",\"mv\":true}"
- },
- {
-  "p": "Fundo",
-  "name": "Fundo animado: Lisboa mexe (carros, barco, água); ao desligar, fica parada",
-  "pass": true,
-  "info": "{\"mv\":{\"n\":76,\"anim\":true},\"st\":{\"anim\":false,\"k\":false}}"
- },
- {
-  "p": "Fundo",
-  "name": "Escolher \"Rio de Janeiro\" muda o fundo na hora",
+  "p": "Animes",
+  "name": "Animes: começa desligada (só aparece a quem a escolher)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Fundo",
-  "name": "Fundos com as estações: no inverno a ria do farol congela (o barco fica preso, sem reflexos) e neva; na primavera o gelo parte-se em placas; folhas no outono; calor no verão; neve em Paris mas não no Rio; pré-visualizar cada estação e voltar a \"Agora\"",
-  "pass": false,
-  "info": "{\"e0\":[\"Agora (Outono)*\",\"Winter\",\"Spring\",\"Summer\",\"Fall\"],\"e1\":{\"gelo\":true,\"neveFarol\":true,\"placas\":true,\"folhas\":true,\"calor\":true,\"parisNeve\":true,\"rioSemNeve\":true,\"petalas\":true,\"gizeCalor\":true,\"est\":\"inverno\",\"on\":\"Winter\"},\"e2\":{\"est\":null,\"on\":\"Agora (Outono)\"}}"
- },
- {
-  "p": "Fundo",
-  "name": "Foto da galeria vira o fundo",
+  "p": "Animes",
+  "name": "Animes: no perfil pessoal do Ryan já vem ligada (e desligar fica guardado)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Fundo",
-  "name": "Depois de fechar e abrir, o fundo escolhido continua",
+  "p": "Animes",
+  "name": "Animes: no registo (escolher as abas) aparece desligada para a pessoa ligar",
+  "pass": true,
+  "info": "{\"on\":false,\"k\":\"animes\"}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: ligar no registo põe a aba no menu (no grupo próprio da parceria, fora do Eu)",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Fundo",
-  "name": "Editar perfil: \"Personagem do Dominus\" abre os personagens (e não a galeria de fotos)",
+  "p": "Animes",
+  "name": "Animes › Início: destaque com a faixa, a temporada e o que está em alta",
+  "pass": true,
+  "info": "[\"Ao vivo e a seguir\\nos próximos episódios, ao segundo\",\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: carrossel de destaque (com pontos para mudar) e os novos episódios",
+  "pass": true,
+  "info": "{\"n\":3,\"on\":0} [\"Ao vivo e a seguir\\nos próximos episódios, ao segundo\",\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: passar o destaque não volta ao primeiro quando a página se redesenha a meio",
+  "pass": true,
+  "info": "{\"t\":2,\"i\":2,\"on\":2}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: a classe de fã sai do que vês (aqui Estratega do Mistério, com o nível e a categoria) e o Recap do ano mostra episódios e horas, o género, os teus do ano, o estúdio e a classe",
+  "pass": true,
+  "info": "{\"c\":{\"k\":\"misterio\",\"nome\":\"Estratega do Mistério\",\"frase\":\"Gostas de pensar antes das personagens.\",\"cor\":\"#6d5dfc\",\"cat\":\"Drama\",\"nivel\":\"Iniciado\",\"eps\":133,\"traços\":[]},\"n\":7,\"t0\":\"&\\n\\nPrumo & PHANTOM\\n\\nO teu 2026 em animes\\n\\nToca para começar.\",\"vistos\":[\"& Prumo & PHANTOM O teu 2026 em animes Toca para começar.\",\"Este ano viste 133 episódios Isso são cerca de 53 horas, mais de 2 dias seguidos.\",\"O teu género Mistério Mistério 33% Psicológico 23% Drama 20%\",\"Os teus 4 do ano 1 Monster 10 2 Death Note 9 3 Erased 8 4 Spy x Family 7\",\"O teu estúdio Madhouse O teu mês mais forte março\",\"Este ano foste Estratega do Mistério Gostas de pensar antes das personagens. Iniciado · ca\",\"4 animes"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Ao vivo e a seguir: os próximos episódios com a contagem ao segundo (e os que acabaram de sair)",
+  "pass": true,
+  "info": "{\"a1\":[\"Sai daqui a 59:48\"],\"a2\":[\"Sai daqui a 59:47\"]}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes no computador: barra própria (selo das duas casas, 5 atalhos com ícone e o Mais por grupos) em vez da fila de separadores; tocar fora fecha o Mais",
+  "pass": true,
+  "info": "{\"tb\":{\"bar\":true,\"links\":5,\"tabs\":false,\"head\":false,\"grupos\":[\"Descobrir\",\"Jogar\",\"Comunidade\",\"A minha coleção\"],\"itens\":16},\"fechou\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início no telemóvel: o carrossel fica no topo e os atalhos (Competição e Diversão) por baixo dele; sala com luz e cor, separador ativo a vermelho e os 6 botões da barra numa linha só (o selo do Prumo não cai para baixo)",
+  "pass": true,
+  "info": "{\"first\":\"an-hero\",\"dq\":true,\"depois\":true,\"top\":0,\"luz\":true,\"tab\":\"rgb(216, 106, 120)\",\"linha\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Parceria Prumo & PHANTOM: o primeiro destaque é a parceria, o selo das duas casas no canto, a assinatura no fim e a página da parceria com o que nasce dela e os números ao vivo",
+  "pass": true,
+  "info": "{\"slide\":true,\"dots\":3,\"slides\":3,\"ass\":true,\"mini\":true,\"pag\":true,\"viva\":true,\"ass2\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Parceria: intro de cinema na primeira entrada nos Animes (o prumo e a aranha no mesmo fio), Entrar fecha e não volta a aparecer",
+  "pass": true,
+  "info": "{\"in1\":{\"on\":true,\"t\":\"Saltar\\n&\\nPrumo\\n&\\n\\nO mesmo fio.\\n\\nParceria oficial dos Animes do Prumo\\n\\nEntrar\"},\"in2\":true,\"in3\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: encontra pelo nome (com a nota da comunidade)",
+  "pass": true,
+  "info": "&\nAnimes\nInício\nNavegar\nSimulcasts\nPursuit\nA minha lista\nMais\nPesquisar\n\n2 resultados para “frieren”\n\n9,1\nFrieren: Beyond Journey's End\nSérie · 28 episódios · 2023\nAventura · Drama · Fantasia\nUma elfa maga revê a vida.\nFrieren: Beyond Journey's End\nSérie · 28 episódios · 2023\n8,0\nFrieren Season 2\nSé"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: título, nota, ranking, géneros em português, sinopse e onde ver (só serviços de streaming do país da conta, também os links antigos em http; sem YouTube nem Hulu em Portugal)",
+  "pass": true,
+  "info": "{\"t\":\"& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões no teu tier. Sinopse PT: A young elf mage reflects on life. Tradução automática. Ver o origina"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: a sinopse aparece traduzida sozinha (grátis, com \"Ver o original\")",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Fundo",
-  "name": "Editar perfil: com a lista aberta dá para subir até ao topo do formulário",
+  "p": "Animes",
+  "name": "Animes › Detalhe: as temporadas ficam no mesmo anime (seletor Temporadas, sem a manga) e recomendações",
+  "pass": true,
+  "info": "[\"Temporada 1 2023 · 28 ep.|Frieren: Beyond Journey's End|on\",\"Temporada 2 2026 · 12 ep.|Frieren Season 2\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: todos os episódios (28, sem a secção \"Com imagem\" quando só há miniaturas de alguns), personagens com a voz e as aberturas/encerramentos",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: tocar no episódio 2 marca que viste até lá",
   "pass": true,
   "info": ""
  },
  {
-  "p": "Fundo",
-  "name": "sem erros de JavaScript",
+  "p": "Animes",
+  "name": "Animes: \"Estou a ver\" junta à lista com o episódio 0 e a data de começo",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: tocar outra vez no estado marcado tira da lista (e tocar de novo volta a juntar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: episódio, nota 1–10, favorito, resenha, top 10 e tier ficam guardados",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":2023,\"sea\":\"FALL\",\"fmt\":\"TV\",\"eps\":28,\"dur\":24,\"gen\":[\"Adventure\",\"Drama\",\"Fantasy\"],\"stu\":\"Estúdio "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: mostra o episódio, a nota com o nome e o tier",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: chegar ao último episódio passa para \"Visto\" com a data de fim",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › A minha lista: vistos, episódios, horas, nota média e géneros",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Vistos 1 A ver 0 Quero ver 0 Episódios vistos 28 11 horas a ver anime A tua nota média 9,0 1 com nota Os géneros que mais vês Aventura 1 Drama 1 Fantasia 1 A minha fila As minhas listas Histórico Tudo A tua fila está vazia. Marca animes como “Quero ver” ou “Estou a ver”. Pesquisar anime & Uma parceria Prumo & PHANTOM Conhecer a parceria"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Top 10 e tier list: o anime está no tier S e no 1.º lugar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: a estação atual com todos os animes e o próximo episódio",
+  "pass": true,
+  "info": "{\"h\":\"Outono 2026\",\"n\":4,\"t\":\"8,0 Cyberpunk: Edgerunners 2 Série na internet · 10 episódios · 2026 Ação · Drama Cyberpunk: Edgerunners 2 Ep. 8 · sáb 05:50 8,5 The Apothecary Diaries Season 3 Série · 12 episódios · 2026 Drama · Mistério Uma farmacêutica resolve mistérios no palácio. The Apothecary Di"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: filtrar só os filmes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: voltar à temporada anterior (Verão 2026)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Calendário: os episódios da semana por dia e à hora certa (sem conteúdo adulto)",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Calendário de lançamentos Os episódios novos dos próximos 7 dias, à hora do teu aparelho (a hora a que saem no Japão). Normalmente chegam às plataformas de streaming no mesmo dia. Só os da minha lista Hoje quinta, 26/11 06:50 The Apothecary Diaries Season 3 Episódio 7 de 12 Amanhã sexta, 27/11 06:00 Série Sem Faixa Episódio 3 de 12 Sába"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Melhores do ano: ranking com o 1.º, a nota e os botões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Melhores do ano: escolher outro ano (2011)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: \"Quero ver\" num anime do ranking junta à lista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Navegar: populares com \"Ver mais\" (página seguinte)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Categorias: tocar em Ação abre os animes dessa categoria",
+  "pass": true,
+  "info": "#animes.navegar a Garotas mágicas Ecchi 8,0 Navegar Action página 1 Série · 12 episódios · 2026 Ação · Drama Navegar Action página 1 Série · 12 episódios · 2026 8,0 Outro 1 Série · 12 episódios · 2026 Ação · Drama Outro 1 Série · 12 episódios · 2026 Ver mais & Uma parceria Prumo & PHANTOM Conhecer a parceria"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Notícias: notícias de anime pelo servidor do Prumo",
+  "pass": true,
+  "info": "&\nAnimes\nInício\nNavegar\nSimulcasts\nPursuit\nA minha lista\nMais\nNotícias de anime\n\nO que se está a dizer sobre anime, mangá, estreias e streaming, nas últimas 48 horas. Abre no site de cada jornal.\n\nJornal Teste · há 1 min\nPesquisa 1\nJornal Teste · há 1 min\nPesquisa 2\nJornal Teste · há 1 min\nPesquisa "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: junta o Kitsu (encontra o que o AniList não tem) e esconde o conteúdo adulto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: \"Pedir à IA para encontrar\" descobre o anime pelo nome em português",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe de um anime que só o Kitsu tinha: o AniList completa (procura pelo nome)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › As minhas listas: criar uma lista a partir do anime e vê-la em A minha lista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: a escolha a partir do que viste, a dizer porquê, sem o que já tens na lista",
+  "pass": true,
+  "info": "[\"8,7 Violet Evergarden Série · 12 episódios · 2026 Ação · Drama Violet Evergarden Porque viste Frieren: Beyond Journey's End\",\"8,0 Mushoku Tensei Série · 12 episódios · 2026 Ação · Drama Mushoku Tensei Porque viste Frieren: Beyond Journey's End\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: os teus géneros, clássicos, joias escondidas e filmes",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Recomendado para ti A partir do que viste e das tuas notas (Frieren: Beyond Journey's End). O que já está na tua lista não aparece: marca Quero ver ou Já vi e as sugestões mudam. A escolha para ti 8,7 Violet Evergarden Série · 12 episódios · 2026 Ação · Drama Violet Evergarden Porque viste Frieren: Beyond Journey's End 8,0 Mushoku Tensei Série · 12 episódios · 2026 Ação · Drama Mushoku Tensei Porque viste Frieren: Beyond Journey's End Pede à IA Diz o que te apetece ver e a IA escolhe 8 animes a pensar na tua lista (os que já tens fi"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: pedir à IA dá animes reais com o porquê (os da lista ficam de fora)",
+  "pass": true,
+  "info": "Mushishi Série · 12 episódios · 2026 Calmo e contemplativo, como Frieren. Quero ver Já vi 8,6 de 10"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: faixa \"Recomendado para ti\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: com o AniList em baixo, a pesquisa usa o MyAnimeList (reserva)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no telemóvel nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: sem erros na consola",
   "pass": true,
   "info": ""
  }
