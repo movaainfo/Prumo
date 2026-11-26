@@ -121,85 +121,144 @@ const FX = (() => { let cv = null, g = null, st = null, W = 0, H = 0, P = [], R 
         add({ x: x + Math.cos(a) * r, y: y + Math.sin(a) * r, vx: -Math.cos(a) * r / f, vy: -Math.sin(a) * r / f, fr: 1, gr: 0, l: 1, dl: 1 / f, s: 1.6 + Math.random() * 2, c: C[i % C.length], k: 'spark' }); } go(); } }; })();
 
 // --- a banda sonora (original, feita no momento pelo telemóvel): pad, batida, baixo e arpejos; impactos, subidas e cortes ---
-const SOM = (() => { let ac = null, out = null, lp = null, padF = null, NB = null, on = true, play = false, t0 = 0, step = 0, nextT = 0, tm = 0, nv = 0, arp = false, bpm = 112;
-  try { on = localStorage.getItem('oc_rx_som') !== '0'; } catch (e) { }
-  const mf = m => 440 * Math.pow(2, (m - 69) / 12), CH = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]];
-  const ctx = () => { try { if (!ac) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; ac = new C(); const comp = ac.createDynamicsCompressor(); out = ac.createGain(); out.gain.value = on ? .5 : 0; out.connect(comp); comp.connect(ac.destination);
-        lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 520; lp.connect(out); padF = ac.createBiquadFilter(); padF.type = 'lowpass'; padF.frequency.value = 1400; padF.connect(out);
+// v3.88 · a banda sonora do Recap (feita no próprio aparelho, sem ficheiros): cada ecrã tem a sua parte da música e os seus efeitos.
+// Abertura com caixinha de música e o coração a bater antes do ano; contagens que sobem em notas; o género com batida e o tema;
+// cartas a virar nos teus 5; o ano mês a mês tocado como melodia; o Pursuit em som de jogo antigo; o rank com tensão e fanfarra;
+// a classe com coro e tambores; e o final com fogo de artifício (assobio e estalidos). As explosões são acordes, não só "pum".
+const SOM = (() => { let ac = null, out = null, mix = null, rev = null, dly = null, NB = null, on = true, play = false, step = 0, nextT = 0, tm = 0, nv = 0, sec = 'abre';
+  const bpm = 108; try { on = localStorage.getItem('oc_rx_som') !== '0'; } catch (e) { }
+  const mf = m => 440 * Math.pow(2, (m - 69) / 12);
+  const CH = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]];   // lá menor, fá, dó, sol (a progressão das aberturas de anime)
+  const MEL = [[[0, 76, 3], [3, 76, 3], [6, 74, 2], [8, 72, 2], [10, 74, 2], [12, 76, 2], [14, 79, 2]], [[0, 81, 4], [4, 79, 2], [6, 77, 2], [8, 76, 4], [12, 72, 4]],
+    [[0, 76, 3], [3, 79, 3], [6, 84, 2], [8, 83, 2], [10, 79, 2], [12, 76, 4]], [[0, 74, 4], [4, 79, 2], [6, 83, 2], [8, 81, 3], [11, 79, 2], [13, 74, 3]]];   // o tema: [passo, nota, duração]
+  const PENTA = [60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88, 91, 93, 96];
+  const ctx = () => { try { if (!ac) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; ac = new C();
+        const comp = ac.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4; out = ac.createGain(); out.gain.value = on ? .55 : 0; out.connect(comp); comp.connect(ac.destination); mix = ac.createGain(); mix.connect(out);
+        rev = ac.createConvolver(); const L = ac.sampleRate * 2.2 | 0, ib = ac.createBuffer(2, L, ac.sampleRate); for (let c = 0; c < 2; c++) { const d = ib.getChannelData(c); for (let i = 0; i < L; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / L, 3); } rev.buffer = ib; const rg = ac.createGain(); rg.gain.value = .3; rev.connect(rg); rg.connect(out);
+        dly = ac.createDelay(1); dly.delayTime.value = 60 / bpm * .75; const fb = ac.createGain(); fb.gain.value = .3; const dg = ac.createGain(); dg.gain.value = .26; dly.connect(fb); fb.connect(dly); dly.connect(dg); dg.connect(out);
         const b = ac.createBuffer(1, ac.sampleRate, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; NB = b; }
       if (ac.state === 'suspended') ac.resume(); return ac; } catch (e) { return null; } };
-  const tone = (t, f, dur, type, vol, dest) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .015); g.gain.exponentialRampToValueAtTime(.0008, t + dur); o.connect(g); g.connect(dest || out); o.start(t); o.stop(t + dur + .05); };
-  const noise = (t, dur, f, type, vol, f2) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = NB; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + dur);
-    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0008, t + dur); s.connect(fl); fl.connect(g); g.connect(out); s.start(t); s.stop(t + dur + .05); };
-  const kick = (t, v = .9) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(40, t + .2); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.001, t + .38); o.connect(g); g.connect(out); o.start(t); o.stop(t + .42); };
-  const sched = () => { if (!play || !ac) return; const spb = 60 / bpm / 4;
-    while (nextT < ac.currentTime + .18) { const s = step % 16, bar = Math.floor(step / 16) % 4, ch = CH[bar];
-      if (s === 0) ch.forEach(n => tone(nextT, mf(n), spb * 16, 'sawtooth', .022, padF));
-      if (nv >= 1) { if (s % 4 === 0) kick(nextT); if (s === 4 || s === 12) { noise(nextT, .2, 1900, 'bandpass', .32); tone(nextT, 185, .09, 'triangle', .12); } if (s % 2 === 1) noise(nextT, .045, 8500, 'highpass', .07);
-        if (s % 4 === 0 || s === 7 || s === 10) tone(nextT, mf(ch[0] - 24), .24, 'sawtooth', .09, lp); }
-      if (arp && s % 2 === 0) tone(nextT, mf(ch[(s / 2) % 3] + 12 + (s >= 8 ? 12 : 0)), .14, 'square', .022);
-      nextT += spb; step++; }
-    tm = setTimeout(sched, 45); };
-  return { get on() { return on; },
-    start() { if (!ctx()) return; play = true; step = 0; nv = 0; arp = false; nextT = ac.currentTime + .05; clearTimeout(tm); sched(); },
+  // peças: oscilador e ruído com envolvente, filtro e envio para o eco e a sala
+  const send = (n, r, e) => { n.connect(mix); if (r) { const g = ac.createGain(); g.gain.value = r; n.connect(g); g.connect(rev); } if (e) { const g = ac.createGain(); g.gain.value = e; n.connect(g); g.connect(dly); } };
+  const osc = (t, f, dur, type, vol, o = {}) => { const s = ac.createOscillator(), g = ac.createGain(); s.type = type; s.frequency.setValueAtTime(f, t); if (o.det) s.detune.value = o.det; if (o.slide) s.frequency.exponentialRampToValueAtTime(o.slide, t + dur * .9);
+    let last = s; if (o.lp) { const fl = ac.createBiquadFilter(); fl.type = o.bp ? 'bandpass' : 'lowpass'; fl.frequency.setValueAtTime(o.lp, t); if (o.lp2) fl.frequency.exponentialRampToValueAtTime(o.lp2, t + (o.lpT || dur)); if (o.q) fl.Q.value = o.q; s.connect(fl); last = fl; }
+    const a = o.a || .01; g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + a); g.gain.exponentialRampToValueAtTime(.0005, t + Math.max(a + .03, dur)); last.connect(g); send(g, o.r, o.e); s.start(t); s.stop(t + dur + .1); return s; };
+  const ruido = (t, dur, f, type, vol, o = {}) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = NB; s.loop = dur > .9; fl.type = type; fl.frequency.setValueAtTime(f, t); if (o.f2) fl.frequency.exponentialRampToValueAtTime(o.f2, t + dur); if (o.q) fl.Q.value = o.q;
+    if (o.in) { g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * .92); } else g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0005, t + dur); s.connect(fl); fl.connect(g); send(g, o.r, o.e); s.start(t); s.stop(t + dur + .05); };
+  // instrumentos
+  const sino = (t, m, v = .06, d = 1.6) => { osc(t, mf(m), d, 'sine', v, { r: .5, e: .2 }); osc(t, mf(m) * 2.76, d * .35, 'sine', v * .35, { r: .4 }); osc(t, mf(m) * 5.4, d * .15, 'sine', v * .16, { r: .3 }); };
+  const marimba = (t, m, v = .1) => { osc(t, mf(m), .45, 'sine', v, { r: .25 }); osc(t, mf(m) * 4, .07, 'sine', v * .22); };
+  const pluck = (t, m, v = .05) => osc(t, mf(m), .32, 'sawtooth', v, { lp: 3200, lp2: 500, lpT: .25, e: .25, r: .15 });
+  const lead = (t, m, d, v = .055) => { [osc(t, mf(m), d, 'square', v * .6, { lp: 2600, a: .02, e: .35, r: .25 }), osc(t, mf(m), d, 'sawtooth', v * .5, { det: 9, lp: 2200, a: .02, e: .3, r: .2 })].forEach(s => { const l = ac.createOscillator(), lg = ac.createGain(); l.frequency.value = 5.5; lg.gain.value = 7; l.connect(lg); lg.connect(s.detune); l.start(t + .12); l.stop(t + d + .1); }); };
+  const pad = (t, ch, d, v = .016, br = 1200) => ch.forEach(n => [-7, 7].forEach(dt => osc(t, mf(n), d, 'sawtooth', v, { lp: br, a: .6, r: .45, det: dt })));
+  const coro = (t, ch, d, v = .022) => ch.forEach(n => [-6, 6].forEach(dt => { osc(t, mf(n), d, 'sawtooth', v, { lp: 800, bp: 1, q: 6, a: .45, det: dt, r: .6 }); osc(t, mf(n), d, 'sawtooth', v * .6, { lp: 1200, bp: 1, q: 8, a: .45, det: -dt, r: .6 }); }));
+  const rhodes = (t, ch, d, v = .045) => ch.forEach((n, i) => { osc(t + i * .012, mf(n), d, 'sine', v, { r: .3 }); osc(t + i * .012, mf(n) * 2, d * .4, 'triangle', v * .28, { r: .2 }); });
+  const baixo = (t, m, d, v = .13) => { osc(t, mf(m), d, 'sine', v); osc(t, mf(m), d, 'sawtooth', v * .22, { lp: 420 }); };
+  const kick = (t, v = .6) => { const s = ac.createOscillator(), g = ac.createGain(); s.frequency.setValueAtTime(130, t); s.frequency.exponentialRampToValueAtTime(42, t + .16); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.001, t + .3); s.connect(g); g.connect(mix); s.start(t); s.stop(t + .32); };
+  const palmas = (t, v = .2) => { [0, .012, .024].forEach(o => ruido(t + o, .07, 1400, 'bandpass', v, { q: 1.4 })); ruido(t + .03, .2, 1200, 'bandpass', v * .45, { q: 1, r: .5 }); };
+  const chimbal = (t, v = .045, ab) => ruido(t, ab ? .22 : .04, 9000, 'highpass', v);
+  const shaker = (t, v = .03) => ruido(t, .06, 6500, 'bandpass', v, { q: 2 });
+  const taiko = (t, v = .5) => { osc(t, 92, .5, 'sine', v, { slide: 48, r: .4 }); ruido(t, .12, 400, 'lowpass', v * .4, { r: .3 }); };
+  const coracao = (t, v = .28) => { osc(t, 58, .22, 'sine', v, { slide: 40 }); osc(t + .2, 52, .26, 'sine', v * .7, { slide: 36 }); };
+  const vinil = (t, d) => { for (let i = 0; i < d * 8; i++) ruido(t + Math.random() * d, .006, 3000 + Math.random() * 4000, 'bandpass', .04 + Math.random() * .05, { q: 4 }); };
+  const chip = (t, m, d, v = .03) => osc(t, mf(m), d, 'square', v, { e: .1 });
+  // cada parte da música, passo a passo (16 passos por compasso)
+  const SEC = {
+    abre: (s, b, ch, t, q) => { if (s === 0) pad(t, ch, q * 16, .013, 900); if (s % 4 === 0) sino(t, PENTA[[7, 9, 8, 10][b] + (s % 8 ? 2 : 0)], .045, 1.8);
+      if (nv >= 1) { if (s === 0 || s === 8) kick(t, .5); if (s % 2 === 1) shaker(t); if (s === 4 || s === 12) palmas(t, .13); if (s % 8 === 0) baixo(t, ch[0] - 24, q * 6); } else if (s === 0 || s === 8) coracao(t, .2); },
+    conta: (s, b, ch, t, q) => { if (s === 0) pad(t, ch, q * 16, .011, 1100); if (s % 2 === 0) marimba(t, ch[(s / 2) % 3] + 12 + (s >= 8 ? 12 : 0), .06);
+      if (nv >= 1) { if (s % 8 === 0) kick(t, .45); if (s === 4 || s === 12) palmas(t, .11); if (s % 4 === 2) chimbal(t, .035); if (s === 0 || s === 6 || s === 10) baixo(t, ch[0] - 24, q * 3); } },
+    drop: (s, b, ch, t, q) => { if (s === 0) pad(t, ch, q * 16, .014, 1800); if (s % 4 === 0) kick(t, .55); if (s === 4 || s === 12) palmas(t, .18); chimbal(t, s % 4 === 2 ? .05 : .025, s % 4 === 2);
+      if ([0, 3, 6, 10, 12].includes(s)) baixo(t, ch[0] - 24 + (s === 10 ? 7 : 0), q * 2.5); MEL[b].forEach(([p, m, d]) => { if (p === s) lead(t, m, q * d); }); if (s % 2 === 1) pluck(t, ch[(s >> 1) % 3] + 12, .025); },
+    top: (s, b, ch, t, q) => { if (s === 0) rhodes(t, ch.map(n => n + 12), q * 14, .04); if (s % 8 === 0) kick(t, .4); if (s === 8) palmas(t, .1); if (s % 2 === 1) shaker(t, .025); if (s === 0 || s === 10) baixo(t, ch[0] - 24, q * 4);
+      if (nv >= 2) MEL[b].forEach(([p, m, d]) => { if (p === s) lead(t, m, q * d, .05); }); },
+    calmo: (s, b, ch, t, q) => { if (s === 0) { rhodes(t, ch.map(n => n + 12), q * 15, .045); vinil(t, q * 16); } if (s === 0 || s === 10) kick(t, .35); if (s === 8) ruido(t, .12, 2200, 'bandpass', .1, { r: .3 }); if (s % 4 === 2) chimbal(t, .02); if (s === 0) baixo(t, ch[0] - 24, q * 8, .09); },
+    jogo: (s, b, ch, t, q) => { chip(t, ch[s % 3] + 24, q * .9, .025); if (s % 4 === 0) chip(t, ch[0] - 12, q * 2, .045); if (s % 8 === 0) kick(t, .4); if (s === 4 || s === 12) ruido(t, .06, 5000, 'highpass', .07); },
+    rank: (s, b, ch, t, q) => { if (s === 0) pad(t, [ch[0] - 12, ch[0] - 5], q * 16, .018, 500);
+      if (nv < 1) { if (s === 0 || s === 8) coracao(t, .26); if (s % 2 === 0 && b % 2 === 1) taiko(t, .08 + s * .012); }
+      else { if (s % 4 === 0) kick(t, .55); if (s === 4 || s === 12) palmas(t, .16); chimbal(t, .035, s % 4 === 2); if (s % 4 === 0) baixo(t, ch[0] - 24, q * 3); if (s % 2 === 0) pluck(t, ch[(s >> 1) % 3] + 24, .03); } },
+    classe: (s, b, ch, t, q) => { if (s === 0) coro(t, ch, q * 16, .02); if ([0, 6, 8, 11, 14].includes(s)) taiko(t, s === 0 ? .5 : .3); if (s % 4 === 0) baixo(t, ch[0] - 24, q * 4, .11); if (nv >= 1 && s % 4 === 2) sino(t, ch[1] + 24, .03, 1.2); },
+    carta: (s, b, ch, t, q) => { if (s === 0) pad(t, ch, q * 16, .011, 1500); if (s % 2 === 0) sino(t, PENTA[(s / 2 + b * 2) % PENTA.length] + 12, .028, 1.2); },
+    fim: (s, b, ch, t, q) => { SEC.drop(s, b, ch, t, q); if (s === 0 && b === 0) ruido(t, 1.6, 7000, 'highpass', .1, { r: .5 }); } };
+  const sched = () => { if (!play || !ac) return; const q = 60 / bpm / 4;
+    while (nextT < ac.currentTime + .2) { const s = step % 16, b = Math.floor(step / 16) % 4; try { (SEC[sec] || SEC.abre)(s, b, CH[b], nextT, q); } catch (e) { } nextT += q; step++; }
+    tm = setTimeout(sched, 50); };
+  const T = () => ac.currentTime, CHA = () => CH[Math.floor(step / 16) % 4];
+  return { get on() { return on; }, get secao_() { return sec; },
+    start() { if (!ctx()) return; play = true; step = 0; nv = 0; sec = 'abre'; nextT = ac.currentTime + .05; clearTimeout(tm); sched(); },
     stop() { play = false; clearTimeout(tm); if (ac) { try { out.gain.setTargetAtTime(0, ac.currentTime, .12); const a = ac; setTimeout(() => { try { a.close(); } catch (e) { } }, 600); } catch (e) { } } ac = null; },
-    nivel(n, a) { nv = n; arp = !!a; },
-    impacto(forte) { if (!ac) return; const t = ac.currentTime; kick(t, 1); noise(t, forte ? 1.4 : .8, 3200, 'lowpass', forte ? .6 : .4); tone(t, 48, forte ? .9 : .5, 'sine', .7); if (forte) tone(t + .02, 96, .4, 'triangle', .2); },
-    subida(seg = 1.4) { if (!ac) return; const t = ac.currentTime, s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = NB; s.loop = true; fl.type = 'bandpass'; fl.Q.value = 3; fl.frequency.setValueAtTime(300, t); fl.frequency.exponentialRampToValueAtTime(7000, t + seg);
-      g.gain.setValueAtTime(.001, t); g.gain.exponentialRampToValueAtTime(.35, t + seg); g.gain.exponentialRampToValueAtTime(.001, t + seg + .08); s.connect(fl); fl.connect(g); g.connect(out); s.start(t); s.stop(t + seg + .1); },
-    corte() { if (!ac) return; noise(ac.currentTime, .32, 2600, 'bandpass', .25, 380); },
-    tique() { if (!ac) return; tone(ac.currentTime, 1500 + Math.random() * 300, .03, 'square', .025); },
-    brilho() { if (!ac) return; const t = ac.currentTime; [76, 79, 83, 88, 91].forEach((n, i) => tone(t + i * .07, mf(n), .5, 'triangle', .06)); },
-    pop() { if (!ac) return; const t = ac.currentTime; noise(t, .5, 1800, 'lowpass', .25); tone(t, 70, .25, 'sine', .3); },
-    alterna() { on = !on; try { localStorage.setItem('oc_rx_som', on ? '1' : '0'); } catch (e) { } if (ac && out) out.gain.setTargetAtTime(on ? .5 : 0, ac.currentTime, .05); return on; } }; })();
+    nivel(n) { nv = n; },
+    secao(k) { if (k && k !== sec) { sec = k; step = 0; } },
+    // a explosão é um acorde: grave que cai, sopro de ar e o acorde da música (com sinos no forte)
+    impacto(forte) { if (!ac) return; const t = T(), ch = CHA(); kick(t, .7); osc(t, 70, forte ? 1.1 : .6, 'sine', .4, { slide: 32 }); ruido(t, forte ? 1.2 : .6, 2400, 'lowpass', forte ? .3 : .2, { f2: 300, r: .6 });
+      ch.concat(ch.map(n => n + 12)).forEach(n => osc(t, mf(n), forte ? 1.4 : .8, 'sawtooth', .028, { lp: 3500, lp2: 700, lpT: .5, r: .5 })); if (forte) [84, 88, 91, 96].forEach((m, i) => sino(t + .08 + i * .06, m, .03, 1.4)); },
+    // a subida: ruído a abrir, um tom a subir e uma tarola a acelerar
+    subida(seg = 1.4) { if (!ac) return; const t = T(); ruido(t, seg, 400, 'bandpass', .2, { f2: 8000, q: 2, in: 1, r: .3 }); osc(t, mf(48), seg, 'sawtooth', .022, { slide: mf(72), lp: 600, lp2: 4000, lpT: seg, a: seg * .8 });
+      const n = Math.round(seg * 9); for (let i = 0; i < n; i++) { const k = i / n; palmas(t + seg * (1 - Math.pow(1 - k, 1.8)), .025 + k * .08); } },
+    corte() { if (!ac) return; ruido(T(), .4, 3200, 'bandpass', .2, { f2: 300, q: 1.2, r: .3 }); },
+    // as contagens sobem em notas (no Pursuit, moedas)
+    tique(k) { if (!ac) return; const t = T(); if (sec === 'jogo') { chip(t, 83, .05, .03); chip(t + .05, 88, .09, .03); return; } marimba(t, PENTA[Math.min(PENTA.length - 1, Math.floor((k == null ? Math.random() : k) * PENTA.length))] + 12, .055); },
+    brilho() { if (!ac) return; const t = T(); PENTA.slice(4).forEach((m, i) => osc(t + i * .035, mf(m + 12), .6, 'triangle', .03, { r: .5, e: .2 })); [88, 91, 96].forEach((m, i) => sino(t + .4 + i * .08, m, .03, 1.6)); },
+    pop() { if (!ac) return; const t = T(); osc(t, 700, .12, 'sine', .12, { slide: 1500 }); sino(t + .05, 91, .04, 1); },
+    // a carta a virar (os teus 5): um estalo e uma nota que sobe a cada anime
+    vira(i = 0) { if (!ac) return; const t = T(); ruido(t, .09, 2500, 'bandpass', .14, { f2: 900, q: 1.5 }); pluck(t + .03, [72, 74, 76, 79, 81][i % 5], .06); },
+    // o teu ano tocado como melodia: cada mês uma nota (mais episódios, nota mais alta)
+    melodia(ms) { if (!ac || !ms) return; const t = T(), mx = Math.max(1, ...ms); ms.forEach((v, i) => { const m = PENTA[Math.round(v / mx * 10) + 2]; marimba(t + i * .16, m, v ? .07 : .03); if (v === mx && v) sino(t + i * .16, m + 12, .04, 1.4); }); },
+    // o rank: fanfarra de metais e um prato
+    fanfarra() { if (!ac) return; const t = T(); [[60, 64, 67], [65, 69, 72], [67, 71, 74, 79]].forEach((ch, i) => ch.forEach(n => osc(t + i * .22, mf(n), i === 2 ? 1.6 : .22, 'sawtooth', .035, { lp: 900, lp2: 3200, lpT: .12, r: .45 }))); ruido(t + .44, 1.8, 6000, 'highpass', .12, { r: .5 }); taiko(t + .44, .4); },
+    // a classe: o coro abre e o gongo
+    coroHit() { if (!ac) return; const t = T(); coro(t, [57, 64, 69, 72], 2.4, .03); osc(t, 55, 3, 'sine', .3, { r: .6 }); osc(t, 55 * 2.7, 2, 'sine', .06, { r: .6 }); ruido(t, 2, 900, 'bandpass', .06, { q: .7, r: .6 }); taiko(t, .55); },
+    // fogo de artifício: o assobio a subir e o rebentamento com estalidos
+    fogo(i = 0) { if (!ac) return; const t = T(); osc(t, 800 + i * 40, .5, 'sine', .035, { slide: 2600 + i * 80, r: .3 }); ruido(t + .5, .5, 1800, 'lowpass', .16, { r: .5 }); for (let k = 0; k < 9; k++) ruido(t + .55 + Math.random() * .7, .02, 4000 + Math.random() * 3000, 'bandpass', .05, { q: 3, r: .3 }); },
+    alterna() { on = !on; try { localStorage.setItem('oc_rx_som', on ? '1' : '0'); } catch (e) { } if (ac && out) out.gain.setTargetAtTime(on ? .55 : 0, ac.currentTime, .05); return on; } }; })();
 
 const vib = p => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) { } };
 const impacto = (el, x, y, cores, forte) => { if (!el) return; const sec = el.querySelector('.rx-s.on') || el; el.classList.remove('rx-flash'); sec.classList.remove('rx-shake'); void el.offsetWidth; el.classList.add('rx-flash'); sec.classList.add('rx-shake'); FX.ring(x, y, cores[0], forte ? 22 : 14); if (forte) setTimeout(() => FX.ring(x, y, '#ffffff', 10, 36), 90);
   FX.burst(x, y, { n: forte ? 170 : 95, c: cores.concat('#ffffff'), sp: forte ? 15 : 10 }); SOM.impacto(forte); vib(forte ? [40, 30, 70] : 35); };
 const conta = (el, ate, ms, fim) => { if (!el) return; if (!FX.on) { el.textContent = nf(ate); if (fim) fim(); return; } const t0 = performance.now(); let lt = 0;
-  const f = t => { const k = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(2, -10 * k); el.textContent = nf(Math.round(ate * (k >= 1 ? 1 : e))); if (t - lt > 70 && k < .97) { SOM.tique(); lt = t; } if (k < 1 && document.body.contains(el)) requestAnimationFrame(f); else if (fim) fim(); }; requestAnimationFrame(f); };
+  const f = t => { const k = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(2, -10 * k); el.textContent = nf(Math.round(ate * (k >= 1 ? 1 : e))); if (t - lt > 70 && k < .97) { SOM.tique(e); lt = t; } if (k < 1 && document.body.contains(el)) requestAnimationFrame(f); else if (fim) fim(); }; requestAnimationFrame(f); };
 const parede = imgs => { if (!imgs.length) return ''; const L = []; while (L.length < 28) L.push(...imgs); return `<div class="rx-wall" aria-hidden="true">${[0, 1, 2, 3].map(r => `<div class="rx-wr" style="--d:${r % 2 ? -1 : 1}">${L.slice(r * 7, r * 7 + 7).concat(L.slice(r * 7, r * 7 + 7)).map(u => `<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" loading="eager">`).join('')}</div>`).join('')}</div>`; };
 const letreiro = t => `<div class="rx-mq" aria-hidden="true">${[0, 1, 2, 3, 4].map(r => `<div class="rx-mr${r % 2 ? ' inv' : ''}"><span>${Array(8).fill(esc(t)).join(' · ')} · </span><span>${Array(8).fill(esc(t)).join(' · ')} · </span></div>`).join('')}</div>`;
 
 // --- os ecrãs: html, duração, fundo (poster), a música de cada um e a coreografia ---
 const ecras = (d, c) => { const nome = OS.Social && OS.Social.nome ? OS.Social.nome() : 'PHANTOM', S = [], cc = c ? c.cor : '#ff3d8b', ouro = ['#fde047', '#f59e0b', '#ffffff'], img0 = (d.top.find(a => a.img) || {}).img || '';
   const mid = (el, sel) => { const e = el.querySelector(sel), [ox, oy] = FX.off(); if (!e) return [FX.W() / 2, FX.H() / 2]; const r = e.getBoundingClientRect(); return [r.left - ox + r.width / 2, r.top - oy + r.height / 2]; };
-  S.push({ dur: 6400, c1: '#12081f', c2: '#3b0a45', mus: 0, html: `<div class="rx-in"><span class="rx-fio" aria-hidden="true"></span><p class="rx-pre">${OS.Parceria ? OS.Parceria.mini() : ''}<span>Prumo &amp; ${esc(nome)} apresentam</span></p><h1 class="rx-tt"><span class="w1">O teu</span><span class="w2">${d.y}</span><span class="w3">em animes</span></h1><p class="rx-tap">Toca para avançar · segura para parar</p><button type="button" class="rx-recb" data-act="arGravar">${UI.ic('play')}Gravar para as redes</button></div>`,
+  S.push({ dur: 6400, c1: '#12081f', c2: '#3b0a45', mus: 0, sec: 'abre', html: `<div class="rx-in"><span class="rx-fio" aria-hidden="true"></span><p class="rx-pre">${OS.Parceria ? OS.Parceria.mini() : ''}<span>Prumo &amp; ${esc(nome)} apresentam</span></p><h1 class="rx-tt"><span class="w1">O teu</span><span class="w2">${d.y}</span><span class="w3">em animes</span></h1><p class="rx-tap">Toca para avançar · segura para parar</p><button type="button" class="rx-recb" data-act="arGravar">${UI.ic('play')}Gravar para as redes</button></div>`,
     go: (el, T, R) => { T(() => SOM.subida(1.1), 100); T(() => { const [x, y] = mid(el, '.w2'); impacto(R, x, y, ouro.concat(cc), true); SOM.nivel(1); }, 1250); T(() => FX.burst(FX.W() * .2, FX.H() * .3, { n: 60, c: ouro }), 2300); T(() => FX.burst(FX.W() * .8, FX.H() * .35, { n: 60, c: [cc, '#fff'] }), 2700); } });
   const dias = Math.floor(d.h / 24), voos = Math.floor(d.h / 14);
-  S.push({ dur: 8400, c1: '#07112a', c2: '#1d4ed8', mus: 1, html: `${parede(d.imgs)}<div class="rx-in rx-epw"><p class="rx-k">Este ano viste</p><b class="rx-big">0</b><p class="rx-u">episódios</p>
+  S.push({ dur: 8400, c1: '#07112a', c2: '#1d4ed8', mus: 1, sec: 'conta', html: `${parede(d.imgs)}<div class="rx-in rx-epw"><p class="rx-k">Este ano viste</p><b class="rx-big">0</b><p class="rx-u">episódios</p>
       <ul class="rx-facts"><li><b>${nf(d.h)} horas</b> de anime</li>${dias ? `<li>Dava <b>${dias} ${dias === 1 ? 'dia' : 'dias'} seguidos</b>, sem dormir</li>` : ''}${voos ? `<li>Ou <b>${voos} ${voos === 1 ? 'voo' : 'voos'}</b> de Lisboa a Tóquio</li>` : ''}</ul></div>`,
     go: (el, T, R) => { T(() => conta(el.querySelector('.rx-big'), d.eps, 2100, () => { const [x, y] = mid(el, '.rx-big'); impacto(R, x, y, ['#60a5fa', '#a5f3fc', cc], true); el.classList.add('bum'); }), 450); } });
   if (d.G.length) { const g0 = d.G[0], gc = GCOR[g0.k] || cc, gi = (d.top.find(a => (a.gen || []).includes(g0.k) && a.img) || {}).img || img0;
-    S.push({ dur: 7800, c1: '#120a1f', c2: gc, mus: 2, img: gi, html: `${letreiro(g0.n)}<div class="rx-in rx-genw"><p class="rx-k">O teu género dominante</p><b class="rx-gen">${esc(g0.n)}</b>
+    S.push({ dur: 7800, c1: '#120a1f', c2: gc, mus: 2, sec: 'drop', img: gi, html: `${letreiro(g0.n)}<div class="rx-in rx-genw"><p class="rx-k">O teu género dominante</p><b class="rx-gen">${esc(g0.n)}</b>
       <ol class="rx-bars">${d.G.map((x, i) => `<li style="--d:${1.5 + i * .35}s;--p:${x.p}%;--c:${GCOR[x.k] || cc}"><span>${esc(x.n)}</span><i></i><em data-n="${x.p}">0</em></li>`).join('')}</ol></div>`,
       go: (el, T, R) => { T(() => { const [x, y] = mid(el, '.rx-gen'); impacto(R, x, y, [gc, '#ffffff'], false); }, 900); el.querySelectorAll('.rx-bars em').forEach((e, i) => T(() => conta(e, +e.dataset.n, 900, () => { e.textContent += '%'; }), 1500 + i * 350)); } }); }
   if (d.top.length) { const um = d.top[0], resto = d.top.slice(1).reverse(), t1 = (.4 + resto.length * .55 + .5) * 1000 + 350;
-    S.push({ dur: 10000, c1: '#1a0606', c2: '#7f1d1d', mus: 1, img: um.img || '', html: `<div class="rx-in rx-topw"><p class="rx-k">Os teus ${d.top.length} do ano</p><ol class="rx-top">${resto.map((a, i) => `<li style="--d:${.3 + i * .55}s"><span>${d.top.length - i}</span>${a.img ? `<img src="${esc(a.img)}" alt="" referrerpolicy="no-referrer">` : '<i></i>'}<b>${esc(a.t)}</b>${+a.nota ? `<em>${a.nota}</em>` : ''}</li>`).join('')}</ol>
+    S.push({ dur: 10000, c1: '#1a0606', c2: '#7f1d1d', mus: 1, sec: 'top', img: um.img || '', html: `<div class="rx-in rx-topw"><p class="rx-k">Os teus ${d.top.length} do ano</p><ol class="rx-top">${resto.map((a, i) => `<li style="--d:${.3 + i * .55}s"><span>${d.top.length - i}</span>${a.img ? `<img src="${esc(a.img)}" alt="" referrerpolicy="no-referrer">` : '<i></i>'}<b>${esc(a.t)}</b>${+a.nota ? `<em>${a.nota}</em>` : ''}</li>`).join('')}</ol>
       <div class="rx-one" style="--d:${t1 / 1000 - .35}s"><div class="rx-rays" aria-hidden="true"></div>${um.img ? `<img src="${esc(um.img)}" alt="" referrerpolicy="no-referrer">` : ''}<div><small>O teu anime do ano</small><b>${esc(um.t)}</b>${+um.nota ? `<em>nota ${um.nota}</em>` : ''}</div></div></div>`,
-      go: (el, T, R) => { T(() => { SOM.nivel(0); SOM.subida(1.2); }, t1 - 1200); T(() => { const [x, y] = mid(el, '.rx-one img, .rx-one b'); impacto(R, x, y, ouro, true); SOM.nivel(2, true); SOM.brilho(); FX.conf(170, ['#fde047', '#f472b6', '#60a5fa', '#34d399', '#ffffff']); }, t1); } }); }
+      go: (el, T, R) => { resto.forEach((a, i) => T(() => SOM.vira(i), (.3 + i * .55) * 1000 + 120)); T(() => { SOM.nivel(0); SOM.subida(1.2); }, t1 - 1200); T(() => { const [x, y] = mid(el, '.rx-one img, .rx-one b'); impacto(R, x, y, ouro, true); SOM.nivel(2, true); SOM.brilho(); FX.conf(170, ['#fde047', '#f472b6', '#60a5fa', '#34d399', '#ffffff']); }, t1); } }); }
   if (d.mes || d.stu) { const mx = Math.max(1, ...d.ms);
-    S.push({ dur: 7600, c1: '#04201a', c2: '#047857', mus: 1, html: `<div class="rx-in"><p class="rx-k">O teu ano, mês a mês</p><div class="rx-ms">${d.ms.map((v, i) => `<span class="${i === d.mi && d.mes ? 'pk' : ''}" style="--h:${Math.max(4, Math.round(v / mx * 100))}%;--d:${.2 + i * .07}s"><i></i><small>${MS[i]}</small></span>`).join('')}</div>
+    S.push({ dur: 7600, c1: '#04201a', c2: '#047857', mus: 1, sec: 'calmo', html: `<div class="rx-in"><p class="rx-k">O teu ano, mês a mês</p><div class="rx-ms">${d.ms.map((v, i) => `<span class="${i === d.mi && d.mes ? 'pk' : ''}" style="--h:${Math.max(4, Math.round(v / mx * 100))}%;--d:${.2 + i * .07}s"><i></i><small>${MS[i]}</small></span>`).join('')}</div>
       ${d.mes ? `<p class="rx-mx"><b>${esc(d.mes)}</b> foi o teu mês</p>` : ''}${d.stu ? `<p class="rx-stu"><small>O teu estúdio</small><b>${esc(d.stu)}</b></p>` : ''}</div>`,
-      go: (el, T) => { T(() => { const pk = el.querySelector('.rx-ms .pk i'); if (pk) { const r = pk.getBoundingClientRect(), [ox, oy] = FX.off(); FX.burst(r.left - ox + r.width / 2, r.top - oy, { n: 70, c: ['#6ee7b7', '#ffffff'], sp: 8, up: 3 }); SOM.pop(); vib(25); } }, 1500); } }); }
-  if (d.pu && d.pu.p > 0) S.push({ dur: 6800, c1: '#1c0f02', c2: '#b45309', mus: 1, html: `<div class="rx-in"><p class="rx-k">No Pursuit da parceria</p><b class="rx-big">0</b><p class="rx-u">pontos</p>${d.pu.pos ? `<p class="rx-mx"><b>${d.pu.pos}.º</b> no ranking de animes</p>` : ''}</div>`,
+      go: (el, T) => { T(() => SOM.melodia(d.ms), 350); T(() => { const pk = el.querySelector('.rx-ms .pk i'); if (pk) { const r = pk.getBoundingClientRect(), [ox, oy] = FX.off(); FX.burst(r.left - ox + r.width / 2, r.top - oy, { n: 70, c: ['#6ee7b7', '#ffffff'], sp: 8, up: 3 }); SOM.pop(); vib(25); } }, 1500); } }); }
+  if (d.pu && d.pu.p > 0) S.push({ dur: 6800, c1: '#1c0f02', c2: '#b45309', mus: 1, sec: 'jogo', html: `<div class="rx-in"><p class="rx-k">No Pursuit da parceria</p><b class="rx-big">0</b><p class="rx-u">pontos</p>${d.pu.pos ? `<p class="rx-mx"><b>${d.pu.pos}.º</b> no ranking de animes</p>` : ''}</div>`,
     go: (el, T, R) => { T(() => conta(el.querySelector('.rx-big'), d.pu.p, 1600, () => { const [x, y] = mid(el, '.rx-big'); impacto(R, x, y, ouro, false); }), 400); } });
   if (c) { const rk = c.rank, nx = c.prox;
-    S.push({ dur: 9000, c1: '#040308', c2: rk.c, mus: 0, html: `<div class="rx-in rx-rkw"><p class="rx-k">O teu rank de fã</p><div class="rx-rk" style="--rk:${rk.c}"><span class="rx-aura" aria-hidden="true"></span><b>${rk.r}</b></div><p class="rx-rkn">${esc(rk.n)}</p>
+    S.push({ dur: 9000, c1: '#040308', c2: rk.c, mus: 0, sec: 'rank', html: `<div class="rx-in rx-rkw"><p class="rx-k">O teu rank de fã</p><div class="rx-rk" style="--rk:${rk.c}"><span class="rx-aura" aria-hidden="true"></span><b>${rk.r}</b></div><p class="rx-rkn">${esc(rk.n)}</p>
       ${nx ? `<div class="rx-nx"><small>Para o Rank ${nx.R.r} · ${esc(nx.R.n)} falta:</small>${nx.req.filter(x => x.tem < x.v).slice(0, 3).map(x => `<span>${nf(x.v - x.tem)} ${esc(x.n)}</span>`).join('')}</div>` : '<div class="rx-nx"><small>O topo absoluto. Quase ninguém chega aqui.</small></div>'}</div>`,
-      go: (el, T, R) => { T(() => { FX.implode(FX.W() / 2, FX.H() * .42, [rk.c, '#ffffff'], 70, 40); SOM.subida(1.15); }, 300); T(() => { const [x, y] = mid(el, '.rx-rk b'); impacto(R, x, y, [rk.c, '#ffffff'], true); el.classList.add('bum'); SOM.nivel(1); }, 1500); } });
-    S.push({ dur: 10800, c1: '#040308', c2: c.cor, mus: 0, html: `<div class="rx-in rx-clw"><p class="rx-k">Este ano, a tua classe é…</p><div class="rx-cw"><div class="rx-card" style="--cl:${c.cor}"><div class="rx-holo" aria-hidden="true"></div>${emblema(c.k, '#ffffff', 64)}
+      go: (el, T, R) => { T(() => { FX.implode(FX.W() / 2, FX.H() * .42, [rk.c, '#ffffff'], 70, 40); SOM.subida(1.15); }, 300); T(() => { const [x, y] = mid(el, '.rx-rk b'); impacto(R, x, y, [rk.c, '#ffffff'], true); el.classList.add('bum'); SOM.nivel(1); SOM.fanfarra(); }, 1500); } });
+    S.push({ dur: 10800, c1: '#040308', c2: c.cor, mus: 0, sec: 'classe', html: `<div class="rx-in rx-clw"><p class="rx-k">Este ano, a tua classe é…</p><div class="rx-cw"><div class="rx-card" style="--cl:${c.cor}"><div class="rx-holo" aria-hidden="true"></div>${emblema(c.k, '#ffffff', 64)}
       <small>${c.hib ? 'Classe híbrida' : 'Classe'} · Rank ${rk.r}</small><b>${esc(c.nome)}</b><p>${esc(c.frase)}</p>${c.cat ? `<em>categoria ${esc(c.cat)}</em>` : ''}</div></div>
       ${c.titulos.length ? `<div class="rx-tits">${c.titulos.map((t, i) => `<i style="--d:${3.4 + i * .3}s">${esc(t)}</i>`).join('')}</div>` : ''}</div>`,
-      go: (el, T, R) => { T(() => { FX.implode(FX.W() / 2, FX.H() * .5, [c.cor, '#ffffff', '#fde047'], 110, 52); el.classList.add('rx-rumble'); SOM.subida(1.9); }, 200); T(() => { el.classList.remove('rx-rumble'); const [x, y] = mid(el, '.rx-card'); impacto(R, x, y, [c.cor, '#ffffff', '#fde047'], true); el.classList.add('bum'); SOM.nivel(2, true); SOM.brilho(); }, 2100);
+      go: (el, T, R) => { T(() => { FX.implode(FX.W() / 2, FX.H() * .5, [c.cor, '#ffffff', '#fde047'], 110, 52); el.classList.add('rx-rumble'); SOM.subida(1.9); }, 200); T(() => { el.classList.remove('rx-rumble'); SOM.coroHit(); const [x, y] = mid(el, '.rx-card'); impacto(R, x, y, [c.cor, '#ffffff', '#fde047'], true); el.classList.add('bum'); SOM.nivel(2, true); SOM.brilho(); }, 2100);
         T(() => FX.burst(FX.W() * .15, FX.H() * .2, { n: 70, c: [c.cor, '#fff'] }), 2700); T(() => FX.burst(FX.W() * .85, FX.H() * .25, { n: 70, c: [c.cor, '#fde047'] }), 3000);
         const cw = el.querySelector('.rx-cw'); if (cw) { const mv = e => { const r = cw.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; cw.style.setProperty('--tx', (x * 22).toFixed(1) + 'deg'); cw.style.setProperty('--ty', (-y * 18).toFixed(1) + 'deg'); cw.style.setProperty('--hx', (50 + x * 80).toFixed(0) + '%'); }; el.addEventListener('pointermove', mv); } } }); }
-  S.push({ dur: 0, c1: '#0b0816', c2: cc, mus: 1, img: img0, html: `<div class="rx-in rx-fim"><div class="rx-sum" style="--cl:${cc}"><small>Prumo &amp; ${esc(nome)} · Recap</small><b class="rx-sy">${d.y}</b>
+  S.push({ dur: 0, c1: '#0b0816', c2: cc, mus: 1, sec: 'fim', img: img0, html: `<div class="rx-in rx-fim"><div class="rx-sum" style="--cl:${cc}"><small>Prumo &amp; ${esc(nome)} · Recap</small><b class="rx-sy">${d.y}</b>
       ${d.imgs.length ? `<div class="rx-sp">${d.top.filter(a => a.img).slice(0, 5).map((a, i) => `<img src="${esc(a.img)}" alt="" referrerpolicy="no-referrer" style="--i:${i}">`).join('')}</div>` : ''}
       <div class="rx-sg"><span><b>${nf(d.eps)}</b>episódios</span><span><b>${nf(d.h)}</b>horas</span>${d.G[0] ? `<span><b>${esc(d.G[0].n)}</b>género</span>` : ''}${c ? `<span><b>Rank ${c.rank.r}</b>${esc(c.rank.n)}</span>` : ''}</div>
       ${d.top[0] ? `<p class="rx-s1"><small>Anime do ano</small>${esc(d.top[0].t)}</p>` : ''}${c ? `<p class="rx-s1"><small>Classe</small>${esc(c.nome)}</p>` : ''}</div>
       <div class="ar-act"><button type="button" class="btn an-cta" data-act="arPartilhar">${UI.ic('arrowUp')}Partilhar a imagem</button><button type="button" class="btn an-ghost" data-act="arGravar">${UI.ic('play')}Gravar para as redes</button><button type="button" class="btn an-ghost" data-act="arRever">Ver outra vez</button><button type="button" class="btn an-ghost" data-act="arFechar">Fechar</button></div></div>`,
-    go: (el, T) => { for (let i = 0; i < 7; i++) T(() => { FX.burst(FX.W() * (.15 + Math.random() * .7), FX.H() * (.12 + Math.random() * .3), { n: 70, c: [['#fde047', '#f472b6', '#60a5fa', '#34d399', cc][i % 5], '#ffffff'], sp: 9 }); SOM.pop(); }, 300 + i * 850); } });
+    go: (el, T) => { for (let i = 0; i < 7; i++) T(() => { FX.burst(FX.W() * (.15 + Math.random() * .7), FX.H() * (.12 + Math.random() * .3), { n: 70, c: [['#fde047', '#f472b6', '#60a5fa', '#34d399', cc][i % 5], '#ffffff'], sp: 9 }); SOM.fogo(i); }, 300 + i * 850); } });
   return S; };
 
 // --- o leitor: tocar avança, à esquerda volta, segurar pára; transição em corte diagonal ---
@@ -213,7 +272,7 @@ const mostra = i => { if (!RX) return; const n = RX.S.length; if (i < 0) i = 0; 
   st.querySelectorAll('.rx-pg i').forEach((b, k) => { b.classList.toggle('feito', k < i); b.classList.remove('on'); if (k === i) { void b.offsetWidth; b.classList.add('on'); b.style.setProperty('--dur', (s.dur || 1) + 'ms'); } });
   if (ant !== i && ant != null) { const w = st.querySelector('.rx-wipe'); w.style.setProperty('--wc', s.c2); w.classList.remove('go'); void w.offsetWidth; w.classList.add('go'); SOM.corte(); }
   const cur = sc[i]; cur.replaceWith(cur.cloneNode(true)); const now = st.querySelectorAll('.rx-s')[i];   // recomeça as animações CSS
-  SOM.nivel(s.mus || 0, s.mus === 2);
+  SOM.secao(s.sec || 'abre'); SOM.nivel(s.mus || 0);
   const T = (f, ms) => RX.tm.push(setTimeout(() => { if (RX && RX.i === i && !RX.pausa) f(); }, ms));
   try { s.go(now, T, st); } catch (e) { }
   RX.t0 = Date.now(); RX.rest = s.dur; if (s.dur) RX.auto = setTimeout(() => mostra(i + 1), s.dur); };
@@ -236,7 +295,7 @@ A.arRecap = b => { const j = janela(), prev = b && b.dataset && b.dataset.prev &
 const img0Of = d => (d.top.find(a => a.img) || {}).img || '';
 A.arFechar = () => fecha();
 A.arRever = () => { if (!RX) return; SOM.start(); mostra(0); };
-A.arSom = b => { const on = SOM.alterna(); b.textContent = on ? '♪' : '×♪'; b.setAttribute('aria-pressed', String(on)); if (on && RX) { SOM.start(); SOM.nivel(RX.S[RX.i].mus || 0, RX.S[RX.i].mus === 2); } };
+A.arSom = b => { const on = SOM.alterna(); b.textContent = on ? '♪' : '×♪'; b.setAttribute('aria-pressed', String(on)); if (on && RX) { SOM.start(); (SOM.secao(RX.S[RX.i].sec || 'abre'), SOM.nivel(RX.S[RX.i].mus || 0)); } };
 // modo gravação: 3, 2, 1… e passa tudo sozinho, com música, sem botões à vista (em formato de story)
 A.arGravar = () => { if (!RX) return; const st = RX.st; RX.tm.forEach(clearTimeout); clearTimeout(RX.auto); RX.el.classList.add('rx-rec'); RX.rec = true;
   const cd = document.createElement('div'); cd.className = 'rx-cd'; cd.innerHTML = '<p>Começa a gravar o ecrã agora</p><b>3</b>'; st.appendChild(cd); let n = 3; SOM.start();

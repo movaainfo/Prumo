@@ -23,3 +23,10 @@ html[data-epoca=halloween] body::after{content:'';position:fixed;top:0;right:0;w
 .ep-ovo{position:absolute;z-index:3;width:28px;height:36px;border:0;padding:0;background:none;cursor:pointer;transform:rotate(var(--r,0deg));filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));transition:transform .2s}
 .ep-ovo:hover,.ep-ovo:focus-visible{transform:rotate(var(--r,0deg)) scale(1.15)}.ep-ovo svg{width:100%;height:100%;display:block}
 @media (prefers-reduced-motion:reduce){.ep-santa,.ep-fan,.ep-mon{display:none}}
+/* v3.88 · passagem de ano: a garrafa de champanhe a atravessar o céu */
+.ep-champ{width:clamp(130px,17vw,180px)}
+/* v3.88 · a prévia de um tema: aviso a flutuar com "Parar" (só na administração e nas Definições, durante 10 minutos) */
+.ep-prev{position:fixed;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 92px);z-index:60;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:8px 8px 8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(12,9,22,.9);color:#fff;font:600 13px/1 var(--sans);cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.ep-prev b{color:#ffd34d}.ep-prev i{font-style:normal;padding:7px 12px;border-radius:999px;background:#ffd34d;color:#1a1206;font-weight:800}
+.ep-prev:focus-visible{outline:2px solid #ffd34d;outline-offset:2px}
+@media (min-width:900px){.ep-prev{bottom:20px}}

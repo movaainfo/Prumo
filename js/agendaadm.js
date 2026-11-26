@@ -49,11 +49,15 @@ let DS = null, DSB = false;
 const desafios = () => { if (DS || DSB || !(OS.Social && OS.Social.call)) return; DSB = true; OS.Social.call('adminDesafios', {}).then(j => { DS = j.semanas || []; }).catch(e => { DS = { err: e.message }; }).finally(() => { DSB = false; OS.request(); }); };
 const btn = (x) => `<button type="button" class="btn sm" data-act="${x[1]}"${x[2] ? ` data-a="${esc(x[2])}"` : ''}${x[3] ? ` data-b="${esc(x[3])}"` : ''}>${esc(x[0])}</button>`;
 const painel = () => { if (!adm()) return ''; desafios(); const L = itens();
-  return `<div class="pn ag-pn" id="admAgenda"><div class="pn-h"><h3>${UI.ic('cal')}O que vai acontecer</h3><span class="mut">só neste aparelho; ninguém mais vê as prévias</span></div>
+  return `<div class="pn ag-pn" id="admAgenda"><div class="pn-h"><h3>${UI.ic('cal')}O que vai acontecer</h3><span class="mut">só neste aparelho; ninguém mais vê as prévias</span><button type="button" class="btn sm ag-stop" data-act="agParar">${UI.ic('stop')}Parar as prévias</button></div>
     <p class="mut" style="margin:0 0 12px">Tudo o que tem data marcada, por ordem. Toca para ver antes de ir ao ar: os temas ficam 10 minutos só aqui, os avisos aparecem só neste aparelho.</p>
     <ol class="ag-l">${L.map(x => `<li class="${x.ar ? 'ar' : ''}"><div class="ag-q">${x.ar ? '<b>No ar agora</b>' : x.q ? `<b>${esc(falta(x.q))}</b><small>${esc(fd(x.q, x.q.getHours() || x.q.getMinutes()))}</small>` : '<b>Sem data</b>'}${x.ate ? `<small>até ${esc(fd(x.ate))}</small>` : ''}</div>
       <div class="ag-t"><b>${esc(x.t)}</b><p>${x.d}</p><div class="row gap6 wrap">${x.b.map(btn).join('')}</div></div></li>`).join('')}</ol>
     <div class="ag-ds"><h4>Desafios das próximas semanas</h4>${!DS ? '<p class="mut">A carregar…</p>' : DS.err ? `<p class="mut">${esc(DS.err)}</p>` : `<ol>${DS.map((s, i) => `<li${i ? '' : ' class="ar"'}><small>${i ? '' : 'Esta semana · '}${esc(U.fmtD(s.ini))} a ${esc(U.fmtD(s.fim))}</small><b>${esc(s.desafio.t)}</b><span>${esc(s.desafio.d || '')}</span>${(s.animes || []).length ? `<em class="ag-an">Animes: ${s.animes.map(x => `${esc(x.nv)} · ${esc(x.t)} (${esc(x.d)})`).join(' / ')}</em>` : ''}</li>`).join('')}</ol>`}</div></div>`; };
+// v3.88: parar tudo o que está em prévia (tema da festa, dia de anos, estação do fundo e o Recap) e voltar ao normal
+A.agParar = () => { try { if (A.epVer) A.epVer({ dataset: { v: '' } }); } catch (e) { } try { if (OS.Festas && OS.Festas.pararPrev) OS.Festas.pararPrev(); } catch (e) { }
+  let est = false; try { est = !!localStorage.getItem('nau:est'); localStorage.removeItem('nau:est'); } catch (e) { } if (est && OS.Fundo && OS.Fundo.refresh) try { OS.Fundo.refresh(); } catch (e) { }
+  try { if (A.arFechar) A.arFechar(); } catch (e) { } UI.toast('Prévias paradas. O app voltou ao normal.', 'pos'); OS.request(); };
 A.agRecap = () => { if (A.arRecap) A.arRecap({ dataset: { prev: '1' } }); };
 A.agAv = b => aviso(b.dataset.a, b.dataset.b);
 A.agTema = b => tema(b.dataset.a);

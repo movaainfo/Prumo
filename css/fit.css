@@ -1675,3 +1675,4 @@ html.fb-on #fblk{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .pl-c.pop{position:relative;border-color:var(--farol,#F2C48D);box-shadow:0 0 0 1.5px var(--farol,#F2C48D) inset,0 18px 40px -26px var(--farol,#F2C48D)}
 .bdg.pl-popb{background:var(--farol,#F2C48D);color:#1a1206;font-weight:800}
 @media (min-width:900px){.pl-g .pl-c.pop{transform:translateY(-6px)}}
+.ag-pn .pn-h{flex-wrap:wrap;gap:8px}.ag-stop{margin-left:auto}

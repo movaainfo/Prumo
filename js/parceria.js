@@ -59,7 +59,7 @@ const OQUE = [
   ['ranking', 'award', 'Ranking de animes', 'Os pontos de todos os jogos da parceria, com pódio, fotos e o @ de cada um.'],
   ['clas', 'chat', 'Clãs e conversas', 'Grupos e conversas a dois, com cada mensagem verificada pela IA.'],
   ['premios', 'trophy', 'Prémios Prumo', 'A votação do ano: os melhores animes escolhidos por quem os vê.'],
-  ['comunidade', 'users', 'Comunidade', 'Indicações, pedidos, sugestões, a Equipa SA e o recrutamento.'],
+  ['comunidade', 'users', 'Comunidade', 'Indicações, pedidos, sugestões, a Equipa ' + nome() + ' e o recrutamento.'],
   ['perfil', 'user', 'Perfil de anime', 'O teu @, a tua foto e o teu fundo, só para os Animes.'],
   ['', 'eye', 'Comentários sem spoilers', 'A IA tapa os spoilers. Só vê quem quiser.'],
   ['', 'bell', 'Avisos de episódios', 'Toca no sino de um anime e recebes um aviso quando sai cada episódio.']];

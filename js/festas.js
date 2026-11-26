@@ -83,5 +83,6 @@ OS.on && OS.on('ready', () => { emFesta(); setInterval(emFesta, 6e4); OS.on('one
 // pré-visualizar (Administração › Agenda): a contagem de 10 segundos com os fogos e o dia de anos, sem mexer no que fica guardado
 const preverAno = () => { const p = proximo() || { c: CAL[pais()] || 'greg', t: Date.now() }; const v = VISTO; festa({ t: Date.now() + 10400, c: p.c, chave: '__prev' }, true); VISTO = v; setTimeout(() => { try { localStorage.removeItem('oc_fx___prev'); U.ls.set('oc_fx___prev', 0); } catch (e) { } }, 500); };
 const preverAnos = (min = 3) => { PREV_ANOS = Date.now() + min * 6e4; VELAS = false; emFesta(); confetes(); OS.request && OS.request(); setTimeout(() => { emFesta(); OS.request && OS.request(); }, min * 6e4 + 500); };
-OS.Festas = { proximo, anos, festa, CAL, NOWRUZ, LUNAR, ROSH, NOME, preverAno, preverAnos };
+const pararPrev = () => { PREV_ANOS = 0; emFesta(); OS.request && OS.request(); };   // v3.88: "Parar a prévia" da Agenda
+OS.Festas = { proximo, anos, festa, CAL, NOWRUZ, LUNAR, ROSH, NOME, preverAno, preverAnos, pararPrev };
 })();
