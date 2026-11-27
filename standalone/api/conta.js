@@ -505,7 +505,7 @@ const OPS = {
     const sl = await spList(); contas.forEach(c => { c.sp = c.admin || sl.includes(N.normEmail(c.email)); });
     return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos, spotify: sl, spMax: SP_MAX, spConf: !!spCid(),
       // o que falta configurar no Vercel (só se diz se está ou não; os valores nunca saem do servidor)
-      cfg: { strava: !!(process.env.STRAVA_CLIENT_ID && process.env.STRAVA_CLIENT_SECRET), oura: !!(process.env.OURA_CLIENT_ID && process.env.OURA_CLIENT_SECRET), revenuecat: !!(process.env.REVENUECAT_WEBHOOK_AUTH && process.env.REVENUECAT_API_KEY), stripe: require('./_planos').cobranca(), stripeTeste: /^sk_test_/.test(String(process.env.STRIPE_SECRET_KEY || '').trim()), mail: process.env.RESEND_API_KEY ? 'resend' : process.env.BREVO_API_KEY ? 'brevo' : '', mailDe: !!String(process.env.NAUTILO_EMAIL_DE || '').trim() } }; },
+      cfg: { revenuecat: !!(process.env.REVENUECAT_WEBHOOK_AUTH && process.env.REVENUECAT_API_KEY), stripe: require('./_planos').cobranca(), stripeTeste: /^sk_test_/.test(String(process.env.STRIPE_SECRET_KEY || '').trim()), mail: process.env.RESEND_API_KEY ? 'resend' : process.env.BREVO_API_KEY ? 'brevo' : '', mailDe: !!String(process.env.NAUTILO_EMAIL_DE || '').trim() } }; },
 
   // v3.20: o administrador repõe o cofre de Senhas de uma conta (também a dele) quando a senha mestra se perdeu.
   // O cofre está cifrado no aparelho com a senha mestra, que ninguém conhece: não dá para a mudar sem ela, por isso o cofre fica vazio

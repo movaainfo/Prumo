@@ -580,12 +580,7 @@ ${corpo}  </div>
   <p class="mut adm-note">Atualizado <span id="admAt">${ago(ADM.vivoAt || ADM.at)}</span> (sozinho, a cada 20 s). O tempo de uso conta os minutos com o Prumo aberto e à vista (desbloqueado). Estes dados estão descritos na Política de Privacidade.</p></div>`; };
 // v3.71: integrações opcionais (não contam como "por fazer"): o que cada uma precisa e se já está ativa
 const intPn = () => { const UI = OS.UI, cf = (ADM && ADM.cfg) || {}, VC = 'Vercel › projeto prumo › Settings › Environment Variables', ORIG = 'https://prumo-vida.vercel.app';
-  const L = [['strava', 'Strava (e Garmin pelo Strava)', `<ol class="adm-steps"><li>Em <b>strava.com/settings/api</b> cria a app: nome <b>Prumo</b>, site <b>${ORIG}</b>, <b>Authorization Callback Domain</b>: <b>prumo-vida.vercel.app</b>.</li>
-      <li>${VC}: <b>STRAVA_CLIENT_ID</b> e <b>STRAVA_CLIENT_SECRET</b> (os dois que o Strava mostra) › Save › Redeploy.</li>
-      <li>Uma app nova do Strava só aceita 1 atleta (tu). Para abrir a todas as contas, pede o aumento no formulário do <b>Strava Developer Program</b> (pedem capturas do Prumo e como usas os dados). Os dados do Strava ficam fora da IA do Prumo, como as regras deles exigem.</li></ol>`],
-    ['oura', 'Oura (anel)', `<ol class="adm-steps"><li>Em <b>cloud.ouraring.com/oauth/applications</b> cria a aplicação: <b>Redirect URI</b> <b>${ORIG}/api/liga</b>; permissões <b>daily</b>, <b>heartrate</b>, <b>workout</b>, <b>session</b> e <b>personal</b>.</li>
-      <li>${VC}: <b>OURA_CLIENT_ID</b> e <b>OURA_CLIENT_SECRET</b> › Save › Redeploy.</li>
-      <li>Como o Prumo é pago, as regras da Oura pedem autorização escrita deles antes de abrir a todos: escreve-lhes pela página de parceiros da Oura. Até lá usa só na tua conta. Os dados da Oura ficam fora da IA do Prumo.</li></ol>`],
+  const L = [
     ['revenuecat', 'Compras nas lojas (RevenueCat)', `<ol class="adm-steps"><li>Em <b>app.revenuecat.com</b> cria o projeto Prumo e liga a Play Store e a App Store; cria os <b>entitlements</b> <b>essencial</b>, <b>avancado</b> e <b>completo</b> com os produtos de cada plano.</li>
       <li>Project settings › API keys › copia a <b>chave secreta</b> (sk_…). ${VC}: <b>REVENUECAT_API_KEY</b> = essa chave.</li>
       <li>Integrations › Webhooks › Add: URL <b>${ORIG}/api/revenuecat</b>; em <b>Authorization header</b> inventa uma senha comprida e põe a mesma em ${VC} como <b>REVENUECAT_WEBHOOK_AUTH</b>. Save › Redeploy.</li></ol>`],

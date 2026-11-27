@@ -1,7 +1,7 @@
 /* PRUMO — círculos da semana no Corpo (v3.74). Um círculo por modalidade (musculação, corrida, natação, bicicleta e cada desporto
    que praticas): por fora o tempo feito esta semana, por dentro o planeado; em baixo o total. O planeado sai do que já está no app:
    a divisão do treino por dias (Treino), o plano de corrida (Corrida), a frequência de cada desporto (Praticar desporto) e a tua
-   meta de dias por semana. O feito conta os treinos, as corridas, as práticas e o que vem do Strava e do Oura. */
+   meta de dias por semana. O feito conta os treinos, as corridas e as práticas. */
 (() => {
 'use strict';
 const U = OS.U, UI = OS.UI, V = OS.views, esc = U.esc;
