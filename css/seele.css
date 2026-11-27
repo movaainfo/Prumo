@@ -1,0 +1,36 @@
+/* PRUMO v3.92 · parceria Prumo & seele. O logótipo sem fundo: a borboleta com as cores dela e o nome na cor do texto do tema
+   (branco nos temas escuros, escuro nos claros); o "&" a dourado, como o corpo da borboleta. O resto segue o tema. */
+.se-pg{display:flex;flex-direction:column;gap:20px;max-width:980px}
+.se-hero{position:relative;overflow:hidden;padding:30px 22px 28px;border-radius:24px;text-align:center;
+  background:radial-gradient(42% 70% at 50% 30%,color-mix(in srgb,#F2C46B 12%,transparent),transparent 72%),var(--pn,#16171c);border:1px solid var(--line2,#2a2b31)}
+.se-marca{display:flex;align-items:center;justify-content:center;gap:clamp(4px,1.6vw,16px)}
+.se-selo{flex:none;display:block}.se-selo img{display:block;width:clamp(54px,11vw,96px);height:auto;filter:drop-shadow(0 8px 14px rgba(0,0,0,.3))}
+.se-e{flex:none;font:italic 400 clamp(38px,8vw,72px)/1 var(--serif,Georgia,serif);color:color-mix(in srgb,#E2B04F 78%,var(--tx,#fff))}
+.se-sl{display:flex;align-items:center;gap:clamp(4px,1.4vw,14px);min-width:0}
+.se-borb{display:block;flex:none;width:clamp(66px,15vw,140px);height:auto;filter:drop-shadow(0 6px 12px rgba(0,0,0,.22))}
+.se-nome{display:block;flex:none;width:clamp(104px,25vw,210px);aspect-ratio:480/218;background:var(--tx,#fff);
+  -webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
+.se-t{margin:16px 0 6px;font:italic 500 clamp(20px,3.4vw,28px)/1.25 var(--serif,Georgia,serif);color:var(--tx,#fff)}
+.se-d{max-width:46ch;margin:0 auto;font-size:15px;line-height:1.55;color:var(--mut)}
+/* as fases: lagarta, crisálida, borboleta */
+.se-ciclo{padding:20px 22px}
+.se-ciclo ol{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:0;padding:0;list-style:none}
+.se-ciclo li{position:relative;padding-top:28px}
+.se-ciclo li:not(:last-child)::after{content:"";position:absolute;top:7px;left:22px;right:-12px;height:2px;border-radius:2px;background:var(--line2,#2a2b31)}
+.se-ciclo li.feito::after{background:linear-gradient(90deg,#FF9A3C,#F2D27A)}
+.se-pt{position:absolute;top:0;left:0;width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--line2,#2a2b31)}
+.se-ciclo .feito .se-pt{background:#FF9A3C;box-shadow:none}
+.se-ciclo .agora .se-pt{background:#3E63E0;box-shadow:0 0 0 4px color-mix(in srgb,#3E63E0 28%,transparent)}
+.se-ciclo b{display:block;font-size:15px}
+.se-ciclo em{display:block;margin-top:2px;font-style:normal;font-size:12.5px;font-weight:700;color:var(--mut)}
+.se-ciclo .agora em{color:color-mix(in srgb,#5B7CF5 75%,var(--tx,#fff))}
+.se-ciclo small{display:block;margin-top:6px;font-size:13px;line-height:1.45;color:var(--mut)}
+.se-ciclo .depois b{color:var(--mut)}
+.se-adm{display:flex;align-items:flex-start;gap:8px;margin:0;font-size:13px;color:var(--mut)}.se-adm .ic{flex:none;width:16px;height:16px;margin-top:1px}
+@media (max-width:640px){
+  .se-hero{padding:24px 14px 22px;border-radius:20px}
+  .se-ciclo ol{grid-template-columns:1fr;gap:16px}
+  .se-ciclo li{padding:0 0 0 30px}
+  .se-ciclo li:not(:last-child)::after{top:22px;bottom:-12px;left:7px;right:auto;width:2px;height:auto}
+  .se-ciclo li.feito::after{background:linear-gradient(#FF9A3C,#F2D27A)}
+  .se-pt{top:2px}}
