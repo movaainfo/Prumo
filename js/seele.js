@@ -18,7 +18,7 @@ const dLonga = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('pt-PT', { 
 const dAno = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 const hojeL = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const faltam = d => { const n = Math.round((Date.parse(d + 'T23:59:59') - Date.now()) / 864e5); return n <= 0 ? 'termina hoje' : n === 1 ? 'falta 1 dia' : 'faltam ' + n + ' dias'; };
-const marca = () => `<span class="se-sl se-sl-s" aria-label="seele"><img class="se-borb" src="icons/seele-borboleta.webp" width="360" height="252" alt="" decoding="async" draggable="false"><span class="se-nome" role="img" aria-label="seele" style="-webkit-mask-image:url(icons/seele-nome.webp);mask-image:url(icons/seele-nome.webp)"></span></span>`;
+const marca = grande => `<span class="se-sl${grande ? '' : ' se-sl-s'}" aria-label="seele"><img class="se-borb" src="icons/seele-borboleta.webp" width="360" height="252" alt="" decoding="async" draggable="false"><span class="se-nome" role="img" aria-label="seele" style="-webkit-mask-image:url(icons/seele-nome.webp);mask-image:url(icons/seele-nome.webp)"></span></span>`;
 
 /* ---------- dados ---------- */
 const carregar = async forcar => { if (!conta() || S.busy || (!forcar && S.d && Date.now() - S.at < 45e3)) return S.d; S.busy = true; S.err = '';
@@ -100,7 +100,7 @@ const formHTML = () => { const f = S.form || {}, P = f.premios || [], cr = (S.d 
 /* ---------- a página (#seele) ---------- */
 const FASES = [['Lagarta', 'Combinada', 'A parceria está acertada e já tem casa no Prumo.'], ['Crisálida', 'A preparar', 'Os primeiros prémios estão a ser preparados.'], ['Borboleta', 'Aberta', 'Os prémios entram em jogo para todas as contas.']];
 const hero = temCamp => `<section class="se-hero" aria-label="Prumo &amp; seele">
-    <div class="se-marca"><span class="se-selo">${selo(96)}</span><i class="se-e" aria-hidden="true">&amp;</i>${marca()}</div>
+    <div class="se-marca"><span class="se-selo">${selo(96)}</span><i class="se-e" aria-hidden="true">&amp;</i>${marca(true)}</div>
     <p class="se-t">${temCamp ? 'Prémios de verdade pelo que fazes.' : 'Uma parceria nova, ainda em crisálida.'}</p>
     <p class="se-d">${temCamp ? 'Objetos reais, Selos e sorteios ligados ao que fazes no Prumo (ranking, foco, leituras) e nos Animes da parceria Prumo &amp; PHANTOM. Participar é sempre grátis.' : 'Estamos a preparar os primeiros prémios. Quando estiverem prontos, esta página enche-se e abre a todas as contas.'}</p></section>`;
 const view = () => {
