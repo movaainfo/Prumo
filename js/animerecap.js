@@ -127,7 +127,7 @@ const FX = (() => { let cv = null, g = null, st = null, W = 0, H = 0, P = [], R 
 // a classe com coro e tambores; e o final com fogo de artifício (assobio e estalidos). As explosões são acordes, não só "pum".
 const SOM = (() => { let ac = null, out = null, mix = null, rev = null, dly = null, NB = null, on = true, play = false, step = 0, nextT = 0, tm = 0, nv = 0, sec = 'abre';
   const bpm = 108; try { on = localStorage.getItem('oc_rx_som') !== '0'; } catch (e) { }
-  const mf = m => 440 * Math.pow(2, (m - 69) / 12);
+  const mf = m => 440 * Math.pow(2, ((Number.isFinite(+m) ? +m : 72) - 69) / 12);   // uma nota que falte (dados vazios) nunca vira NaN no áudio
   const CH = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]];   // lá menor, fá, dó, sol (a progressão das aberturas de anime)
   const MEL = [[[0, 76, 3], [3, 76, 3], [6, 74, 2], [8, 72, 2], [10, 74, 2], [12, 76, 2], [14, 79, 2]], [[0, 81, 4], [4, 79, 2], [6, 77, 2], [8, 76, 4], [12, 72, 4]],
     [[0, 76, 3], [3, 79, 3], [6, 84, 2], [8, 83, 2], [10, 79, 2], [12, 76, 4]], [[0, 74, 4], [4, 79, 2], [6, 83, 2], [8, 81, 3], [11, 79, 2], [13, 74, 3]]];   // o tema: [passo, nota, duração]
@@ -140,10 +140,10 @@ const SOM = (() => { let ac = null, out = null, mix = null, rev = null, dly = nu
       if (ac.state === 'suspended') ac.resume(); return ac; } catch (e) { return null; } };
   // peças: oscilador e ruído com envolvente, filtro e envio para o eco e a sala
   const send = (n, r, e) => { n.connect(mix); if (r) { const g = ac.createGain(); g.gain.value = r; n.connect(g); g.connect(rev); } if (e) { const g = ac.createGain(); g.gain.value = e; n.connect(g); g.connect(dly); } };
-  const osc = (t, f, dur, type, vol, o = {}) => { const s = ac.createOscillator(), g = ac.createGain(); s.type = type; s.frequency.setValueAtTime(f, t); if (o.det) s.detune.value = o.det; if (o.slide) s.frequency.exponentialRampToValueAtTime(o.slide, t + dur * .9);
+  const osc = (t, f, dur, type, vol, o = {}) => { if (![t, f, dur, vol].every(Number.isFinite) || f <= 0) return null; const s = ac.createOscillator(), g = ac.createGain(); s.type = type; s.frequency.setValueAtTime(f, t); if (o.det) s.detune.value = o.det; if (o.slide) s.frequency.exponentialRampToValueAtTime(o.slide, t + dur * .9);
     let last = s; if (o.lp) { const fl = ac.createBiquadFilter(); fl.type = o.bp ? 'bandpass' : 'lowpass'; fl.frequency.setValueAtTime(o.lp, t); if (o.lp2) fl.frequency.exponentialRampToValueAtTime(o.lp2, t + (o.lpT || dur)); if (o.q) fl.Q.value = o.q; s.connect(fl); last = fl; }
     const a = o.a || .01; g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + a); g.gain.exponentialRampToValueAtTime(.0005, t + Math.max(a + .03, dur)); last.connect(g); send(g, o.r, o.e); s.start(t); s.stop(t + dur + .1); return s; };
-  const ruido = (t, dur, f, type, vol, o = {}) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = NB; s.loop = dur > .9; fl.type = type; fl.frequency.setValueAtTime(f, t); if (o.f2) fl.frequency.exponentialRampToValueAtTime(o.f2, t + dur); if (o.q) fl.Q.value = o.q;
+  const ruido = (t, dur, f, type, vol, o = {}) => { if (![t, dur, f, vol].every(Number.isFinite)) return null; const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = NB; s.loop = dur > .9; fl.type = type; fl.frequency.setValueAtTime(f, t); if (o.f2) fl.frequency.exponentialRampToValueAtTime(o.f2, t + dur); if (o.q) fl.Q.value = o.q;
     if (o.in) { g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * .92); } else g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0005, t + dur); s.connect(fl); fl.connect(g); send(g, o.r, o.e); s.start(t); s.stop(t + dur + .05); };
   // instrumentos
   const sino = (t, m, v = .06, d = 1.6) => { osc(t, mf(m), d, 'sine', v, { r: .5, e: .2 }); osc(t, mf(m) * 2.76, d * .35, 'sine', v * .35, { r: .4 }); osc(t, mf(m) * 5.4, d * .15, 'sine', v * .16, { r: .3 }); };
@@ -197,13 +197,13 @@ const SOM = (() => { let ac = null, out = null, mix = null, rev = null, dly = nu
       const n = Math.round(seg * 9); for (let i = 0; i < n; i++) { const k = i / n; palmas(t + seg * (1 - Math.pow(1 - k, 1.8)), .025 + k * .08); } },
     corte() { if (!ac) return; ruido(T(), .4, 3200, 'bandpass', .2, { f2: 300, q: 1.2, r: .3 }); },
     // as contagens sobem em notas (no Pursuit, moedas)
-    tique(k) { if (!ac) return; const t = T(); if (sec === 'jogo') { chip(t, 83, .05, .03); chip(t + .05, 88, .09, .03); return; } marimba(t, PENTA[Math.min(PENTA.length - 1, Math.floor((k == null ? Math.random() : k) * PENTA.length))] + 12, .055); },
+    tique(k) { if (!ac) return; const t = T(); if (sec === 'jogo') { chip(t, 83, .05, .03); chip(t + .05, 88, .09, .03); return; } marimba(t, PENTA[Math.max(0, Math.min(PENTA.length - 1, Math.floor((Number.isFinite(k) ? k : Math.random()) * PENTA.length)))] + 12, .055); },
     brilho() { if (!ac) return; const t = T(); PENTA.slice(4).forEach((m, i) => osc(t + i * .035, mf(m + 12), .6, 'triangle', .03, { r: .5, e: .2 })); [88, 91, 96].forEach((m, i) => sino(t + .4 + i * .08, m, .03, 1.6)); },
     pop() { if (!ac) return; const t = T(); osc(t, 700, .12, 'sine', .12, { slide: 1500 }); sino(t + .05, 91, .04, 1); },
     // a carta a virar (os teus 5): um estalo e uma nota que sobe a cada anime
     vira(i = 0) { if (!ac) return; const t = T(); ruido(t, .09, 2500, 'bandpass', .14, { f2: 900, q: 1.5 }); pluck(t + .03, [72, 74, 76, 79, 81][i % 5], .06); },
     // o teu ano tocado como melodia: cada mês uma nota (mais episódios, nota mais alta)
-    melodia(ms) { if (!ac || !ms) return; const t = T(), mx = Math.max(1, ...ms); ms.forEach((v, i) => { const m = PENTA[Math.round(v / mx * 10) + 2]; marimba(t + i * .16, m, v ? .07 : .03); if (v === mx && v) sino(t + i * .16, m + 12, .04, 1.4); }); },
+    melodia(ms) { if (!ac || !ms) return; ms = ms.map(v => Math.max(0, +v || 0)); const t = T(), mx = Math.max(1, ...ms); ms.forEach((v, i) => { const m = PENTA[Math.min(PENTA.length - 1, Math.round(v / mx * 10) + 2)]; marimba(t + i * .16, m, v ? .07 : .03); if (v === mx && v) sino(t + i * .16, m + 12, .04, 1.4); }); },
     // o rank: fanfarra de metais e um prato
     fanfarra() { if (!ac) return; const t = T(); [[60, 64, 67], [65, 69, 72], [67, 71, 74, 79]].forEach((ch, i) => ch.forEach(n => osc(t + i * .22, mf(n), i === 2 ? 1.6 : .22, 'sawtooth', .035, { lp: 900, lp2: 3200, lpT: .12, r: .45 }))); ruido(t + .44, 1.8, 6000, 'highpass', .12, { r: .5 }); taiko(t + .44, .4); },
     // a classe: o coro abre e o gongo
