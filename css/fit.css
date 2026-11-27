@@ -1683,3 +1683,8 @@ html.fb-on #fblk{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .kz-v i{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
 .kz-v.v-verde{color:#5FD39A;background:rgba(63,185,122,.14)}.kz-v.v-amarelo{color:#F0C94A;background:rgba(232,185,49,.16)}.kz-v.v-vermelho{color:#FF8A8A;background:rgba(239,91,91,.16)}
 .kz-leg{display:flex;flex-wrap:wrap;gap:6px 10px;margin:4px 0 10px;font-size:12.5px}
+/* v3.95 · Ranking: o nome numa linha só dele e os números por baixo (a regra .rk-n dos Animes punha tudo lado a lado e cortava o nome) */
+.rk-board .rk-n{display:block;min-width:0}
+.rk-board .rk-n small{flex-wrap:wrap;row-gap:2px}
+@media (max-width:560px){.rk-board .rk-n small .rk-tm{flex-basis:100%;margin-left:0}}
+.rk-board .rk-n b{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere;line-height:1.25}

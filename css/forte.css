@@ -108,7 +108,9 @@ html.spy-ear #jvFab{box-shadow:0 0 0 4px rgba(242,196,141,.22),0 8px 22px rgba(0
 .dash-sum{color:#C6D1DE}
 .dash-ctl{position:absolute;top:16px;right:16px}
 @media (max-width:860px){
-  .dash-top{margin:-16px -16px 0;border-radius:0;border:0;border-bottom:1px solid var(--line);padding:18px 18px 22px;min-height:360px}
+  .dash-top{margin:-16px -16px 0;border-radius:0;border:0;padding:18px 18px 34px;min-height:360px;background:transparent}
+  /* v3.95: no telemóvel a cena desvanece em cima e em baixo e mistura-se com as cores do fundo (o texto e os botões ficam nítidos) */
+  .dash-sc{background:#0A1422;-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.65) 22px,#000 56px,#000 calc(100% - 92px),rgba(0,0,0,.55) calc(100% - 38px),transparent 100%);mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.65) 22px,#000 56px,#000 calc(100% - 92px),rgba(0,0,0,.55) calc(100% - 38px),transparent 100%)}
   .dash-top>div:first-child{padding-top:150px}
   .dash-top h1{font-size:34px}
   .dash-top .q-push{font-size:24px}
