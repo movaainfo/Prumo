@@ -372,6 +372,155 @@ const mesFechar = async () => { const M = mesK(); if (MES_OK === M) return; cons
   const NOMES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'], mes = NOMES[(m === 1 ? 12 : m - 1) - 1] + ' de ' + (m === 1 ? y - 1 : y);
   const L = Object.entries(base).map(([id, p]) => [id, p - (B0[id] || 0)]).filter(([, d]) => d > 0).sort((a, b) => b[1] - a[1]).slice(0, 3);
   await darVarios(L.map(([id, d], i) => [id, { k: 'mes' + (i + 1) + ':' + Mp, n: i ? (i + 1) + '.º lugar do mês no ranking de animes' : 'Campeão do mês no ranking de animes', d: mes + ' · ' + d + ' pontos', kind: 'Troféu', lvl: LUG[i], cat: 'Ranking', lugar: i + 1 }])); };
+/* ---------- v3.90 · DUELO DE HÁBITOS: 7 dias contra um amigo. Cada um conta o que faz de verdade no app (hábitos cumpridos, treinos e corridas,
+   tarefas feitas e minutos de foco/estudo); o app manda só os pontos de cada dia (nunca o nome dos hábitos) e o servidor guarda o maior valor
+   de cada dia, com limite. Ganha quem somar mais. Dá medalhas e o registo de vitórias. ---------- */
+const DU = id => 'so/du/' + id, DUID = /^[a-f0-9]{10}$/, DU_MAX_DIA = 60, DU_DIAS = 7;
+const duAgora = () => +process.env.NAUTILO_DUELO_AGORA || Date.now();   // os testes avançam o relógio
+const duDias = t0 => Array.from({ length: DU_DIAS }, (_, i) => lisboa(t0 + i * DIA).d);
+const duTot = (o, dias) => (dias || []).reduce((t, d) => t + Math.min(DU_MAX_DIA, +((o || {})[d]) || 0), 0);
+const duFechar = async w => { if (!w || w.estado !== 'ativa' || duAgora() < w.fim) return w; let feito = false;
+  const w2 = await mudar(DU(w.id), null, o => { if (!o || o.estado !== 'ativa') return false; const a = duTot(o.va, o.dias), b = duTot(o.vb, o.dias); o.estado = 'fim'; o.res = { a, b, venc: a > b ? 'a' : b > a ? 'b' : 'empate' }; feito = true; });
+  if (!feito) return (await ler(DU(w.id), null)).v || w; const r = w2.res, txt = `${w2.nA} ${r.a} – ${r.b} ${w2.nB}`;
+  for (const [lado, id] of [['a', w2.a], ['b', w2.b]]) { await mudar(P(id), null, p => { if (!p) return false; if (r.venc === 'empate') p.duE = (p.duE || 0) + 1; else if (r.venc === lado) p.duV = (p.duV || 0) + 1; else p.duD = (p.duD || 0) + 1; }).catch(() => { });
+    if (r.venc === lado) await darMed(id, { k: 'duv:' + w2.id, n: 'Venceu um duelo de hábitos', d: txt, kind: 'Medalha', lvl: 'Ouro', cat: 'Duelos' });
+    else if (r.venc === 'empate') await darMed(id, { k: 'due:' + w2.id, n: 'Empate num duelo de hábitos', d: txt, kind: 'Medalha', lvl: 'Prata', cat: 'Duelos' }); }
+  return w2; };
+const duLer = async id => { if (!DUID.test(String(id || ''))) return null; let w = (await ler(DU(id), null)).v; if (!w) return null; if (w.estado === 'convite' && duAgora() - w.criado > 3 * DIA) w.estado = 'expirou'; return duFechar(w); };
+const duPub = async (w, eu) => { const l = w.a === eu ? 'a' : 'b', o = l === 'a' ? w.b : w.a, po = await pubAn(o), dias = w.dias || [], hoje = lisboa(duAgora()).d;
+  const lin = v => dias.map(d => ({ d, p: Math.min(DU_MAX_DIA, +((v || {})[d]) || 0), fut: d > hoje }));
+  return { id: w.id, estado: w.estado, eu: l, por: w.a === eu, outro: po, criado: w.criado, ini: w.ini || 0, fim: w.fim || 0, dias, hoje,
+    meu: { tot: duTot(l === 'a' ? w.va : w.vb, dias), dias: lin(l === 'a' ? w.va : w.vb) }, dele: { tot: duTot(l === 'a' ? w.vb : w.va, dias), dias: lin(l === 'a' ? w.vb : w.va) }, venc: (w.res || {}).venc ? ((w.res.venc === 'empate') ? 'empate' : w.res.venc === l ? 'eu' : 'ele') : '' }; };
+// o nome, o @ e a foto de alguém (para os jogos)
+const pubAn = async id => { const v = (await ler(P(id), null)).v || {}; return { id, nome: v.nome || 'Alguém', user: v.user || '', av: v.av || 0 }; };
+OPS.duelos = async c => { const v = await perfil(c.eu, c.nome), L = [];
+  for (const id of (v.duelos || []).slice(0, 20)) { const w = await duLer(id); if (w && w.a && w.b) L.push(await duPub(w, c.eu)); }
+  const amigos = await Promise.all((v.amigos || []).slice(0, 60).map(pubAn)), v2 = (await ler(P(c.eu), null)).v || v;   // lido outra vez: um duelo pode ter acabado agora
+  return { duelos: L, amigos, reg: { v: v2.duV || 0, d: v2.duD || 0, e: v2.duE || 0 }, regras: { max: DU_MAX_DIA, dias: DU_DIAS } }; };
+OPS.duelDesafiar = async (c, b) => { const outro = String(b.amigo || ''); if (!ID.test(outro) || outro === c.eu) throw N.err('duelo', 'Escolhe um amigo para desafiar.', 400);
+  const v = await perfil(c.eu, c.nome); if (!(v.amigos || []).includes(outro)) throw N.err('duelo', 'Só podes desafiar os teus amigos.', 403);
+  const o = (await ler(P(outro), null)).v; if (!o || (o.bloq || []).includes(c.eu)) throw N.err('duelo', 'Não é possível desafiar esta pessoa.', 403);
+  let ativos = 0; for (const id of (v.duelos || []).slice(0, 20)) { const w = await duLer(id); if (!w || !['convite', 'ativa'].includes(w.estado)) continue; ativos++; if ([w.a, w.b].includes(outro)) throw N.err('duelo', 'Já tens um duelo com esta pessoa.', 400); }
+  if (ativos >= 3) throw N.err('duelo', 'Já tens 3 duelos a decorrer (o máximo).', 400);
+  const id = N.crypto.randomBytes(5).toString('hex'), w = { id, a: c.eu, b: outro, nA: v.nome, nB: o.nome, estado: 'convite', criado: duAgora(), va: {}, vb: {} }; await gravar(DU(id), w, { overwrite: false });
+  for (const p of [c.eu, outro]) await mudar(P(p), null, x => { if (!x) return false; x.duelos = [id].concat((x.duelos || []).filter(y => y !== id)).slice(0, 30); });
+  return { duelo: await duPub(w, c.eu) }; };
+OPS.duelResp = async (c, b) => { const w = await duLer(String(b.id || '')); if (!w || ![w.a, w.b].includes(c.eu)) throw N.err('duelo', 'Duelo desconhecido.', 404);
+  if (w.estado !== 'convite') throw N.err('duelo', w.estado === 'expirou' ? 'O convite expirou (passaram 3 dias).' : 'Este duelo já não está à espera de resposta.', 400);
+  if (b.sim && c.eu !== w.b) throw N.err('duelo', 'Só quem foi desafiado pode aceitar.', 403);
+  const ini = duAgora(); await mudar(DU(w.id), null, o => { if (o.estado !== 'convite') return false; if (b.sim) { o.estado = 'ativa'; o.ini = ini; o.dias = duDias(ini); o.fim = ini + DU_DIAS * DIA; } else o.estado = c.eu === w.a ? 'cancelado' : 'recusado'; });
+  return { duelo: await duPub(await duLer(w.id), c.eu) }; };
+OPS.duelProg = async (c, b, req) => { if (N.limit(req, 'dup|' + c.eu, 90, 3600e3)) throw N.err('limite', 'Espera um pouco.', 429); const w = await duLer(String(b.id || ''));
+  if (!w || ![w.a, w.b].includes(c.eu)) throw N.err('duelo', 'Duelo desconhecido.', 404); if (w.estado !== 'ativa') return { duelo: await duPub(w, c.eu) };
+  const hoje = lisboa(duAgora()).d, k = w.a === c.eu ? 'va' : 'vb', inn = b.v && typeof b.v === 'object' ? b.v : {};
+  await mudar(DU(w.id), null, o => { if (o.estado !== 'ativa') return false; const cur = o[k] = o[k] || {}; let mudou = false;
+    (o.dias || []).forEach(d => { if (d > hoje || inn[d] == null) return; const x = Math.max(0, Math.min(DU_MAX_DIA, Math.round(+inn[d] || 0))); if (x > (cur[d] || 0)) { cur[d] = x; mudou = true; } }); if (!mudou) return false; });   // nunca desce
+  return { duelo: await duPub(await duLer(w.id), c.eu) }; };
+
+/* ---------- v3.90 · QUIZ RELÂMPAGO: todos os dias às 21h (Lisboa), 10 perguntas de anime iguais para toda a gente, 15 segundos cada.
+   As perguntas saem de dados reais (estúdio, ano, episódios, nota, géneros e popularidade no MyAnimeList); a resposta certa fica no servidor
+   e o tempo também é medido no servidor. Às 21h15 fecha: ranking, pontos para o ranking de animes e medalhas. ---------- */
+const QZ_A = () => +(process.env.NAUTILO_QUIZ_ABRE || 1260), QZ_F = () => +(process.env.NAUTILO_QUIZ_FECHA || 1275), QZ_SEG = 15, QZ_N = 10;
+const QZ = d => 'so/qz/' + d, QZP = (d, id) => 'so/qzp/' + d + '/' + id;
+const rndDe = async k => { let s = N.crypto.createHmac('sha256', await N.master()).update(k).digest().readUInt32BE(0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; };
+const qzPool = async d => { let pool = (await ler('so/qzpool', null)).v;
+  if (!pool || Date.now() - pool.at > 3 * DIA || pool.L.length < 30) { const L = [];
+    for (let pg = 1; pg <= 4; pg++) { try { const j = await jk('top/anime?filter=bypopularity&page=' + pg); if (!(j.data || []).length) break;
+        (j.data || []).forEach(x => { if (!x || !x.mal_id || (x.rating && /Rx|R\+/.test(x.rating))) return; L.push({ id: x.mal_id, t: x.title_english || x.title, y: x.year || ((((x.aired || {}).prop || {}).from || {}).year) || 0, e: x.type === 'TV' ? +x.episodes || 0 : 0, st: ((x.studios || [])[0] || {}).name || '', g: (x.genres || []).map(z => z.name).slice(0, 4), sc: +x.score || 0, m: +x.members || 0, img: (((x.images || {}).webp || {}).image_url) || (((x.images || {}).jpg || {}).image_url) || '' }); }); } catch (e) { break; } await sleep(450); }
+    if (L.length >= 12) { pool = { L, at: Date.now() }; await gravar('so/qzpool', pool).catch(() => { }); } }
+  if (!pool || pool.L.length < 12) throw N.err('quiz', 'As bases de animes não responderam. O quiz de hoje sai daqui a pouco.', 502); return pool.L; };
+const baralha = (L, r) => { const a = L.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const qzGerar = async d => { const L = await qzPool(d), r = await rndDe('quiz:' + d), A = baralha(L, r), Q = [], usados = new Set(), tit = x => x.t;
+  const pega = f => { const x = A.find(z => !usados.has(z.id) && f(z)); if (x) usados.add(x.id); return x; };
+  const opc = (certa, outras) => { const op = baralha([certa].concat(outras.slice(0, 3)), r); return { op: op.map(String), c: op.indexOf(certa) }; };
+  const T = {
+    estudio: () => { const x = pega(z => z.st); if (!x) return null; const out = [...new Set(L.map(z => z.st).filter(s => s && s !== x.st))]; if (out.length < 3) return null; return Object.assign({ t: `Que estúdio fez «${tit(x)}»?`, img: x.img }, opc(x.st, baralha(out, r))); },
+    ano: () => { const x = pega(z => z.y > 1960); if (!x) return null; const out = baralha([-6, -4, -3, -2, -1, 1, 2, 3, 4, 5].map(k => x.y + k).filter(y => y <= new Date().getFullYear() + 1), r); return Object.assign({ t: `Em que ano estreou «${tit(x)}»?` }, opc(x.y, out)); },
+    eps: () => { const x = pega(z => z.e > 0 && z.e <= 220); if (!x) return null; const out = [...new Set(L.map(z => z.e).filter(e => e > 0 && e !== x.e))]; if (out.length < 3) return null; return Object.assign({ t: `Quantos episódios tem «${tit(x)}»?` }, opc(x.e, baralha(out, r))); },
+    nota: () => { const C = baralha(L.filter(z => z.sc > 0), r); const g = []; for (const z of C) { if (g.every(y => Math.abs(y.sc - z.sc) >= .08)) g.push(z); if (g.length === 4) break; } if (g.length < 4) return null; const best = g.reduce((a, b) => b.sc > a.sc ? b : a);
+      return Object.assign({ t: 'Qual destes tem a nota mais alta no MyAnimeList?' }, opc(tit(best), g.filter(z => z !== best).map(tit))); },
+    genero: () => { const gs = baralha([...new Set(L.flatMap(z => z.g))], r); for (const G of gs) { const x = A.find(z => !usados.has(z.id) && z.g.includes(G)), out = baralha(L.filter(z => !z.g.includes(G)), r).slice(0, 3); if (x && out.length === 3) { usados.add(x.id); return Object.assign({ t: `Qual destes animes é de ${G}?` }, opc(tit(x), out.map(tit))); } } return null; },
+    capa: () => { const x = pega(z => z.img); if (!x) return null; return Object.assign({ t: 'Que anime é este?', img: x.img, capa: true }, opc(tit(x), baralha(L.filter(z => z.id !== x.id), r).slice(0, 3).map(tit))); },
+    popular: () => { const C = baralha(L.filter(z => z.m > 0), r); const g = []; for (const z of C) { if (g.every(y => Math.abs(y.m - z.m) / Math.max(y.m, z.m) > .12)) g.push(z); if (g.length === 4) break; } if (g.length < 4) return null; const best = g.reduce((a, b) => b.m > a.m ? b : a);
+      return Object.assign({ t: 'Qual destes tem mais gente a seguir no MyAnimeList?' }, opc(tit(best), g.filter(z => z !== best).map(tit))); } };
+  const ORDEM = ['capa', 'estudio', 'ano', 'genero', 'nota', 'eps', 'estudio', 'popular', 'ano', 'genero', 'capa', 'eps', 'nota', 'popular'];
+  for (const k of ORDEM) { if (Q.length >= QZ_N) break; try { const q = T[k](); if (q && new Set(q.op).size === 4) Q.push(q); } catch (e) { } }
+  if (Q.length < 6) throw N.err('quiz', 'Não deu para preparar as perguntas de hoje. Tenta daqui a pouco.', 502); return Q.slice(0, QZ_N); };
+const qzDe = async (L, criar) => { let q = (await ler(QZ(L.d), null)).v; if (q || !criar) return q;
+  q = { dia: L.d, Q: await qzGerar(L.d), fechado: false }; try { await gravar(QZ(L.d), q, { overwrite: false }); } catch (e) { q = (await ler(QZ(L.d), q)).v; } return q; };
+const qzFechar = async (d, q) => { const B = await N.store().list('so/qzp/' + d + '/').catch(() => []), G = [];
+  for (const b of B) { const g = (await ler(b.pathname, null)).v; if (g && g.id) G.push(g); }
+  const R = G.filter(g => (g.pts || 0) > 0).sort((a, b) => (b.pts || 0) - (a.pts || 0) || (a.ms || 0) - (b.ms || 0)).map((g, i) => ({ id: g.id, nome: g.nome, user: g.user || '', av: g.av || 0, pts: g.pts, certas: (g.r || []).filter(x => x.ok).length, rk: Math.max(5, 80 - 8 * i) }));
+  let ganhei = false; const v = await mudar(QZ(d), q, o => { if (o.fechado) return false; o.fechado = true; o.res = R.slice(0, 100); o.total = G.length; ganhei = true; });
+  if (ganhei && R.length) { await somaPts(R.map(x => [x.id, x.nome, x.rk, { user: x.user, av: x.av }])).catch(() => { });
+    const M = R.slice(0, 3).map((x, i) => [x.id, { k: 'qz' + (i + 1) + ':' + d, n: (i + 1) + '.º no Quiz relâmpago', d: d.split('-').reverse().join('/') + ' · ' + x.pts + ' pontos', kind: 'Medalha', lvl: LUG[i], cat: 'Quiz', lugar: i + 1 }]);
+    R.filter(x => x.certas >= QZ_N).forEach(x => M.push([x.id, { k: 'qzp:' + d, n: 'Quiz perfeito: 10 em 10', d: d.split('-').reverse().join('/'), kind: 'Medalha', lvl: 'Mérito', cat: 'Quiz' }])); await darVarios(M).catch(() => { }); }
+  return v; };
+const qzPerg = (q, i, g) => { const x = q.Q[i]; return x ? { i, n: q.Q.length, t: x.t, op: x.op, img: x.img || '', capa: !!x.capa, at: g.at, seg: QZ_SEG } : null; };
+const qzVer = async c => { const L = lisboa(), A = QZ_A(), F = QZ_F(), m = L.min, fase = m < A ? 'espera' : m < F ? 'aberto' : 'fechado';
+  let q = await qzDe(L, fase === 'aberto'); if (q && !q.fechado && fase === 'fechado') q = await qzFechar(L.d, q);
+  const g = q ? (await ler(QZP(L.d, c.eu), null)).v : null, min0 = Math.floor(Date.now() / 6e4) * 6e4, abreAt = min0 + (A - m) * 6e4, fechaAt = min0 + (F - m) * 6e4;
+  const ontem = fase === 'espera' ? (await ler(QZ(lisboa(Date.now() - DIA).d), null)).v : null;
+  return { fase, dia: L.d, abreAt: fase === 'fechado' ? abreAt + DIA : abreAt, fechaAt, ultimo: fechaAt - 3 * 6e4, ts: Date.now(), n: q ? q.Q.length : QZ_N, seg: QZ_SEG,
+    eu: g ? { i: g.i, pts: g.pts || 0, fim: !!g.fim, r: g.r || [] } : null, pergunta: g && !g.fim && fase === 'aberto' ? qzPerg(q, g.i, g) : null,
+    res: q && q.fechado ? (q.res || []).slice(0, 30).map(x => Object.assign({}, x, { eu: x.id === c.eu })) : null, pos: q && q.fechado ? (q.res || []).findIndex(x => x.id === c.eu) + 1 : 0, total: q && q.fechado ? q.total : undefined,
+    ontem: ontem && ontem.fechado ? (ontem.res || []).slice(0, 3).map(x => ({ nome: x.nome, user: x.user, pts: x.pts })) : null }; };
+OPS.quiz = async c => ({ quiz: await qzVer(c) });
+OPS.quizComecar = async c => { const L = lisboa(), m = L.min; if (m < QZ_A() || m >= QZ_F()) throw N.err('quiz', 'O quiz de hoje não está aberto agora.', 400); if (m >= QZ_F() - 3) throw N.err('quiz', 'Já não dá tempo de começar: o quiz fecha daqui a pouco.', 400);
+  const q = await qzDe(L, true), v = await perfil(c.eu, c.nome), g = { id: c.eu, nome: v.nome, user: v.user || '', av: v.av || 0, ini: Date.now(), at: Date.now(), i: 0, r: [], pts: 0, ms: 0 };
+  try { await gravar(QZP(L.d, c.eu), g, { overwrite: false }); } catch (e) { throw N.err('quiz', 'Já jogaste o quiz de hoje.', 409); }
+  return { quiz: await qzVer(c) }; };
+OPS.quizResp = async (c, b) => { const L = lisboa(); if (L.min < QZ_A() || L.min >= QZ_F()) throw N.err('quiz', 'O quiz de hoje já fechou.', 400); const q = await qzDe(L, false); if (!q) throw N.err('quiz', 'O quiz de hoje não está aberto.', 400);
+  const i = Math.round(+b.i), op = Math.round(+b.opc); let out = null;   // a resposta vem em opc (op é o nome do pedido)
+  await mudar(QZP(L.d, c.eu), null, g => { if (!g) throw N.err('quiz', 'Carrega primeiro em Começar.', 400); if (g.fim || g.i !== i) { out = { repetida: true }; return false; }
+    const x = q.Q[i], ms = Date.now() - g.at, ok = op === x.c && ms <= (QZ_SEG + 1.5) * 1000, p = ok ? 100 + Math.round(50 * Math.max(0, 1 - ms / (QZ_SEG * 1000))) : 0;
+    g.r.push({ ok, p, ms: Math.min(ms, QZ_SEG * 1000) }); g.pts = (g.pts || 0) + p; g.ms = (g.ms || 0) + Math.min(ms, QZ_SEG * 1000); g.i = i + 1; g.at = Date.now(); if (g.i >= q.Q.length) g.fim = Date.now();
+    out = { ok, p, certa: x.c, tempo: ms > (QZ_SEG + 1.5) * 1000 }; });
+  return Object.assign({ resp: out }, { quiz: await qzVer(c) }); };
+
+/* ---------- v3.90 · BOLÃO DA TEMPORADA: antes e no começo de cada temporada de animes, cada um prevê o melhor da temporada (nota mais
+   alta no MyAnimeList no fim), o mais popular (mais gente a seguir) e a nota final do mais esperado. Os palpites fecham 3 semanas depois do
+   começo; os resultados saem uma semana depois do fim, com pontos para o ranking de animes e medalhas. ---------- */
+const BOL = k => 'so/bol/' + k, BOLP = (k, id) => 'so/bolp/' + k + '/' + id, ESTS = ['winter', 'spring', 'summer', 'fall'], ESTN = { winter: 'inverno', spring: 'primavera', summer: 'verão', fall: 'outono' }, ESTM = { winter: 'janeiro a março', spring: 'abril a junho', summer: 'julho a setembro', fall: 'outubro a dezembro' };
+const bAgora = () => +process.env.NAUTILO_BOLAO_AGORA || Date.now();
+const tempDe = (y, i) => { while (i < 0) { i += 4; y--; } while (i > 3) { i -= 4; y++; } const ini = Date.UTC(y, i * 3, 1), fim = Date.UTC(i === 3 ? y + 1 : y, i === 3 ? 0 : i * 3 + 3, 1);
+  return { k: y + '-' + ESTS[i], y, s: ESTS[i], nome: 'Temporada de ' + ESTN[ESTS[i]] + ' ' + y, meses: ESTM[ESTS[i]], ini, fimT: fim, abre: ini - 45 * DIA, fecha: ini + 21 * DIA, res: fim + 7 * DIA }; };
+const tempAt = t => { const d = new Date(t); return tempDe(d.getUTCFullYear(), Math.floor(d.getUTCMonth() / 3)); };
+const temporadaLista = async T => { const L = [];
+  for (let pg = 1; pg <= 3; pg++) { try { const j = await jk('seasons/' + T.y + '/' + T.s + '?page=' + pg); (j.data || []).forEach(x => { if (!x || !x.mal_id || (x.rating && /Rx|R\+/.test(x.rating)) || !['TV', 'ONA'].includes(x.type || 'TV')) return; if (!L.some(z => z.id === x.mal_id)) L.push({ id: x.mal_id, t: x.title_english || x.title, img: (((x.images || {}).webp || {}).image_url) || (((x.images || {}).jpg || {}).image_url) || '', sc: +x.score || 0, m: +x.members || 0 }); }); if (!(j.pagination || {}).has_next_page) break; } catch (e) { if (!L.length) throw e; break; } await sleep(450); }
+  return L.sort((a, b) => b.m - a.m); };
+const bolDe = async (T, criar) => { let o = (await ler(BOL(T.k), null)).v; if (o || !criar) return o; let L = [];
+  try { L = (await temporadaLista(T)).slice(0, 40); } catch (e) { return null; } if (L.length < 4) return null;
+  o = { k: T.k, nome: T.nome, meses: T.meses, abre: T.abre, fecha: T.fecha, fimT: T.fimT, res0: T.res, L, dest: L[0].id, res: null };
+  try { await gravar(BOL(T.k), o, { overwrite: false }); } catch (e) { o = (await ler(BOL(T.k), o)).v; } return o; };
+const BOL_PTS = { top1: 100, top3: 40 };
+const bolPontos = (p, R) => { if (!p || !R) return null; const pm = R.melhor[0] && p.melhor === R.melhor[0].id ? BOL_PTS.top1 : R.melhor.some(x => x.id === p.melhor) ? BOL_PTS.top3 : 0;
+  const pp = R.popular[0] && p.popular === R.popular[0].id ? BOL_PTS.top1 : R.popular.some(x => x.id === p.popular) ? BOL_PTS.top3 : 0, pn = p.nota && R.nota ? Math.max(0, Math.round(100 - Math.abs(p.nota - R.nota) * 100)) : 0;
+  return { melhor: pm, popular: pp, nota: pn, tot: pm + pp + pn }; };
+const bolFechar = async (T, o) => { if (o.res || bAgora() < o.res0) return o; try { await N.store().put('so/bolres/' + o.k, Buffer.from('1'), { overwrite: false }); } catch (e) { return (await ler(BOL(o.k), o)).v; }
+  let F = []; try { F = await temporadaLista(T); } catch (e) { await N.store().del(['so/bolres/' + o.k]).catch(() => { }); return o; }
+  const by = Object.fromEntries(F.map(x => [x.id, x])), C = o.L.map(x => Object.assign({}, x, { scF: (by[x.id] || {}).sc || 0, mF: (by[x.id] || {}).m || x.m }));
+  const R = { melhor: C.filter(x => x.scF > 0).sort((a, b) => b.scF - a.scF).slice(0, 3).map(x => ({ id: x.id, t: x.t, sc: x.scF })), popular: C.slice().sort((a, b) => b.mF - a.mF).slice(0, 3).map(x => ({ id: x.id, t: x.t, m: x.mF })), nota: (C.find(x => x.id === o.dest) || {}).scF || 0 };
+  const B = await N.store().list('so/bolp/' + o.k + '/').catch(() => []), G = []; for (const b of B) { const g = (await ler(b.pathname, null)).v; if (g && g.id) G.push(Object.assign(g, { pt: bolPontos(g, R) })); }
+  const rank = G.filter(g => g.pt.tot > 0).sort((a, b) => b.pt.tot - a.pt.tot || a.at - b.at).map(g => ({ id: g.id, nome: g.nome, user: g.user || '', av: g.av || 0, pts: g.pt.tot }));
+  const o2 = await mudar(BOL(o.k), o, x => { if (x.res) return false; x.res = Object.assign(R, { rank: rank.slice(0, 100), total: G.length }); });
+  if (rank.length) await somaPts(rank.map(x => [x.id, x.nome, x.pts, { user: x.user, av: x.av }])).catch(() => { });
+  const M = rank.slice(0, 3).map((x, i) => [x.id, { k: 'bol' + (i + 1) + ':' + o.k, n: (i + 1) + '.º no Bolão da temporada', d: o.nome + ' · ' + x.pts + ' pontos', kind: 'Troféu', lvl: LUG[i], cat: 'Bolão', lugar: i + 1 }]);
+  G.filter(g => g.pt.melhor === BOL_PTS.top1).forEach(g => M.push([g.id, { k: 'bolm:' + o.k, n: 'Acertou no melhor da temporada', d: o.nome + ' · ' + R.melhor[0].t, kind: 'Medalha', lvl: 'Ouro', cat: 'Bolão' }]));
+  await darVarios(M).catch(() => { }); return o2; };
+const bolPub = async (o, c) => { const p = (await ler(BOLP(o.k, c.eu), null)).v, agora = bAgora(), est = o.res ? 'fim' : agora < o.fecha ? 'aberto' : 'espera';
+  return { k: o.k, nome: o.nome, meses: o.meses, estado: est, fecha: o.fecha, res0: o.res0, L: est === 'aberto' ? o.L : o.L.filter(x => p && [p.melhor, p.popular].includes(x.id)).concat(o.L.filter(x => x.id === o.dest)), dest: o.L.find(x => x.id === o.dest) || null,
+    meu: p ? { melhor: p.melhor, popular: p.popular, nota: p.nota, at: p.at, pt: o.res ? bolPontos(p, o.res) : null } : null,
+    res: o.res ? { melhor: o.res.melhor, popular: o.res.popular, nota: o.res.nota, rank: (o.res.rank || []).slice(0, 30).map(x => Object.assign({}, x, { eu: x.id === c.eu })), total: o.res.total, pos: (o.res.rank || []).findIndex(x => x.id === c.eu) + 1 } : null }; };
+OPS.bolao = async c => { const t = bAgora(), C = tempAt(t), Ts = [tempDe(C.y, ESTS.indexOf(C.s) - 1), C, tempDe(C.y, ESTS.indexOf(C.s) + 1)], out = [];
+  for (const T of Ts) { const aberto = t >= T.abre && t < T.fecha; let o = await bolDe(T, aberto); if (!o) continue; if (!o.res && t >= o.res0) o = await bolFechar(T, o); out.push(await bolPub(o, c)); }
+  return { boloes: out, pts: BOL_PTS }; };
+OPS.bolaoPalpite = async (c, b) => { const m0 = String(b.k || '').match(/^(\d{4})-(winter|spring|summer|fall)$/), T = m0 ? tempDe(+m0[1], ESTS.indexOf(m0[2])) : null;
+  if (!T) throw N.err('bolao', 'Bolão desconhecido.', 400); const o = await bolDe(T, false); if (!o) throw N.err('bolao', 'Bolão desconhecido.', 404); if (bAgora() >= o.fecha) throw N.err('bolao', 'Os palpites deste bolão já fecharam.', 400);
+  const ids = new Set(o.L.map(x => x.id)), melhor = +b.melhor, popular = +b.popular, nota = Math.round((+b.nota || 0) * 100) / 100;
+  if (!ids.has(melhor) || !ids.has(popular)) throw N.err('bolao', 'Escolhe os animes da lista desta temporada.', 400); if (!(nota >= 1 && nota <= 10)) throw N.err('bolao', 'A nota tem de ser entre 1 e 10.', 400);
+  const v = await perfil(c.eu, c.nome); await gravar(BOLP(o.k, c.eu), { id: c.eu, nome: v.nome, user: v.user || '', av: v.av || 0, melhor, popular, nota, at: Date.now() });
+  return { bolao: await bolPub(o, c) }; };
 /* ---------- v3.75: perfil dos animes — o @ (escolhido uma vez, não muda), a foto e o fundo ---------- */
 const RESERV = /^(admin|administra|prumo|phantom|superanimes|suporte|equipa|staff|moderador|oficial|sistema)/;
 const imgP = (k, id) => 'so/img/' + k + '/' + id;

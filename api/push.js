@@ -172,6 +172,10 @@ const lisb = t => { const p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: '
 const HU_A = () => +(process.env.NAUTILO_HUNTER_ABRE || 1200), HU_F = () => +(process.env.NAUTILO_HUNTER_FECHA || 1320), hhmm = m => String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
 const lerSo = async p => { try { const g = await N.store().get(p); return g ? N.open(await N.accKey(), g.buf) : null; } catch (e) { return null; } };
 const jogadas = async d => { const M = new Map(); try { for (const b of await N.store().list('so/hg/' + d + '/')) { const g = await lerSo(b.pathname); if (!g || !g.id) continue; const i = g.id.lastIndexOf('-'); if (i > 0) M.set(g.id.slice(0, i) + '|' + g.id.slice(i + 1), g); } } catch (e) { } return M; };
+// v3.90 · Quiz relâmpago: aviso 5 minutos antes das 21h (Lisboa) a quem tem os avisos dos jogos ligados
+const QZ_A = () => +(process.env.NAUTILO_QUIZ_ABRE || 1260);
+const quizAviso = (U, st, now, out) => { const fans = U.filter(([, x]) => x.cat.jogo && x.an && x.an.hu); if (!fans.length) return; const L = lisb(now), A = QZ_A(); st.qz = st.qz || {};
+  if (L.min >= A - 5 && L.min < A + 5 && st.qz.av !== L.d) { st.qz.av = L.d; fans.forEach(([uk]) => out.push({ uk, m: { t: 'Quiz relâmpago às ' + hhmm(A), b: '10 perguntas de anime, 15 segundos cada. Quanto mais rápido, mais pontos.', u: '#animes.quiz', g: 'quiz' }, ttl: 1200 })); } };
 const pursuit = async (U, st, now, out) => { const fans = U.filter(([, x]) => x.cat.jogo && x.an && x.an.hu); if (!fans.length) return;
   const L = lisb(now), A = HU_A(), F = HU_F(); st.hu = st.hu || {};
   const msg = (uk, t, b, g) => out.push({ uk, m: { t, b, u: '#animes.pursuit', g }, ttl: 3600 });
@@ -254,6 +258,7 @@ const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.f
     const k = uk + '|' + part + '|' + (it.g || '') + '|' + it.at; if (st.sent[k]) return; st.sent[k] = now; out.push({ uk, m: { t: it.t, b: it.b, u: it.u, g: it.g || part }, ttl: 1800 }); }); }));
   try { await sports(U, st, now, out); } catch (e) { console.error('push desportos', e.message); }
   try { await pursuit(U, st, now, out); } catch (e) { console.error('push pursuit', e.message); }
+  try { quizAviso(U, st, now, out); } catch (e) { console.error('push quiz', e.message); }
   try { festas(U, st, now, out); } catch (e) { console.error('push festas', e.message); }
   try { despensa(U, st, now, out); } catch (e) { console.error('push despensa', e.message); }
   try { recapAviso(U, st, now, out); } catch (e) { console.error('push recap', e.message); }
