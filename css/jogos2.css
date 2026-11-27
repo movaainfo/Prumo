@@ -70,3 +70,34 @@
 @media (max-width:520px){.qz-op{grid-template-columns:1fr}.du-bars{height:48px}}
 @media (prefers-reduced-motion:reduce){.qz-b{transition:none}}
 @supports not (color:color-mix(in srgb,red 50%,blue)){.qz-b.certa{background:rgba(60,207,142,.28)}.qz-b.errada{background:rgba(232,96,110,.28)}.qz-res span{background:rgba(232,96,110,.22)}.qz-res span.ok{background:rgba(60,207,142,.3)}}
+/* v3.91 · Sombras */
+.sb-hero{background:linear-gradient(135deg,#14161f,#262a3a 55%,#3a2a14)}.sb-hero .j2-k{color:#E8D9B0}
+.sb-jogo{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:18px;align-items:start}
+.sb-fig{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px;border-radius:22px;background:linear-gradient(180deg,#ece6da,#d9cfbd);box-shadow:0 18px 40px -24px #000}
+.sb-fig img{display:block;width:auto;max-width:100%;max-height:420px;height:auto;image-rendering:auto}
+.sb-fig figcaption{font-size:12.5px;font-weight:700;color:#3b3427}
+.sb-fig.n3{background:linear-gradient(180deg,#f3ecdc,#e5d9bf)}
+.sb-lado{display:flex;flex-direction:column;gap:12px;min-width:0}
+.sb-tent{list-style:none;margin:0;padding:0;display:grid;gap:6px}.sb-tent li{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:44px;padding:8px 14px;border-radius:12px;background:var(--j2c);border:1px dashed var(--j2l);color:var(--j2m)}
+.sb-tent li.no{border-style:solid;border-color:color-mix(in srgb,#E8606E 55%,transparent);color:var(--j2t)}.sb-tent li.no b{color:#E8606E}
+.sb-tent li.ok{border-style:solid;border-color:#3ccf8e;color:var(--j2t);background:color-mix(in srgb,#3ccf8e 14%,var(--j2c))}.sb-tent li.ok b{color:#3ccf8e}
+.sb-dicas{list-style:none;margin:0;padding:0;display:grid;gap:6px}.sb-dicas li{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,#E8D9B0 12%,var(--j2c))}.sb-dicas .ic{flex:none;width:17px;height:17px;color:#E8D9B0}
+.sb-f{display:flex;gap:8px;flex-wrap:wrap}.sb-f .field{min-width:0;flex:1}
+.sb-fim{display:flex;flex-direction:column;gap:6px}.sb-fim p{margin:0}
+.j2-t.sb .jg-ic{background:linear-gradient(145deg,#3a3f52,#0e0f16);color:#E8D9B0}
+@media (max-width:700px){.sb-jogo{grid-template-columns:1fr}.sb-fig img{max-height:360px}}
+/* v3.91 · Sequência a dois */
+.sq-hero{background:linear-gradient(135deg,#3a1a06,#1d1612 55%,#2a0d1c)}.sq-hero .j2-k{color:#F5A35A}
+.sq-c{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:16px;border-radius:20px;background:var(--j2c);border:1px solid var(--j2l)}
+.sq-c.viva{border-color:color-mix(in srgb,#F5A35A 50%,transparent)}
+.sq-chama{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:86px;height:96px;border-radius:24px;background:linear-gradient(180deg,#2a1a10,#160e0a)}
+.sq-c.viva .sq-chama{background:radial-gradient(60% 55% at 50% 70%,#F5A35A,#C2410C 60%,#3a1406)}
+.sq-chama b{position:relative;font-size:34px;line-height:1;font-weight:900;color:#fff;font-variant-numeric:tabular-nums}.sq-chama small{position:relative;color:rgba(255,255,255,.8);font-size:12px}
+.sq-mid{display:flex;flex-direction:column;gap:8px;min-width:0}
+.sq-par{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.sq-par span{font-weight:700}.sq-par i{font-style:normal;opacity:.5;margin:0 4px}
+.sq-hoje{display:flex;gap:8px;flex-wrap:wrap}.sq-hoje span{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.06);font-size:13px;color:var(--j2m)}
+.sq-hoje span .ic{width:14px;height:14px}.sq-hoje span.ok{color:#3ccf8e;background:color-mix(in srgb,#3ccf8e 14%,transparent)}
+.sq-dias{display:flex;gap:4px;flex-wrap:wrap}.sq-dias i{width:16px;height:16px;border-radius:5px;background:rgba(255,255,255,.07)}.sq-dias i.m{background:color-mix(in srgb,#F5A35A 35%,transparent)}.sq-dias i.f{background:#F5A35A}.sq-dias i.h{box-shadow:0 0 0 2px var(--j2t)}
+.j2-t.sq .jg-ic{background:linear-gradient(145deg,#F5A35A,#C2410C)}
+@media (max-width:560px){.sq-c{grid-template-columns:auto 1fr}.sq-x{grid-column:1/-1;justify-self:start}}
+@supports not (color:color-mix(in srgb,red 50%,blue)){.sb-tent li.ok{background:rgba(60,207,142,.14)}.sq-dias i.m{background:rgba(245,163,90,.35)}}

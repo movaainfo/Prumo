@@ -136,14 +136,74 @@ const boPagina = () => { if (!conta()) return semConta('Bolão da temporada', 'P
     ${!d.boloes.length ? '<p class="mut">O próximo bolão abre 45 dias antes da próxima temporada.</p>' : ''}</section>`; };
 OS.forms.boPalpite = async (f, v) => { try { const j = await call('bolaoPalpite', { k: f.dataset.k, melhor: v('melhor'), popular: v('popular'), nota: v('nota') }); const i = BS.d.boloes.findIndex(o => o.k === j.bolao.k); if (i >= 0) BS.d.boloes[i] = j.bolao; UI.toast('Palpite guardado. Podes mudá-lo até os palpites fecharem.', 'pos'); OS.request(); } catch (e) { UI.toast(e.message, 'neg'); } };
 
+
+/* =================== SOMBRAS (#animes.sombras) =================== */
+const SS = { d: null, at: 0, busy: false, err: '', env: false, ult: '' };
+const sbCarregar = async forcar => { if (!conta() || SS.busy || (!forcar && SS.d && Date.now() - SS.at < 6e4)) return; SS.busy = true; SS.err = '';
+  try { SS.d = (await call('sombra', {})).sombra; SS.at = Date.now(); } catch (e) { SS.err = e.message || 'Não deu para abrir a sombra de hoje.'; } SS.busy = false; OS.request(); };
+const NIVN = ['Só a silhueta', 'Os contornos', 'As cores', 'Revelada'];
+const sbPagina = () => { if (!conta()) return semConta('Sombras', 'Todos os dias, a silhueta de uma personagem de anime.'); sbCarregar(false); const s = SS.d;
+  if (!s) return `<section class="j2-pg"><p class="an-ld">${SS.err ? esc(SS.err) : '<span class="an-sp"></span>A abrir a sombra de hoje…'}</p></section>`;
+  const resto = s.max - s.tent.length;
+  return `<section class="j2-pg sb-pg"><div class="j2-hero sb-hero"><div><span class="j2-k">${UI.ic('eye')}Sombras · uma por dia</span><h2>${s.fim ? (s.ok ? 'Acertaste!' : 'Não foi desta') : 'Quem é esta personagem?'}</h2>
+      <p>${s.fim ? (s.ok ? `Era <b>${esc(s.resp.nome)}</b>, de ${esc(s.resp.anime)}. Ganhaste <b>${s.pts} pontos</b> no ranking de animes.` : `Era <b>${esc(s.resp.nome)}</b>, de ${esc(s.resp.anime)}.`) : `Tens ${resto} ${resto === 1 ? 'tentativa' : 'tentativas'}. Cada erro mostra mais um pouco e dá uma dica. Acertar à primeira vale 60 pontos, à segunda 40 e à terceira 20.`}</p></div>
+      <div class="j2-hk"><span><b>${s.seq}</b> ${s.seq === 1 ? 'dia seguido' : 'dias seguidos'}</span></div></div>
+    <div class="sb-jogo"><figure class="sb-fig n${s.nivel}"><img src="${s.img}" alt="${s.fim ? esc(s.resp.nome) : 'A silhueta da personagem de hoje'}" width="300" height="420"><figcaption>${NIVN[s.nivel]}</figcaption></figure>
+      <div class="sb-lado"><ol class="sb-tent">${Array.from({ length: s.max }, (_, i) => { const t = s.tent[i]; return `<li class="${t == null ? '' : (s.ok && i === s.tent.length - 1 ? 'ok' : 'no')}">${t == null ? `<span>Tentativa ${i + 1}</span>` : `<span>${esc(t)}</span><b>${s.ok && i === s.tent.length - 1 ? 'Certo' : 'Não'}</b>`}</li>`; }).join('')}</ol>
+        ${s.dica1 || s.dica2 ? `<ul class="sb-dicas">${s.dica1 ? `<li>${UI.ic('info')}${esc(s.dica1)}</li>` : ''}${s.dica2 ? `<li>${UI.ic('tv')}Do anime <b>${esc(s.dica2)}</b></li>` : ''}</ul>` : ''}
+        ${s.fim ? `<div class="sb-fim">${s.stats ? `<p>Hoje jogaram <b>${s.stats.jog}</b>: ${s.stats.ok[0]} à primeira, ${s.stats.ok[1]} à segunda, ${s.stats.ok[2]} à terceira e ${s.stats.falhou} não acertaram.</p>` : ''}<p class="mut">A próxima sombra sai à meia-noite de Lisboa, daqui a <span data-ate="${s.amanha}">${falta(s.amanha)}</span>.</p></div>`
+          : `<form class="sb-f" data-form="sbPalpite" autocomplete="off"><input class="field grow" name="nome" list="sbNomes" maxlength="60" placeholder="Nome da personagem" aria-label="Nome da personagem" required autofocus><datalist id="sbNomes">${s.nomes.map(n => `<option value="${esc(n)}">`).join('')}</datalist><button class="btn pri">Adivinhar</button></form>
+            <p class="mut j2-n">Vale o nome completo, o primeiro ou o último nome, e pequenos erros de escrita.</p>`}</div></div></section>`; };
+OS.forms.sbPalpite = async (f, v) => { if (SS.env) return; SS.env = true; const n = v('nome'); try { const j = await call('sombraPalpite', { nome: n }); SS.d = j.sombra; SS.at = Date.now();
+    if (j.certo) { UI.toast('Acertaste: era ' + j.sombra.resp.nome + '!', 'pos'); if (OS.Vivo && OS.Vivo.confetti) try { OS.Vivo.confetti(); } catch (e) { } } else if (j.sombra.fim) UI.toast('Não foi desta: era ' + j.sombra.resp.nome + '.', 'neg'); else UI.toast('Não é. Vê a sombra outra vez e a dica.', 'warn'); }
+  catch (e) { UI.toast(e.message, 'neg'); } SS.env = false; OS.request(); };
+
+/* =================== SEQUÊNCIA A DOIS (#jogos.sequencia) =================== */
+const QQ = { d: null, at: 0, busy: false, err: '', env: {} };
+// o dia cumprido de cada um: pelo menos metade dos hábitos desse dia (mínimo 1); sem hábitos nesse dia, 1 treino, 1 tarefa feita ou 25 min de foco
+const diaCumprido = d => { let hs = []; try { hs = OS.all('habits').filter(h => h.active && OS.Hab && OS.Hab.due(h, d) && h.freq !== 'X por semana'); } catch (e) { }
+  if (hs.length) { const f = hs.filter(h => OS.Hab.done(h, d)).length; return f >= Math.max(1, Math.ceil(hs.length / 2)); }
+  const p = pontosDia(d).det; return p.t > 0 || p.k > 0 || p.f > 0; };
+const sqCarregar = async forcar => { if (!conta() || QQ.busy || (!forcar && QQ.d && Date.now() - QQ.at < 6e4)) return; QQ.busy = true; QQ.err = '';
+  try { QQ.d = await call('seqs', {}); QQ.at = Date.now(); sqEnviar(); } catch (e) { QQ.err = e.message || 'Não deu para abrir as sequências.'; } QQ.busy = false; OS.request(); };
+const sqEnviar = async () => { for (const w of ((QQ.d || {}).seqs || []).filter(x => x.estado === 'ativa')) { const v = {}, dd = w.dias.slice(-3); let mais = false;
+    dd.forEach(x => { if (diaCumprido(x.d)) { v[x.d] = 1; if (!x.eu) mais = true; } }); const j = JSON.stringify(v), e = QQ.env[w.id] || {}; if (!mais || (e.j === j && Date.now() - e.at < 6e4)) continue; QQ.env[w.id] = { j, at: Date.now() };
+    try { const r = await call('seqProg', { id: w.id, v }); const i = QQ.d.seqs.findIndex(x => x.id === w.id); if (i >= 0) QQ.d.seqs[i] = r.seq; OS.request(); } catch (er) { } } };
+OS.on('change', c => { if (QQ.d && ['habits', 'workouts', 'runs', 'tasks', 'sessions'].includes(c)) setTimeout(sqEnviar, 1600); });
+const sqCard = w => { const n = w.cur;
+  return `<article class="sq-c${n ? ' viva' : ''}"><div class="sq-chama" aria-label="${n} ${n === 1 ? 'dia' : 'dias'} seguidos"><span class="sq-fl" aria-hidden="true"></span><b>${n}</b><small>${n === 1 ? 'dia' : 'dias'}</small></div>
+    <div class="sq-mid"><div class="sq-par">${av(eu(), 32)}<span>Tu</span><i aria-hidden="true">+</i>${av(w.outro, 32)}<span>${esc(w.outro.nome)}</span></div>
+      <div class="sq-hoje"><span class="${w.eu ? 'ok' : ''}">${UI.ic(w.eu ? 'check' : 'clock')}Tu: ${w.eu ? 'cumprido' : 'ainda falta'}</span><span class="${w.ele ? 'ok' : ''}">${UI.ic(w.ele ? 'check' : 'clock')}${esc(w.outro.nome)}: ${w.ele ? 'cumprido' : 'ainda falta'}</span></div>
+      <div class="sq-dias" aria-label="Os últimos dias">${w.dias.map(x => `<i class="${x.eu && x.ele ? 'f' : x.eu || x.ele ? 'm' : ''}${x.d === w.hoje ? ' h' : ''}" title="${esc(x.d)}${x.eu && x.ele ? ': os dois cumpriram' : x.eu ? ': só tu' : x.ele ? ': só ' + esc(w.outro.nome) : ''}"></i>`).join('')}</div>
+      <small class="mut">Recorde: ${w.melhor} ${w.melhor === 1 ? 'dia' : 'dias'}${n === 0 && w.dias.length > 1 ? ' · a sequência recomeçou' : ''}</small></div>
+    <button type="button" class="btn sm ghost sq-x" data-act="sqTerminar" data-id="${esc(w.id)}" aria-label="Terminar a sequência com ${esc(w.outro.nome)}">Terminar</button></article>`; };
+const sqPagina = () => { if (!conta()) return semConta('Sequência a dois', 'Mantém uma sequência de dias com um amigo.'); sqCarregar(false); const d = QQ.d;
+  const topo = UI.head('Sequência a dois', 'Uma sequência partilhada: o dia só conta quando os dois cumprem.', '', 'Jogos');
+  if (!d) return topo + `<section class="j2-pg"><p class="mut">${QQ.err ? esc(QQ.err) : 'A abrir as sequências…'}</p></section>`;
+  const at = d.seqs.filter(w => w.estado === 'ativa'), conv = d.seqs.filter(w => w.estado === 'convite' && !w.por), env = d.seqs.filter(w => w.estado === 'convite' && w.por), livres = d.amigos.filter(a => !d.seqs.some(w => w.outro.id === a.id));
+  return topo + `<section class="j2-pg sq-pg"><div class="j2-hero sq-hero"><div><span class="j2-k">${UI.ic('flame')}Sequência a dois</span><h2>${at.length ? 'As tuas sequências' : 'Começa uma sequência com um amigo'}</h2>
+      <p>Todos os dias, cada um cumpre o seu dia: <b>pelo menos metade dos hábitos desse dia</b> (no mínimo 1). Num dia sem hábitos marcados, basta 1 treino, 1 tarefa feita ou 25 minutos de foco. Se um dos dois falhar, a sequência recomeça para os dois. Medalhas aos 7, 30, 100 e 365 dias.</p></div></div>
+    ${conv.map(w => `<div class="du-conv">${av(w.outro, 36)}<p><b>${esc(w.outro.nome)}</b> quer começar uma sequência contigo.</p><div class="row gap6"><button type="button" class="btn sm pri" data-act="sqResp" data-id="${esc(w.id)}" data-sim="1">Aceitar</button><button type="button" class="btn sm ghost" data-act="sqResp" data-id="${esc(w.id)}">Recusar</button></div></div>`).join('')}
+    ${at.map(sqCard).join('')}
+    ${env.map(w => `<div class="du-conv esp">${av(w.outro, 36)}<p>Convidaste <b>${esc(w.outro.nome)}</b>. Falta a resposta (o convite dura 3 dias).</p><button type="button" class="btn sm ghost" data-act="sqResp" data-id="${esc(w.id)}">Cancelar</button></div>`).join('')}
+    <section class="j2-sec"><h3>Nova sequência</h3>${d.amigos.length ? (livres.length ? `<form class="du-novo" data-form="sqNova" autocomplete="off"><select class="field grow" name="amigo" aria-label="Escolhe o amigo" required>${livres.map(a => `<option value="${esc(a.id)}">${esc(a.nome)}${a.user ? ' (@' + esc(a.user) + ')' : ''}</option>`).join('')}</select><button class="btn pri">${UI.ic('flame')}Convidar</button></form><p class="mut j2-n">Até 3 sequências ao mesmo tempo. O teu amigo só vê se cumpriste o dia, nunca os teus hábitos.</p>` : '<p class="mut">Já tens uma sequência com todos os teus amigos.</p>')
+      : `<p class="mut">Ainda não tens amigos no Prumo. Adiciona-os pelo código em <a class="acc" href="#animes.clas">Clãs e conversas</a>.</p>`}</section></section>`; };
+A.sqResp = async b => { const sim = !!b.dataset.sim; try { await call('seqResp', { id: b.dataset.id, sim }); UI.toast(sim ? 'Sequência começada: cumpram os dois o dia de hoje.' : 'Feito.', 'pos'); } catch (e) { UI.toast(e.message, 'neg'); } sqCarregar(true); };
+A.sqTerminar = b => UI.ask('Terminar esta sequência?', 'A sequência acaba para os dois e não pode ser retomada. As medalhas ganhas ficam.', 'Terminar', async () => { try { await call('seqTerminar', { id: b.dataset.id }); UI.toast('Sequência terminada.', 'pos'); } catch (e) { UI.toast(e.message, 'neg'); } sqCarregar(true); });
+OS.forms.sqNova = async (f, v) => { try { const j = await call('seqConvidar', { amigo: v('amigo') }); UI.toast(`Convite enviado a ${j.seq.outro.nome}.`, 'pos'); } catch (e) { UI.toast(e.message, 'neg'); } sqCarregar(true); };
+OS.Sombras = { pagina: sbPagina, carregar: sbCarregar, _S: SS };
+OS.Sequencia = { pagina: sqPagina, carregar: sqCarregar, diaCumprido, _S: QQ };
+
 /* =================== a tela de Jogos: os 3 jogos novos e a página do Duelo =================== */
-const tiles = () => { const q = QS.d, b = BS.d; if (conta()) { qzCarregar(false); boCarregar(false); duCarregar(false); }
+const tiles = () => { const q = QS.d, b = BS.d; if (conta()) { qzCarregar(false); boCarregar(false); duCarregar(false); sbCarregar(false); sqCarregar(false); }
   const qt = !q ? 'Todos os dias às 21h' : q.fase === 'espera' ? 'Começa daqui a ' + falta(q.abreAt) : q.fase === 'aberto' ? (q.eu ? (q.eu.fim ? 'Jogaste hoje: ' + nf(q.eu.pts) + ' pts' : 'A meio do quiz') : 'A decorrer agora') : 'Resultados de hoje';
   const ab = b && b.boloes.find(o => o.estado === 'aberto'), du = DS.d && DS.d.duelos.filter(w => w.estado === 'ativa').length;
   return `<a class="jg-t j2-t du" href="#jogos.duelo"><span class="jg-ic">${UI.ic('swords')}</span><b>Duelo de hábitos</b><p>7 dias contra um amigo: ganha quem cumprir mais hábitos, treinos e tarefas.</p><small>${du ? du + (du === 1 ? ' duelo a decorrer' : ' duelos a decorrer') : 'Desafia um amigo'}</small></a>
     <a class="jg-t j2-t qz${q && q.fase === 'aberto' ? ' on' : ''}" href="#animes.quiz"><span class="jg-ic">${UI.ic('bolt2')}</span><b>Quiz relâmpago</b><p>10 perguntas de anime às 21h, iguais para todos. Quanto mais rápido, mais pontos.</p><small>${esc(qt)}</small></a>
+    <a class="jg-t j2-t sb" href="#animes.sombras"><span class="jg-ic">${UI.ic('eye')}</span><b>Sombras</b><p>A silhueta de uma personagem de anime por dia. 3 tentativas para dizer quem é.</p><small>${SS.d ? (SS.d.fim ? (SS.d.ok ? 'Acertaste hoje' : 'Amanhã há outra') : 'A de hoje está à espera') : 'Uma por dia'}</small></a>
+    <a class="jg-t j2-t sq" href="#jogos.sequencia"><span class="jg-ic">${UI.ic('flame')}</span><b>Sequência a dois</b><p>Uma sequência com um amigo: o dia só conta quando os dois cumprem.</p><small>${QQ.d && QQ.d.seqs.some(w => w.estado === 'ativa') ? 'Maior sequência: ' + Math.max(...QQ.d.seqs.filter(w => w.estado === 'ativa').map(w => w.cur)) + ' dias' : 'Convida um amigo'}</small></a>
     <a class="jg-t j2-t bo" href="#animes.bolao"><span class="jg-ic">${UI.ic('ticket')}</span><b>Bolão da temporada</b><p>Prevê o melhor e o mais popular da temporada de animes.</p><small>${ab ? 'Palpites até ' + dataC(ab.fecha) : 'Ver os bolões'}</small></a>`; };
-const liga = () => { const j = OS.views.jogos; if (!j || j._j2) return; const f = sub => { if (sub === 'duelo') return duPagina(); const h = j(sub), k = '<div class="jg-g">', i = h.indexOf(k); return i < 0 ? h : h.slice(0, i + k.length) + tiles() + h.slice(i + k.length); }; f._j2 = 1; f._ds = j._ds; OS.views.jogos = f; };
+const liga = () => { const j = OS.views.jogos; if (!j || j._j2) return; const f = sub => { if (sub === 'duelo') return duPagina(); if (sub === 'sequencia') return sqPagina(); const h = j(sub), k = '<div class="jg-g">', i = h.indexOf(k); return i < 0 ? h : h.slice(0, i + k.length) + tiles() + h.slice(i + k.length); }; f._j2 = 1; f._ds = j._ds; OS.views.jogos = f; };
 // liga-se depois dos outros (o Desafio da semana também acrescenta o seu cartão à tela de Jogos): a página do Duelo fica só com o duelo
 OS.on('ready', () => setTimeout(liga, 0));
 OS.Duelo = { pagina: duPagina, pontosDia, carregar: duCarregar, _S: DS };

@@ -23,7 +23,7 @@ const MET = { Ouro: ['#FFF1BF', '#E7B84A', '#8F6210'], Prata: ['#FBFCFD', '#C6CD
 const RIB = { Desporto: ['#1F4E8C', '#F5F1E8'], Estudos: ['#7A1F2B', '#E8C77A'], Trabalho: ['#2F3E4E', '#C9D3DC'], Competição: ['#8C1D18', '#F5F1E8'], 'Arte e cultura': ['#4A2A6B', '#E9D6A0'],
   Voluntariado: ['#2E6B4A', '#F5F1E8'], Pessoal: ['#6B4A2E', '#E8C77A'], Outro: ['#3A3F47', '#E3E6EA'],
   // v3.89: as fitas das medalhas ganhas no Prumo
-  'Clãs': ['#8E1B2A', '#F5C35A'], Desafios: ['#2C3E8C', '#E8C77A'], Pursuit: ['#1F1F24', '#E84860'], Ranking: ['#5A2A8C', '#F5F1E8'], Metas: ['#1F6B5A', '#F5F1E8'], Prumo: ['#3A3F47', '#E8C77A'], Duelos: ['#B8263A', '#F5F1E8'], Quiz: ['#D4A017', '#1F1F24'], 'Bolão': ['#0E7C86', '#F5F1E8'] };
+  'Clãs': ['#8E1B2A', '#F5C35A'], Desafios: ['#2C3E8C', '#E8C77A'], Pursuit: ['#1F1F24', '#E84860'], Ranking: ['#5A2A8C', '#F5F1E8'], Metas: ['#1F6B5A', '#F5F1E8'], Prumo: ['#3A3F47', '#E8C77A'], Duelos: ['#B8263A', '#F5F1E8'], Quiz: ['#D4A017', '#1F1F24'], 'Bolão': ['#0E7C86', '#F5F1E8'], Sombras: ['#1F1F24', '#C9D2DC'], 'Sequência': ['#E8590C', '#F5F1E8'] };
 let uid = 0;
 const grad = (id, m) => `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2=".25"><stop offset="0" stop-color="${m[0]}"/><stop offset=".38" stop-color="${m[1]}"/><stop offset=".72" stop-color="${m[2]}"/><stop offset="1" stop-color="${m[1]}"/></linearGradient>`;
 const num = (x, y, n, sz, col) => n ? `<text x="${x}" y="${y}" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="${sz}" fill="${col}" opacity=".8">${n}</text>` : '';

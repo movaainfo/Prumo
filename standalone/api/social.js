@@ -6,7 +6,7 @@
 // Ranking de animes: pontos ganhos nos jogos. PURSUIT: todos os dias às 20h (hora de Lisboa) há pistas de um anime ao calhas; marca-se "Pursuit"
 // na página do anime que se acha que é (uma vez por dia); às 22h fecha e quem acertou ganha pontos pela ordem (1.º 100, 2.º 90… mínimo 10).
 'use strict';
-const N = require('./_nuvem'), PL = require('./_planos'), GIF = require('./_gif');
+const N = require('./_nuvem'), PL = require('./_planos'), GIF = require('./_gif'), PNGS = require('./_png');
 const PID = /^[a-f0-9]{12}$/, ID = /^[a-z0-9]{8,40}-[a-f0-9]{12}$/, CID = /^[a-z0-9]{10}$/;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const JK = () => process.env.JIKAN_BASE || 'https://api.jikan.moe/v4/';
@@ -521,6 +521,93 @@ OPS.bolaoPalpite = async (c, b) => { const m0 = String(b.k || '').match(/^(\d{4}
   if (!ids.has(melhor) || !ids.has(popular)) throw N.err('bolao', 'Escolhe os animes da lista desta temporada.', 400); if (!(nota >= 1 && nota <= 10)) throw N.err('bolao', 'A nota tem de ser entre 1 e 10.', 400);
   const v = await perfil(c.eu, c.nome); await gravar(BOLP(o.k, c.eu), { id: c.eu, nome: v.nome, user: v.user || '', av: v.av || 0, melhor, popular, nota, at: Date.now() });
   return { bolao: await bolPub(o, c) }; };
+/* ---------- v3.91 · SOMBRAS: todos os dias a silhueta de corpo inteiro de uma personagem de anime; 3 tentativas para dizer quem é.
+   Cada erro mostra uma versão mais reveladora (os contornos, depois as cores em mosaico) e uma dica (a primeira letra, depois o anime).
+   As silhuetas fazem-se no servidor a partir de imagens com fundo transparente (lista em _sombras.json, montada a partir das wikis dos
+   animes); a imagem original só vai para o app quando o jogo acaba. Pontos para o ranking (60, 40, 20) e medalhas pelos dias seguidos. ---------- */
+const SB_POOL = (() => { try { return require('./_sombras.json'); } catch (e) { return []; } })();
+const SB = d => 'so/sb/' + d, SBP = (d, id) => 'so/sbp/' + d + '/' + id, SB_PTS = [60, 40, 20], SB_TENT = 3;
+const sbHostOk = u => /^https:\/\/static\.wikia\.nocookie\.net\/[\w.-]+\/images\//.test(String(u || '')) || (!!process.env.NAUTILO_SB_LOCAL && /^http:\/\/localhost:\d+\//.test(String(u || '')));
+const diaMais = (d, k) => new Date(Date.parse(d + 'T12:00:00Z') + k * DIA).toISOString().slice(0, 10);
+const sbPool = () => { if (process.env.NAUTILO_SB_POOL) { try { return JSON.parse(process.env.NAUTILO_SB_POOL); } catch (e) { } } return SB_POOL; };   // os testes usam uma lista própria
+const sbLista = async () => { const fora = new Set(((await ler('so/sbfora', { L: [] })).v || {}).L || []); return sbPool().filter(c => !fora.has(c.alid)); };
+const sbDia = async L => { let v = (await ler(SB(L.d), null)).v; if (v) return v; const P0 = await sbLista(); if (!P0.length) throw N.err('sombra', 'As sombras ainda não estão prontas. Volta daqui a pouco.', 503);
+  const hist = ((await ler('so/sbhist', { L: [] })).v || {}).L || [], r = await rndDe('sombra:' + L.d), ord = baralha(P0, r), C = ord.filter(c => !hist.includes(c.alid)).concat(ord.filter(c => hist.includes(c.alid)));
+  for (const c of C.slice(0, 6)) { if (!sbHostOk(c.img)) continue;
+    try { const rr = await fetch(c.img, { headers: { 'user-agent': 'Prumo/1.0' }, signal: AbortSignal.timeout(15000) }); if (!rr.ok) continue; const S = PNGS.silhuetas(Buffer.from(await rr.arrayBuffer()));
+      const m = await iaImg(S.fim, 'png'); if (m && m.ok === false) continue;   // a imagem final também passa pela IA (sem nudez nem nada explícito)
+      v = { dia: L.d, id: c.alid, nome: c.nome, alt: c.alt || [], anime: c.anime, lv: S.lv, fim: S.fim, n: { jog: 0, ok: [0, 0, 0], falhou: 0 } };
+      try { await gravar(SB(L.d), v, { overwrite: false }); await mudar('so/sbhist', { L: [] }, o => { o.L = (o.L || []).concat(c.alid).slice(-120); }); } catch (e) { v = (await ler(SB(L.d), v)).v; } return v; } catch (e) { } }
+  throw N.err('sombra', 'Não deu para preparar a sombra de hoje. Tenta daqui a pouco.', 502); };
+const sbN = s => norm(s).replace(/[^a-z0-9 ]/g, ' ').replace(/ou\b/g, 'o').replace(/uu/g, 'u').replace(/oo/g, 'o').replace(/\s+/g, ' ').trim();
+const lev = (a, b) => { if (Math.abs(a.length - b.length) > 2) return 9; const d = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
+// aceita o nome completo (em qualquer ordem), o primeiro ou o último nome, os outros nomes conhecidos e pequenos erros de escrita
+const sbCerto = (g, v) => { const x = sbN(g), xs = x.split(' ').sort().join(' '); if (x.length < 2) return false;
+  return [v.nome].concat(v.alt || []).some(c => { const y = sbN(c); if (!y) return false; const ys = y.split(' ').sort().join(' '); if (x === y || xs === ys) return true;
+    return (y.length >= 5 && lev(x, y) <= 1) || (y.length >= 9 && lev(x, y) <= 2) || (y.split(' ').length > 1 && y.split(' ').some(p => p.length >= 4 && (p === x || (p.length >= 6 && lev(p, x) <= 1)))); }); };
+const sbSeq = (p, hoje) => p && p.sbUlt && (p.sbUlt === hoje || p.sbUlt === diaMais(hoje, -1)) ? p.sbSeq || 0 : 0;
+const sbPub = async (c, L, v, g) => { const t = g ? g.t : [], fim = !!g && (g.ok || t.length >= SB_TENT), niv = Math.min(2, t.length), p = (await ler(P(c.eu), null)).v || {};
+  const meia = (() => { const m = L.min; return Math.floor(Date.now() / 6e4) * 6e4 + (1440 - m) * 6e4; })();
+  return { dia: L.d, img: 'data:image/png;base64,' + (fim ? v.fim : v.lv[niv]), tent: t, max: SB_TENT, fim, ok: !!(g && g.ok), pts: (g && g.pts) || 0, nivel: fim ? 3 : niv,
+    dica1: t.length >= 1 || fim ? 'Começa por ' + (v.nome || '?').trim()[0].toUpperCase() : '', dica2: t.length >= 2 || fim ? v.anime : '', resp: fim ? { nome: v.nome, anime: v.anime } : null,
+    stats: fim ? v.n : null, seq: sbSeq(p, L.d), amanha: meia, nomes: [...new Set((await sbLista()).map(x => x.nome))].sort() }; };
+OPS.sombra = async c => { const L = lisboa(), v = await sbDia(L), g = (await ler(SBP(L.d, c.eu), null)).v; return { sombra: await sbPub(c, L, v, g) }; };
+OPS.sombraPalpite = async (c, b, req) => { if (N.limit(req, 'sbp|' + c.eu, 30, 3600e3)) throw N.err('limite', 'Espera um pouco.', 429); const nome = String(b.nome || '').trim().slice(0, 60); if (nome.length < 2) throw N.err('sombra', 'Escreve o nome da personagem.', 400);
+  const L = lisboa(), v = await sbDia(L), pf = await perfil(c.eu, c.nome); let res = null;
+  const g = await mudar(SBP(L.d, c.eu), () => ({ id: c.eu, t: [], ok: false, pts: 0, at: 0 }), o => { if (o.ok || o.t.length >= SB_TENT) throw N.err('sombra', 'Já jogaste a sombra de hoje. Amanhã há outra.', 409);
+    const ok = sbCerto(nome, v); o.t.push(nome); o.at = Date.now(); if (ok) { o.ok = true; o.pts = SB_PTS[o.t.length - 1]; } res = { ok, fim: ok || o.t.length >= SB_TENT, n: o.t.length }; });
+  if (res.fim) { const ultimo = res.ok ? res.n - 1 : -1;
+    await mudar(SB(L.d), null, o => { if (!o) return false; o.n = o.n || { jog: 0, ok: [0, 0, 0], falhou: 0 }; o.n.jog++; if (ultimo >= 0) o.n.ok[ultimo]++; else o.n.falhou++; }).catch(() => { });
+    let seq = 0; await mudar(P(c.eu), null, p => { if (!p) return false; if (res.ok) { p.sbSeq = p.sbUlt === diaMais(L.d, -1) ? (p.sbSeq || 0) + 1 : p.sbUlt === L.d ? p.sbSeq || 1 : 1; p.sbUlt = L.d; } else { p.sbSeq = 0; p.sbUlt = ''; } seq = p.sbSeq || 0; }).catch(() => { });
+    if (res.ok) { await somaPts([[c.eu, pf.nome, g.pts, { user: pf.user, av: pf.av }]]).catch(() => { });
+      for (const [k, lv] of [[7, 'Ouro'], [30, 'Platina'], [100, 'Diamante']]) if (seq === k) await darMed(c.eu, { k: 'sb' + k + ':' + L.d, n: k + ' dias seguidos a acertar nas Sombras', d: 'até ' + L.d.split('-').reverse().join('/'), kind: 'Medalha', lvl: lv, cat: 'Sombras' }); } }
+  return Object.assign({ certo: res.ok }, { sombra: await sbPub(c, L, (await ler(SB(L.d), v)).v || v, g) }); };
+// a administração pode tirar uma personagem da lista (se a imagem estiver mal) — e a de hoje é trocada
+OPS.adminSombraTirar = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const L = lisboa(), v = (await ler(SB(L.d), null)).v, id = +b.id || (v && v.id); if (!id) throw N.err('sombra', 'Nada para tirar.', 400);
+  await mudar('so/sbfora', { L: [] }, o => { o.L = [...new Set((o.L || []).concat(id))]; }); if (v && v.id === id) await N.store().del([SB(L.d)]).catch(() => { }); return { ok2: true, id }; };
+
+/* ---------- v3.91 · SEQUÊNCIA A DOIS: tu e um amigo mantêm uma sequência juntos. Um dia conta quando os DOIS o cumprem; se um falhar,
+   a sequência recomeça para os dois. Dia cumprido (medido no app de cada um): pelo menos metade dos hábitos desse dia (no mínimo 1);
+   sem hábitos marcados nesse dia, basta 1 treino, 1 tarefa feita ou 25 min de foco. Só vai para o servidor "cumprido sim/não". ---------- */
+const SQ = id => 'so/sq/' + id, SQ_MARCOS = [[7, 'Bronze'], [30, 'Prata'], [100, 'Ouro'], [365, 'Diamante']];
+const sqAgora = () => +process.env.NAUTILO_SEQ_AGORA || Date.now();
+const sqCalc = w => { const hoje = lisboa(sqAgora()).d, A = w.va || {}, B = w.vb || {}, both = x => !!(A[x] && B[x]); let d = w.d0, cur = 0, melhor = w.melhor || 0, n = 0;
+  while (w.d0 && d < hoje && n++ < 2000) { if (both(d)) { cur++; melhor = Math.max(melhor, cur); } else cur = 0; d = diaMais(d, 1); }
+  const tot = cur + (both(hoje) ? 1 : 0); melhor = Math.max(melhor, tot);
+  const dias = Array.from({ length: 14 }, (_, i) => diaMais(hoje, i - 13)).filter(x => !w.d0 || x >= w.d0).map(x => ({ d: x, a: !!A[x], b: !!B[x] }));
+  return { cur: tot, melhor, hoje, hojeA: !!A[hoje], hojeB: !!B[hoje], ontemPerdido: cur === 0 && w.d0 < hoje && !both(diaMais(hoje, -1)), dias }; };
+const sqPub = async (w, eu) => { const l = w.a === eu ? 'a' : 'b', o = l === 'a' ? w.b : w.a, k = w.estado === 'ativa' || w.estado === 'fim' ? sqCalc(w) : null;
+  return { id: w.id, estado: w.estado, por: w.a === eu, outro: await pubAn(o), criado: w.criado, d0: w.d0 || '', cur: k ? k.cur : 0, melhor: k ? k.melhor : 0, hoje: k ? k.hoje : '',
+    eu: k ? (l === 'a' ? k.hojeA : k.hojeB) : false, ele: k ? (l === 'a' ? k.hojeB : k.hojeA) : false, dias: k ? k.dias.map(x => ({ d: x.d, eu: l === 'a' ? x.a : x.b, ele: l === 'a' ? x.b : x.a })) : [] }; };
+// medalhas dos marcos (7, 30, 100 e 365 dias) para os dois, uma vez cada
+const sqMarcos = async w => { const k = sqCalc(w), novos = SQ_MARCOS.filter(([n]) => k.melhor >= n && !(w.meds || []).includes(n)); if (!novos.length && (w.melhor || 0) >= k.melhor) return w;
+  const w2 = await mudar(SQ(w.id), null, o => { if (!o) return false; o.melhor = Math.max(o.melhor || 0, k.melhor); o.meds = [...new Set((o.meds || []).concat(novos.map(x => x[0])))]; });
+  for (const [n, lv] of novos) for (const id of [w.a, w.b]) await darMed(id, { k: 'sq' + n + ':' + w.id, n: `Sequência a dois: ${n} dias`, d: `${w.nA} e ${w.nB}`, kind: 'Medalha', lvl: lv, cat: 'Sequência' });
+  return w2 || w; };
+const sqLer = async id => { if (!DUID.test(String(id || ''))) return null; const w = (await ler(SQ(id), null)).v; if (w && w.estado === 'convite' && sqAgora() - w.criado > 3 * DIA) w.estado = 'expirou'; return w; };
+OPS.seqs = async c => { const v = await perfil(c.eu, c.nome), L = [];
+  for (const id of (v.seqs || []).slice(0, 12)) { const w = await sqLer(id); if (w && ['convite', 'ativa'].includes(w.estado)) L.push(await sqPub(w.estado === 'ativa' ? await sqMarcos(w) : w, c.eu)); }
+  return { seqs: L, amigos: await Promise.all((v.amigos || []).slice(0, 60).map(pubAn)) }; };
+OPS.seqConvidar = async (c, b) => { const outro = String(b.amigo || ''); if (!ID.test(outro) || outro === c.eu) throw N.err('seq', 'Escolhe um amigo.', 400);
+  const v = await perfil(c.eu, c.nome); if (!(v.amigos || []).includes(outro)) throw N.err('seq', 'Só podes fazer uma sequência com os teus amigos.', 403); const o = (await ler(P(outro), null)).v; if (!o || (o.bloq || []).includes(c.eu)) throw N.err('seq', 'Não é possível com esta pessoa.', 403);
+  let n = 0; for (const id of (v.seqs || []).slice(0, 12)) { const w = await sqLer(id); if (!w || !['convite', 'ativa'].includes(w.estado)) continue; n++; if ([w.a, w.b].includes(outro)) throw N.err('seq', 'Já tens uma sequência com esta pessoa.', 400); }
+  if (n >= 3) throw N.err('seq', 'Já tens 3 sequências (o máximo).', 400);
+  const id = N.crypto.randomBytes(5).toString('hex'), w = { id, a: c.eu, b: outro, nA: v.nome, nB: o.nome, estado: 'convite', criado: sqAgora(), va: {}, vb: {}, melhor: 0, meds: [] }; await gravar(SQ(id), w, { overwrite: false });
+  for (const p of [c.eu, outro]) await mudar(P(p), null, x => { if (!x) return false; x.seqs = [id].concat((x.seqs || []).filter(y => y !== id)).slice(0, 20); });
+  return { seq: await sqPub(w, c.eu) }; };
+OPS.seqResp = async (c, b) => { const w = await sqLer(String(b.id || '')); if (!w || ![w.a, w.b].includes(c.eu)) throw N.err('seq', 'Sequência desconhecida.', 404); if (w.estado !== 'convite') throw N.err('seq', 'Este convite já não está à espera de resposta.', 400);
+  if (b.sim && c.eu !== w.b) throw N.err('seq', 'Só quem foi convidado pode aceitar.', 403);
+  await mudar(SQ(w.id), null, o => { if (o.estado !== 'convite') return false; if (b.sim) { o.estado = 'ativa'; o.d0 = lisboa(sqAgora()).d; } else o.estado = c.eu === w.a ? 'cancelado' : 'recusado'; });
+  return { seq: await sqPub(await sqLer(w.id), c.eu) }; };
+OPS.seqProg = async (c, b, req) => { if (N.limit(req, 'sqp|' + c.eu, 90, 3600e3)) throw N.err('limite', 'Espera um pouco.', 429); let w = await sqLer(String(b.id || ''));
+  if (!w || ![w.a, w.b].includes(c.eu)) throw N.err('seq', 'Sequência desconhecida.', 404); if (w.estado !== 'ativa') return { seq: await sqPub(w, c.eu) };
+  const hoje = lisboa(sqAgora()).d, k = w.a === c.eu ? 'va' : 'vb', inn = b.v && typeof b.v === 'object' ? b.v : {};
+  w = await mudar(SQ(w.id), null, o => { if (o.estado !== 'ativa') return false; const cur = o[k] = o[k] || {}; let mudou = false;
+    [diaMais(hoje, -2), diaMais(hoje, -1), hoje].forEach(d => { if (d < o.d0 || !inn[d] || cur[d]) return; cur[d] = 1; mudou = true; }); if (!mudou) return false; });   // só os últimos 3 dias; um dia cumprido não volta atrás
+  return { seq: await sqPub(await sqMarcos(w), c.eu) }; };
+OPS.seqTerminar = async (c, b) => { const w = await sqLer(String(b.id || '')); if (!w || ![w.a, w.b].includes(c.eu)) throw N.err('seq', 'Sequência desconhecida.', 404);
+  await mudar(SQ(w.id), null, o => { if (!['ativa', 'convite'].includes(o.estado)) return false; o.estado = 'fim'; o.fimPor = c.eu; }); return { ok2: true }; };
 /* ---------- v3.75: perfil dos animes — o @ (escolhido uma vez, não muda), a foto e o fundo ---------- */
 const RESERV = /^(admin|administra|prumo|phantom|superanimes|suporte|equipa|staff|moderador|oficial|sistema)/;
 const imgP = (k, id) => 'so/img/' + k + '/' + id;
@@ -529,7 +616,7 @@ const PEDIMG = `Esta imagem vai ser a foto ou o fundo de um perfil, ou a foto de
 const verImg = async (s64, gif) => { const m = await iaImg(s64, gif); N.count('img:' + (m ? (m.ok ? 'ok' : 'barrada') : 'sem-ia'));
   if (!m) throw N.err('img', 'Não deu para verificar a imagem agora. Tenta daqui a pouco.', 503); if (m.ok === false) throw N.err('img', 'Esta imagem não pode ser usada: ' + String(m.motivo || 'não cumpre as regras').slice(0, 120), 400); };
 const PEDGIF = `As imagens seguintes são grelhas com quadros de uma imagem animada (GIF) que vai ser a foto ou o fundo de um perfil numa app para pessoas a partir dos 16 anos. Vê TODOS os quadros: se QUALQUER um tiver nudez ou conteúdo sexual, violência explícita, ódio (símbolos ou gestos), drogas ou documentos e dados pessoais visíveis, bloqueia. Responde SÓ com JSON numa linha: {"ok":true} ou {"ok":false,"motivo":"<curto, em português de Portugal>"}. Permite animações normais, personagens de anime, paisagens e arte.`;
-const iaImg = async (b64, gif) => { const env = k => String(process.env[k] || '').trim(), to = () => AbortSignal.timeout(gif ? 20000 : 9000), L = gif ? b64.map(d => ({ d, mt: 'image/png' })) : [{ d: b64, mt: 'image/jpeg' }], PED = gif ? PEDGIF : PEDIMG;
+const iaImg = async (b64, gif) => { const env = k => String(process.env[k] || '').trim(), to = () => AbortSignal.timeout(gif ? 20000 : 9000), L = gif === 'png' ? [{ d: b64, mt: 'image/png' }] : gif ? b64.map(d => ({ d, mt: 'image/png' })) : [{ d: b64, mt: 'image/jpeg' }], PED = gif === true ? PEDGIF : PEDIMG;
   try { if (env('NAUTILO_MOD_MOCK')) { const r = await fetch(env('NAUTILO_MOD_MOCK'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ img: 1, n: L.reduce((t, x) => t + x.d.length, 0), gif: !!gif, q: L.length }), signal: to() }); return json1(await r.text()); }
     if (env('ANTHROPIC_API_KEY')) { const r = await fetch((env('ANTHROPIC_BASE_URL') || 'https://api.anthropic.com') + '/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': env('ANTHROPIC_API_KEY'), 'anthropic-version': '2023-06-01' }, signal: to(),
         body: JSON.stringify({ model: env('NAUTILO_MOD_MODEL') || 'claude-haiku-5-5', max_tokens: 80, messages: [{ role: 'user', content: L.map(x => ({ type: 'image', source: { type: 'base64', media_type: x.mt, data: x.d } })).concat({ type: 'text', text: PED }) }] }) });
