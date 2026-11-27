@@ -21,7 +21,7 @@
   "p": "Contas",
   "name": "Criar conta: mostra o código de recuperação (só uma vez)",
   "pass": true,
-  "info": "RVLQ-VZPY-3QTE-AXWH"
+  "info": "L5FW-M5YC-KF65-UMAD"
  },
  {
   "p": "Contas",
@@ -93,7 +93,7 @@
   "p": "Contas",
   "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
   "pass": true,
-  "info": "19 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+  "info": "20 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~foco,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
  },
  {
   "p": "Contas",
@@ -157,9 +157,9 @@
  },
  {
   "p": "Contas",
-  "name": "Parceria Prumo & seele (vazia por agora): a administração vê a entrada no menu e a página com o selo do Prumo, o logótipo da seele sem fundo azul e a fase \"Crisálida\"",
-  "pass": true,
-  "info": "{\"menu\":true,\"img\":true,\"nome\":true,\"azul\":false,\"selo\":true,\"fases\":3,\"agora\":\"Crisálida\",\"aviso\":true,\"titulo\":true}"
+  "name": "Parceria Prumo & seele (sem campanhas publicadas): a administração vê a entrada no menu, a página com o selo do Prumo, o logótipo da seele sem fundo azul, a fase \"Crisálida\" e a secção Gerir prémios",
+  "pass": false,
+  "info": "{\"menu\":true,\"img\":true,\"nome\":false,\"azul\":false,\"selo\":true,\"fases\":3,\"agora\":\"Crisálida\",\"aviso\":true,\"titulo\":true}"
  },
  {
   "p": "Contas",
@@ -189,13 +189,13 @@
   "p": "Contas",
   "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
   "pass": true,
-  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"d7f8293f73df7c1d54c24077\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-27T18:19:41.878Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"d8515fa3131bcd73680dd19d\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-27T22:20:21.052Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
  },
  {
   "p": "Contas",
   "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
   "pass": true,
-  "info": "{\"ult\":1795803607210,\"ent\":1,\"dias\":{\"2026-11-27\":70}}"
+  "info": "{\"ult\":1795818044491,\"ent\":1,\"dias\":{\"2026-11-27\":66}}"
  },
  {
   "p": "Contas",
@@ -381,13 +381,13 @@
   "p": "Contas",
   "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
   "pass": true,
-  "info": "20261127182046-85bcc2"
+  "info": "20261127222122-2204d7"
  },
  {
   "p": "Contas",
   "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
   "pass": true,
-  "info": "{\"id\":\"20261127182046-85bcc2\",\"uid\":\"83a97ec535c1738ae8e12d06\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+  "info": "{\"id\":\"20261127222122-2204d7\",\"uid\":\"5e86e6c6d8eb4b917bae0b23\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
  },
  {
   "p": "Contas",
@@ -397,7 +397,7 @@
  },
  {
   "p": "Contas",
-  "name": "Parceria seele: uma conta normal não vê a entrada no menu nem a página (nem o nome) enquanto está vazia",
+  "name": "Parceria seele: sem campanhas publicadas, uma conta normal não vê a entrada no menu nem a página (nem o nome)",
   "pass": true,
   "info": "{\"adm\":false,\"menu\":false,\"hero\":false,\"fechada\":true,\"nome\":false}"
  },
@@ -412,5 +412,515 @@
   "name": "sem erros de JavaScript",
   "pass": true,
   "info": ""
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque XSS guardado: nenhum código malicioso corre nem entra no ecrã em 188 páginas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: 10 logins falsos seguidos trancam a conta 15 min (nem a senha certa entra logo a seguir)",
+  "pass": true,
+  "info": "[401,401,401,401,401,401,401,401,429,429] certa:429"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: enxurrada de logins do mesmo endereço é travada (429 depois de 30)",
+  "pass": true,
+  "info": "[401,401,401,401,429,429]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: robô que preenche o campo escondido do registo é recusado",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Muitas contas criadas a partir daqui. Tenta mais tarde.\",\"code\":\"limite\",\"_st\":429}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: e-mail com código HTML é recusado no registo",
+  "pass": true,
+  "info": "{\"ok\":false,\"msg\":\"Esse e-mail não parece válido.\",\"code\":\"email\",\"_st\":400}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: pedidos de sites de fora (mesmo com nome parecido) são recusados",
+  "pass": true,
+  "info": "403 403"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: token forjado não entra; a conta A não lê nem grava os dados da conta B",
+  "pass": true,
+  "info": "401 404 404"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: línguas inventadas não gastam a IA (só as da lista da app)",
+  "pass": true,
+  "info": "400 400"
+ },
+ {
+  "p": "Ataque",
+  "name": "Ataque: a cópia de segurança não abre a quem não é o Vercel",
+  "pass": true,
+  "info": "200 403"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: o atalho de gastos continua a guardar (avisa que entra quando a app voltar) e a app não busca nada enquanto dura",
+  "pass": true,
+  "info": "{\"g1\":{\"st\":200,\"t\":\"✓ 12,5 € registado no Prumo (o Prumo está em manutenção: entra nas contas às 22:52)\"},\"p1\":503}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: a conta de administração continua a usar a app, com o botão flutuante da contagem até ao fim",
+  "pass": true,
+  "info": "{\"fab\":\"Manutenção 29:56\",\"cover\":false}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: só a administração liga; ligada, as outras contas não entram nem sincronizam (503) e a administração e as contas de teste continuam",
+  "pass": true,
+  "info": "{\"nao\":403,\"lig\":true,\"eu\":503,\"dados\":503,\"login\":503,\"reg\":503,\"adm\":200,\"teste\":200,\"pub\":{\"on\":true,\"ate\":1795819929315,\"motivo\":\"manual\",\"prox\":0}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: a app mostra o ecrã \"O Prumo está em manutenção\" a tapar tudo, com a hora de regresso",
+  "pass": true,
+  "info": "{\"t\":\"O Prumo está em manutenção\\n\\nEstamos a fazer a revisão semanal de segurança e a cópia de segurança dos dados. Voltamos às 22:52.\\n\\nOs teus dados estão guardados, no aparelho e no servidor. Não"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: desligada pela administração, o ecrã sai sozinho e as contas voltam a funcionar",
+  "pass": true,
+  "info": "true 200"
+ },
+ {
+  "p": "Ataque",
+  "name": "Manutenção: acabada, o gasto guardado pelo atalho está na caixa para a app o juntar às contas",
+  "pass": true,
+  "info": "200 [{\"id\":\"mwzjqwv0-0a9799f68e\",\"t\":\"2026-11-27T22:22:09.373Z\",\"v\":12.5,\"d\":\"Café na manutenção\",\"c\":\"Alimentação\"}]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Relatório da semana: a administração gera-o (contas, planos, atividade, segurança com os ataques de hoje, falhas, cópias, saúde) e mais ninguém o vê",
+  "pass": true,
+  "info": "{\"st\":200,\"n\":1,\"contas\":{\"total\":6,\"novas\":6,\"porConfirmar\":0,\"teste\":1,\"entraramSemana\":3,\"perfis\":7},\"sec\":{\"login_falhou\":8,\"admin_negado\":2,\"conta_trancada\":1,\"login_bloqueada\":3,\"login_desconhecido\":30,\"limite\":1,\"robo_registo\":1,\"origem\":2,\"token_falso\":1,\"backup_negado\":1,\"manutencao_ligar\":1,\"manutencao_desligar\":1},\"alertas\":4,\"outro\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Saúde da base de dados: verificação na hora (escrever, ler, apagar, chave, contas) com histórico; só a administração vê",
+  "pass": true,
+  "info": "{\"ok\":true,\"saude\":{\"n\":1,\"ok\":1,\"pct\":100,\"ms\":1,\"ultima\":{\"t\":1795818165823,\"ok\":true,\"ms\":1,\"passos\":{\"escrever\":0,\"ler\":0,\"apagar\":0,\"chave\":0,\"contas\":1},\"copia\":\"2026-11-27\"},\"falhas\":[]},\"_st\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Visitas: a página conta visitas e visitantes únicos do dia (o mesmo aparelho 2 vezes = 1), origem (Google, Instagram), país e cliques; robôs e pedidos estranhos não contam; só a administração vê",
+  "pass": true,
+  "info": "{\"st\":200,\"t\":{\"visitas\":3,\"unicos\":2,\"app\":3,\"cliques\":1,\"registos\":6,\"pagamentos\":0,\"conversao\":300},\"antes\":{\"visitas\":0,\"unicos\":0,\"app\":3,\"cliques\":0,\"registos\":6,\"pagamentos\":0,\"conversao\":0},\"o\":[[\"direto\",3],[\"Google\",1],[\"Instagram\",1]],\"p\":[[\"??\",3],[\"BR\",1],[\"PT\",1]],\"bot\":{\"ok\":true,\"ok2\":false},\"mau\":{\"ok\":true,\"ok2\":false},\"outro\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Visitas: os contadores do dia juntam-se num só ficheiro (_dia.json), sem perder nem contar nada a dobrar",
+  "pass": true,
+  "info": "{\"fs1\":1,\"fs2\":[\"_dia.json\"],\"v\":3,\"v2\":4}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus: o servidor só conta o tipo de ameaça bloqueada (sem nomes nem conteúdos) e só a administração vê",
+  "pass": true,
+  "info": "{\"a3\":{\"ok\":true,\"ok2\":false,\"_st\":200},\"av\":{\"ok\":true,\"av\":{\"f_macro\":2},\"_st\":200},\"n\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › ficheiros: apanha EICAR, programas disfarçados, nomes invertidos, macros, ZIP com programas, bombas ZIP, PDFs com código, SVG com código; deixa passar CSV, PNG, XLSX e PDF limpos",
+  "pass": true,
+  "info": "[\"eicar\",\"prog\",\"prog\",\"nome\",\"macro\",\"zipprog\",\"bomba\",\"pdfjs\",\"disf\",\"svg\",null,null,null,null]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › links: bancos e lojas imitados, truque do @, programas, javascript: são perigosos; encurtados, sem cadeado, letras estrangeiras e IPs pedem cuidado; os sites verdadeiros abrem sem perguntas",
+  "pass": true,
+  "info": "[]"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › na app: o ficheiro EICAR é parado antes de chegar à app (aviso e caixa limpa), o CSV limpo passa, e as caixas criadas na hora também são verificadas",
+  "pass": true,
+  "info": "{\"i1\":{\"got\":[],\"modal\":\"Teste bem-sucedido\\n\\nteste-eicar.txt\\n\\nÉ o ficheiro de teste EICAR: o antivírus está a funcionar.\\n\\nO ficheiro de teste foi apanhado e não entrou na app.\\n\\nPercebi\",\"val\":\"\"},\"i2\":[\"extrato.csv\"],\"fc\":true,\"i3\":{\"got\":[],\"modal\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › links na app: tocar num link perigoso mostra o aviso e não abre; um site verdadeiro abre logo; nos e-mails os links perigosos ficam desligados e marcados",
+  "pass": true,
+  "info": "{\"l1\":{\"nav\":[],\"modal\":\"Este link parece perigoso\\n\\nhttp://paypa1.com/login\\n\\nImita o nome \\\"paypal\\\" trocando letras por números.\\nA ligação não é segura (sem cadeado, http).\\n\\nSe veio num e-mail ou mensagem a pedir dados, senhas ou pagamentos, o mais seguro é não abrir e ir ao site escrevendo o endereço tu mesmo.\\n\\nAbrir mesmo assim\\nNão abrir\"},\"l2\":{\"nav\":[\"avBom\"],\"modal\":false},\"em\":{\"m"
+ },
+ {
+  "p": "Ataque",
+  "name": "Antivírus › Definições: separador \"Antivírus e proteção\" com o estado, o histórico das ameaças, o botão de teste e o que fazer no telemóvel e no computador",
+  "pass": true,
+  "info": "{\"t\":\"Sistema\\nDEFINIÇÕES\\n\\nO antivírus do Prumo e tudo o que protege os teus dados.\\n\\nGeral\\nConta e perfis\\nE-mail\\nLigações\\nAtalhos do iPhone\\nSpyke (assistente)\\nImpostos\\nAntivírus e proteção\\nPrivacidade e term\",\"on\":true,\"tab\":true,\"hist\":true,\"nota\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: as falhas da app aparecem agrupadas (mensagem, onde, quantas vezes) com as novas assinaladas; só a administração vê",
+  "pass": true,
+  "info": "{\"st\":200,\"g\":{\"k\":\"TypeError: falha de teste a332e5 @ teste.js:1:1\",\"n\":4,\"dias\":1,\"prim\":\"2026-11-27\",\"ult\":\"2026-11-27\",\"hoje\":4,\"novo\":true},\"n\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: um erro novo que se repete manda e-mail à administração (no máximo um a cada 6 horas)",
+  "pass": true,
+  "info": "{\"v1\":{\"alerta\":true,\"novos\":[[\"TypeError: falha de teste a332e5 @ teste.js:1:1\",4]],\"tApp\":4,\"tSrv\":0},\"v2\":{\"alerta\":false,\"novos\":[[\"ReferenceError: outra ca802e @ b.js:2:2\",3]],\"tApp\":3,\"tSrv\":0},\"mails\":[\"Prumo · um erro novo a repetir-se\",\"Prumo · um erro novo a repetir-se\"]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Erros e quedas: /api/saude?ping=1 responde 200 a um monitor externo (sem dados de ninguém) e a verificação completa continua só para o Vercel",
+  "pass": true,
+  "info": "{\"pg\":{\"st\":200,\"j\":{\"ok\":true,\"ms\":0}},\"cr\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Readwise: a chave errada é recusada; a certa traz os livros e destaques para as Leituras (página e nota nas citações), junta ao livro que já existe, ignora artigos e apagados, e não duplica",
+  "pass": true,
+  "info": "{\"mau\":\"recusada O Readwise não aceitou a chave. Copia-a outra vez em readwise.io/access_token.\",\"rw\":{\"st\":{\"tok\":\"rwaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"last\":\"2026-11-27T22:22:55.063Z\",\"livros\":1,\"dest\":2,\"at\":1795818175092},\"pz\":1,\"pq\":[[\"Tu tornas-te\",\"\",\"\",false],[\"O essencial \",\"12\",\"a melhor\",true]],\"ha\":{\"capa\":\"https://exemplo.pt/h.jpg\",\"st\":\"A ler\",\"q\":1,\"f\":\"Ebook\"},\"art\":false,\"again\":{\"nl\":0,\"nd\":0},\"painel\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "RevenueCat: sem a senha certa é recusado; uma compra dá o plano (confirmado no RevenueCat, não no que o aviso diz); o mesmo aviso não conta duas vezes; compras de teste não contam; ao expirar o plano sai",
+  "pass": true,
+  "info": "{\"rid\":\"p_da14\",\"sem\":401,\"errada\":401,\"h1\":{\"_st\":200,\"ok\":true},\"p1\":{\"id\":\"avancado\",\"n\":\"Avançado\",\"lvl\":2,\"perfis\":3,\"ia\":150,\"cobranca\":false,\"pago\":1,\"ate\":1798410175867,\"ciclo\":\"mes\",\"loja\":\"play_store\"},\"h2\":{\"_st\":200,\"ok\":true,\"repetido\":1},\"n1\":1,\"n2\":1,\"p3\":\"avancado\",\"p4\":\"completo\",\"p5\":{\"id\":\"completo\",\"n\":\"Completo\",\"lvl\":3,\"perfis\":5,\"ia\":400,\"cobranca\":false,\"teste\":1,\"ate\":1797027775776},\"h6\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Contas como carteira: os 3 cartões das contas a sair do bolso, saldo total, cartões em dívida e reservas, contas em cartões com gráfico, últimas transações; o olho esconde os valores",
+  "pass": true,
+  "info": "{\"wl\":{\"cartoes\":[\"inter\",\"nu\",\"C6\"],\"tot\":\"€ 6128,71\",\"chips\":2,\"contas\":4,\"sp\":4,\"ult\":5,\"add\":true,\"tabela\":true},\"esc\":{\"x\":15,\"tot\":\"••••••\"}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Carteira: cada cartão mostra o banco e a conta; tocar abre o cartão da conta com o saldo, as entradas e saídas do mês e os movimentos dessa conta, e dá para ver os meses anteriores",
+  "pass": true,
+  "info": "{\"cb\":[\"inter Inter · Conta à ordem € 621,10\",\"nu Nubank · Conta à ordem € 2627,61\",\"C6 C6 · Poupança € 3000,00\"],\"det\":{\"t\":\"Nubank Nubank Conta à ordem Saldo € 2627,61 Novembro 2026 Entradas +€ 1500,00 Saídas −€ 72,39 Movimentos 3 26 nov Streaming Streaming −€ 9,99 21 nov Supermercado Supermercado −€ 62,40 7 nov Salário Salário +€ 1500,00 Nova transação nesta conta Editar a conta\",\"n\":3},\"ant\":\"outubro 2026\"}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Atividade em curso: o treino aparece numa barra no topo (rotina, exercício de agora, descanso a contar, séries por exercício, kcal); tocar abre o treino; o fim do descanso fica marcado para avisar com a app fechada; o bloco de foco também aparece e a barra sai quando acaba",
+  "pass": true,
+  "info": "{\"t1\":{\"on\":true,\"t\":\"0:59 Upper Completo Agachamento com barra +0 kcal\",\"segs\":[\"m\",\"\"],\"pv\":[{\"at\":1795818244214,\"t\":\"Descanso acabou\",\"b\":\"Bora para a próxima série.\",\"u\":\"#treino\",\"g\":\"descanso\"}],\"nome\":\"Agachamento com barra\"},\"t2\":{\"ecra\":true,\"barra\":false},\"t3\":{\"foco\":\"5:00 Bloco de foco · Estudo Resumo do capítulo 3 1/2\",\"fim\":true,\"pv\":[]}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Discord: um endereço que não é webhook é recusado; ligar publica a mensagem de boas-vindas no canal e o treino terminado (sem @everyone e sem menções)",
+  "pass": true,
+  "info": "{\"mau\":400,\"msgs\":[{\"title\":\"O Prumo está ligado a este canal\",\"description\":\"A ligou o Prumo. Os avisos escolhidos vão aparecer aqui.\",\"color\":10165040},{\"title\":\"A terminou o treino\",\"description\":\"**Upper @​everyone** · 52 min · 2 séries · 960 kg de volume\",\"color\":13111342}],\"dc\":{\"pn\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios Prumo: nomeados escolhidos a partir dos animes do ano (por categoria, com aberturas), só a administração abre e revela, um voto por categoria que se pode mudar, resultados com percentagens por ordem",
+  "pass": true,
+  "info": "{\"v0\":\"nomeacao\",\"g\":200,\"cats\":[\"ano:8\",\"acao:6\",\"romance:6\",\"comedia:6\",\"fantasia:6\",\"drama:6\",\"desporto:6\",\"slice:6\",\"continua:6\",\"filme:4\",\"abertura:6\"],\"ab\":\"\\\"Yuusha\\\" by YOASOBI\",\"naoAdm\":403,\"cedo\":400,\"falso\":400,\"sem\":401,\"fase\":\"revelada\",\"ra\":[[\"208\",2,66.7],[\"108\",1,33.3]]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios na app: separador Prémios com os resultados, a cerimónia (\"e o prémio vai para…\") e os vencedores oficiais da Crunchyroll e de outras premiações",
+  "pass": true,
+  "info": "{\"ui\":{\"hero\":true,\"cer\":true,\"crun\":true,\"res\":11},\"cer\":\"Prémios Prumo 2026 · 1 de 11 ANIME DO ANO E o prémio vai para… Show spring 8 Season 2 66.7% dos votos 2.º Show winter 8 Season 2 33.3% 3.º Show summer 8 Season 2 0% 4.º Show fall 8 Season 2 0% 5.º Sho\"}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios dos livros: nomeados por género gerados do Open Library (Livro do Ano, Ficção, Fantasia, Clássico…), só a administração muda a fase, um voto por categoria que se pode mudar, sem conta não vota",
+  "pass": true,
+  "info": "{\"v0\":true,\"g\":200,\"cats\":[\"ano:8\",\"ficcao:6\",\"romance:6\",\"fantasia:6\",\"misterio:6\",\"naoficcao:6\",\"pessoal:6\",\"biografia:6\",\"classico:6\"],\"naoAdm\":403,\"cedo\":400,\"falso\":400,\"sem\":401}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Leituras › Prémios: separadores Para ti, Top livros e Prémios; a votação aberta mostra os nomeados com o meu voto marcado e tocar noutro livro vota nessa categoria",
+  "pass": true,
+  "info": "{\"p0\":{\"tabs\":\"Estante|Para ti|Top livros|Desafios|Estatísticas|Para tiEscolhidos pelo que lês|Top livrosOs mais lidos e votados|PrémiosA votação dos melhores do ano|Pesquisar livrosTodos os livros do mundo|EstanteA ler, quero ler, lidos|Minha estanteOs livros que tens em casa|Top 10 da vidaOs teus 10 melhores, por ordem|DesafiosAs tuas metas de leitura|EstatísticasPáginas, ritmo e géneros|Resenha"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios dos livros revelados: vencedor de cada categoria em destaque, com a percentagem (Livro do Ano: 66,7%)",
+  "pass": true,
+  "info": "{\"w\":\"Livro romance 0 Autor 0 66,7%\",\"n\":9}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Leituras › Para ti: sem livros lidos mostra os mais lidos e os clássicos; com um lido (5 estrelas) recomenda pela autora e pelo género, e \"Quero ler\" põe na estante",
+  "pass": true,
+  "info": "{\"t0\":\"Estudos\\nLEITURAS\\n\\nA tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios l\",\"t1\":\"Estudos\\nLEITURAS\\n\\nA tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios literários.\\n\\nAdicionar livro\\nEstante\\nPara ti\\nTop livros\\nDesaf\",\"add\":\"Quero ler|Autora Teste|/works/OLTauthorAutora0W\",\"q\":[\"/trending/weekly.json \",\"/search.json subject:classic_literature\",\"/search.json author:\\\"Autora Teste\\\"\",\"/search.json subject:fa"
+ },
+ {
+  "p": "Ataque",
+  "name": "Leituras › Top livros: os 10 mais bem avaliados de cada género (escolher Terror mostra o Top Terror) e os mais lidos da semana",
+  "pass": true,
+  "info": "{\"li\":10,\"h\":\"1\\nTop horror 1\\nAutor 0 · 2020 · ★ 4,9\\n2\\nTop horror 2\\nAutor 1 · 2020 · ★ 4,8\\n3\\nTop horror 3\\nAutor 2 · 2020 · ★ 4,7\\n4\\nTop horror 4\\nAutor 3 · 2020 · ★ 4,6\\n5\\nTop horror 5\\nAutor 4 · 2020 · ★ 4,5\\n6\\nTop horror 6\\nAutor 5 · 2020 · ★ 4,4\\n7\\nTop horror 7\\nAutor 6 · 2020 · ★ 4,3\\"
+ },
+ {
+  "p": "Ataque",
+  "name": "Amigos e conversa a dois: só entre amigos (pedido por código e aceite); links, telefones e insultos (regras e IA) são barrados e não chegam ao amigo; depois de 3 barradas fica 1 hora sem escrever; sem sessão ou com perfil de outra conta não entra",
+  "pass": true,
+  "info": "{\"semTok\":401,\"alheio\":404,\"cedo\":403,\"ped\":200,\"bom\":true,\"lnk\":\"Links não são permitidos nas conversas.\",\"tel\":\"Não partilhes números de telefone nas conversas.\",\"ofn\":\"Isto é um insulto dirigido a alguém.\",\"mudo\":403,\"lb\":1,\"mod\":4}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Clãs: criar (nome verificado), o código só envia um pedido (o dono aceita), conversa do clã só para membros, lista de conversas, denunciar (a administração vê e apaga a mensagem) e bloquear (deixa de poder falar e de pedir amizade)",
+  "pass": true,
+  "info": "{\"cl\":200,\"cod\":\"TW9P28\",\"feio\":400,\"ent\":200,\"antes\":403,\"apr\":200,\"mc\":true,\"fora\":403,\"lc\":1,\"den\":200,\"dn0\":403,\"dl\":1,\"apg\":200,\"lc2\":0,\"dmB\":403,\"pedB\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Pursuit: antes das 20h não se marca; às 20h saem pistas do anime (sem dizer o nome); um Hunter por pessoa e por dia; às 22h fecha e quem acertou ganha 100, 90… pela ordem; quem errou não ganha; ranking de animes com os pontos",
+  "pass": true,
+  "info": "{\"h0\":\"espera\",\"m0\":400,\"f1\":\"aberto\",\"pistas\":[\"Géneros: Ação, Aventura e Drama.\",\"É adaptado de um mangá e estreou nos anos 2000.\",\"Temas: militar; público: shounen (rapazes adolescentes).\",\"É uma série com 64 episódios, feita pelo estúdio Bones.\",\"Estreou na primavera de 2009. O título (em japonês romanizado) tem 3 palavras.\"],\"full\":\"7000\",\"okB\":200,\"okC\":200,\"errA\":200,\"dup\":409,\"f2\":\"fechado\",\"res\":[{\"id\":\"3a7e134d8be665428bbc0183-aac9cbea0513\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795818217218,\"pts\":100},{\"id\":\"7aac8e4e1c6dd4cc13d10b2c-5df03617e53d\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"at\":1795818217252,\"pts\":90}],\"rk\":[{\"id\":\"3a7e134d8be665428bbc0183-aac9cbea0513\",\"nome\":\"A\",\"p\":100,\"user\":\"\",\"a"
+ },
+ {
+  "p": "Ataque",
+  "name": "Medalhas: os 3 primeiros a acertar no Pursuit ganham ouro, prata e bronze (uma vez por dia); quem errou não ganha",
+  "pass": true,
+  "info": "{\"b1\":{\"k\":\"hu1:2026-11-27\",\"n\":\"Primeiro a acertar no Pursuit\",\"d\":\"Brother Warriors 7000 · 27/11/2026\",\"kind\":\"Medalha\",\"lvl\":\"Ouro\",\"cat\":\"Pursuit\",\"lugar\":1,\"at\":1795818217265},\"c2\":{\"k\":\"hu2:2026-11-27\",\"n\":\"2.º a acertar no Pursuit\",\"d\":\"Brother Warriors 7000 · 27/11/2026\",\"kind\":\"Medalha\",\"lvl\":\"Prata\",\"cat\":\"Pursuit\",\"lugar\":2,\"at\":1795818217265},\"a\":0}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Parceria na app: tela de Jogos com \"Prumo & Otaku Lab\" em destaque (a administração escreve o nome; outras contas não), o Pursuit e o ranking; Animes fora do \"Eu\"; Pursuit com os resultados; conversa do clã a enviar pela app e a IA a barrar o insulto",
+  "pass": true,
+  "info": "{\"p0\":\"PHANTOM\",\"pn\":403,\"pa\":200,\"pg\":{\"ok\":true,\"nome\":\"Otaku Lab\",\"site\":\"https://otakulab.example\",\"_st\":200},\"jg\":{\"hero\":true,\"nome\":true,\"hu\":true,\"rk\":true,\"dom\":true,\"grp\":\"\",\"eu\":true},\"hu\":{\"res\":true,\"meu\":true,\"mk\":true,\"cred\":true},\"ch\":{\"n\":1,\"meu\":[\"Mensagem do teste pela app\"],\"toast\":\"A mensagem não foi enviada: Isto é um insulto dirigido a alguém.\",\"nota\":true},\"lcB\":[\"Mensagem do teste pela app\"]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Pursuit com o MyAnimeList em baixo: o anime do dia e as pistas vêm do AniList; depois das 22h sem jogo criado mostra o de amanhã (sem erro)",
+  "pass": true,
+  "info": "{\"PF\":{\"f\":\"aberto\",\"p\":[\"Géneros: Ação e Drama.\",\"É adaptado de um mangá e estreou nos anos 2000.\",\"Temas: Alchemy.\",\"É uma série com 51 episódios, feita pelo estúdio Studio Bones.\",\"Estreou no outono de 2003. O título (em japonês romanizado) tem 4 palavras.\"]},\"PD\":{\"f\":\"espera\",\"a\":1795824000000},\"st\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Parceria: sem nome escrito volta a PHANTOM",
+  "pass": true,
+  "info": "{\"ok\":true,\"parceiro\":{\"nome\":\"PHANTOM\",\"site\":\"\",\"at\":1795818233339},\"_st\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Corpo: círculos da semana por modalidade (feito por fora, planeado por baixo): musculação, corrida (plano de corrida), natação (frequência do desporto), bicicleta do Strava, e o total",
+  "pass": true,
+  "info": "{\"pn\":true,\"txt\":\"Semana 48 A tua semana 23/11 a 29/11 55min / 2 h 45 min Musculação 30min / 1 h 40 min Corrida 45min / 1 h 30 min Natação 1h 10min sem plano Bicicleta Total da semana: 3 h 20 min / 5 h 55 min planeados\",\"rings\":4,\"mods\":[\"Musculação:55/165\",\"Corrida:30/100\",\"Natação:45/90\",\"Bicicleta:70/0\"]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Fotos: escolher várias fotos lê-as no aparelho e junta as iguais e as parecidas (fica a mais nítida), encontra as desfocadas, as escuras e as capturas de ecrã antigas, e mostra quanto se pode libertar",
+  "pass": true,
+  "info": "{\"n\":6,\"iguais\":1,\"parecidas\":1,\"desf\":[\"IMG_0003.jpg\"],\"esc\":[\"IMG_0004.jpg\"],\"cap\":[\"Screenshot 2026-08-01 at 10.00.png\"],\"grupos\":[\"iguais:2\",\"parecidas:2\"],\"sugUI\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Fotos e vídeos: os vídeos entram com a miniatura e a duração; Tirar foto e Gravar vídeo pelo Prumo; o que se partilha da Galeria entra sozinho; o cartão explica como fica automático",
+  "pass": true,
+  "info": "{\"gravou\":true,\"v\":{\"video\":1,\"th\":true},\"sh\":true,\"auto\":true,\"cam\":2,\"vid\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Fotos automáticas: no computador, a pasta ligada importa sozinha as fotos (também das subpastas) e as novas que aparecem; na app da App Store, as fotos novas da galeria entram sozinhas",
+  "pass": true,
+  "info": "{\"p1\":2,\"p2\":3,\"lig\":true,\"nat\":true,\"natTxt\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Fotos com a IA (miniaturas): categorias e o que mostra cada foto, sugestões da IA para apagar, pesquisa pelo conteúdo (\"pizza\"), ver a foto em grande com a informação, apagar um grupo de iguais e uma foto; ficam guardadas no aparelho",
+  "pass": true,
+  "info": "{\"ia\":{\"cats\":[\"Comida e bebida\",\"Memes e imagens da internet\",\"Paisagens e viagens\"],\"comIA\":12,\"sugIA\":4},\"pq\":{\"t\":[\"5 fotos para \\\"pizza\\\"\"],\"n\":5},\"n0\":12,\"n1\":11,\"n2\":10,\"n3\":10,\"vv\":\"Uma pizza no jantar\\nComida e bebida\\npizza\\njantar\\n27/11/2026 (data do ficheiro) · 200×150 · 1 KB\\n\\nSugerida para apagar: F\",\"fm\":2}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Perfil dos animes: o @ escolhe-se uma vez e não muda, é único e há nomes reservados; foto e fundo próprios (verificados pela IA) e servidos a quem os vê",
+  "pass": true,
+  "info": "{\"u1\":{\"ok\":true,\"user\":\"ana_14642d\",\"_st\":200},\"u2\":409,\"u3\":409,\"u4\":400,\"u5\":400,\"im\":200,\"fu\":200,\"mau\":400,\"eu\":{\"id\":\"283f1b39505728e878685f30-b25eaa054040\",\"nome\":\"A\",\"cod\":\"X2PKUM\",\"user\":\"ana_14642d\",\"av\":1795818271369,\"fu\":1795818271374,\"cl\":\"\",\"pl\":{\"n\":\"Completo\",\"lvl\":3},\"pts\":0,\"mudo\":0},\"g\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Comentários nos animes: a IA tapa os spoilers (só vê quem quiser) e barra ofensas; gostos nos comentários e no anime; com o @ e a foto; denunciar e a administração apaga; ninguém apaga o comentário dos outros",
+  "pass": true,
+  "info": "{\"c1\":{\"id\":\"55747c74ab22\",\"de\":\"283f1b39505728e878685f30-b25eaa054040\",\"nome\":\"A\",\"user\":\"ana_14642d\",\"av\":1795818271369,\"t\":\"A animação é incrível, um dos melhores de sempre.\",\"at\":1795818271383,\"sp\":false,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c2\":{\"id\":\"418b21e44fdb\",\"de\":\"fcc8dcd25f25e3a16e7d3dc4-6dac3e7d2479\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"t\":\"Não acredito que o Hughes morre no episódio 10\",\"at\":1795818271386,\"sp\":true,\"gostos\":0,\"gostei\":false,\"meu\":true},\"c3\":true,\"gc\":1,\"ga\":{\"ok\":true,\"gostos\":1,\"gostei\":true,\"_st\":200},\"ga2\":{\"ok\":true,\"gostos\":2,\"gostei\":true,\"_st\":200},\"n\":2,\"dn\":20"
+ },
+ {
+  "p": "Ataque",
+  "name": "Comunidade: indicações públicas (com gostos), pedidos, sugestões e candidaturas ao recrutamento só para a administração (com o e-mail da conta), tudo verificado pela IA; a equipa SA editada pela administração",
+  "pass": true,
+  "info": "{\"i1\":200,\"i2\":200,\"i3\":200,\"i4\":400,\"li\":1,\"gi\":1,\"naoAdm\":403,\"ac\":1,\"eq\":2}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Caixa da Comunidade na Administração: sugestões, pedidos, reclamações (também pelo app), recrutamento e indicações juntos, com o e-mail e a origem; marcar como visto; só a administração vê",
+  "pass": true,
+  "info": "{\"r1\":200,\"x\":{\"id\":\"26c5a6b6665b\",\"tipo\":\"reclamacao\",\"nome\":\"A\",\"user\":\"\",\"titulo\":\"\",\"texto\":\"O gráfico de gastos não abre no meu telemóvel.\",\"at\":1795818271437,\"email\":\"atkb712f87c0b@teste.pt\",\"orig\":\"app\",\"visto\":false},\"n0\":4,\"n1\":3,\"nao\":403}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Desafio da semana: o mesmo desafio para todos; Participar põe no ranking; quem completa fica pela ordem (com o @), quem vai a caminho e quantos ainda não começaram; o progresso tem limite",
+  "pass": true,
+  "info": "{\"d0\":{\"k\":\"treinos\",\"t\":\"Semana de ferro\",\"d\":\"Regista 4 treinos esta semana.\",\"alvo\":4,\"un\":\"treinos\",\"ic\":\"dumbbell\"},\"sem\":\"2026-S47\",\"p1\":{\"id\":\"283f1b39505728e878685f30-b25eaa054040\",\"nome\":\"A\",\"user\":\"ana_14642d\",\"av\":1795818271369,\"v\":5,\"at\":1795818271544,\"eu\":true},\"dv\":{\"f\":1,\"c\":1,\"z\":1,\"t\":3},\"nao\":{\"id\":\"fcc8dcd25f25e3a16e7d3dc4-6dac3e7d2479\",\"nome\":\"A\",\"user\":\"\",\"av\":0,\"v\":40,\"at\":1795818271552,\"eu\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Desafios semanais dos Animes: 3 por semana (fácil, médio e difícil, nunca a mesma medida), iguais para todos; completar dá os pontos uma vez (e o bónus com os 3); o progresso tem limite; ranking da semana; a administração vê os das próximas semanas",
+  "pass": true,
+  "info": "{\"L\":[\"notas2:notas\",\"eps20:eps\",\"dias7:dias\"],\"pts\":145,\"p1\":{\"v\":{\"notas2\":2,\"eps20\":20,\"dias7\":7},\"ok\":{\"notas2\":1795818271558,\"eps20\":1795818271558,\"dias7\":1795818271558},\"pts\":145,\"bon\":true},\"n1\":[15,30,60,40],\"n2\":[],\"p3\":{\"notas2\":6,\"eps20\":60,\"dias7\":21},\"rk\":2,\"ad\":6}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Clãs: pesquisar pelo nome e pedir para entrar (nunca se entra sozinho); cancelar o pedido; só o dono ou um moderador aceita ou recusa; o dono escolhe os moderadores",
+  "pass": true,
+  "info": "{\"cA\":200,\"achou\":{\"id\":\"5b0477f4cf\",\"nome\":\"Lua Carmesim d4ad\",\"desc\":\"Guerreiros da madrugada\",\"cor\":\"#7B4FD6\",\"foto\":0,\"vit\":0,\"n\":1,\"pts\":0,\"membro\":false,\"pedi\":false},\"pd\":200,\"pd2\":{\"id\":\"5b0477f4cf\",\"nome\":\"Lua Carmesim d4ad\",\"desc\":\"Guerreiros da madrugada\",\"cor\":\"#7B4FD6\",\"foto\":0,\"vit\":0,\"n\":1,\"pts\":0,\"membro\":false,\"pedi\":true},\"can\":200,\"p0\":[],\"naoGere\":403,\"naoMembro\":403,\"p1\":2,\"aceita\":{\"ok\":true,\"ok2\":true,\"entrou\":true,\"_st\":200},\"mod\":200,\"recusa\":200,\"n\":2,\"papel\":\"mod\"}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Foto do clã: só quem gere a muda; a IA verifica sempre as fotos (a barrada não entra, nem no clã nem no perfil; se a IA não responder, também não); aparece na pesquisa e é servida a quem a vê",
+  "pass": true,
+  "info": "{\"fNao\":403,\"fBarr\":[400,\"Esta imagem não pode ser usada: Nudez ou conteúdo sexual.\"],\"pBarr\":400,\"fSem\":503,\"fOk\":{\"ok\":true,\"foto\":1795818272079,\"_st\":200},\"gI\":200,\"b3\":1795818272079}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Vagas e Selos: o clã enche e não aceita mais pedidos; comprar Selos abre o Stripe (pagamento único com o preço do pacote); só conta depois de pago, uma vez e só para quem comprou; um pagamento que ficou a meio entra sozinho; o reforço gasta 200 Selos e dá +10 vagas; o bónus do plano só nos planos pagos e uma só vez",
+  "pass": true,
+  "info": "{\"cheio\":[400,\"Este clã está cheio (2 vagas). Quem é do clã pode comprar mais vagas com Selos.\"],\"semSelos\":402,\"w0\":{\"s\":0,\"anim\":false,\"mov\":[]},\"b0\":0,\"mode\":\"payment\",\"amt\":\"499\",\"cedo\":409,\"alheio\":403,\"conf\":550,\"conf2\":0,\"w1\":650,\"ref\":{\"ok\":true,\"vagas\":12,\"carteira\":{\"s\":450,\"anim\":false,\"mov\":[{\"v\":-200,\"d\":\"Reforço do clã Lua Carmesim d4ad (+10 vagas)\",\"at\":1795818272115},{\"v\":100,\"d\":\"Compra de 100 Selos\",\"at\":1795818272112},{\"v\":550,\"d\":\"Compra de 550 Selos\",\"at\":1795818272103}]},\"_st\":200},\"n\":3,\"wA\":500,\"bA\":500,\"wA2\":500}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Foto e fundo animados (GIF): no Avançado e no Completo; no Essencial desbloqueiam-se com 500 Selos (uma vez); a IA vê os quadros do GIF e barra; um ficheiro que não é GIF não entra; servido como GIF",
+  "pass": true,
+  "info": "{\"gOk\":{\"ok\":true,\"av\":1795818272143,\"gif\":true,\"_st\":200},\"lastG\":{\"gif\":true,\"q\":1},\"gNaoGif\":400,\"gBarr\":400,\"gEss\":402,\"anPobre\":402,\"an\":{\"s\":50,\"anim\":true,\"mov\":[{\"v\":-500,\"d\":\"Foto e fundo animados no perfil\",\"at\":1795818272163},{\"v\":550,\"d\":\"Compra de 550 Selos\",\"at\":1795818272161}]},\"an2\":true,\"gEss2\":200,\"gG\":200}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Guerra de clãs: só quem gere desafia; um clã só tem uma guerra de cada vez; o desafiado aceita; contam os pontos ganhos durante a guerra (desafios dos Animes); no fim, vitória e derrota no histórico e no ranking de clãs; troféu para o clã vencedor, MVP para quem mais pontuou e nada para quem perdeu sem pontuar",
+  "pass": true,
+  "info": "{\"naoGereD\":403,\"des\":\"proposta\",\"dup\":400,\"resp\":\"ativa\",\"gm\":{\"e\":\"ativa\",\"sA\":145,\"sB\":0},\"gf\":{\"e\":\"fim\",\"v\":\"a\",\"sA\":145},\"vit\":1,\"der\":1,\"m1\":[\"gwm\",\"gwv\",\"adperf\"],\"m3\":[\"gwv\"],\"pv\":3,\"rkx\":{\"id\":\"5b0477f4cf\",\"nome\":\"Lua Carmesim d4ad\",\"cor\":\"#7B4FD6\",\"foto\":1795818272079,\"vit\":1,\"n\":3,\"pts\":295,\"meu\":false}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "No app: a página dos Selos (saldo, pacotes e onde usar), o ecrã do clã com a foto, as vagas, o reforço e a guerra, a lista com Procurar e Ranking de clãs, e a vitrine com as conquistas ganhas no Prumo",
+  "pass": true,
+  "info": "{\"sl\":\"Sistema SELOS A moeda do Prumo: compra uma vez e usa no app. O teu saldo 505 Selos Quem assina o Avançado recebe 200 Selos no primeiro mês; no Completo, 500. Ve\",\"pk\":4,\"cv\":\"Voltar Lua Carmesim d4ad Guerreiros da madrugada 3 membros de 12 vagas · 295 pontos · 1 vitória em guerras Mudar a foto Tirar a foto A IA verifica cada foto antes de aparecer: sem nudez, conteúdo sexual, violência ou ódio. Conversa do clã Código: CL-SFAXP6 Sai\",\"vg\":true,\"gw\":true,\"lst\":2,\"tf\":\"Eu QUEM SOU EU A tua vida num só lugar: a tua história, as pessoas que amas, os momentos que te marcaram e quem és. Retrato Troféus Biografia Família & amigos Linha do tempo Tudo sobre mim Entrevista \",\"pecas\":3}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Duelo de hábitos: só entre amigos e um de cada vez com a mesma pessoa; só o desafiado aceita; 7 dias; cada dia tem limite (60) e nunca desce; os dias futuros não contam; o amigo vê só os pontos; no fim ganha quem somou mais, com medalha e o registo de vitórias e derrotas",
+  "pass": true,
+  "info": "{\"naoAmigo\":403,\"des\":\"convite\",\"dup\":400,\"naoAceita\":403,\"ac\":\"ativa\",\"dias\":7,\"tots\":[20,20,60,60],\"wv\":{\"m\":60,\"d\":20},\"wf\":{\"e\":\"fim\",\"v\":\"ele\"},\"reg\":[{\"v\":0,\"d\":1,\"e\":0},{\"v\":1,\"d\":0,\"e\":0}]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Quiz relâmpago: 10 perguntas de dados reais (4 opções), a resposta certa nunca vai para o app; joga-se uma vez; cada pergunta responde-se uma vez; certa e rápida vale mais; às 21h15 sai o ranking (pontos para o ranking de animes) e medalhas (1.º, 2.º e o quiz perfeito)",
+  "pass": true,
+  "info": "{\"f\":\"aberto\",\"n\":10,\"tipos\":[\"Que anime é este?\",\"Que estúdio fez «P\",\"Em que ano estreou\",\"Qual destes animes\",\"Qual destes tem a \",\"Quantos episódios \",\"Que estúdio fez «P\",\"Qual destes tem ma\",\"Em que ano estreou\",\"Qual destes animes\"],\"pq\":\"Que anime é este?\",\"segredo\":false,\"c1b\":409,\"rep\":{\"repetida\":true},\"fim\":true,\"pts\":1500,\"FQ\":{\"f\":\"fechado\",\"res\":[\"10:80\",\"1:72\"],\"pos\":2},\"rk\":[0,80]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Bolão da temporada: abre antes e no começo da temporada com os animes dela (sem filmes); o palpite tem de ser da lista; fecha 3 semanas depois do começo; no fim conta o melhor (100 ou 40 no top 3), o mais popular e a nota do mais esperado; pontos e medalhas; o bolão seguinte abre sozinho",
+  "pass": true,
+  "info": "{\"B0\":{\"e\":\"aberto\",\"n\":9,\"dest\":108},\"ruim\":400,\"pa\":200,\"pb\":200,\"tarde\":400,\"B1\":{\"e\":\"fim\",\"m\":[104,108,103],\"p\":[108,107,106],\"n\":8.2,\"t1\":{\"melhor\":100,\"popular\":100,\"nota\":100,\"tot\":300},\"t2\":{\"melhor\":40,\"popular\":40,\"nota\":30,\"tot\":110}},\"prox\":\"aberto\"}"
+ },
+ {
+  "p": "Ataque",
+  "name": "No app: a tela de Jogos com o Duelo, o Quiz e o Bolão; a página do Duelo; o Quiz joga-se no ecrã (pergunta, 4 respostas, a barra do tempo, a certa marcada e a seguinte); o Bolão com as escolhas e a nota",
+  "pass": true,
+  "info": "{\"jg\":5,\"du\":\"Jogos DUELO DE HÁBITOS 7 dias contra um amigo. Ganha quem fizer mais de verdade. Duelo de hábitos Desafia um amigo Conta\",\"qa\":\"Quiz relâmpago · todos os dias às 21h O quiz está a decorrer Fecha às 21h15. Podes começar até às 21h12 (daqui a 1:31:50\",\"q1\":{\"t\":\"Que anime é este?\",\"bt\":4,\"bar\":true},\"fb\":true,\"marc\":1,\"q2\":\"2\",\"bo\":{\"sel\":2,\"nota\":true,\"t\":\"Bolão da temporada Quem acerta no futuro dos animes? Antes e no começo de cada temporada, faz o teu palpite: o melhor, o mais popular e a nota do mais esperado.\"}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Sombras: a silhueta de corpo inteiro do dia (a imagem original nunca vai para o app antes do fim); cada erro mostra mais um pouco e dá uma dica; aceita o nome em qualquer ordem e pequenos erros; 60/40/20 pontos; joga-se uma vez; dias seguidos; números do dia",
+  "pass": false,
+  "info": "{\"A0\":{\"n\":0,\"img\":2830,\"nomes\":1},\"g1\":{\"c\":false,\"n\":1,\"d1\":\"Começa por J\"},\"g2\":{\"c\":false,\"pts\":0,\"fim\":false,\"seq\":0,\"igual\":false},\"g3\":200,\"pts\":[0,0],\"B3\":{\"fim\":true,\"ok\":false,\"st\":{\"jog\":2,\"ok\":[0,0,0],\"falhou\":2}}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Sequência a dois: só entre amigos e uma por par; só o convidado aceita; o dia só conta quando os dois cumprem; se um falhar recomeça para os dois (o recorde fica); dias futuros não contam; medalha para os dois aos 7 dias; terminar acaba para os dois",
+  "pass": true,
+  "info": "{\"cv\":\"convite\",\"dup\":400,\"naoAc\":403,\"ac\":\"ativa\",\"cur\":[0,1,2,1,7],\"melhor\":[2,7]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "No app: a página das Sombras (a imagem, as 3 tentativas e a resposta no fim), os 5 jogos na tela de Jogos e a página da Sequência a dois",
+  "pass": false,
+  "info": "{\"sb\":{\"img\":true,\"tent\":3,\"t\":\"Sombras · uma por dia Não foi desta Era Jinzouningen 18-gou, de Dragon Ball Z. 0 dias seguidos Revelada Goku Não Vegeta Não Luffy Não Começa por J Do anime Drag\"},\"jg\":5,\"sq\":\"Jogos SEQUÊNCIA A DOIS Uma sequência partilhada: o dia só conta quando os dois cumprem. Sequência a dois Começa uma sequência com um amigo Todos os dias, cada u\"}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Selos ganhos no app (sem lojas): a presença do dia dá 2 Selos uma só vez, a carteira mostra as formas de ganhar e o limite diário; a conta de administração tem Selos sem fim",
+  "pass": true,
+  "info": "{\"pr1\":[2,2],\"pr2\":0,\"s\":2,\"g\":[2,60],\"inf\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Black Friday automática todos os anos (2026: 23 a 30/11; 2027: sexta 26/11): −40% no 1.º ano dos anuais e −30% em 3 meses dos mensais com o cupão aplicado sozinho no checkout; +50% de Selos nos pacotes; fora da época não há promoção",
+  "pass": false,
+  "info": "{\"bfd\":{\"ini\":\"2026-11-23\",\"sex\":\"2026-11-27\",\"fim\":\"2026-11-30\"},\"bfd2\":{\"ini\":\"2027-11-22\",\"sex\":\"2027-11-26\",\"fim\":\"2027-11-29\"},\"promo\":[40,30],\"pl0\":false,\"bf\":250,\"cpn\":null,\"ck\":503,\"msg\":\"As assinaturas ainda não estão abertas.\"}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Clãs: um clã de cada vez (não cria nem pede outro; ao ser aceite, os outros pedidos saem); alianças: o dono propõe pelo código, o outro dono aceita, ficam aliados e não podem entrar em guerra; qualquer dono desfaz",
+  "pass": true,
+  "info": "{\"k1b\":[400,\"Já estás num clã. Sai dele primeiro para criares outro.\"],\"ped3c\":[400,\"Já estás num clã. Sai dele primeiro para pedires para entrar noutro.\"],\"clas\":1,\"al1\":{\"ok\":true,\"proposta\":true,\"cla\":{\"id\":\"606c1b7af5\",\"nome\":\"Asas Azuis 2af9\"},\"_st\":200},\"nd\":403,\"rec\":[{\"id\":\"fa127ce627\",\"nome\":\"Borboletas 2af9\",\"cor\":\"#3D7BF7\",\"foto\":0,\"n\":2,\"vit\":0}],\"al2\":{\"ok\":true,\"ok2\":true,\"aliados\":true,\"_st\":200},\"ali\":[{\"id\":\"606c1b7af5\",\"nome\":\"Asas Azuis 2af9\",\"cor\":\"#7B4FD6\",\"foto\":0,\"n\":1,\"vit\":0,\"desde\":1795818332667}],\"g\":[400,\"Esse clã é vosso aliado: aliados não entram em guerra entre si.\"],\"des\":{\"ok\":true,\"ok2\":true,\"_st\":200}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Perfil: o plano aparece no perfil e o próprio perfil abre como os outros o veem; mudar o nome do perfil Prumo muda também nos clãs",
+  "pass": null,
+  "info": "{\"pl\":null,\"plA\":null,\"ren\":200,\"mem\":\"Nome Novo 2af9\"}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios da seele (mérito): o rascunho só a administração vê; um sorteio sem autorização não se publica; publicada, abre a seele a todos; participar exige idade e regulamento (a equipa não participa); os livros contam só no período e sem repetir; fechar apura os primeiros (quem tem 0 não ganha); confirmar dá os Selos, uma medalha e o e-mail; o vencedor aceita; excluir funciona",
+  "pass": true,
+  "info": "{\"g1\":\"086c3f0e87\",\"lv0\":{\"ok\":true,\"aberta\":false,\"pend\":0,\"ativas\":[],\"_st\":200},\"semAut\":[400,\"Um sorteio com prémios precisa de autorização antes de ser publicado (no Brasil, da Secretaria de Prémios e Apostas do Ministério da Fazenda; em Portugal, da Câmara Municipal). Escreve o número da autorização.\"],\"pub\":{\"ok\":true,\"ok2\":true,\"_st\":200},\"lv1\":true,\"semIdade\":400,\"admEnt\":403,\"c1\":{\"dentro\":true,\"pts\":3,\"pos\":2,\"nl\":3},\"n\":3,\"venc\":[[\"P2\",5,\"por_confirmar\"],[\"P1\",3,\"por_confirmar\"]],\"conf\":{\"ok\":true,\"ok2\":true,\"_st\":200},\"s2\":325,\"meu\":{\"pos\":1,\"premio\":{\"t\":\"Livro à escolha até 25 €\",\"s\":300},\"estado\":\"confirmado\",\"prazo\":1797027948751},\"pend\":1,\"ace\":200,\"exc\":{\"ok\":true,\"ok2\":true,\"suplente\":\"\",\"_st\":200}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Prémios da seele (sorteio): o código da semente é público antes; no fim a semente revelada bate certo com ele, só os qualificados entram (quem tem 0 fica de fora) e ganha o HMAC mais baixo",
+  "pass": true,
+  "info": "{\"pub2\":{\"ok\":true,\"ok2\":true,\"_st\":200},\"hash0\":\"1bca1553abb2a6138dee9415103f4186a91502c1bec9b80a63f4ac6b0f9092b0\",\"seed\":\"718ac8537d39f3dbdb845289e3bed36b6a0ee815e6ca9b7efd7013673de8f9af\",\"qual\":[{\"quem\":\"A\",\"h\":\"aff506153ae25b16\",\"pts\":50},{\"quem\":\"A\",\"h\":\"eedc35f691fd376f\",\"pts\":80}],\"venc\":[\"P2\"],\"quals\":[\"P2\",\"P1\"]}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Desafio da semana na Visão geral: o cartão com o desafio, o tempo que falta e o ranking; o treino registado no app conta sozinho no progresso",
+  "pass": true,
+  "info": "{\"dc\":{\"card\":true,\"t\":\"Desafio da semana acaba daqui a 2 dias e 1 h Semana de ferro Regista 4 treinos esta semana. 0/4 treinos 1 completaram · 0 a caminho · 2 ainda não começaram 1 A A 40/4 Ver o ranking todo\",\"eu\":\"1/4 treinos\"},\"sv\":{\"id\":\"283f1b39505728e878685f30-b25eaa054040\",\"nome\":\"A\",\"user\":\"ana_14642d\",\"av\":1795818271369,\"v\":1,\"at\":0,\"eu\":true}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Desafios dos Animes na app: o registo diário conta os episódios, o anime começado, a nota e o género (o \"Já vi\" de coisas antigas não conta); página com os 3 desafios, o tempo que falta e o ranking; faixa no início dos Animes e entrada no Mais",
+  "pass": true,
+  "info": "{\"lg\":{\"e\":3,\"f\":0,\"n\":1,\"s\":1,\"l\":1,\"g\":[\"Action\"]},\"cards\":3,\"t\":\"Desafios da semana Semana perfeita Contam sozinhos com o que vês e marcas no app. Cada desafio completo dá pontos ao ranking dos animes. 145 pontos esta semana acaba daqui a 2 dias e 1 h 1.º de 3 C Fácil Olho crítico Dá nota a 2 animes. 2/2 notas Completo B Médio Maratona Vê 20 episódios esta semana\",\"fx\":3,\"mais\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Na app: um perfil só no menu do perfil (foto, nome, @, pontos e clãs); o editor tem o @ (fixo), a foto (tua, do Dominus ou de anime) e o fundo; as fotos de anime só passam do AniList/MyAnimeList; a primeira vez nos Animes escolhe-se Competição e/ou Diversão; a Comunidade com as 5 opções",
+  "pass": true,
+  "info": "{\"ui\":{\"cards\":1,\"car\":false,\"edAt\":\"@ana_14642d\",\"edFu\":true,\"edAni\":true,\"aniP\":true,\"chips\":20,\"px\":400,\"ap\":\"A A @ana_14642d atk73437bc89d@teste.pt 145 pontos 0 clãs 0 Selos\",\"bv\":true,\"dq\":true,\"cu\":true},\"ind\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Temas das festas: cada festa vale a época toda (Natal de 1/12 a 6/1, Halloween de 15/10 a 2/11, Páscoa nas 2 semanas antes até à segunda-feira, Carnaval, junho, passagem de ano) e sai quando acaba; Natal com luzes no topo, neve que acumula e o limpa-neves; nas Definições liga-se, desliga-se e vê-se cada tema",
+  "pass": true,
+  "info": "{\"datas\":{\"natal1\":\"natal\",\"natal\":\"natal\",\"reis\":\"natal\",\"fimNatal\":\"\",\"anonovo\":\"anonovo\",\"hall\":\"halloween\",\"finados\":\"halloween\",\"hoje\":\"\",\"pascoa\":\"pascoa\",\"pascoaFim\":\"pascoa\",\"depoisPascoa\":\"\",\"carnaval\":\"carnaval\",\"junho\":\"junho\"},\"s1\":{\"EP\":\"natal\",\"neve\":1.7881016944117418,\"plow\":true,\"nplow\":1,\"P\":70,\"cv\":true,\"gar\":true,\"ks\":\"s\",\"santa\":false,\"pill\":true},\"top\":true,\"attr\":\"natal\",\"pn\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Passagem de ano diferente do Natal: sem neve nem limpa-neves, com confetes dourados e bolhas de champanhe; a prévia troca de tema e o botão \"Parar\" volta ao normal",
+  "pass": true,
+  "info": "{\"an\":{\"EP\":\"anonovo\",\"neve\":0,\"plow\":false,\"nplow\":1,\"P\":46,\"cv\":true,\"gar\":true,\"ks\":\"gb\",\"santa\":false,\"pill\":true,\"attr\":\"anonovo\",\"pt\":\"A ver: Passagem de ano\\nParar\"},\"pa\":{\"EP\":\"\",\"neve\":0,\"plow\":false,\"nplow\":1,\"P\":0,\"cv\":false,\"gar\":false,\"ks\":\"\",\"santa\":false,\"pill\":false,\"attr\":\"\"}}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Rede instável: sem internet a app funciona e guarda; quando a rede volta (com o servidor a falhar 3 vezes) sincroniza e a tarefa aparece no outro aparelho",
+  "pass": true,
+  "info": "{\"off\":{\"st\":\"sem ligação (guardado neste aparelho)\",\"vis\":true},\"falhas\":3,\"on\":\"sincronizada\",\"there\":true}"
+ },
+ {
+  "p": "Ataque",
+  "name": "Falhas do app: o servidor aceita o registo da falha (com limite) para o relatório da semana",
+  "pass": true,
+  "info": "{\"ok\":true,\"ok2\":true,\"_st\":200}"
  }
 ]
