@@ -44,3 +44,6 @@
 html.lite-x .tf-art.hon,html.lite-x .tf-it{animation:none;opacity:1;transform:none}
 /* 3.3: os blocos da página Eu (e dos Troféus) não ficam colados uns aos outros */
 .me>*+*{margin-top:16px}
+/* v3.89 · ganhas no Prumo (clãs, desafios, Pursuit, rankings e metas cumpridas) */
+.tf-gt{margin:14px 0 8px;font-size:13px;font-weight:700;color:var(--mut)}
+.tf-gn{cursor:default}.tf-gn small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}

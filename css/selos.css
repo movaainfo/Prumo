@@ -1,0 +1,42 @@
+/* PRUMO v3.89 · Selos (a moeda do Prumo): a moeda é um selo de cera vermelho, como o do logo; o resto segue as cores do tema */
+.sl-ic{display:inline-block;flex:none;vertical-align:middle;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+.sl-chip{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:4px 12px 4px 6px;border-radius:999px;background:color-mix(in srgb,#B8263A 18%,var(--pn,#16171c));box-shadow:inset 0 0 0 1px color-mix(in srgb,#E8606E 40%,transparent);color:var(--tx,#fff);text-decoration:none;font-weight:800;font-variant-numeric:tabular-nums}
+.sl-chip:hover{background:color-mix(in srgb,#B8263A 30%,var(--pn,#16171c))}.sl-chip:focus-visible{outline:2px solid #E8606E;outline-offset:2px}
+.sl-pg{display:flex;flex-direction:column;gap:22px;max-width:980px}
+.sl-hero{position:relative;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:8px 24px;padding:26px 28px;border-radius:24px;overflow:hidden;
+  background:radial-gradient(70% 120% at 0% 0%,color-mix(in srgb,#B8263A 42%,transparent),transparent 70%),radial-gradient(60% 90% at 100% 100%,color-mix(in srgb,var(--accent,#3D7BF7) 22%,transparent),transparent 70%),var(--pn,#16171c);
+  border:1px solid color-mix(in srgb,#E8606E 26%,var(--line2,#2a2b31))}
+.sl-coin .big{width:clamp(84px,14vw,112px);height:auto;filter:drop-shadow(0 14px 22px rgba(110,15,30,.55))}
+.sl-sal{display:flex;flex-direction:column;line-height:1}.sl-sal small{font-size:13px;color:var(--mut);margin-bottom:6px}
+.sl-sal b{font:800 clamp(46px,9vw,76px)/1 var(--serif,Georgia,serif);font-variant-numeric:tabular-nums;letter-spacing:-.02em}.sl-sal span{margin-top:4px;font-weight:700;color:var(--mut)}
+.sl-bn{grid-column:1/-1;display:flex;align-items:flex-start;gap:8px;margin:8px 0 0;font-size:14px}.sl-bn .ic{flex:none;width:18px;height:18px;margin-top:1px;color:#F07A84}
+.sl-sec h3{margin:0 0 10px}
+.sl-pks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.sl-pk{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:20px 14px 14px;border-radius:20px;background:var(--pn,#16171c);border:1px solid var(--line2,#2a2b31);text-align:center}
+.sl-pk.top{border-color:color-mix(in srgb,#E8606E 60%,transparent);background:linear-gradient(180deg,color-mix(in srgb,#B8263A 22%,var(--pn,#16171c)),var(--pn,#16171c))}
+.sl-tag{position:absolute;top:-10px;padding:3px 10px;border-radius:999px;background:#B8263A;color:#fff;font-size:12px;font-weight:800}
+.sl-pki{position:relative;display:grid;place-items:center;height:52px}.sl-pki .b2{position:absolute;right:-14px;bottom:0}
+.sl-pk small{color:var(--mut);font-size:12.5px}.sl-pk b{font:800 30px/1 var(--serif,Georgia,serif);font-variant-numeric:tabular-nums}.sl-pkb{font-size:12.5px;color:var(--mut);min-height:2.4em}
+.sl-buy{width:100%;justify-content:center;margin-top:6px;font-variant-numeric:tabular-nums}
+.sl-legal{margin:10px 0 0;font-size:12.5px}
+.sl-usos{display:grid;gap:8px}
+.sl-uso{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;background:var(--pn,#16171c);border:1px solid var(--line2,#2a2b31);color:var(--tx);text-decoration:none}
+a.sl-uso:hover{border-color:color-mix(in srgb,#E8606E 40%,var(--line2,#2a2b31))}
+.sl-ui{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,#B8263A 22%,transparent);color:#F07A84}.sl-ui .ic{width:20px;height:20px}
+.sl-uso>span:nth-child(2){display:flex;flex-direction:column;gap:2px;min-width:0}.sl-uso small{color:var(--mut);line-height:1.35}
+.sl-uso em{display:inline-flex;align-items:center;gap:5px;font-style:normal;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}.sl-uso em.ok{color:var(--pos,#3ccf8e)}
+.sl-mov{list-style:none;margin:0;padding:0;display:grid;gap:4px}.sl-mov li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:var(--pn,#16171c)}
+.sl-mov li span{display:flex;flex-direction:column;min-width:0}.sl-mov small{color:var(--mut);font-size:12px}.sl-mov b{font-variant-numeric:tabular-nums}.sl-mov b.pos{color:var(--pos,#3ccf8e)}.sl-mov b.neg{color:var(--mut)}
+@media (max-width:760px){.sl-pks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.sl-hero{grid-template-columns:1fr;justify-items:start;padding:20px}.sl-uso{grid-template-columns:auto 1fr}.sl-uso>em,.sl-uso>.btn{grid-column:1/-1;justify-self:start}}
+/* as vagas no ecrã do clã */
+.so-vg h3{display:flex;align-items:center;gap:8px}.so-vg h3 .ic{width:20px;height:20px;color:var(--an-or)}
+.so-vgb{height:12px;border-radius:999px;background:var(--an-c1);overflow:hidden;box-shadow:inset 0 0 0 1px var(--an-ln)}.so-vgb i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--an-or),#F5C35A)}
+.so-vgb.quase i{background:linear-gradient(90deg,#F5A35A,#F5C35A)}.so-vgb.cheio i{background:#E8606E}
+.so-refs{display:flex;align-items:flex-start;gap:6px;margin:0;font-size:13px;color:var(--an-mut)}.so-refs .ic{flex:none;width:16px;height:16px;margin-top:1px;color:#F5C35A}.so-refs b{color:var(--an-tx)}
+/* os Selos no cartão do perfil */
+.pf-sl{display:flex;flex-direction:column;color:inherit;text-decoration:none}.pf-sl b{display:inline-flex;align-items:center;gap:4px}
+@supports not (color:color-mix(in srgb,red 50%,blue)){.sl-chip,.sl-ui{background:rgba(184,38,58,.2)}.sl-hero,.sl-pk.top{background:var(--pn,#16171c)}}
+/* os botões de cada membro do clã ficam numa linha própria por baixo */
+.so-clv .rk-l li:has(.so-mbt){grid-template-columns:3em 1fr auto}
+.so-mbt{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:6px}

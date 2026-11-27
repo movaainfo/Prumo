@@ -21,7 +21,9 @@ OS.S.trophies = { label: 'Troféu ou medalha', title: r => r.title || 'Conquista
 const MET = { Ouro: ['#FFF1BF', '#E7B84A', '#8F6210'], Prata: ['#FBFCFD', '#C6CDD5', '#6F7984'], Bronze: ['#FBD2B0', '#C77F4A', '#6E3B18'],
   Mérito: ['#EFE4FF', '#A98BF2', '#4E36A0'], Participação: ['#E1ECF5', '#93AECB', '#3E5873'], Platina: ['#F1FBFA', '#A9DCD6', '#3F7F7A'], Diamante: ['#F3F8FF', '#AFCBF4', '#3D5F9E'] };
 const RIB = { Desporto: ['#1F4E8C', '#F5F1E8'], Estudos: ['#7A1F2B', '#E8C77A'], Trabalho: ['#2F3E4E', '#C9D3DC'], Competição: ['#8C1D18', '#F5F1E8'], 'Arte e cultura': ['#4A2A6B', '#E9D6A0'],
-  Voluntariado: ['#2E6B4A', '#F5F1E8'], Pessoal: ['#6B4A2E', '#E8C77A'], Outro: ['#3A3F47', '#E3E6EA'] };
+  Voluntariado: ['#2E6B4A', '#F5F1E8'], Pessoal: ['#6B4A2E', '#E8C77A'], Outro: ['#3A3F47', '#E3E6EA'],
+  // v3.89: as fitas das medalhas ganhas no Prumo
+  'Clãs': ['#8E1B2A', '#F5C35A'], Desafios: ['#2C3E8C', '#E8C77A'], Pursuit: ['#1F1F24', '#E84860'], Ranking: ['#5A2A8C', '#F5F1E8'], Metas: ['#1F6B5A', '#F5F1E8'], Prumo: ['#3A3F47', '#E8C77A'] };
 let uid = 0;
 const grad = (id, m) => `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2=".25"><stop offset="0" stop-color="${m[0]}"/><stop offset=".38" stop-color="${m[1]}"/><stop offset=".72" stop-color="${m[2]}"/><stop offset="1" stop-color="${m[1]}"/></linearGradient>`;
 const num = (x, y, n, sz, col) => n ? `<text x="${x}" y="${y}" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="${sz}" fill="${col}" opacity=".8">${n}</text>` : '';
@@ -70,7 +72,31 @@ A.tfF = b => OS.setUI('tfF', b.dataset.v);
 const rank = r => (r.level === 'Ouro' ? 0 : r.level === 'Prata' ? 1 : r.level === 'Bronze' ? 2 : 3) * 10 + (r.kind === 'Troféu' ? 0 : 1) + (+r.place || 9) / 100;
 const yearOf = r => String(r.date || '').slice(0, 4);
 const disc = (lvl, n) => { const m = MET[lvl], g = 'tq' + (++uid); return `<div class="tf-q ${n ? '' : 'z'}"><svg viewBox="0 0 40 40" aria-hidden="true"><defs>${grad(g, m)}</defs><circle cx="20" cy="20" r="17" fill="url(#${g})"/><circle cx="20" cy="20" r="12.5" fill="none" stroke="${m[2]}" stroke-opacity=".5" stroke-width="1.2"/></svg><b class="mono">${n}</b><span>${lvl}</span></div>`; };
-const prumoShelf = () => { if (!OS.Dom || !OS.Dom.achievements) return ''; let L = []; try { L = OS.Dom.achievements().filter(a => a.t > 0); } catch (e) { return ''; } if (!L.length) return '';
+/* ---------- v3.89 · ganhas no Prumo: o servidor dá-as sozinho (guerra de clãs, 1.º lugar, desafios, Pursuit, campeão do mês) e as metas cumpridas ---------- */
+const conta = () => !!(OS.Acc && OS.Acc.on && OS.Acc.token && OS.Acc.token() && OS.Acc.pid && OS.Acc.pid());
+const MS = { L: null, at: 0, busy: false };
+const medLer = async forcar => { if (!conta() || MS.busy || !(OS.Social && OS.Social.call) || (!forcar && MS.L && Date.now() - MS.at < 5 * 6e4)) return MS.L; MS.busy = true;
+  try { MS.L = (await OS.Social.call('medalhas', {})).med || []; MS.at = Date.now(); avisar(); } catch (e) { } MS.busy = false; OS.request(); return MS.L; };
+// avisa das medalhas novas (uma vez por medalha, neste aparelho)
+const vistoK = () => 'os2medv:' + ((OS.Acc && OS.Acc.pid && OS.Acc.pid()) || '');
+const avisar = () => { if (!MS.L) return; let v = null; try { v = JSON.parse(localStorage.getItem(vistoK()) || 'null'); } catch (e) { }
+  const ks = MS.L.map(m => m.k); if (!v) { try { localStorage.setItem(vistoK(), JSON.stringify(ks.slice(0, 400))); } catch (e) { } return; }
+  const novas = MS.L.filter(m => !v.includes(m.k)); if (!novas.length) return; try { localStorage.setItem(vistoK(), JSON.stringify(ks.slice(0, 400))); } catch (e) { }
+  const m = novas[0]; UI.toast(novas.length > 1 ? `Ganhaste ${novas.length} conquistas novas: ${m.n} e mais. Vê em Eu › Troféus.` : `Ganhaste: ${m.n}${m.d ? ' (' + m.d + ')' : ''}. Vê em Eu › Troféus.`, 'pos');
+  if (OS.Vivo && OS.Vivo.confetti) try { OS.Vivo.confetti(); } catch (e) { } };
+OS.on('ready', () => setTimeout(() => medLer(true), 5000)); document.addEventListener('visibilitychange', () => { if (!document.hidden) medLer(false); });
+const metas = () => { let L = []; try { L = OS.all('goals').filter(g => g.status === 'Concluída' || (g.status !== 'Abandonada' && OS.Goal && OS.Goal.info && OS.Goal.info(g).p >= 1)); } catch (e) { }
+  const lvl = h => /5 anos|Longo/.test(h || '') ? 'Platina' : /3 anos/.test(h || '') ? 'Ouro' : /1 ano/.test(h || '') ? 'Prata' : 'Bronze';
+  return L.map(g => ({ k: 'meta:' + g.id, n: g.title || 'Meta cumprida', d: 'Meta de ' + (g.horizon || '').toLowerCase() + (g.cat ? ' · ' + g.cat : ''), kind: 'Medalha', lvl: lvl(g.horizon), cat: 'Metas', at: Date.parse(g.doneAt || g.updated || g.due || '') || 0 })); };
+const peca = (m, i) => `<div class="tf-it tf-gn" style="--i:${i}" title="${esc(m.d || '')}">${art({ kind: m.kind === 'Distinção' ? 'Distinção' : m.kind === 'Troféu' ? 'Troféu' : 'Medalha', level: m.lvl, cat: m.cat, place: m.lugar || 0 })}<b>${esc(m.n)}</b><small>${esc(m.d || m.lvl)}</small></div>`;
+const ganhas = () => { medLer(false); const S = MS.L || [], M = metas(), tro = S.filter(m => m.kind !== 'Medalha').length;
+  if (!S.length && !M.length) return conta() ? `<section class="pn tf-pr"><div class="pn-h"><h3>${UI.ic('award')}Ganhas no Prumo</h3></div><p class="mut tf-sub">Aqui aparecem sozinhos os troféus e as medalhas que ganhas no Prumo: vencer uma guerra de clãs, ficar em 1.º nos desafios ou no ranking, acertar primeiro no Pursuit, completar uma semana perfeita e cumprir as tuas metas.</p></section>` : '';
+  return `<section class="pn tf-pr tf-gnh"><div class="pn-h"><h3>${UI.ic('award')}Ganhas no Prumo</h3><span class="mut">${S.length + M.length}</span></div>
+    <p class="mut tf-sub">${S.length ? `${tro} ${tro === 1 ? 'troféu' : 'troféus'} e ${S.length - tro} ${S.length - tro === 1 ? 'medalha' : 'medalhas'} em clãs, desafios, Pursuit e rankings` : 'Os troféus de clãs, desafios e rankings aparecem aqui quando os ganhares'}${M.length ? ` · ${M.length} ${M.length === 1 ? 'meta cumprida' : 'metas cumpridas'}` : ''}.</p>
+    ${S.length ? `<h4 class="tf-gt">Competições e clãs</h4><div class="tf-shelf sm">${S.map(peca).join('')}</div>` : ''}
+    ${M.length ? `<h4 class="tf-gt">Metas cumpridas</h4><div class="tf-shelf sm">${M.sort((a, b) => b.at - a.at).map(peca).join('')}</div>` : ''}</section>`; };
+const prumoShelf = () => ganhas() + domShelf();
+const domShelf = () => { if (!OS.Dom || !OS.Dom.achievements) return ''; let L = []; try { L = OS.Dom.achievements().filter(a => a.t > 0); } catch (e) { return ''; } if (!L.length) return '';
   const TN = ['Bronze', 'Prata', 'Ouro', 'Platina', 'Diamante'];
   return `<section class="pn tf-pr"><div class="pn-h"><h3>${UI.ic('crown')}Medalhas do Prumo</h3><span class="mut">${L.length}</span></div><p class="mut tf-sub">As conquistas que o Dominus te deu pelo que fizeste aqui.</p>
     <div class="tf-shelf sm">${L.map((a, i) => { const lvl = TN[Math.min(4, a.t - 1)]; return `<div class="tf-it" style="--i:${i}">${art({ kind: 'Medalha', level: lvl, cat: 'Outro' })}<b>${esc(a.n)}</b><small>${esc(lvl)} · ${U.nf(a.v)} ${esc(a.u)}</small></div>`; }).join('')}</div></section>`; };
@@ -93,5 +119,5 @@ const view = () => { const all = OS.all('trophies'), f = OS.ui.tfF || 'todas', L
 // um cartão pequeno no Retrato (Quem sou eu)
 const card = () => { const all = OS.all('trophies'); if (!all.length) return ''; const hon = all.find(r => r.fav) || U.sortBy(all, r => rank(r))[0];
   return `<a class="pn tf-card" href="#eu.trofeus">${art(hon, 'sm')}<span><small>Troféus e medalhas</small><b>${all.length} ${all.length === 1 ? 'conquista' : 'conquistas'}</b><span class="mut">${esc(hon.title || '')}</span></span></a>`; };
-OS.Trofeus = { view, card, art };
+OS.Trofeus = { view, card, art, medLer, metas, _MS: MS };
 })();

@@ -6,7 +6,7 @@
 // Ranking de animes: pontos ganhos nos jogos. PURSUIT: todos os dias às 20h (hora de Lisboa) há pistas de um anime ao calhas; marca-se "Pursuit"
 // na página do anime que se acha que é (uma vez por dia); às 22h fecha e quem acertou ganha pontos pela ordem (1.º 100, 2.º 90… mínimo 10).
 'use strict';
-const N = require('./_nuvem');
+const N = require('./_nuvem'), PL = require('./_planos'), GIF = require('./_gif');
 const PID = /^[a-f0-9]{12}$/, ID = /^[a-z0-9]{8,40}-[a-f0-9]{12}$/, CID = /^[a-z0-9]{10}$/;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const JK = () => process.env.JIKAN_BASE || 'https://api.jikan.moe/v4/';
@@ -22,7 +22,7 @@ const conta = async (t, pid) => { const k = t.u + '|' + t.v + '|' + pid, c = OKS
   const g = await N.store().get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
   if (!r || r.uid !== t.u || (r.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   const pf = (r.perfis || []).find(x => x.id === pid); if (!pf) throw N.err('perfil', 'Este perfil já não existe.', 404);
-  await N.gate(r.email); const o = { at: Date.now(), email: r.email, nome: String(pf.nome || 'Pessoa').slice(0, 24), adm: N.isAdminEmail(r.email), teste: N.isTeste(r.email) }; OKS.set(k, o); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); return o; };
+  await N.gate(r.email); const e = PL.efetivo(r), o = { at: Date.now(), email: r.email, nome: String(pf.nome || 'Pessoa').slice(0, 24), adm: N.isAdminEmail(r.email), teste: N.isTeste(r.email), uid: r.uid, lvl: e.lvl || 0, plano: e.n || '', pago: !!(e.pago || e.admin || e.contaTeste) }; OKS.set(k, o); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); return o; };
 const P = id => 'so/p/' + id;
 const COD = () => { const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let s = ''; const b = N.crypto.randomBytes(6); for (const x of b) s += A[x % A.length]; return s; };
 const perfil = async (id, nome) => { let { v } = await ler(P(id), null); if (v) return v;
@@ -62,7 +62,7 @@ const podeConv = async (eu, perf, cv) => { if (!cv) throw N.err('conversa', 'Con
 const msgs = async (k, desde) => { const out = []; for (const d of [dia(Date.now() - 864e5), dia()]) { const L = (await ler('so/m/' + k + '/' + d, [])).v || []; L.forEach(m => { if (!desde || m.at > desde) out.push(m); }); } return out.slice(-150); };
 /* ---------- clãs ---------- */
 const CL = cid => 'so/cl/' + cid;
-const claPub = c => ({ id: c.id, nome: c.nome, desc: c.desc, cor: c.cor, cod: c.cod, n: c.membros.length, membros: c.membros.map(m => ({ id: m.id, nome: m.nome, papel: m.papel })) });
+const claPub = c => ({ id: c.id, nome: c.nome, desc: c.desc, cor: c.cor, cod: c.cod, foto: c.foto || 0, vit: c.vit || 0, der: c.der || 0, vagas: vagas(c), n: c.membros.length, membros: c.membros.map(m => ({ id: m.id, nome: m.nome, papel: m.papel })) });
 /* ---------- ranking de animes ---------- */
 const PTS = 'so/pts.json';
 const somaPts = async (L) => mudar(PTS, {}, T => { L.forEach(([id, nome, p, x]) => { const o = T[id] = T[id] || { p: 0, nome }; o.p += p; o.nome = nome || o.nome; if (x) { if (x.user) o.user = x.user; if (x.av) o.av = x.av; } }); });
@@ -111,7 +111,9 @@ const fechar = async (P0, v0) => { const L = await N.store().list('so/hg/' + v0.
   for (const b of L) { const g = (await ler(b.pathname, null)).v; if (g) G.push(g); }
   const certos = G.filter(g => g.mal === v0.mal).sort((a, b) => a.at - b.at), res = certos.map((g, i) => ({ id: g.id, nome: g.nome, user: g.user || '', av: g.av || 0, at: g.at, pts: Math.max(10, 100 - 10 * i) }));
   let ganhei = false; const v = await mudar(P0, v0, o => { if (o.fechado) return false; o.fechado = true; o.res = res.slice(0, 100); o.total = G.length; ganhei = true; });
-  if (ganhei && res.length) await somaPts(res.map(r => [r.id, r.nome, r.pts, { user: r.user, av: r.av }])); return v; };
+  if (ganhei && res.length) { await somaPts(res.map(r => [r.id, r.nome, r.pts, { user: r.user, av: r.av }]));
+    await darVarios(res.slice(0, 3).map((r, i) => [r.id, { k: 'hu' + (i + 1) + ':' + v0.dia, n: i ? (i + 1) + '.º a acertar no Pursuit' : 'Primeiro a acertar no Pursuit', d: (v0.titulo || 'Anime do dia') + ' · ' + v0.dia.split('-').reverse().join('/'), kind: 'Medalha', lvl: LUG[i], cat: 'Pursuit', lugar: i + 1 }])).catch(() => { }); }
+  return v; };
 const hunterVer = async (eu) => { const { L, v } = await desafio(), abre = H_ABRE(), fecha = H_FECHA(), m = L.min;
   const fase = !v ? 'espera' : v.fechado ? 'fechado' : 'aberto', meu = v && eu ? (await ler('so/hg/' + v.dia + '/' + eu, null)).v : null;
   const visiveis = !v ? [] : v.fechado ? v.pistas : v.pistas.slice(0, Math.min(v.pistas.length, 3 + (m >= abre + 40 ? 1 : 0) + (m >= abre + 80 ? 1 : 0)));
@@ -123,9 +125,10 @@ const hunterVer = async (eu) => { const { L, v } = await desafio(), abre = H_ABR
 /* ---------- pedidos ---------- */
 const OPS = {
   async eu(c, b) { const v = await perfil(c.eu, c.nome), amigos = await Promise.all((v.amigos || []).map(pub)), pedidos = await Promise.all((v.pedidos || []).map(pub)), clas = [];
-    for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (cl) clas.push(claPub(cl)); }
+    for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (cl) clas.push(Object.assign(claPub(cl), gerente(cl, c.eu) ? { ped: (cl.pedidos || []).length, conv: (cl.convites || []).length } : {}, { gw: cl.guerra ? 1 : 0 })); }
+    const claPed = []; for (const cid of (v.claPed || []).slice(-10)) { const cl = (await ler(CL(cid), null)).v; if (cl && (cl.pedidos || []).some(x => x.id === c.eu)) claPed.push({ id: cid, nome: cl.nome, cor: cl.cor, foto: cl.foto || 0 }); }
     if (c.nome && v.nome !== c.nome) { v.nome = c.nome; await mudar(P(c.eu), null, p => { p.nome = c.nome; }).catch(() => { }); if (v.user || v.av) pubPts(c.eu, { nome: c.nome }).catch(() => { }); }
-    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas }; },
+    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas, claPed }; },
   async nome(c, b) { const n = String(b.nome || '').replace(/\s+/g, ' ').trim(); if (n.length < 2 || n.length > 24) throw N.err('nome', 'O nome tem de ter entre 2 e 24 letras.', 400);
     const m = await moderar(n); if (!m.ok) throw N.err('nome', 'Esse nome não pode ser usado: ' + m.motivo, 400); await perfil(c.eu, c.nome); await mudar(P(c.eu), null, v => { v.nome = n; }); return { ok2: true, nome: n }; },
   async amigoPedir(c, b) { const cod = String(b.cod || '').toUpperCase().replace(/^PR-?/, '').replace(/[^A-Z0-9]/g, ''); const g = await N.store().get('so/c/' + cod).catch(() => null); if (!g) throw N.err('amigo', 'Não encontrei ninguém com esse código.', 404);
@@ -149,19 +152,18 @@ const OPS = {
     const v = await perfil(c.eu, c.nome); if ((v.clas || []).length >= 5) throw N.err('cla', 'Já estás em 5 clãs, o máximo.', 400);
     const cid = N.crypto.randomBytes(5).toString('hex'); let cod = ''; for (let i = 0; i < 5 && !cod; i++) { const x = COD(); try { await N.store().put('so/cc/' + x, Buffer.from(JSON.stringify({ cid })), { overwrite: false }); cod = x; } catch (e) { } }
     const cl = { id: cid, nome, desc, cor, cod, dono: c.eu, membros: [{ id: c.eu, nome: v.nome, papel: 'dono', desde: Date.now() }], criado: Date.now() }; await gravar(CL(cid), cl, { overwrite: false });
-    await mudar(P(c.eu), null, p => { p.clas = [...new Set((p.clas || []).concat(cid))]; }); return { cla: claPub(cl) }; },
+    await mudar(P(c.eu), null, p => { p.clas = [...new Set((p.clas || []).concat(cid))]; }); await idxPor(cl).catch(() => { }); return { cla: claPub(cl) }; },
+  // v3.89: ninguém entra num clã sozinho: o código (ou a pesquisa) só envia um pedido, que o dono ou um moderador aceita
   async claEntrar(c, b) { const cod = String(b.cod || '').toUpperCase().replace(/^CL-?/, '').replace(/[^A-Z0-9]/g, ''); const g = await N.store().get('so/cc/' + cod).catch(() => null); if (!g) throw N.err('cla', 'Não encontrei nenhum clã com esse código.', 404);
-    const cid = JSON.parse(g.buf.toString()).cid, v = await perfil(c.eu, c.nome); if ((v.clas || []).length >= 5 && !(v.clas || []).includes(cid)) throw N.err('cla', 'Já estás em 5 clãs, o máximo.', 400);
-    const cl = await mudar(CL(cid), null, o => { if (o.membros.some(m => m.id === c.eu)) return false; if (o.membros.length >= 50) throw N.err('cla', 'Este clã está cheio (50 pessoas).', 400); if ((o.banidos || []).includes(c.eu)) throw N.err('cla', 'Não podes entrar neste clã.', 403); o.membros.push({ id: c.eu, nome: v.nome, papel: 'membro', desde: Date.now() }); });
-    await mudar(P(c.eu), null, p => { p.clas = [...new Set((p.clas || []).concat(cid))]; }); return { cla: claPub(cl) }; },
+    return pedirEntrar(c, JSON.parse(g.buf.toString()).cid); },
   async claSair(c, b) { const cid = String(b.id || ''); if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400);
     await mudar(CL(cid), null, o => { o.membros = o.membros.filter(m => m.id !== c.eu); if (o.dono === c.eu && o.membros.length) { o.dono = o.membros[0].id; o.membros[0].papel = 'dono'; } });
-    await mudar(P(c.eu), null, p => { p.clas = (p.clas || []).filter(x => x !== cid); }); return { ok2: true }; },
+    await mudar(P(c.eu), null, p => { p.clas = (p.clas || []).filter(x => x !== cid); }); await idxDe(cid); return { ok2: true }; },
   async claTirar(c, b) { const cid = String(b.id || ''), quem = String(b.membro || ''); if (!CID.test(cid) || !ID.test(quem)) throw N.err('cla', 'Pedido desconhecido.', 400);
     await mudar(CL(cid), null, o => { const eu = o.membros.find(m => m.id === c.eu); if (!eu || !['dono', 'mod'].includes(eu.papel) || quem === o.dono) throw N.err('cla', 'Só quem gere o clã pode tirar pessoas.', 403); o.membros = o.membros.filter(m => m.id !== quem); o.banidos = [...new Set((o.banidos || []).concat(quem))]; });
-    await mudar(P(quem), null, p => { p.clas = (p.clas || []).filter(x => x !== cid); }).catch(() => { }); return { ok2: true }; },
+    await mudar(P(quem), null, p => { p.clas = (p.clas || []).filter(x => x !== cid); }).catch(() => { }); await idxDe(cid); return { ok2: true }; },
   async claVer(c, b) { const cid = String(b.id || ''); const cl = CID.test(cid) && (await ler(CL(cid), null)).v; if (!cl || !cl.membros.some(m => m.id === c.eu)) throw N.err('cla', 'Não és membro deste clã.', 403);
-    const T = (await ler(PTS, {})).v || {}, r = claPub(cl); r.membros = r.membros.map(m => Object.assign(m, { pts: (T[m.id] || {}).p || 0, user: (T[m.id] || {}).user || '', av: (T[m.id] || {}).av || 0 })).sort((a, b2) => b2.pts - a.pts); r.pts = r.membros.reduce((s, m) => s + m.pts, 0); return { cla: r }; },
+    const T = (await ler(PTS, {})).v || {}, r = claPub(cl); r.membros = r.membros.map(m => Object.assign(m, { pts: (T[m.id] || {}).p || 0, user: (T[m.id] || {}).user || '', av: (T[m.id] || {}).av || 0 })).sort((a, b2) => b2.pts - a.pts); r.pts = r.membros.reduce((s, m) => s + m.pts, 0); return { cla: Object.assign(r, await claExtra(c, cl, T)) }; },
   async conversas(c, b) { const v = await perfil(c.eu, c.nome), out = [];
     for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (!cl) continue; const k = 'c-' + cid, u = (await ler('so/u/' + k, null)).v; out.push({ conv: k, tipo: 'c', nome: cl.nome, cor: cl.cor, ult: u, novas: u && u.at > ((v.lidas || {})[k] || 0) && u.de !== c.eu }); }
     for (const a of v.amigos || []) { const k = 'd-' + [c.eu, a].sort().join('~'), u = (await ler('so/u/' + k, null)).v, p = await pub(a); out.push({ conv: 'd-' + a, tipo: 'd', nome: p.nome, ult: u, novas: u && u.at > ((v.lidas || {})[k] || 0) && u.de !== c.eu }); }
@@ -188,24 +190,203 @@ const OPS = {
     if (/^a-\d+$/.test(d.conv)) await mudar(CA(d.conv.slice(2)), { L: [], gl: [] }, o => { const i = o.L.findIndex(x => x.id === d.mid); if (i < 0) return false; o.L.splice(i, 1); }).catch(() => { });
     for (const dd of [dia(Date.now() - 864e5), dia()]) await mudar('so/m/' + d.conv + '/' + dd, [], L => { const i = L.findIndex(x => x.id === d.mid); if (i < 0) return false; L.splice(i, 1); }).catch(() => { });
     if (b.mudo) await mudar(P(d.de), null, p => { p.mudo = Date.now() + 7 * 864e5; }).catch(() => { }); await N.store().del(['so/den/' + ref]); return { ok2: true }; },
-  async rankAnime(c, b) { const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).map(([id, o]) => ({ id, nome: o.nome, p: o.p, user: o.user || '', av: o.av || 0, cl: o.cl || '' })).sort((a, b2) => b2.p - a.p); const i = L.findIndex(x => x.id === c.eu);
+  async rankAnime(c, b) { await mesFechar().catch(() => { }); const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).map(([id, o]) => ({ id, nome: o.nome, p: o.p, user: o.user || '', av: o.av || 0, cl: o.cl || '' })).sort((a, b2) => b2.p - a.p); const i = L.findIndex(x => x.id === c.eu);
     return { lista: L.slice(0, 100).map((x, k) => Object.assign(x, { pos: k + 1, eu: x.id === c.eu })), eu: i >= 0 ? Object.assign({ pos: i + 1 }, L[i]) : null, total: L.length }; },
   async hunter(c, b) { return { hunter: await hunterVer(c.eu) }; },
   async hunterMarcar(c, b) { const { L, v } = await desafio(); if (!v || v.fechado) throw N.err('hunter', v ? 'O Pursuit de hoje já fechou.' : 'O Pursuit de hoje ainda não começou (20h).', 400);
     const mal = String(b.mal || '').replace(/\D/g, ''); if (!mal) throw N.err('hunter', 'Anime desconhecido.', 400); const v0 = await perfil(c.eu, c.nome);
     try { await gravar('so/hg/' + v.dia + '/' + c.eu, { id: c.eu, nome: v0.nome, user: v0.user || '', av: v0.av || 0, mal, titulo: String(b.titulo || '').slice(0, 120), at: Date.now() }, { overwrite: false }); } catch (e) { if (e.code === 'exists' || e.status === 409 || /exist|precondition/i.test(e.message || '')) throw N.err('hunter', 'Já marcaste o teu Pursuit de hoje.', 409); throw e; }
     return { ok2: true, hunter: await hunterVer(c.eu) }; } };
+/* ---------- v3.89 · clãs: pedidos para entrar, foto, pesquisa, ranking de clãs e guerra de clãs ---------- */
+const IDX = 'so/clidx.json', GW = wid => 'so/gw/' + wid, WID = /^[a-f0-9]{10}$/, DIA = 864e5;
+const gerente = (cl, eu) => { const m = (cl.membros || []).find(x => x.id === eu); return !!m && ['dono', 'mod'].includes(m.papel); };
+const idxPor = async cl => { await idxLer(); return mudar(IDX, {}, X => { X[cl.id] = { nome: cl.nome, desc: cl.desc || '', cor: cl.cor, foto: cl.foto || 0, vit: cl.vit || 0, m: cl.membros.map(x => x.id) }; }); };
+const idxDe = async cid => { try { const cl = (await ler(CL(cid), null)).v; if (cl && cl.membros.length) await idxPor(cl); else await mudar(IDX, {}, X => { if (!X[cid]) return false; delete X[cid]; }); } catch (e) { } };
+// o índice (para pesquisar) faz-se sozinho a primeira vez, com os clãs que já existiam
+const idxLer = async () => { let X = (await ler(IDX, null)).v; if (X) return X; X = {}; try { const L = (await N.store().list('so/cl/')).slice(0, 800); for (const it of L) { const cl = (await ler(it.pathname, null)).v; if (cl && cl.membros && cl.membros.length) X[cl.id] = { nome: cl.nome, desc: cl.desc || '', cor: cl.cor, foto: cl.foto || 0, vit: cl.vit || 0, m: cl.membros.map(x => x.id) }; } } catch (e) { } await gravar(IDX, X).catch(() => { }); return X; };
+const somaCla = (e, T) => (e.m || []).reduce((t, id) => t + ((T[id] || {}).p || 0), 0);
+const pedirEntrar = async (c, cid) => { if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400); const v = await perfil(c.eu, c.nome);
+  if ((v.clas || []).includes(cid)) throw N.err('cla', 'Já estás neste clã.', 400); if ((v.clas || []).length >= 5) throw N.err('cla', 'Já estás em 5 clãs, o máximo.', 400);
+  const cl = await mudar(CL(cid), null, o => { if (!o) throw N.err('cla', 'Clã desconhecido.', 404); if (o.membros.some(m => m.id === c.eu)) return false; if ((o.banidos || []).includes(c.eu)) throw N.err('cla', 'Não podes entrar neste clã.', 403);
+    if (o.membros.length >= vagas(o)) throw N.err('cla', 'Este clã está cheio (' + vagas(o) + ' vagas). Quem é do clã pode comprar mais vagas com Selos.', 400); o.pedidos = (o.pedidos || []).filter(x => x.id !== c.eu); if (o.pedidos.length >= 60) throw N.err('cla', 'Este clã tem muitos pedidos à espera. Tenta mais tarde.', 429);
+    o.pedidos.push({ id: c.eu, nome: v.nome, user: v.user || '', av: v.av || 0, at: Date.now() }); });
+  await mudar(P(c.eu), null, p => { if (!p) return false; p.claPed = [...new Set((p.claPed || []).concat(cid))].slice(-20); }).catch(() => { });
+  return { pedido: true, cla: { id: cl.id, nome: cl.nome, cor: cl.cor, foto: cl.foto || 0 } }; };
+OPS.claPedir = async (c, b) => pedirEntrar(c, String(b.id || ''));
+OPS.claCancelar = async (c, b) => { const cid = String(b.id || ''); if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400);
+  await mudar(CL(cid), null, o => { if (!o || !(o.pedidos || []).some(x => x.id === c.eu)) return false; o.pedidos = o.pedidos.filter(x => x.id !== c.eu); }); await mudar(P(c.eu), null, p => { if (!p) return false; p.claPed = (p.claPed || []).filter(x => x !== cid); }); return { ok2: true }; };
+// o dono ou um moderador aceita ou recusa cada pedido
+OPS.claResponder = async (c, b) => { const cid = String(b.id || ''), quem = String(b.quem || ''), sim = !!b.sim; if (!CID.test(cid) || !ID.test(quem)) throw N.err('cla', 'Pedido desconhecido.', 400);
+  const pv = (await ler(P(quem), null)).v; let cheio5 = sim && pv && (pv.clas || []).length >= 5 && !(pv.clas || []).includes(cid);
+  const cl = await mudar(CL(cid), null, o => { if (!o || !gerente(o, c.eu)) throw N.err('cla', 'Só quem gere o clã pode responder aos pedidos.', 403); const pd = (o.pedidos || []).find(x => x.id === quem); if (!pd) return false;
+    o.pedidos = o.pedidos.filter(x => x.id !== quem); if (sim && !cheio5) { if (o.membros.length >= vagas(o)) throw N.err('cla', 'O clã está cheio (' + vagas(o) + ' vagas). Reforça o clã com Selos para aceitar mais pessoas.', 400); if (!o.membros.some(m => m.id === quem)) o.membros.push({ id: quem, nome: pd.nome, papel: 'membro', desde: Date.now() }); } });
+  await mudar(P(quem), null, p => { if (!p) return false; p.claPed = (p.claPed || []).filter(x => x !== cid); if (sim && !cheio5) p.clas = [...new Set((p.clas || []).concat(cid))]; }).catch(() => { });
+  if (cl) await idxPor(cl).catch(() => { }); if (cheio5) throw N.err('cla', 'Esta pessoa já está em 5 clãs, o máximo. O pedido foi retirado.', 400); return { ok2: true, entrou: sim }; };
+OPS.claMod = async (c, b) => { const cid = String(b.id || ''), quem = String(b.quem || ''); if (!CID.test(cid) || !ID.test(quem)) throw N.err('cla', 'Pedido desconhecido.', 400);
+  await mudar(CL(cid), null, o => { if (!o || o.dono !== c.eu) throw N.err('cla', 'Só o dono escolhe os moderadores.', 403); const m = o.membros.find(x => x.id === quem); if (!m || m.papel === 'dono') return false; m.papel = m.papel === 'mod' ? 'membro' : 'mod'; }); return { ok2: true }; };
+// a foto do clã (dono ou moderador); a IA verifica sempre antes de entrar
+OPS.claFoto = async (c, b) => { const cid = String(b.id || ''); if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400); const cl0 = (await ler(CL(cid), null)).v; if (!cl0 || !gerente(cl0, c.eu)) throw N.err('cla', 'Só quem gere o clã pode mudar a foto.', 403);
+  if (b.apagar) { await N.store().del([imgP('cla', cid)]).catch(() => { }); const cl = await mudar(CL(cid), null, o => { o.foto = 0; }); await idxPor(cl).catch(() => { }); return { foto: 0 }; }
+  const s64 = String(b.b64 || ''); if (!/^[A-Za-z0-9+/=]{400,}$/.test(s64) || s64.length > 140e3 * 1.37) throw N.err('img', 'A imagem é grande demais ou não é válida.', 400);
+  const buf = Buffer.from(s64, 'base64'); if (buf[0] !== 0xFF || buf[1] !== 0xD8) throw N.err('img', 'Envia uma imagem (JPEG).', 400); await verImg(s64);
+  await N.store().put(imgP('cla', cid), buf); const ver = Date.now(), cl = await mudar(CL(cid), null, o => { o.foto = ver; }); await idxPor(cl).catch(() => { }); return { foto: ver }; };
+// procurar clãs (pelo nome ou pela descrição); sem texto, os maiores e mais fortes
+OPS.claBuscar = async (c, b) => { const q = norm(String(b.q || '').trim()).slice(0, 40), X = await idxLer(), T = (await ler(PTS, {})).v || {}, v = await perfil(c.eu, c.nome);
+  const L = Object.entries(X).filter(([, e]) => !q || norm(e.nome + ' ' + e.desc).includes(q)).map(([id, e]) => ({ id, nome: e.nome, desc: e.desc, cor: e.cor, foto: e.foto || 0, vit: e.vit || 0, n: (e.m || []).length, pts: somaCla(e, T), membro: (v.clas || []).includes(id), pedi: (v.claPed || []).includes(id) }))
+    .sort((a, b2) => (q ? 0 : b2.pts - a.pts) || b2.n - a.n).slice(0, 40); return { clas: L }; };
+OPS.claRanking = async (c, b) => { const X = await idxLer(), T = (await ler(PTS, {})).v || {}, v = await perfil(c.eu, c.nome);
+  const L = Object.entries(X).map(([id, e]) => ({ id, nome: e.nome, cor: e.cor, foto: e.foto || 0, vit: e.vit || 0, n: (e.m || []).length, pts: somaCla(e, T), meu: (v.clas || []).includes(id) })).filter(x => x.n).sort((a, b2) => b2.pts - a.pts || b2.vit - a.vit); return { clas: L.slice(0, 50), total: L.length }; };
+// guerra de clãs: um clã desafia outro; se aceitar, durante 7 dias contam os pontos que os membros de cada um ganham nos jogos e desafios dos Animes
+const pPts = (T, id) => (T[id] || {}).p || 0;
+const placar = (w, T) => { const lado = base => Object.entries(base || {}).map(([id, p0]) => ({ id, d: Math.max(0, pPts(T, id) - p0), nome: ((T[id] || {}).nome) || (w.nomes || {})[id] || 'Alguém' })).sort((x, y) => y.d - x.d);
+  const A = lado(w.baseA), B = lado(w.baseB), top = L => L.filter(x => x.d > 0).slice(0, 5).map(x => ({ nome: x.nome, pts: x.d }));
+  return { sA: A.reduce((t, x) => t + x.d, 0), sB: B.reduce((t, x) => t + x.d, 0), topA: top(A), topB: top(B) }; };
+const BONUS_VIT = 50, BONUS_EMP = 20, GDUR = () => +process.env.NAUTILO_GUERRA_SEG > 0 ? +process.env.NAUTILO_GUERRA_SEG * 1000 : 7 * DIA;   // a guerra dura 7 dias (os testes encurtam)
+// acaba a guerra quando passa o fim (uma só vez): vitória ou empate, bónus de pontos para quem jogou e o histórico dos dois clãs
+const gwFechar = async w => { if (w.estado !== 'ativa' || Date.now() < w.fim) return w; const T = (await ler(PTS, {})).v || {}, pl = placar(w, T); let feito = false;
+  const w2 = await mudar(GW(w.id), null, o => { if (!o || o.estado !== 'ativa') return false; o.estado = 'fim'; o.res = { sA: pl.sA, sB: pl.sB, venc: pl.sA > pl.sB ? 'a' : pl.sB > pl.sA ? 'b' : 'empate', topA: pl.topA, topB: pl.topB }; feito = true; });
+  if (!feito) return (await ler(GW(w.id), null)).v || w; const r = w2.res;
+  for (const [lado, cid] of [['a', w.a], ['b', w.b]]) { const cl = await mudar(CL(cid), null, o => { if (!o) return false; if (o.guerra === w.id) o.guerra = ''; o.hist = [w.id].concat((o.hist || []).filter(x => x !== w.id)).slice(0, 10); if (r.venc === 'empate') o.emp = (o.emp || 0) + 1; else if (r.venc === lado) o.vit = (o.vit || 0) + 1; else o.der = (o.der || 0) + 1; }).catch(() => null); if (cl) await idxPor(cl).catch(() => { }); }
+  const premio = r.venc === 'empate' ? BONUS_EMP : BONUS_VIT, quem = r.venc === 'empate' ? Object.keys(w.baseA || {}).concat(Object.keys(w.baseB || {})) : Object.keys((r.venc === 'a' ? w.baseA : w.baseB) || {});
+  if (quem.length) await somaPts(quem.map(id => [id, (T[id] || {}).nome || 'Alguém', premio])).catch(() => { });
+  // as medalhas da guerra: vitória para o clã que ganhou, MVP para quem mais pontuou nele, empate, e "lutou" para quem pontuou no clã que perdeu
+  const delta = base => Object.entries(base || {}).map(([id, p0]) => [id, Math.max(0, pPts(T, id) - p0)]), placarTxt = `${w.nA} ${r.sA} – ${r.sB} ${w.nB}`, M = [];
+  if (r.venc === 'empate') delta(w.baseA).concat(delta(w.baseB)).filter(([, d]) => d > 0).forEach(([id]) => M.push([id, { k: 'gwe:' + w.id, n: 'Empate na guerra de clãs', d: placarTxt, kind: 'Medalha', lvl: 'Prata', cat: 'Clãs' }]));
+  else { const V = delta(r.venc === 'a' ? w.baseA : w.baseB), Pd = delta(r.venc === 'a' ? w.baseB : w.baseA), mvp = V.slice().sort((x, y) => y[1] - x[1])[0];
+    V.forEach(([id]) => M.push([id, { k: 'gwv:' + w.id, n: 'Vitória na guerra de clãs', d: placarTxt, kind: 'Troféu', lvl: 'Ouro', cat: 'Clãs' }]));
+    if (mvp && mvp[1] > 0) M.push([mvp[0], { k: 'gwm:' + w.id, n: 'MVP da guerra de clãs', d: placarTxt + ' · ' + mvp[1] + ' pontos', kind: 'Distinção', lvl: 'Platina', cat: 'Clãs' }]);
+    Pd.filter(([, d]) => d > 0).forEach(([id]) => M.push([id, { k: 'gwl:' + w.id, n: 'Lutou na guerra de clãs', d: placarTxt, kind: 'Medalha', lvl: 'Participação', cat: 'Clãs' }])); }
+  await darVarios(M).catch(() => { }); return w2; };
+const gwLer = async wid => { if (!WID.test(String(wid || ''))) return null; let w = (await ler(GW(wid), null)).v; if (!w) return null; if (w.estado === 'proposta' && Date.now() - w.criada > 2 * DIA) w.estado = 'expirou'; return gwFechar(w); };
+const gwPub = (w, T, eu, meus) => { const pl = w.estado === 'ativa' ? placar(w, T) : w.res ? { sA: w.res.sA, sB: w.res.sB, topA: w.res.topA || [], topB: w.res.topB || [] } : { sA: 0, sB: 0, topA: [], topB: [] };
+  return { id: w.id, estado: w.estado, a: w.a, b: w.b, nA: w.nA, nB: w.nB, cA: w.cA, cB: w.cB, criada: w.criada, ini: w.ini || 0, fim: w.fim || 0, sA: pl.sA, sB: pl.sB, topA: pl.topA, topB: pl.topB, venc: (w.res || {}).venc || '', meu: (meus || []).includes(w.a) ? 'a' : (meus || []).includes(w.b) ? 'b' : '' }; };
+const ocupado = async wid => { const w = await gwLer(wid); return !!w && (w.estado === 'ativa' || w.estado === 'proposta'); };
+OPS.claDesafiar = async (c, b) => { const cid = String(b.id || ''), alvo = String(b.alvo || ''); if (!CID.test(cid) || !CID.test(alvo) || cid === alvo) throw N.err('guerra', 'Escolhe outro clã para desafiar.', 400);
+  const A = (await ler(CL(cid), null)).v, B = (await ler(CL(alvo), null)).v; if (!A || !B) throw N.err('guerra', 'Clã desconhecido.', 404); if (!gerente(A, c.eu)) throw N.err('guerra', 'Só quem gere o clã pode desafiar outro clã.', 403);
+  if (A.guerra && await ocupado(A.guerra)) throw N.err('guerra', 'O teu clã já está numa guerra (ou tem um desafio à espera).', 400); if (B.guerra && await ocupado(B.guerra)) throw N.err('guerra', 'Esse clã já está numa guerra.', 400);
+  if ((B.convites || []).length >= 5) throw N.err('guerra', 'Esse clã já tem muitos desafios à espera.', 429);
+  const wid = N.crypto.randomBytes(5).toString('hex'), w = { id: wid, a: cid, b: alvo, nA: A.nome, nB: B.nome, cA: A.cor, cB: B.cor, estado: 'proposta', criada: Date.now(), por: c.eu };
+  await gravar(GW(wid), w, { overwrite: false }); await mudar(CL(cid), null, o => { o.guerra = wid; }); await mudar(CL(alvo), null, o => { o.convites = [...new Set((o.convites || []).concat(wid))].slice(-5); });
+  return { guerra: gwPub(w, {}, c.eu, [cid]) }; };
+OPS.claGuerraResp = async (c, b) => { const w = await gwLer(String(b.wid || '')); if (!w) throw N.err('guerra', 'Desafio desconhecido.', 404); if (w.estado !== 'proposta') throw N.err('guerra', w.estado === 'expirou' ? 'O desafio expirou (passaram 2 dias).' : 'Este desafio já não está à espera de resposta.', 400);
+  const B = (await ler(CL(w.b), null)).v, A = (await ler(CL(w.a), null)).v; if (!B || !gerente(B, c.eu)) throw N.err('guerra', 'Só quem gere o clã desafiado pode responder.', 403);
+  if (b.sim) { if (B.guerra && B.guerra !== w.id && await ocupado(B.guerra)) throw N.err('guerra', 'O teu clã já está noutra guerra.', 400); const T = (await ler(PTS, {})).v || {}, base = cl => Object.fromEntries(((cl || {}).membros || []).map(m => [m.id, pPts(T, m.id)]));
+    const ini = Date.now(); await mudar(GW(w.id), null, o => { if (o.estado !== 'proposta') return false; o.estado = 'ativa'; o.ini = ini; o.fim = ini + GDUR(); o.baseA = base(A); o.baseB = base(B); o.nomes = Object.fromEntries([].concat((A || {}).membros || [], (B || {}).membros || []).map(m => [m.id, m.nome])); });
+    await mudar(CL(w.b), null, o => { o.guerra = w.id; o.convites = (o.convites || []).filter(x => x !== w.id); }); }
+  else { await mudar(GW(w.id), null, o => { if (o.estado !== 'proposta') return false; o.estado = 'recusada'; }); await mudar(CL(w.a), null, o => { if (o.guerra === w.id) o.guerra = ''; }); await mudar(CL(w.b), null, o => { o.convites = (o.convites || []).filter(x => x !== w.id); }); }
+  const w2 = await gwLer(w.id), v = await perfil(c.eu, c.nome); return { guerra: gwPub(w2, (await ler(PTS, {})).v || {}, c.eu, v.clas || []) }; };
+OPS.claGuerra = async (c, b) => { const w = await gwLer(String(b.wid || '')); if (!w) throw N.err('guerra', 'Guerra desconhecida.', 404); const v = await perfil(c.eu, c.nome); if (![w.a, w.b].some(x => (v.clas || []).includes(x))) throw N.err('guerra', 'Só os membros dos dois clãs veem esta guerra.', 403);
+  return { guerra: gwPub(w, (await ler(PTS, {})).v || {}, c.eu, v.clas || []) }; };
+// o que o ecrã do clã mostra a mais: pedidos (a quem gere), desafios recebidos, a guerra e as últimas guerras
+const claExtra = async (c, cl, T) => { const ge = gerente(cl, c.eu), meus = [cl.id], out = { gere: ge, dono: cl.dono === c.eu, emp: cl.emp || 0, pedidos: ge ? (cl.pedidos || []).map(p => ({ id: p.id, nome: p.nome, user: p.user || '', av: p.av || 0, at: p.at })) : [], convites: [], guerra: null, hist: [], extra: cl.extra || 0, ref: (cl.ref || []).slice().sort((x, y) => y.n - x.n).slice(0, 8).map(r => ({ nome: r.nome, n: r.n })) };
+  for (const wid of (cl.convites || [])) { const w = await gwLer(wid); if (w && w.estado === 'proposta') out.convites.push(gwPub(w, T, c.eu, meus)); }
+  if (cl.guerra) { const w = await gwLer(cl.guerra); if (w && (w.estado === 'ativa' || w.estado === 'proposta' || (w.estado === 'fim' && Date.now() - w.fim < 3 * DIA))) out.guerra = gwPub(w, T, c.eu, meus);
+    // se a guerra acabou agora, o clã mudou (vitórias, derrotas, histórico): lê-se outra vez
+    if (w && w.estado !== 'ativa' && w.estado !== 'proposta') { const f = (await ler(CL(cl.id), null)).v; if (f) { cl = f; Object.assign(out, { vit: f.vit || 0, der: f.der || 0, emp: f.emp || 0 }); } } }
+  for (const wid of (cl.hist || []).slice(0, 5)) { const w = (await ler(GW(wid), null)).v; if (w && w.res) out.hist.push(gwPub(w, T, c.eu, meus)); }
+  if (!out.guerra && out.hist[0] && Date.now() - (out.hist[0].fim || 0) < 3 * DIA) out.guerra = out.hist[0]; return out; };
+/* ---------- v3.89 · Selos: a moeda do Prumo. Compram-se no Stripe (pagamento único) e os planos pagos dão alguns todos os meses.
+   Gastam-se no app: reforços de vagas para um clã e a foto e o fundo animados no perfil. Cada perfil tem a sua carteira. Os Selos do plano
+   são dados uma só vez, no primeiro mês da assinatura, e por conta (o primeiro perfil que abrir a carteira recebe-os), para não se multiplicarem
+   pelos perfis; quem sobe de plano recebe só a diferença. Não valem dinheiro e não se trocam. ---------- */
+const W = id => 'so/w/' + id, BONUS = new Map();
+const SELOS = { pacotes: [{ id: 's100', n: 100, b: 0, EUR: 99, BRL: 490 }, { id: 's550', n: 500, b: 50, EUR: 499, BRL: 2490 }, { id: 's1200', n: 1000, b: 200, EUR: 999, BRL: 4990 }, { id: 's2600', n: 2000, b: 600, EUR: 1999, BRL: 9990 }],
+  mes: { 1: 0, 2: 200, 3: 500 }, reforco: 200, vagasRef: 10, animado: 500 };
+const VB = () => Math.max(1, Math.round(+process.env.NAUTILO_VAGAS_BASE) || 20), VAGAS_MAX = 200, vagas = cl => Math.min(VAGAS_MAX, VB() + ((cl && cl.extra) || 0));
+const wPub = w => ({ s: w.s || 0, anim: !!w.anim, mov: (w.mov || []).slice(0, 30) });
+const movAdd = (w, v, d) => { w.s = (w.s || 0) + v; w.mov = [{ v, d: String(d).slice(0, 90), at: Date.now() }].concat(w.mov || []).slice(0, 60); };
+const mesK = () => lisboa(Date.now()).d.slice(0, 7);
+// os Selos do plano: só nos planos pagos (não no teste grátis nem em ofertas, para ninguém juntar Selos com contas novas), uma vez por conta
+const mensal = async c => { const n = c.pago ? SELOS.mes[c.lvl] || 0 : 0; if (!n || !c.uid || (BONUS.get(c.uid) || 0) >= n) return 0; let delta = 0;
+  await mudar('so/wb/' + c.uid, { dado: 0 }, o => { if ((o.dado || 0) >= n) return false; delta = n - (o.dado || 0); o.dado = n; o.at = Date.now(); o.por = c.eu; }); BONUS.set(c.uid, n);
+  if (delta) await mudar(W(c.eu), {}, w => movAdd(w, delta, 'Selos de boas-vindas do plano ' + (c.plano || ''))); return delta; };
+const prodSelos = async () => { const k = 'so/cfg/selos-' + PL.modo(), g = (await ler(k, null)).v; if (g && g.id) return g.id;
+  const p = await PL.stripe('products', { name: 'Prumo · Selos', metadata: { app: 'prumo', tipo: 'selos' } }); await gravar(k, { id: p.id }).catch(() => { }); return p.id; };
+const voltaDe = (req, v) => { const o = String(req.headers.origin || ''), h = /^https?:\/\/[^/]+$/.test(o) ? o : 'https://' + String(req.headers['x-forwarded-host'] || req.headers.host || 'prumo-vida.vercel.app').split(',')[0].trim();
+  const x = String(v || ''); return x && x.startsWith(h + '/') && x.length < 300 && !/[#?\s]/.test(x) ? x : h + '/'; };
+// credita uma compra uma só vez (o id do pagamento fica guardado na carteira)
+const creditar = async (eu, ses) => { const m = (ses && ses.metadata) || {}; if (!ses || ses.status !== 'complete' || ses.payment_status !== 'paid' || m.tipo !== 'selos' || m.eu !== eu) return 0;
+  const n = Math.max(0, Math.min(1e5, Math.round(+m.n || 0))); let dado = 0;
+  await mudar(W(eu), {}, w => { w.cs = w.cs || []; if (w.cs.includes(ses.id)) { if (!(w.pend || []).some(p => p.id === ses.id)) return false; w.pend = w.pend.filter(p => p.id !== ses.id); return; }
+    w.cs = [ses.id].concat(w.cs).slice(0, 200); w.pend = (w.pend || []).filter(p => p.id !== ses.id); movAdd(w, n, 'Compra de ' + n + ' Selos'); dado = n; });
+  if (dado) N.count('selos:compra'); return dado; };
+const carteira = async c => { await mensal(c).catch(() => { }); let w = (await ler(W(c.eu), {})).v || {};
+  // um pagamento que ficou a meio (a pessoa fechou a página do Stripe antes de voltar): confere-se aqui
+  if ((w.pend || []).length && PL.cobranca()) { for (const p of w.pend.slice(0, 3)) { try { const ses = await PL.stripe('checkout/sessions/' + p.id, null, 'GET');
+      if (ses.status === 'complete') await creditar(c.eu, ses); else if (ses.status === 'expired' || Date.now() - p.at > 2 * DIA) await mudar(W(c.eu), {}, x => { x.pend = (x.pend || []).filter(y => y.id !== p.id); }); } catch (e) { } }
+    w = (await ler(W(c.eu), {})).v || {}; }
+  return { carteira: wPub(w), loja: { cobranca: PL.cobranca(), pacotes: SELOS.pacotes.map(x => ({ id: x.id, n: x.n, b: x.b, EUR: x.EUR, BRL: x.BRL })), bonus: c.pago ? SELOS.mes[c.lvl] || 0 : 0, plano: c.plano || '', planoBonus: { avancado: SELOS.mes[2], completo: SELOS.mes[3] } },
+    custos: { reforco: SELOS.reforco, vagas: SELOS.vagasRef, animado: SELOS.animado }, animado: c.lvl >= 2 || !!c.adm || !!w.anim }; };
+const gastar = async (eu, v, d, extra) => mudar(W(eu), {}, w => { if ((w.s || 0) < v) throw N.err('selos', `Precisas de ${v} Selos e tens ${w.s || 0}.`, 402); movAdd(w, -v, d); if (extra) extra(w); });
+const devolver = (eu, v, d) => mudar(W(eu), {}, w => movAdd(w, v, d)).catch(() => { });
+OPS.carteira = async c => carteira(c);
+OPS.selosComprar = async (c, b, req) => { if (!PL.cobranca()) throw N.err('cobranca', 'A compra de Selos ainda não está aberta.', 503);
+  const pk = SELOS.pacotes.find(x => x.id === b.pac); if (!pk) throw N.err('selos', 'Escolhe um pacote de Selos.', 400);
+  if (N.limit(req, 'selos|' + c.eu, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
+  const brl = String(b.cur || '').toUpperCase() === 'BRL' && PL.brasil(req), volta = voltaDe(req, b.volta), total = pk.n + pk.b;
+  let ses; try { ses = await PL.stripe('checkout/sessions', { mode: 'payment', client_reference_id: c.eu.slice(0, 200), customer_email: c.email, locale: brl ? 'pt-BR' : 'pt',
+    success_url: volta + '#selos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#selos',
+    line_items: { 0: { quantity: 1, price_data: { currency: brl ? 'brl' : 'eur', unit_amount: brl ? pk.BRL : pk.EUR, product: await prodSelos() } } },
+    metadata: { app: 'prumo', tipo: 'selos', eu: c.eu, pac: pk.id, n: String(total) }, payment_intent_data: { description: 'Prumo · ' + total + ' Selos', metadata: { app: 'prumo', tipo: 'selos', pac: pk.id } } }); }
+  catch (e) { if (e && e.stripe) { console.error('nautilo stripe selos', e.status || '', String(e.message || '').slice(0, 200)); throw N.err('stripe', 'O pagamento não abriu agora. Tenta daqui a pouco.', 502); } throw e; }
+  await mudar(W(c.eu), {}, w => { w.pend = [{ id: ses.id, at: Date.now() }].concat(w.pend || []).slice(0, 5); }); return { url: ses.url }; };
+OPS.selosConfirmar = async (c, b) => { const sid = String(b.sid || ''); if (!/^cs_[A-Za-z0-9_]{6,200}$/.test(sid)) throw N.err('selos', 'Pagamento desconhecido.', 400); if (!PL.cobranca()) throw N.err('cobranca', 'A compra de Selos ainda não está aberta.', 503);
+  const ses = await PL.stripe('checkout/sessions/' + sid, null, 'GET'); if (((ses || {}).metadata || {}).eu !== c.eu) throw N.err('selos', 'Este pagamento não é deste perfil.', 403);
+  if (ses.status !== 'complete' || ses.payment_status !== 'paid') throw N.err('pendente', 'O pagamento ainda não foi concluído.', 409);
+  const n = await creditar(c.eu, ses); return Object.assign({ dados: n }, await carteira(c)); };
+// reforçar um clã: qualquer membro gasta Selos e o clã fica com mais vagas para sempre
+OPS.claReforco = async (c, b) => { const cid = String(b.id || ''); if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400); const cl0 = (await ler(CL(cid), null)).v;
+  if (!cl0 || !cl0.membros.some(m => m.id === c.eu)) throw N.err('cla', 'Só quem é do clã o pode reforçar.', 403); if (vagas(cl0) >= VAGAS_MAX) throw N.err('cla', 'Este clã já tem o máximo de vagas (' + VAGAS_MAX + ').', 400);
+  await gastar(c.eu, SELOS.reforco, 'Reforço do clã ' + cl0.nome + ' (+' + SELOS.vagasRef + ' vagas)');
+  try { const v = await perfil(c.eu, c.nome), cl = await mudar(CL(cid), null, o => { if (!o) throw N.err('cla', 'Clã desconhecido.', 404); o.extra = Math.min(VAGAS_MAX - VB(), (o.extra || 0) + SELOS.vagasRef);
+      o.ref = o.ref || []; const r = o.ref.find(x => x.id === c.eu); if (r) { r.n++; r.at = Date.now(); r.nome = v.nome; } else o.ref.push({ id: c.eu, nome: v.nome, n: 1, at: Date.now() }); });
+    await idxPor(cl).catch(() => { }); N.count('selos:reforco'); return { vagas: vagas(cl), carteira: wPub((await ler(W(c.eu), {})).v || {}) }; }
+  catch (e) { await devolver(c.eu, SELOS.reforco, 'Devolução: o reforço não foi aplicado'); throw e; } };
+// desbloquear a foto e o fundo animados (no Avançado e no Completo já vêm incluídos)
+OPS.perfilAnimado = async (c, b) => { const w0 = (await ler(W(c.eu), {})).v || {}; if (w0.anim || c.lvl >= 2 || c.adm) return { ja: true, animado: true, carteira: wPub(w0) };
+  await gastar(c.eu, SELOS.animado, 'Foto e fundo animados no perfil', w => { w.anim = Date.now(); }); N.count('selos:animado'); return { animado: true, carteira: wPub((await ler(W(c.eu), {})).v || {}) }; };
+const podeAnimar = async c => c.lvl >= 2 || !!c.adm || !!(((await ler(W(c.eu), {})).v || {}).anim);
+
+/* ---------- v3.89 · medalhas e troféus ganhos no Prumo (aparecem em Eu › Troféus e no perfil dos animes). O servidor dá-os sozinho:
+   guerra de clãs (vitória, MVP, empate, lutar), desafios dos animes (1.º, 2.º e 3.º da semana, semana perfeita), desafio da semana
+   (cumprir e os 3 primeiros), campeão do mês no ranking de animes e os 3 primeiros a acertar no Pursuit. ---------- */
+const MED_MAX = 300, PESO = { Platina: 0, Ouro: 1, Prata: 2, Bronze: 3, Mérito: 4, Participação: 5 };
+const medTopo = (L, n = 8) => L.slice().sort((a, b) => (a.kind === 'Troféu' || a.kind === 'Distinção' ? 0 : 1) - (b.kind === 'Troféu' || b.kind === 'Distinção' ? 0 : 1) || (PESO[a.lvl] ?? 9) - (PESO[b.lvl] ?? 9) || b.at - a.at).slice(0, n).map(m => medPub(m));
+const darMed = async (id, m) => { if (!ID.test(String(id || ''))) return; await mudar(P(id), null, p => { if (!p) return false; p.med = p.med || []; if (p.med.some(x => x.k === m.k)) return false;
+  p.med.unshift(Object.assign({ at: Date.now() }, m)); p.med = p.med.slice(0, MED_MAX); }).catch(() => { }); };
+const darVarios = async L => { for (let i = 0; i < L.length; i += 10) await Promise.all(L.slice(i, i + 10).map(([id, m]) => darMed(id, m))); };
+const LUG = ['Ouro', 'Prata', 'Bronze'];
+const medPub = m => ({ k: m.k, n: m.n, d: m.d || '', kind: m.kind || 'Medalha', lvl: m.lvl || 'Ouro', cat: m.cat || 'Prumo', lugar: m.lugar || 0, at: m.at || 0 });
+OPS.medalhas = async c => { const v = await perfil(c.eu, c.nome); return { med: (v.med || []).map(medPub) }; };
+// fecha uma semana dos desafios dos animes e do desafio da semana (uma só vez, na primeira visita da semana seguinte)
+const semFechar = async S => { const ant = semana(S.ini - 3600e3); try { await N.store().put('so/medsem/' + ant.k, Buffer.from('1'), { overwrite: false }); } catch (e) { return; }
+  const A = ((await ler('so/ands/' + ant.k, { T: {} })).v || {}).T || {}, R = Object.entries(A).filter(([, x]) => (x.pts || 0) > 0).sort((a, b) => (b[1].pts || 0) - (a[1].pts || 0) || (a[1].at || 0) - (b[1].at || 0)).slice(0, 3);
+  const D = ((await ler('so/ds/' + ant.k, { T: {} })).v || {}).T || {}, F = Object.entries(D).filter(([, x]) => x.at).sort((a, b) => a[1].at - b[1].at).slice(0, 3);
+  await darVarios(R.map(([id, x], i) => [id, { k: 'adsem' + (i + 1) + ':' + ant.k, n: (i + 1) + '.º lugar nos Desafios dos Animes', d: 'Semana ' + ant.k.split('-S')[1] + ' de ' + ant.k.slice(0, 4) + ' · ' + x.pts + ' pontos', kind: 'Troféu', lvl: LUG[i], cat: 'Desafios', lugar: i + 1 }])
+    .concat(F.map(([id], i) => [id, { k: 'dssem' + (i + 1) + ':' + ant.k, n: (i + 1) + '.º a cumprir o Desafio da semana', d: 'Semana ' + ant.k.split('-S')[1] + ' de ' + ant.k.slice(0, 4), kind: 'Troféu', lvl: LUG[i], cat: 'Desafios', lugar: i + 1 }]))); };
+// o campeão do mês no ranking de animes: os pontos ganhos nesse mês (a diferença entre o início deste mês e o do mês passado)
+let MES_OK = '';
+const mesFechar = async () => { const M = mesK(); if (MES_OK === M) return; const T = (await ler(PTS, {})).v || {}, base = Object.fromEntries(Object.entries(T).map(([id, o]) => [id, o.p || 0]));
+  try { await gravar('so/ptsmes/' + M, base, { overwrite: false }); } catch (e) { MES_OK = M; return; } MES_OK = M;
+  const [y, m] = M.split('-').map(Number), Mp = (m === 1 ? y - 1 : y) + '-' + String(m === 1 ? 12 : m - 1).padStart(2, '0'), B0 = (await ler('so/ptsmes/' + Mp, null)).v; if (!B0) return;
+  const NOMES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'], mes = NOMES[(m === 1 ? 12 : m - 1) - 1] + ' de ' + (m === 1 ? y - 1 : y);
+  const L = Object.entries(base).map(([id, p]) => [id, p - (B0[id] || 0)]).filter(([, d]) => d > 0).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  await darVarios(L.map(([id, d], i) => [id, { k: 'mes' + (i + 1) + ':' + Mp, n: i ? (i + 1) + '.º lugar do mês no ranking de animes' : 'Campeão do mês no ranking de animes', d: mes + ' · ' + d + ' pontos', kind: 'Troféu', lvl: LUG[i], cat: 'Ranking', lugar: i + 1 }])); };
 /* ---------- v3.75: perfil dos animes — o @ (escolhido uma vez, não muda), a foto e o fundo ---------- */
 const RESERV = /^(admin|administra|prumo|phantom|superanimes|suporte|equipa|staff|moderador|oficial|sistema)/;
 const imgP = (k, id) => 'so/img/' + k + '/' + id;
-const PEDIMG = `Esta imagem vai ser a foto ou o fundo de um perfil numa app para pessoas a partir dos 16 anos. Responde SÓ com JSON numa linha: {"ok":true} ou {"ok":false,"motivo":"<curto, em português de Portugal>"}. Bloqueia nudez ou conteúdo sexual, violência explícita, ódio (símbolos ou gestos), drogas e documentos ou dados pessoais visíveis. Permite fotos normais, personagens de anime, paisagens e arte.`;
-const iaImg = async b64 => { const env = k => String(process.env[k] || '').trim(), to = () => AbortSignal.timeout(9000);
-  try { if (env('NAUTILO_MOD_MOCK')) { const r = await fetch(env('NAUTILO_MOD_MOCK'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ img: 1, n: b64.length }), signal: to() }); return json1(await r.text()); }
+const PEDIMG = `Esta imagem vai ser a foto ou o fundo de um perfil, ou a foto de um clã (grupo), numa app para pessoas a partir dos 16 anos. Responde SÓ com JSON numa linha: {"ok":true} ou {"ok":false,"motivo":"<curto, em português de Portugal>"}. Bloqueia nudez ou conteúdo sexual, violência explícita, ódio (símbolos ou gestos), drogas e documentos ou dados pessoais visíveis. Permite fotos normais, personagens de anime, paisagens e arte.`;
+// v3.89: a IA analisa sempre as fotos (perfil, fundo e clã); se não der para verificar agora, a imagem não entra
+const verImg = async (s64, gif) => { const m = await iaImg(s64, gif); N.count('img:' + (m ? (m.ok ? 'ok' : 'barrada') : 'sem-ia'));
+  if (!m) throw N.err('img', 'Não deu para verificar a imagem agora. Tenta daqui a pouco.', 503); if (m.ok === false) throw N.err('img', 'Esta imagem não pode ser usada: ' + String(m.motivo || 'não cumpre as regras').slice(0, 120), 400); };
+const PEDGIF = `As imagens seguintes são grelhas com quadros de uma imagem animada (GIF) que vai ser a foto ou o fundo de um perfil numa app para pessoas a partir dos 16 anos. Vê TODOS os quadros: se QUALQUER um tiver nudez ou conteúdo sexual, violência explícita, ódio (símbolos ou gestos), drogas ou documentos e dados pessoais visíveis, bloqueia. Responde SÓ com JSON numa linha: {"ok":true} ou {"ok":false,"motivo":"<curto, em português de Portugal>"}. Permite animações normais, personagens de anime, paisagens e arte.`;
+const iaImg = async (b64, gif) => { const env = k => String(process.env[k] || '').trim(), to = () => AbortSignal.timeout(gif ? 20000 : 9000), L = gif ? b64.map(d => ({ d, mt: 'image/png' })) : [{ d: b64, mt: 'image/jpeg' }], PED = gif ? PEDGIF : PEDIMG;
+  try { if (env('NAUTILO_MOD_MOCK')) { const r = await fetch(env('NAUTILO_MOD_MOCK'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ img: 1, n: L.reduce((t, x) => t + x.d.length, 0), gif: !!gif, q: L.length }), signal: to() }); return json1(await r.text()); }
     if (env('ANTHROPIC_API_KEY')) { const r = await fetch((env('ANTHROPIC_BASE_URL') || 'https://api.anthropic.com') + '/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': env('ANTHROPIC_API_KEY'), 'anthropic-version': '2023-06-01' }, signal: to(),
-        body: JSON.stringify({ model: env('NAUTILO_MOD_MODEL') || 'claude-haiku-5-5', max_tokens: 80, messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } }, { type: 'text', text: PEDIMG }] }] }) });
+        body: JSON.stringify({ model: env('NAUTILO_MOD_MODEL') || 'claude-haiku-5-5', max_tokens: 80, messages: [{ role: 'user', content: L.map(x => ({ type: 'image', source: { type: 'base64', media_type: x.mt, data: x.d } })).concat({ type: 'text', text: PED }) }] }) });
       if (r.ok) { const j = await r.json(); const o = json1(((j.content || []).find(c => c.type === 'text') || {}).text); if (o) return o; } }
     if (env('GEMINI_API_KEY')) { const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (env('NAUTILO_MOD_GEMINI') || 'gemini-flash-lite-latest') + ':generateContent?key=' + encodeURIComponent(env('GEMINI_API_KEY')), { method: 'POST', headers: { 'content-type': 'application/json' }, signal: to(),
-        body: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: 'image/jpeg', data: b64 } }, { text: PEDIMG }] }], generationConfig: { temperature: 0, maxOutputTokens: 80, responseMimeType: 'application/json' } }) });
+        body: JSON.stringify({ contents: [{ parts: L.map(x => ({ inline_data: { mime_type: x.mt, data: x.d } })).concat({ text: PED }) }], generationConfig: { temperature: 0, maxOutputTokens: 80, responseMimeType: 'application/json' } }) });
       if (r.ok) { const j = await r.json(); const o = json1((((((j.candidates || [])[0] || {}).content || {}).parts || [])[0] || {}).text); if (o) return o; } }
   } catch (e) { } return null; };
 OPS.user = async (c, b) => { const u = String(b.user || '').trim().replace(/^@/, '').toLowerCase();
@@ -216,13 +397,18 @@ OPS.user = async (c, b) => { const u = String(b.user || '').trim().replace(/^@/,
   await mudar(P(c.eu), null, p => { p.user = u; }); await pubPts(c.eu, { nome: v.nome, user: u }).catch(() => { }); return { user: u }; };
 OPS.perfilImg = async (c, b) => { const k = b.k === 'fu' ? 'fu' : 'av', max = k === 'fu' ? 380e3 : 140e3; await perfil(c.eu, c.nome);
   if (b.apagar) { await N.store().del([imgP(k, c.eu)]).catch(() => { }); await mudar(P(c.eu), null, p => { p[k] = 0; }); if (k === 'av') await pubPts(c.eu, { av: 0 }).catch(() => { }); return { [k]: 0 }; }
-  const s64 = String(b.b64 || ''); if (!/^[A-Za-z0-9+/=]{400,}$/.test(s64) || s64.length > max * 1.37) throw N.err('img', 'A imagem é grande demais ou não é válida.', 400);
+  const s64 = String(b.b64 || '');
+  if (b.gif === true) { if (!(await podeAnimar(c))) throw N.err('animado', 'A foto e o fundo animados vêm com os planos Avançado e Completo, ou desbloqueiam-se com Selos.', 402);
+    const maxG = k === 'fu' ? 3e6 : 15e5; if (!/^[A-Za-z0-9+/=]{400,}$/.test(s64) || s64.length > maxG * 1.37) throw N.err('img', 'O GIF é grande demais (máximo ' + (k === 'fu' ? '3' : '1,5') + ' MB).', 400);
+    const buf = Buffer.from(s64, 'base64'); if (!GIF.eGif(buf)) throw N.err('img', 'Envia um GIF.', 400); let q; try { q = GIF.quadros(buf); } catch (e) { throw N.err('img', e.gif ? e.message : 'Não deu para ler este GIF.', 400); }
+    await verImg(q.grelhas, true); await N.store().put(imgP(k, c.eu), buf); const ver = Date.now(); await mudar(P(c.eu), null, p => { p[k] = ver; p[k + 'G'] = 1; }); if (k === 'av') await pubPts(c.eu, { av: ver }).catch(() => { }); return { [k]: ver, gif: true }; }
+  if (!/^[A-Za-z0-9+/=]{400,}$/.test(s64) || s64.length > max * 1.37) throw N.err('img', 'A imagem é grande demais ou não é válida.', 400);
   const buf = Buffer.from(s64, 'base64'); if (buf[0] !== 0xFF || buf[1] !== 0xD8) throw N.err('img', 'Envia uma imagem (JPEG).', 400);
-  const m = await iaImg(s64); if (m && m.ok === false) throw N.err('img', 'Esta imagem não pode ser usada: ' + String(m.motivo || 'não cumpre as regras').slice(0, 120), 400);
+  await verImg(s64);
   await N.store().put(imgP(k, c.eu), buf); const ver = Date.now(); await mudar(P(c.eu), null, p => { p[k] = ver; }); if (k === 'av') await pubPts(c.eu, { av: ver }).catch(() => { }); return { [k]: ver }; };
 OPS.verPerfil = async (c, b) => { const id = String(b.id || ''); if (!ID.test(id)) throw N.err('perfil', 'Perfil desconhecido.', 400); const v = (await ler(P(id), null)).v; if (!v) throw N.err('perfil', 'Perfil desconhecido.', 404);
   const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).sort((a, b2) => b2[1].p - a[1].p), pos = L.findIndex(([i]) => i === id);
-  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu) } }; };
+  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu), nmed: (v.med || []).length, med: medTopo(v.med || []) } }; };
 /* ---------- comentários nos animes: a IA barra ofensas e tapa os spoilers (só vê quem quiser) ---------- */
 const CA = mal => 'so/ca/' + mal;
 let NUMS = null;
@@ -304,7 +490,7 @@ const dsPub = (id, o, eu) => ({ id, nome: o.nome, user: o.user || '', av: o.av |
 const dsVer = async (c, S, D) => { const o = (await ler('so/ds/' + S.k, { T: {} })).v || { T: {} }, T = o.T || {};
   const L = Object.entries(T).map(([id, x]) => dsPub(id, x, c.eu)), feitos = L.filter(x => x.at).sort((a, b) => a.at - b.at || b.v - a.v), caminho = L.filter(x => !x.at && x.v > 0).sort((a, b) => b.v - a.v), zero = L.filter(x => !x.at && !x.v);
   return { sem: S.k, fim: S.fim, desafio: D, feitos: feitos.slice(0, 100), caminho: caminho.slice(0, 100), zero: zero.length, total: L.length, eu: T[c.eu] ? dsPub(c.eu, T[c.eu], c.eu) : null }; };
-OPS.desafio = async (c, b) => { const S = semana(), D = await desafioDe(S);
+OPS.desafio = async (c, b) => { const S = semana(), D = await desafioDe(S); semFechar(S).catch(() => { });
   if (D.k === 'pursuit') { const o = (await ler('so/ds/' + S.k, { T: {} })).v || { T: {} }; if ((o.T || {})[c.eu]) { const n = await acertosSemana(S, c.eu); if (n !== o.T[c.eu].v) await mudar('so/ds/' + S.k, { T: {} }, x => { const e = x.T[c.eu]; if (!e) return false; e.v = n; if (n >= D.alvo && !e.at) e.at = Date.now(); }); } }
   return dsVer(c, S, D); };
 OPS.desafioEntrar = async (c, b) => { const S = semana(), D = await desafioDe(S), v0 = await perfil(c.eu, c.nome);
@@ -313,7 +499,8 @@ OPS.desafioEntrar = async (c, b) => { const S = semana(), D = await desafioDe(S)
 OPS.desafioProg = async (c, b, req) => { const S = semana(), D = await desafioDe(S); if (D.k === 'pursuit') return OPS.desafio(c, b);
   if (N.limit(req, 'dsp|' + c.eu, 40, 3600e3)) throw N.err('limite', 'Espera um pouco.', 429);
   const v = Math.max(0, Math.min(D.alvo * 10, Math.round((+b.v || 0) * 10) / 10));
-  await mudar('so/ds/' + S.k, { T: {} }, x => { const e = (x.T || {})[c.eu]; if (!e) return false; e.v = v; e.upd = Date.now(); if (v >= D.alvo && !e.at) e.at = Date.now(); if (v < D.alvo && e.at) e.at = 0; });
+  let cumpriu = false; await mudar('so/ds/' + S.k, { T: {} }, x => { const e = (x.T || {})[c.eu]; if (!e) return false; e.v = v; e.upd = Date.now(); if (v >= D.alvo && !e.at) { e.at = Date.now(); cumpriu = true; } if (v < D.alvo && e.at) e.at = 0; });
+  if (cumpriu) await darMed(c.eu, { k: 'ds:' + S.k, n: 'Desafio da semana cumprido', d: (D.t || 'Desafio') + ' · semana ' + S.k.split('-S')[1], kind: 'Medalha', lvl: 'Mérito', cat: 'Desafios' });
   return dsVer(c, S, D); };
 OPS.desafioSair = async (c, b) => { const S = semana(); await mudar('so/ds/' + S.k, { T: {} }, x => { if (!(x.T || {})[c.eu]) return false; delete x.T[c.eu]; }); return OPS.desafio(c, b); };
 /* ---------- v3.85 · Desafios semanais dos Animes: 3 por semana (fácil, médio, difícil), os mesmos para todas as contas, escolhidos pelo servidor.
@@ -348,18 +535,19 @@ const anVer = async (c, S, L) => { const o = (await ler('so/ands/' + S.k, { T: {
     rank: R.slice(0, 100), total: R.length, pos: R.findIndex(x => x.eu) + 1, eu: me ? { v: me.v || {}, ok: me.ok || {}, pts: me.pts || 0, bon: !!me.bon } : { v: {}, ok: {}, pts: 0, bon: false } }; };
 // grava o progresso (o do app chega em b.v; o do Pursuit conta-se aqui); quem completa ganha os pontos uma vez, para sempre
 const anGravar = async (c, S, L, vc) => { const srv = {}; for (const x of L) if (ANSRV.has(x.m) && srv[x.m] == null) srv[x.m] = x.m === 'pac' ? await acertosSemana(S, c.eu) : await pdiasSemana(S, c.eu);
-  const nov = []; let v0 = null;
+  const nov = []; let v0 = null, perfeita = false;
   await mudar('so/ands/' + S.k, { T: {} }, o => { o.T = o.T || {}; let e = o.T[c.eu], mudou = false;
     const ant = x => e && e.v ? e.v[x.k] || 0 : 0, val = x => ANSRV.has(x.m) ? srv[x.m] : vc && vc[x.k] != null ? Math.max(ant(x), Math.max(0, Math.min(x.alvo * 3, Math.round(+vc[x.k] || 0)))) : ant(x); // o progresso do app nunca desce (um aparelho atrasado não apaga o que outro mandou)
     if (!e) { if (!L.some(x => val(x) > 0)) return false; e = o.T[c.eu] = { nome: c.nome, v: {}, ok: {}, pts: 0, at: 0 }; mudou = true; }
     nov.length = 0;
     for (const x of L) { const v = val(x); if (e.v[x.k] !== v) { e.v[x.k] = v; mudou = true; } if (v >= x.alvo && !e.ok[x.k]) { e.ok[x.k] = Date.now(); e.pts = (e.pts || 0) + x.pts; e.at = Date.now(); nov.push(x.pts); mudou = true; } }
-    if (!e.bon && L.every(x => e.ok[x.k])) { e.bon = Date.now(); e.pts += ANBONUS; nov.push(ANBONUS); mudou = true; }
+    if (!e.bon && L.every(x => e.ok[x.k])) { e.bon = Date.now(); e.pts += ANBONUS; nov.push(ANBONUS); mudou = true; perfeita = true; }
     v0 = e; if (!mudou) return false; e.upd = Date.now(); });
   if (v0 && v0.cl == null) { const pf = await perfil(c.eu, c.nome); await mudar('so/ands/' + S.k, { T: {} }, o => { const e = (o.T || {})[c.eu]; if (!e) return false; e.nome = pf.nome || e.nome; e.user = pf.user || ''; e.av = pf.av || 0; e.cl = pf.classe || ''; }); }
   if (nov.length) { const pf = await perfil(c.eu, c.nome); await somaPts([[c.eu, pf.nome, nov.reduce((a, b) => a + b, 0), { user: pf.user, av: pf.av }]]); }
+  if (perfeita) await darMed(c.eu, { k: 'adperf:' + S.k, n: 'Semana perfeita nos Desafios dos Animes', d: 'Semana ' + S.k.split('-S')[1] + ' de ' + S.k.slice(0, 4) + ' · os 3 desafios', kind: 'Medalha', lvl: 'Mérito', cat: 'Desafios' });
   return nov; };
-OPS.anDesafios = async (c, b) => { const S = semana(), L = await anDesDe(S); if (L.some(x => ANSRV.has(x.m))) await anGravar(c, S, L, null).catch(() => { }); return anVer(c, S, L); };
+OPS.anDesafios = async (c, b) => { const S = semana(), L = await anDesDe(S); semFechar(S).catch(() => { }); if (L.some(x => ANSRV.has(x.m))) await anGravar(c, S, L, null).catch(() => { }); return anVer(c, S, L); };
 OPS.anDesafiosProg = async (c, b, req) => { if (N.limit(req, 'adp|' + c.eu, 60, 3600e3)) throw N.err('limite', 'Espera um pouco.', 429);
   const S = semana(), L = await anDesDe(S), vc = {}; L.forEach(x => { if (!ANSRV.has(x.m) && b.v && b.v[x.k] != null) vc[x.k] = b.v[x.k]; });
   const nov = await anGravar(c, S, L, vc); const r = await anVer(c, S, L); r.novos = nov; return r; };
@@ -379,8 +567,8 @@ OPS.adminParceiro = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem aces
   const o = { nome, site, at: Date.now() }; await N.store().put(PARC, Buffer.from(JSON.stringify(o))); return { parceiro: o }; };
 module.exports = N.handler(async (req, res) => {
   // o nome do parceiro (público, para o app o mostrar antes de entrar na conta)
-  if (req.method === 'GET' && String((req.query || {}).op || '') === 'img') { const q = req.query || {}, k = q.k === 'fu' ? 'fu' : 'av', id = String(q.id || ''); if (!ID.test(id) || N.limit(req, 'simg', 300, 60e3)) return N.send(res, 400, { ok: false });
-    const g = await N.store().get(imgP(k, id)).catch(() => null); if (!g) return N.send(res, 404, { ok: false }); res.statusCode = 200; res.setHeader('content-type', 'image/jpeg'); res.setHeader('cache-control', 'public, max-age=86400'); res.setHeader('x-content-type-options', 'nosniff'); return res.end(g.buf); }
+  if (req.method === 'GET' && String((req.query || {}).op || '') === 'img') { const q = req.query || {}, k = q.k === 'fu' ? 'fu' : q.k === 'cla' ? 'cla' : 'av', id = String(q.id || ''); if (!(k === 'cla' ? CID : ID).test(id) || N.limit(req, 'simg', 300, 60e3)) return N.send(res, 400, { ok: false });
+    const g = await N.store().get(imgP(k, id)).catch(() => null); if (!g) return N.send(res, 404, { ok: false }); res.statusCode = 200; res.setHeader('content-type', GIF.eGif(g.buf) ? 'image/gif' : 'image/jpeg'); res.setHeader('cache-control', 'public, max-age=86400'); res.setHeader('x-content-type-options', 'nosniff'); return res.end(g.buf); }
   if (req.method === 'GET' && String((req.query || {}).op || '') === 'parceiro') { if (N.limit(req, 'parc', 60, 60e3)) return N.send(res, 429, { ok: false }); res.setHeader('cache-control', 'public, max-age=300'); const o = await parceiro();
     // v3.78: os números da parceria ao vivo (só contagens, sem nomes), guardados 10 minutos
     let n; if ((req.query || {}).n) { try { n = await numeros(); } catch (e) { } }
@@ -393,4 +581,4 @@ module.exports = N.handler(async (req, res) => {
   const c = await conta(t, pid); c.eu = t.u + '-' + pid; if (!ID.test(c.eu)) return N.send(res, 400, { ok: false, msg: 'Perfil inválido.' });
   return N.send(res, 200, Object.assign({ ok: true }, await OPS[op](c, b, req)));
 });
-module.exports._regras = regras; module.exports._lisboa = lisboa; module.exports._semana = semana;
+module.exports._regras = regras; module.exports._lisboa = lisboa; module.exports._semana = semana; module.exports._SELOS = SELOS;
