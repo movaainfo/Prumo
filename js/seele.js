@@ -18,7 +18,7 @@ const dLonga = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('pt-PT', { 
 const dAno = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 const hojeL = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const faltam = d => { const n = Math.round((Date.parse(d + 'T23:59:59') - Date.now()) / 864e5); return n <= 0 ? 'termina hoje' : n === 1 ? 'falta 1 dia' : 'faltam ' + n + ' dias'; };
-const marca = grande => `<span class="se-sl${grande ? '' : ' se-sl-s'}" aria-label="seele"><img class="se-borb" src="icons/seele-borboleta.webp" width="360" height="252" alt="" decoding="async" draggable="false"><span class="se-nome" role="img" aria-label="seele" style="-webkit-mask-image:url(icons/seele-nome.webp);mask-image:url(icons/seele-nome.webp)"></span></span>`;
+const marca = grande => `<span class="se-sl${grande ? '' : ' se-sl-s'}" aria-label="seele"><img class="se-borb" src="icons/seele-borboleta.webp" width="760" height="526" alt="" decoding="async" draggable="false"><span class="se-nome" role="img" aria-label="seele" style="-webkit-mask-image:url(icons/seele-nome.webp);mask-image:url(icons/seele-nome.webp)"></span></span>`;
 
 /* ---------- dados ---------- */
 const carregar = async forcar => { if (!conta() || S.busy || (!forcar && S.d && Date.now() - S.at < 45e3)) return S.d; S.busy = true; S.err = '';
@@ -98,25 +98,53 @@ const formHTML = () => { const f = S.form || {}, P = f.premios || [], cr = (S.d 
     <div class="row gap8"><button class="btn pri">${f.id ? 'Guardar' : 'Guardar como rascunho'}</button>${f.id || f.aberto ? '<button type="button" class="btn ghost" data-act="seFormX">Fechar</button>' : ''}</div></form>`; };
 
 /* ---------- a página (#seele) ---------- */
-const FASES = [['Lagarta', 'Combinada', 'A parceria está acertada e já tem casa no Prumo.'], ['Crisálida', 'A preparar', 'Os primeiros prémios estão a ser preparados.'], ['Borboleta', 'Aberta', 'Os prémios entram em jogo para todas as contas.']];
-const hero = temCamp => `<section class="se-hero" aria-label="Prumo &amp; seele">
-    <div class="se-marca"><span class="se-selo">${selo(96)}</span><i class="se-e" aria-hidden="true">&amp;</i>${marca(true)}</div>
-    <p class="se-t">${temCamp ? 'Prémios de verdade pelo que fazes.' : 'Uma parceria nova, ainda em crisálida.'}</p>
-    <p class="se-d">${temCamp ? 'Objetos reais, Selos e sorteios ligados ao que fazes no Prumo (ranking, foco, leituras) e nos Animes da parceria Prumo &amp; PHANTOM. Participar é sempre grátis.' : 'Estamos a preparar os primeiros prémios. Quando estiverem prontos, esta página enche-se e abre a todas as contas.'}</p></section>`;
+// a borboleta: duas metades da mesma imagem que rodam à volta do corpo (abre as asas uma vez ao entrar; depois respira devagar)
+const borboleta = () => `<span class="se-bf${S.vista ? ' ja' : ''}" aria-hidden="true"><span class="se-wl"><img src="icons/seele-borboleta.webp" alt="" width="760" height="526" decoding="async" draggable="false"></span><span class="se-wr"><img src="icons/seele-borboleta.webp" alt="" width="760" height="526" decoding="async" draggable="false"></span></span>`;
+const hero = () => `<section class="se-hero" aria-label="Prumo &amp; seele">
+    <div class="se-hv">${borboleta()}</div>
+    <div class="se-ht"><div class="se-marca"><span class="se-selo">${selo(64)}</span><i class="se-e" aria-hidden="true">&amp;</i><span class="se-nome se-nome-h" role="img" aria-label="seele" style="-webkit-mask-image:url(icons/seele-nome.webp);mask-image:url(icons/seele-nome.webp)"></span></div>
+      <h1 class="se-t">O teu esforço ganha asas.</h1>
+      <p class="se-d">O Prumo mede o que fazes todos os dias. A seele transforma isso em prémios de verdade: objetos, livros, experiências e Selos. Participar é sempre grátis.</p>
+      <div class="se-acts"><button type="button" class="btn pri" data-act="seIr" data-alvo="sePremios">${UI.ic('gift')}Ver os prémios</button><button type="button" class="btn ghost" data-act="seIr" data-alvo="seComo">Como funciona</button>${adm() ? '<button type="button" class="btn ghost" data-act="seIr" data-alvo="seAdm">Gerir prémios</button>' : ''}</div></div></section>`;
+// a parceria ao vivo (só contagens)
+const numeros = L => { const pub = L.filter(c => !['rascunho', 'cancelada'].includes(c.estado)); if (!pub.length) return '';
+  const jogo = pub.filter(c => ['aberta', 'breve'].includes(c.estado)).length, part = pub.reduce((a, c) => a + (c.n || 0), 0), venc = pub.reduce((a, c) => a + (((c.res || {}).venc) || []).filter(v => v.estado !== 'por_confirmar').length, 0);
+  return `<div class="se-viva" aria-label="A parceria ao vivo">${[[jogo, jogo === 1 ? 'prémio em jogo' : 'prémios em jogo'], [part, part === 1 ? 'participação' : 'participações'], [venc, venc === 1 ? 'vencedor' : 'vencedores']].map(([v, l]) => `<div><b>${nf(v)}</b><span>${l}</span></div>`).join('')}</div>`; };
+// ganha-se com o que já se faz no Prumo e nos Animes da PHANTOM
+const CAMINHOS = [['prumo', 'award', 'Ranking do Prumo', 'Os pontos de disciplina de cada dia: entrar, cumprir as tarefas e os hábitos.', '#ranking', 'Abrir o Ranking'],
+  ['foco', 'focus', 'Dias de foco', 'Dias seguidos com 70 pontos ou mais no Ranking do Prumo.', '#ranking', 'Ver os meus dias'],
+  ['livros', 'book', 'Leituras', 'Os livros que terminas, com a data de fim nas tuas Leituras.', '#leituras', 'Abrir as Leituras'],
+  ['animes', 'gamepad', 'Jogos dos Animes', 'Pursuit, Quiz relâmpago, Sombras e desafios, na parceria Prumo & PHANTOM.', '#animes.jogos', 'Jogar']];
+const caminhos = L => { const ativo = k => L.some(c => c.crit === k && ['aberta', 'breve'].includes(c.estado));
+  return `<section class="se-sec" id="seComo"><h2 class="se-h2">Ganha com o que já fazes</h2><div class="se-cm">${CAMINHOS.map(([k, ic, t, d, h, l]) => `<a class="se-cmi${k === 'animes' ? ' ph' : ''}" href="${h}"><span class="se-cmic">${UI.ic(ic)}</span><b>${t}</b><p>${esc(d)}</p><span class="se-cmf">${ativo(k) ? '<em>Há um prémio em jogo</em>' : ''}<small>${l}</small></span></a>`).join('')}</div></section>`; };
+// os quatro passos de um prémio, pela ordem da vida da borboleta
+const PASSOS = [['Ovo', 'Participa', 'Escolhe um prémio em jogo e entra. É grátis e não precisas de comprar nada.'], ['Lagarta', 'Faz o teu dia', 'Cumpre, lê, joga. O que fazes no período conta sozinho.'],
+  ['Crisálida', 'A campanha fecha', 'Ganham os primeiros ou, num sorteio, quem se qualificou. A equipa confirma cada vencedor.'], ['Borboleta', 'Recebes o prémio', 'Aceitas na app: os Selos chegam logo e o prémio físico é combinado por e-mail.']];
+const metamorfose = () => `<section class="se-sec se-met"><h2 class="se-h2">Da lagarta à borboleta</h2><ol>${PASSOS.map(([f, t, d], i) => `<li><span class="se-mn" aria-hidden="true">${i + 1}</span><small>${f}</small><b>${t}</b><p>${d}</p></li>`).join('')}</ol></section>`;
+const sorteios = () => `<section class="se-sec se-srt"><h2 class="se-h2">Sorteios que se podem verificar</h2><p>Quando um prémio é sorteado, ninguém escolhe à mão. Antes de começar, a página mostra o código de uma semente secreta. No fim, a semente é revelada e qualquer pessoa confirma que bate certo com o código e que a ordem dos vencedores saiu dela.</p>
+    <div class="se-srtv" aria-hidden="true"><span><b>Antes</b><code>código público</code></span><i></i><span><b>No fim</b><code>semente revelada</code></span><i></i><span><b>Resultado</b><code>ordem verificável</code></span></div></section>`;
+const FAQ = [['Custa alguma coisa?', 'Não. Participar é sempre grátis e os Selos não dão entradas nem mais hipóteses.'], ['Quem pode participar?', 'Quem tem conta no Prumo, com a idade mínima de cada campanha (normalmente 18 anos, ou com autorização de quem tem a guarda) e nos países indicados. Uma entrada por conta.'],
+  ['Como recebo um prémio físico?', 'Depois de aceitares o prémio na app, a equipa escreve para o e-mail da tua conta para combinar a entrega, sem custos para ti.'], ['E se alguém fizer batota?', 'Cada vencedor é confirmado pela equipa antes de receber. Quem não cumprir as regras perde o prémio e entra o suplente.'],
+  ['Onde estão as regras?', 'Cada campanha tem o seu regulamento completo: carrega em Regulamento no cartão do prémio.']];
+const faq = () => `<section class="se-sec se-faq"><h2 class="se-h2">Perguntas</h2>${FAQ.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</section>`;
+const assinatura = () => `<footer class="se-ass"><span class="se-assf" aria-hidden="true"></span><span class="se-assm" aria-hidden="true">${selo(28)}<i>&amp;</i><img src="icons/seele-borboleta.webp" alt="" width="40" height="28"></span><p>Uma parceria <b>Prumo &amp; seele</b></p></footer>`;
 const view = () => {
   if (!ve()) return UI.head('Parceria', '', '', 'Parceria') + `<div class="pn"><p style="margin:0">Esta página ainda não está aberta.</p><p class="mut" style="margin:6px 0 0"><a class="acc" href="#hoje">Voltar ao Hoje</a></p></div>`;
-  carregar(false); const d = S.d, L = (d && d.lista) || [], pub = L.filter(c => !['rascunho', 'cancelada'].includes(c.estado));
+  carregar(false); if (!S.vista) setTimeout(() => { S.vista = true; }, 2200);
+  const d = S.d, L = (d && d.lista) || [], pub = L.filter(c => !['rascunho', 'cancelada'].includes(c.estado));
   const jogo = L.filter(c => ['aberta', 'breve', 'a_fechar'].includes(c.estado)), fim = L.filter(c => c.estado === 'fechada');
-  const admSec = adm() ? `<section class="se-sec se-admsec"><h3>${UI.ic('shield')}Gerir prémios</h3>${S.form ? formHTML() : `<button type="button" class="btn pri" data-act="seNova">${UI.ic('plus')}Nova campanha</button>`}
-      ${L.filter(c => ['rascunho', 'cancelada'].includes(c.estado)).map(cartao).join('')}<p class="mut se-leg">Só a administração vê esta secção e os rascunhos. A seele aparece no menu de toda a gente assim que publicares a primeira campanha.</p></section>` : '';
-  return UI.head('seele', 'Prémios de verdade e sorteios, em parceria com a seele.', '', 'Parceria') + `<div class="se-pg">${hero(pub.length > 0)}
+  const admSec = adm() ? `<section class="se-sec se-admsec" id="seAdm"><h3>${UI.ic('shield')}Gerir prémios</h3>${S.form ? formHTML() : `<button type="button" class="btn pri" data-act="seNova">${UI.ic('plus')}Nova campanha</button>`}
+      ${L.filter(c => ['rascunho', 'cancelada'].includes(c.estado)).map(cartao).join('')}<p class="mut se-leg">Só a administração vê esta secção e os rascunhos.${pub.length ? '' : ' A seele aparece no menu de toda a gente assim que publicares a primeira campanha.'}</p></section>` : '';
+  return `<div class="se-pg">${hero()}${numeros(L)}
     ${!d ? `<div class="pn"><p class="mut" style="margin:0">${S.err ? esc(S.err) : 'A abrir os prémios…'}</p></div>` : ''}
     ${meusHTML(L)}
-    ${jogo.length ? `<section class="se-sec"><h3>${UI.ic('gift')}Prémios em jogo</h3><div class="se-cs">${jogo.map(cartao).join('')}</div></section>` : d && !pub.length ? `<section class="se-ciclo" aria-label="Em que fase está a parceria"><ol>${FASES.map(([n, e, t], i) => `<li class="${i < 1 ? 'feito' : i === 1 ? 'agora' : 'depois'}"${i === 1 ? ' aria-current="step"' : ''}><span class="se-pt" aria-hidden="true"></span><b>${n}</b><em>${i === 1 ? 'Agora: ' : ''}${e}</em><small>${t}</small></li>`).join('')}</ol></section>` : d ? '<p class="mut">Não há prémios em jogo agora. Os próximos aparecem aqui.</p>' : ''}
-    ${fim.length ? `<section class="se-sec"><h3>${UI.ic('award')}Vencedores</h3>${fim.map(vencHTML).join('')}</section>` : ''}
-    ${admSec}
-    <section class="se-sec se-como"><h3>Como funcionam os prémios</h3><ul><li><b>Grátis, sempre.</b> Participar não custa nada e os Selos não compram entradas.</li><li><b>Ligados ao que fazes.</b> O Ranking do Prumo, os dias de foco, as Leituras e os jogos dos Animes da PHANTOM.</li><li><b>Prémios reais.</b> Objetos, livros, experiências e Selos. A equipa confirma quem ganha e combina a entrega por e-mail.</li><li><b>Sorteios verificáveis.</b> O código do sorteio é público antes de começar; no fim, qualquer pessoa pode confirmar o resultado.</li></ul></section>
+    <section class="se-sec" id="sePremios"><h2 class="se-h2">Prémios em jogo</h2>${jogo.length ? `<div class="se-cs">${jogo.map(cartao).join('')}</div>` : `<div class="se-vazio">${borboletaMini()}<div><b>${d ? 'Os primeiros prémios estão a chegar.' : 'A abrir…'}</b><p>Quando houver um prémio em jogo, aparece aqui, no Ranking, nas Leituras e nos Jogos.</p></div></div>`}</section>
+    ${caminhos(L)}${metamorfose()}
+    ${fim.length ? `<section class="se-sec"><h2 class="se-h2">Vencedores</h2>${fim.map(vencHTML).join('')}</section>` : ''}
+    ${sorteios()}${faq()}${admSec}${assinatura()}
   </div>`; };
+const borboletaMini = () => `<img class="se-bfm" src="icons/seele-borboleta.webp" alt="" width="72" height="50" aria-hidden="true">`;
+A.seIr = b => { const e = document.getElementById(b.dataset.alvo); if (e) e.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
 OS.views.seele = view;
 
 /* ---------- ações ---------- */

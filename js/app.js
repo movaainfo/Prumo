@@ -109,7 +109,7 @@ document.addEventListener('click', e => { if (!e.target.closest('.tn-g')) docume
 /* ---------- revelação progressiva: poucas secções de cada vez ----------
    Os botões "Mostrar mais"/"Ver mais" mostram logo o que estava escondido: o render não redesenha uma página igual,
    por isso não basta guardar a escolha. */
-const SKIP = ['fotos', 'jogos', 'dominus', 'definicoes', 'explorar', 'mundo', 'senhas', 'oportunidades', 'admin', 'jornal'];
+const SKIP = ['fotos', 'jogos', 'dominus', 'definicoes', 'explorar', 'mundo', 'senhas', 'oportunidades', 'admin', 'jornal', 'seele'];   // v3.94: a página da seele vê-se inteira
 function progressive(cur, raw) {
   if (SKIP.includes(cur)) return; const view = U.$('#view'); let root = view; while (root.children.length === 1 && root.firstElementChild.children.length > 1) root = root.firstElementChild;
   const kids = [...root.children].filter(el => !el.matches('script,style')), key = 'more_page_' + raw, open = OS.ui[key];

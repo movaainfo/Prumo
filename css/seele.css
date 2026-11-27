@@ -1,39 +1,73 @@
-/* PRUMO v3.92 · parceria Prumo & seele. O logótipo sem fundo: a borboleta com as cores dela e o nome na cor do texto do tema
-   (branco nos temas escuros, escuro nos claros); o "&" a dourado, como o corpo da borboleta. O resto segue o tema. */
-.se-pg{display:flex;flex-direction:column;gap:20px;max-width:980px}
-.se-hero{position:relative;overflow:hidden;padding:30px 22px 28px;border-radius:24px;text-align:center;
-  background:radial-gradient(42% 70% at 50% 30%,color-mix(in srgb,#F2C46B 12%,transparent),transparent 72%),var(--pn,#16171c);border:1px solid var(--line2,#2a2b31)}
-.se-marca{display:flex;align-items:center;justify-content:center;gap:clamp(4px,1.6vw,16px)}
-.se-selo{flex:none;display:block}.se-selo img{display:block;width:clamp(54px,11vw,96px);height:auto;filter:drop-shadow(0 8px 14px rgba(0,0,0,.3))}
-.se-e{flex:none;font:italic 400 clamp(38px,8vw,72px)/1 var(--serif,Georgia,serif);color:color-mix(in srgb,#E2B04F 78%,var(--tx,#fff))}
-.se-sl{display:flex;align-items:center;gap:clamp(4px,1.4vw,14px);min-width:0}
-.se-borb{display:block;flex:none;width:clamp(66px,15vw,140px);height:auto;filter:drop-shadow(0 6px 12px rgba(0,0,0,.22))}
-.se-nome{display:block;flex:none;width:clamp(104px,25vw,210px);aspect-ratio:480/218;background:var(--tx,#fff);
-  -webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
-.se-t{margin:16px 0 6px;font:italic 500 clamp(20px,3.4vw,28px)/1.25 var(--serif,Georgia,serif);color:var(--tx,#fff)}
-.se-d{max-width:46ch;margin:0 auto;font-size:15px;line-height:1.55;color:var(--mut)}
-/* as fases: lagarta, crisálida, borboleta */
-.se-ciclo{padding:20px 22px}
-.se-ciclo ol{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:0;padding:0;list-style:none}
-.se-ciclo li{position:relative;padding-top:28px}
-.se-ciclo li:not(:last-child)::after{content:"";position:absolute;top:7px;left:22px;right:-12px;height:2px;border-radius:2px;background:var(--line2,#2a2b31)}
-.se-ciclo li.feito::after{background:linear-gradient(90deg,#FF9A3C,#F2D27A)}
-.se-pt{position:absolute;top:0;left:0;width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--line2,#2a2b31)}
-.se-ciclo .feito .se-pt{background:#FF9A3C;box-shadow:none}
-.se-ciclo .agora .se-pt{background:#3E63E0;box-shadow:0 0 0 4px color-mix(in srgb,#3E63E0 28%,transparent)}
-.se-ciclo b{display:block;font-size:15px}
-.se-ciclo em{display:block;margin-top:2px;font-style:normal;font-size:12.5px;font-weight:700;color:var(--mut)}
-.se-ciclo .agora em{color:color-mix(in srgb,#5B7CF5 75%,var(--tx,#fff))}
-.se-ciclo small{display:block;margin-top:6px;font-size:13px;line-height:1.45;color:var(--mut)}
-.se-ciclo .depois b{color:var(--mut)}
-.se-adm{display:flex;align-items:flex-start;gap:8px;margin:0;font-size:13px;color:var(--mut)}.se-adm .ic{flex:none;width:16px;height:16px;margin-top:1px}
-@media (max-width:640px){
-  .se-hero{padding:24px 14px 22px;border-radius:20px}
-  .se-ciclo ol{grid-template-columns:1fr;gap:16px}
-  .se-ciclo li{padding:0 0 0 30px}
-  .se-ciclo li:not(:last-child)::after{top:22px;bottom:-12px;left:7px;right:auto;width:2px;height:auto}
-  .se-ciclo li.feito::after{background:linear-gradient(#FF9A3C,#F2D27A)}
-  .se-pt{top:2px}}
+/* PRUMO v3.94 · a página da parceria Prumo & seele. A ideia: "o teu esforço ganha asas": a borboleta da seele abre as asas uma vez ao entrar
+   (as duas metades da mesma imagem rodam à volta do corpo) e depois respira devagar. O logótipo não tem fundo: a borboleta com as cores dela e o
+   nome na cor do texto do tema; o "&" a dourado, como o corpo da borboleta. O resto segue o tema. */
+.se-pg{display:flex;flex-direction:column;gap:26px;max-width:1040px}
+.se-h2{margin:0;font:600 clamp(22px,3vw,28px)/1.2 var(--serif,Georgia,serif);letter-spacing:-.01em}
+/* o topo */
+.se-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:8px 28px;padding:34px 34px 30px;border-radius:26px;
+  background:radial-gradient(46% 80% at 24% 46%,color-mix(in srgb,#F2C46B 15%,transparent),transparent 70%),radial-gradient(40% 70% at 90% 0%,color-mix(in srgb,#3E63E0 12%,transparent),transparent 70%),var(--pn,#16171c);border:1px solid var(--line2,#2a2b31)}
+.se-hv{display:grid;place-items:center;min-height:230px}
+.se-bf{position:relative;display:block;width:min(100%,330px);aspect-ratio:760/526;perspective:900px;filter:drop-shadow(0 18px 26px rgba(0,0,0,.35))}
+.se-bf>span{position:absolute;inset:0;transform-origin:50% 50%;transform-style:preserve-3d}
+.se-bf img{display:block;width:100%;height:auto}
+.se-wl{clip-path:inset(0 50% 0 0)}.se-wr{clip-path:inset(0 0 0 50%)}
+.se-wl{animation:seAbreE 1.5s cubic-bezier(.2,.9,.25,1) .2s both,seRespE 7s ease-in-out 2.2s infinite}
+.se-wr{animation:seAbreD 1.5s cubic-bezier(.2,.9,.25,1) .2s both,seRespD 7s ease-in-out 2.2s infinite}
+.se-bf.ja .se-wl{animation:seRespE 7s ease-in-out infinite}.se-bf.ja .se-wr{animation:seRespD 7s ease-in-out infinite}
+@keyframes seAbreE{from{transform:rotateY(78deg)}to{transform:none}}
+@keyframes seAbreD{from{transform:rotateY(-78deg)}to{transform:none}}
+@keyframes seRespE{0%,82%,100%{transform:none}88%{transform:rotateY(34deg)}94%{transform:rotateY(4deg)}}
+@keyframes seRespD{0%,82%,100%{transform:none}88%{transform:rotateY(-34deg)}94%{transform:rotateY(-4deg)}}
+.se-ht{display:flex;flex-direction:column;gap:12px}
+.se-marca{display:flex;align-items:center;gap:10px}
+.se-selo{flex:none;display:block}.se-selo img{display:block;width:clamp(44px,6vw,64px);height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
+.se-e{flex:none;font:italic 400 clamp(32px,4.4vw,48px)/1 var(--serif,Georgia,serif);color:color-mix(in srgb,#E2B04F 78%,var(--tx,#fff))}
+.se-nome{display:block;flex:none;width:clamp(104px,25vw,210px);aspect-ratio:480/218;background:var(--tx,#fff);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
+.se-nome-h{width:clamp(110px,16vw,170px)}
+.se-sl{display:flex;align-items:center;gap:clamp(4px,1.4vw,14px);min-width:0}.se-borb{display:block;flex:none;width:clamp(66px,15vw,140px);height:auto}
+.se-t{margin:4px 0 0;font:italic 500 clamp(30px,4.6vw,50px)/1.06 var(--serif,Georgia,serif);letter-spacing:-.015em;color:var(--tx,#fff)}
+.se-d{max-width:52ch;margin:0;font-size:16px;line-height:1.6;color:var(--tx2,var(--mut))}
+.se-hero .se-acts{margin-top:4px}
+/* a parceria ao vivo */
+.se-viva{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.se-viva div{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:16px;background:var(--pn,#16171c);border:1px solid var(--line2,#2a2b31)}
+.se-viva b{font:600 30px/1 var(--serif,Georgia,serif);font-variant-numeric:tabular-nums;color:#F2C46B}.se-viva span{font-size:13px;color:var(--mut)}
+/* prémios em jogo, sem nenhum */
+.se-vazio{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:18px;border:1px dashed color-mix(in srgb,#F2C46B 45%,var(--line2,#2a2b31))}
+.se-vazio b{display:block;font:600 18px/1.3 var(--serif,Georgia,serif)}.se-vazio p{margin:4px 0 0;color:var(--mut);font-size:14px}.se-bfm{flex:none;width:72px;height:auto}
+/* ganha com o que já fazes */
+.se-cm{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.se-cmi{position:relative;display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:18px;text-decoration:none;color:var(--tx,#fff);background:var(--pn,#16171c);border:1px solid var(--line2,#2a2b31);transition:border-color .2s ease,transform .2s ease}
+.se-cmi:hover{border-color:color-mix(in srgb,#F2C46B 55%,var(--line2,#2a2b31));transform:translateY(-2px)}.se-cmi:focus-visible{outline:2px solid #F2C46B;outline-offset:2px}
+.se-cmic{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:color-mix(in srgb,#3E63E0 18%,transparent);color:color-mix(in srgb,#8FA6FF 85%,var(--tx,#fff))}.se-cmic .ic{width:20px;height:20px}
+.se-cmi.ph .se-cmic{background:rgba(184,52,68,.2);color:#F0909B}
+.se-cmi b{font-size:16px}.se-cmi p{margin:0;color:var(--mut);font-size:13.5px;line-height:1.45;flex:1}
+.se-cmf{display:flex;flex-direction:column;gap:2px}.se-cmf em{font-style:normal;font-size:12px;font-weight:700;color:#FF9A3C}.se-cmf small{font-weight:700;font-size:13px;color:#F2C46B}
+/* da lagarta à borboleta (os passos de um prémio) */
+.se-met ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;counter-reset:none}
+.se-met li{position:relative;display:flex;flex-direction:column;gap:4px;padding:16px 14px 14px;border-radius:18px;background:var(--pn,#16171c);border:1px solid var(--line2,#2a2b31)}
+.se-met li:not(:last-child)::after{content:"";position:absolute;top:30px;right:-12px;width:12px;height:2px;background:linear-gradient(90deg,#FF9A3C,#F2D27A)}
+.se-mn{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#F2C46B;color:#1c1406;font-weight:900;font-size:14px}
+.se-met li:last-child .se-mn{background:linear-gradient(135deg,#3E63E0,#FF9A3C);color:#fff}
+.se-met small{margin-top:6px;color:#F2C46B;font-weight:700;font-size:12px}.se-met b{font-size:16px}.se-met p{margin:0;color:var(--mut);font-size:13.5px;line-height:1.45}
+/* sorteios verificáveis */
+.se-srt>p{margin:0;max-width:70ch;line-height:1.6;color:var(--tx2,var(--mut))}
+.se-srtv{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.se-srtv span{display:flex;flex-direction:column;gap:4px;padding:10px 14px;border-radius:14px;background:var(--pn,#16171c);border:1px solid var(--line2,#2a2b31)}
+.se-srtv b{font-size:12px;color:var(--mut)}.se-srtv code{font-size:13px;color:#F2C46B}.se-srtv i{flex:none;width:22px;height:2px;background:color-mix(in srgb,#F2C46B 60%,transparent)}
+/* perguntas */
+.se-faq details{border-top:1px solid var(--line2,#2a2b31);padding:12px 2px}.se-faq details:last-child{border-bottom:1px solid var(--line2,#2a2b31)}
+.se-faq summary{cursor:pointer;font-weight:700;font-size:15px}.se-faq summary:focus-visible{outline:2px solid #F2C46B;outline-offset:2px;border-radius:6px}.se-faq p{margin:8px 0 0;color:var(--tx2,var(--mut));line-height:1.55;max-width:70ch}
+/* a assinatura no fim */
+.se-ass{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0 6px;text-align:center}
+.se-assf{width:2px;height:44px;background:linear-gradient(transparent,#F2C46B)}
+.se-assm{display:inline-flex;align-items:center;gap:6px}.se-assm img{display:block}.se-assm i{font:italic 22px/1 var(--serif,Georgia,serif);color:color-mix(in srgb,#E2B04F 78%,var(--tx,#fff))}
+.se-ass p{margin:0;color:var(--mut)}.se-ass b{color:var(--tx,#fff);font-family:var(--serif,Georgia,serif);font-weight:600}
+@media (max-width:900px){.se-cm,.se-met ol{grid-template-columns:repeat(2,1fr)}.se-met li:nth-child(2)::after{display:none}}
+@media (max-width:640px){.se-hero{grid-template-columns:1fr;padding:22px 16px 22px;text-align:left}.se-hv{min-height:0}.se-bf{width:min(78%,260px)}
+  .se-viva b{font-size:24px}.se-viva div{padding:12px}.se-cm,.se-met ol{grid-template-columns:1fr}.se-met li::after{display:none}.se-srtv i{display:none}}
+@media (prefers-reduced-motion:reduce){.se-wl,.se-wr,.se-bf.ja .se-wl,.se-bf.ja .se-wr{animation:none!important}.se-cmi{transition:none}.se-cmi:hover{transform:none}}
+
 /* v3.93 · prémios da seele: campanhas, vencedores, os meus prémios e a administração */
 .se-sl-s{display:inline-flex;align-items:center;gap:6px}.se-sl-s .se-borb{width:34px}.se-sl-s .se-nome{width:58px}
 .se-sec{display:flex;flex-direction:column;gap:12px}.se-sec>h3{display:flex;align-items:center;gap:8px;margin:0}.se-sec>h3 .ic{width:18px;height:18px;color:#F2C46B}
