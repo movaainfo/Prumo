@@ -29,9 +29,11 @@ const P = id => 'so/p/' + id;
 // Corre no máximo uma vez por perfil e por nome/plano (em memória), sem ler nada nos pedidos seguintes.
 const SINC = new Map();
 const PLN = c => ({ n: c.adm ? 'Administração' : c.lvl >= 1 ? (c.plano || ['', 'Essencial', 'Avançado', 'Completo'][c.lvl] || 'Pago') : 'Grátis', lvl: c.adm ? 9 : c.lvl || 0 });
-const sincPerfil = async c => { const pl = PLN(c), k = c.nome + '|' + pl.n; if (SINC.get(c.eu) === k) return; SINC.set(c.eu, k); if (SINC.size > 5000) SINC.delete(SINC.keys().next().value);
-  let mudouNome = false, v = null;
-  await mudar(P(c.eu), null, p => { if (!p) return false; const pn = !p.pl || p.pl.n !== pl.n || p.pl.lvl !== pl.lvl; mudouNome = !!(c.nome && p.nome !== c.nome); if (!pn && !mudouNome) return false; if (mudouNome) p.nome = c.nome; p.pl = pl; v = p; }).catch(() => { });
+const sincPerfil = async c => { const pl = PLN(c), k = c.nome + '|' + pl.n; if (SINC.get(c.eu) === k) return;
+  let mudouNome = false, v = null, existe = false;
+  await mudar(P(c.eu), null, p => { if (!p) return false; existe = true; const pn = !p.pl || p.pl.n !== pl.n || p.pl.lvl !== pl.lvl; mudouNome = !!(c.nome && p.nome !== c.nome); if (!pn && !mudouNome) return false; if (mudouNome) p.nome = c.nome; p.pl = pl; v = p; }).catch(() => { });
+  // só fica marcado como feito quando o perfil social já existe (senão, o primeiro pedido que o cria volta a tentar)
+  if (existe) { SINC.set(c.eu, k); if (SINC.size > 5000) SINC.delete(SINC.keys().next().value); }
   if (mudouNome && v) await nomeEmTodo(c.eu, c.nome, v).catch(() => { }); };
 const nomeEmTodo = async (eu, nome, v) => { for (const cid of (v.clas || [])) { const cl = await mudar(CL(cid), null, o => { if (!o) return false; const m = (o.membros || []).find(x => x.id === eu); if (!m || m.nome === nome) return false; m.nome = nome; if (o.dono === eu) o.donoNome = nome; }).catch(() => null); if (cl && typeof idxPor === 'function') await idxPor(cl).catch(() => { }); }
   if (v.user || v.av) await pubPts(eu, { nome }).catch(() => { }); };

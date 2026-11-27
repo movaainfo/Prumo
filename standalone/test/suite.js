@@ -1054,6 +1054,7 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
     { const N0 = require(path.join(ROOT, 'api', '_nuvem.js')), ENV = ['NAUTILO_SB_POOL', 'NAUTILO_SB_LOCAL', 'NAUTILO_SEQ_AGORA'], old = Object.fromEntries(ENV.map(k => [k, process.env[k]])), repor = () => ENV.forEach(k => { if (old[k] == null) delete process.env[k]; else process.env[k] = old[k]; });
       const S1 = await reg(), S2 = await reg(), T1 = await reg(), T2 = await reg(); try {
         process.env.NAUTILO_SB_LOCAL = '1'; process.env.NAUTILO_SB_POOL = JSON.stringify([{ alid: 9001, nome: 'Kaito Hoshino', alt: ['Kaito', 'Hoshino'], anime: 'Estrela do Teste', img: 'http://localhost:' + PORT + '/pngmock/fig.png' }]);
+        await N0.store().del(['so/sb/' + new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon' }).format(new Date())]).catch(() => { });   // uma sombra do dia criada antes (pelo app noutro teste) não pode valer aqui
         const a0 = await so(S1, { op: 'sombra' }), A0 = a0.sombra || {}, dia = A0.dia, st = await N0.store().get('so/sb/' + dia), V = st ? N0.open(await N0.accKey(), st.buf) : {}, fimImg = 'data:image/png;base64,' + V.fim;
         const g1 = await so(S1, { op: 'sombraPalpite', nome: 'Naruto Uzumaki' }), G1 = g1.sombra || {}, rk0 = await so(S1, { op: 'rankAnime' }), e1 = await so(S1, { op: 'eu' }), p0 = ((rk0.lista || []).find(x => x.id === e1.eu.id) || {}).p || 0;
         const g2 = await so(S1, { op: 'sombraPalpite', nome: 'hoshino kaitou' }), G2 = g2.sombra || {}, g3 = await so(S1, { op: 'sombraPalpite', nome: 'Kaito' }), rk1 = await so(S1, { op: 'rankAnime' }), pA = ((rk1.lista || []).find(x => x.id === e1.eu.id) || {}).p || 0;
@@ -1096,9 +1097,11 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
         JSON.stringify({ pr1: [pr1.dados, pr1.selosGanhos], pr2: pr2.dados, s: (wP.carteira || {}).s, g: wP.ganhar && [wP.ganhar.hoje, wP.ganhar.limite], inf: (wAd.carteira || {}).inf }));
       // Black Friday: ligada à força (NAUTILO_BF=on) e desligada
       const PLm = require(path.join(ROOT, 'api', '_planos.js')), bfd = PLm.bfDatas(2026), bfd2 = PLm.bfDatas(2027);
+      const oSK = process.env.STRIPE_SECRET_KEY, oSA = process.env.NAUTILO_STRIPE_API; process.env.STRIPE_SECRET_KEY = 'sk_test_mock'; process.env.NAUTILO_STRIPE_API = 'http://localhost:' + PORT + '/stripemock';
       process.env.NAUTILO_BF = 'on'; const plb = await api('conta', { op: 'planos' }), wbf = await so(P1, { op: 'carteira' }), sbf = await so(P1, { op: 'selosComprar', pac: 's550', cur: 'EUR', volta: BASE }), fsb = (STRIPE.ses[(sbf.url || '').split('/').pop()] || {}).f || {};
       const ckb = await api('conta', { op: 'checkout', plano: 'avancado', ciclo: 'ano', cur: 'EUR', volta: BASE }, { tok: P1.tok }), fck = (STRIPE.ses[(ckb.url || '').split('/').pop()] || {}).f || {}, cpn = (STRIPE.coupons || {})[fck['discounts[0][coupon]']] || null;
       process.env.NAUTILO_BF = 'off'; const pl0 = await api('conta', { op: 'planos' });
+      if (oSK == null) delete process.env.STRIPE_SECRET_KEY; else process.env.STRIPE_SECRET_KEY = oSK; if (oSA == null) delete process.env.NAUTILO_STRIPE_API; else process.env.NAUTILO_STRIPE_API = oSA;
       ok('Black Friday automática todos os anos (2026: 23 a 30/11; 2027: sexta 26/11): −40% no 1.º ano dos anuais e −30% em 3 meses dos mensais com o cupão aplicado sozinho no checkout; +50% de Selos nos pacotes; fora da época não há promoção',
         bfd.ini === '2026-11-23' && bfd.sex === '2026-11-27' && bfd.fim === '2026-11-30' && bfd2.sex === '2027-11-26' && plb.promo && plb.promo.ano === 40 && plb.promo.mes === 30 && !pl0.promo
         && (wbf.loja.pacotes.find(x => x.id === 's550') || {}).bf === 250 && fsb['metadata[n]'] === '800' && !!cpn && cpn.percent_off === 40 && cpn.duration === 'once' && !fck.allow_promotion_codes,
