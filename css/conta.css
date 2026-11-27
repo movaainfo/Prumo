@@ -333,3 +333,7 @@ html.loja .pl-p, html.loja .pl-p + small, html.loja .pl-cupn, html.loja .pl-ctl 
 .ac-anich button{flex:none;padding:7px 12px;border-radius:999px;border:1px solid rgba(233,227,216,.18);background:rgba(255,255,255,.05);color:inherit;font:600 12.5px/1 var(--sans);cursor:pointer;white-space:nowrap}
 .ac-anich button.on,.ac-anich button:hover{border-color:var(--farol,#F2C48D);background:rgba(242,196,141,.14)}
 .ac-anil .ac-animais{grid-column:1/-1;justify-self:center;margin:4px 0}
+/* v3.93 · Black Friday nos planos */
+.pl-bf{display:flex;flex-direction:column;gap:4px;margin:0 0 14px;padding:14px 18px;border-radius:16px;background:linear-gradient(100deg,#0d0d10 0%,#26070f 60%,#3a0a14 100%);border:1px solid #E8606E;color:#fff}
+.pl-bf b{font-size:17px;font-weight:900;letter-spacing:.02em;color:#FFCB52}.pl-bf span{font-size:14px;line-height:1.5}.pl-bf strong{color:#FFCB52}
+.pl-bfn{color:#FFCB52!important;font-weight:700}

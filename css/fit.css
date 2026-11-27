@@ -1676,3 +1676,10 @@ html.fb-on #fblk{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .bdg.pl-popb{background:var(--farol,#F2C48D);color:#1a1206;font-weight:800}
 @media (min-width:900px){.pl-g .pl-c.pop{transform:translateY(-6px)}}
 .ag-pn .pn-h{flex-wrap:wrap;gap:8px}.ag-stop{margin-left:auto}
+/* v3.93 · despensa: a cor da validade (verde, amarelo, vermelho) */
+.kz-it.v-verde,.kz-it.v-amarelo,.kz-it.v-vermelho{box-shadow:inset 3px 0 0 var(--kzv);padding-left:10px;border-radius:2px}
+.kz-it.v-verde{--kzv:#3FB97A}.kz-it.v-amarelo{--kzv:#E8B931}.kz-it.v-vermelho{--kzv:#EF5B5B;background:color-mix(in srgb,#EF5B5B 7%,transparent)}
+.kz-v{display:inline-flex;align-items:center;gap:5px;padding:1px 8px;border-radius:999px;font-weight:600}
+.kz-v i{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.kz-v.v-verde{color:#5FD39A;background:rgba(63,185,122,.14)}.kz-v.v-amarelo{color:#F0C94A;background:rgba(232,185,49,.16)}.kz-v.v-vermelho{color:#FF8A8A;background:rgba(239,91,91,.16)}
+.kz-leg{display:flex;flex-wrap:wrap;gap:6px 10px;margin:4px 0 10px;font-size:12.5px}

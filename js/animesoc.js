@@ -26,7 +26,7 @@ const nomeUser = o => `<b>${esc(o.nome || 'Pessoa')}</b>${o.user ? `<small>@${es
 const fundo = o => o && o.fu ? `background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.65)),url('api/social?op=img&k=fu&id=${encodeURIComponent(o.id)}&v=${o.fu}')` : '';
 const cartao = (o, edita) => { if (!o) return `<div class="ap-card ap-ld"><span class="an-sp"></span></div>`;
   return `<div class="ap-card${o.fu ? ' com-fundo' : ''}" style="${fundo(o)}">${o.fu ? '' : '<img class="ap-ar" src="icons/phantom-aranha-olho.webp" alt="" aria-hidden="true">'}<span class="ap-mk">${SO().marca ? SO().marca('xs') : ''}</span>
-    <div class="ap-who">${av(o, 64)}<div>${nomeUser(o)}${o.user ? '' : edita ? '<small class="ap-sem">Ainda sem @</small>' : ''}${o.cl ? `<em class="ap-cl">${esc(o.cl)}</em>` : ''}</div></div>
+    <div class="ap-who">${av(o, 64)}<div>${nomeUser(o)}${o.user ? '' : edita ? '<small class="ap-sem">Ainda sem @</small>' : ''}${o.cl ? `<em class="ap-cl">${esc(o.cl)}</em>` : ''}${o.pl && o.pl.n ? `<em class="ap-pl l${Math.min(9, +o.pl.lvl || 0)}" title="Plano do Prumo">${UI.ic('star')}${esc(o.pl.n === 'Grátis' ? 'Plano grátis' : o.pl.n === 'Administração' ? 'Administração' : 'Plano ' + o.pl.n)}</em>` : ''}</div></div>
     <div class="ap-st"><span><b>${o.pts || 0}</b>pontos</span>${o.pos ? `<span><b>${o.pos}.º</b>no ranking</span>` : ''}${o.clas != null ? `<span><b>${o.clas}</b>${o.clas === 1 ? 'clã' : 'clãs'}</span>` : ''}</div>
     ${edita ? `<button type="button" class="btn sm ap-ed" data-act="apEditar">${UI.ic('edit')}Editar o perfil</button>` : ''}</div>`; };
 const meu = () => { const d = euD(); return d && d.eu ? Object.assign({ clas: (d.clas || []).length }, d.eu) : null; };
@@ -143,7 +143,9 @@ A.cmDen = async b => { const m = prompt('Denunciar este comentário? Diz porquê
 // tocar na foto de alguém: o perfil dos animes dessa pessoa
 A.apVerPerfil = async (b, e) => { if (e && e.preventDefault) e.preventDefault(); try { const j = await call('verPerfil', { id: b.dataset.id }), pf = j.perfil, A0 = OS.Trofeus && OS.Trofeus.art;
     const med = (pf.med || []).length && A0 ? `<div class="ap-med"><small>${pf.nmed} ${pf.nmed === 1 ? 'conquista' : 'conquistas'} no Prumo</small><div>${pf.med.map(m => `<span title="${esc(m.n + (m.d ? ' · ' + m.d : ''))}">${A0({ kind: m.kind === 'Medalha' ? 'Medalha' : m.kind === 'Distinção' ? 'Distinção' : 'Troféu', level: m.lvl, cat: m.cat, place: m.lugar || 0 })}<i>${esc(m.n)}</i></span>`).join('')}</div></div>` : '';
-    UI.modal(`<div class="ap-edit">${cartao(pf, false)}${med}<button type="button" class="btn" data-mclose>Fechar</button></div>`, 'ap-modal'); } catch (er) { UI.toast(er.message, 'neg'); } };
+    UI.modal(`<div class="ap-edit">${pf.meu ? '<p class="ap-vista">Assim é que os outros veem o teu perfil.</p>' : ''}${cartao(pf, false)}${med}<div class="row gap8">${pf.meu ? `<button type="button" class="btn pri" data-act="apEditar">${UI.ic('edit')}Editar o perfil</button>` : ''}<button type="button" class="btn" data-mclose>Fechar</button></div></div>`, 'ap-modal'); } catch (er) { UI.toast(er.message, 'neg'); } };
+// v3.93: ver o meu perfil como os outros o veem (no menu do perfil)
+A.apVerMeu = (b, e) => { try { UI.closeModal && UI.closeModal(); } catch (er) { } return A.apVerPerfil({ dataset: { id: 'eu' } }, e); };
 
 /* ---------- Comunidade ---------- */
 const pn = () => (SO().nome ? SO().nome() : 'PHANTOM') || 'PHANTOM';   // v3.88: a equipa é a do parceiro (Equipa PHANTOM), já não "Equipa SA"

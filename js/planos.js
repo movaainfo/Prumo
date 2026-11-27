@@ -54,11 +54,17 @@ const status = c => { if (c.local) return 'Modo pessoal: tens tudo.';
   if (c.acabou) return 'O teu teste grátis acabou. Escolhe um plano para continuar; os teus dados estão todos guardados.';
   if (c.semCobranca) return 'As assinaturas abrem em breve: até lá tens tudo do Completo.';
   return ''; };
+// v3.93 · Black Friday automática (o servidor diz quando é): faixa por cima dos planos e o preço com desconto em cada um
+const bfDe = P0 => { const b = P0 && P0.promo; return b && b.ate > Date.now() ? b : null; };
+const bfFaixa = (P0, c, loja) => { const b = bfDe(P0); if (!b || c.pago || c.admin || c.local || loja || !(P0 && P0.cobranca)) return '';
+  const ate = new Date(b.ate).toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' });
+  return `<div class="pl-bf" role="note"><b>${esc(b.nome)} no Prumo</b><span>Até ${esc(ate)}: <strong>−${b.ano}% no 1.º ano</strong> dos planos anuais e <strong>−${b.mes}% nos ${b.meses} primeiros meses</strong> dos mensais. O desconto entra sozinho no pagamento.</span></div>`; };
 const cards = (c, P0) => { const loja = !!(OS.Loja && OS.Loja.on), loc = curOf(), cur = loc === 'BRL' && ((((P0 && P0.planos) || [])[0] || {}).precos || {}).BRL ? 'BRL' : 'EUR', ci = OS.ui.plCiclo === 'ano' ? 'ano' : 'mes', L = (P0 && P0.planos) || [], open = !!(P0 && P0.cobranca);
   if (loc !== 'EUR') loadFx();
   return `<div class="pl-ctl"><div class="seg" role="radiogroup" aria-label="Pagamento">${[['mes', 'Mensal'], ['ano', 'Anual · 2 meses grátis']].map(([k, l]) => `<button type="button" class="${ci === k ? 'on' : ''}" data-act="plCiclo" data-v="${k}" aria-pressed="${ci === k}">${l}</button>`).join('')}</div>
     ${c.pago && c.cur && c.cur !== 'EUR' ? `<span class="mut pl-curx">A tua assinatura é paga em ${esc((MOEDAS.find(m => m[0] === c.cur) || [, c.cur])[1])}</span>` : ''}</div>
   ${loja ? '<p class="mut pl-curn">Nesta versão da app não há compras: aqui vês o teu plano e o que cada um inclui.</p>' : ''}<p class="mut pl-curn"${loja ? ' hidden' : ''}>${cur === 'BRL' ? 'Preços em reais para o Brasil, com impostos incluídos. A cobrança é em reais.' : `Os preços são em euros, com impostos incluídos.${loc !== 'EUR' ? ' Ao pagar, vês o valor na tua moeda, convertido pelo câmbio do dia (o valor ao lado de cada preço é aproximado).' : ' Se pagares com um cartão noutra moeda, o valor é convertido pelo câmbio do dia.'}`}</p>
+  ${bfFaixa(P0, c, loja)}
   ${open && !c.pago && !c.local && !loja ? cupBox() : ''}
   <div class="pl-g">${[1, 2, 3].map(l => { const p = L.find(x => x.lvl === l), pr = p && p.precos && p.precos[cur], val = pr ? pr[ci] : 0, mine = c.pago && c.lvl === l, top = l === 3, pop = l === 2;   // v3.86: o Avançado é o plano mais popular (em destaque)
     const btn = loja ? (mine ? `<button class="btn" disabled>${UI.ic('check')}O teu plano</button>` : '') : !open ? `<button class="btn" disabled>${c.admin ? 'Liga o Stripe para abrir' : 'Em breve'}</button>`
@@ -69,6 +75,9 @@ const cards = (c, P0) => { const loja = !!(OS.Loja && OS.Loja.on), loc = curOf()
     return `<section class="pl-c${top ? ' top' : ''}${pop ? ' pop' : ''}${mine || (!c.pago && c.lvl === l && !c.teste) ? ' mine' : ''}"><div class="pl-ch"><b>${NOME[l]}</b>${top ? '<span class="bdg pos">o mais completo</span>' : ''}${pop ? '<span class="bdg pl-popb">o mais popular</span>' : ''}</div>
       ${(() => { const cp = cupOk(ID[l]) && !c.pago ? OS.ui.plCupao : null, dv = cp ? Math.round(val * (100 - cp.pct)) / 100 : 0;
         if (cp && val) return `<div class="pl-p"><s class="pl-old">${money(val, cur)}</s> <b>${money(dv, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small></div><small class="pl-cupn">−${cp.pct}% ${esc(cupDur(cp, ci))}</small>`;
+        // v3.93: Black Friday (sem código aplicado): o preço com o desconto da época
+        const bf = !cp && val && open && !c.pago && !c.admin && !c.local && !loja ? bfDe(P0) : null;
+        if (bf) { const pct = ci === 'ano' ? bf.ano : bf.mes, bv = Math.round(val * (100 - pct)) / 100; return `<div class="pl-p"><s class="pl-old">${money(val, cur)}</s> <b>${money(bv, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small></div><small class="pl-cupn pl-bfn">${esc(bf.nome)}: −${pct}% ${ci === 'ano' ? 'no 1.º ano' : 'nos ' + bf.meses + ' primeiros meses'}</small>`; }
         const ax = val && cur === 'EUR' ? approx(val, loc) : '';
         return `<div class="pl-p">${val ? `<b>${money(val, cur)}</b><small>/${ci === 'ano' ? 'ano' : 'mês'}</small>` : '<b>—</b>'}</div>${val && ci === 'ano' ? `<small class="mut">${money(Math.round(val / 12), cur)} por mês${ax ? ' · ' + ax + ' por ano' : ''}</small>` : ax ? `<small class="mut pl-ax">${ax} por mês</small>` : '<small class="mut">&nbsp;</small>'}`; })()}
       <ul class="pl-f">${FEAT[l].map(f => `<li>${UI.ic('check')}<span>${esc(f)}</span></li>`).join('')}</ul>${btn}</section>`; }).join('')}</div>`; };

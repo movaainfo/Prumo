@@ -66,4 +66,15 @@ const fimDe = s => 1000 * (+s.current_period_end || +(((s.items || {}).data || [
 const doStripe = s => ({ sub: s.id, cus: typeof s.customer === 'string' ? s.customer : (s.customer && s.customer.id) || '', estado: s.status || '', ate: fimDe(s), cancelar: !!s.cancel_at_period_end,
   id: (s.metadata && s.metadata.plano) || '', ciclo: (s.metadata && s.metadata.ciclo) || '', modo: s.livemode === true ? 'live' : s.livemode === false ? 'test' : '', cur: String(s.currency || ((((s.items || {}).data || [])[0] || {}).price || {}).currency || '').toUpperCase(), at: Date.now() });
 
-module.exports = { brasil, DIA, TESTE_DIAS, planos, byId, cobranca, efetivo, auto, testeAte, isAdmin, stripe, doStripe, ACTIVE, modo, mesmo, MOEDAS, moeda, preco };
+// v3.93 · Black Friday automática, todos os anos: da segunda-feira da semana da Black Friday (a sexta depois da 4.ª quinta-feira de novembro)
+// até à Cyber Monday, em Lisboa. Planos: −40% no 1.º ano dos anuais e −30% nos 3 primeiros meses dos mensais (só em assinaturas novas).
+// Selos: +50% de oferta em cada pacote. NAUTILO_BF = on | off | AAAA-MM-DD..AAAA-MM-DD (para testes ou para mudar as datas sem mexer no código).
+const BF = { nome: 'Black Friday', ano: 40, mes: 30, meses: 3, selos: 50 };
+const lisD = t => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(t));
+const bfDatas = y => { const dow = new Date(Date.UTC(y, 10, 1)).getUTCDay(), sex = 1 + ((4 - dow + 7) % 7) + 21 + 1, iso = d => new Date(Date.UTC(y, 10, d)).toISOString().slice(0, 10); return { ini: iso(sex - 4), sex: iso(sex), fim: iso(sex + 3) }; };
+const promo = (t = Date.now()) => { const e = String(process.env.NAUTILO_BF || '').trim(); if (e === 'off') return null; const hoje = lisD(t), y = +hoje.slice(0, 4);
+  let D = bfDatas(y); const m = e.match(/^(\d{4}-\d{2}-\d{2})\.\.(\d{4}-\d{2}-\d{2})$/); if (m) D = { ini: m[1], sex: m[1], fim: m[2] };
+  if (e !== 'on' && (hoje < D.ini || hoje > D.fim)) return null;
+  const ate = e === 'on' && hoje > D.fim ? t + 3 * DIA : Date.parse(D.fim + 'T23:59:59Z');
+  return Object.assign({ id: 'bf' + y, ini: D.ini, sex: D.sex, fim: D.fim, ate }, BF); };
+module.exports = { promo, bfDatas, brasil, DIA, TESTE_DIAS, planos, byId, cobranca, efetivo, auto, testeAte, isAdmin, stripe, doStripe, ACTIVE, modo, mesmo, MOEDAS, moeda, preco };

@@ -138,7 +138,7 @@ const lerBar = cur => UI.secBar({ base: 'leituras', nome: 'Leituras', ic: 'book'
     ['O meu progresso', [['desafios', 'Desafios', 'target', 'As tuas metas de leitura'], ['estatisticas', 'Estatísticas', 'chart', 'Páginas, ritmo e géneros'], ['resenhas', 'Resenhas & citações', 'note', 'O que escreveste e sublinhaste']]]],
   dir: `<a class="sx-i" href="#leituras.buscar" aria-label="Pesquisar livros">${UI.ic('search')}</a>` });
 V.leituras = sub => { const k = sub === 'livro' ? 'livro' : LT.some(t => t[0] === (sub || '')) ? (sub || '') : '';
-  return UI.head('Leituras', 'A tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios literários.', `<a class="btn pri" href="#leituras.buscar">${UI.ic('search')}<span>Adicionar livro</span></a>`, 'Estudos') + lerBar(k === 'livro' ? '' : k) + `<div class="bk">${LT_[k]()}</div>`; };
+  return UI.head('Leituras', 'A tua estante virtual: todos os livros do mundo, o que estás a ler, já leste ou abandonaste, resenhas, os livros que tens em casa e desafios literários.', `<a class="btn pri" href="#leituras.buscar">${UI.ic('search')}<span>Adicionar livro</span></a>`, 'Estudos') + lerBar(k === 'livro' ? '' : k) + (OS.Seele && !k ? OS.Seele.faixa(['livros']) : '') + `<div class="bk">${LT_[k]()}</div>`; };   // v3.93: o prémio de leitura da seele
 const LT_ = {};
 LT_.parati = () => OS.LivrosMais ? OS.LivrosMais.paraTi() : '';
 LT_.tops = () => OS.LivrosMais ? OS.LivrosMais.tops() : '';

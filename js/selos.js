@@ -9,7 +9,7 @@ const conta = () => !!(OS.Acc && OS.Acc.on && OS.Acc.token && OS.Acc.token() && 
 const call = (op, b) => OS.Social && OS.Social.call ? OS.Social.call(op, b) : Promise.reject(new Error('Sem ligação.'));
 const loja = () => !!(OS.Loja && OS.Loja.on) || !!(window.PrumoLoja && window.PrumoLoja.on);
 const S = { d: null, at: 0, busy: false, err: '' };
-const nf = n => Number(n || 0).toLocaleString('pt-PT');
+const nf = n => n === Infinity ? '∞' : Number(n || 0).toLocaleString('pt-PT');
 // a moeda: um selo de cera com o prumo (o fio de prumo) gravado
 let uid = 0;
 const ic = (sz = 20, cls = '') => { const g = 'sl' + (++uid); let d = ''; for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2, r = i % 2 ? 10.6 : 11.6; d += (i ? 'L' : 'M') + (12 + Math.cos(a) * r).toFixed(2) + ' ' + (12 + Math.sin(a) * r).toFixed(2); }
@@ -18,13 +18,24 @@ const ic = (sz = 20, cls = '') => { const g = 'sl' + (++uid); let d = ''; for (l
     <path d="M12 6.4v5.2" stroke="#FFE3E6" stroke-width="1.1" stroke-linecap="round"/><path d="M12 11.2l2.4 2.6a2.4 2.4 0 0 1-4.8 0z" fill="#FFE3E6" fill-opacity=".92"/></svg>`; };
 const carregar = async forcar => { if (!conta() || S.busy || (!forcar && S.d && Date.now() - S.at < 60e3)) return S.d; S.busy = true; S.err = '';
   try { S.d = await call('carteira', {}); S.at = Date.now(); } catch (e) { S.err = (e && e.message) || 'Não deu para abrir a carteira.'; } S.busy = false; OS.request(); return S.d; };
-const saldo = () => (S.d && S.d.carteira && S.d.carteira.s) || 0;
+const saldo = () => S.d && S.d.carteira && S.d.carteira.inf ? Infinity : (S.d && S.d.carteira && S.d.carteira.s) || 0;   // v3.93: a administração tem Selos sem fim
 const animado = () => !!(S.d && S.d.animado);
 const set = j => { if (!j) return; if (j.carteira && S.d) S.d.carteira = j.carteira; if (j.animado != null && S.d) S.d.animado = j.animado; OS.request(); };
 // o preço de um pacote na moeda da pessoa (no Brasil em reais; no resto, em euros)
 const cur = () => { const p = OS.one('profile') || {}; return p.country === 'BR' ? 'BRL' : 'EUR'; };
 const preco = pk => { const c = cur(), v = (c === 'BRL' ? pk.BRL : pk.EUR) / 100; return v.toLocaleString(c === 'BRL' ? 'pt-BR' : 'pt-PT', { style: 'currency', currency: c }); };
 const chip = () => conta() ? `<a class="sl-chip" href="#selos" aria-label="Os teus Selos: ${nf(saldo())}">${ic(18)}<b>${S.d ? nf(saldo()) : '…'}</b></a>` : '';
+
+/* ---------- v3.93 · ganhar Selos no app (sem lojas): presença, Quiz, Sombras e medalhas; limite por dia ---------- */
+const GIC = { presenca: 'sun', quiz: 'bolt', sombra: 'eye', med: 'award', seele: 'gift' };
+const ganharSec = d => { const g = d && d.ganhar; if (!g) return '';
+  const pc = Math.min(100, Math.round(g.hoje / Math.max(1, g.limite) * 100));
+  return `<section class="sl-sec sl-gan"><h3>Ganhar Selos</h3><p class="sl-gh"><span>Hoje ganhaste <b>${nf(g.hoje)}</b> de ${nf(g.limite)} Selos possíveis por dia.</span><i class="sl-gb" role="img" aria-label="${pc}% do limite de hoje"><i style="width:${pc}%"></i></i></p>
+    <ul class="sl-gl">${g.formas.map(f => `<li><span class="sl-ui">${UI.ic(GIC[f.k] || 'star')}</span><span><b>${esc(f.t)}</b><small>${esc(f.d)}</small></span>${f.n ? `<em>+${nf(f.n)}${ic(14)}</em>` : '<em class="ok">Prémios</em>'}</li>`).join('')}</ul></section>`; };
+// uma vez por dia, ao abrir o Prumo com a conta: os Selos da presença
+const presenca = async () => { if (!conta()) return; const k = 'os2pres:' + OS.Acc.pid() + ':' + new Date().toISOString().slice(0, 10); try { if (localStorage.getItem(k)) return; } catch (e) { }
+  try { const j = await call('presenca', {}); try { localStorage.setItem(k, '1'); } catch (e) { } if (j.dados > 0) { UI.toast(`+${j.dados} Selos por abrires o Prumo hoje`, 'pos'); if (S.d && j.carteira) { S.d.carteira = Object.assign({}, S.d.carteira, j.carteira); OS.request(); } } } catch (e) { } };
+OS.on('ready', () => setTimeout(presenca, 4000));
 
 /* ---------- a página (#selos) ---------- */
 const NOMES = { s100: 'Punhado', s550: 'Bolsa', s1200: 'Cofre', s2600: 'Tesouro' };
@@ -35,10 +46,11 @@ const view = () => { if (!conta()) return UI.head('Selos', 'A moeda do Prumo.', 
   const bonus = L.bonus ? `<p class="sl-bn">${UI.ic('gift')}<span>O teu plano ${esc(L.plano)} deu-te <b>${nf(L.bonus)} Selos</b> de boas-vindas no primeiro mês.</span></p>`
     : `<p class="sl-bn">${UI.ic('gift')}<span>Quem assina o <b>Avançado</b> recebe ${nf(L.planoBonus.avancado)} Selos no primeiro mês; no <b>Completo</b>, ${nf(L.planoBonus.completo)}. <a class="acc" href="#planos">Ver os planos</a></span></p>`;
   return UI.head('Selos', 'A moeda do Prumo: compra uma vez e usa no app.', '', 'Sistema') + `<div class="sl-pg">
-    <section class="sl-hero"><div class="sl-coin" aria-hidden="true">${ic(112, 'big')}</div><div class="sl-sal"><small>O teu saldo</small><b>${nf(w.s)}</b><span>${w.s === 1 ? 'Selo' : 'Selos'}</span></div>${bonus}</section>
-    <section class="sl-sec"><h3>Comprar Selos</h3>${comprar ? `<div class="sl-pks">${L.pacotes.map((pk, i) => `<article class="sl-pk${i === 2 ? ' top' : ''}">${i === 2 ? '<span class="sl-tag">Melhor valor</span>' : ''}<span class="sl-pki">${ic(i < 2 ? 34 : 44)}${i > 1 ? ic(26, 'b2') : ''}</span><small>${NOMES[pk.id] || ''}</small><b>${nf(pk.n + pk.b)}</b><span class="sl-pkb">${pk.b ? `${nf(pk.n)} + ${nf(pk.b)} de oferta` : 'Selos'}</span><button type="button" class="btn ${i === 2 ? 'pri' : ''} sl-buy" data-act="slComprar" data-id="${pk.id}">${preco(pk)}</button></article>`).join('')}</div>
+    <section class="sl-hero"><div class="sl-coin" aria-hidden="true">${ic(112, 'big')}</div><div class="sl-sal"><small>O teu saldo</small><b>${w.inf ? '∞' : nf(w.s)}</b><span>${w.inf ? 'Selos sem fim (conta de administração)' : w.s === 1 ? 'Selo' : 'Selos'}</span></div>${bonus}</section>
+    ${ganharSec(d)}
+    <section class="sl-sec"><h3>Comprar Selos</h3>${comprar && L.promo ? `<p class="sl-bf"><b>${esc(L.promo.nome)}</b><span>Até ${esc(new Date(L.promo.ate).toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' }))}: +${L.promo.selos}% de Selos em cada pacote, pelo mesmo preço.</span></p>` : ''}${comprar ? `<div class="sl-pks">${L.pacotes.map((pk, i) => `<article class="sl-pk${i === 2 ? ' top' : ''}">${i === 2 ? '<span class="sl-tag">Melhor valor</span>' : ''}<span class="sl-pki">${ic(i < 2 ? 34 : 44)}${i > 1 ? ic(26, 'b2') : ''}</span><small>${NOMES[pk.id] || ''}</small><b>${nf(pk.n + pk.b + (pk.bf || 0))}</b><span class="sl-pkb">${pk.b || pk.bf ? `${nf(pk.n)}${pk.b ? ' + ' + nf(pk.b) + ' de oferta' : ''}${pk.bf ? ` + <em class="sl-bfx">${nf(pk.bf)} de Black Friday</em>` : ''}` : 'Selos'}</span><button type="button" class="btn ${i === 2 ? 'pri' : ''} sl-buy" data-act="slComprar" data-id="${pk.id}">${preco(pk)}</button></article>`).join('')}</div>
         <p class="mut sl-legal">Pagamento único pelo Stripe (cartão, Apple Pay ou Google Pay): o Prumo nunca vê o teu cartão. Os Selos ficam neste perfil e não valem dinheiro nem se trocam. Os que ainda não usaste podem ser devolvidos até 14 dias depois da compra (7 no Brasil); os gastos não. Mais em <a class="acc" href="planos.html" target="_blank" rel="noopener">Planos e preços</a>.</p>`
-      : `<p class="mut">${loja() ? 'A compra de Selos não está disponível nesta app. Os Selos que já tens podem ser usados aqui.' : 'A compra de Selos abre em breve.'}</p>`}</section>
+      : `<p class="mut">${loja() ? 'A compra de Selos não está disponível nesta app: ganha-os a jogar e a cumprir (vê acima) ou compra no site do Prumo. Os que já tens usam-se aqui.' : 'A compra de Selos abre em breve. Entretanto, ganha-os a jogar e a cumprir (vê acima).'}</p>`}</section>
     <section class="sl-sec"><h3>Onde usar os Selos</h3><div class="sl-usos">
       <a class="sl-uso" href="#animes.clas"><span class="sl-ui">${UI.ic('users')}</span><span><b>Reforçar um clã</b><small>Cada clã começa com 20 vagas. Cada reforço dá mais ${C.vagas} vagas, para sempre, e qualquer membro pode reforçar.</small></span><em>${ic(16)}${nf(C.reforco)}</em></a>
       <div class="sl-uso"><span class="sl-ui">${UI.ic('play')}</span><span><b>Foto e fundo animados no perfil</b><small>Um GIF como foto e como fundo do teu perfil. Já vem incluído no Avançado e no Completo.</small></span>${d.animado ? '<em class="ok">Desbloqueado</em>' : `<button type="button" class="btn sm pri" data-act="slAnimado">${ic(16)}${nf(C.animado)}</button>`}</div></div></section>
