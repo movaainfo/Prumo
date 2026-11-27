@@ -1,49 +1,703 @@
 [
  {
-  "p": "Cores do app",
-  "name": "Sem escolha, o app abre com a paleta do logo (Selo) já no ecrã do código",
+  "p": "Contas",
+  "name": "Aparelho novo: abre o ecrã da conta (criar conta ou entrar) e não o código pessoal",
   "pass": true,
-  "info": "[{\"pal\":\"selo\",\"cur\":\"selo\",\"tc\":\"rgb(19, 10, 11)\"},[18,7,9]]"
+  "info": "{\"gate\":true,\"lock\":false,\"mode\":true}"
  },
  {
-  "p": "Cores do app",
-  "name": "Definições: \"Cores do app\" com 9 paletas e a atual marcada",
+  "p": "Contas",
+  "name": "Criar conta sem aceitar os termos: não cria (as três caixas são obrigatórias)",
   "pass": true,
-  "info": "{\"n\":9,\"on\":\"selo\",\"grp\":true}"
+  "info": "{\"gate\":true,\"msg\":\" Please check this box if you want to proceed.\"}"
  },
  {
-  "p": "Cores do app",
-  "name": "Escolher \"Mar\" volta exatamente ao azul de antes e fica guardado neste perfil",
+  "p": "Contas",
+  "name": "Criar conta: \"O que é isto?\" em cada caixa explica em linguagem simples (sem marcar a caixa)",
   "pass": true,
-  "info": "[[7,13,22],{\"ls\":\"\\\"mar\\\"\",\"last\":\"\\\"mar\\\"\",\"tc\":\"#070D16\",\"on\":\"mar\"}]"
+  "info": "{\"open\":true,\"t\":\"Sono, treino, alimentação, peso e a tua religião são \\\"dados sensíveis\\\" na lei (RGPD na Europa, LGPD no Brasil), por isso temos de te pedir autorização à parte. Servem só para o Pru"
  },
  {
-  "p": "Cores do app",
-  "name": "Floresta: fundos verdes; as cores com significado (gastos, avisos) não mudam",
+  "p": "Contas",
+  "name": "Criar conta: mostra o código de recuperação (só uma vez)",
   "pass": true,
-  "info": "[[10,19,16],\"#E8807A\",\"#E8807A\"]"
+  "info": "K62S-GW8L-9XWD-XPAE"
  },
  {
-  "p": "Cores do app",
-  "name": "Ao voltar a abrir, já abre com a paleta escolhida (sem piscar a azul)",
+  "p": "Contas",
+  "name": "Depois pede o primeiro perfil, já com o nome",
   "pass": true,
-  "info": "[\"floresta\",{\"lk\":false,\"sp\":false,\"view\":15803,\"h\":\"#definicoes\"}]"
+  "info": ""
  },
  {
-  "p": "Cores do app",
-  "name": "As cenas do fundo tomam a paleta (sem estragar as ligações #id nem as cores com significado)",
+  "p": "Contas",
+  "name": "Perfil novo: o código são 6 casinhas com teclado numérico (só números)",
   "pass": true,
-  "info": "<rect fill=\"#130a0b\"/><use href=\"#abc\"/><path fill=\"url(#def)\"/><i style=\"color:#E8807A\">"
+  "info": ""
  },
  {
-  "p": "Cores do app",
-  "name": "Trocar de paleta é rápido (sem recarregar)",
+  "p": "Contas",
+  "name": "Só aceita números: as letras não entram e as casas acendem pelo que foi escrito",
   "pass": true,
-  "info": "20 ms"
+  "info": ""
  },
  {
-  "p": "Cores do app",
-  "name": "sem erros JS (cores)",
+  "p": "Contas",
+  "name": "Ao 6.º número passa sozinho para a casa seguinte (Repete o código)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Códigos diferentes: avisa e não cria",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfis como na Netflix: \"Quem está a usar\", a bolinha do perfil e \"Adicionar perfil\"",
+  "pass": true,
+  "info": "{\"n\":1,\"name\":\"Ana\",\"av\":\"🌊\",\"add\":true,\"title\":\"Quem está a usar o Prumo?\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Escolher o perfil abre o mesmo ecrã de bloqueio, com o nome do perfil e \"Trocar de perfil\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã do código numa conta geral: 6 casinhas, teclado numérico e sem botão (entra sozinho)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Código errado: entra sozinho ao 6.º número, diz \"incorreto\" e limpa as casas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Perfil novo começa limpo: nada do Ryan (sem disciplinas, candidaturas, contactos, metas), com o nome do perfil",
+  "pass": true,
+  "info": "{\"subj\":0,\"apps\":0,\"contacts\":0,\"goals\":0,\"short\":\"Ana\",\"uni\":\"\",\"hab\":6,\"acc\":2,\"bub\":true,\"mova\":\"O meu negócio\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "A bolinha do perfil aparece na barra de cima",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
+  "pass": true,
+  "info": "19 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
+ },
+ {
+  "p": "Contas",
+  "name": "Senha errada: mensagem clara",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Noutro aparelho (computador): entra com a mesma conta e vê os mesmos dados",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sincroniza nos dois sentidos em segundos (computador → telemóvel)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Segundo perfil na mesma conta: dados separados (não vê as tarefas da Ana)",
+  "pass": true,
+  "info": "{\"t\":[],\"short\":\"Bruno\",\"p\":\"Bruno\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Conta e perfis: blocos fechados com seta; abertos mostram e-mail, perfis, sincronização, senha, sair e apagar a conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: escolher um personagem do Dominus (heróis e, à medida que os derrotas, monstros e chefes) passa a ser a bolinha do perfil",
+  "pass": true,
+  "info": "{\"n\":12,\"ok\":true,\"unl\":true,\"img\":\"data:image/png;base64,\",\"bub\":true,\"modal\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "Editar perfil: uma foto tua fica cortada em quadrado (160 px, leve) e guardada no perfil, em todos os aparelhos",
+  "pass": true,
+  "info": "[{\"jpg\":true,\"len\":2183,\"prev\":true},{\"w\":160,\"h\":160,\"jpg\":true}]"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã \"Quem está a usar\": o perfil aparece com a foto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Gerir perfis › Editar: tirar a foto volta ao emoji",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta de administração: aparece o separador \"Admin\" no fim do menu (ou em \"Mais\", se não couber)",
+  "pass": true,
+  "info": "{\"adm\":true,\"nav\":\"Admin\",\"shown\":true,\"side\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Parceria Prumo & seele (sem campanhas publicadas): a administração vê a entrada no menu, a página com o selo do Prumo, o logótipo da seele sem fundo azul, \"O teu esforço ganha asas\", os 4 caminhos (Ranking, foco, Leituras, Jogos dos Animes), os 4 passos da lagarta à borboleta, as perguntas e a secção Gerir prémios",
+  "pass": true,
+  "info": "{\"menu\":true,\"img\":true,\"nome\":true,\"azul\":false,\"selo\":true,\"fases\":4,\"agora\":\"O teu esforço ganha asas.\",\"caminhos\":4,\"faq\":5,\"aviso\":true,\"titulo\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: lista as contas (e-mail, nome, perfis), último acesso, última entrada e minutos por dia, sem senhas",
+  "pass": true,
+  "info": "{\"r\":[\"ana teste ana@exemplo.pt ana bruno\"],\"contas\":true,\"ana\":true,\"hoje\":true,\"kpi\":4,\"senha\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração arrumada: \"Precisa de ti\" em cima e 8 separadores (Contas, Visitas, Vendas, Comunidade, Agenda, Pedidos, Servidor, Ajustes), a abrir em Contas",
+  "pass": true,
+  "info": "{\"n\":8,\"sel\":\"Contas1\",\"al\":true,\"lista\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração › Agenda: o que vai acontecer por ordem (Recap, Prémios dos livros e de anime, temas das festas, Ano Novo, estações), os desafios das próximas 6 semanas e a prévia de cada um só neste aparelho (tema de Natal, contagem do Ano Novo)",
+  "pass": true,
+  "info": "{\"ag\":{\"n\":18,\"ds\":6,\"bt\":19,\"t\":\"O que vai acontecer só neste aparelho; ninguém mais vê as prévias Parar as prévias Tudo o que tem data marcada, por ordem. Toca para ver antes de ir ao ar: os temas ficam 10 minutos só aqui, os avisos\"},\"tm\":\"natal\",\"fx\":{\"on\":true,\"n\":\"10\"}}"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração › Visitas: visitantes por dia, funil (visitantes → cliques → registos → pagamentos), origens, países e aparelhos",
+  "pass": true,
+  "info": "{\"t\":\"Visitas\\n7 dias\\n14 dias\\n30 dias\\n0\\nvisitantes na página\\n0\\nvisitas à página\\n2\\npessoas a abrir o app\\n1\\nregistos\\n0\\npagamentos\\n0%\\nvisitantes que se registam\\n21\\n22\\n23\\n24\\n25\\n26\\n27\\n\\nvisitantes\\nregistos\\n\\nVisitantes\\n0\\nCliques em Começar\\n0\\n—\\nRegistos\\n1\\n—\\nPagamentos\\n0\\n—"
+ },
+ {
+  "p": "Contas",
+  "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
+  "pass": true,
+  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"402c60e127818fabe50608f5\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-27T23:51:13.314Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
+ },
+ {
+  "p": "Contas",
+  "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
+  "pass": true,
+  "info": "{\"ult\":1795823498484,\"ent\":1,\"dias\":{\"2026-11-27\":70}}"
+ },
+ {
+  "p": "Contas",
+  "name": "Tocar numa conta mostra o detalhe: perfis, criada, última entrada, último acesso e o gráfico dos 30 dias",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal (aparelho que já tinha o Prumo): igual a antes, sem ecrã de conta nem bolinha",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sair da conta limpa este aparelho e volta ao ecrã de entrar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Esqueci a senha: o código de recuperação muda a senha e dá um código novo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Com a senha mudada, os outros aparelhos pedem para entrar outra vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Atalho de gastos do iPhone numa conta sem script: o link do perfil regista e o gasto entra nas finanças desse perfil",
+  "pass": true,
+  "info": "✓ 12,4 € registado no Prumo / 403"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Atalhos do iPhone mostra o link do perfil (sem pedir o script Google)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Sono numa conta: o atalho do app Saúde envia para o link do perfil (tipo=sono) e a noite entra no Painel",
+  "pass": true,
+  "info": "{\"lk\":true,\"r1\":\"✓ Sono enviado para o Prumo\",\"sl\":[{\"d\":\"2026-11-27\",\"m\":450,\"src\":\"saude\"}]}"
+ },
+ {
+  "p": "Contas",
+  "name": "Jornal numa conta sem script: as notícias vêm do servidor do Prumo",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Conta nova: pergunta o nome da IA uma vez, e a IA já está ligada sem chave nenhuma",
+  "pass": true,
+  "info": "{\"ask\":true,\"key\":\"nautilo-servidor\",\"own\":\"\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Nome da IA: \"Luna\" (é ela) — chama-se por voz pelo nome e o texto fica no feminino",
+  "pass": true,
+  "info": "{\"n\":\"Luna\",\"f\":true,\"w1\":true,\"w2\":false,\"t\":\"Cérebro da Luna · fala com a Luna\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Definições: o separador e os blocos usam o nome da IA (sem \"Spyke\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar (servidor do Prumo → IA grátis): responde, e o pedido leva o nome dela",
+  "pass": true,
+  "info": "Olá! Aqui é a tua IA. · {\"model\":\"openai\",\"messages\":[{\"role\":\"user\",\"content\":\"Diz olá à Luna\"}],\"temperature\":0.4,\"private\":true,\"referrer\":\"nautilo\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "IA sem configurar: pedidos em JSON (decisões, resumos, tutor) também funcionam",
+  "pass": true,
+  "info": "{\"ok\":true,\"resposta\":\"feito\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "IA de reserva numa conta: se a ligação do aparelho falhar (\"Failed to fetch\", limite da grátis), responde pelo servidor do Prumo (api/ia?p=livre)",
+  "pass": true,
+  "info": "{\"t\":\"Olá! Aqui é a tua IA.\",\"direct\":1,\"eng\":\"reserva\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Modelos: o que respondeu bem passa à frente e o sobrecarregado fica 10 min de lado",
+  "pass": true,
+  "info": "{\"L\":[\"gemini-3.5-flash\",\"gemini-flash-lite-latest\"],\"mins\":10}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fotos sem a chave Google: mensagem clara a explicar como ligar (sem ficar a carregar)",
+  "pass": true,
+  "info": "A IA não respondeu (Ler fotos, PDFs e voz precisa da IA do Google. Liga a tua chave grátis em Definições › Spyke › Cérebro.)."
+ },
+ {
+  "p": "Contas",
+  "name": "A IA do servidor só responde a quem tem sessão numa conta",
+  "pass": true,
+  "info": "401"
+ },
+ {
+  "p": "Contas",
+  "name": "Modo pessoal: Definições tem \"Conta Prumo\" para guardar o Prumo numa conta",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Ao guardar numa conta nova, o código de recuperação da senha aparece uma vez",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Guardar na conta: este aparelho passa a usar a conta com o mesmo código e os mesmos dados; o perfil continua o do Ryan (marcos e textos dele)",
+  "pass": true,
+  "info": "{\"on\":true,\"pub\":false,\"ps\":true,\"t\":true,\"g\":true,\"short\":\"Ryan\",\"leg\":100,\"who\":\"o Ryan (brasileiro)\",\"bub\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta sem administração: sem o separador \"Admin\" e o servidor recusa a lista de contas",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Noutro aparelho: entra na conta do Ryan e aparece tudo o que estava no Prumo pessoal",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Outro aparelho no modo pessoal: \"Entrar na conta neste aparelho\" leva ao ecrã de entrar, com o e-mail (os dados pessoais deste aparelho saem)",
+  "pass": true,
+  "info": "{\"has\":true,\"em\":\"ryan@exemplo.pt\",\"keys\":[],\"meta\":null,\"tasks\":0}"
+ },
+ {
+  "p": "Contas",
+  "name": "O servidor recusa criar conta sem a aceitação dos termos",
+  "pass": true,
+  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.\",\"code\":\"term"
+ },
+ {
+  "p": "Contas",
+  "name": "Ecrã de entrar: Termos, Privacidade, Cookies e Acessibilidade abrem por cima (LGPD e RGPD, ANPD e CNPD) e fecham com Esc",
+  "pass": true,
+  "info": "{\"open\":true,\"t\":\"Política de Privacidade\",\"lgpd\":true,\"tabs\":6}"
+ },
+ {
+  "p": "Contas",
+  "name": "Conta que ainda não aceitou esta versão: ao entrar, pede para aceitar os termos uma vez",
+  "pass": true,
+  "info": "{\"termos\":true,\"boxes\":3}"
+ },
+ {
+  "p": "Contas",
+  "name": "Aceitar fica guardado na conta (versão e data) e segue para os perfis",
+  "pass": true,
+  "info": "{\"still\":true,\"t\":\"2026-11-21\"}"
+ },
+ {
+  "p": "Contas",
+  "name": "Depois de aceitar não volta a pedir (nem ao recarregar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Definições › Privacidade e termos: os 6 documentos, o que aceitaste e quando",
+  "pass": true,
+  "info": "{\"tab\":true,\"docs\":6,\"ac\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
+  "pass": true,
+  "info": "20261127235219-d1533b"
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
+  "pass": true,
+  "info": "{\"id\":\"20261127235219-d1533b\",\"uid\":\"40354aed3fd64c85a007618d\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
+ },
+ {
+  "p": "Contas",
+  "name": "Administração: marcar o pedido como respondido; o que falta configurar (chave da IA, Stripe e e-mail) só para o administrador; o Gmail já não está pendente (chave do Google verificada)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Contas",
+  "name": "Parceria seele: sem campanhas publicadas, uma conta normal não vê a entrada no menu nem a página (nem o nome)",
+  "pass": true,
+  "info": "{\"adm\":false,\"menu\":false,\"hero\":false,\"fechada\":true,\"nome\":false}"
+ },
+ {
+  "p": "Contas",
+  "name": "Contas públicas mostram as mesmas fotos dos alimentos",
+  "pass": true,
+  "info": "{\"pub\":true,\"pin\":true}"
+ },
+ {
+  "p": "Contas",
+  "name": "sem erros de JavaScript",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: começa desligada (só aparece a quem a escolher)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no perfil pessoal do Ryan já vem ligada (e desligar fica guardado)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no registo (escolher as abas) aparece desligada para a pessoa ligar",
+  "pass": true,
+  "info": "{\"on\":false,\"k\":\"animes\"}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: ligar no registo põe a aba no menu (no grupo próprio da parceria, fora do Eu)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: destaque com a faixa, a temporada e o que está em alta",
+  "pass": true,
+  "info": "[\"Ao vivo e a seguir\\nos próximos episódios, ao segundo\",\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: carrossel de destaque (com pontos para mudar) e os novos episódios",
+  "pass": true,
+  "info": "{\"n\":3,\"on\":0} [\"Ao vivo e a seguir\\nos próximos episódios, ao segundo\",\"Novos episódios\",\"Simulcasts de Outono 2026\\nout. a dez.\",\"Em alta agora\",\"Explora por categoria\",\"Clássicos que quase toda a gente adora\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: passar o destaque não volta ao primeiro quando a página se redesenha a meio",
+  "pass": true,
+  "info": "{\"t\":2,\"i\":2,\"on\":2}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: a classe de fã sai do que vês (aqui Arquiteto das Sombras), o rank de E a SSS pede tudo ao mesmo tempo (SS e SSS também pedem pontos no Pursuit) e há títulos raros por conquistar",
+  "pass": true,
+  "info": "{\"c\":{\"nome\":\"Arquiteto das Sombras\",\"nivel\":\"Rank E\",\"rank\":\"Despertado\",\"hib\":false,\"prox\":\"D\"},\"bl\":\"A tua classe de fãEDespertado Arquiteto das SombrasVês a jogada três episódios antes de ela acontecer.133 episódios · 3 séries terminadas · categoria Drama Para o Rank D · Aprendiz80%100/100 episódios\",\"r\":[5,7,1]}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Recap: só abre no fim do ano (antes disso mostra quando abre); palco de story com som e modo gravação (3, 2, 1); com animações (partículas), a contagem dos episódios e horas, o género, os teus 5 com o anime do ano, o mês e o estúdio, o rank, a classe em carta e o cartão final para partilhar",
+  "pass": true,
+  "info": "{\"n\":8,\"t0\":\"& Prumo & PHANTOM apresentam O TEU 2026 EM ANIMES Toca para avançar · segura para parar Gravar para as redes\",\"fx\":true,\"vistos\":[\"& Prumo & PHANTOM apresentam O TEU 2026 EM ANIMES Toca para avançar · segura para parar Gravar para as redes\",\"Este ano viste 133 episódios 53 horas de anime Dava 2 dias seguidos, sem dormir Ou 3 voos de Lisboa a Tóquio\",\"MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉRIO · MISTÉR\",\"Os teus 4 do ano 4 Spy x Family 7 3 Erased 8 2 Death Note 9 O teu anime do ano Monster nota 10\",\"O teu ano, mês a mês J F M A M J J A S O N D Março foi o teu mês O teu estúdio Madhouse\",\"O teu rank de fã E DESPERTADO Para o Rank D · Aprendiz falta: 2 séries terminadas\",\"Este ano, a tua classe é… CLASSE · RANK E Arquiteto das Sombras Vês a jogada três episódios antes de"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Ao vivo e a seguir: os próximos episódios com a contagem ao segundo (e os que acabaram de sair)",
+  "pass": true,
+  "info": "{\"a1\":[\"Sai daqui a 58:46\"],\"a2\":[\"Sai daqui a 58:45\"]}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes no computador: barra própria (selo das duas casas, 5 atalhos com ícone e o Mais por grupos) em vez da fila de separadores; tocar fora fecha o Mais",
+  "pass": true,
+  "info": "{\"tb\":{\"bar\":true,\"links\":5,\"tabs\":false,\"head\":false,\"grupos\":[\"Descobrir\",\"Jogar\",\"Comunidade\",\"A minha coleção\"],\"itens\":20},\"fechou\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início no telemóvel: o carrossel fica no topo e os atalhos (Competição e Diversão) por baixo dele; sala com luz e cor, separador ativo a vermelho e os 6 botões da barra numa linha só (o selo do Prumo não cai para baixo)",
+  "pass": true,
+  "info": "{\"first\":\"an-hero\",\"dq\":true,\"depois\":true,\"top\":0,\"luz\":true,\"tab\":\"rgb(216, 106, 120)\",\"linha\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Parceria Prumo & PHANTOM: o primeiro destaque é a parceria, o selo das duas casas no canto, a assinatura no fim e a página da parceria com o que nasce dela e os números ao vivo",
+  "pass": true,
+  "info": "{\"slide\":true,\"dots\":3,\"slides\":3,\"ass\":true,\"mini\":true,\"pag\":true,\"viva\":true,\"ass2\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Parceria: intro de cinema na primeira entrada nos Animes (o prumo e a aranha no mesmo fio), Entrar fecha e não volta a aparecer",
+  "pass": true,
+  "info": "{\"in1\":{\"on\":true,\"t\":\"Saltar\\n&\\nPrumo\\n&\\n\\nO mesmo fio.\\n\\nParceria oficial dos Animes do Prumo\\n\\nEntrar\"},\"in2\":true,\"in3\":true}"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: encontra pelo nome (com a nota da comunidade)",
+  "pass": true,
+  "info": "&\nAnimes\nInício\nNavegar\nSimulcasts\nPursuit\nA minha lista\nMais\nPesquisar\n\n2 resultados para “frieren”\n\n9,1\nFrieren: Beyond Journey's End\nSérie · 28 episódios · 2023\nAventura · Drama · Fantasia\nUma elfa maga revê a vida.\nFrieren: Beyond Journey's End\nSérie · 28 episódios · 2023\n8,0\nFrieren Season 2\nSé"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: título, nota, ranking, géneros em português, sinopse e onde ver (só serviços de streaming do país da conta, também os links antigos em http; sem YouTube nem Hulu em Portugal)",
+  "pass": true,
+  "info": "{\"t\":\"& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões no teu tier. Sinopse PT: A young elf mage reflects on life. Tradução automática. Ver o origina"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: a sinopse aparece traduzida sozinha (grátis, com \"Ver o original\")",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: as temporadas ficam no mesmo anime (seletor Temporadas, sem a manga) e recomendações",
+  "pass": true,
+  "info": "[\"Temporada 1 2023 · 28 ep.|Frieren: Beyond Journey's End|on\",\"Temporada 2 2026 · 12 ep.|Frieren Season 2\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: todos os episódios (28, sem a secção \"Com imagem\" quando só há miniaturas de alguns), personagens com a voz e as aberturas/encerramentos",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Animes Frieren: Beyond Journey's End Sousou no Frieren · 日本 9,1 nota da comunidade 1.º mais bem avaliado de sempre Série · 28 episódios · 24 min · Outono 2023 Aventura Drama Fantasia Estou a ver Quero ver Já vi Em pausa Larguei Guardar numa lista Marca se estás a ver, já viste ou queres ver: depois dás a nota, escreves a resenha e pões "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: tocar no episódio 2 marca que viste até lá",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: \"Estou a ver\" junta à lista com o episódio 0 e a data de começo",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: tocar outra vez no estado marcado tira da lista (e tocar de novo volta a juntar)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: episódio, nota 1–10, favorito, resenha, top 10 e tier ficam guardados",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":2023,\"sea\":\"FALL\",\"fmt\":\"TV\",\"eps\":28,\"dur\":24,\"gen\":[\"Adventure\",\"Drama\",\"Fantasy\"],\"stu\":\"Estúdio "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe: mostra o episódio, a nota com o nome e o tier",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: chegar ao último episódio passa para \"Visto\" com a data de fim",
+  "pass": true,
+  "info": "{\"al\":154587,\"mal\":155587,\"ki\":0,\"t\":\"Frieren: Beyond Journey's End\",\"ro\":\"Sousou no Frieren\",\"img\":\"https://s4.anilist.co/c/154587.jpg\",\"col\":\"#e4a128\",\"ban\":\"https://s4.anilist.co/b/154587.jpg\",\"y\":"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › A minha lista: vistos, episódios, horas, nota média e géneros",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Vistos 1 A ver 0 Quero ver 0 Episódios vistos 28 11 horas a ver anime A tua nota média 9,0 1 com nota Os géneros que mais vês Aventura 1 Drama 1 Fantasia 1 A minha fila As minhas listas Histórico Tudo A tua fila está vazia. Marca animes como “Quero ver” ou “Estou a ver”. Pesquisar anime & Uma parceria Prumo & PHANTOM Conhecer a parceria"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Top 10 e tier list: o anime está no tier S e no 1.º lugar",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: a estação atual com todos os animes e o próximo episódio",
+  "pass": true,
+  "info": "{\"h\":\"Outono 2026\",\"n\":4,\"t\":\"8,0 Cyberpunk: Edgerunners 2 Série na internet · 10 episódios · 2026 Ação · Drama Cyberpunk: Edgerunners 2 Ep. 8 · dom 23:52 8,5 The Apothecary Diaries Season 3 Série · 12 episódios · 2026 Drama · Mistério Uma farmacêutica resolve mistérios no palácio. The Apothecary Di"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: filtrar só os filmes",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Temporada: voltar à temporada anterior (Verão 2026)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Calendário: os episódios da semana por dia e à hora certa (sem conteúdo adulto)",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Calendário de lançamentos Os episódios novos dos próximos 7 dias, à hora do teu aparelho (a hora a que saem no Japão). Normalmente chegam às plataformas de streaming no mesmo dia. Só os da minha lista Hoje sexta, 27/11 Sem episódios. Amanhã sábado, 28/11 00:52 The Apothecary Diaries Season 3 Episódio 7 de 12 Domingo 29/11 00:02 Série Se"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Melhores do ano: ranking com o 1.º, a nota e os botões",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Melhores do ano: escolher outro ano (2011)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: \"Quero ver\" num anime do ranking junta à lista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Navegar: populares com \"Ver mais\" (página seguinte)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Categorias: tocar em Ação abre os animes dessa categoria",
+  "pass": true,
+  "info": "#animes.navegar a Garotas mágicas Ecchi 8,0 Navegar Action página 1 Série · 12 episódios · 2026 Ação · Drama Navegar Action página 1 Série · 12 episódios · 2026 8,0 Outro 1 Série · 12 episódios · 2026 Ação · Drama Outro 1 Série · 12 episódios · 2026 Ver mais & Uma parceria Prumo & PHANTOM Conhecer a parceria"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Notícias: notícias de anime pelo servidor do Prumo",
+  "pass": true,
+  "info": "&\nAnimes\nInício\nNavegar\nSimulcasts\nPursuit\nA minha lista\nMais\nNotícias de anime\n\nO que se está a dizer sobre anime, mangá, estreias e streaming, nas últimas 48 horas. Abre no site de cada jornal.\n\nJornal Teste · há 1 min\nPesquisa 1\nJornal Teste · há 1 min\nPesquisa 2\nJornal Teste · há 1 min\nPesquisa "
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: junta o Kitsu (encontra o que o AniList não tem) e esconde o conteúdo adulto",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Pesquisar: \"Pedir à IA para encontrar\" descobre o anime pelo nome em português",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Detalhe de um anime que só o Kitsu tinha: o AniList completa (procura pelo nome)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › As minhas listas: criar uma lista a partir do anime e vê-la em A minha lista",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: a escolha a partir do que viste, a dizer porquê, sem o que já tens na lista",
+  "pass": true,
+  "info": "[\"8,7 Violet Evergarden Série · 12 episódios · 2026 Ação · Drama Violet Evergarden Porque viste Frieren: Beyond Journey's End\",\"8,0 Mushoku Tensei Série · 12 episódios · 2026 Ação · Drama Mushoku Tensei Porque viste Frieren: Beyond Journey's End\"]"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: os teus géneros, clássicos, joias escondidas e filmes",
+  "pass": true,
+  "info": "& Animes Início Navegar Simulcasts Pursuit A minha lista Mais Recomendado para ti A partir do que viste e das tuas notas (Frieren: Beyond Journey's End). O que já está na tua lista não aparece: marca Quero ver ou Já vi e as sugestões mudam. A escolha para ti 8,7 Violet Evergarden Série · 12 episódios · 2026 Ação · Drama Violet Evergarden Porque viste Frieren: Beyond Journey's End 8,0 Mushoku Tensei Série · 12 episódios · 2026 Ação · Drama Mushoku Tensei Porque viste Frieren: Beyond Journey's End Pede à IA Diz o que te apetece ver e a IA escolhe 8 animes a pensar na tua lista (os que já tens fi"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Para ti: pedir à IA dá animes reais com o porquê (os da lista ficam de fora)",
+  "pass": true,
+  "info": "Mushishi Série · 12 episódios · 2026 Calmo e contemplativo, como Frieren. Quero ver Já vi 8,6 de 10"
+ },
+ {
+  "p": "Animes",
+  "name": "Animes › Início: faixa \"Recomendado para ti\"",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: com o AniList em baixo, a pesquisa usa o MyAnimeList (reserva)",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: no telemóvel nada sai do ecrã",
+  "pass": true,
+  "info": ""
+ },
+ {
+  "p": "Animes",
+  "name": "Animes: sem erros na consola",
   "pass": true,
   "info": ""
  }

@@ -1,3 +1,4 @@
+Animes: a faixa da parceria no topo passa de uma cor à outra sem cortes no telemóvel. Menu da conta: o cartão do perfil já não corta o e-mail nem a classe.
 Separadores no telemóvel: o separador escolhido volta a ler-se bem em todas as paletas de cores.
 Painel: a cena do topo mistura-se suavemente com o fundo também no tablet e no computador.
 Ranking: os nomes já não aparecem cortados no telemóvel. Painel: a cena do topo mistura-se suavemente com as cores do fundo.

@@ -136,3 +136,12 @@ a.pp-it:focus-visible{outline:2px solid #D86A78;outline-offset:2px}
 /* a sombra por cima do destaque (para ler o texto) fica mais leve no slide da parceria: o degradê vê-se */
 .pp-slide .an-hg{background:linear-gradient(90deg,rgba(14,11,24,.5) 0%,rgba(14,11,24,.18) 42%,transparent 66%),linear-gradient(0deg,var(--an-bg) 0%,transparent 24%)!important}
 @media (max-width:640px){.pp-slide .an-hg{background:linear-gradient(0deg,var(--an-bg) 0%,rgba(14,11,24,.5) 30%,transparent 56%)!important}}
+/* v3.98 · telemóvel: a faixa da parceria nos Animes sem cortes de cor. O palco (roxo) passa ao vinho do texto e acaba no escuro da página
+   num degradê contínuo: o palco deixa de ter fundo próprio e de escurecer em baixo (era isso que fazia a linha a meio), e o vermelho já não toca o fundo da faixa */
+@media (max-width:640px){
+  .pp-slide{background:radial-gradient(85% 30% at 8% 72%,rgba(214,58,84,.42),transparent 72%),radial-gradient(80% 40% at 30% 4%,rgba(150,70,220,.34),transparent 70%),
+    linear-gradient(180deg,#2a1450 0%,#371352 30%,#4a1248 50%,#561238 66%,#3a1026 80%,var(--an-bg,#0e0b18) 96%)!important}
+  .pp-slide .an-hpic{background:transparent!important}
+  .pp-slide .an-hg{background:linear-gradient(180deg,rgba(14,11,24,.4) 0%,transparent 16%)!important}
+  .pp-slide .an-hd{color:rgba(255,236,240,.86)}
+}
