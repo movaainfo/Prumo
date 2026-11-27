@@ -171,6 +171,10 @@ const cupaoDe = async code => { code = cNorm(code); if (!CODE_RX.test(code)) ret
   if (!cp || !cp.valid || !cp.percent_off) return null; return { code, pct: +cp.percent_off, dur: cp.duration, meses: cp.duration_in_months || 0, planos: [], promo: pc.id }; };
 // cria o pagamento; se o Stripe da conta ainda não conhecer a marca ou a moeda fixa (versão antiga da API), cria sem elas
 //   (os métodos de pagamento escolhem-se só no painel do Stripe: Definições › Métodos de pagamento; a API já não aceita payment_method_types)
+// v3.93: o cupão da Black Friday no Stripe (um por ano, ciclo e modo), criado na primeira vez e guardado
+const bfCupao = async (pr, ciclo) => { const k = 'cfg/bf-' + pr.id + '-' + ciclo + '-' + P.modo(); try { const g = await N.store().get(k); if (g) { const o = JSON.parse(g.buf.toString()); if (o && o.id) return o.id; } } catch (e) { }
+  const ano = ciclo === 'ano', cp = await P.stripe('coupons', Object.assign({ percent_off: ano ? pr.ano : pr.mes, duration: ano ? 'once' : 'repeating', name: pr.nome + ' ' + pr.id.slice(2) + (ano ? ' · −' + pr.ano + '% no 1.º ano' : ' · −' + pr.mes + '% em ' + pr.meses + ' meses'), metadata: { app: 'prumo', promo: pr.id } }, ano ? {} : { duration_in_months: pr.meses }));
+  await N.store().put(k, Buffer.from(JSON.stringify({ id: cp.id, at: Date.now() }))).catch(() => { }); N.count('promo:' + pr.id); return cp.id; };
 const sesCria = async (params, x) => { let q = Object.assign({}, params);
   for (let i = 0; i < 2; i++) { try { return await P.stripe('checkout/sessions', q); }
     catch (e) { const m = String(e.message || ''); if (!(x && e.stripe && e.status === 400)) throw e;
@@ -234,7 +238,7 @@ const OPS = {
 
   /* ---------- planos e cobrança (Stripe) ---------- */
   // os planos e os preços (público: a página Planos mostra-os mesmo antes de entrar)
-  async planos() { return { planos: P.planos().map(p => ({ id: p.id, n: p.n, lvl: p.lvl, ia: p.ia, perfis: p.perfis, precos: p.precos })), cobranca: P.cobranca(), testeDias: P.TESTE_DIAS() }; },
+  async planos() { return { planos: P.planos().map(p => ({ id: p.id, n: p.n, lvl: p.lvl, ia: p.ia, perfis: p.perfis, precos: p.precos })), cobranca: P.cobranca(), testeDias: P.TESTE_DIAS(), promo: P.promo() }; },
   // assinar: abre o pagamento do Stripe (cartão, Apple Pay, Google Pay…) e volta ao Prumo
   async checkout(req, b) { const s = await session(req); if (!P.cobranca()) throw N.err('cobranca', 'As assinaturas ainda não estão abertas.', 503);
     const pl = P.byId(b.plano), ciclo = b.ciclo === 'ano' ? 'ano' : 'mes', loc = String(b.cur || '').toUpperCase(); if (!pl) throw N.err('plano', 'Plano desconhecido.', 400);
@@ -243,6 +247,8 @@ const OPS = {
     if (N.limit(req, 'checkout|' + s.rec.uid, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
     const volta = voltaDe(req, b.volta), prod = await produto(pl.id).catch(e => { throw pagErr(e, 'produto'); }), cus = P.mesmo(s.rec.plano) && s.rec.plano.cus;
     let desc = null; if (b.cupao) { desc = await cupaoDe(b.cupao); if (!desc) throw N.err('cupao', 'Esse código de desconto não é válido ou já expirou.', 400); if (desc.planos.length && !desc.planos.includes(pl.id)) throw N.err('cupao', 'Esse código não serve para o plano ' + pl.n + '.', 400); }
+    // v3.93: na Black Friday (sem código da pessoa), o desconto da época vai sozinho
+    const bf = !desc && P.promo() ? await bfCupao(P.promo(), ciclo).catch(() => null) : null;
     const ses = await sesCria(Object.assign({ mode: 'subscription', client_reference_id: s.rec.uid, success_url: volta + '#planos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#planos', allow_promotion_codes: 'true', locale: loc === 'BRL' ? 'pt-BR' : loc === 'EUR' ? 'pt' : 'auto',
       // no Brasil cobra-se em reais (preço próprio); no resto, em euros (o preço do dono) e quem paga noutra moeda vê o valor convertido pelo Stripe (Adaptive Pricing)
       adaptive_pricing: { enabled: brl ? 'false' : 'true' },
@@ -250,7 +256,7 @@ const OPS = {
       branding_settings: marca(volta),
       metadata: { uid: s.rec.uid, plano: pl.id, ciclo, cur: brl ? 'BRL' : 'EUR' }, subscription_data: { metadata: { uid: s.rec.uid, plano: pl.id, ciclo, cur: brl ? 'BRL' : 'EUR', app: 'prumo' } } }, cus ? { customer: cus } : { customer_email: s.rec.email },
       // com um código já aplicado no Prumo vai o desconto (o Stripe não deixa juntar com "tenho um código" na página dele)
-      desc ? { discounts: { 0: { promotion_code: desc.promo } }, allow_promotion_codes: undefined } : {}), true).catch(e => { if (desc && e.stripe && /first.time|first-time|customer.*not eligible|primeira/i.test(e.message || '')) throw N.err('cupao', 'Esse código é só para quem assina pela primeira vez.', 400); throw pagErr(e, 'checkout'); });
+      desc ? { discounts: { 0: { promotion_code: desc.promo } }, allow_promotion_codes: undefined } : bf ? { discounts: { 0: { coupon: bf } }, allow_promotion_codes: undefined } : {}), true).catch(e => { if (desc && e.stripe && /first.time|first-time|customer.*not eligible|primeira/i.test(e.message || '')) throw N.err('cupao', 'Esse código é só para quem assina pela primeira vez.', 400); throw pagErr(e, 'checkout'); });
     await change(s.eid, r => { r.pend = { cs: ses.id, at: Date.now(), modo: P.modo() }; });
     return { url: ses.url }; },
   // de volta do Stripe: confirma no Stripe (não confia na app) e guarda a assinatura na conta

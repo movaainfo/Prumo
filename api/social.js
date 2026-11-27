@@ -7,6 +7,7 @@
 // na página do anime que se acha que é (uma vez por dia); às 22h fecha e quem acertou ganha pontos pela ordem (1.º 100, 2.º 90… mínimo 10).
 'use strict';
 const N = require('./_nuvem'), PL = require('./_planos'), GIF = require('./_gif'), PNGS = require('./_png');
+const ALS = new (require('async_hooks').AsyncLocalStorage)();   // v3.93: os Selos ganhos num pedido voltam na resposta
 const PID = /^[a-f0-9]{12}$/, ID = /^[a-z0-9]{8,40}-[a-f0-9]{12}$/, CID = /^[a-z0-9]{10}$/;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const JK = () => process.env.JIKAN_BASE || 'https://api.jikan.moe/v4/';
@@ -18,12 +19,24 @@ const gravar = async (p, v, o) => N.store().put(p, N.seal(await N.accKey(), v), 
 const mudar = async (p, d, fn) => { for (let i = 0; i < 8; i++) { const { v, etag } = await ler(p, null), cur = v == null ? (typeof d === 'function' ? d() : JSON.parse(JSON.stringify(d))) : v; const r = fn(cur); if (r === false) return cur;
     try { await gravar(p, cur, etag ? { ifMatch: etag } : { overwrite: false }); return cur; } catch (e) { if (i === 7) throw N.err('ocupado', 'Muita gente ao mesmo tempo. Tenta outra vez.', 503); await sleep(60 + Math.random() * 200); } } };
 /* ---------- quem pede ---------- */
-const conta = async (t, pid) => { const k = t.u + '|' + t.v + '|' + pid, c = OKS.get(k); if (c && Date.now() - c.at < 30e3) return c;
+const conta = async (t, pid) => { const k = t.u + '|' + t.v + '|' + pid, c = OKS.get(k); if (c && Date.now() - c.at < 15e3) return c;   // v3.93: 15 s (o nome e o plano novos chegam depressa aos clãs)
   const g = await N.store().get('a/' + t.a); let r = null; try { r = g && N.open(await N.accKey(), g.buf); } catch (e) { }
   if (!r || r.uid !== t.u || (r.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   const pf = (r.perfis || []).find(x => x.id === pid); if (!pf) throw N.err('perfil', 'Este perfil já não existe.', 404);
   await N.gate(r.email); const e = PL.efetivo(r), o = { at: Date.now(), email: r.email, nome: String(pf.nome || 'Pessoa').slice(0, 24), adm: N.isAdminEmail(r.email), teste: N.isTeste(r.email), uid: r.uid, lvl: e.lvl || 0, plano: e.n || '', pago: !!(e.pago || e.admin || e.contaTeste) }; OKS.set(k, o); if (OKS.size > 3000) OKS.delete(OKS.keys().next().value); return o; };
 const P = id => 'so/p/' + id;
+// v3.93: o nome (do perfil Prumo) e o plano vão para todo o lado: perfil social, membros dos clãs e ranking dos animes.
+// Corre no máximo uma vez por perfil e por nome/plano (em memória), sem ler nada nos pedidos seguintes.
+const SINC = new Map();
+const PLN = c => ({ n: c.adm ? 'Administração' : c.lvl >= 1 ? (c.plano || ['', 'Essencial', 'Avançado', 'Completo'][c.lvl] || 'Pago') : 'Grátis', lvl: c.adm ? 9 : c.lvl || 0 });
+const sincPerfil = async c => { const pl = PLN(c), k = c.nome + '|' + pl.n; if (SINC.get(c.eu) === k) return;
+  let mudouNome = false, v = null, existe = false;
+  await mudar(P(c.eu), null, p => { if (!p) return false; existe = true; const pn = !p.pl || p.pl.n !== pl.n || p.pl.lvl !== pl.lvl; mudouNome = !!(c.nome && p.nome !== c.nome); if (!pn && !mudouNome) return false; if (mudouNome) p.nome = c.nome; p.pl = pl; v = p; }).catch(() => { });
+  // só fica marcado como feito quando o perfil social já existe (senão, o primeiro pedido que o cria volta a tentar)
+  if (existe) { SINC.set(c.eu, k); if (SINC.size > 5000) SINC.delete(SINC.keys().next().value); }
+  if (mudouNome && v) await nomeEmTodo(c.eu, c.nome, v).catch(() => { }); };
+const nomeEmTodo = async (eu, nome, v) => { for (const cid of (v.clas || [])) { const cl = await mudar(CL(cid), null, o => { if (!o) return false; const m = (o.membros || []).find(x => x.id === eu); if (!m || m.nome === nome) return false; m.nome = nome; if (o.dono === eu) o.donoNome = nome; }).catch(() => null); if (cl && typeof idxPor === 'function') await idxPor(cl).catch(() => { }); }
+  if (v.user || v.av) await pubPts(eu, { nome }).catch(() => { }); };
 const COD = () => { const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let s = ''; const b = N.crypto.randomBytes(6); for (const x of b) s += A[x % A.length]; return s; };
 const perfil = async (id, nome) => { let { v } = await ler(P(id), null); if (v) return v;
   for (let i = 0; i < 5; i++) { const cod = COD(); try { await N.store().put('so/c/' + cod, Buffer.from(JSON.stringify({ id })), { overwrite: false }); v = { id, nome, cod, amigos: [], pedidos: [], enviados: [], bloq: [], clas: [], lidas: {}, criado: Date.now() }; break; } catch (e) { } }
@@ -73,13 +86,38 @@ const lisboa = (t = Date.now()) => { const p = {}; new Intl.DateTimeFormat('en-G
 const H_ABRE = () => +(process.env.NAUTILO_HUNTER_ABRE || 1200), H_FECHA = () => +(process.env.NAUTILO_HUNTER_FECHA || 1320); // minutos depois da meia-noite (Lisboa): 20:00 e 22:00
 const jk = async p => { for (let i = 0; i < 3; i++) { try { const r = await fetch(JK() + p, { headers: { accept: 'application/json', 'user-agent': 'Prumo/1.0' }, signal: AbortSignal.timeout(10000) }); if (r.status === 429) { await sleep(1200); continue; } if (!r.ok) throw new Error('Jikan ' + r.status); return await r.json(); } catch (e) { if (i === 2) throw e; await sleep(700); } } };
 const ESTACAO = { winter: 'no inverno', spring: 'na primavera', summer: 'no verão', fall: 'no outono' }, FONTE = { Manga: 'num mangá', 'Light novel': 'numa light novel', Novel: 'num romance', Original: 'numa história original (não adaptado)', 'Web manga': 'num mangá online', 'Visual novel': 'numa visual novel', Game: 'num jogo' };
-const pistasDe = a => { const P0 = [], ger = (a.genres || []).map(g => g.name).slice(0, 3), tem = (a.themes || []).concat(a.demographics || []).map(g => g.name).slice(0, 2), est = (a.studios || []).map(s => s.name)[0];
-  P0.push(`É ${a.type === 'Movie' ? 'um filme' : 'uma série'}${a.episodes && a.type !== 'Movie' ? ' com ' + a.episodes + ' episódios' : ''}${a.year ? ' e estreou ' + (ESTACAO[a.season] || 'em') + ' de ' + a.year : ''}.`);
-  if (ger.length) P0.push('Géneros: ' + ger.join(', ') + (tem.length ? '; temas: ' + tem.join(', ') : '') + '.');
-  P0.push(`É baseado ${FONTE[a.source] || 'em ' + (a.source || 'algo')}.`);
-  if (est) P0.push(`O estúdio de animação é ${est}.`);
-  const tt = String(a.title || '').trim(), w = tt.split(/\s+/).length; P0.push(`O título (em japonês romanizado) começa por "${tt[0]}" e tem ${w} palavra${w === 1 ? '' : 's'}.`);
+// v3.93: as 5 pistas, da mais difícil para a mais fácil, em português (os géneros e temas vêm em inglês das bases e são traduzidos)
+const GEN_PT = { Action: 'Ação', Adventure: 'Aventura', 'Avant Garde': 'Vanguarda', 'Award Winning': 'Premiado', Comedy: 'Comédia', Drama: 'Drama', Fantasy: 'Fantasia', Gourmet: 'Gastronomia', Horror: 'Terror', Mystery: 'Mistério', Romance: 'Romance',
+  'Sci-Fi': 'Ficção científica', 'Slice of Life': 'Quotidiano', Sports: 'Desporto', Supernatural: 'Sobrenatural', Suspense: 'Suspense', Thriller: 'Suspense', Psychological: 'Psicológico', 'Mahou Shoujo': 'Raparigas mágicas', Mecha: 'Robôs gigantes', Music: 'Música',
+  'Boys Love': 'Boys love', 'Girls Love': 'Girls love', 'Adult Cast': 'elenco adulto', Anthropomorphic: 'animais com traços humanos', CGDCT: 'raparigas fofas no dia a dia', Childcare: 'cuidar de crianças', 'Combat Sports': 'desportos de combate', Delinquents: 'delinquentes',
+  Detective: 'detetives', Educational: 'educativo', 'Gag Humor': 'humor absurdo', Gore: 'violência explícita', Harem: 'harém', 'High Stakes Game': 'jogos de alto risco', Historical: 'histórico', 'Idols (Female)': 'idols', 'Idols (Male)': 'idols', Isekai: 'outro mundo (isekai)',
+  Iyashikei: 'calmo e reconfortante', 'Love Polygon': 'triângulo amoroso', 'Love Status Quo': 'romance que não avança', 'Magical Sex Shift': 'troca de corpo mágica', 'Martial Arts': 'artes marciais', Medical: 'medicina', Military: 'militar', Mythology: 'mitologia',
+  'Organized Crime': 'crime organizado', 'Otaku Culture': 'cultura otaku', Parody: 'paródia', 'Performing Arts': 'artes de palco', Pets: 'animais de estimação', Racing: 'corridas', Reincarnation: 'reencarnação', 'Reverse Harem': 'harém invertido', Samurai: 'samurais',
+  School: 'escola', Showbiz: 'mundo do espetáculo', Space: 'espaço', 'Strategy Game': 'jogos de estratégia', 'Super Power': 'superpoderes', Survival: 'sobrevivência', 'Team Sports': 'desportos de equipa', 'Time Travel': 'viagens no tempo', Vampire: 'vampiros',
+  'Video Game': 'videojogos', Villainess: 'vilã', 'Visual Arts': 'artes visuais', Workplace: 'mundo do trabalho', 'Urban Fantasy': 'fantasia urbana', Magic: 'magia', Demons: 'demónios', 'Female Protagonist': 'protagonista feminina', 'Male Protagonist': 'protagonista masculino',
+  Shounen: 'shounen (rapazes adolescentes)', Shoujo: 'shoujo (raparigas adolescentes)', Seinen: 'seinen (adultos)', Josei: 'josei (mulheres adultas)', Kids: 'infantil' };
+const ptG = x => GEN_PT[x] || x;
+const listaPT = L => L.length <= 1 ? L.join('') : L.slice(0, -1).join(', ') + ' e ' + L[L.length - 1];
+const FONTE_PT = { Manga: 'de um mangá', 'Light novel': 'de uma light novel', Novel: 'de um romance', Original: 'de nenhuma obra: é uma história original', 'Web manga': 'de um mangá online', 'Web novel': 'de um romance online', 'Visual novel': 'de uma visual novel', Game: 'de um jogo', '4-koma manga': 'de um mangá de 4 vinhetas' };
+const H_PISTAS = [0, 0, 35, 70, 105];   // minutos depois de abrir: 2 às 20:00, a 3.ª às 20:35, a 4.ª às 21:10, a 5.ª às 21:45 (às 22:00 revela-se o anime)
+const pistasDe = (a, pers) => { const P0 = [], ger = (a.genres || []).map(g => ptG(g.name)).slice(0, 3), tem = (a.themes || []).map(g => ptG(g.name)).slice(0, 2), dem = (a.demographics || []).map(g => ptG(g.name))[0], est = (a.studios || []).map(s => s.name)[0];
+  const tt = String(a.title || '').trim(), w = tt ? tt.split(/\s+/).length : 0;
+  // 1: só os géneros
+  P0.push(ger.length ? 'Géneros: ' + listaPT(ger) + '.' : 'É um anime que mistura vários géneros.');
+  // 2: de onde vem e a década
+  P0.push(`É adaptado ${FONTE_PT[a.source] || 'de ' + (a.source || 'outra obra')}${a.year ? ' e estreou nos anos ' + (Math.floor(a.year / 10) * 10) : ''}.`);
+  // 3: os temas e o público
+  P0.push(tem.length || dem ? [tem.length ? 'Temas: ' + listaPT(tem) : '', dem ? 'público: ' + dem : ''].filter(Boolean).join('; ').replace(/^./, c => c.toUpperCase()) + '.' : `É ${a.type === 'Movie' ? 'um filme' : 'uma série'} de animação japonesa.`);
+  // 4: o estúdio, o formato e os episódios
+  P0.push(`${a.type === 'Movie' ? 'É um filme' : 'É uma série'}${a.episodes && a.type !== 'Movie' ? ' com ' + a.episodes + ' episódios' : ''}${est ? ', feita pelo estúdio ' + est : ''}.`);
+  // 5: a temporada e o ano, e uma personagem principal (só o nome próprio e a inicial do apelido)
+  const p5 = []; if (a.year) p5.push('Estreou ' + (ESTACAO[a.season] || 'em') + ' de ' + a.year + '.');
+  if (pers) p5.push(`Uma das personagens principais chama-se ${pers}${/\.$/.test(pers) ? '' : '.'}`); else if (w) p5.push(`O título (em japonês romanizado) tem ${w} palavra${w === 1 ? '' : 's'}.`);
+  P0.push(p5.join(' ') || 'Saiu há mais de uma década.');
   return P0; };
+// a personagem principal: "Higashikata, Josuke" → "Josuke H."
+const persDe = nome => { const s = String(nome || '').trim(); if (!s) return ''; const [ap, pr] = s.includes(',') ? s.split(',').map(x => x.trim()) : [s.split(/\s+/).slice(1).join(' '), s.split(/\s+/)[0]];
+  return pr ? pr + (ap ? ' ' + ap[0].toUpperCase() + '.' : '') : (ap || ''); };
 // v3.78: quando o MyAnimeList (Jikan) não responde, o AniList dá a mesma informação (pelos números do MyAnimeList)
 const ALQ = () => process.env.NAUTILO_ANILIST || 'https://graphql.anilist.co';
 const al = async (query, variables) => { const r = await fetch(ALQ(), { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ query, variables }), signal: AbortSignal.timeout(9000) });
@@ -87,11 +125,11 @@ const al = async (query, variables) => { const r = await fetch(ALQ(), { method: 
 const ALFONTE = { MANGA: 'Manga', LIGHT_NOVEL: 'Light novel', NOVEL: 'Novel', ORIGINAL: 'Original', VISUAL_NOVEL: 'Visual novel', VIDEO_GAME: 'Game', WEB_NOVEL: 'Web novel', DOUJINSHI: 'Doujinshi', ANIME: 'Anime', MULTIMEDIA_PROJECT: 'Original' };
 const alTop = async () => { const L = []; for (let pg = 1; pg <= 4; pg++) { const d = await al('query($p:Int){Page(page:$p,perPage:50){media(type:ANIME,sort:POPULARITY_DESC,isAdult:false){idMal genres}}}', { p: pg });
     ((d.Page || {}).media || []).forEach(m => { if (m.idMal && !(m.genres || []).includes('Ecchi') && !(m.genres || []).includes('Hentai')) L.push(m.idMal); }); } return L; };
-const alFicha = async mal => { const m = ((await al('query($m:Int){Media(idMal:$m,type:ANIME){idMal title{romaji english} format episodes season seasonYear source genres tags{name rank isMediaSpoiler} studios(isMain:true){nodes{name}} coverImage{extraLarge large}}}', { m: +mal })) || {}).Media;
+const alFicha = async mal => { const m = ((await al('query($m:Int){Media(idMal:$m,type:ANIME){idMal title{romaji english} format episodes season seasonYear source genres tags{name rank isMediaSpoiler} studios(isMain:true){nodes{name}} coverImage{extraLarge large} characters(role:MAIN,perPage:2){nodes{name{first last}}}}}', { m: +mal })) || {}).Media;
   if (!m || !m.idMal) return {};
   return { mal_id: m.idMal, title: (m.title || {}).romaji || (m.title || {}).english || '', title_english: (m.title || {}).english || '', type: m.format === 'MOVIE' ? 'Movie' : 'TV', episodes: m.episodes || 0, year: m.seasonYear || 0, season: String(m.season || '').toLowerCase(),
     source: ALFONTE[m.source] || '', genres: (m.genres || []).map(name => ({ name })), themes: (m.tags || []).filter(t => !t.isMediaSpoiler && t.rank >= 70).slice(0, 2).map(t => ({ name: t.name })), demographics: [], studios: (((m.studios || {}).nodes) || []).map(x => ({ name: x.name })),
-    images: { webp: { large_image_url: (m.coverImage || {}).extraLarge || (m.coverImage || {}).large || '' } } }; };
+    images: { webp: { large_image_url: (m.coverImage || {}).extraLarge || (m.coverImage || {}).large || '' } }, _pers: ((((m.characters || {}).nodes) || [])[0] || {}).name || null }; };
 // o anime do dia: um dos 200 mais populares, escolhido pela data (o mesmo para todos) sem repetir nos últimos 60 dias
 const escolher = async d => { let top = (await ler('so/htop', null)).v;
   if (!top || Date.now() - top.at > 7 * 864e5 || !top.L.length) { const L = []; for (let pg = 1; pg <= 8; pg++) { try { const j = await jk('top/anime?filter=bypopularity&page=' + pg); if (!(j.data || []).length) break; (j.data || []).forEach(x => { if (x && x.mal_id && x.rating && !/Rx|R\+/.test(x.rating)) L.push(x.mal_id); }); } catch (e) { break; } await sleep(450); } if (!L.length) { try { (await alTop()).forEach(x => L.push(x)); } catch (e) { } } if (L.length) { top = { L, at: Date.now() }; await gravar('so/htop', top); } }
@@ -103,7 +141,11 @@ const desafio = async () => { const L = lisboa(), d = L.d, P0 = 'so/h/' + d; let
   // (só entre as 20h e as 22h: depois de fechar, sem jogo criado, mostra o de amanhã)
   if (!v && L.min >= H_ABRE() && L.min < H_FECHA()) { const mal = await escolher(d); let a = {}; try { a = ((await jk('anime/' + mal + '/full')) || {}).data || {}; } catch (e) { }
     if (!a.mal_id) { try { a = await alFicha(mal); } catch (e) { } } if (!a.mal_id) throw N.err('hunter', 'As bases de animes não responderam. O Pursuit de hoje sai daqui a pouco.', 502);
-    v = { dia: d, mal: String(a.mal_id), titulo: a.title_english || a.title, img: ((a.images || {}).webp || {}).large_image_url || ((a.images || {}).jpg || {}).image_url || '', pistas: pistasDe(a), fechado: false };
+    let pers = ''; if (a._pers) pers = persDe([a._pers.last, a._pers.first].filter(Boolean).join(', '));
+    else { try { const ch = (((await jk('anime/' + a.mal_id + '/characters')) || {}).data || []).find(x => x && x.role === 'Main' && x.character && x.character.name); if (ch) pers = persDe(ch.character.name); } catch (e) { } }
+    // a personagem não pode trazer palavras do título (seria dar a resposta)
+    const tw = String((a.title_english || '') + ' ' + (a.title || '')).toLowerCase().split(/[^a-z0-9]+/).filter(x => x.length > 3); if (pers && tw.some(x => pers.toLowerCase().includes(x))) pers = '';
+    v = { dia: d, mal: String(a.mal_id), titulo: a.title_english || a.title, img: ((a.images || {}).webp || {}).large_image_url || ((a.images || {}).jpg || {}).image_url || '', pistas: pistasDe(a, pers), fechado: false };
     try { await gravar(P0, v, { overwrite: false }); await mudar('so/hhist', { L: [] }, o => { o.L = (o.L || []).concat(+v.mal).slice(-60); }); } catch (e) { v = (await ler(P0, v)).v; } }
   if (v && !v.fechado && L.min >= H_FECHA()) v = await fechar(P0, v);
   return { L, v }; };
@@ -116,10 +158,10 @@ const fechar = async (P0, v0) => { const L = await N.store().list('so/hg/' + v0.
   return v; };
 const hunterVer = async (eu) => { const { L, v } = await desafio(), abre = H_ABRE(), fecha = H_FECHA(), m = L.min;
   const fase = !v ? 'espera' : v.fechado ? 'fechado' : 'aberto', meu = v && eu ? (await ler('so/hg/' + v.dia + '/' + eu, null)).v : null;
-  const visiveis = !v ? [] : v.fechado ? v.pistas : v.pistas.slice(0, Math.min(v.pistas.length, 3 + (m >= abre + 40 ? 1 : 0) + (m >= abre + 80 ? 1 : 0)));
+  const visiveis = !v ? [] : v.fechado ? v.pistas : v.pistas.slice(0, Math.max(2, H_PISTAS.filter(x => m >= abre + x).length));
   const ontem = fase === 'espera' ? (await ler('so/h/' + lisboa(Date.now() - 864e5).d, null)).v : null;
   const min0 = Math.floor(Date.now() / 6e4) * 6e4, depois = !v && m >= fecha ? 864e5 : 0, abreAt = min0 - (m - abre) * 6e4 + depois, fechaAt = min0 - (m - fecha) * 6e4 + depois;   // depois das 22h sem jogo: o de amanhã
-  return { fase, dia: L.d, abre, fecha, agora: m, abreAt, fechaAt, amanha: abreAt + 864e5, ts: Date.now(), pistas: visiveis, total: v ? v.pistas.length : 5, meu: meu ? { mal: meu.mal, titulo: meu.titulo, at: meu.at, certo: v && v.fechado ? meu.mal === v.mal : undefined } : null,
+  return { fase, dia: L.d, abre, fecha, agora: m, abreAt, fechaAt, amanha: abreAt + 864e5, ts: Date.now(), pistas: visiveis, quando: H_PISTAS.map(x => abreAt + x * 6e4), total: v ? v.pistas.length : 5, meu: meu ? { mal: meu.mal, titulo: meu.titulo, at: meu.at, certo: v && v.fechado ? meu.mal === v.mal : undefined } : null,
     resposta: v && v.fechado ? { mal: v.mal, titulo: v.titulo, img: v.img } : null, res: v && v.fechado ? (v.res || []).slice(0, 30) : null, jogadores: v && v.fechado ? v.total : undefined,
     ontem: ontem && ontem.fechado ? { titulo: ontem.titulo, img: ontem.img, res: (ontem.res || []).slice(0, 5) } : null }; };
 /* ---------- pedidos ---------- */
@@ -127,10 +169,10 @@ const OPS = {
   async eu(c, b) { const v = await perfil(c.eu, c.nome), amigos = await Promise.all((v.amigos || []).map(pub)), pedidos = await Promise.all((v.pedidos || []).map(pub)), clas = [];
     for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (cl) clas.push(Object.assign(claPub(cl), gerente(cl, c.eu) ? { ped: (cl.pedidos || []).length, conv: (cl.convites || []).length } : {}, { gw: cl.guerra ? 1 : 0 })); }
     const claPed = []; for (const cid of (v.claPed || []).slice(-10)) { const cl = (await ler(CL(cid), null)).v; if (cl && (cl.pedidos || []).some(x => x.id === c.eu)) claPed.push({ id: cid, nome: cl.nome, cor: cl.cor, foto: cl.foto || 0 }); }
-    if (c.nome && v.nome !== c.nome) { v.nome = c.nome; await mudar(P(c.eu), null, p => { p.nome = c.nome; }).catch(() => { }); if (v.user || v.av) pubPts(c.eu, { nome: c.nome }).catch(() => { }); }
-    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas, claPed }; },
+    if (c.nome && v.nome !== c.nome) { v.nome = c.nome; await mudar(P(c.eu), null, p => { p.nome = c.nome; }).catch(() => { }); await nomeEmTodo(c.eu, c.nome, v).catch(() => { }); }
+    const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pl: PLN(c), pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas, claPed }; },
   async nome(c, b) { const n = String(b.nome || '').replace(/\s+/g, ' ').trim(); if (n.length < 2 || n.length > 24) throw N.err('nome', 'O nome tem de ter entre 2 e 24 letras.', 400);
-    const m = await moderar(n); if (!m.ok) throw N.err('nome', 'Esse nome não pode ser usado: ' + m.motivo, 400); await perfil(c.eu, c.nome); await mudar(P(c.eu), null, v => { v.nome = n; }); return { ok2: true, nome: n }; },
+    const m = await moderar(n); if (!m.ok) throw N.err('nome', 'Esse nome não pode ser usado: ' + m.motivo, 400); await perfil(c.eu, c.nome); const v2 = await mudar(P(c.eu), null, v => { v.nome = n; }); await nomeEmTodo(c.eu, n, v2).catch(() => { }); return { ok2: true, nome: n }; },
   async amigoPedir(c, b) { const cod = String(b.cod || '').toUpperCase().replace(/^PR-?/, '').replace(/[^A-Z0-9]/g, ''); const g = await N.store().get('so/c/' + cod).catch(() => null); if (!g) throw N.err('amigo', 'Não encontrei ninguém com esse código.', 404);
     const outro = JSON.parse(g.buf.toString()).id; if (outro === c.eu) throw N.err('amigo', 'Esse é o teu código.', 400); await perfil(c.eu, c.nome); const o = (await ler(P(outro), null)).v; if (!o) throw N.err('amigo', 'Não encontrei essa pessoa.', 404);
     if ((o.bloq || []).includes(c.eu)) throw N.err('amigo', 'Não é possível adicionar esta pessoa.', 403);
@@ -149,7 +191,7 @@ const OPS = {
   async claCriar(c, b) { const nome = String(b.nome || '').replace(/\s+/g, ' ').trim(), desc = String(b.desc || '').trim().slice(0, 160), cor = /^#[0-9a-f]{6}$/i.test(b.cor || '') ? b.cor : '#9B1B30';
     if (nome.length < 3 || nome.length > 28) throw N.err('cla', 'O nome do clã tem de ter entre 3 e 28 letras.', 400);
     const m = await moderar(nome + (desc ? ' — ' + desc : '')); if (!m.ok) throw N.err('cla', 'Esse nome ou descrição não pode ser usado: ' + m.motivo, 400);
-    const v = await perfil(c.eu, c.nome); if ((v.clas || []).length >= 5) throw N.err('cla', 'Já estás em 5 clãs, o máximo.', 400);
+    const v = await perfil(c.eu, c.nome); if ((v.clas || []).length >= CLA_MAX) throw N.err('cla', 'Já estás num clã. Sai dele primeiro para criares outro.', 400);
     const cid = N.crypto.randomBytes(5).toString('hex'); let cod = ''; for (let i = 0; i < 5 && !cod; i++) { const x = COD(); try { await N.store().put('so/cc/' + x, Buffer.from(JSON.stringify({ cid })), { overwrite: false }); cod = x; } catch (e) { } }
     const cl = { id: cid, nome, desc, cor, cod, dono: c.eu, membros: [{ id: c.eu, nome: v.nome, papel: 'dono', desde: Date.now() }], criado: Date.now() }; await gravar(CL(cid), cl, { overwrite: false });
     await mudar(P(c.eu), null, p => { p.clas = [...new Set((p.clas || []).concat(cid))]; }); await idxPor(cl).catch(() => { }); return { cla: claPub(cl) }; },
@@ -199,6 +241,7 @@ const OPS = {
     return { ok2: true, hunter: await hunterVer(c.eu) }; } };
 /* ---------- v3.89 · clãs: pedidos para entrar, foto, pesquisa, ranking de clãs e guerra de clãs ---------- */
 const IDX = 'so/clidx.json', GW = wid => 'so/gw/' + wid, WID = /^[a-f0-9]{10}$/, DIA = 864e5;
+const CLA_MAX = 1;   // v3.93: cada pessoa está num clã de cada vez (para entrar ou criar outro, sai primeiro)
 const gerente = (cl, eu) => { const m = (cl.membros || []).find(x => x.id === eu); return !!m && ['dono', 'mod'].includes(m.papel); };
 const idxPor = async cl => { await idxLer(); return mudar(IDX, {}, X => { X[cl.id] = { nome: cl.nome, desc: cl.desc || '', cor: cl.cor, foto: cl.foto || 0, vit: cl.vit || 0, m: cl.membros.map(x => x.id) }; }); };
 const idxDe = async cid => { try { const cl = (await ler(CL(cid), null)).v; if (cl && cl.membros.length) await idxPor(cl); else await mudar(IDX, {}, X => { if (!X[cid]) return false; delete X[cid]; }); } catch (e) { } };
@@ -206,7 +249,7 @@ const idxDe = async cid => { try { const cl = (await ler(CL(cid), null)).v; if (
 const idxLer = async () => { let X = (await ler(IDX, null)).v; if (X) return X; X = {}; try { const L = (await N.store().list('so/cl/')).slice(0, 800); for (const it of L) { const cl = (await ler(it.pathname, null)).v; if (cl && cl.membros && cl.membros.length) X[cl.id] = { nome: cl.nome, desc: cl.desc || '', cor: cl.cor, foto: cl.foto || 0, vit: cl.vit || 0, m: cl.membros.map(x => x.id) }; } } catch (e) { } await gravar(IDX, X).catch(() => { }); return X; };
 const somaCla = (e, T) => (e.m || []).reduce((t, id) => t + ((T[id] || {}).p || 0), 0);
 const pedirEntrar = async (c, cid) => { if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400); const v = await perfil(c.eu, c.nome);
-  if ((v.clas || []).includes(cid)) throw N.err('cla', 'Já estás neste clã.', 400); if ((v.clas || []).length >= 5) throw N.err('cla', 'Já estás em 5 clãs, o máximo.', 400);
+  if ((v.clas || []).includes(cid)) throw N.err('cla', 'Já estás neste clã.', 400); if ((v.clas || []).length >= CLA_MAX) throw N.err('cla', 'Já estás num clã. Sai dele primeiro para pedires para entrar noutro.', 400);
   const cl = await mudar(CL(cid), null, o => { if (!o) throw N.err('cla', 'Clã desconhecido.', 404); if (o.membros.some(m => m.id === c.eu)) return false; if ((o.banidos || []).includes(c.eu)) throw N.err('cla', 'Não podes entrar neste clã.', 403);
     if (o.membros.length >= vagas(o)) throw N.err('cla', 'Este clã está cheio (' + vagas(o) + ' vagas). Quem é do clã pode comprar mais vagas com Selos.', 400); o.pedidos = (o.pedidos || []).filter(x => x.id !== c.eu); if (o.pedidos.length >= 60) throw N.err('cla', 'Este clã tem muitos pedidos à espera. Tenta mais tarde.', 429);
     o.pedidos.push({ id: c.eu, nome: v.nome, user: v.user || '', av: v.av || 0, at: Date.now() }); });
@@ -217,11 +260,13 @@ OPS.claCancelar = async (c, b) => { const cid = String(b.id || ''); if (!CID.tes
   await mudar(CL(cid), null, o => { if (!o || !(o.pedidos || []).some(x => x.id === c.eu)) return false; o.pedidos = o.pedidos.filter(x => x.id !== c.eu); }); await mudar(P(c.eu), null, p => { if (!p) return false; p.claPed = (p.claPed || []).filter(x => x !== cid); }); return { ok2: true }; };
 // o dono ou um moderador aceita ou recusa cada pedido
 OPS.claResponder = async (c, b) => { const cid = String(b.id || ''), quem = String(b.quem || ''), sim = !!b.sim; if (!CID.test(cid) || !ID.test(quem)) throw N.err('cla', 'Pedido desconhecido.', 400);
-  const pv = (await ler(P(quem), null)).v; let cheio5 = sim && pv && (pv.clas || []).length >= 5 && !(pv.clas || []).includes(cid);
+  const pv = (await ler(P(quem), null)).v; let cheio5 = sim && pv && (pv.clas || []).length >= CLA_MAX && !(pv.clas || []).includes(cid);
   const cl = await mudar(CL(cid), null, o => { if (!o || !gerente(o, c.eu)) throw N.err('cla', 'Só quem gere o clã pode responder aos pedidos.', 403); const pd = (o.pedidos || []).find(x => x.id === quem); if (!pd) return false;
     o.pedidos = o.pedidos.filter(x => x.id !== quem); if (sim && !cheio5) { if (o.membros.length >= vagas(o)) throw N.err('cla', 'O clã está cheio (' + vagas(o) + ' vagas). Reforça o clã com Selos para aceitar mais pessoas.', 400); if (!o.membros.some(m => m.id === quem)) o.membros.push({ id: quem, nome: pd.nome, papel: 'membro', desde: Date.now() }); } });
   await mudar(P(quem), null, p => { if (!p) return false; p.claPed = (p.claPed || []).filter(x => x !== cid); if (sim && !cheio5) p.clas = [...new Set((p.clas || []).concat(cid))]; }).catch(() => { });
-  if (cl) await idxPor(cl).catch(() => { }); if (cheio5) throw N.err('cla', 'Esta pessoa já está em 5 clãs, o máximo. O pedido foi retirado.', 400); return { ok2: true, entrou: sim }; };
+  // v3.93: quem entrou num clã deixa de ter pedidos à espera nos outros
+  if (sim && !cheio5 && pv) for (const x of (pv.claPed || []).filter(x => x !== cid)) { await mudar(CL(x), null, o => { if (!o || !(o.pedidos || []).some(y => y.id === quem)) return false; o.pedidos = o.pedidos.filter(y => y.id !== quem); }).catch(() => { }); await mudar(P(quem), null, p => { if (!p) return false; p.claPed = (p.claPed || []).filter(y => y !== x); }).catch(() => { }); }
+  if (cl) await idxPor(cl).catch(() => { }); if (cheio5) throw N.err('cla', 'Esta pessoa já entrou noutro clã. O pedido foi retirado.', 400); return { ok2: true, entrou: sim }; };
 OPS.claMod = async (c, b) => { const cid = String(b.id || ''), quem = String(b.quem || ''); if (!CID.test(cid) || !ID.test(quem)) throw N.err('cla', 'Pedido desconhecido.', 400);
   await mudar(CL(cid), null, o => { if (!o || o.dono !== c.eu) throw N.err('cla', 'Só o dono escolhe os moderadores.', 403); const m = o.membros.find(x => x.id === quem); if (!m || m.papel === 'dono') return false; m.papel = m.papel === 'mod' ? 'membro' : 'mod'; }); return { ok2: true }; };
 // a foto do clã (dono ou moderador); a IA verifica sempre antes de entrar
@@ -263,6 +308,7 @@ const gwPub = (w, T, eu, meus) => { const pl = w.estado === 'ativa' ? placar(w, 
 const ocupado = async wid => { const w = await gwLer(wid); return !!w && (w.estado === 'ativa' || w.estado === 'proposta'); };
 OPS.claDesafiar = async (c, b) => { const cid = String(b.id || ''), alvo = String(b.alvo || ''); if (!CID.test(cid) || !CID.test(alvo) || cid === alvo) throw N.err('guerra', 'Escolhe outro clã para desafiar.', 400);
   const A = (await ler(CL(cid), null)).v, B = (await ler(CL(alvo), null)).v; if (!A || !B) throw N.err('guerra', 'Clã desconhecido.', 404); if (!gerente(A, c.eu)) throw N.err('guerra', 'Só quem gere o clã pode desafiar outro clã.', 403);
+  if ((A.aliados || []).some(x => x.id === alvo)) throw N.err('guerra', 'Esse clã é vosso aliado: aliados não entram em guerra entre si.', 400);
   if (A.guerra && await ocupado(A.guerra)) throw N.err('guerra', 'O teu clã já está numa guerra (ou tem um desafio à espera).', 400); if (B.guerra && await ocupado(B.guerra)) throw N.err('guerra', 'Esse clã já está numa guerra.', 400);
   if ((B.convites || []).length >= 5) throw N.err('guerra', 'Esse clã já tem muitos desafios à espera.', 429);
   const wid = N.crypto.randomBytes(5).toString('hex'), w = { id: wid, a: cid, b: alvo, nA: A.nome, nB: B.nome, cA: A.cor, cB: B.cor, estado: 'proposta', criada: Date.now(), por: c.eu };
@@ -284,7 +330,40 @@ const claExtra = async (c, cl, T) => { const ge = gerente(cl, c.eu), meus = [cl.
     // se a guerra acabou agora, o clã mudou (vitórias, derrotas, histórico): lê-se outra vez
     if (w && w.estado !== 'ativa' && w.estado !== 'proposta') { const f = (await ler(CL(cl.id), null)).v; if (f) { cl = f; Object.assign(out, { vit: f.vit || 0, der: f.der || 0, emp: f.emp || 0 }); } } }
   for (const wid of (cl.hist || []).slice(0, 5)) { const w = (await ler(GW(wid), null)).v; if (w && w.res) out.hist.push(gwPub(w, T, c.eu, meus)); }
-  if (!out.guerra && out.hist[0] && Date.now() - (out.hist[0].fim || 0) < 3 * DIA) out.guerra = out.hist[0]; return out; };
+  if (!out.guerra && out.hist[0] && Date.now() - (out.hist[0].fim || 0) < 3 * DIA) out.guerra = out.hist[0];
+  Object.assign(out, await aliPub(cl, c)); return out; };
+/* ---------- v3.93 · clãs aliados: o dono propõe uma aliança (pelo código do outro clã), o dono do outro aceita. Até ALI_MAX aliados;
+   aliados aparecem na página um do outro e não podem entrar em guerra entre si. Qualquer um dos donos desfaz a aliança. ---------- */
+const ALI_MAX = 3;
+const aliMini = async cid => { const o = (await ler(CL(cid), null)).v; return o ? { id: o.id, nome: o.nome, cor: o.cor, foto: o.foto || 0, n: (o.membros || []).length, vit: o.vit || 0 } : null; };
+const aliPub = async (cl, c) => { const dono = cl.dono === c.eu, aliados = (await Promise.all((cl.aliados || []).map(x => aliMini(x.id)))).filter(Boolean).map((x, i) => Object.assign(x, { desde: (cl.aliados[i] || {}).desde || 0 }));
+  const recebidos = dono ? (await Promise.all((cl.aliPed || []).map(x => aliMini(x.id)))).filter(Boolean) : [], enviados = dono ? (await Promise.all((cl.aliEnv || []).map(aliMini))).filter(Boolean) : [];
+  return { aliados, aliRec: recebidos, aliEnv: enviados, aliMax: ALI_MAX }; };
+const donoDe = (cl, eu) => !!cl && cl.dono === eu;
+OPS.claAliar = async (c, b) => { const cid = String(b.id || ''); let alvo = String(b.alvo || '');
+  if (!alvo && b.cod) { const cod = String(b.cod).toUpperCase().replace(/^CL-?/, '').replace(/[^A-Z0-9]/g, ''), g = await N.store().get('so/cc/' + cod).catch(() => null); if (!g) throw N.err('alianca', 'Não encontrei nenhum clã com esse código.', 404); alvo = JSON.parse(g.buf.toString()).cid; }
+  if (!CID.test(cid) || !CID.test(alvo)) throw N.err('alianca', 'Clã desconhecido.', 400); if (cid === alvo) throw N.err('alianca', 'Um clã não pode ser aliado de si próprio.', 400);
+  const A = (await ler(CL(cid), null)).v, B = (await ler(CL(alvo), null)).v; if (!A || !B) throw N.err('alianca', 'Clã desconhecido.', 404); if (!donoDe(A, c.eu)) throw N.err('alianca', 'Só o dono do clã propõe alianças.', 403);
+  if ((A.aliados || []).some(x => x.id === alvo)) throw N.err('alianca', 'Já são aliados.', 400); if ((A.aliados || []).length >= ALI_MAX) throw N.err('alianca', `O teu clã já tem ${ALI_MAX} aliados, o máximo.`, 400);
+  if ((B.aliados || []).length >= ALI_MAX) throw N.err('alianca', `Esse clã já tem ${ALI_MAX} aliados, o máximo.`, 400);
+  // se o outro já tinha proposto, fica logo aliado
+  if ((A.aliPed || []).some(x => x.id === alvo)) return OPS.claAliResp(c, { id: cid, de: alvo, sim: true });
+  await mudar(CL(alvo), null, o => { if (!o) throw N.err('alianca', 'Clã desconhecido.', 404); o.aliPed = (o.aliPed || []).filter(x => x.id !== cid); if (o.aliPed.length >= 10) throw N.err('alianca', 'Esse clã tem muitas propostas à espera. Tenta mais tarde.', 429); o.aliPed.push({ id: cid, at: Date.now() }); });
+  await mudar(CL(cid), null, o => { o.aliEnv = [...new Set((o.aliEnv || []).concat(alvo))].slice(-10); });
+  N.count('cla:alianca'); return { proposta: true, cla: { id: B.id, nome: B.nome } }; };
+OPS.claAliResp = async (c, b) => { const cid = String(b.id || ''), de = String(b.de || ''), sim = !!b.sim; if (!CID.test(cid) || !CID.test(de)) throw N.err('alianca', 'Proposta desconhecida.', 400);
+  const A = (await ler(CL(cid), null)).v; if (!donoDe(A, c.eu)) throw N.err('alianca', 'Só o dono do clã responde às alianças.', 403); if (!(A.aliPed || []).some(x => x.id === de)) throw N.err('alianca', 'Esta proposta já não está à espera.', 404);
+  if (sim) { const B = (await ler(CL(de), null)).v; if (!B) throw N.err('alianca', 'Esse clã já não existe.', 404);
+    if ((A.aliados || []).length >= ALI_MAX || (B.aliados || []).length >= ALI_MAX) throw N.err('alianca', `Um dos clãs já tem ${ALI_MAX} aliados, o máximo.`, 400); }
+  const agora = Date.now();
+  await mudar(CL(cid), null, o => { o.aliPed = (o.aliPed || []).filter(x => x.id !== de); o.aliEnv = (o.aliEnv || []).filter(x => x !== de); if (sim && !(o.aliados || []).some(x => x.id === de)) o.aliados = (o.aliados || []).concat({ id: de, desde: agora }); });
+  await mudar(CL(de), null, o => { if (!o) return false; o.aliEnv = (o.aliEnv || []).filter(x => x !== cid); o.aliPed = (o.aliPed || []).filter(x => x.id !== cid); if (sim && !(o.aliados || []).some(x => x.id === cid)) o.aliados = (o.aliados || []).concat({ id: cid, desde: agora }); }).catch(() => { });
+  return { ok2: true, aliados: sim }; };
+OPS.claAliDesfazer = async (c, b) => { const cid = String(b.id || ''), alvo = String(b.alvo || ''); if (!CID.test(cid) || !CID.test(alvo)) throw N.err('alianca', 'Clã desconhecido.', 400);
+  const A = (await ler(CL(cid), null)).v; if (!donoDe(A, c.eu)) throw N.err('alianca', 'Só o dono do clã desfaz alianças.', 403);
+  await mudar(CL(cid), null, o => { o.aliados = (o.aliados || []).filter(x => x.id !== alvo); o.aliEnv = (o.aliEnv || []).filter(x => x !== alvo); });
+  await mudar(CL(alvo), null, o => { if (!o) return false; o.aliados = (o.aliados || []).filter(x => x.id !== cid); o.aliPed = (o.aliPed || []).filter(x => x.id !== cid); }).catch(() => { });
+  return { ok2: true }; };
 /* ---------- v3.89 · Selos: a moeda do Prumo. Compram-se no Stripe (pagamento único) e os planos pagos dão alguns todos os meses.
    Gastam-se no app: reforços de vagas para um clã e a foto e o fundo animados no perfil. Cada perfil tem a sua carteira. Os Selos do plano
    são dados uma só vez, no primeiro mês da assinatura, e por conta (o primeiro perfil que abrir a carteira recebe-os), para não se multiplicarem
@@ -294,12 +373,14 @@ const SELOS = { pacotes: [{ id: 's100', n: 100, b: 0, EUR: 99, BRL: 490 }, { id:
   mes: { 1: 0, 2: 200, 3: 500 }, reforco: 200, vagasRef: 10, animado: 500 };
 const VB = () => Math.max(1, Math.round(+process.env.NAUTILO_VAGAS_BASE) || 20), VAGAS_MAX = 200, vagas = cl => Math.min(VAGAS_MAX, VB() + ((cl && cl.extra) || 0));
 const wPub = w => ({ s: w.s || 0, anim: !!w.anim, mov: (w.mov || []).slice(0, 30) });
+const wOut = (c, w) => Object.assign(wPub(w), c && c.adm ? { inf: true } : {});   // v3.93: a administração vê ∞
 const movAdd = (w, v, d) => { w.s = (w.s || 0) + v; w.mov = [{ v, d: String(d).slice(0, 90), at: Date.now() }].concat(w.mov || []).slice(0, 60); };
 const mesK = () => lisboa(Date.now()).d.slice(0, 7);
 // os Selos do plano: só nos planos pagos (não no teste grátis nem em ofertas, para ninguém juntar Selos com contas novas), uma vez por conta
 const mensal = async c => { const n = c.pago ? SELOS.mes[c.lvl] || 0 : 0; if (!n || !c.uid || (BONUS.get(c.uid) || 0) >= n) return 0; let delta = 0;
   await mudar('so/wb/' + c.uid, { dado: 0 }, o => { if ((o.dado || 0) >= n) return false; delta = n - (o.dado || 0); o.dado = n; o.at = Date.now(); o.por = c.eu; }); BONUS.set(c.uid, n);
   if (delta) await mudar(W(c.eu), {}, w => movAdd(w, delta, 'Selos de boas-vindas do plano ' + (c.plano || ''))); return delta; };
+const bfSelos = pk => { const pr = PL.promo(); return pr ? Math.round(pk.n * pr.selos / 100) : 0; };   // v3.93: Black Friday: +50% de Selos em cada pacote
 const prodSelos = async () => { const k = 'so/cfg/selos-' + PL.modo(), g = (await ler(k, null)).v; if (g && g.id) return g.id;
   const p = await PL.stripe('products', { name: 'Prumo · Selos', metadata: { app: 'prumo', tipo: 'selos' } }); await gravar(k, { id: p.id }).catch(() => { }); return p.id; };
 const voltaDe = (req, v) => { const o = String(req.headers.origin || ''), h = /^https?:\/\/[^/]+$/.test(o) ? o : 'https://' + String(req.headers['x-forwarded-host'] || req.headers.host || 'prumo-vida.vercel.app').split(',')[0].trim();
@@ -315,15 +396,17 @@ const carteira = async c => { await mensal(c).catch(() => { }); let w = (await l
   if ((w.pend || []).length && PL.cobranca()) { for (const p of w.pend.slice(0, 3)) { try { const ses = await PL.stripe('checkout/sessions/' + p.id, null, 'GET');
       if (ses.status === 'complete') await creditar(c.eu, ses); else if (ses.status === 'expired' || Date.now() - p.at > 2 * DIA) await mudar(W(c.eu), {}, x => { x.pend = (x.pend || []).filter(y => y.id !== p.id); }); } catch (e) { } }
     w = (await ler(W(c.eu), {})).v || {}; }
-  return { carteira: wPub(w), loja: { cobranca: PL.cobranca(), pacotes: SELOS.pacotes.map(x => ({ id: x.id, n: x.n, b: x.b, EUR: x.EUR, BRL: x.BRL })), bonus: c.pago ? SELOS.mes[c.lvl] || 0 : 0, plano: c.plano || '', planoBonus: { avancado: SELOS.mes[2], completo: SELOS.mes[3] } },
-    custos: { reforco: SELOS.reforco, vagas: SELOS.vagasRef, animado: SELOS.animado }, animado: c.lvl >= 2 || !!c.adm || !!w.anim }; };
-const gastar = async (eu, v, d, extra) => mudar(W(eu), {}, w => { if ((w.s || 0) < v) throw N.err('selos', `Precisas de ${v} Selos e tens ${w.s || 0}.`, 402); movAdd(w, -v, d); if (extra) extra(w); });
+  return { carteira: wOut(c, w), loja: { cobranca: PL.cobranca(), promo: PL.promo(), pacotes: SELOS.pacotes.map(x => ({ id: x.id, n: x.n, b: x.b, bf: bfSelos(x), EUR: x.EUR, BRL: x.BRL })), bonus: c.pago ? SELOS.mes[c.lvl] || 0 : 0, plano: c.plano || '', planoBonus: { avancado: SELOS.mes[2], completo: SELOS.mes[3] } },
+    custos: { reforco: SELOS.reforco, vagas: SELOS.vagasRef, animado: SELOS.animado }, animado: c.lvl >= 2 || !!c.adm || !!w.anim, ganhar: ganharInfo(w) }; };
+// v3.93: a conta de administração tem Selos sem fim (gasta sem descontar; o movimento fica registado a 0)
+const gastar = async (eu, v, d, extra, inf) => mudar(W(eu), {}, w => { if (inf) { movAdd(w, 0, d + ' (Selos sem fim da administração)'); if (extra) extra(w); return; }
+  if ((w.s || 0) < v) throw N.err('selos', `Precisas de ${v} Selos e tens ${w.s || 0}.`, 402); movAdd(w, -v, d); if (extra) extra(w); });
 const devolver = (eu, v, d) => mudar(W(eu), {}, w => movAdd(w, v, d)).catch(() => { });
 OPS.carteira = async c => carteira(c);
 OPS.selosComprar = async (c, b, req) => { if (!PL.cobranca()) throw N.err('cobranca', 'A compra de Selos ainda não está aberta.', 503);
   const pk = SELOS.pacotes.find(x => x.id === b.pac); if (!pk) throw N.err('selos', 'Escolhe um pacote de Selos.', 400);
   if (N.limit(req, 'selos|' + c.eu, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
-  const brl = String(b.cur || '').toUpperCase() === 'BRL' && PL.brasil(req), volta = voltaDe(req, b.volta), total = pk.n + pk.b;
+  const brl = String(b.cur || '').toUpperCase() === 'BRL' && PL.brasil(req), volta = voltaDe(req, b.volta), total = pk.n + pk.b + bfSelos(pk);
   let ses; try { ses = await PL.stripe('checkout/sessions', { mode: 'payment', client_reference_id: c.eu.slice(0, 200), customer_email: c.email, locale: brl ? 'pt-BR' : 'pt',
     success_url: volta + '#selos?ok={CHECKOUT_SESSION_ID}', cancel_url: volta + '#selos',
     line_items: { 0: { quantity: 1, price_data: { currency: brl ? 'brl' : 'eur', unit_amount: brl ? pk.BRL : pk.EUR, product: await prodSelos() } } },
@@ -337,23 +420,47 @@ OPS.selosConfirmar = async (c, b) => { const sid = String(b.sid || ''); if (!/^c
 // reforçar um clã: qualquer membro gasta Selos e o clã fica com mais vagas para sempre
 OPS.claReforco = async (c, b) => { const cid = String(b.id || ''); if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400); const cl0 = (await ler(CL(cid), null)).v;
   if (!cl0 || !cl0.membros.some(m => m.id === c.eu)) throw N.err('cla', 'Só quem é do clã o pode reforçar.', 403); if (vagas(cl0) >= VAGAS_MAX) throw N.err('cla', 'Este clã já tem o máximo de vagas (' + VAGAS_MAX + ').', 400);
-  await gastar(c.eu, SELOS.reforco, 'Reforço do clã ' + cl0.nome + ' (+' + SELOS.vagasRef + ' vagas)');
+  await gastar(c.eu, SELOS.reforco, 'Reforço do clã ' + cl0.nome + ' (+' + SELOS.vagasRef + ' vagas)', null, !!c.adm);
   try { const v = await perfil(c.eu, c.nome), cl = await mudar(CL(cid), null, o => { if (!o) throw N.err('cla', 'Clã desconhecido.', 404); o.extra = Math.min(VAGAS_MAX - VB(), (o.extra || 0) + SELOS.vagasRef);
       o.ref = o.ref || []; const r = o.ref.find(x => x.id === c.eu); if (r) { r.n++; r.at = Date.now(); r.nome = v.nome; } else o.ref.push({ id: c.eu, nome: v.nome, n: 1, at: Date.now() }); });
-    await idxPor(cl).catch(() => { }); N.count('selos:reforco'); return { vagas: vagas(cl), carteira: wPub((await ler(W(c.eu), {})).v || {}) }; }
-  catch (e) { await devolver(c.eu, SELOS.reforco, 'Devolução: o reforço não foi aplicado'); throw e; } };
+    await idxPor(cl).catch(() => { }); N.count('selos:reforco'); return { vagas: vagas(cl), carteira: wOut(c, (await ler(W(c.eu), {})).v || {}) }; }
+  catch (e) { if (!c.adm) await devolver(c.eu, SELOS.reforco, 'Devolução: o reforço não foi aplicado'); throw e; } };
 // desbloquear a foto e o fundo animados (no Avançado e no Completo já vêm incluídos)
-OPS.perfilAnimado = async (c, b) => { const w0 = (await ler(W(c.eu), {})).v || {}; if (w0.anim || c.lvl >= 2 || c.adm) return { ja: true, animado: true, carteira: wPub(w0) };
-  await gastar(c.eu, SELOS.animado, 'Foto e fundo animados no perfil', w => { w.anim = Date.now(); }); N.count('selos:animado'); return { animado: true, carteira: wPub((await ler(W(c.eu), {})).v || {}) }; };
+OPS.perfilAnimado = async (c, b) => { const w0 = (await ler(W(c.eu), {})).v || {}; if (w0.anim || c.lvl >= 2 || c.adm) return { ja: true, animado: true, carteira: wOut(c, w0) };
+  await gastar(c.eu, SELOS.animado, 'Foto e fundo animados no perfil', w => { w.anim = Date.now(); }); N.count('selos:animado'); return { animado: true, carteira: wOut(c, (await ler(W(c.eu), {})).v || {}) }; };
 const podeAnimar = async c => c.lvl >= 2 || !!c.adm || !!(((await ler(W(c.eu), {})).v || {}).anim);
+
+/* ---------- v3.93 · ganhar Selos dentro do app (sem passar pelas lojas): a presença de cada dia, o Quiz relâmpago, as Sombras e as medalhas
+   (que já chegam pelos duelos, desafios, guerra de clãs, Sequência a dois…) dão Selos. Cada ganho tem uma chave e não se repete; há um limite
+   por dia e por perfil (os prémios da seele ficam de fora do limite). Comprar Selos continua só no site, pelo Stripe. ---------- */
+const GANHO = { presenca: 2, semana: 10, quiz: 5, quizBom: 5, sombra: [10, 6, 4], med: { Diamante: 30, Platina: 20, Ouro: 12, Prata: 8, Bronze: 5 }, trofeu: 25 };
+const GLIM = () => Math.max(1, Math.round(+process.env.NAUTILO_SELOS_DIA) || 60);
+const ganha = async (eu, n, motivo, chave, semLimite) => { if (!ID.test(String(eu || '')) || !(n > 0) || !chave) return 0; let dado = 0; const d = lisboa().d;
+  await mudar(W(eu), {}, w => { w.gk = w.gk || []; if (w.gk.includes(chave)) return false; let v = Math.round(n);
+    if (!semLimite) { if (!w.gd || w.gd.d !== d) w.gd = { d, n: 0 }; v = Math.min(v, GLIM() - w.gd.n); if (v <= 0) return false; w.gd.n += v; }
+    w.gk = [chave].concat(w.gk).slice(0, 400); movAdd(w, v, motivo); dado = v; }).catch(() => { });
+  if (dado) { N.count('selos:ganho'); const st = ALS.getStore(); if (st && st.eu === eu) st.n += dado; } return dado; };
+// as formas de ganhar, para a página dos Selos (com o que já ganhaste hoje)
+const ganharInfo = w => ({ hoje: w && w.gd && w.gd.d === lisboa().d ? w.gd.n : 0, limite: GLIM(), formas: [
+  { k: 'presenca', t: 'Abrir o Prumo', d: 'Uma vez por dia; ao fim de 7 dias seguidos, mais ' + GANHO.semana + '.', n: GANHO.presenca },
+  { k: 'quiz', t: 'Quiz relâmpago das 21h', d: 'Terminar o quiz; com 8 certas ou mais, o dobro.', n: GANHO.quiz },
+  { k: 'sombra', t: 'Sombras', d: 'Acertar na personagem: ' + GANHO.sombra.join(', ') + ' Selos (1.ª, 2.ª ou 3.ª tentativa).', n: GANHO.sombra[0] },
+  { k: 'med', t: 'Medalhas e troféus', d: 'Cada medalha nova: de ' + GANHO.med.Bronze + ' (Bronze) a ' + GANHO.med.Diamante + ' (Diamante); troféus ' + GANHO.trofeu + '. Vêm dos duelos, desafios, guerra de clãs, Sequência a dois e jogos.', n: GANHO.med.Ouro },
+  { k: 'seele', t: 'Prémios da seele', d: 'Algumas campanhas dão Selos aos vencedores (fora do limite diário).', n: 0 }] });
+OPS.presenca = async c => { const d = lisboa().d, n = await ganha(c.eu, GANHO.presenca, 'Presença no Prumo', 'pres:' + d); let semana = 0;
+  if (n) { let seq = 0; await mudar(W(c.eu), {}, w => { w.pres = w.pres || {}; if (w.pres.ult === d) return false; w.pres.seq = w.pres.ult === diaMais(d, -1) ? (w.pres.seq || 0) + 1 : 1; w.pres.ult = d; seq = w.pres.seq; }).catch(() => { });
+    if (seq && seq % 7 === 0) semana = await ganha(c.eu, GANHO.semana, seq + ' dias seguidos no Prumo', 'pres7:' + d); }
+  return { dados: n + semana, carteira: wOut(c, (await ler(W(c.eu), {})).v || {}) }; };
 
 /* ---------- v3.89 · medalhas e troféus ganhos no Prumo (aparecem em Eu › Troféus e no perfil dos animes). O servidor dá-os sozinho:
    guerra de clãs (vitória, MVP, empate, lutar), desafios dos animes (1.º, 2.º e 3.º da semana, semana perfeita), desafio da semana
    (cumprir e os 3 primeiros), campeão do mês no ranking de animes e os 3 primeiros a acertar no Pursuit. ---------- */
 const MED_MAX = 300, PESO = { Platina: 0, Ouro: 1, Prata: 2, Bronze: 3, Mérito: 4, Participação: 5 };
 const medTopo = (L, n = 8) => L.slice().sort((a, b) => (a.kind === 'Troféu' || a.kind === 'Distinção' ? 0 : 1) - (b.kind === 'Troféu' || b.kind === 'Distinção' ? 0 : 1) || (PESO[a.lvl] ?? 9) - (PESO[b.lvl] ?? 9) || b.at - a.at).slice(0, n).map(m => medPub(m));
-const darMed = async (id, m) => { if (!ID.test(String(id || ''))) return; await mudar(P(id), null, p => { if (!p) return false; p.med = p.med || []; if (p.med.some(x => x.k === m.k)) return false;
-  p.med.unshift(Object.assign({ at: Date.now() }, m)); p.med = p.med.slice(0, MED_MAX); }).catch(() => { }); };
+const darMed = async (id, m) => { if (!ID.test(String(id || ''))) return; let novo = false; await mudar(P(id), null, p => { if (!p) return false; p.med = p.med || []; if (p.med.some(x => x.k === m.k)) return false;
+  p.med.unshift(Object.assign({ at: Date.now() }, m)); p.med = p.med.slice(0, MED_MAX); novo = true; }).catch(() => { });
+  // v3.93: cada medalha nova dá Selos (os troféus mais)
+  if (novo) await ganha(id, m.kind === 'Troféu' || m.kind === 'Distinção' ? GANHO.trofeu : GANHO.med[m.lvl] || 5, (m.kind || 'Medalha') + ': ' + String(m.n || '').slice(0, 60), 'med:' + m.k).catch(() => { }); };
 const darVarios = async L => { for (let i = 0; i < L.length; i += 10) await Promise.all(L.slice(i, i + 10).map(([id, m]) => darMed(id, m))); };
 const LUG = ['Ouro', 'Prata', 'Bronze'];
 const medPub = m => ({ k: m.k, n: m.n, d: m.d || '', kind: m.kind || 'Medalha', lvl: m.lvl || 'Ouro', cat: m.cat || 'Prumo', lugar: m.lugar || 0, at: m.at || 0 });
@@ -471,11 +578,12 @@ OPS.quizComecar = async c => { const L = lisboa(), m = L.min; if (m < QZ_A() || 
   try { await gravar(QZP(L.d, c.eu), g, { overwrite: false }); } catch (e) { throw N.err('quiz', 'Já jogaste o quiz de hoje.', 409); }
   return { quiz: await qzVer(c) }; };
 OPS.quizResp = async (c, b) => { const L = lisboa(); if (L.min < QZ_A() || L.min >= QZ_F()) throw N.err('quiz', 'O quiz de hoje já fechou.', 400); const q = await qzDe(L, false); if (!q) throw N.err('quiz', 'O quiz de hoje não está aberto.', 400);
-  const i = Math.round(+b.i), op = Math.round(+b.opc); let out = null;   // a resposta vem em opc (op é o nome do pedido)
+  const i = Math.round(+b.i), op = Math.round(+b.opc); let out = null, fimG = null;   // a resposta vem em opc (op é o nome do pedido)
   await mudar(QZP(L.d, c.eu), null, g => { if (!g) throw N.err('quiz', 'Carrega primeiro em Começar.', 400); if (g.fim || g.i !== i) { out = { repetida: true }; return false; }
     const x = q.Q[i], ms = Date.now() - g.at, ok = op === x.c && ms <= (QZ_SEG + 1.5) * 1000, p = ok ? 100 + Math.round(50 * Math.max(0, 1 - ms / (QZ_SEG * 1000))) : 0;
-    g.r.push({ ok, p, ms: Math.min(ms, QZ_SEG * 1000) }); g.pts = (g.pts || 0) + p; g.ms = (g.ms || 0) + Math.min(ms, QZ_SEG * 1000); g.i = i + 1; g.at = Date.now(); if (g.i >= q.Q.length) g.fim = Date.now();
+    g.r.push({ ok, p, ms: Math.min(ms, QZ_SEG * 1000) }); g.pts = (g.pts || 0) + p; g.ms = (g.ms || 0) + Math.min(ms, QZ_SEG * 1000); g.i = i + 1; g.at = Date.now(); if (g.i >= q.Q.length) { g.fim = Date.now(); fimG = g; }
     out = { ok, p, certa: x.c, tempo: ms > (QZ_SEG + 1.5) * 1000 }; });
+  if (fimG) { const certas = fimG.r.filter(r => r.ok).length; await ganha(c.eu, GANHO.quiz, 'Quiz relâmpago terminado', 'qz:' + L.d); if (certas >= 8) await ganha(c.eu, GANHO.quizBom, 'Quiz relâmpago: ' + certas + ' certas', 'qzb:' + L.d); }
   return Object.assign({ resp: out }, { quiz: await qzVer(c) }); };
 
 /* ---------- v3.90 · BOLÃO DA TEMPORADA: antes e no começo de cada temporada de animes, cada um prevê o melhor da temporada (nota mais
@@ -561,6 +669,7 @@ OPS.sombraPalpite = async (c, b, req) => { if (N.limit(req, 'sbp|' + c.eu, 30, 3
     await mudar(SB(L.d), null, o => { if (!o) return false; o.n = o.n || { jog: 0, ok: [0, 0, 0], falhou: 0 }; o.n.jog++; if (ultimo >= 0) o.n.ok[ultimo]++; else o.n.falhou++; }).catch(() => { });
     let seq = 0; await mudar(P(c.eu), null, p => { if (!p) return false; if (res.ok) { p.sbSeq = p.sbUlt === diaMais(L.d, -1) ? (p.sbSeq || 0) + 1 : p.sbUlt === L.d ? p.sbSeq || 1 : 1; p.sbUlt = L.d; } else { p.sbSeq = 0; p.sbUlt = ''; } seq = p.sbSeq || 0; }).catch(() => { });
     if (res.ok) { await somaPts([[c.eu, pf.nome, g.pts, { user: pf.user, av: pf.av }]]).catch(() => { });
+      await ganha(c.eu, GANHO.sombra[res.n - 1] || 4, 'Acertaste na sombra de hoje', 'sb:' + L.d);
       for (const [k, lv] of [[7, 'Ouro'], [30, 'Platina'], [100, 'Diamante']]) if (seq === k) await darMed(c.eu, { k: 'sb' + k + ':' + L.d, n: k + ' dias seguidos a acertar nas Sombras', d: 'até ' + L.d.split('-').reverse().join('/'), kind: 'Medalha', lvl: lv, cat: 'Sombras' }); } }
   return Object.assign({ certo: res.ok }, { sombra: await sbPub(c, L, (await ler(SB(L.d), v)).v || v, g) }); };
 // a administração pode tirar uma personagem da lista (se a imagem estiver mal) — e a de hoje é trocada
@@ -642,9 +751,9 @@ OPS.perfilImg = async (c, b) => { const k = b.k === 'fu' ? 'fu' : 'av', max = k 
   const buf = Buffer.from(s64, 'base64'); if (buf[0] !== 0xFF || buf[1] !== 0xD8) throw N.err('img', 'Envia uma imagem (JPEG).', 400);
   await verImg(s64);
   await N.store().put(imgP(k, c.eu), buf); const ver = Date.now(); await mudar(P(c.eu), null, p => { p[k] = ver; }); if (k === 'av') await pubPts(c.eu, { av: ver }).catch(() => { }); return { [k]: ver }; };
-OPS.verPerfil = async (c, b) => { const id = String(b.id || ''); if (!ID.test(id)) throw N.err('perfil', 'Perfil desconhecido.', 400); const v = (await ler(P(id), null)).v; if (!v) throw N.err('perfil', 'Perfil desconhecido.', 404);
+OPS.verPerfil = async (c, b) => { const id = String(b.id || '') === 'eu' ? c.eu : String(b.id || ''); if (id === c.eu) { await perfil(c.eu, c.nome); await sincPerfil(c); } if (!ID.test(id)) throw N.err('perfil', 'Perfil desconhecido.', 400); const v = (await ler(P(id), null)).v; if (!v) throw N.err('perfil', 'Perfil desconhecido.', 404);
   const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).sort((a, b2) => b2[1].p - a[1].p), pos = L.findIndex(([i]) => i === id);
-  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu), nmed: (v.med || []).length, med: medTopo(v.med || []) } }; };
+  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu), nmed: (v.med || []).length, med: medTopo(v.med || []), pl: v.pl || null, meu: id === c.eu } }; };
 /* ---------- comentários nos animes: a IA barra ofensas e tapa os spoilers (só vê quem quiser) ---------- */
 const CA = mal => 'so/ca/' + mal;
 let NUMS = null;
@@ -801,6 +910,130 @@ const parceiro = async () => { try { const g = await N.store().get(PARC); return
 OPS.adminParceiro = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const nome = String(b.nome || '').replace(/\s+/g, ' ').trim().slice(0, 30) || PARC0, site = String(b.site || '').trim().slice(0, 200);
   if (site && !/^https:\/\/[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(site)) throw N.err('admin', 'O site tem de começar por https://', 400);
   const o = { nome, site, at: Date.now() }; await N.store().put(PARC, Buffer.from(JSON.stringify(o))); return { parceiro: o }; };
+/* ---------- v3.93 · seele: prémios de verdade e sorteios (campanhas). A administração cria uma campanha: o prémio (real e/ou Selos) de cada lugar,
+   o critério (Ranking do Prumo, dias de foco, pontos dos jogos dos Animes da PHANTOM ou livros lidos), o período, quantos ganham e como: por mérito
+   (os primeiros ganham) ou por sorteio entre quem se qualifica (os N primeiros, ou quem chega a um mínimo). Entrar é grátis e nunca se paga com Selos;
+   uma entrada por conta. O sorteio é verificável: o código (hash) da semente secreta aparece antes e a semente revela-se no fim. Os vencedores são
+   confirmados pela administração antes de receber; um sorteio só se publica com a referência da autorização (Brasil: SPA/MF; Portugal: Câmara Municipal). ---------- */
+const PRC = id => 'so/pr/c/' + id, PRE = (id, eu) => 'so/pr/e/' + id + '/' + eu, PRU = (id, uid) => 'so/pr/u/' + id + '/' + uid, PRIDX = 'so/pr/idx', PRID = /^[a-f0-9]{10}$/;
+const PR_CRIT = {
+  prumo: { n: 'Ranking do Prumo', u: 'pontos', d: 'a soma dos pontos de disciplina de cada dia no Ranking do Prumo, no período', parc: 'prumo' },
+  foco: { n: 'Dias de foco seguidos', u: 'dias', d: 'a maior sequência de dias de foco (70 pontos ou mais no Ranking do Prumo), no período', parc: 'prumo' },
+  animes: { n: 'Jogos dos Animes', u: 'pontos', d: 'os pontos ganhos nos jogos dos Animes da parceria Prumo & PHANTOM (Pursuit, Quiz relâmpago, Sombras, desafios), no período', parc: 'phantom' },
+  livros: { n: 'Livros lidos', u: 'livros', d: 'os livros que terminas de ler nas tuas Leituras (com a data de fim dentro do período)', parc: 'prumo' } };
+const PR_PAISES = ['PT', 'BR', 'OUTRO'], PR_IMG = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/, PR_ACEITAR_DIAS = 14;
+const prHoje = () => lisboa().d;
+const prEstado = cp => cp.estado === 'rascunho' ? 'rascunho' : cp.estado === 'cancelada' ? 'cancelada' : cp.res ? 'fechada' : prHoje() < cp.ini ? 'breve' : prHoje() > cp.fim ? 'a_fechar' : 'aberta';
+const prLer = async id => PRID.test(String(id || '')) ? (await ler(PRC(id), null)).v : null;
+const prIdx = async () => ((await ler(PRIDX, { L: [] })).v || {}).L || [];
+const prIdxPor = cp => mudar(PRIDX, { L: [] }, o => { o.L = (o.L || []).filter(x => x.id !== cp.id); if (cp.estado !== 'apagada') o.L.unshift({ id: cp.id, estado: cp.res ? 'fechada' : cp.estado, titulo: cp.titulo, fim: cp.fim }); o.L = o.L.slice(0, 200); });
+const prPremio = (cp, pos) => { const L = cp.premios || []; return L[Math.min(pos - 1, L.length - 1)] || { t: '', s: 0 }; };
+const prPremioTxt = p => [p.t, p.s ? p.s + ' Selos' : ''].filter(Boolean).join(' + ');
+// os pontos de cada pessoa no período
+const rankDe = async eu => { const i = eu.lastIndexOf('-'); try { const g = await N.store().get('r/' + eu.slice(0, i) + '/' + eu.slice(i + 1)); return g ? N.open(await N.accKey(), g.buf) : null; } catch (e) { return null; } };
+const prPts = async (cp, e, T) => { const k = cp.crit;
+  if (k === 'livros') return (e.livros || []).length;
+  if (k === 'animes') { const t = ((T || {})[e.eu] || {}).p || 0, b = cp.base && cp.base[e.eu] != null ? cp.base[e.eu] : e.base || 0; return Math.max(0, t - b); }
+  const r = await rankDe(e.eu), d = (r && r.d) || {}, dias = Object.keys(d).filter(x => x >= cp.ini && x <= cp.fim).sort();
+  if (k === 'prumo') return dias.reduce((a, x) => a + (+d[x] || 0), 0);
+  let best = 0, run = 0, prev = ''; dias.forEach(x => { if ((+d[x] || 0) >= 70) { run = prev && diaMais(prev, 1) === x ? run + 1 : 1; prev = x; best = Math.max(best, run); } }); return best; };
+// na data de início, a fotografia dos pontos dos Animes de toda a gente (o que conta é o que se ganha a partir daí)
+const prBase = async cp => { if (cp.crit !== 'animes' || cp.base || cp.estado !== 'publicada' || prHoje() < cp.ini) return cp; const T = (await ler(PTS, {})).v || {}, base = {}; Object.entries(T).forEach(([id, o]) => { base[id] = o.p || 0; });
+  return (await mudar(PRC(cp.id), null, o => { if (!o || o.base) return false; o.base = base; }).catch(() => null)) || cp; };
+const PRL = new Map();
+const prEntradas = async (id, forcar) => { const c = PRL.get(id); if (!forcar && c && Date.now() - c.at < 45e3) return c.L;
+  const B = await N.store().list('so/pr/e/' + id + '/').catch(() => []), L = []; let i = 0;
+  await Promise.all(Array.from({ length: Math.min(8, B.length) }, async () => { while (i < B.length) { const x = B[i++]; const e = (await ler(x.pathname, null)).v; if (e) L.push(e); } }));
+  PRL.set(id, { at: Date.now(), L }); if (PRL.size > 50) PRL.delete(PRL.keys().next().value); return L; };
+const prTabela = async (cp, forcar) => { const L = await prEntradas(cp.id, forcar), T = cp.crit === 'animes' ? (await ler(PTS, {})).v || {} : null, out = [];
+  for (const e of L) out.push({ eu: e.eu, nome: e.nome, user: e.user || '', av: e.av || 0, pais: e.pais || '', at: e.at, email: e.email || '', pts: await prPts(cp, e, T), nl: (e.livros || []).length });
+  return out.sort((a, b) => b.pts - a.pts || a.at - b.at); };
+const hmacPr = (seed, eu) => N.crypto.createHmac('sha256', seed).update(eu).digest('hex');
+// fechar: os pontos finais, os vencedores (mérito ou sorteio) e os suplentes; a semente do sorteio passa a ser pública
+const prFechar = async (cp, forcar) => { if (cp.res || cp.estado !== 'publicada' || (!forcar && prEstado(cp) !== 'a_fechar')) return cp;
+  cp = await prBase(cp); const tab = await prTabela(cp, true), comPts = tab.filter(x => x.pts > 0), nV = cp.nV || 1; let venc, sup, qual = null;
+  if (cp.modo === 'sorteio') { const Q = cp.qual && cp.qual.tipo === 'min' ? comPts.filter(x => x.pts >= (cp.qual.n || 1)) : comPts.slice(0, (cp.qual && cp.qual.n) || 10);
+    const ord = Q.map(x => Object.assign({ h: hmacPr(cp.seed, x.eu) }, x)).sort((a, b) => a.h < b.h ? -1 : 1); qual = ord.map(x => ({ quem: x.user ? '@' + x.user : x.nome, h: x.h.slice(0, 16), pts: x.pts }));
+    venc = ord.slice(0, nV); sup = ord.slice(nV, nV * 3); }
+  else { venc = comPts.slice(0, nV); sup = comPts.slice(nV, nV * 2); }
+  const linha = (x, i) => ({ eu: x.eu, nome: x.nome, user: x.user, av: x.av, email: x.email, pts: x.pts, pos: i + 1, nl: x.nl, estado: 'por_confirmar', at: Date.now() });
+  const res = { at: Date.now(), n: tab.length, tab: tab.slice(0, 30).map(x => ({ eu: x.eu, nome: x.nome, user: x.user, av: x.av, pts: x.pts })), venc: venc.map(linha), sup: sup.map(x => linha(x, 0)), qual };
+  const novo = await mudar(PRC(cp.id), null, o => { if (!o || o.res) return false; o.res = res; }).catch(() => null);
+  if (novo) { await prIdxPor(novo).catch(() => { }); N.count('premio:fechado'); return novo; } return (await prLer(cp.id)) || cp; };
+const prPub = async (cp, c, adm) => { cp = await prBase(cp); if (prEstado(cp) === 'a_fechar') cp = await prFechar(cp);
+  const st = prEstado(cp), cr = PR_CRIT[cp.crit] || {}, o = { id: cp.id, titulo: cp.titulo, desc: cp.desc || '', img: cp.img || '', crit: cp.crit, critN: cr.n, critD: cr.d, unid: cr.u, parc: cr.parc, modo: cp.modo, qual: cp.qual || null, nV: cp.nV, premios: cp.premios || [],
+    ini: cp.ini, fim: cp.fim, estado: st, paises: cp.paises || [], idade: cp.idade || 18, autorizacao: cp.autorizacao || '', hash: cp.hash || '', seed: cp.res ? cp.seed : '' };
+  if (st === 'rascunho') return Object.assign(o, { n: 0 });
+  if (cp.res) { const r = cp.res, eu = c.eu; Object.assign(o, { n: r.n, top: r.tab.slice(0, 10).map((x, i) => ({ nome: x.nome, user: x.user, av: x.av, pts: x.pts, pos: i + 1, eu: x.eu === eu })),
+      res: { venc: r.venc.filter(x => x.estado !== 'excluido').map(x => ({ nome: x.nome, user: x.user, av: x.av, pos: x.pos, pts: x.pts, premio: prPremioTxt(prPremio(cp, x.pos)), estado: x.estado, eu: x.eu === eu })), qual: r.qual, nSup: r.sup.length } });
+    const meu = r.venc.find(x => x.eu === eu && x.estado !== 'excluido'); if (meu) o.meu = { pos: meu.pos, premio: prPremio(cp, meu.pos), estado: meu.estado, prazo: meu.conf ? meu.conf + PR_ACEITAR_DIAS * DIA : 0 };
+    if (adm) o.adm = { venc: r.venc, sup: r.sup, n: r.n }; return o; }
+  const tab = await prTabela(cp), i = tab.findIndex(x => x.eu === c.eu), qN = cp.modo === 'sorteio' && cp.qual ? cp.qual : null;
+  o.n = tab.length; o.top = tab.slice(0, 10).map((x, k) => ({ nome: x.nome, user: x.user, av: x.av, pts: x.pts, pos: k + 1, eu: x.eu === c.eu }));
+  o.eu = i >= 0 ? { dentro: true, pts: tab[i].pts, pos: i + 1, qual: qN ? (qN.tipo === 'min' ? tab[i].pts >= qN.n : i < qN.n && tab[i].pts > 0) : undefined, nl: tab[i].nl } : { dentro: false };
+  if (adm) o.adm = { n: tab.length }; return o; };
+OPS.premios = async (c, b) => { const idx = await prIdx(), aberta = idx.some(x => x.estado === 'publicada' || x.estado === 'fechada');
+  // leve: o que o menu e as outras páginas precisam (há prémios? há um prémio meu à espera? que campanhas estão em jogo?)
+  if (b.leve) { let pend = 0; const ativas = [];
+    for (const x of idx.filter(x => x.estado === 'fechada').slice(0, 10)) { const cp = await prLer(x.id); if (cp && cp.res && cp.res.venc.some(v => v.eu === c.eu && v.estado === 'confirmado')) pend++; }
+    for (const x of idx.filter(x => x.estado === 'publicada').slice(0, 12)) { const cp = await prLer(x.id); if (!cp || cp.res) continue; const st = prEstado(cp); if (st === 'aberta' || st === 'breve') ativas.push({ id: cp.id, titulo: cp.titulo, crit: cp.crit, ini: cp.ini, fim: cp.fim, modo: cp.modo, estado: st, premio: prPremioTxt(prPremio(cp, 1)) }); }
+    return { aberta, pend, ativas }; }
+  const L = []; for (const x of idx.slice(0, 40)) { if (x.estado === 'rascunho' && !c.adm) continue; if (x.estado === 'cancelada' && !c.adm) continue; const cp = await prLer(x.id); if (cp) L.push(await prPub(cp, c, c.adm)); }
+  const ord = { aberta: 0, breve: 1, a_fechar: 2, fechada: 3, rascunho: 4, cancelada: 5 }; L.sort((a, b2) => (ord[a.estado] ?? 9) - (ord[b2.estado] ?? 9) || (a.estado === 'fechada' ? b2.fim.localeCompare(a.fim) : a.fim.localeCompare(b2.fim)));
+  return { aberta, lista: L, crits: Object.entries(PR_CRIT).map(([k, v]) => ({ k, n: v.n, u: v.u, d: v.d, parc: v.parc })), pend: L.filter(x => x.meu && x.meu.estado === 'confirmado').length }; };
+OPS.premioEntrar = async (c, b, req) => { if (N.limit(req, 'pre|' + c.eu, 30, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
+  const cp = await prLer(b.id); if (!cp || cp.estado !== 'publicada' || cp.res) throw N.err('premio', 'Esta campanha não está aberta.', 404); if (prHoje() > cp.fim) throw N.err('premio', 'Esta campanha já terminou.', 400);
+  if (c.adm) throw N.err('premio', 'A equipa do Prumo e da seele não pode participar nas campanhas.', 403); if (c.teste) throw N.err('premio', 'As contas de teste não participam.', 403);
+  if (!b.idade) throw N.err('premio', `Confirma que tens ${cp.idade || 18} anos ou mais (ou autorização de quem tem a tua guarda).`, 400); if (!b.regras) throw N.err('premio', 'Lê e aceita o regulamento para participar.', 400);
+  const pais = PR_PAISES.includes(String(b.pais || '').toUpperCase()) ? String(b.pais).toUpperCase() : 'OUTRO'; if ((cp.paises || []).length && !cp.paises.includes(pais)) throw N.err('premio', 'Esta campanha não está aberta no teu país.', 403);
+  try { await N.store().put(PRU(cp.id, c.uid), Buffer.from(JSON.stringify({ eu: c.eu, at: Date.now() })), { overwrite: false }); }
+  catch (e) { const g = await N.store().get(PRU(cp.id, c.uid)).catch(() => null), o = g ? JSON.parse(g.buf.toString()) : null; if (!o || o.eu !== c.eu) throw N.err('premio', 'Já há um perfil desta conta nesta campanha (uma entrada por conta).', 409); }
+  const pf = await perfil(c.eu, c.nome), T = cp.crit === 'animes' ? (await ler(PTS, {})).v || {} : {};
+  await mudar(PRE(cp.id, c.eu), () => ({ eu: c.eu, uid: c.uid, at: Date.now(), livros: [] }), e => { e.nome = pf.nome || c.nome; e.user = pf.user || ''; e.av = pf.av || 0; e.email = c.email; e.pais = pais; if (e.base == null) e.base = (T[c.eu] || {}).p || 0; });
+  if (Array.isArray(b.livros) && cp.crit === 'livros') await prLivros(cp, c, b.livros);
+  PRL.delete(cp.id); N.count('premio:entrada'); return { campanha: await prPub(await prLer(cp.id), c, false) }; };
+const prLivros = async (cp, c, L) => { const fim = cp.fim < prHoje() ? cp.fim : prHoje(), vistos = new Set(), ok = [];
+  for (const x of (Array.isArray(L) ? L : []).slice(0, 300)) { const t = String((x && x.t) || '').trim().slice(0, 120), d = String((x && x.fim) || ''); if (t.length < 2 || !/^\d{4}-\d{2}-\d{2}$/.test(d) || d < cp.ini || d > fim) continue;
+    const k = t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, ''); if (!k || vistos.has(k)) continue; vistos.add(k); ok.push({ t, a: String((x && x.a) || '').slice(0, 80), fim: d }); }
+  await mudar(PRE(cp.id, c.eu), null, e => { if (!e) return false; e.livros = ok.slice(0, 200); e.lat = Date.now(); }); PRL.delete(cp.id); return ok.length; };
+OPS.premioLivros = async (c, b, req) => { if (N.limit(req, 'prl|' + c.eu, 60, 3600e3)) throw N.err('limite', 'Muitos pedidos.', 429); const cp = await prLer(b.id);
+  if (!cp || cp.crit !== 'livros' || cp.estado !== 'publicada' || cp.res || prHoje() > cp.fim) return { n: 0 }; if (!(await ler(PRE(cp.id, c.eu), null)).v) return { n: 0 }; return { n: await prLivros(cp, c, b.livros) }; };
+OPS.premioAceitar = async (c, b) => { const cp = await prLer(b.id); if (!cp || !cp.res) throw N.err('premio', 'Campanha desconhecida.', 404); let ok = false;
+  await mudar(PRC(cp.id), null, o => { const v = o && o.res && o.res.venc.find(x => x.eu === c.eu); if (!v || v.estado !== 'confirmado') return false; v.estado = 'aceite'; v.aceite = Date.now(); ok = true; });
+  if (!ok) throw N.err('premio', 'Não há nenhum prémio teu à espera de ser aceite aqui.', 400); return { campanha: await prPub(await prLer(cp.id), c, false) }; };
+// a administração: criar e editar (rascunho), publicar, fechar já, cancelar, apagar o rascunho, confirmar ou excluir vencedores, marcar como entregue
+const prLimpa = (b, cp) => { const d = b.dados || {}, x = Object.assign({}, cp || {}); const txt = (v, n) => String(v || '').replace(/\s+/g, ' ').trim().slice(0, n), dt = v => /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : '';
+  x.titulo = txt(d.titulo, 80); x.desc = String(d.desc || '').trim().slice(0, 900); x.crit = PR_CRIT[d.crit] ? d.crit : 'prumo'; x.modo = d.modo === 'sorteio' ? 'sorteio' : 'merito';
+  x.qual = x.modo === 'sorteio' ? { tipo: d.qual && d.qual.tipo === 'min' ? 'min' : 'top', n: Math.max(1, Math.min(1e6, Math.round(+(d.qual && d.qual.n) || 10))) } : null;
+  x.nV = Math.max(1, Math.min(50, Math.round(+d.nV || 1))); x.premios = (Array.isArray(d.premios) ? d.premios : []).slice(0, 10).map(p => ({ t: txt(p && p.t, 120), s: Math.max(0, Math.min(100000, Math.round(+(p && p.s) || 0))) })).filter(p => p.t || p.s);
+  x.ini = dt(d.ini); x.fim = dt(d.fim); x.paises = (Array.isArray(d.paises) ? d.paises : []).map(p => String(p).toUpperCase()).filter(p => PR_PAISES.includes(p)); x.idade = +d.idade === 16 ? 16 : 18; x.autorizacao = txt(d.autorizacao, 160);
+  if (d.img === '') x.img = ''; else if (typeof d.img === 'string' && d.img) { if (d.img.length > 240000 || !PR_IMG.test(d.img)) throw N.err('premio', 'A imagem tem de ser JPEG, PNG ou WebP e pequena (até ~170 KB).', 400); x.img = d.img; }
+  return x; };
+OPS.adminPremio = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso.', 403); const ac = String(b.acao || '');
+  if (ac === 'guardar') { let cp = b.id ? await prLer(b.id) : null; if (b.id && !cp) throw N.err('premio', 'Campanha desconhecida.', 404); if (cp && cp.estado !== 'rascunho') throw N.err('premio', 'Só se edita uma campanha em rascunho.', 400);
+    const x = prLimpa(b, cp); if (x.titulo.length < 3) throw N.err('premio', 'Dá um título à campanha.', 400);
+    if (!cp) { x.id = N.crypto.randomBytes(5).toString('hex'); x.estado = 'rascunho'; x.criado = Date.now(); x.por = c.email; await gravar(PRC(x.id), x, { overwrite: false }); } else await gravar(PRC(x.id), x);
+    await prIdxPor(x); return { id: x.id }; }
+  const cp = await prLer(b.id); if (!cp) throw N.err('premio', 'Campanha desconhecida.', 404);
+  if (ac === 'publicar') { if (cp.estado !== 'rascunho') throw N.err('premio', 'Esta campanha já foi publicada.', 400);
+    if (!cp.premios.length) throw N.err('premio', 'Diz qual é o prémio (um objeto, Selos ou os dois).', 400); if (!cp.ini || !cp.fim || cp.ini > cp.fim) throw N.err('premio', 'Escolhe as datas de início e de fim.', 400); if (cp.fim < prHoje()) throw N.err('premio', 'A data de fim já passou.', 400);
+    if (cp.modo === 'sorteio' && cp.autorizacao.length < 6) throw N.err('premio', 'Um sorteio com prémios precisa de autorização antes de ser publicado (no Brasil, da Secretaria de Prémios e Apostas do Ministério da Fazenda; em Portugal, da Câmara Municipal). Escreve o número da autorização.', 400);
+    const seed = N.crypto.randomBytes(32).toString('hex'), o = await mudar(PRC(cp.id), null, v => { v.estado = 'publicada'; v.pub = Date.now(); v.seed = seed; v.hash = N.crypto.createHash('sha256').update(seed).digest('hex'); });
+    await prIdxPor(o); await prBase(o); N.count('premio:publicado'); return { ok2: true }; }
+  if (ac === 'apagar') { if (cp.estado !== 'rascunho') throw N.err('premio', 'Só se apaga um rascunho. Uma campanha publicada pode ser cancelada.', 400); await N.store().del([PRC(cp.id)]).catch(() => { }); await prIdxPor({ id: cp.id, estado: 'apagada' }); return { ok2: true }; }
+  if (ac === 'cancelar') { if (cp.estado !== 'publicada' || cp.res) throw N.err('premio', 'Só se cancela uma campanha publicada que ainda não fechou.', 400); const o = await mudar(PRC(cp.id), null, v => { v.estado = 'cancelada'; v.canc = Date.now(); }); await prIdxPor(o); return { ok2: true }; }
+  if (ac === 'fechar') { if (cp.estado !== 'publicada' || cp.res) throw N.err('premio', 'Esta campanha não está aberta.', 400); const o = await prFechar(cp, true); return { ok2: true, venc: (o.res && o.res.venc.length) || 0 }; }
+  const eu = String(b.eu || ''); if (!cp.res || !ID.test(eu)) throw N.err('premio', 'Vencedor desconhecido.', 400); let alvo = null, novoVenc = null;
+  if (ac === 'confirmar') { await mudar(PRC(cp.id), null, o => { const v = o.res.venc.find(x => x.eu === eu); if (!v || v.estado !== 'por_confirmar') return false; v.estado = 'confirmado'; v.conf = Date.now(); alvo = Object.assign({}, v); });
+    if (alvo) { const pr = prPremio(cp, alvo.pos); if (pr.s) await ganha(eu, pr.s, 'Prémio da seele: ' + cp.titulo, 'pr:' + cp.id + ':' + eu, true);
+      await darMed(eu, { k: 'pr:' + cp.id, n: alvo.pos === 1 ? 'Venceu um prémio da seele' : alvo.pos + '.º lugar num prémio da seele', d: cp.titulo + (pr.t ? ' · ' + pr.t : ''), kind: 'Troféu', lvl: LUG[Math.min(2, alvo.pos - 1)], cat: 'seele', lugar: alvo.pos });
+      try { const m = require('./conta').mailRaw; if (m && alvo.email && (process.env.RESEND_API_KEY || process.env.BREVO_API_KEY || process.env.NAUTILO_EMAIL_MOCK)) await m(alvo.email, 'Ganhaste um prémio no Prumo: ' + cp.titulo, `Olá ${alvo.nome}!\n\nGanhaste ${prPremioTxt(pr)} na campanha "${cp.titulo}" da parceria Prumo & seele.\n\nAbre o Prumo › seele e carrega em "Aceitar o prémio" até ${PR_ACEITAR_DIAS} dias a partir de hoje.${pr.t ? ' Depois, a equipa contacta-te por este e-mail para combinar a entrega.' : ''}\n\nParabéns!\nA equipa do Prumo`); } catch (e) { } }
+    return { ok2: !!alvo }; }
+  if (ac === 'excluir') { await mudar(PRC(cp.id), null, o => { const v = o.res.venc.find(x => x.eu === eu); if (!v || v.estado === 'excluido' || v.estado === 'entregue') return false; v.estado = 'excluido'; v.motivo = String(b.motivo || '').slice(0, 200); v.exc = Date.now();
+      const s0 = (o.res.sup || []).shift(); if (s0) { novoVenc = Object.assign({}, s0, { pos: v.pos, estado: 'por_confirmar', at: Date.now(), sub: eu }); o.res.venc.push(novoVenc); o.res.venc.sort((a, b2) => a.pos - b2.pos || (a.estado === 'excluido' ? 1 : -1)); } });
+    return { ok2: true, suplente: novoVenc ? novoVenc.nome : '' }; }
+  if (ac === 'entregue') { let ok = false; await mudar(PRC(cp.id), null, o => { const v = o.res.venc.find(x => x.eu === eu); if (!v || !['confirmado', 'aceite'].includes(v.estado)) return false; v.estado = 'entregue'; v.ent = Date.now(); ok = true; }); return { ok2: ok }; }
+  throw N.err('premio', 'Pedido desconhecido.', 400); };
 module.exports = N.handler(async (req, res) => {
   // o nome do parceiro (público, para o app o mostrar antes de entrar na conta)
   if (req.method === 'GET' && String((req.query || {}).op || '') === 'img') { const q = req.query || {}, k = q.k === 'fu' ? 'fu' : q.k === 'cla' ? 'cla' : 'av', id = String(q.id || ''); if (!(k === 'cla' ? CID : ID).test(id) || N.limit(req, 'simg', 300, 60e3)) return N.send(res, 400, { ok: false });
@@ -815,6 +1048,8 @@ module.exports = N.handler(async (req, res) => {
   if (!Object.prototype.hasOwnProperty.call(OPS, op)) return N.send(res, 400, { ok: false, msg: 'Pedido desconhecido.' });
   if (N.limit(req, 'social|' + t.u, 240, 60e3)) return N.send(res, 429, { ok: false, msg: 'Demasiados pedidos. Espera um pouco.' });
   const c = await conta(t, pid); c.eu = t.u + '-' + pid; if (!ID.test(c.eu)) return N.send(res, 400, { ok: false, msg: 'Perfil inválido.' });
-  return N.send(res, 200, Object.assign({ ok: true }, await OPS[op](c, b, req)));
+  await sincPerfil(c).catch(() => { });
+  const st = { eu: c.eu, n: 0 }, r = await ALS.run(st, () => OPS[op](c, b, req));
+  return N.send(res, 200, Object.assign({ ok: true }, r, st.n ? { selosGanhos: st.n } : {}));
 });
 module.exports._regras = regras; module.exports._lisboa = lisboa; module.exports._semana = semana; module.exports._SELOS = SELOS;
