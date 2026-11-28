@@ -1125,6 +1125,34 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
           JSON.stringify({ jg: ui.jg.n, fq0: ui.fq0.slice(0, 100), fq1: ui.fq1, fq2: ui.fq2, fq3: ui.fq3.slice(0, 80), rp: [ui.rp0, ui.f0, ui.f1, ui.abertas], rpAntes: ui.rpAntes, toast: ui.toast, rq: ui.rq, bg: ui.bg.n, tp: ui.tp.slice(0, 200), mini: ui.mini }).slice(0, 900));
         await k.ctx.close(); }
     }
+    // v4.02 · passo 3: e-mails automáticos (boas-vindas, teste a acabar, pagamento falhado, «sentimos a tua falta»), desligados até a administração os ligar
+    { const N0 = require(path.join(ROOT, 'api', '_nuvem.js')), P0 = require(path.join(ROOT, 'api', '_planos.js')), EMM = require(path.join(ROOT, 'api', 'emails.js'));
+      const ENV = ['NAUTILO_EMAIL_MOCK', 'NAUTILO_EMAIL_TESTES', 'STRIPE_SECRET_KEY', 'NAUTILO_PLANOS_DESDE'], old = Object.fromEntries(ENV.map(k => [k, process.env[k]])), repor = () => ENV.forEach(k => { if (old[k] == null) delete process.env[k]; else process.env[k] = old[k]; });
+      const lerA = async eid => N0.open(await N0.accKey(), (await N0.store().get('a/' + eid)).buf), porA = async (eid, r) => N0.store().put('a/' + eid, N0.seal(await N0.accKey(), r), {}), porU = async (uid, u) => N0.store().put('u/' + uid, N0.seal(await N0.accKey(), u), {});
+      try { process.env.NAUTILO_EMAIL_MOCK = 'http://localhost:' + PORT + '/emailmock'; process.env.NAUTILO_EMAIL_TESTES = '1'; process.env.NAUTILO_PLANOS_DESDE = '2020-01-01'; if (!process.env.STRIPE_SECRET_KEY) process.env.STRIPE_SECRET_KEY = 'sk_test_emails';
+        const R = []; for (let i = 0; i < 6; i++) { const x = await reg(); x.eid = await N0.emailId(x.email); R.push(x); }
+        const now = Date.now(), DIA = 864e5, [E1, E2, E3, E4, E5, E6] = R, mexe = async (x, f) => { const r = await lerA(x.eid); f(r); await porA(x.eid, r); return r; };
+        await mexe(E2, r => { r.criado = new Date(now - 11.5 * DIA).toISOString(); }); const r2 = await lerA(E2.eid); await porU(r2.uid, { dias: {}, ult: now - 3600e3, a: E2.eid, lg: 'pt-BR' });
+        await mexe(E3, r => { r.criado = new Date(now - 13.5 * DIA).toISOString(); });
+        const r4 = await mexe(E4, r => { r.criado = new Date(now - 40 * DIA).toISOString(); r.ult = now - 20 * DIA; }); await porU(r4.uid, { dias: {}, ult: now - 20 * DIA, a: E4.eid });
+        await mexe(E5, r => { r.mailOff = true; r.plano = { id: 'essencial', estado: 'past_due', modo: P0.modo(), ate: now + 5 * DIA, at: now }; });
+        await mexe(E6, r => { r.mailOff = true; });
+        const so = R.map(x => x.eid), n0 = MAILS.length, desl = await EMM.run({ force: true, so }), r1 = await EMM.run({ force: true, so, forcarLigado: true }), novos = MAILS.slice(n0), de = e => novos.filter(m => m.to === e).map(m => m.subject);
+        const r1b = await EMM.run({ force: true, so, forcarLigado: true }), noite = await EMM.run({ so, forcarLigado: true, now: Date.parse('2026-11-28T03:30:00Z') });
+        ok('E-mails automáticos: desligados não sai nada; ligados, cada pessoa recebe só o que lhe toca (boas-vindas a quem chegou, «acaba daqui a 3 dias» na língua da app, «acaba amanhã», «sentimos a tua falta» a quem está há 20 dias sem abrir, «o pagamento falhou» mesmo a quem desligou os outros) e nunca o mesmo duas vezes; de noite não envia',
+          desl.desligado === 1 && r1.enviados.bv === 1 && r1.enviados.t3 === 1 && r1.enviados.t1 === 1 && r1.enviados.fa === 1 && r1.enviados.pf === 1 && /Bem-vindo ao Prumo/.test(de(E1.email)[0] || '') && de(E2.email)[0] === 'Seu teste grátis acaba em 3 dias'
+          && de(E3.email)[0] === 'O teu teste grátis acaba amanhã' && de(E4.email)[0] === 'Sentimos a tua falta no Prumo' && de(E5.email)[0] === 'Não conseguimos cobrar a tua assinatura do Prumo' && !de(E6.email).length && !Object.keys(r1b.enviados).length && noite.fora === 1,
+          JSON.stringify({ desl, r1: r1.enviados, r1b: r1b.enviados, noite, s: R.map(x => de(x.email)) }).slice(0, 700));
+        // deixar de receber (link do e-mail), assinatura, preferência na conta e a administração
+        const m4 = novos.find(m => m.to === E4.email) || {}, lk = ((m4.text || '').match(/https?:\/\/\S+op=sair\S+/) || [''])[0], qs = lk.slice(lk.indexOf('?'));
+        const sair = await fetch(BASE + 'api/emails' + qs).then(async r => ({ st: r.status, t: await r.text() })), falso = await fetch(BASE + 'api/emails' + qs.replace(/s=[^&]+/, 's=' + 'x'.repeat(32))).then(r => r.status), off4 = (await lerA(E4.eid)).mailOff;
+        const pref = await api('conta', { op: 'emails', off: true }, { tok: E1.tok }), pref2 = await api('conta', { op: 'emails', off: false }, { tok: E1.tok });
+        const est = await api('emails', { op: 'estado' }, { tok: ad.token }), naoAdm = await api('emails', { op: 'estado' }, { tok: E1.tok }), ver = await api('emails', { op: 'ver', k: 't3' }, { tok: ad.token }), lig = await api('emails', { op: 'ligar', on: true }, { tok: ad.token }), lig2 = await api('emails', { op: 'ligar', on: false }, { tok: ad.token });
+        ok('E-mails automáticos: o link «deixar de receber» de cada e-mail desliga-os (com assinatura; um link falso não serve); a pessoa liga e desliga em Definições › Conta; só a administração vê, liga e pré-visualiza',
+          sair.st === 200 && /deixas de receber/.test(sair.t) && falso === 400 && off4 === true && /op=sair&e=[a-f0-9]{40}&s=/.test(lk) && pref.conta && pref.conta.mailOff === true && pref2.conta && pref2.conta.mailOff === false
+          && est.ok && est.cfg && est.tipos.length === 5 && naoAdm._st === 403 && /Prumo/.test(ver.html || '') && /teste grátis acaba daqui a 3 dias/.test(ver.sub || '') && lig.cfg && lig.cfg.on === true && lig2.cfg && lig2.cfg.on === false,
+          JSON.stringify({ sair: sair.st, falso, off4, lk: lk.slice(0, 60), pref: pref.conta && pref.conta.mailOff, est: est._st, naoAdm: naoAdm._st, ver: ver.sub, lig: lig.cfg, lig2: lig2.cfg }).slice(0, 600));
+      } finally { repor(); } }
     // v3.91: Sombras (a silhueta do dia, 3 tentativas, a imagem original só no fim, pontos e dias seguidos) e Sequência a dois (o dia só conta com os dois, recomeça se um falhar, recorde e medalhas)
     { const N0 = require(path.join(ROOT, 'api', '_nuvem.js')), ENV = ['NAUTILO_SB_POOL', 'NAUTILO_SB_LOCAL', 'NAUTILO_SEQ_AGORA'], old = Object.fromEntries(ENV.map(k => [k, process.env[k]])), repor = () => ENV.forEach(k => { if (old[k] == null) delete process.env[k]; else process.env[k] = old[k]; });
       const S1 = await reg(), S2 = await reg(), T1 = await reg(), T2 = await reg(); try {

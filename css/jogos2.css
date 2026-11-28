@@ -190,3 +190,13 @@
 .as-cn{margin-top:14px}
 .as-dica{font-size:.85rem;margin-top:12px}
 .as-vol small{color:var(--neg,#d66)}
+/* v4.02 · e-mails automáticos (Administração) e preferência em Definições › Conta */
+.em-l{display:flex;flex-direction:column;gap:8px}
+.em-t{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.em-ck,.ac-mail{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.em-ck span,.ac-mail span{display:flex;flex-direction:column}
+.em-ck small{color:var(--mut);font-size:.82rem}
+.em-ck input,.ac-mail input{margin-top:4px}
+.em-log{margin-top:12px}.em-log summary{cursor:pointer;color:var(--mut);font-size:.88rem}
+.em-modal{max-width:640px}
+.em-fr{width:100%;height:min(70vh,620px);border:1px solid var(--line);border-radius:10px;background:#f3f5f8;margin-top:10px}
