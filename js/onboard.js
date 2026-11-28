@@ -14,7 +14,7 @@ const MUST = ['visao', 'definicoes'];
 // páginas só do perfil pessoal (o Prumo do Ryan): não aparecem nas outras contas (desde a 3.12 a Cozinha e a lista de compras são de todas)
 const PERSONAL = [];
 // abas que começam desligadas: só aparecem a quem as escolher (no registo, em Definições ou em Explorar)
-const OPTIN = ['animes'];
+const OPTIN = ['animes', 'diario'];   // v4.04: o Diário também é opcional
 // no perfil pessoal do Ryan (ps) as opcionais já vêm ligadas (pediu os Animes ativados); nas outras contas começam desligadas. Quem desliga uma fica com ela em "off".
 const psProf = () => !!(OS.Acc && OS.Acc.on && !OS.Acc.pub);
 const hiddenSet = () => { const A0 = OS.one('areas') || {}, on = new Set(A0.on || []), off = new Set(A0.off || []), ps = psProf();

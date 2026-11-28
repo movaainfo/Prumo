@@ -355,9 +355,13 @@ const PUSH = [
 const fit = arr => (OS.Areas && !OS.Areas.on('fe')) || (OS.Rel && OS.Rel.chosen() && ['budista', 'hindu', 'espiritual', 'nenhuma'].includes(OS.Rel.meta().fam)) ? arr.filter(t => !/\bDeus\b|Jesus|Bíblia|orar\b|oração/i.test(t)) : arr;
 const pick = (arr0, salt) => { const arr = fit(arr0); return arr[(U.hash(U.today() + salt) + (OS.ui['q_' + salt] || 0)) % arr.length]; };
 A.qNext = b => { OS.setUI('q_' + b.dataset.k, (OS.ui['q_' + b.dataset.k] || 0) + 1); };
-const truthCard = () => `<div class="pn q-truth"><div class="pn-h"><h3>Verdade do dia</h3><button class="icon-btn" data-act="qNext" data-k="t" aria-label="Outra verdade" title="Outra">${OS.UI.ic('right')}</button></div><p>${esc(pick(TRUTH, 't'))}</p></div>`;
-const pushLine = () => `<p class="q-push">${esc(pick(PUSH, 'p'))} <button class="q-more" data-act="qNext" data-k="p" aria-label="Outra frase">↻</button></p>`;
-OS.Quotes = { TRUTH, PUSH, truth: () => pick(TRUTH, 't'), push: () => pick(PUSH, 'p') };
+const truthCard = () => `<div class="pn q-truth"><div class="pn-h"><h3>Verdade do dia</h3><button class="icon-btn" data-act="qNext" data-k="t" aria-label="Outra verdade" title="Outra">${OS.UI.ic('right')}</button></div><p>${esc(lembra('t', pick(TRUTH, 't')))}</p></div>`;
+const pushLine = () => `<p class="q-push">${esc(lembra('p', pick(PUSH, 'p')))} <button class="q-more" data-act="qNext" data-k="p" aria-label="Outra frase">↻</button></p>`;
+// v4.04: a IA sabe a frase de qualquer dia (a que apareceu, se a pessoa trocou; senão a que o dia escolhe)
+const QL = 'oc_frases'; const lembra = (k, v) => { try { const L = U.ls.get(QL, {}) || {}, d = U.today(); if (L[d] && L[d][k] === v) return v; L[d] = Object.assign(L[d] || {}, { [k]: v }); Object.keys(L).sort().slice(0, -400).forEach(x => delete L[x]); U.ls.set(QL, L); } catch (e) { } return v; };
+const doDia = (arr0, salt, d) => { const arr = fit(arr0); return arr[U.hash(d + salt) % arr.length]; };
+const dia = d => { const L = (U.ls.get(QL, {}) || {})[d] || {}; return { frase_do_dia: L.p || doDia(PUSH, 'p', d), verdade_do_dia: L.t || doDia(TRUTH, 't', d) }; };
+OS.Quotes = { TRUTH, PUSH, truth: () => lembra('t', pick(TRUTH, 't')), push: () => lembra('p', pick(PUSH, 'p')), dia };
 const wrap = (k, fn) => { const o = V[k]; if (!o || o._q) return; V[k] = sub => fn(o(sub), sub); V[k]._q = 1; };
 OS.on('ready', () => {
   wrap('visao', h => h.replace(/(<div class="dash-top"><div><div class="eyebrow">[^<]*<\/div><h1>[^<]*<\/h1>)/, '$1' + pushLine()));

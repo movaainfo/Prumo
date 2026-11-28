@@ -476,3 +476,7 @@ body.onb-open{overflow:hidden}
 .fo-pipauto input{width:18px;height:18px;margin-top:2px;flex:none}
 .fo-pipauto b{display:block;font-size:13.5px}.fo-pipauto small{display:block;font-size:12px;opacity:.8;line-height:1.4}
 .fo-pipnot{font-size:12.5px;margin:10px 0 0;max-width:560px}
+/* v4.04: o ecrã de entrada pinta até ao fundo do ecrã (no iPhone, em modo app, sobrava uma barra por baixo) */
+html:has(#splash.lkx:not([hidden])),html:has(#splash.lkx:not([hidden])) body{background:#04070D!important}
+#splash.lkx{box-shadow:0 320px 0 0 #04070D}
+#splash.lkx .lk-scene::after{background:linear-gradient(180deg,rgba(4,7,13,.6) 0%,rgba(4,7,13,0) 24%,rgba(4,7,13,0) 46%,rgba(4,7,13,.55) 64%,rgba(4,7,13,.92) 84%,#04070D 100%)}

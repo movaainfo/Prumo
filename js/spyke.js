@@ -82,6 +82,7 @@ S.ctx = () => OS.paraIA(() => ctxIA()); // v3.71: sem Strava nem Oura
 const ctxIA = () => { const t = U.today(), L = [], add = (k, v) => { if (v) L.push(k + ': ' + v); };
   add('Agora', new Date().toLocaleString(OS.loc ? OS.loc() : 'pt-PT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) + ' (' + (OS.Pais ? OS.Pais.name(OS.Pais.code(), 'pt') : 'Portugal') + ')');
   const p = OS.one('profile'); add('Utilizador', [p.name || name(), p.city].filter(Boolean).join(', '));
+  try { if (OS.Quotes && OS.Quotes.dia) { const h = OS.Quotes.dia(t), o = OS.Quotes.dia(U.addDays(t, -1)); add('Frases', 'hoje «' + h.frase_do_dia + '» (verdade do dia: «' + h.verdade_do_dia + '»); ontem «' + o.frase_do_dia + '» (verdade: «' + o.verdade_do_dia + '»)'); } } catch (e) { }   // v4.04
   try { add('Agenda hoje e amanhã', OS.Cal.items(t, U.addDays(t, 1)).filter(x => x.src !== 'task').slice(0, 14).map(x => (x.date === t ? 'hoje' : 'amanhã') + (x.start ? ' ' + x.start : '') + ' ' + x.title).join('; ')); } catch (e) { }
   try { add('Alertas', OS.Intel.alerts().slice(0, 10).map(a => `${a.area}: ${a.title}${a.detail ? ' (' + a.detail + ')' : ''}`).join('; ')); } catch (e) { }
   try { add('Próximas ações por prioridade', OS.Intel.next().slice(0, 10).map(n => `${n.kind}: ${n.title}${n.why && n.why.length ? ' (' + n.why.slice(0, 2).join(', ') + ')' : ''}`).join('; ')); } catch (e) { }

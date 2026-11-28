@@ -175,7 +175,9 @@ document.addEventListener('visibilitychange', () => { if (!B || B.phase === 'end
   wake(); draw(); });
 // enquanto o bloco corre, a navegação fica atrás do ecrã fechado e o teclado não abre outros ecrãs
 document.addEventListener('keydown', e => { if (B && B.phase !== 'end' && e.key === 'Escape') { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
-OS.on('ready', () => { draw(); if (B && B.phase !== 'end') wake(); });
+OS.on('ready', () => { if (B && B.phase === 'run' && B.hide) { B.hide = 0; save(); } draw(); if (B && B.phase !== 'end') wake(); });
+// v4.04: com o bloco a contar, voltar ao app mostra logo o temporizador (mesmo que o tivesses minimizado)
+document.addEventListener('visibilitychange', () => { if (!document.hidden && B && B.phase === 'run' && B.hide) { B.hide = 0; save(); draw(); } });
 
 /* ---------- entradas ---------- */
 OS.on('ready', () => { const h = V.hoje; if (h && !h._fb) { V.hoje = s => h(s).replace(/(<a class="btn ghost sm" href="#next">[\s\S]*?<\/a>)/, `<div class="row gap6" style="flex-wrap:wrap;justify-content:flex-end"><a class="btn sm pri fb-hb" href="#foco">${UI.ic('lock')}Bloco de foco</a>$1</div>`); V.hoje._fb = 1; } });

@@ -581,6 +581,10 @@ document.addEventListener('visibilitychange', () => { if (!RUN || RUN.phase !== 
 addEventListener('pagehide', () => { if (RUN && RUN.phase === 'grow' && !RUN.hid) { RUN.hid = Date.now(); save(); } });
 function back() { if (!RUN || !RUN.hid) return; const away = Date.now() - RUN.hid, lim = RUN.pip ? 0 : +cfg().strict; RUN.hid = null; RUN.pip = false; save();
   if (lim && away > lim * 1000 && left() > 0) return finish(false, `Saíste do Prumo durante ${Math.round(away / 1000)} s`); if (away > 4000 && left() > 0) UI.toast('Voltaste a tempo — a árvore continua a crescer', 'pos'); step(); }
+// v4.04: com a árvore ou o Pomodoro a contar, abrir o app (ou voltar a ele) leva direto ao temporizador, e não ao início
+const aoTimer = () => { if (!RUN || !(RUN.phase === 'grow' || RUN.phase === 'break')) return; const r = OS.route(); if (r.base === 'floresta' && !r.sub) return; try { location.hash = 'floresta'; } catch (e) { } };
+OS.Forest_ao = aoTimer; OS.on('unlock', () => setTimeout(aoTimer, 30)); OS.on('ready', () => setTimeout(aoTimer, 30));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(aoTimer, 60); });
 OS.on('ready', () => { if (RUN) { if (RUN.phase === 'grow' && RUN.hid) back(); if (RUN) loop(); if (RUN && RUN.sp && !THUMB[RUN.sp]) setTimeout(() => { try { if (T && !FAIL) thumbs([RUN.sp]); else if (!FAIL) load3().then(() => RUN && thumbs([RUN.sp])); } catch (e) { } }, 4000); } });
 addEventListener('hashchange', pill);
 A.foPlant = () => plant();

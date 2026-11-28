@@ -424,6 +424,9 @@ A.focusEnd = b => { if (!FS) return; const early = b && b.dataset.early; if (FS.
 A.focusCancel = () => { FS = null; U.ls.del(FK); renderFocus(); UI.toast('Sessão descartada'); };
 A.focusMin = () => { if (!FS) return; FS.min = true; U.ls.set(FK, FS); renderFocus(); };
 A.focusMax = () => { if (!FS) return; FS.min = false; U.ls.set(FK, FS); renderFocus(); };
+// v4.04: com a sessão de foco a contar, voltar ao app abre o temporizador em grande
+document.addEventListener('visibilitychange', () => { if (!document.hidden && FS && FS.min && OS.Lock && OS.Lock.unlocked()) A.focusMax(); });
+OS.on('unlock', () => { if (FS && FS.min) A.focusMax(); });
 function renderFocus() {
   const el = U.$('#focus'), dock = U.$('#dock');
   if (!FS) { el.hidden = true; dock.hidden = true; el.innerHTML = ''; return; }
