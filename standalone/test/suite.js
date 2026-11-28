@@ -1218,19 +1218,24 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
         const ui = await E(k.p, async ym => { const w = ms => new Promise(r => setTimeout(r, ms)), box = document.createElement('div'); box.id = 'rfTeste'; document.body.appendChild(box); const pinta = () => { box.innerHTML = OS.RelFin.painel(); };
           OS.on('change', pinta); const r = {}; await OS.RelFin.carregar(ym); pinta(); await w(300); const R = OS.RelFin._S; r.c = R.d && R.d._c && { vendas: R.d._c.vendas, liq: R.d._c.liq, ebitda: R.d._c.ebitda, imp: R.d._c.imp, rl: R.d._c.rl, ativo: R.d._c.ativo };
           r.tabelas = box.querySelectorAll('.rf-t').length; r.quadro = !!box.querySelector('#rfSig'); r.txt = box.innerText.replace(/\s+/g, ' ');
+          // antes de assinar: o PDF e o Excel saem marcados como não autenticados
+          const d0 = await OS.RelFin.pdf(R.d), raw0 = d0.output(), x0 = await OS.RelFin.xlsx(R.d), wb0 = window.XLSX.read(await x0.arrayBuffer(), { type: 'array' });
+          r.antes = { falta: /FALTA A ASSINATURA/.test(raw0), aut: OS.RelFin.autenticado(R.d), badge: (box.querySelector('.rf-pn .bdg') || {}).textContent, capa: window.XLSX.utils.sheet_to_json(wb0.Sheets.Capa, { header: 1 }).map(x => x.join(' ')).join(' | ').slice(0, 400), dr0: (window.XLSX.utils.sheet_to_json(wb0.Sheets.Resultados, { header: 1 })[0] || []).join(' ') };
           // sem rever / sem desenhar não assina
           box.querySelector('[data-act=rfAssinar]').click(); await w(200); r.semRever = !(R.d.assinatura);
           box.querySelector('#rfRevi').checked = true; const cv = box.querySelector('#rfSig'), bb = cv.getBoundingClientRect(), ev = (t, x, y) => cv.dispatchEvent(new PointerEvent(t, { pointerId: 1, bubbles: true, clientX: bb.left + x, clientY: bb.top + y }));
           ev('pointerdown', 20, 40); for (let i = 0; i < 30; i++) ev('pointermove', 20 + i * 9, 40 + Math.sin(i / 3) * 18); ev('pointerup', 290, 40);
           box.querySelector('[data-act=rfAssinar]').click(); await w(1200); pinta(); await w(200); r.assinado = !!(R.d.assinatura && R.d.assinatura.h === R.d._h) && !!box.querySelector('.rf-ass.ok img');
-          const doc = await OS.RelFin.pdf(R.d), raw = doc.output(); r.pdf = { pag: doc.getNumberOfPages(), tam: raw.length, img: /\/Subtype \/Image/.test(raw), titulo: /Demonstra/.test(raw), rasc: /RASCUNHO/.test(raw) };
+          const doc = await OS.RelFin.pdf(R.d), raw = doc.output(); r.pdf = { pag: doc.getNumberOfPages(), tam: raw.length, img: /\/Subtype \/Image/.test(raw), titulo: /Demonstra/.test(raw), rasc: /RASCUNHO|FALTA A ASSINATURA/.test(raw), aut: /AUTENTICADO/.test(raw), cod: (raw.match(/[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}/) || [''])[0] };
+          r.badge = (box.querySelector('.rf-pn .bdg') || {}).textContent; r.codigo = OS.RelFin.codigo(R.d.assinatura.h);
           const xb = await OS.RelFin.xlsx(R.d), X = window.XLSX, wb = X.read(await xb.arrayBuffer(), { type: 'array' }); r.xlsx = { folhas: wb.SheetNames, capa: X.utils.sheet_to_json(wb.Sheets.Capa, { header: 1 }).map(x => x.join(' ')).join(' | ').slice(0, 300), dr: X.utils.sheet_to_json(wb.Sheets.Resultados, { header: 1 }).slice(1, 4) };
           OS.off && OS.off('change', pinta); return r; }, ym);
         if (process.env.SHOTS) { try { await E(k.p, () => { const b = document.getElementById('rfTeste'); b.style.cssText = 'position:fixed;inset:0;overflow:auto;background:var(--bg);z-index:99999;padding:16px'; }); await sleep(300); await k.p.screenshot({ path: path.join(process.env.SHOTS, 'relfin.png'), fullPage: false }); } catch (e) { } }
-        ok('Relatório financeiro (no ecrã): resultados, fluxos de caixa, balanço e indicadores para rever; só assina depois de confirmar a revisão e desenhar no quadro; o PDF leva as demonstrações e a assinatura (sem «rascunho») e o Excel tem as folhas com os valores',
+        ok('Relatório financeiro (no ecrã): resultados, fluxos de caixa, balanço e indicadores para rever; sem a assinatura está «Não autenticado» (o PDF e o Excel saem marcados assim); só assina depois de confirmar a revisão e desenhar no quadro; assinado, o PDF e o Excel saem «Autenticado» com a assinatura e o código de verificação',
           ui.c && ui.c.vendas === 3198 && ui.c.liq === 2599 && ui.c.ebitda === 2599 - 92 - 7000 && ui.c.imp === 0 && ui.tabelas === 4 && ui.quadro && /Demonstração de resultados/.test(ui.txt) && /Balanço/.test(ui.txt) && ui.semRever && ui.assinado
-          && ui.pdf.pag >= 2 && ui.pdf.img && ui.pdf.titulo && !ui.pdf.rasc && ['Capa', 'Resultados', 'Fluxos de caixa', 'Balanço', 'Indicadores', 'Movimentos Stripe', 'Despesas'].every(f => ui.xlsx.folhas.includes(f)) && /Assinado por/.test(ui.xlsx.capa) && ui.xlsx.dr[0][1] === 31.98,
-          JSON.stringify(ui).slice(0, 900));
+          && ui.antes.falta && !ui.antes.aut && ui.antes.badge === 'Não autenticado' && /NÃO AUTENTICADO/.test(ui.antes.capa) && /NÃO AUTENTICADO/.test(ui.antes.dr0) && ui.badge === 'Autenticado'
+          && ui.pdf.pag >= 2 && ui.pdf.img && ui.pdf.titulo && !ui.pdf.rasc && ui.pdf.aut && ui.pdf.cod === ui.codigo && ['Capa', 'Resultados', 'Fluxos de caixa', 'Balanço', 'Indicadores', 'Movimentos Stripe', 'Despesas'].every(f => ui.xlsx.folhas.includes(f)) && /AUTENTICADO · assinado por/.test(ui.xlsx.capa) && /Código de verificação/.test(ui.xlsx.capa) && ui.xlsx.dr[0][1] === 31.98,
+          JSON.stringify(Object.assign({}, ui, { txt: (ui.txt || '').slice(0, 120) })).slice(0, 1400));
         await k.ctx.close();
       } finally { repor(); STRIPE.bt = []; } }
     // v3.91: Sombras (a silhueta do dia, 3 tentativas, a imagem original só no fim, pontos e dias seguidos) e Sequência a dois (o dia só conta com os dois, recomeça se um falhar, recorde e medalhas)
