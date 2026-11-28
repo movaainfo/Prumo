@@ -1186,7 +1186,7 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
         const adm = await api('conta', { op: 'admin' }, { tok: ad.token }), ng = adm.negocio || {}, fin = (ng.abas || []).find(a => a.k === 'financas');
         ok('Números do negócio na Administração: conversão do teste para pago, quanto entra por mês por moeda, quantos vão cancelar, contas novas e as abas mais usadas (só nomes de abas válidos e contagens)',
           typeof ng.pagos === 'number' && ng.pagos >= 1 && typeof ng.testes === 'number' && (ng.conv === null || typeof ng.conv === 'number') && ng.mrr && ng.mrr.EUR > 0 && typeof ng.cancelar === 'number' && ng.novos >= 3 && fin && fin.p >= 1 && fin.n >= 3 && !(ng.abas || []).some(a => /</.test(a.k)),
-          JSON.stringify({ pagos: ng.pagos, testes: ng.testes, conv: ng.conv, mrr: ng.mrr, novos: ng.novos, abas: (ng.abas || []).slice(0, 4) }).slice(0, 400));
+          JSON.stringify({ st: adm._st, msg: adm.msg, pagos: ng.pagos, testes: ng.testes, conv: ng.conv, mrr: ng.mrr, novos: ng.novos, abas: (ng.abas || []).slice(0, 4) }).slice(0, 400));
         // faturas certificadas: desligadas sem a conta; ligadas, cada pagamento do Stripe vira fatura-recibo finalizada e enviada ao cliente, só uma vez
         const des = await FAT.run({ faturas: [] });
         Object.assign(process.env, { INVOICEXPRESS_ACCOUNT: 'prumo-teste', INVOICEXPRESS_API_KEY: 'chave-ix', INVOICEXPRESS_API_BASE: 'http://localhost:' + PORT + '/ixmock', NAUTILO_FATURA_IVA: '23', NAUTILO_FATURAS: '1' });
