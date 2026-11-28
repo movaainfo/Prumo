@@ -1904,10 +1904,10 @@ async function sharedTests(b) {
     await E(p, () => { OS.one('forest').sp = 'natal'; OS.one('forest').mins = 25; OS.one('forest').tag = 's:' + (OS.all('subjects').find(s => s.status === 'Em curso') || OS.add('subjects', { name: 'Disciplina Floresta', status: 'Em curso' })).id; OS.touch('forest'); }); await sleep(300); await p.click('#view [data-act=foPlant]'); await sleep(500);
     await E(p, () => { OS.Forest.run().t0 = Date.now() - 25 * 60000 + 800; }); await sleep(2500);
     ok('floresta: árvore cresce até ao fim, dá moedas e regista estudo', await E(p, () => { const t = OS.all('trees').slice(-1)[0]; return t && t.alive && t.sp === 'natal' && t.mins === 25 && OS.one('forest').coins >= 30 && OS.all('sessions').some(x => /Floresta/.test(x.learned || '')) && /Plantaste/.test(document.querySelector('#view').textContent); }));
-    await p.click('#view [data-act=foAgain]'); await sleep(300); await p.click('#view [data-act=foPlant]'); await sleep(400);
+    await p.click('#view [data-act=foAgain]'); await sleep(300); await E(p, () => { OS.one('forest').pipAuto = false; OS.touch('forest'); }); await p.click('#view [data-act=foPlant]'); await sleep(400);
     await E(p, () => { Object.defineProperty(document, 'hidden', { get: () => true, configurable: true }); document.dispatchEvent(new Event('visibilitychange')); OS.Forest.run().hid = Date.now() - 90000; Object.defineProperty(document, 'hidden', { get: () => false, configurable: true }); document.dispatchEvent(new Event('visibilitychange')); }); await sleep(500);
-    ok('floresta: sair do Prumo mata a árvore', await E(p, () => OS.all('trees').slice(-1)[0].alive === false && /morreu/.test(document.querySelector('#view').textContent)));
-    await E(p, () => { delete document.hidden; location.hash = 'floresta.floresta'; }); await sleep(600);
+    ok('floresta: sair do Prumo (sem o relógio flutuante) mata a árvore', await E(p, () => OS.all('trees').slice(-1)[0].alive === false && /morreu/.test(document.querySelector('#view').textContent)));
+    await E(p, () => { delete document.hidden; delete OS.one('forest').pipAuto; OS.touch('forest'); location.hash = 'floresta.floresta'; }); await sleep(600);
     ok('floresta: a minha floresta e catálogo', await E(p, () => /árvore/.test(document.querySelector('#view .fo-ov').textContent)) && (await E(p, () => { location.hash = 'floresta.loja'; }), await sleep(400), await E(p, () => document.querySelectorAll('#view .fo-card').length >= 34)));
     // UNIVERSIDADE+
     let uP = [];
