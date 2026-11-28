@@ -75,7 +75,7 @@ const podeConv = async (eu, perf, cv) => { if (!cv) throw N.err('conversa', 'Con
 const msgs = async (k, desde) => { const out = []; for (const d of [dia(Date.now() - 864e5), dia()]) { const L = (await ler('so/m/' + k + '/' + d, [])).v || []; L.forEach(m => { if (!desde || m.at > desde) out.push(m); }); } return out.slice(-150); };
 /* ---------- clãs ---------- */
 const CL = cid => 'so/cl/' + cid;
-const claPub = c => ({ id: c.id, nome: c.nome, desc: c.desc, cor: c.cor, cod: c.cod, foto: c.foto || 0, vit: c.vit || 0, der: c.der || 0, vagas: vagas(c), n: c.membros.length, membros: c.membros.map(m => ({ id: m.id, nome: m.nome, papel: m.papel })) });
+const claPub = c => ({ id: c.id, nome: c.nome, desc: c.desc, cor: c.cor, cod: c.cod, foto: c.foto || 0, vit: c.vit || 0, der: c.der || 0, vagas: vagas(c), n: c.membros.length, membros: c.membros.map(m => ({ id: m.id, nome: m.nome, papel: m.papel, cargo: m.cargo || '', cg: cargoNome(c, m) })) });
 /* ---------- ranking de animes ---------- */
 const PTS = 'so/pts.json';
 const somaPts = async (L) => mudar(PTS, {}, T => { L.forEach(([id, nome, p, x]) => { const o = T[id] = T[id] || { p: 0, nome }; o.p += p; o.nome = nome || o.nome; if (x) { if (x.user) o.user = x.user; if (x.av) o.av = x.av; } }); });
@@ -167,7 +167,7 @@ const hunterVer = async (eu) => { const { L, v } = await desafio(), abre = H_ABR
 /* ---------- pedidos ---------- */
 const OPS = {
   async eu(c, b) { const v = await perfil(c.eu, c.nome), amigos = await Promise.all((v.amigos || []).map(pub)), pedidos = await Promise.all((v.pedidos || []).map(pub)), clas = [];
-    for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (cl) clas.push(Object.assign(claPub(cl), gerente(cl, c.eu) ? { ped: (cl.pedidos || []).length, conv: (cl.convites || []).length } : {}, { gw: cl.guerra ? 1 : 0 })); }
+    for (const cid of v.clas || []) { const cl = (await ler(CL(cid), null)).v; if (cl) clas.push(Object.assign(claPub(cl), { meuCargo: cargoNome(cl, cl.membros.find(m => m.id === c.eu)) }, pode(cl, c.eu, 'pedidos') ? { ped: (cl.pedidos || []).length } : {}, pode(cl, c.eu, 'guerra') ? { conv: (cl.convites || []).length } : {}, { gw: cl.guerra ? 1 : 0 })); }
     const claPed = []; for (const cid of (v.claPed || []).slice(-10)) { const cl = (await ler(CL(cid), null)).v; if (cl && (cl.pedidos || []).some(x => x.id === c.eu)) claPed.push({ id: cid, nome: cl.nome, cor: cl.cor, foto: cl.foto || 0 }); }
     if (c.nome && v.nome !== c.nome) { v.nome = c.nome; await mudar(P(c.eu), null, p => { p.nome = c.nome; }).catch(() => { }); await nomeEmTodo(c.eu, c.nome, v).catch(() => { }); }
     const T = (await ler(PTS, {})).v || {}; return { eu: { id: v.id, nome: v.nome, cod: v.cod, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pl: PLN(c), pts: (T[v.id] || {}).p || 0, mudo: v.mudo && v.mudo > Date.now() ? v.mudo : 0 }, amigos, pedidos, enviados: v.enviados || [], bloq: v.bloq || [], clas, claPed }; },
@@ -202,7 +202,7 @@ const OPS = {
     await mudar(CL(cid), null, o => { o.membros = o.membros.filter(m => m.id !== c.eu); if (o.dono === c.eu && o.membros.length) { o.dono = o.membros[0].id; o.membros[0].papel = 'dono'; } });
     await mudar(P(c.eu), null, p => { p.clas = (p.clas || []).filter(x => x !== cid); }); await idxDe(cid); return { ok2: true }; },
   async claTirar(c, b) { const cid = String(b.id || ''), quem = String(b.membro || ''); if (!CID.test(cid) || !ID.test(quem)) throw N.err('cla', 'Pedido desconhecido.', 400);
-    await mudar(CL(cid), null, o => { const eu = o.membros.find(m => m.id === c.eu); if (!eu || !['dono', 'mod'].includes(eu.papel) || quem === o.dono) throw N.err('cla', 'Só quem gere o clã pode tirar pessoas.', 403); o.membros = o.membros.filter(m => m.id !== quem); o.banidos = [...new Set((o.banidos || []).concat(quem))]; });
+    await mudar(CL(cid), null, o => { const eu = o.membros.find(m => m.id === c.eu); if (!eu || !pode(o, c.eu, 'expulsar') || quem === o.dono || quem === c.eu) throw N.err('cla', 'Só quem tem a permissão de tirar pessoas o pode fazer (e o líder não pode ser tirado).', 403); o.membros = o.membros.filter(m => m.id !== quem); o.banidos = [...new Set((o.banidos || []).concat(quem))]; });
     await mudar(P(quem), null, p => { p.clas = (p.clas || []).filter(x => x !== cid); }).catch(() => { }); await idxDe(cid); return { ok2: true }; },
   async claVer(c, b) { const cid = String(b.id || ''); const cl = CID.test(cid) && (await ler(CL(cid), null)).v; if (!cl || !cl.membros.some(m => m.id === c.eu)) throw N.err('cla', 'Não és membro deste clã.', 403);
     const T = (await ler(PTS, {})).v || {}, r = claPub(cl); r.membros = r.membros.map(m => Object.assign(m, { pts: (T[m.id] || {}).p || 0, user: (T[m.id] || {}).user || '', av: (T[m.id] || {}).av || 0 })).sort((a, b2) => b2.pts - a.pts); r.pts = r.membros.reduce((s, m) => s + m.pts, 0); return { cla: Object.assign(r, await claExtra(c, cl, T)) }; },
@@ -242,7 +242,15 @@ const OPS = {
 /* ---------- v3.89 · clãs: pedidos para entrar, foto, pesquisa, ranking de clãs e guerra de clãs ---------- */
 const IDX = 'so/clidx.json', GW = wid => 'so/gw/' + wid, WID = /^[a-f0-9]{10}$/, DIA = 864e5;
 const CLA_MAX = 1;   // v3.93: cada pessoa está num clã de cada vez (para entrar ou criar outro, sai primeiro)
-const gerente = (cl, eu) => { const m = (cl.membros || []).find(x => x.id === eu); return !!m && ['dono', 'mod'].includes(m.papel); };
+/* v3.99 · cargos do clã: o líder (dono) cria cargos com nome e permissões e dá-os às pessoas. Cada permissão abre uma parte da gestão.
+   O moderador antigo continua a poder tudo menos gerir cargos. Até 8 cargos por clã. */
+const PERMS = ['editar', 'pedidos', 'expulsar', 'guerra', 'aliancas', 'cargos'];
+const CARGO_MAX = 8;
+const cargoNome = (cl, m) => { if (!m) return ''; if (m.papel === 'dono' || cl.dono === m.id) return 'Líder'; const cg = m.cargo && (cl.cargos || []).find(x => x.id === m.cargo); return cg ? cg.nome : m.papel === 'mod' ? 'Moderador' : ''; };
+const pode = (cl, eu, perm) => { const m = cl && (cl.membros || []).find(x => x.id === eu); if (!m) return false; if (m.papel === 'dono' || cl.dono === eu) return true;
+  const cg = m.cargo && (cl.cargos || []).find(x => x.id === m.cargo); if (cg) return (cg.perms || []).includes(perm); return m.papel === 'mod' && perm !== 'cargos'; };
+const permsDe = (cl, eu) => PERMS.filter(p => pode(cl, eu, p));
+const gerente = (cl, eu) => permsDe(cl, eu).length > 0;
 const idxPor = async cl => { await idxLer(); return mudar(IDX, {}, X => { X[cl.id] = { nome: cl.nome, desc: cl.desc || '', cor: cl.cor, foto: cl.foto || 0, vit: cl.vit || 0, m: cl.membros.map(x => x.id) }; }); };
 const idxDe = async cid => { try { const cl = (await ler(CL(cid), null)).v; if (cl && cl.membros.length) await idxPor(cl); else await mudar(IDX, {}, X => { if (!X[cid]) return false; delete X[cid]; }); } catch (e) { } };
 // o índice (para pesquisar) faz-se sozinho a primeira vez, com os clãs que já existiam
@@ -261,16 +269,16 @@ OPS.claCancelar = async (c, b) => { const cid = String(b.id || ''); if (!CID.tes
 // o dono ou um moderador aceita ou recusa cada pedido
 OPS.claResponder = async (c, b) => { const cid = String(b.id || ''), quem = String(b.quem || ''), sim = !!b.sim; if (!CID.test(cid) || !ID.test(quem)) throw N.err('cla', 'Pedido desconhecido.', 400);
   const pv = (await ler(P(quem), null)).v; let cheio5 = sim && pv && (pv.clas || []).length >= CLA_MAX && !(pv.clas || []).includes(cid);
-  const cl = await mudar(CL(cid), null, o => { if (!o || !gerente(o, c.eu)) throw N.err('cla', 'Só quem gere o clã pode responder aos pedidos.', 403); const pd = (o.pedidos || []).find(x => x.id === quem); if (!pd) return false;
+  const cl = await mudar(CL(cid), null, o => { if (!o || !pode(o, c.eu, 'pedidos')) throw N.err('cla', 'Só quem tem a permissão de aceitar pedidos pode responder.', 403); const pd = (o.pedidos || []).find(x => x.id === quem); if (!pd) return false;
     o.pedidos = o.pedidos.filter(x => x.id !== quem); if (sim && !cheio5) { if (o.membros.length >= vagas(o)) throw N.err('cla', 'O clã está cheio (' + vagas(o) + ' vagas). Reforça o clã com Selos para aceitar mais pessoas.', 400); if (!o.membros.some(m => m.id === quem)) o.membros.push({ id: quem, nome: pd.nome, papel: 'membro', desde: Date.now() }); } });
   await mudar(P(quem), null, p => { if (!p) return false; p.claPed = (p.claPed || []).filter(x => x !== cid); if (sim && !cheio5) p.clas = [...new Set((p.clas || []).concat(cid))]; }).catch(() => { });
   // v3.93: quem entrou num clã deixa de ter pedidos à espera nos outros
   if (sim && !cheio5 && pv) for (const x of (pv.claPed || []).filter(x => x !== cid)) { await mudar(CL(x), null, o => { if (!o || !(o.pedidos || []).some(y => y.id === quem)) return false; o.pedidos = o.pedidos.filter(y => y.id !== quem); }).catch(() => { }); await mudar(P(quem), null, p => { if (!p) return false; p.claPed = (p.claPed || []).filter(y => y !== x); }).catch(() => { }); }
   if (cl) await idxPor(cl).catch(() => { }); if (cheio5) throw N.err('cla', 'Esta pessoa já entrou noutro clã. O pedido foi retirado.', 400); return { ok2: true, entrou: sim }; };
 OPS.claMod = async (c, b) => { const cid = String(b.id || ''), quem = String(b.quem || ''); if (!CID.test(cid) || !ID.test(quem)) throw N.err('cla', 'Pedido desconhecido.', 400);
-  await mudar(CL(cid), null, o => { if (!o || o.dono !== c.eu) throw N.err('cla', 'Só o dono escolhe os moderadores.', 403); const m = o.membros.find(x => x.id === quem); if (!m || m.papel === 'dono') return false; m.papel = m.papel === 'mod' ? 'membro' : 'mod'; }); return { ok2: true }; };
+  await mudar(CL(cid), null, o => { if (!o || !pode(o, c.eu, 'cargos')) throw N.err('cla', 'Só quem gere os cargos escolhe os moderadores.', 403); const m = o.membros.find(x => x.id === quem); if (!m || m.papel === 'dono' || m.id === c.eu) return false; m.papel = m.papel === 'mod' ? 'membro' : 'mod'; if (m.papel === 'mod') delete m.cargo; }); return { ok2: true }; };
 // a foto do clã (dono ou moderador); a IA verifica sempre antes de entrar
-OPS.claFoto = async (c, b) => { const cid = String(b.id || ''); if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400); const cl0 = (await ler(CL(cid), null)).v; if (!cl0 || !gerente(cl0, c.eu)) throw N.err('cla', 'Só quem gere o clã pode mudar a foto.', 403);
+OPS.claFoto = async (c, b) => { const cid = String(b.id || ''); if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400); const cl0 = (await ler(CL(cid), null)).v; if (!cl0 || !pode(cl0, c.eu, 'editar')) throw N.err('cla', 'Só quem tem a permissão de editar o clã pode mudar a foto.', 403);
   if (b.apagar) { await N.store().del([imgP('cla', cid)]).catch(() => { }); const cl = await mudar(CL(cid), null, o => { o.foto = 0; }); await idxPor(cl).catch(() => { }); return { foto: 0 }; }
   const s64 = String(b.b64 || ''); if (!/^[A-Za-z0-9+/=]{400,}$/.test(s64) || s64.length > 140e3 * 1.37) throw N.err('img', 'A imagem é grande demais ou não é válida.', 400);
   const buf = Buffer.from(s64, 'base64'); if (buf[0] !== 0xFF || buf[1] !== 0xD8) throw N.err('img', 'Envia uma imagem (JPEG).', 400); await verImg(s64);
@@ -307,7 +315,7 @@ const gwPub = (w, T, eu, meus) => { const pl = w.estado === 'ativa' ? placar(w, 
   return { id: w.id, estado: w.estado, a: w.a, b: w.b, nA: w.nA, nB: w.nB, cA: w.cA, cB: w.cB, criada: w.criada, ini: w.ini || 0, fim: w.fim || 0, sA: pl.sA, sB: pl.sB, topA: pl.topA, topB: pl.topB, venc: (w.res || {}).venc || '', meu: (meus || []).includes(w.a) ? 'a' : (meus || []).includes(w.b) ? 'b' : '' }; };
 const ocupado = async wid => { const w = await gwLer(wid); return !!w && (w.estado === 'ativa' || w.estado === 'proposta'); };
 OPS.claDesafiar = async (c, b) => { const cid = String(b.id || ''), alvo = String(b.alvo || ''); if (!CID.test(cid) || !CID.test(alvo) || cid === alvo) throw N.err('guerra', 'Escolhe outro clã para desafiar.', 400);
-  const A = (await ler(CL(cid), null)).v, B = (await ler(CL(alvo), null)).v; if (!A || !B) throw N.err('guerra', 'Clã desconhecido.', 404); if (!gerente(A, c.eu)) throw N.err('guerra', 'Só quem gere o clã pode desafiar outro clã.', 403);
+  const A = (await ler(CL(cid), null)).v, B = (await ler(CL(alvo), null)).v; if (!A || !B) throw N.err('guerra', 'Clã desconhecido.', 404); if (!pode(A, c.eu, 'guerra')) throw N.err('guerra', 'Só quem gere o clã pode desafiar outro clã.', 403);
   if ((A.aliados || []).some(x => x.id === alvo)) throw N.err('guerra', 'Esse clã é vosso aliado: aliados não entram em guerra entre si.', 400);
   if (A.guerra && await ocupado(A.guerra)) throw N.err('guerra', 'O teu clã já está numa guerra (ou tem um desafio à espera).', 400); if (B.guerra && await ocupado(B.guerra)) throw N.err('guerra', 'Esse clã já está numa guerra.', 400);
   if ((B.convites || []).length >= 5) throw N.err('guerra', 'Esse clã já tem muitos desafios à espera.', 429);
@@ -315,7 +323,7 @@ OPS.claDesafiar = async (c, b) => { const cid = String(b.id || ''), alvo = Strin
   await gravar(GW(wid), w, { overwrite: false }); await mudar(CL(cid), null, o => { o.guerra = wid; }); await mudar(CL(alvo), null, o => { o.convites = [...new Set((o.convites || []).concat(wid))].slice(-5); });
   return { guerra: gwPub(w, {}, c.eu, [cid]) }; };
 OPS.claGuerraResp = async (c, b) => { const w = await gwLer(String(b.wid || '')); if (!w) throw N.err('guerra', 'Desafio desconhecido.', 404); if (w.estado !== 'proposta') throw N.err('guerra', w.estado === 'expirou' ? 'O desafio expirou (passaram 2 dias).' : 'Este desafio já não está à espera de resposta.', 400);
-  const B = (await ler(CL(w.b), null)).v, A = (await ler(CL(w.a), null)).v; if (!B || !gerente(B, c.eu)) throw N.err('guerra', 'Só quem gere o clã desafiado pode responder.', 403);
+  const B = (await ler(CL(w.b), null)).v, A = (await ler(CL(w.a), null)).v; if (!B || !pode(B, c.eu, 'guerra')) throw N.err('guerra', 'Só quem gere o clã desafiado pode responder.', 403);
   if (b.sim) { if (B.guerra && B.guerra !== w.id && await ocupado(B.guerra)) throw N.err('guerra', 'O teu clã já está noutra guerra.', 400); const T = (await ler(PTS, {})).v || {}, base = cl => Object.fromEntries(((cl || {}).membros || []).map(m => [m.id, pPts(T, m.id)]));
     const ini = Date.now(); await mudar(GW(w.id), null, o => { if (o.estado !== 'proposta') return false; o.estado = 'ativa'; o.ini = ini; o.fim = ini + GDUR(); o.baseA = base(A); o.baseB = base(B); o.nomes = Object.fromEntries([].concat((A || {}).membros || [], (B || {}).membros || []).map(m => [m.id, m.nome])); });
     await mudar(CL(w.b), null, o => { o.guerra = w.id; o.convites = (o.convites || []).filter(x => x !== w.id); }); }
@@ -324,7 +332,7 @@ OPS.claGuerraResp = async (c, b) => { const w = await gwLer(String(b.wid || ''))
 OPS.claGuerra = async (c, b) => { const w = await gwLer(String(b.wid || '')); if (!w) throw N.err('guerra', 'Guerra desconhecida.', 404); const v = await perfil(c.eu, c.nome); if (![w.a, w.b].some(x => (v.clas || []).includes(x))) throw N.err('guerra', 'Só os membros dos dois clãs veem esta guerra.', 403);
   return { guerra: gwPub(w, (await ler(PTS, {})).v || {}, c.eu, v.clas || []) }; };
 // o que o ecrã do clã mostra a mais: pedidos (a quem gere), desafios recebidos, a guerra e as últimas guerras
-const claExtra = async (c, cl, T) => { const ge = gerente(cl, c.eu), meus = [cl.id], out = { gere: ge, dono: cl.dono === c.eu, emp: cl.emp || 0, pedidos: ge ? (cl.pedidos || []).map(p => ({ id: p.id, nome: p.nome, user: p.user || '', av: p.av || 0, at: p.at })) : [], convites: [], guerra: null, hist: [], extra: cl.extra || 0, ref: (cl.ref || []).slice().sort((x, y) => y.n - x.n).slice(0, 8).map(r => ({ nome: r.nome, n: r.n })) };
+const claExtra = async (c, cl, T) => { const ge = gerente(cl, c.eu), meus = [cl.id], out = { gere: ge, dono: cl.dono === c.eu, perms: permsDe(cl, c.eu), cargos: (cl.cargos || []).map(x => ({ id: x.id, nome: x.nome, cor: x.cor || '', perms: x.perms || [], n: cl.membros.filter(m => m.cargo === x.id).length })), emp: cl.emp || 0, pedidos: pode(cl, c.eu, 'pedidos') ? (cl.pedidos || []).map(p => ({ id: p.id, nome: p.nome, user: p.user || '', av: p.av || 0, at: p.at })) : [], convites: [], guerra: null, hist: [], extra: cl.extra || 0, ref: (cl.ref || []).slice().sort((x, y) => y.n - x.n).slice(0, 8).map(r => ({ nome: r.nome, n: r.n })) };
   for (const wid of (cl.convites || [])) { const w = await gwLer(wid); if (w && w.estado === 'proposta') out.convites.push(gwPub(w, T, c.eu, meus)); }
   if (cl.guerra) { const w = await gwLer(cl.guerra); if (w && (w.estado === 'ativa' || w.estado === 'proposta' || (w.estado === 'fim' && Date.now() - w.fim < 3 * DIA))) out.guerra = gwPub(w, T, c.eu, meus);
     // se a guerra acabou agora, o clã mudou (vitórias, derrotas, histórico): lê-se outra vez
@@ -332,14 +340,50 @@ const claExtra = async (c, cl, T) => { const ge = gerente(cl, c.eu), meus = [cl.
   for (const wid of (cl.hist || []).slice(0, 5)) { const w = (await ler(GW(wid), null)).v; if (w && w.res) out.hist.push(gwPub(w, T, c.eu, meus)); }
   if (!out.guerra && out.hist[0] && Date.now() - (out.hist[0].fim || 0) < 3 * DIA) out.guerra = out.hist[0];
   Object.assign(out, await aliPub(cl, c)); return out; };
+// v3.99 · as conquistas de vida que o aparelho calcula (marcos do Mundo, troféus reais, livros lidos): só títulos curtos, até 24
+OPS.conquistas = async (c, b) => { const T = s => String(s == null ? '' : s).replace(/[\u0000-\u001f<>]/g, ' ').replace(/\s+/g, ' ').trim();
+  const L = (Array.isArray(b.L) ? b.L : []).slice(0, 24).map(x => ({ id: T(x && x.id).slice(0, 24), n: T(x && x.n).slice(0, 60), d: T(x && x.d).slice(0, 80), c: T(x && x.c).slice(0, 24), k: ['Troféu', 'Medalha', 'Placa', 'Certificado', 'Distinção'].includes(x && x.k) ? x.k : '', l: ['Ouro', 'Prata', 'Bronze', 'Mérito', 'Participação'].includes(x && x.l) ? x.l : '', p: Math.max(0, Math.min(99, parseInt(x && x.p, 10) || 0)), at: /^\d{4}-\d{2}-\d{2}$/.test(String(x && x.at || '')) ? x.at : '' })).filter(x => x.id && x.n);
+  await perfil(c.eu, c.nome); await mudar(P(c.eu), null, p => { if (!p) return false; if (JSON.stringify(p.conq || []) === JSON.stringify(L)) return false; p.conq = L; }); return { n: L.length }; };
+// v3.99 · editar o clã (nome, descrição, cor) com a permissão «editar»; a IA verifica o texto como na criação
+OPS.claEditar = async (c, b) => { const cid = String(b.id || ''); if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400); const cl0 = (await ler(CL(cid), null)).v;
+  if (!cl0 || !pode(cl0, c.eu, 'editar')) throw N.err('cla', 'Só quem tem a permissão de editar o clã o pode mudar.', 403);
+  const nome = b.nome != null ? String(b.nome).replace(/\s+/g, ' ').trim() : cl0.nome, desc = b.desc != null ? String(b.desc).replace(/\s+/g, ' ').trim().slice(0, 300) : (cl0.desc || ''), cor = /^#[0-9a-f]{6}$/i.test(b.cor || '') ? b.cor : cl0.cor;
+  if (nome.length < 3 || nome.length > 28) throw N.err('cla', 'O nome do clã tem de ter entre 3 e 28 letras.', 400);
+  if (nome !== cl0.nome || desc !== (cl0.desc || '')) { const m = await moderar(nome + (desc ? ' — ' + desc : '')); if (!m.ok) throw N.err('cla', 'Esse nome ou descrição não pode ser usado: ' + m.motivo, 400); }
+  const cl = await mudar(CL(cid), null, o => { if (!o) throw N.err('cla', 'Clã desconhecido.', 404); o.nome = nome; o.desc = desc; o.cor = cor; o.editado = Date.now(); });
+  await idxPor(cl).catch(() => { }); N.count('cla:editar'); return { cla: claPub(cl) }; };
+// criar ou mudar um cargo: nome, cor e permissões. Quem não é o líder não pode dar a permissão de gerir cargos.
+OPS.claCargo = async (c, b) => { const cid = String(b.id || ''); if (!CID.test(cid)) throw N.err('cla', 'Clã desconhecido.', 400); const g = b.cargo || {};
+  const nome = String(g.nome || '').replace(/\s+/g, ' ').trim(), cor = /^#[0-9a-f]{6}$/i.test(g.cor || '') ? g.cor : '', gid = /^[a-z0-9]{4,12}$/.test(String(g.id || '')) ? String(g.id) : '';
+  if (nome.length < 2 || nome.length > 20) throw N.err('cla', 'O nome do cargo tem de ter entre 2 e 20 letras.', 400);
+  if (/^(l[ií]der|dono|moderador)$/i.test(nome)) throw N.err('cla', 'Esse nome está reservado. Escolhe outro.', 400);
+  const cl0 = (await ler(CL(cid), null)).v; if (!cl0 || !pode(cl0, c.eu, 'cargos')) throw N.err('cla', 'Só quem gere os cargos os pode criar ou mudar.', 403);
+  const ld = cl0.dono === c.eu; let perms = [...new Set((Array.isArray(g.perms) ? g.perms : []).map(String))].filter(p => PERMS.includes(p)); if (!ld) perms = perms.filter(p => p !== 'cargos');
+  if (!gid || !(cl0.cargos || []).some(x => x.id === gid)) { const m = await moderar(nome); if (!m.ok) throw N.err('cla', 'Esse nome não pode ser usado: ' + m.motivo, 400); }
+  let novo = gid; const cl = await mudar(CL(cid), null, o => { o.cargos = o.cargos || []; const x = gid && o.cargos.find(y => y.id === gid);
+    if (x) { if (!ld && (x.perms || []).includes('cargos')) throw N.err('cla', 'Só o líder muda um cargo que gere cargos.', 403); x.nome = nome; x.cor = cor; x.perms = perms; }
+    else { if (o.cargos.length >= CARGO_MAX) throw N.err('cla', `O clã já tem ${CARGO_MAX} cargos, o máximo.`, 400); if (o.cargos.some(y => y.nome.toLowerCase() === nome.toLowerCase())) throw N.err('cla', 'Já existe um cargo com esse nome.', 400);
+      novo = N.crypto.randomBytes(4).toString('hex'); o.cargos.push({ id: novo, nome, cor, perms, criado: Date.now() }); } });
+  return { ok2: true, cargo: novo, cargos: cl.cargos }; };
+OPS.claCargoApagar = async (c, b) => { const cid = String(b.id || ''), gid = String(b.cargo || ''); if (!CID.test(cid) || !/^[a-z0-9]{4,12}$/.test(gid)) throw N.err('cla', 'Cargo desconhecido.', 400);
+  await mudar(CL(cid), null, o => { if (!o || !pode(o, c.eu, 'cargos')) throw N.err('cla', 'Só quem gere os cargos os pode apagar.', 403); const x = (o.cargos || []).find(y => y.id === gid); if (!x) return false;
+    if (o.dono !== c.eu && (x.perms || []).includes('cargos')) throw N.err('cla', 'Só o líder apaga um cargo que gere cargos.', 403); o.cargos = o.cargos.filter(y => y.id !== gid); o.membros.forEach(m => { if (m.cargo === gid) delete m.cargo; }); });
+  return { ok2: true }; };
+// dar (ou tirar) um cargo a alguém do clã; o líder não muda de cargo e ninguém se promove a si próprio
+OPS.claCargoDar = async (c, b) => { const cid = String(b.id || ''), quem = String(b.quem || ''), gid = String(b.cargo || ''); if (!CID.test(cid) || !ID.test(quem)) throw N.err('cla', 'Pedido desconhecido.', 400);
+  await mudar(CL(cid), null, o => { if (!o || !pode(o, c.eu, 'cargos')) throw N.err('cla', 'Só quem gere os cargos os pode dar.', 403); const m = o.membros.find(x => x.id === quem); if (!m) throw N.err('cla', 'Essa pessoa não está no clã.', 404);
+    if (m.papel === 'dono' || quem === o.dono) throw N.err('cla', 'O líder não muda de cargo.', 400); if (quem === c.eu && o.dono !== c.eu) throw N.err('cla', 'Não podes mudar o teu próprio cargo.', 403);
+    if (!gid) { delete m.cargo; if (m.papel === 'mod') m.papel = 'membro'; return; } const x = (o.cargos || []).find(y => y.id === gid); if (!x) throw N.err('cla', 'Cargo desconhecido.', 404);
+    if (o.dono !== c.eu && (x.perms || []).includes('cargos')) throw N.err('cla', 'Só o líder dá um cargo que gere cargos.', 403); m.cargo = gid; if (m.papel === 'mod') m.papel = 'membro'; });
+  return { ok2: true }; };
 /* ---------- v3.93 · clãs aliados: o dono propõe uma aliança (pelo código do outro clã), o dono do outro aceita. Até ALI_MAX aliados;
    aliados aparecem na página um do outro e não podem entrar em guerra entre si. Qualquer um dos donos desfaz a aliança. ---------- */
 const ALI_MAX = 3;
 const aliMini = async cid => { const o = (await ler(CL(cid), null)).v; return o ? { id: o.id, nome: o.nome, cor: o.cor, foto: o.foto || 0, n: (o.membros || []).length, vit: o.vit || 0 } : null; };
-const aliPub = async (cl, c) => { const dono = cl.dono === c.eu, aliados = (await Promise.all((cl.aliados || []).map(x => aliMini(x.id)))).filter(Boolean).map((x, i) => Object.assign(x, { desde: (cl.aliados[i] || {}).desde || 0 }));
+const aliPub = async (cl, c) => { const dono = pode(cl, c.eu, 'aliancas'), aliados = (await Promise.all((cl.aliados || []).map(x => aliMini(x.id)))).filter(Boolean).map((x, i) => Object.assign(x, { desde: (cl.aliados[i] || {}).desde || 0 }));
   const recebidos = dono ? (await Promise.all((cl.aliPed || []).map(x => aliMini(x.id)))).filter(Boolean) : [], enviados = dono ? (await Promise.all((cl.aliEnv || []).map(aliMini))).filter(Boolean) : [];
   return { aliados, aliRec: recebidos, aliEnv: enviados, aliMax: ALI_MAX }; };
-const donoDe = (cl, eu) => !!cl && cl.dono === eu;
+const donoDe = (cl, eu) => !!cl && pode(cl, eu, 'aliancas');
 OPS.claAliar = async (c, b) => { const cid = String(b.id || ''); let alvo = String(b.alvo || '');
   if (!alvo && b.cod) { const cod = String(b.cod).toUpperCase().replace(/^CL-?/, '').replace(/[^A-Z0-9]/g, ''), g = await N.store().get('so/cc/' + cod).catch(() => null); if (!g) throw N.err('alianca', 'Não encontrei nenhum clã com esse código.', 404); alvo = JSON.parse(g.buf.toString()).cid; }
   if (!CID.test(cid) || !CID.test(alvo)) throw N.err('alianca', 'Clã desconhecido.', 400); if (cid === alvo) throw N.err('alianca', 'Um clã não pode ser aliado de si próprio.', 400);
@@ -403,6 +447,18 @@ const gastar = async (eu, v, d, extra, inf) => mudar(W(eu), {}, w => { if (inf) 
   if ((w.s || 0) < v) throw N.err('selos', `Precisas de ${v} Selos e tens ${w.s || 0}.`, 402); movAdd(w, -v, d); if (extra) extra(w); });
 const devolver = (eu, v, d) => mudar(W(eu), {}, w => movAdd(w, v, d)).catch(() => { });
 OPS.carteira = async c => carteira(c);
+/* v3.99 · ranking de Selos: quem tem mais Selos guardados. A conta de administração (Selos sem fim) e as contas de teste não entram.
+   Lê as carteiras uma vez a cada 5 minutos (até 2000) e junta o nome, o @ e a foto do ranking de animes. */
+const ADM_K = 'so/admids.json', ADMS = new Set(); let RS = null;
+const admMarca = async c => { if (!c || !c.adm || !c.eu || ADMS.has(c.eu)) return; ADMS.add(c.eu); await mudar(ADM_K, {}, o => { if (o[c.eu]) return false; o[c.eu] = Date.now(); }).catch(() => { }); };
+OPS.rankSelos = async (c, b) => { if (!RS || Date.now() - RS.at > 5 * 6e4) { const adm = (await ler(ADM_K, {})).v || {}, T = (await ler(PTS, {})).v || {}, L = [];
+    let itens = []; try { itens = (await N.store().list('so/w/')).slice(0, 2000); } catch (e) { }
+    for (const it of itens) { const id = String(it.pathname || '').replace(/^so\/w\//, '').replace(/\.json$/, ''); if (!ID.test(id) || adm[id] || ADMS.has(id)) continue;
+      const w = (await ler(W(id), {})).v || {}; if (w.adm || !(w.s > 0)) continue; const t = T[id] || {}; let nome = t.nome; if (!nome) { const pv = (await ler(P(id), null)).v; if (!pv || pv.teste) continue; nome = pv.nome; }
+      L.push({ id, nome: nome || 'Pessoa', user: t.user || '', av: t.av || 0, s: w.s }); }
+    L.sort((x, y) => y.s - x.s); RS = { at: Date.now(), L }; }
+  const L = RS.L, i = L.findIndex(x => x.id === c.eu);
+  return { lista: L.slice(0, 100).map((x, k) => Object.assign({}, x, { pos: k + 1, eu: x.id === c.eu })), eu: c.adm ? { adm: true } : i >= 0 ? Object.assign({ pos: i + 1 }, L[i]) : null, total: L.length }; };
 OPS.selosComprar = async (c, b, req) => { if (!PL.cobranca()) throw N.err('cobranca', 'A compra de Selos ainda não está aberta.', 503);
   const pk = SELOS.pacotes.find(x => x.id === b.pac); if (!pk) throw N.err('selos', 'Escolhe um pacote de Selos.', 400);
   if (N.limit(req, 'selos|' + c.eu, 20, 3600e3)) throw N.err('limite', 'Muitos pedidos. Tenta daqui a pouco.', 429);
@@ -443,7 +499,7 @@ const ganha = async (eu, n, motivo, chave, semLimite) => { if (!ID.test(String(e
 // as formas de ganhar, para a página dos Selos (com o que já ganhaste hoje)
 const ganharInfo = w => ({ hoje: w && w.gd && w.gd.d === lisboa().d ? w.gd.n : 0, limite: GLIM(), formas: [
   { k: 'presenca', t: 'Abrir o Prumo', d: 'Uma vez por dia; ao fim de 7 dias seguidos, mais ' + GANHO.semana + '.', n: GANHO.presenca },
-  { k: 'quiz', t: 'Quiz relâmpago das 21h', d: 'Terminar o quiz; com 8 certas ou mais, o dobro.', n: GANHO.quiz },
+  { k: 'quiz', t: 'Quiz relâmpago das 13h', d: 'Terminar o quiz; com 8 certas ou mais, o dobro.', n: GANHO.quiz },
   { k: 'sombra', t: 'Sombras', d: 'Acertar na personagem: ' + GANHO.sombra.join(', ') + ' Selos (1.ª, 2.ª ou 3.ª tentativa).', n: GANHO.sombra[0] },
   { k: 'med', t: 'Medalhas e troféus', d: 'Cada medalha nova: de ' + GANHO.med.Bronze + ' (Bronze) a ' + GANHO.med.Diamante + ' (Diamante); troféus ' + GANHO.trofeu + '. Vêm dos duelos, desafios, guerra de clãs, Sequência a dois e jogos.', n: GANHO.med.Ouro },
   { k: 'seele', t: 'Prémios da seele', d: 'Algumas campanhas dão Selos aos vencedores (fora do limite diário).', n: 0 }] });
@@ -524,10 +580,10 @@ OPS.duelProg = async (c, b, req) => { if (N.limit(req, 'dup|' + c.eu, 90, 3600e3
     (o.dias || []).forEach(d => { if (d > hoje || inn[d] == null) return; const x = Math.max(0, Math.min(DU_MAX_DIA, Math.round(+inn[d] || 0))); if (x > (cur[d] || 0)) { cur[d] = x; mudou = true; } }); if (!mudou) return false; });   // nunca desce
   return { duelo: await duPub(await duLer(w.id), c.eu) }; };
 
-/* ---------- v3.90 · QUIZ RELÂMPAGO: todos os dias às 21h (Lisboa), 10 perguntas de anime iguais para toda a gente, 15 segundos cada.
+/* ---------- v3.90 · QUIZ RELÂMPAGO: todos os dias às 13h (Lisboa; v3.99: saiu das 21h para não colar no Pursuit das 20h), 10 perguntas de anime iguais para toda a gente, 15 segundos cada.
    As perguntas saem de dados reais (estúdio, ano, episódios, nota, géneros e popularidade no MyAnimeList); a resposta certa fica no servidor
-   e o tempo também é medido no servidor. Às 21h15 fecha: ranking, pontos para o ranking de animes e medalhas. ---------- */
-const QZ_A = () => +(process.env.NAUTILO_QUIZ_ABRE || 1260), QZ_F = () => +(process.env.NAUTILO_QUIZ_FECHA || 1275), QZ_SEG = 15, QZ_N = 10;
+   e o tempo também é medido no servidor. Às 13h15 fecha: ranking, pontos para o ranking de animes e medalhas. ---------- */
+const QZ_A = () => +(process.env.NAUTILO_QUIZ_ABRE || 780), QZ_F = () => +(process.env.NAUTILO_QUIZ_FECHA || 795), QZ_SEG = 15, QZ_N = 10;
 const QZ = d => 'so/qz/' + d, QZP = (d, id) => 'so/qzp/' + d + '/' + id;
 const rndDe = async k => { let s = N.crypto.createHmac('sha256', await N.master()).update(k).digest().readUInt32BE(0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; };
 const qzPool = async d => { let pool = (await ler('so/qzpool', null)).v;
@@ -753,7 +809,8 @@ OPS.perfilImg = async (c, b) => { const k = b.k === 'fu' ? 'fu' : 'av', max = k 
   await N.store().put(imgP(k, c.eu), buf); const ver = Date.now(); await mudar(P(c.eu), null, p => { p[k] = ver; }); if (k === 'av') await pubPts(c.eu, { av: ver }).catch(() => { }); return { [k]: ver }; };
 OPS.verPerfil = async (c, b) => { const id = String(b.id || '') === 'eu' ? c.eu : String(b.id || ''); if (id === c.eu) { await perfil(c.eu, c.nome); await sincPerfil(c); } if (!ID.test(id)) throw N.err('perfil', 'Perfil desconhecido.', 400); const v = (await ler(P(id), null)).v; if (!v) throw N.err('perfil', 'Perfil desconhecido.', 404);
   const T = (await ler(PTS, {})).v || {}, L = Object.entries(T).filter(([, o]) => o.p > 0).sort((a, b2) => b2[1].p - a[1].p), pos = L.findIndex(([i]) => i === id);
-  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, amigo: (v.amigos || []).includes(c.eu), nmed: (v.med || []).length, med: medTopo(v.med || []), pl: v.pl || null, meu: id === c.eu } }; };
+  const cid0 = (v.clas || [])[0], cl0 = cid0 ? (await ler(CL(cid0), null)).v : null, cla = cl0 ? { id: cl0.id, nome: cl0.nome, cor: cl0.cor, cargo: cargoNome(cl0, (cl0.membros || []).find(m => m.id === id)) } : null;
+  return { perfil: { id, nome: v.nome, user: v.user || '', av: v.av || 0, fu: v.fu || 0, cl: v.classe || '', pts: (T[id] || {}).p || 0, pos: pos >= 0 ? pos + 1 : 0, clas: (v.clas || []).length, cla, conq: (v.conq || []).slice(0, 24), amigo: (v.amigos || []).includes(c.eu), nmed: (v.med || []).length, med: medTopo(v.med || []), pl: v.pl || null, meu: id === c.eu } }; };
 /* ---------- comentários nos animes: a IA barra ofensas e tapa os spoilers (só vê quem quiser) ---------- */
 const CA = mal => 'so/ca/' + mal;
 let NUMS = null;
@@ -1048,7 +1105,7 @@ module.exports = N.handler(async (req, res) => {
   if (!Object.prototype.hasOwnProperty.call(OPS, op)) return N.send(res, 400, { ok: false, msg: 'Pedido desconhecido.' });
   if (N.limit(req, 'social|' + t.u, 240, 60e3)) return N.send(res, 429, { ok: false, msg: 'Demasiados pedidos. Espera um pouco.' });
   const c = await conta(t, pid); c.eu = t.u + '-' + pid; if (!ID.test(c.eu)) return N.send(res, 400, { ok: false, msg: 'Perfil inválido.' });
-  await sincPerfil(c).catch(() => { });
+  await sincPerfil(c).catch(() => { }); admMarca(c).catch(() => { });
   const st = { eu: c.eu, n: 0 }, r = await ALS.run(st, () => OPS[op](c, b, req));
   return N.send(res, 200, Object.assign({ ok: true }, r, st.n ? { selosGanhos: st.n } : {}));
 });

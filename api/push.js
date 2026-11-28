@@ -10,7 +10,7 @@
 'use strict';
 const crypto = require('crypto'), N = require('./_nuvem'), W = require('./_webpush'), F = require('./futebol');
 const PID = /^[a-f0-9]{12}$/, IDX = 'push/idx', STP = 'push/st';
-const CAT0 = { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1, festas: 1, desp: 1 }; // v3.73: jogo = o Pursuit (começo às 20h e resultados às 22h) · v3.77: ep = episódios novos dos animes com o sino
+const CAT0 = { rot: 1, foco: 1, fut: 1, sp: 1, inv: 1, jogo: 1, ep: 1, festas: 1, desp: 1, ecra: 1 }; // v3.73: jogo = o Pursuit (começo às 20h e resultados às 22h) · v3.77: ep = episódios novos dos animes com o sino
 let VK = null; const vapid = async () => VK || (VK = W.vapidFrom(await N.master()));
 const pkey = async () => Buffer.from(crypto.hkdfSync('sha256', await N.master(), Buffer.from('nautilo-v1'), Buffer.from('push'), 32));
 const load = async p => { const g = await N.store().get(p); if (!g) return { v: {}, etag: null }; try { return { v: N.open(await pkey(), g.buf) || {}, etag: g.etag }; } catch (e) { return { v: {}, etag: g.etag }; } };
@@ -49,6 +49,8 @@ const PARTS = {
   fe: d => ({ pais: /^[A-Z]{2}$/.test(String(d && d.pais || '')) ? d.pais : 'PT', anos: /^\d{2}-\d{2}$/.test(String(d && d.anos || '')) ? d.anos : '', nome: str(d && d.nome, 40).split(' ')[0] }),
   // v3.79: a validade das coisas da despensa (nome e data), só as dos próximos 30 dias
   desp: d => (Array.isArray(d) ? d : []).slice(0, 80).map(x => ({ n: str(x && x.n, 60), e: /^\d{4}-\d{2}-\d{2}$/.test(String(x && x.e || '')) ? x.e : '' })).filter(x => x.n && x.e),
+  // v4.00: o tempo de ecrã: só o último dia registado (para lembrar às 21h30 quando falta o de hoje)
+  ecra: d => ({ on: d && d.on ? 1 : 0, ult: /^\d{4}-\d{2}-\d{2}$/.test(String(d && d.ult || '')) ? d.ult : '' }),
   cat: d => { const r = {}; Object.keys(CAT0).forEach(k => { r[k] = d && d[k] === 0 ? 0 : 1; }); return r; } };
 
 // a sessão vale e o perfil é desta conta (como nos dados)
@@ -172,8 +174,8 @@ const lisb = t => { const p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: '
 const HU_A = () => +(process.env.NAUTILO_HUNTER_ABRE || 1200), HU_F = () => +(process.env.NAUTILO_HUNTER_FECHA || 1320), hhmm = m => String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
 const lerSo = async p => { try { const g = await N.store().get(p); return g ? N.open(await N.accKey(), g.buf) : null; } catch (e) { return null; } };
 const jogadas = async d => { const M = new Map(); try { for (const b of await N.store().list('so/hg/' + d + '/')) { const g = await lerSo(b.pathname); if (!g || !g.id) continue; const i = g.id.lastIndexOf('-'); if (i > 0) M.set(g.id.slice(0, i) + '|' + g.id.slice(i + 1), g); } } catch (e) { } return M; };
-// v3.90 · Quiz relâmpago: aviso 5 minutos antes das 21h (Lisboa) a quem tem os avisos dos jogos ligados
-const QZ_A = () => +(process.env.NAUTILO_QUIZ_ABRE || 1260);
+// v3.90 · Quiz relâmpago: aviso 5 minutos antes das 13h (Lisboa) a quem tem os avisos dos jogos ligados
+const QZ_A = () => +(process.env.NAUTILO_QUIZ_ABRE || 780);
 const quizAviso = (U, st, now, out) => { const fans = U.filter(([, x]) => x.cat.jogo && x.an && x.an.hu); if (!fans.length) return; const L = lisb(now), A = QZ_A(); st.qz = st.qz || {};
   if (L.min >= A - 5 && L.min < A + 5 && st.qz.av !== L.d) { st.qz.av = L.d; fans.forEach(([uk]) => out.push({ uk, m: { t: 'Quiz relâmpago às ' + hhmm(A), b: '10 perguntas de anime, 15 segundos cada. Quanto mais rápido, mais pontos.', u: '#animes.quiz', g: 'quiz' }, ttl: 1200 })); } };
 const pursuit = async (U, st, now, out) => { const fans = U.filter(([, x]) => x.cat.jogo && x.an && x.an.hu); if (!fans.length) return;
@@ -240,6 +242,10 @@ const andesAviso = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.an || 
     out.push({ uk, m: { t: 'Desafios novos nos Animes', b: 'Três desafios para esta semana: um fácil, um médio e um difícil. Cada um dá pontos para o ranking.', u: '#animes.desafios', g: 'andes' }, ttl: 12 * 3600 }); }); };
 
 /* ---------- v3.79 · despensa: às 9h de cada um, o que vence hoje, amanhã e daqui a 3 dias (uma mensagem por dia) ---------- */
+// v4.00 · o tempo de ecrã não se lê sozinho (a Apple e a Google não deixam): às 21h30 locais, a quem ainda não registou o de hoje, um lembrete para enviar o print
+const ecraAviso = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.cat.ecra || !x.ecra || !x.ecra.on) return; const L = local(now, x.tz); if (L.min < 1290 || L.min >= 1300) return;
+    const hoje = L.y + '-' + L.md, k = 'ecra:' + uk + ':' + hoje; if (st.sent[k] || x.ecra.ult === hoje) return; st.sent[k] = now;
+    out.push({ uk, m: { t: 'Tempo de ecrã de hoje', b: 'Tira um print do Tempo de ecrã e envia-o ao Prumo: ele lê os números e diz-te como correu o dia.', u: '#corpo.ecra', g: 'ecra' }, ttl: 7200 }); }); };
 const despensa = (U, st, now, out) => { U.forEach(([uk, x]) => { if (!x.cat.desp || !(x.desp || []).length) return; const L = local(now, x.tz); if (L.min < 540 || L.min >= 550) return;
     const hoje = L.y + '-' + L.md, mais = n => new Date(Date.parse(hoje + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10), k = 'desp:' + uk + ':' + hoje; if (st.sent[k]) return;
     const de = n => x.desp.filter(i => i.e === mais(n)).map(i => i.n), h = de(0), a = de(1), t = de(3), parte = (l, L2) => L2.length ? l + ': ' + L2.slice(0, 4).join(', ') + (L2.length > 4 ? ' e mais ' + (L2.length - 4) : '') : '';
@@ -261,6 +267,7 @@ const cron = async o => { o = o || {}; const now = o.now || Date.now(); if (!o.f
   try { quizAviso(U, st, now, out); } catch (e) { console.error('push quiz', e.message); }
   try { festas(U, st, now, out); } catch (e) { console.error('push festas', e.message); }
   try { despensa(U, st, now, out); } catch (e) { console.error('push despensa', e.message); }
+  try { ecraAviso(U, st, now, out); } catch (e) { console.error('push ecra', e.message); }
   try { recapAviso(U, st, now, out); } catch (e) { console.error('push recap', e.message); }
   try { andesAviso(U, st, now, out); } catch (e) { console.error('push andes', e.message); }
   try { await episodios(U, st, now, out, o.force && o.eps); } catch (e) { console.error('push episódios', e.message); }
