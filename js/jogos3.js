@@ -28,17 +28,17 @@ const fqTimer = () => { clearInterval(FQ.T); const p = FQ.d && FQ.d.pergunta; if
   FQ.T = setInterval(() => { const l = fqLeft(), el = document.getElementById('fqT'), bar = document.getElementById('fqBar'); if (el) el.textContent = Math.ceil(l / 1000) + ' s'; if (bar) bar.style.width = (l / (p.seg * 1000) * 100).toFixed(1) + '%';
     if (l <= 0) { clearInterval(FQ.T); A.fqResp({ dataset: { o: '-1' } }); } }, 250); };
 A.fqComecar = async b => { b.disabled = true; try { const j = await call('fquizComecar', {}); FQ.fb = null; fqSet(j.fquiz); } catch (e) { UI.toast(e.message, 'neg'); fqLoad(true); } OS.request(); };
-A.fqResp = async b => { const p = FQ.d && FQ.d.pergunta; if (!p || FQ.busy || FQ.fb) return; FQ.busy = true; clearInterval(FQ.T); const o = +b.dataset.o;
-  try { const j = await call('fquizResp', { i: p.i, opc: o }); FQ.fb = Object.assign({ o, p }, j.resp || {}); FQ.d = j.fquiz; FQ.at = Date.now(); if (j.fquiz && j.fquiz.eu && j.fquiz.eu.fim && OS.Selos) OS.Selos.carregar && OS.Selos.carregar(true); }
-  catch (e) { UI.toast(e.message, 'neg'); } FQ.busy = false; OS.request(); };
-A.fqProx = async () => { if (FQ.busy) return; FQ.busy = true; try { const j = await call('fquizProx', {}); FQ.fb = null; fqSet(j.fquiz); } catch (e) { UI.toast(e.message, 'neg'); } FQ.busy = false; OS.request(); };
+A.fqResp = async b => { const p = FQ.d && FQ.d.pergunta; if (!p || FQ.env || FQ.fb) return; FQ.env = true; clearInterval(FQ.T); const o = +b.dataset.o;
+  try { const j = await call('fquizResp', { i: p.i, opc: o }); FQ.fb = Object.assign({}, j.resp || {}, { o, q: p }); /* q = a pergunta (o servidor usa «p» para os pontos) */ FQ.d = j.fquiz; FQ.at = Date.now(); if (j.fquiz && j.fquiz.eu && j.fquiz.eu.fim && OS.Selos) OS.Selos.carregar && OS.Selos.carregar(true); }
+  catch (e) { UI.toast(e.message, 'neg'); fqLoad(true); } FQ.env = false; OS.request(); };
+A.fqProx = async () => { if (FQ.env) return; FQ.env = true; try { const j = await call('fquizProx', {}); FQ.fb = null; fqSet(j.fquiz); } catch (e) { UI.toast(e.message, 'neg'); } FQ.env = false; OS.request(); };
 A.fqFim = () => { FQ.fb = null; OS.request(); };
 const fqRank = q => q.res && q.res.length ? `<section class="j3-sec"><h3>Ranking da semana</h3><ol class="j3-rk">${q.res.map((x, i) => `<li class="${x.eu ? 'eu' : ''}"><b>${i + 1}.º</b>${av(x, 26)}<span>${esc(x.nome)}${x.user ? ` <small>@${esc(x.user)}</small>` : ''}</span><em>${nf(x.pts)} · ${x.certas}/10</em></li>`).join('')}</ol>${q.pos > 30 ? `<p class="mut">Estás em ${q.pos}.º de ${q.total}.</p>` : ''}</section>` : '';
 const fqPagina = () => { if (!conta()) return semConta('Quiz de finanças', '10 perguntas de dinheiro por semana.'); fqLoad(false); const q = FQ.d;
   const hero = (t, d) => `${voltar}<div class="j3-hero fq"><div><span class="j3-k">${UI.ic('wallet')}Quiz de finanças · semanal</span><h2>${t}</h2><p>${d}</p></div></div>`;
   if (!q) return `<section class="j3-pg">${hero('A abrir o quiz…', '')}${FQ.err ? `<p class="neg">${esc(FQ.err)}</p>` : ''}</section>`;
   const ant = q.ant && q.ant.length ? `<p class="mut j3-n">Semana passada: ${q.ant.map((x, i) => `${i + 1}.º ${esc(x.nome)} (${nf(x.pts)})`).join(' · ')}</p>` : '';
-  if (FQ.fb) { const f = FQ.fb, p = f.p; return `<section class="j3-pg">${hero(f.ok ? 'Certo!' : f.tempo ? 'Acabou o tempo' : 'Não é essa', f.ok ? '+' + f.p + ' pontos' : 'A certa está assinalada.')}
+  if (FQ.fb) { const f = FQ.fb, p = f.q; return `<section class="j3-pg">${hero(f.ok ? 'Certo!' : f.tempo ? 'Acabou o tempo' : 'Não é essa', f.ok ? '+' + f.p + ' pontos' : 'A certa está assinalada.')}
       <div class="j3-q"><p class="j3-qt">${esc(p.t)}</p><div class="j3-op">${p.op.map((x, k) => `<button type="button" class="j3-o ${k === f.certa ? 'ok' : k === f.o ? 'no' : ''}" disabled>${esc(x)}</button>`).join('')}</div>
       ${f.e ? `<div class="j3-exp"><b>Porquê</b><p>${esc(f.e)}</p></div>` : ''}<div class="row gap8">${q.eu && q.eu.fim ? `<button type="button" class="btn pri" data-act="fqFim">Ver o resultado</button>` : `<button type="button" class="btn pri" data-act="fqProx">Pergunta seguinte</button>`}</div></div></section>`; }
   if (!q.eu) return `<section class="j3-pg">${hero('O quiz desta semana está aberto', `Fecha daqui a ${falta(q.fim)}. 10 perguntas sobre dinheiro, poupança, crédito e investimentos.`)}
@@ -54,14 +54,14 @@ const fqPagina = () => { if (!conta()) return semConta('Quiz de finanças', '10 
 /* ===================== RASPADINHA DO MUNDO ===================== */
 const RP = { d: null, at: 0, busy: false, err: '', aberta: null };
 const rpLoad = async forcar => { if (!conta() || RP.busy || (!forcar && RP.d && Date.now() - RP.at < 60e3 && RP.d.d === U.today())) return; RP.busy = true;
-  try { const j = await call('raspa', {}); RP.d = j.raspa; RP.at = Date.now(); RP.err = ''; } catch (e) { RP.err = e.message || 'Não deu para abrir a raspadinha.'; } RP.busy = false; OS.request(); };
+  try { const t0 = Date.now(), j = await call('raspa', {}); if (RP.env || RP.at > t0) { RP.busy = false; return; } RP.d = j.raspa; RP.at = Date.now(); RP.err = ''; } catch (e) { RP.err = e.message || 'Não deu para abrir a raspadinha.'; } RP.busy = false; OS.request(); };
 const LIN = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
 A.rpAbrir = b => { RP.aberta = +b.dataset.i; OS.request(); setTimeout(() => { const q = document.querySelector('#view .j3-rq'); if (q) q.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, 50); };
 A.rpFechar = () => { RP.aberta = null; OS.request(); };
-A.rpResp = async b => { if (RP.busy || RP.aberta == null) return; RP.busy = true; const i = RP.aberta;
+A.rpResp = async b => { if (RP.env || RP.aberta == null) return; RP.env = true; const i = RP.aberta;
   try { const j = await call('raspaResp', { i, opc: +b.dataset.o }); RP.d = j.raspa; RP.at = Date.now(); RP.aberta = null; UI.toast(j.ok ? 'Descobriste ' + ((RP.d.cells[i] || {}).n || 'o país') + '!' : 'Era ' + ((RP.d.cells[i] || {}).certa || '') + '. Esta casa ficou queimada.', j.ok ? 'pos' : 'warn');
     if (j.novas) toastSelos(j.novas * 3); try { const L = U.ls.get('oc_rp_dias', []); if (!L.includes(U.today())) U.ls.set('oc_rp_dias', L.concat(U.today()).slice(-30)); } catch (e) { } }
-  catch (e) { UI.toast(e.message, 'neg'); rpLoad(true); } RP.busy = false; OS.request(); };
+  catch (e) { UI.toast(e.message, 'neg'); rpLoad(true); } RP.env = false; OS.request(); };
 const flag = c2 => `<img class="j3-fl" src="https://flagcdn.com/w160/${esc(String(c2 || '').toLowerCase())}.png" alt="" loading="lazy" referrerpolicy="no-referrer">`;
 const rpPagina = () => { if (!conta()) return semConta('Raspadinha do mundo', 'Todos os dias 9 países escondidos.'); rpLoad(false); const r = RP.d;
   const hero = `${voltar}<div class="j3-hero rp"><div><span class="j3-k">${UI.ic('globe')}Raspadinha do mundo · diária</span><h2>${r ? r.certas + ' de 9 países descobertos' : 'A preparar o cartão…'}</h2><p>Toca numa casa para a raspar: acerta na capital, no continente ou na bandeira. Cada linha de 3 países dá ${3} Selos; o cartão todo, mais 10.</p></div></div>`;
