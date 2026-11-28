@@ -506,7 +506,7 @@ function tagInfo(v) { if (!v) return { tag: '', subject: '', skill: '' }; if (v.
 function plant() { const c = cfg(), sp = SP[c.sp] ? c.sp : 'carvalho', ti = tagInfo(c.tag), po = PO(), ps = PS();
   RUN = { phase: 'grow', t0: Date.now(), mins: Math.max(1, po.on ? +po.f || 25 : +c.mins || 25), sp, tagv: c.tag || '', tag: ti.tag, subject: ti.subject, skill: ti.skill, seed: (Math.random() * 1e9) | 0, hid: null, ph: Math.floor(Math.random() * PHRASES.length) };
   if (po.on) RUN.pomo = { i: (ps.i % (+po.n || 4)) + 1, of: +po.n || 4 };
-  LAST = null; save(); sndPlay(c.sound); try { navigator.wakeLock && navigator.wakeLock.request('screen').then(w => wake = w).catch(() => { }); } catch (e) { } loop(); if (PIPOK) { try { vid(); } catch (e) { } } OS.request(); }
+  LAST = null; save(); sndPlay(c.sound); try { navigator.wakeLock && navigator.wakeLock.request('screen').then(w => wake = w).catch(() => { }); } catch (e) { } loop(); if (PIPOK) { try { vid(); } catch (e) { } if (c.pipAuto !== false) pipJa(); } OS.request(); }
 function finish(ok, why) { if (!RUN || RUN.phase !== 'grow') return; const mins = ok ? RUN.mins : Math.max(0, Math.floor((Date.now() - RUN.t0) / 6e4)), coins = ok ? coinsFor(RUN.mins) : 0;
   const t = OS.add('trees', { date: today(), t0: RUN.t0, mins, plan: RUN.mins, sp: RUN.sp, alive: !!ok, tag: RUN.tag, subject: RUN.subject, skill: RUN.skill, coins, why: why || '', seed: RUN.seed });
   if (ok) { cfg().coins = (+cfg().coins || 0) + coins; OS.touch('forest'); if ((RUN.subject || RUN.skill) && mins >= 5) OS.add('sessions', { date: today(), subject: RUN.subject, skill: RUN.skill, minutes: mins, type: 'Estudo profundo', phone: true, focus: 5, learned: 'Floresta: ' + SP[RUN.sp].n, tree: t.id }); chime(); }
@@ -565,6 +565,18 @@ function pill() { const fl = !/^#floresta/.test(location.hash) && RUN; if (RUN &
   if (fi && FL._fi !== key) { FL._fi = key; fi.innerHTML = RUN.phase !== 'grow' ? '☕' : THUMB[RUN.sp] ? `<img src="${THUMB[RUN.sp]}" alt="" style="transform:scale(${(.6 + .4 * Math.max(.1, prog())).toFixed(2)})">` : esc((SP[RUN.sp] || {}).e || '🌱'); }
   const fb = FL.querySelector('[data-f=give]'); if (fb) fb.textContent = RUN.phase === 'grow' ? 'Desistir' : 'Saltar pausa'; }
 A.foPip = () => openPip();
+/* v4.01 · o relógio fica fixo quando minimizas o app:
+   · ao plantar (o toque conta como gesto), abre logo a janela flutuante (Picture-in-Picture), que fica por cima das outras apps;
+   · com o Prumo escondido, os temporizadores normais abrandam: um "relógio" num worker continua a dar o segundo e a janela flutuante
+     não congela; no Chrome, se a pessoa deixar, a janela abre sozinha ao trocar de separador (Media Session). */
+function pipJa() { try { drawFC(); const v = vid(), ped = () => { if (v.requestPictureInPicture && document.pictureInPictureEnabled !== false) return v.requestPictureInPicture(); if (v.webkitSetPresentationMode) { v.webkitSetPresentationMode('picture-in-picture'); return Promise.resolve(); } return Promise.reject(new Error('sem PiP')); };
+    try { v.play().catch(() => { }); } catch (e) { }
+    ped().catch(() => { const tenta = () => { v.removeEventListener('loadedmetadata', tenta); ped().catch(() => { }); }; if (v.readyState >= 1) setTimeout(() => ped().catch(() => { }), 150); else v.addEventListener('loadedmetadata', tenta); }); } catch (e) { } }
+let TW = null;
+const tickW = () => { if (TW || typeof Worker !== 'function') return; try { const u = URL.createObjectURL(new Blob(['setInterval(function(){postMessage(0)},1000)'], { type: 'text/javascript' })); TW = new Worker(u); URL.revokeObjectURL(u); TW.onmessage = () => { if (!RUN) { TW.terminate(); TW = null; return; } if (document.hidden || pipOn()) step(); }; } catch (e) { TW = null; } };
+const loop0 = loop; loop = function () { loop0(); if (RUN) tickW(); };
+try { if (navigator.mediaSession && navigator.mediaSession.setActionHandler) navigator.mediaSession.setActionHandler('enterpictureinpicture', () => { if (RUN && PIPOK && cfg().pipAuto !== false) openPip(); }); } catch (e) { }
+document.addEventListener('visibilitychange', () => { if (RUN && document.hidden) { try { drawFC(); } catch (e) { } } });
 document.addEventListener('visibilitychange', () => { if (!RUN || RUN.phase !== 'grow') return; if (document.hidden) { RUN.hid = Date.now(); RUN.pip = pipOn(); save(); return; } back(); });
 addEventListener('pagehide', () => { if (RUN && RUN.phase === 'grow' && !RUN.hid) { RUN.hid = Date.now(); save(); } });
 function back() { if (!RUN || !RUN.hid) return; const away = Date.now() - RUN.hid, lim = RUN.pip ? 0 : +cfg().strict; RUN.hid = null; RUN.pip = false; save();
@@ -581,7 +593,7 @@ A.foCat = b => OS.setUI('foCat', b.dataset.v);
 A.foMins = b => { cfg().mins = +b.dataset.v; OS.touch('forest'); };
 A.foSound = b => { cfg().sound = b.dataset.v; OS.touch('forest'); if (RUN && RUN.phase === 'grow') sndPlay(b.dataset.v); };
 document.addEventListener('input', e => { if (e.target.id === 'foDur') { cfg().mins = +e.target.value; const o = document.getElementById('foTime'); if (o && !RUN) o.textContent = mmss(+e.target.value * 6e4); } });
-document.addEventListener('change', e => { if (e.target.id === 'foDur') OS.touch('forest'); if (e.target.id === 'foTag') { cfg().tag = e.target.value; OS.touch('forest'); } if (e.target.id === 'foStrict') { cfg().strict = e.target.value; OS.touch('forest'); } });
+document.addEventListener('change', e => { if (e.target.id === 'foDur') OS.touch('forest'); if (e.target.id === 'foTag') { cfg().tag = e.target.value; OS.touch('forest'); } if (e.target.id === 'foPipAuto') { cfg().pipAuto = !!e.target.checked; OS.touch('forest'); } if (e.target.id === 'foStrict') { cfg().strict = e.target.value; OS.touch('forest'); } });
 
 /* ================= vistas ================= */
 const TABS = [['', 'Plantar'], ['floresta', 'A minha floresta'], ['loja', 'Todas as árvores'], ['moedas', 'Moedas & prémios'], ['stats', 'Estatísticas']];
@@ -608,6 +620,7 @@ VW[''] = () => { const c = cfg(), sp = SP[c.sp] ? c.sp : 'carvalho', t = today()
     <div class="row gap6 fo-chips">${[15, 25, 45, 50, 60, 90, 120].map(m => `<button class="chip ${+c.mins === m ? 'on' : ''}" data-act="foMins" data-v="${m}">${m}</button>`).join('')}</div>`}
     ${pomoPanel(po, ps)}
     <div class="fo-ctl">${tagSel(c.tag || '')}<select class="field" id="foStrict" aria-label="Regra de saída"><option value="10"${c.strict === '10' ? ' selected' : ''}>Morre se saíres 10 s</option><option value="20"${c.strict === '20' ? ' selected' : ''}>Morre se saíres 20 s</option><option value="60"${c.strict === '60' ? ' selected' : ''}>Morre se saíres 1 min</option><option value="0"${c.strict === '0' ? ' selected' : ''}>Só morre se desistires</option></select></div>
+    ${PIPOK ? `<label class="fo-pipauto"><input type="checkbox" id="foPipAuto" ${c.pipAuto !== false ? 'checked' : ''}><span><b>Relógio flutuante ao plantar</b><small>Abre uma janela com o tempo que fica por cima das outras apps quando minimizas o Prumo. Com ela aberta, a árvore não morre por saíres.</small></span></label>` : `<p class="mut fo-pipnot">Neste navegador o relógio não consegue ficar por cima das outras apps. Liga as notificações: a atividade em curso fica na barra de notificações e avisa quando acaba.</p>`}
     ${se[0] !== sp ? `<button class="fo-season" data-act="foSp" data-k="${se[0]}">${se[1]} — experimenta: <b>${esc(SP[se[0]].n)}</b></button>` : ''}
     <div class="row gap6 fo-cats">${CATS.map(([k, l]) => `<button class="chip ${cat === k ? 'on' : ''}" data-act="foCat" data-v="${k}">${l}</button>`).join('')}</div>
     <div class="fo-sps" role="listbox" aria-label="Espécie">${list.map(x => `<button class="fo-sp ${x === sp ? 'on' : ''}" data-act="foSp" data-k="${x}" title="${esc(SP[x].n)}">${thumb(x)}<small>${esc(SP[x].n)}</small></button>`).join('')}<a class="fo-sp more" href="#floresta.loja"><small>Ver todas</small></a></div>
@@ -674,4 +687,5 @@ function flat(h) { h.classList.add('fo-nogl'); const fb = h.querySelector('.fo-f
   fb.innerHTML = again ? `<span class="fd-spin"></span><small>A abrir o 3D…</small>` : `<small>O 3D não abriu agora neste aparelho.${failWhy ? `<span class="fo-why">${esc(failWhy)}</span>` : ''}</small><button type="button" class="btn xs" data-act="fo3dRetry">Tentar outra vez</button>`; }
 A.fo3dRetry = () => { failN = 0; retry3(); const h = document.getElementById('fo3d'); if (h) { const fb = h.querySelector('.fo-fb'); if (fb) { fb.dataset.k = ''; fb.innerHTML = '<span class="fd-spin"></span><small>A abrir o 3D…</small>'; } } setTimeout(mount, 60); };
 OS.Forest = { SP, SCN, fx: () => G.fx ? G.fx.type : "", gl: () => ({ ok: !!G.r, fail: FAIL, why: failWhy }), _fail: (w) => { fail(w || 'teste'); }, _retry: () => { failN = 0; retry3(); }, check: () => Object.keys(SP).map(k => { const out = [k]; [1, .5, .05].forEach(g => [false, true].forEach(d => { try { const b = new Bld(rngOf(5), 1); tree(b, k, g, d); } catch (e) { out.push(g + (d ? 'd' : '') + ': ' + e.message); } })); return out; }).filter(x => x.length > 1), run: () => RUN, last: () => LAST, finish, plant, coinsFor, _t: () => ({ T: !!T, FAIL, G }) };
+OS.Forest._tw = () => !!TW; OS.Forest.pipOk = PIPOK;
 })();

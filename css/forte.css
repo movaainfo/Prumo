@@ -471,3 +471,8 @@ body.onb-open{overflow:hidden}
 .dash-sh p{margin:2px 0 0;font-size:13px;color:var(--mut)}
 .dash-sh .dc-more{white-space:nowrap}
 .dash-sec .dash-grid{margin-top:0}
+/* v4.01 · relógio flutuante ao plantar */
+.fo-pipauto{display:flex;gap:10px;align-items:flex-start;margin:10px 0 0;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);cursor:pointer;max-width:560px}
+.fo-pipauto input{width:18px;height:18px;margin-top:2px;flex:none}
+.fo-pipauto b{display:block;font-size:13.5px}.fo-pipauto small{display:block;font-size:12px;opacity:.8;line-height:1.4}
+.fo-pipnot{font-size:12.5px;margin:10px 0 0;max-width:560px}

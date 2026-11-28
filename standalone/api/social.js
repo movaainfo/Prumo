@@ -489,7 +489,7 @@ const podeAnimar = async c => c.lvl >= 2 || !!c.adm || !!(((await ler(W(c.eu), {
 /* ---------- v3.93 · ganhar Selos dentro do app (sem passar pelas lojas): a presença de cada dia, o Quiz relâmpago, as Sombras e as medalhas
    (que já chegam pelos duelos, desafios, guerra de clãs, Sequência a dois…) dão Selos. Cada ganho tem uma chave e não se repete; há um limite
    por dia e por perfil (os prémios da seele ficam de fora do limite). Comprar Selos continua só no site, pelo Stripe. ---------- */
-const GANHO = { presenca: 2, semana: 10, quiz: 5, quizBom: 5, sombra: [10, 6, 4], med: { Diamante: 30, Platina: 20, Ouro: 12, Prata: 8, Bronze: 5 }, trofeu: 25 };
+const GANHO = { presenca: 2, semana: 10, quiz: 5, quizBom: 5, sombra: [10, 6, 4], med: { Diamante: 30, Platina: 20, Ouro: 12, Prata: 8, Bronze: 5 }, trofeu: 25, fq: 8, fqBom: 8, rpLinha: 3, rpCheia: 10, bgLinha: 3 };
 const GLIM = () => Math.max(1, Math.round(+process.env.NAUTILO_SELOS_DIA) || 60);
 const ganha = async (eu, n, motivo, chave, semLimite) => { if (!ID.test(String(eu || '')) || !(n > 0) || !chave) return 0; let dado = 0; const d = lisboa().d;
   await mudar(W(eu), {}, w => { w.gk = w.gk || []; if (w.gk.includes(chave)) return false; let v = Math.round(n);
@@ -500,6 +500,9 @@ const ganha = async (eu, n, motivo, chave, semLimite) => { if (!ID.test(String(e
 const ganharInfo = w => ({ hoje: w && w.gd && w.gd.d === lisboa().d ? w.gd.n : 0, limite: GLIM(), formas: [
   { k: 'presenca', t: 'Abrir o Prumo', d: 'Uma vez por dia; ao fim de 7 dias seguidos, mais ' + GANHO.semana + '.', n: GANHO.presenca },
   { k: 'quiz', t: 'Quiz relâmpago das 13h', d: 'Terminar o quiz; com 8 certas ou mais, o dobro.', n: GANHO.quiz },
+  { k: 'fq', t: 'Quiz de finanças (semanal)', d: 'Terminar o quiz da semana; com 8 certas ou mais, o dobro.', n: GANHO.fq },
+  { k: 'rp', t: 'Raspadinha do mundo', d: GANHO.rpLinha + ' por cada linha de 3 países descobertos; o cartão todo, mais ' + GANHO.rpCheia + '.', n: GANHO.rpLinha },
+  { k: 'bg', t: 'Bingo da semana', d: GANHO.bgLinha + ' por cada linha; o cartão cheio dá uma medalha de Ouro.', n: GANHO.bgLinha },
   { k: 'sombra', t: 'Sombras', d: 'Acertar na personagem: ' + GANHO.sombra.join(', ') + ' Selos (1.ª, 2.ª ou 3.ª tentativa).', n: GANHO.sombra[0] },
   { k: 'med', t: 'Medalhas e troféus', d: 'Cada medalha nova: de ' + GANHO.med.Bronze + ' (Bronze) a ' + GANHO.med.Diamante + ' (Diamante); troféus ' + GANHO.trofeu + '. Vêm dos duelos, desafios, guerra de clãs, Sequência a dois e jogos.', n: GANHO.med.Ouro },
   { k: 'seele', t: 'Prémios da seele', d: 'Algumas campanhas dão Selos aos vencedores (fora do limite diário).', n: 0 }] });
@@ -1091,6 +1094,170 @@ OPS.adminPremio = async (c, b) => { if (!c.adm) throw N.err('admin', 'Sem acesso
     return { ok2: true, suplente: novoVenc ? novoVenc.nome : '' }; }
   if (ac === 'entregue') { let ok = false; await mudar(PRC(cp.id), null, o => { const v = o.res.venc.find(x => x.eu === eu); if (!v || !['confirmado', 'aceite'].includes(v.estado)) return false; v.estado = 'entregue'; v.ent = Date.now(); ok = true; }); return { ok2: ok }; }
   throw N.err('premio', 'Pedido desconhecido.', 400); };
+/* ====================== v4.01 · quiz de finanças semanal, raspadinha do mundo, bingo da semana e temporada de clãs ====================== */
+/* ---------- QUIZ DE FINANÇAS SEMANAL: 10 perguntas por semana (de segunda a domingo, hora de Lisboa), iguais para todos, 25 s cada.
+   As respostas certas ficam no servidor; depois de cada resposta vem a explicação (é para aprender). Uma tentativa por semana.
+   No começo da semana seguinte fecha: medalhas para os 3 primeiros e para quem fizer 10 em 10. ---------- */
+const FQ_N = 10, FQ_SEG = 25;
+const FQB = [
+  ['Pões 1 000 numa aplicação a 10% ao ano, com juros compostos. Quanto tens ao fim de 2 anos?', ['1 210', '1 200', '1 100', '1 020'], 'No 2.º ano também rendem os juros do 1.º: 1 000 × 1,10 × 1,10 = 1 210. Com juros simples seriam 1 200.'],
+  ['A inflação foi de 3% num ano e o teu dinheiro ficou parado na conta à ordem. O que aconteceu?', ['Compra cerca de 3% menos coisas', 'Ficou igual', 'Passou a valer mais', 'Perdeu 30%'], 'Os preços subiram 3% e o dinheiro não rendeu nada: com o mesmo valor compras menos.'],
+  ['Quanto se costuma recomendar para o fundo de emergência?', ['3 a 6 meses das tuas despesas', '1 semana de salário', '1 ano de salário em ações', 'O mesmo que a dívida do cartão'], 'A regra mais usada é 3 a 6 meses de despesas (6 a 12 se o rendimento for instável).'],
+  ['Onde deve ficar o fundo de emergência?', ['Numa conta ou depósito que dá para levantar logo', 'Em ações de uma só empresa', 'Em criptomoedas', 'Num imóvel'], 'Tem de estar seguro e disponível no próprio dia: imprevistos não esperam.'],
+  ['O que significa diversificar?', ['Espalhar o dinheiro por vários investimentos', 'Pôr tudo no que mais rendeu no ano passado', 'Mudar de banco todos os anos', 'Investir só no teu país'], 'Se um investimento correr mal, os outros amortecem a queda.'],
+  ['O que é um ETF de índice?', ['Um fundo que copia um índice e se compra na bolsa', 'Uma conta poupança com garantia', 'Um empréstimo ao Estado', 'Uma criptomoeda'], 'Com um só ETF ficas com um bocadinho de centenas ou milhares de empresas, com custos baixos.'],
+  ['Comprar uma ação é…', ['Ficar dono de uma pequena parte de uma empresa', 'Emprestar dinheiro a uma empresa', 'Abrir uma conta no banco', 'Comprar um seguro'], 'O acionista é dono de uma parte: ganha se a empresa crescer e pode receber dividendos.'],
+  ['Comprar uma obrigação é…', ['Emprestar dinheiro a uma empresa ou ao Estado', 'Ficar dono da empresa', 'Comprar ouro', 'Pagar um imposto'], 'Recebes juros combinados e o dinheiro de volta no fim do prazo (se quem pediu emprestado pagar).'],
+  ['Em geral, um investimento que promete mais retorno…', ['Tem mais risco', 'Tem menos risco', 'É garantido', 'Não tem custos'], 'Retorno e risco andam juntos. Desconfia de quem promete muito sem risco.'],
+  ['Pela regra dos 72, a 6% ao ano o dinheiro duplica em cerca de…', ['12 anos', '6 anos', '72 anos', '20 anos'], 'Divide 72 pela taxa: 72 ÷ 6 = 12 anos. É uma conta rápida de cabeça.'],
+  ['Pagar só o mínimo do cartão de crédito todos os meses…', ['Sai muito caro por causa dos juros altos', 'É a forma mais barata de pagar', 'Não tem juros', 'Melhora sempre o crédito'], 'O resto da dívida fica a pagar juros altos, muitas vezes acima de 15% ao ano.'],
+  ['Para comparar créditos, o número mais útil é…', ['A taxa anual com todos os custos (TAEG; no Brasil, o CET)', 'A cor do cartão', 'O nome do banco', 'Só o valor da primeira prestação'], 'A TAEG (ou o CET) junta juros e comissões: é o custo real por ano.'],
+  ['Um fundo cobra 2% ao ano e outro 0,2%. Rendem o mesmo antes dos custos. A longo prazo…', ['O de 0,2% deixa-te bem mais dinheiro', 'Dá igual', 'O de 2% rende mais', 'Os custos só contam no 1.º ano'], 'Os custos tiram-se todos os anos e somam-se como juros compostos ao contrário.'],
+  ['Investir o mesmo valor todos os meses, aconteça o que acontecer, ajuda a…', ['Não tentar adivinhar o melhor momento', 'Garantir lucro', 'Não pagar impostos', 'Nunca perder dinheiro'], 'Quando está caro compras menos unidades; quando está barato, mais. Tira a emoção da decisão.'],
+  ['Liquidez é…', ['A rapidez com que transformas um investimento em dinheiro', 'O lucro de um ano', 'O imposto sobre os ganhos', 'A comissão do banco'], 'Um depósito à ordem tem liquidez imediata; uma casa demora meses a vender.'],
+  ['Uma «oportunidade» que paga mais a quem traz novas pessoas é provavelmente…', ['Um esquema em pirâmide', 'Um ETF', 'Um depósito a prazo', 'Uma obrigação do Estado'], 'Se o dinheiro vem de quem entra a seguir e não de um negócio real, um dia acaba e os últimos perdem.'],
+  ['Recebes uma mensagem do «banco» a pedir o código que chegou por SMS. O que fazes?', ['Não dou o código e falo com o banco pelos canais oficiais', 'Respondo com o código', 'Toco no link para confirmar', 'Envio uma foto do cartão'], 'O banco nunca pede códigos por mensagem. Isto é burla (phishing).'],
+  ['Na regra 50/30/20, os 20% são para…', ['Poupar e investir (ou pagar dívidas)', 'Lazer', 'Renda e contas', 'Impostos'], '50% para o essencial, 30% para o que queres e 20% para o teu futuro.'],
+  ['O património líquido é…', ['O que tens menos o que deves', 'O teu salário de um ano', 'O saldo da conta à ordem', 'O valor da tua casa'], 'Soma tudo o que tens (contas, investimentos, bens) e tira as dívidas.'],
+  ['O custo de oportunidade de gastar 100 hoje é…', ['O que esse dinheiro podia render ou comprar noutra coisa', 'O IVA da compra', 'A comissão do cartão', 'Zero, porque o dinheiro é teu'], 'Cada escolha deixa outra para trás: 100 investidos a 7% seriam cerca de 197 em 10 anos.'],
+  ['Tens 1 000 de poupança e 1 000 de dívida no cartão a 18% ao ano. A melhor jogada costuma ser…', ['Pagar a dívida do cartão', 'Investir em ações e manter a dívida', 'Comprar criptomoedas', 'Deixar tudo como está'], 'Pagar uma dívida a 18% é como ganhar 18% garantidos. Nenhum investimento seguro dá isso.'],
+  ['A volatilidade mede…', ['Quanto o preço sobe e desce', 'O lucro garantido', 'Os dividendos', 'A inflação'], 'Mais volatilidade quer dizer sustos maiores pelo caminho, para cima e para baixo.'],
+  ['Um dividendo é…', ['Parte do lucro que a empresa paga aos acionistas', 'O juro de um depósito', 'Uma comissão da corretora', 'Um imposto'], 'Nem todas as empresas pagam dividendos: algumas reinvestem o lucro para crescer.'],
+  ['Dinheiro de que vais precisar daqui a 1 ano deve estar…', ['Em algo seguro e com liquidez', 'Todo em ações', 'Em criptomoedas', 'Num imóvel'], 'A bolsa pode estar em baixo exatamente quando precisares. Prazos curtos pedem segurança.'],
+  ['O S&P 500 é…', ['Um índice com as 500 maiores empresas dos EUA', 'Um banco americano', 'Uma criptomoeda', 'Um imposto americano'], 'É um dos índices mais seguidos do mundo e há ETFs que o copiam.'],
+  ['Ao longo de muitos anos, o que faz o dinheiro crescer mais?', ['Juros compostos', 'Juros simples', 'São iguais', 'Depende só do banco'], 'Nos compostos os juros também rendem juros: a diferença cresce todos os anos.'],
+  ['Rebalancear a carteira é…', ['Voltar à divisão que escolheste entre os investimentos', 'Vender tudo quando cai', 'Mudar de corretora', 'Comprar só o que subiu'], 'Uma vez por ano voltas ao plano: tiras peso ao que subiu muito e reforças o resto.'],
+  ['Investir com dinheiro emprestado (alavancagem)…', ['Aumenta tanto os ganhos como as perdas', 'Elimina o risco', 'Só aumenta os ganhos', 'É obrigatório nas ações'], 'Se correr mal, perdes o teu dinheiro e ainda deves o empréstimo.'],
+  ['Uma ordem limitada na bolsa…', ['Define o preço máximo a que compras (ou mínimo a que vendes)', 'Compra a qualquer preço', 'Só funciona ao fim de semana', 'Cancela o investimento'], 'Evita surpresas de preço, sobretudo em produtos pouco negociados.'],
+  ['Para que serve um seguro?', ['Passar para outro o custo de um imprevisto grande', 'Ganhar dinheiro todos os meses', 'Substituir a poupança', 'Fugir aos impostos'], 'Pagas pouco sempre para não teres de pagar muito de uma vez.'],
+  ['O teu salário subiu 2% e a inflação foi 5%. O teu poder de compra…', ['Desceu', 'Subiu', 'Ficou igual', 'Duplicou'], 'Os preços subiram mais do que o salário: com o novo salário compras menos.'],
+  ['Uma compra «em 12x sem juros», mas mais cara do que a pronto…', ['Tem os juros escondidos no preço', 'É sempre mais barata', 'Não custa nada a mais', 'Dá desconto nos impostos'], 'Compara sempre com o preço a pronto: a diferença é o juro que estás a pagar.'],
+  ['Num crédito com taxa variável, se os juros de referência subirem…', ['A prestação sobe', 'A prestação desce', 'Nada muda', 'O crédito acaba'], 'Na taxa variável a prestação acompanha os juros do mercado; na fixa fica igual.'],
+  ['Um depósito rende 4% e a inflação é 3%. O retorno real é cerca de…', ['1%', '7%', '4%', '−1%'], 'Retorno real ≈ rendimento − inflação: 4% − 3% = 1%.'],
+  ['Uma ação cai 50% e depois sobe 50%. Em relação ao início, estás…', ['A perder 25%', 'Igual', 'A ganhar 25%', 'A perder 50%'], '100 → 50 → 75. Para recuperar uma queda de 50% é preciso subir 100%.'],
+  ['Sobre criptomoedas, o mais acertado é…', ['São muito voláteis: só o que aceitas perder', 'São garantidas pelo banco central', 'Nunca descem', 'Substituem o fundo de emergência'], 'Já caíram mais de 70% várias vezes. Se tiveres, que seja uma parte pequena.'],
+  ['O primeiro passo para fazer um orçamento é…', ['Saber quanto ganhas e para onde vai o dinheiro', 'Pedir um empréstimo', 'Comprar ações', 'Cancelar todas as contas'], 'Regista as despesas 2 ou 3 meses: sem isto não sabes onde cortar.'],
+  ['«Paga-te a ti primeiro» quer dizer…', ['Pôr a poupança de lado logo que recebes', 'Gastar primeiro no que gostas', 'Pagar as dívidas dos outros', 'Pedir aumento todos os meses'], 'Se poupares só o que sobra no fim do mês, muitas vezes não sobra nada.'],
+  ['Se uma dívida custa 20% ao ano, pagá-la mais cedo equivale a…', ['Um rendimento garantido de 20%', 'Perder 20%', 'Nada', 'Um rendimento de 2%'], 'Cada euro pago deixa de pagar 20% de juros: é o melhor «investimento» possível.'],
+  ['Tentar comprar sempre no ponto mais baixo da bolsa…', ['Quase ninguém consegue fazer com consistência', 'É fácil com as notícias', 'É garantido com gráficos', 'Os bancos garantem'], 'Ficar de fora à espera do momento perfeito costuma custar mais do que investir sempre.'],
+  ['A capitalização bolsista de uma empresa é…', ['O preço da ação vezes o número de ações', 'O lucro de um ano', 'O número de trabalhadores', 'A dívida da empresa'], 'É quanto o mercado diz que a empresa vale, toda junta.'],
+  ['Um rácio preço/lucro (P/L) de 20 quer dizer que…', ['Pagas 20 vezes o lucro anual de cada ação', 'A ação vale 20', 'A empresa lucra 20%', 'O dividendo é 20%'], 'É uma forma de ver se uma ação está cara ou barata face ao que a empresa ganha.'],
+  ['A diferença entre o preço de compra e o de venda (spread) é…', ['Um custo de cada operação', 'Um lucro garantido', 'Um imposto do Estado', 'Um dividendo'], 'Por isso comprar e vender muitas vezes sai caro, mesmo sem comissões.'],
+  ['O que faz mais diferença no valor final de um investimento a 30 anos?', ['Começar cedo', 'Escolher o banco com a app mais bonita', 'Ver as cotações todos os dias', 'Mudar de investimento todos os meses'], 'O tempo é o motor dos juros compostos: 10 anos a mais podem duplicar o resultado.'],
+  ['Na União Europeia, os depósitos bancários estão garantidos até…', ['100 000 € por pessoa e por banco', '1 000 €', 'Sem limite', 'Não têm garantia'], 'É o fundo de garantia de depósitos (no Brasil, o FGC garante até 250 mil reais).'],
+  ['Pedir um crédito para pagar férias…', ['Costuma ser má ideia: pagas juros por algo que já acabou', 'É a melhor forma de poupar', 'Não tem custos', 'Melhora o orçamento'], 'Melhor juntar primeiro: as férias saem mais baratas e sem dívida no regresso.'],
+  ['Antes de investir em bolsa, o ideal é ter…', ['Fundo de emergência e as dívidas caras pagas', 'Um carro novo', 'Um cartão de crédito', 'Um empréstimo'], 'Assim não tens de vender os investimentos num mau momento para pagar um imprevisto.'],
+  ['Qual destes é um passivo?', ['Uma dívida no cartão de crédito', 'Um ETF', 'Uma conta poupança', 'Uma obrigação que compraste'], 'Passivo é o que tira dinheiro do teu bolso; ativo é o que põe.'],
+  ['Pões 100 por mês, sem juros, durante 10 anos. Quanto juntas?', ['12 000', '10 000', '1 200', '120 000'], '100 × 12 meses × 10 anos = 12 000. Com juros, seria mais.'],
+  ['Ganhas 1 500 e poupas 300 por mês. A tua taxa de poupança é…', ['20%', '30%', '15%', '5%'], '300 ÷ 1 500 = 0,20, ou seja, 20%.'],
+  ['Antes de uma compra por impulso, uma boa regra é…', ['Esperar uns dias e ver se ainda queres', 'Comprar logo antes que acabe', 'Pagar a prestações', 'Pedir emprestado'], 'Muitos desejos passam em 48 horas. O que fica, provavelmente vale a pena.'],
+  ['Um fundo que rendeu muito nos últimos 3 anos…', ['Não garante que renda o mesmo no futuro', 'Vai render o mesmo', 'Nunca vai descer', 'Tem risco zero'], 'Rentabilidades passadas não garantem as futuras: olha também para custos e risco.'],
+  ['Com inflação alta, quem tem uma dívida a taxa fixa…', ['Paga, em termos reais, um pouco menos', 'Paga mais juros', 'Perde a casa', 'Não nota diferença nenhuma'], 'A prestação fica igual enquanto os preços e (muitas vezes) os salários sobem.'],
+  ['Investir num ETF em dólares, sendo a tua moeda o euro, junta um risco de…', ['Câmbio', 'Inflação zero', 'Liquidez garantida', 'Nenhum'], 'Se o dólar desvalorizar face ao euro, perdes um pouco mesmo que o ETF não mexa.'],
+  ['Um ETF do mundo inteiro reduz sobretudo o risco de…', ['Depender de uma só empresa ou país', 'Inflação', 'Pagar impostos', 'Perder o cartão'], 'Tens milhares de empresas de dezenas de países: uma correr mal pesa pouco.'],
+  ['Pedir fatura com o teu número de contribuinte (NIF ou CPF) pode…', ['Dar deduções ou benefícios nos impostos', 'Aumentar o preço', 'Bloquear o cartão', 'Não serve para nada'], 'Em Portugal entra no IRS; no Brasil, em vários estados, dá créditos e sorteios.'],
+  ['Com 7% ao ano, quanto valem 10 000 ao fim de 10 anos (aproximadamente)?', ['19 700', '17 000', '10 700', '27 000'], '10 000 × 1,07¹⁰ ≈ 19 672. É a regra dos 72 a funcionar: 72 ÷ 7 ≈ 10 anos para duplicar.']];
+const FQ = k => 'so/fq/' + k, FQP = (k, id) => 'so/fqp/' + k + '/' + id;
+const fqDe = async (S, criar) => { let q = (await ler(FQ(S.k), null)).v; if (q || !criar) return q; const r = await rndDe('fq:' + S.k), idx = baralha(FQB.map((_, i) => i), r).slice(0, FQ_N);
+  q = { k: S.k, Q: idx.map(i => { const [t, op, e] = FQB[i], o = baralha(op.map((x, j) => ({ x, j })), r); return { t, op: o.map(z => z.x), c: o.findIndex(z => z.j === 0), e }; }), res: [] };
+  try { await gravar(FQ(S.k), q, { overwrite: false }); } catch (e) { q = (await ler(FQ(S.k), q)).v; } return q; };
+const fqFechar = async (k) => { let dar = null; await mudar(FQ(k), null, o => { if (!o || o.fechado) return false; o.fechado = Date.now(); dar = (o.res || []).slice(); });
+  if (!dar || !dar.length) return; const M = dar.filter(x => x.pts > 0).slice(0, 3).map((x, i) => [x.id, { k: 'fq' + (i + 1) + ':' + k, n: (i + 1) + '.º no Quiz de finanças', d: 'Semana ' + k.split('-S')[1] + ' de ' + k.split('-')[0] + ' · ' + x.pts + ' pontos', kind: 'Medalha', lvl: LUG[i], cat: 'Finanças', lugar: i + 1 }]);
+  dar.filter(x => x.certas >= FQ_N).forEach(x => M.push([x.id, { k: 'fqp:' + k, n: 'Quiz de finanças: 10 em 10', d: 'Semana ' + k.split('-S')[1] + ' de ' + k.split('-')[0], kind: 'Medalha', lvl: 'Mérito', cat: 'Finanças' }])); await darVarios(M).catch(() => { }); };
+const fqVer = async c => { const S = semana(), A = semana(S.ini - 3600e3); const ant = (await ler(FQ(A.k), null)).v; if (ant && !ant.fechado) await fqFechar(A.k);
+  const q = await fqDe(S, true), g = (await ler(FQP(S.k, c.eu), null)).v, R = (q.res || []), pos = R.findIndex(x => x.id === c.eu) + 1, x = g && !g.fim ? q.Q[g.i] : null;
+  return { k: S.k, fim: S.fim, n: q.Q.length, seg: FQ_SEG, ts: Date.now(), eu: g ? { i: g.i, pts: g.pts || 0, fim: !!g.fim, r: g.r || [] } : null, pergunta: x ? { i: g.i, n: q.Q.length, t: x.t, op: x.op, at: g.esp ? 0 : g.at, seg: FQ_SEG, esp: !!g.esp } : null,
+    res: R.slice(0, 30).map(y => Object.assign({}, y, { eu: y.id === c.eu })), pos, total: R.length, ant: ant && ant.res ? ant.res.slice(0, 3).map(y => ({ nome: y.nome, user: y.user, pts: y.pts })) : null }; };
+OPS.fquiz = async c => ({ fquiz: await fqVer(c) });
+OPS.fquizComecar = async c => { const S = semana(), q = await fqDe(S, true), v = await perfil(c.eu, c.nome), g = { id: c.eu, nome: v.nome, user: v.user || '', av: v.av || 0, ini: Date.now(), at: Date.now(), i: 0, r: [], pts: 0, ms: 0 };
+  if (S.fim - Date.now() < 10 * 6e4) throw N.err('fquiz', 'A semana está quase a acabar: o próximo quiz abre na segunda-feira.', 400);
+  try { await gravar(FQP(S.k, c.eu), g, { overwrite: false }); } catch (e) { throw N.err('fquiz', 'Já fizeste o quiz desta semana.', 409); } return { fquiz: await fqVer(c) }; };
+OPS.fquizProx = async c => { const S = semana(); await mudar(FQP(S.k, c.eu), null, g => { if (!g || g.fim || !g.esp) return false; g.esp = 0; g.at = Date.now(); }); return { fquiz: await fqVer(c) }; };
+OPS.fquizResp = async (c, b) => { const S = semana(), q = await fqDe(S, false); if (!q) throw N.err('fquiz', 'O quiz desta semana ainda não abriu.', 400);
+  const i = Math.round(+b.i), op = Math.round(+b.opc); let out = null, fimG = null;
+  await mudar(FQP(S.k, c.eu), null, g => { if (!g) throw N.err('fquiz', 'Carrega primeiro em Começar.', 400); if (g.fim || g.i !== i || g.esp) { out = { repetida: true }; return false; }
+    const x = q.Q[i], ms = Date.now() - g.at, ok = op === x.c && ms <= (FQ_SEG + 2) * 1000, p = ok ? 100 + Math.round(50 * Math.max(0, 1 - ms / (FQ_SEG * 1000))) : 0;
+    g.r.push({ ok, p, ms: Math.min(ms, FQ_SEG * 1000) }); g.pts = (g.pts || 0) + p; g.ms = (g.ms || 0) + Math.min(ms, FQ_SEG * 1000); g.i = i + 1; g.at = Date.now(); if (g.i >= q.Q.length) { g.fim = Date.now(); fimG = g; } else g.esp = 1;
+    out = { ok, p, certa: x.c, e: x.e, tempo: ms > (FQ_SEG + 2) * 1000 }; });
+  if (fimG) { const certas = fimG.r.filter(r => r.ok).length;
+    await mudar(FQ(S.k), null, o => { if (!o) return false; o.res = (o.res || []).filter(y => y.id !== c.eu).concat({ id: c.eu, nome: fimG.nome, user: fimG.user, av: fimG.av, pts: fimG.pts, certas, ms: fimG.ms }).sort((a, b2) => b2.pts - a.pts || a.ms - b2.ms).slice(0, 300); }).catch(() => { });
+    await ganha(c.eu, GANHO.fq, 'Quiz de finanças terminado', 'fq:' + S.k); if (certas >= 8) await ganha(c.eu, GANHO.fqBom, 'Quiz de finanças: ' + certas + ' certas', 'fqb:' + S.k); }
+  return { resp: out, fquiz: await fqVer(c) }; };
+
+/* ---------- RASPADINHA DO MUNDO: todos os dias um cartão de 9 países escondidos (o mesmo para toda a gente). Raspar uma casa é responder
+   a uma pergunta sobre esse país (capital, continente, bandeira). Certa: o país aparece; errada: a casa fica queimada. Cada linha de 3
+   países descobertos dá Selos; o cartão todo, mais. As respostas certas ficam no servidor. ---------- */
+const CONT = ['Europa', 'África', 'Ásia', 'América do Norte', 'América do Sul', 'Oceânia'];
+const PAISES = 'PT|Portugal|Lisboa|0;ES|Espanha|Madrid|0;FR|França|Paris|0;DE|Alemanha|Berlim|0;IT|Itália|Roma|0;GB|Reino Unido|Londres|0;IE|Irlanda|Dublin|0;NL|Países Baixos|Amesterdão|0;BE|Bélgica|Bruxelas|0;CH|Suíça|Berna|0;AT|Áustria|Viena|0;PL|Polónia|Varsóvia|0;CZ|Chéquia|Praga|0;SK|Eslováquia|Bratislava|0;HU|Hungria|Budapeste|0;RO|Roménia|Bucareste|0;BG|Bulgária|Sófia|0;GR|Grécia|Atenas|0;HR|Croácia|Zagreb|0;SI|Eslovénia|Liubliana|0;RS|Sérvia|Belgrado|0;AL|Albânia|Tirana|0;DK|Dinamarca|Copenhaga|0;NO|Noruega|Oslo|0;SE|Suécia|Estocolmo|0;FI|Finlândia|Helsínquia|0;IS|Islândia|Reiquiavique|0;EE|Estónia|Taline|0;LV|Letónia|Riga|0;LT|Lituânia|Vílnius|0;UA|Ucrânia|Kiev|0;MT|Malta|Valeta|0;LU|Luxemburgo|Luxemburgo|0'
+  + ';MA|Marrocos|Rabat|1;DZ|Argélia|Argel|1;TN|Tunísia|Tunes|1;EG|Egito|Cairo|1;NG|Nigéria|Abuja|1;GH|Gana|Acra|1;SN|Senegal|Dacar|1;KE|Quénia|Nairobi|1;ET|Etiópia|Adis Abeba|1;UG|Uganda|Kampala|1;RW|Ruanda|Kigali|1;AO|Angola|Luanda|1;MZ|Moçambique|Maputo|1;CV|Cabo Verde|Praia|1;GW|Guiné-Bissau|Bissau|1;ST|São Tomé e Príncipe|São Tomé|1;NA|Namíbia|Windhoek|1;BW|Botsuana|Gaborone|1;ZW|Zimbabué|Harare|1;ZM|Zâmbia|Lusaca|1;CM|Camarões|Iaundé|1;CD|República Democrática do Congo|Kinshasa|1;MG|Madagáscar|Antananarivo|1;SD|Sudão|Cartum|1;ML|Mali|Bamaco|1'
+  + ';CN|China|Pequim|2;JP|Japão|Tóquio|2;KR|Coreia do Sul|Seul|2;IN|Índia|Nova Deli|2;PK|Paquistão|Islamabade|2;BD|Bangladesh|Daca|2;ID|Indonésia|Jacarta|2;PH|Filipinas|Manila|2;VN|Vietname|Hanói|2;TH|Tailândia|Banguecoque|2;MY|Malásia|Kuala Lumpur|2;KH|Camboja|Phnom Penh|2;NP|Nepal|Catmandu|2;SA|Arábia Saudita|Riade|2;AE|Emirados Árabes Unidos|Abu Dhabi|2;QA|Catar|Doha|2;JO|Jordânia|Amã|2;LB|Líbano|Beirute|2;IQ|Iraque|Bagdade|2;IR|Irão|Teerão|2;AF|Afeganistão|Cabul|2;MN|Mongólia|Ulan Bator|2;UZ|Usbequistão|Tashkent|2;OM|Omã|Mascate|2'
+  + ';US|Estados Unidos|Washington|3;CA|Canadá|Otava|3;MX|México|Cidade do México|3;CU|Cuba|Havana|3;JM|Jamaica|Kingston|3;GT|Guatemala|Cidade da Guatemala|3;CR|Costa Rica|São José|3;PA|Panamá|Cidade do Panamá|3;HN|Honduras|Tegucigalpa|3;DO|República Dominicana|Santo Domingo|3;NI|Nicarágua|Manágua|3'
+  + ';BR|Brasil|Brasília|4;AR|Argentina|Buenos Aires|4;CL|Chile|Santiago|4;PE|Peru|Lima|4;CO|Colômbia|Bogotá|4;VE|Venezuela|Caracas|4;EC|Equador|Quito|4;PY|Paraguai|Assunção|4;UY|Uruguai|Montevideu|4;GY|Guiana|Georgetown|4;SR|Suriname|Paramaribo|4'
+  + ';AU|Austrália|Camberra|5;NZ|Nova Zelândia|Wellington|5;FJ|Fiji|Suva|5;PG|Papua-Nova Guiné|Port Moresby|5;WS|Samoa|Apia|5';
+const PA = PAISES.split(';').map(x => { const [c2, n, cap, ct] = x.split('|'); return { c2, n, cap, ct: +ct }; });
+const RP = d => 'so/rp/' + d, RPP = (d, id) => 'so/rpp/' + d + '/' + id, LINHAS = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+const rpGerar = async d => { const r = await rndDe('rp:' + d), L = baralha(PA, r).slice(0, 9), tipos = baralha(['capital', 'pais', 'continente', 'bandeira', 'capital', 'bandeira', 'pais', 'continente', 'bandeira'], r);
+  const opc = (certa, outras) => { const op = baralha([certa].concat(baralha(outras, r).slice(0, 3)), r); return { op, c: op.indexOf(certa) }; };
+  const outrosDe = (x, f) => { const mesmo = PA.filter(y => y.c2 !== x.c2 && y.ct === x.ct).map(f), resto = PA.filter(y => y.c2 !== x.c2 && y.ct !== x.ct).map(f); return [...new Set(baralha(mesmo, r).concat(baralha(resto, r)))].filter(v => v !== f(x)); };
+  return { d, cells: L.map((x, i) => { const t = tipos[i]; let q;
+    if (t === 'capital') q = Object.assign({ t: `Qual é a capital de ${x.n}?` }, opc(x.cap, outrosDe(x, y => y.cap).slice(0, 6)));
+    else if (t === 'pais') q = Object.assign({ t: `${x.cap} é a capital de que país?` }, opc(x.n, outrosDe(x, y => y.n).slice(0, 6)));
+    else if (t === 'continente') q = Object.assign({ t: `Em que continente fica ${x.n}?` }, opc(CONT[x.ct], CONT.filter((_, k) => k !== x.ct)));
+    else q = Object.assign({ t: 'De que país é esta bandeira?', img: 'https://flagcdn.com/w320/' + x.c2.toLowerCase() + '.png' }, opc(x.n, outrosDe(x, y => y.n).slice(0, 6)));
+    return { c2: x.c2, n: x.n, cap: x.cap, ct: CONT[x.ct], q }; }) }; };
+const rpDe = async d => { let q = (await ler(RP(d), null)).v; if (q) return q; q = await rpGerar(d); try { await gravar(RP(d), q, { overwrite: false }); } catch (e) { q = (await ler(RP(d), q)).v; } return q; };
+const rpLinhas = a => LINHAS.map((L, i) => L.every(k => a[k] === 1) ? i : -1).filter(i => i >= 0);
+const rpVer = async c => { const d = lisboa().d, q = await rpDe(d), g = (await ler(RPP(d, c.eu), null)).v || { a: {} }, a = g.a || {};
+  return { d, cells: q.cells.map((x, i) => Object.assign({ i, st: a[i] === 1 ? 'ok' : a[i] === 0 ? 'x' : null, t: x.q.t, op: x.q.op, img: x.q.img || '' }, a[i] != null ? { c2: x.c2, n: x.n, cap: x.cap, ct: x.ct, certa: x.q.op[x.q.c] } : {})),
+    linhas: rpLinhas(a), certas: Object.values(a).filter(v => v === 1).length, abertas: Object.keys(a).length }; };
+OPS.raspa = async c => ({ raspa: await rpVer(c) });
+OPS.raspaResp = async (c, b) => { const d = lisboa().d, q = await rpDe(d), i = Math.round(+b.i), op = Math.round(+b.opc); if (!(i >= 0 && i < 9)) throw N.err('raspa', 'Casa desconhecida.', 400);
+  let ok = null, antes = [], depois = [];
+  await mudar(RPP(d, c.eu), { a: {} }, g => { g.a = g.a || {}; if (g.a[i] != null) return false; antes = rpLinhas(g.a); ok = op === q.cells[i].q.c; g.a[i] = ok ? 1 : 0; g.at = Date.now(); depois = rpLinhas(g.a); });
+  if (ok == null) throw N.err('raspa', 'Já raspaste esta casa.', 409);
+  const novas = depois.filter(x => !antes.includes(x)); for (const L of novas) await ganha(c.eu, GANHO.rpLinha, 'Raspadinha do mundo: uma linha', 'rp:' + d + ':' + L);
+  const r = await rpVer(c); if (r.certas === 9) await ganha(c.eu, GANHO.rpCheia, 'Raspadinha do mundo: cartão completo', 'rpc:' + d);
+  return { ok, novas: novas.length, raspa: r }; };
+
+/* ---------- BINGO DA SEMANA: o cartão (9 tarefas de várias áreas) é feito e verificado no aparelho, com os registos da pessoa.
+   Aqui só se dão os Selos de cada linha nova e a medalha do cartão cheio (uma vez por semana, com chave). ---------- */
+OPS.bingo = async (c, b) => { const S = semana(); if (String(b.k || '') !== S.k) throw N.err('bingo', 'Este cartão já não é desta semana.', 400);
+  const L = [...new Set((Array.isArray(b.linhas) ? b.linhas : []).map(x => Math.round(+x)).filter(x => x >= 0 && x < 8))]; let n = 0;
+  for (const x of L) n += await ganha(c.eu, GANHO.bgLinha, 'Bingo da semana: uma linha', 'bg:' + S.k + ':' + x);
+  if (b.cheio && L.length === 8) await darMed(c.eu, { k: 'bg:' + S.k, n: 'Bingo da semana: cartão cheio', d: 'Semana ' + S.k.split('-S')[1] + ' de ' + S.k.split('-')[0], kind: 'Medalha', lvl: 'Ouro', cat: 'Desafios' });
+  return { selos: n }; };
+
+/* ---------- TEMPORADA DE CLÃS: cada mês tem um tema (treino, foco, leitura, hábitos, finanças, tarefas). Cada pessoa soma pontos ao seu clã
+   com o que regista nesse tema durante o mês (o aparelho envia o total do mês; o servidor limita a valores possíveis e nunca desce).
+   No começo do mês seguinte fecha: o clã campeão ganha um troféu para cada membro, o 2.º e o 3.º medalhas, e o melhor de todos (MVP) uma distinção. ---------- */
+const TEMAS = [['treino', 'Mês do treino', 'treinos e corridas registados', 10, 62], ['foco', 'Mês do foco', 'minutos de foco e estudo (1 ponto a cada 5 min)', .2, 9000], ['leitura', 'Mês da leitura', 'páginas lidas (1 ponto por página)', 1, 6000],
+  ['habitos', 'Mês dos hábitos', 'hábitos cumpridos (2 pontos cada)', 2, 600], ['financas', 'Mês das finanças', 'dias com os gastos registados (10 pontos por dia)', 10, 31], ['tarefas', 'Mês da execução', 'tarefas concluídas (3 pontos cada)', 3, 900]];
+const TP = ym => 'so/tp/' + ym;
+const temaDe = ym => { const [y, m] = ym.split('-').map(Number); return TEMAS[(y * 12 + m - 1) % TEMAS.length]; };
+const ymDe = d => d.slice(0, 7), ymAnt = ym => { const [y, m] = ym.split('-').map(Number); return m === 1 ? (y - 1) + '-12' : y + '-' + String(m - 1).padStart(2, '0'); };
+const tpClas = o => { const C = {}; Object.entries((o && o.m) || {}).forEach(([eu, x]) => { if (!x.cid || !(x.pts > 0)) return; const k = C[x.cid] = C[x.cid] || { cid: x.cid, pts: 0, n: 0, top: null }; k.pts += x.pts; k.n++; if (!k.top || x.pts > k.top.pts) k.top = { eu, nome: x.nome, pts: x.pts }; });
+  return Object.values(C).sort((a, b) => b.pts - a.pts); };
+const tpFechar = async ym => { let o = null; await mudar(TP(ym), null, x => { if (!x || x.fechado) return false; x.fechado = Date.now(); o = x; }); if (!o) return;
+  const R = tpClas(o).slice(0, 3), tema = temaDe(ym), mes = new Date(Date.parse(ym + '-15T12:00:00Z')).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric', timeZone: 'UTC' }), M = [];
+  for (let i = 0; i < R.length; i++) { const cl = (await ler(CL(R[i].cid), null)).v; if (!cl) continue;
+    await mudar(CL(cl.id), null, x => { if (!x) return false; x.temps = [{ ym, tema: tema[1], pos: i + 1, pts: R[i].pts }].concat((x.temps || []).filter(t => t.ym !== ym)).slice(0, 24); }).catch(() => { });
+    Object.entries(o.m || {}).filter(([, x]) => x.cid === cl.id && x.pts > 0).forEach(([eu]) => M.push([eu, i === 0 ? { k: 'tp1:' + ym, n: 'Clã campeão da temporada: ' + tema[1], d: cl.nome + ' · ' + mes, kind: 'Troféu', lvl: 'Ouro', cat: 'Clãs', lugar: 1 } : { k: 'tp' + (i + 1) + ':' + ym, n: (i + 1) + '.º clã da temporada: ' + tema[1], d: cl.nome + ' · ' + mes, kind: 'Medalha', lvl: LUG[i], cat: 'Clãs', lugar: i + 1 }])); }
+  const mvp = Object.entries(o.m || {}).sort((a, b) => (b[1].pts || 0) - (a[1].pts || 0))[0]; if (mvp && mvp[1].pts > 0) M.push([mvp[0], { k: 'tpmvp:' + ym, n: 'MVP da temporada: ' + tema[1], d: mes + ' · ' + Math.round(mvp[1].pts) + ' pontos', kind: 'Distinção', lvl: 'Ouro', cat: 'Clãs' }]);
+  await darVarios(M).catch(() => { }); };
+const tpVer = async c => { const L = lisboa(), ym = ymDe(L.d), ant = ymAnt(ym), oa = (await ler(TP(ant), null)).v; if (oa && !oa.fechado) await tpFechar(ant);
+  const o = (await ler(TP(ym), null)).v || { m: {} }, R = tpClas(o), X = await idxLer(), v = await perfil(c.eu, c.nome), meu = (v.clas || [])[0] || '', tema = temaDe(ym);
+  const fimMes = Date.parse(diaMais(ym + '-01', 32).slice(0, 7) + '-01T00:00:00Z') - 3600e3, nome = cid => ((X[cid] || {}).nome) || 'Clã', cor = cid => ((X[cid] || {}).cor) || '#9B1B30';
+  const lista = R.slice(0, 30).map((x, i) => ({ pos: i + 1, cid: x.cid, nome: nome(x.cid), cor: cor(x.cid), foto: (X[x.cid] || {}).foto || 0, pts: Math.round(x.pts), n: x.n, top: x.top ? { nome: x.top.nome, pts: Math.round(x.top.pts) } : null, meu: x.cid === meu }));
+  const mi = R.findIndex(x => x.cid === meu), eu = (o.m || {})[c.eu] || null;
+  return { ym, tema: { k: tema[0], n: tema[1], d: tema[2] }, fim: fimMes, lista, meuCla: meu ? { cid: meu, nome: nome(meu), pos: mi + 1, pts: mi >= 0 ? Math.round(R[mi].pts) : 0 } : null, eu: eu ? { v: eu.v, pts: Math.round(eu.pts) } : null, total: R.length,
+    ant: oa ? { tema: temaDe(ant)[1], top: tpClas(oa).slice(0, 3).map(x => ({ nome: nome(x.cid), pts: Math.round(x.pts) })) } : null }; };
+OPS.temporada = async c => ({ temporada: await tpVer(c) });
+OPS.temporadaEnviar = async (c, b) => { const L = lisboa(), ym = ymDe(L.d), tema = temaDe(ym); if (String(b.ym || '') !== ym || String(b.tema || '') !== tema[0]) return { temporada: await tpVer(c) };
+  const v = await perfil(c.eu, c.nome), cid = (v.clas || [])[0] || ''; if (!cid) throw N.err('temporada', 'Entra num clã para somares pontos na temporada.', 400);
+  const val = Math.max(0, Math.min(tema[4], +b.v || 0)), pts = Math.round(val * tema[3] * 10) / 10;
+  await mudar(TP(ym), { m: {} }, o => { if (o.fechado) return false; o.tema = tema[0]; o.m = o.m || {}; const x = o.m[c.eu]; if (x && x.cid !== cid) return false; if (x && x.v >= val) return false; o.m[c.eu] = { cid, v: Math.max(val, x && x.cid === cid ? x.v : 0), pts: Math.max(pts, x && x.cid === cid ? x.pts : 0), nome: v.nome, at: Date.now() }; });
+  return { temporada: await tpVer(c) }; };
+
 module.exports = N.handler(async (req, res) => {
   // o nome do parceiro (público, para o app o mostrar antes de entrar na conta)
   if (req.method === 'GET' && String((req.query || {}).op || '') === 'img') { const q = req.query || {}, k = q.k === 'fu' ? 'fu' : q.k === 'cla' ? 'cla' : 'av', id = String(q.id || ''); if (!(k === 'cla' ? CID : ID).test(id) || N.limit(req, 'simg', 300, 60e3)) return N.send(res, 400, { ok: false });

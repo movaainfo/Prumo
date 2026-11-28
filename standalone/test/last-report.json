@@ -1,61 +1,19 @@
 [
  {
-  "p": "v4",
-  "name": "Corrida dentro de Praticar desporto: saiu do menu Corpo; o cartão da Corrida abre a página da Corrida (com o caminho de volta)",
+  "p": "v4.01",
+  "name": "Floresta: ao plantar abre sozinho o relógio flutuante (opção «Relógio flutuante ao plantar», que se pode desligar) e um relógio à parte continua a contar quando minimizas o app",
   "pass": true,
-  "info": "{\"corpo\":[\"corpo\",\"treino\",\"dieta\",\"desporto\"],\"card\":true,\"hash\":\"#corrida\",\"back\":true,\"title\":\"Corrida\"}"
+  "info": "{\"ok\":true,\"cb\":true,\"nota\":false,\"lig\":true,\"desl\":true,\"relig\":true,\"pedidos\":1,\"tw\":true,\"run\":true}"
  },
  {
-  "p": "v4",
-  "name": "Finanças e Simuladores: barra visual (5 atalhos e o Mais por grupos) no lugar da fileira de abas",
-  "pass": true,
-  "info": "{\"fin\":true,\"main\":5,\"grupos\":[\"O dia a dia\",\"As tuas contas\",\"Planear e entender\"],\"mais\":true,\"tabs\":false,\"sim\":true,\"simG\":3}"
+  "p": "v4.01",
+  "name": "Caça às assinaturas: encontra nos movimentos o que cobra todos os meses ou todos os anos (não confunde o supermercado), junta as recorrentes, mostra custo por mês e por ano e a próxima cobrança; «Quero cancelar» cria a tarefa 2 dias antes da renovação; «Já cancelei» conta para a poupança e desliga a recorrente (e desfaz-se)",
+  "pass": false,
+  "info": "{\"nom\":[\"Ginásio Atlântico:Mensal\",\"NETFLIX.COM 1001:Mensal\",\"Spotify:Mensal\",\"Seguro do telemóvel anual:Anual\"],\"bar\":true,\"kpi\":4,\"cards\":4,\"mercado\":false,\"anual\":true,\"net\":{\"id\":\"tx:netflix\",\"nome\":\"NETFLIX.COM 1001\",\"valor\":12.99,\"cad\":\"Mensal\",\"ult\":\"2026-10-31\",\"prox\":\"2026-11-30\",\"n\":3,\"marca\":true,\"cat\":\"Lazer\",\"fonte\":\"movimentos\",\"mes\":12.99,\"ano\":155.88},\"gin\":true,\"spot\":true,\"task\":{\"sched\":\"2026-11-28\",\"prox\":\"2026-11-30\",\"area\":\"Finanças\",\"esp\":\"2026-11-28\"},\"taskFora\":true,\"poup\":\"€ 155,88\",\"lista\":true,\"recInativa\":true,\"desfeito\":true}"
  },
  {
-  "p": "v4",
-  "name": "Compras: \"Devo comprar?\" pergunta à IA com o produto e as finanças (saldo, reserva, orçamento) e mostra o conselho com as razões e uma alternativa",
-  "pass": true,
-  "info": "{\"bt\":true,\"t\":\"Espera até ao fim do mês: a reserva ainda não chega. Espera um pouco · 28/11/2026 A reserva está abaixo do alvo Custa 12 horas de trabalho Atrasa a meta em 20 dias Alternativa: Ver usados Compra se: Quando a reserva estiver completa Perguntar outra vez\",\"ped\":true,\"saved\":\"esperar\"}"
- },
- {
-  "p": "v4",
-  "name": "Calendário › Limpar: escolhe o que apagar e de quando (aqui os compromissos que já passaram), pede confirmação e não toca nos outros",
-  "pass": true,
-  "info": "{\"n\":\"Apagar 1 registo\",\"velho\":false,\"novo\":true}"
- },
- {
-  "p": "v4",
-  "name": "Trabalho: o valor da hora no topo; vários trabalhos (part-time e freelance) cada um com o valor da hora e o total do mês; o turno usa o valor do trabalho dele",
-  "pass": true,
-  "info": "{\"semJob\":true,\"pay\":[32,40,6],\"cards\":2,\"txt\":\"Os teus trabalhos Trabalho Loja Teste Part-time € 8,00 por hora 4,0 h este mês € 32,00 ganho no mês Design freelance Freelancer / independente € 20,00 por hora 2,0 h este mês € 300,00 por mês A tua hora vale, na prática, € 150,00 (o que ganhas a dividir pelas horas que registaste). 1 turno deste mês sem trabalho escolhido contam com o valor da hora principal. Tudo junto este mês € 338,00 7,0 h trabalhadas O valor da tua hora (principal) por hora\",\""
- },
- {
-  "p": "v4",
-  "name": "Trabalho › Apagar horários e folgas: apaga a última escala importada (turnos e folgas) e deixa os turnos escritos à mão",
-  "pass": true,
-  "info": "{\"lb\":true,\"go\":\"Apagar 2\",\"f1\":false,\"f2\":false,\"s1\":true}"
- },
- {
-  "p": "v4",
-  "name": "Guia de investir: capítulos novos para decidir sozinho (método, analisar um produto, ETFs, carteira, cabeça do investidor, reforma) e exercícios com a solução",
-  "pass": true,
-  "info": "{\"n\":18,\"ids\":7,\"ex\":5}"
- },
- {
-  "p": "v4",
-  "name": "Painel arrumado: blocos com título (O teu dia, Dinheiro, Jogos e novidades), cada cartão no seu bloco e nada solto",
-  "pass": true,
-  "info": "{\"secs\":[\"O teu dia\",\"Dinheiro\",\"Jogos, parceria e novidades\"],\"jogos\":true,\"dom\":true,\"din\":true,\"dia\":true,\"solto\":0}"
- },
- {
-  "p": "v4",
-  "name": "Definições arrumadas: barra visual com 5 atalhos e o Mais por grupos (Tu e a conta, Ligações e automações, O assistente, Segurança e privacidade)",
-  "pass": true,
-  "info": "{\"bar\":true,\"tabs\":false,\"main\":5,\"grupos\":[\"Tu e a conta\",\"Ligações e automações\",\"O assistente\",\"Segurança e privacidade\"],\"on\":true}"
- },
- {
-  "p": "v4",
-  "name": "v4.00: sem erros de JavaScript",
+  "p": "v4.01",
+  "name": "v4.01: sem erros de JavaScript",
   "pass": true,
   "info": ""
  }
