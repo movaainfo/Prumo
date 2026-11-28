@@ -52,6 +52,24 @@ const change = async (eid, fn) => { for (let i = 0; i < 5; i++) { const a = awai
     const out = await fn(a.rec); if (out === false) return a.rec;
     try { await writeAcc(eid, a.rec, a.etag); return a.rec; } catch (e) { if (e.code !== 'conflict') throw e; await N.sleep(80 + Math.random() * 200); } }
   throw N.err('ocupado', 'A conta está a ser alterada noutro aparelho. Tenta outra vez.', 409); };
+/* ---------- v4.03 · passo 6: Indique um amigo e ganhe 1 mês ----------
+   Cada conta tem um código (cv/<código> → a conta). Quem cria conta com o link ?ref=CÓDIGO fica ligado a quem convidou.
+   Quando essa conta passa a pagar (no site ou nas lojas), quem convidou ganha 1 mês: se paga no site, um desconto do valor de 1 mês
+   na próxima fatura (saldo do cliente no Stripe); senão, o plano Completo por mais 30 dias. No máximo 12 meses por ano. */
+const CV_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', CV_MAX = 12;
+const convDe = async code => { const c = String(code || '').toUpperCase().trim(); if (!/^[A-Z2-9]{7}$/.test(c)) return ''; try { const g = await N.store().get('cv/' + c); if (!g) return ''; return (N.open(await N.accKey(), g.buf) || {}).eid || ''; } catch (e) { return ''; } };
+const convGarantir = async (eid, rec) => { if (rec.conv) return rec.conv; for (let i = 0; i < 6; i++) { const c = Array.from({ length: 7 }, () => CV_ABC[N.crypto.randomInt(0, CV_ABC.length)]).join('');
+    try { await N.store().put('cv/' + c, N.seal(await N.accKey(), { eid }), { overwrite: false }); } catch (e) { if (e.code === 'exists' || e.code === 'conflict') continue; throw e; }
+    const r2 = await change(eid, r => { if (r.conv) return false; r.conv = c; }); if (r2.conv !== c) await N.store().del([{ pathname: 'cv/' + c }]).catch(() => { }); return r2.conv; }
+  throw N.err('convite', 'Não deu para criar o teu código agora. Tenta outra vez.', 503); };
+const convRecompensar = async refEid => { const a = await readAcc(refEid); if (!a) return null; const r0 = a.rec, ano = Date.now() - 365 * P.DIA;
+  if ((r0.convHist || []).filter(x => x.at > ano).length >= CV_MAX) return { como: 'limite' };
+  const p = r0.plano; let como = 'mes';
+  if (P.cobranca() && p && p.sub && p.cus && P.mesmo(p) && P.ACTIVE.test(p.estado || '') && P.byId(p.id)) { const pr = P.preco(P.byId(p.id), 'mes', p.cur);
+    try { await P.stripe('customers/' + p.cus + '/balance_transactions', { amount: String(-pr.v), currency: pr.cur.toLowerCase(), description: 'Prumo: 1 mês grátis por convidar um amigo' }); como = 'credito'; } catch (e) { console.error('convite stripe', e.message); como = 'mes'; } }
+  return change(refEid, r => { if (como === 'mes') { const ef = P.efetivo(r), base = Math.max(Date.now(), (r.planoAdm && r.planoAdm.ate) || 0, ef.teste ? ef.ate || 0 : 0), id = r.planoAdm && P.byId(r.planoAdm.id) && P.byId(r.planoAdm.id).lvl >= 3 ? r.planoAdm.id : 'completo';
+      if (!(r.planoAdm && !r.planoAdm.ate)) r.planoAdm = { id, ate: base + 30 * P.DIA, at: Date.now(), conv: 1 }; }
+    r.convPagos = (r.convPagos || 0) + 1; r.convHist = (r.convHist || []).concat({ at: Date.now(), como }).slice(-30); aviso(r, { t: 'convite', como }); }).then(() => ({ como })); };
 const USO_OK = new Map();
 const session = async req => { const t = await N.readToken(req); if (!t) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
   const a = await readAcc(t.a); if (!a || a.rec.uid !== t.u || (a.rec.tv || 1) !== t.v) throw N.err('sessao', 'A sessão terminou. Entra outra vez.', 401);
@@ -199,6 +217,8 @@ const OPS = {
     // v3.21: verificação do e-mail (só no primeiro registo; as contas de teste saltam)
     if (await outraConta(email, eid)) throw N.err('existe', 'Já existe uma conta com este e-mail (ou com uma variação dele). Entra com a tua senha.', 409);
     rec.cx = 1;
+    // v4.03 · passo 6: convite de um amigo (o código do link ?ref=); quem convidou ganha 1 mês quando esta conta assinar
+    const refEid = await convDe(b.ref); if (refEid && refEid !== eid) rec.ref = { eid: refEid, code: String(b.ref).toUpperCase(), at: Date.now() };
     const vc = mailOn() && !TESTE.test(email) ? code6() : ''; if (vc) rec.verif = { h: await N.hashPw(vc), exp: Date.now() + 30 * 60e3, n: 0, env: Date.now(), envs: 1 };
     try { await writeAcc(eid, rec); } catch (e) { if (e.code !== 'exists') throw e;
       // uma conta que nunca confirmou o e-mail (há mais de 30 min) não segura o endereço: dá lugar à nova
@@ -206,8 +226,12 @@ const OPS = {
       await dropData(old.rec.uid); await N.store().put('a/' + eid, N.seal(await N.accKey(), rec)); }
     if (vc && !(await sendCode(email, nome, vc))) { delete rec.verif; await N.store().put('a/' + eid, N.seal(await N.accKey(), rec)); }
     await cPut(email, eid); N.count(TESTE.test(email) ? 'registo_teste' : 'registo');
+    if (rec.ref) change(rec.ref.eid, r => { r.convN = (r.convN || 0) + 1; }).catch(() => { });
     return { token: await N.signToken(rec, eid), conta: pub(rec), recuperacao: code, verificar: rec.verif ? 1 : 0 }; },
   // confirmar o e-mail com o código de 6 números
+  // v4.03 · passo 6: o meu link de convite e quantos amigos entraram e assinaram
+  async convite(req) { const s = await session(req), code = await convGarantir(s.eid, s.rec), r = (await readAcc(s.eid) || {}).rec || s.rec, ano = Date.now() - 365 * P.DIA;
+    return { convite: { codigo: code, entraram: r.convN || 0, assinaram: r.convPagos || 0, meses: (r.convHist || []).filter(x => x.como !== 'limite').length, max: CV_MAX, ano: (r.convHist || []).filter(x => x.at > ano).length } }; },
   // v4.02: a pessoa liga ou desliga os e-mails automáticos (boas-vindas, lembretes, «sentimos a tua falta»); os avisos de pagamento chegam sempre
   async emails(req, b) { const s = await session(req); const rec = await change(s.eid, r => { if (b.off) r.mailOff = true; else delete r.mailOff; }); return { conta: pub(rec) }; },
   async verificarEmail(req, b) { const s = await session(req), v = s.rec.verif; if (!v) return { conta: pub(s.rec) };
@@ -479,6 +503,7 @@ const OPS = {
       u.dias = u.dias || {}; if (u.tot == null) u.tot = Object.values(u.dias).reduce((a, x) => a + (Number(x) || 0), 0);
       const add = Math.max(0, Math.min(min, 1440 - (u.dias[day] || 0)));   // v3.62: um dia tem no máximo 1440 minutos
       u.dias[day] = (u.dias[day] || 0) + add; u.tot += add; u.ult = Date.now(); u.a = t.a; if (typeof b.lg === 'string' && /^[a-z]{2}(-[A-Z]{2})?$/.test(b.lg)) u.lg = b.lg;
+      if (b.vs && typeof b.vs === 'object') { const mk = day.slice(0, 7), AB = u.abas = u.abas || {}, M = AB[mk] = AB[mk] || {}; Object.entries(b.vs).slice(0, 60).forEach(([k, n]) => { if (/^[a-z0-9]{2,20}$/.test(k)) M[k] = (M[k] || 0) + Math.min(50, Math.max(0, Math.round(+n) || 0)); }); Object.keys(AB).sort().slice(0, -2).forEach(x => { delete AB[x]; }); }
       // presença: "abrir" marca a entrada no app; "fim" quando a app sai do ecrã; o resto é sinal de que está a ser usada
       if (b.ev === 'abrir') u.ab = u.ult; u.on = b.ev === 'fim' ? 0 : 1;
       // tempo de uso de cada perfil (para o ranking); o primeiro perfil herda o histórico que já havia
@@ -511,7 +536,16 @@ const OPS = {
     const P = await s.list('p/'), pedidos = []; await pool(P.slice(-300), async x => { const g = await s.get(x.pathname); if (g) pedidos.push(N.open(key, g.buf)); });
     pedidos.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     const sl = await spList(); contas.forEach(c => { c.sp = c.admin || sl.includes(N.normEmail(c.email)); });
-    return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos, spotify: sl, spMax: SP_MAX, spConf: !!spCid(),
+    // v4.03 · passo 5: os números do negócio (sem a administração nem as contas de teste)
+    const negocio = (() => { const now = Date.now(), D30 = 30 * 864e5, reais = contas.filter(c => !c.admin && !TESTE.test(c.email || '')), PL = c => c.plano || {}, mrr = {}; let pagos = 0, loja = 0, testes = 0, acabou = 0, cancelar = 0, novos = 0, oferta = 0;
+      reais.forEach(c => { const p = PL(c); if (Date.parse(c.criado || '') > now - D30) novos++; if (p.oferta) oferta++;
+        if (p.pago) { pagos++; if (p.cancelar) cancelar++; if (p.loja) loja++; else { const pl = P.byId(p.id); if (pl) { const pr = P.preco(pl, p.ciclo === 'ano' ? 'ano' : 'mes', p.cur), v = p.ciclo === 'ano' ? pr.v / 12 : pr.v; mrr[pr.cur] = (mrr[pr.cur] || 0) + v; } } }
+        else if (p.teste) testes++; else if (p.acabou) acabou++; });
+      const fim = pagos + acabou, abas = {}, mk = new Date().toISOString().slice(0, 7);
+      Object.values(uso).forEach(u => { const M = (u.abas || {})[mk]; if (!M) return; Object.entries(M).forEach(([k, n]) => { const a = abas[k] = abas[k] || { n: 0, p: 0 }; a.n += n; a.p++; }); });
+      return { pagos, loja, testes, acabou, oferta, cancelar, novos, conv: fim ? Math.round(pagos / fim * 1000) / 10 : null, mrr: Object.fromEntries(Object.entries(mrr).map(([k, v]) => [k, Math.round(v)])), mes: mk,
+        abas: Object.entries(abas).sort((a, b) => b[1].p - a[1].p || b[1].n - a[1].n).slice(0, 15).map(([k, v]) => ({ k, n: v.n, p: v.p })) }; })();
+    return { contas, total: contas.length, perfis: contas.reduce((n, c) => n + c.perfis.length, 0), pedidos, negocio, spotify: sl, spMax: SP_MAX, spConf: !!spCid(),
       // o que falta configurar no Vercel (só se diz se está ou não; os valores nunca saem do servidor)
       cfg: { revenuecat: !!(process.env.REVENUECAT_WEBHOOK_AUTH && process.env.REVENUECAT_API_KEY), stripe: require('./_planos').cobranca(), stripeTeste: /^sk_test_/.test(String(process.env.STRIPE_SECRET_KEY || '').trim()), mail: process.env.RESEND_API_KEY ? 'resend' : process.env.BREVO_API_KEY ? 'brevo' : '', mailDe: !!String(process.env.NAUTILO_EMAIL_DE || '').trim() } }; },
 
@@ -614,7 +648,7 @@ module.exports = N.handler(async (req, res) => {
   N.send(res, 200, Object.assign({ ok: true }, await op(req, b)));
 });
 module.exports.mailRaw = (...a) => mailRaw(...a);
-module.exports.contaDe = eid => readAcc(eid); module.exports.change = (eid, fn) => change(eid, fn);   // v4.02: e-mails automáticos (api/emails.js)
+module.exports.convRecompensar = refEid => convRecompensar(refEid); module.exports.contaDe = eid => readAcc(eid); module.exports.change = (eid, fn) => change(eid, fn);   // v4.02: e-mails automáticos (api/emails.js)
 // v3.71: usados pelo api/revenuecat (compras nas lojas)
 module.exports.existe = async eid => /^[a-f0-9]{40}$/.test(String(eid || '')) && !!(await readAcc(eid));
 module.exports.planoLoja = async (eid, pl) => change(eid, r => { if (pl) r.planoLoja = pl; else delete r.planoLoja; });

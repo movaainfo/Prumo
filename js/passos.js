@@ -26,5 +26,5 @@ OS.Passos = { estado, faltam, cartao };
 OS.on && OS.on('ready', () => {
   // o pontinho vermelho no Painel (junta-se ao que já lá estava)
   try { const g = OS.NAV.find(x => x[0] === 'Visão geral'), it = g && g[1].find(x => x[0] === 'visao'); if (it) { const b0 = it[3]; it[3] = () => { const r = b0 ? s(b0, null) : null; if (r) return r; const n = faltam(); return n ? [n, 'neg'] : null; }; } } catch (e) { }
-  const o = OS.views.visao; if (o && !o._ps) { OS.views.visao = sub => { const h = o(sub), k = '<!--dg-->', i = h.indexOf(k), c = s(cartao, ''); if (!c || i < 0) return h; const j = h.indexOf('</div>', h.indexOf('<div class="dash-top"')); return h.slice(0, i) + c + h.slice(i); }; OS.views.visao._ps = 1; } });
+  const o = OS.views.visao; if (o && !o._ps) { OS.views.visao = sub => { const h = o(sub), k = '<!--dg-->', i = h.indexOf(k), c = s(() => OS.Passos.cartao(), ''); if (!c || i < 0) return h; const j = h.indexOf('</div>', h.indexOf('<div class="dash-top"')); return h.slice(0, i) + c + h.slice(i); }; OS.views.visao._ps = 1; } });
 })();

@@ -5,7 +5,7 @@
 // Para repor uma conta ou um perfil a partir de um dia, pede ao programador: os ficheiros voltam para o sítio deles com a mesma cifra.
 'use strict';
 const N = require('./_nuvem');
-const PREF = ['a/', 'b/', 'c/', 'd/', 'g/', 'i/', 'k/', 'p/', 'r/', 'u/', 'x/', 'cfg/', 'push/', 'sys/'];
+const PREF = ['a/', 'b/', 'c/', 'cv/', 'd/', 'g/', 'i/', 'k/', 'p/', 'r/', 'u/', 'x/', 'cfg/', 'push/', 'sys/'];
 const KEEP = () => Math.max(2, +(process.env.NAUTILO_BACKUP_DIAS || 7)), BUDGET = 240e3;
 
 const pool = async (items, n, fn) => { let i = 0; await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => { while (i < items.length) { const k = i++; await fn(items[k], k); } })); };

@@ -200,3 +200,30 @@
 .em-log{margin-top:12px}.em-log summary{cursor:pointer;color:var(--mut);font-size:.88rem}
 .em-modal{max-width:640px}
 .em-fr{width:100%;height:min(70vh,620px);border:1px solid var(--line);border-radius:10px;background:#f3f5f8;margin-top:10px}
+/* v4.03 · A tua primeira semana (Painel) */
+.sm-c{border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 14px;background:var(--card,var(--bg2));display:flex;flex-direction:column;gap:10px}
+.sm-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.sm-h small{display:block;color:var(--mut);font-size:.8rem}
+.sm-h b{display:block;font-size:1.05rem;margin-top:2px}
+.sm-b{display:block;height:6px;border-radius:99px;background:color-mix(in srgb,var(--acc) 14%,transparent);overflow:hidden}
+.sm-b i{display:block;height:100%;background:var(--acc);border-radius:inherit}
+.sm-hoje{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--acc) 10%,transparent)}
+.sm-hoje p{margin:0;flex:1 1 220px}
+.sm-l{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.sm-l li{display:flex;gap:8px;align-items:center;font-size:.86rem;padding:6px 8px;border-radius:10px}
+.sm-l li small{display:block;color:var(--mut);font-size:.74rem}
+.sm-i{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.75rem;border:1px solid var(--line)}
+.sm-l li.ok .sm-i{background:var(--pos,#3a9d6a);border-color:transparent;color:#fff}
+.sm-l li.agora{background:color-mix(in srgb,var(--acc) 12%,transparent)}
+.sm-l li.agora .sm-i{border-color:var(--acc);color:var(--acc);font-weight:700}
+.sm-l li.fut{opacity:.6}
+/* v4.03 · números do negócio (Administração) */
+.ng-ab{display:flex;flex-direction:column;gap:6px}
+.ng-r{display:grid;grid-template-columns:minmax(110px,1fr) 2fr auto;gap:10px;align-items:center;font-size:.86rem}
+.ng-r i{display:block;height:8px;border-radius:99px;background:color-mix(in srgb,var(--acc) 15%,transparent);position:relative;overflow:hidden}
+.ng-r i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--acc);border-radius:inherit}
+.ng-r small{color:var(--mut)}
+/* v4.03 · Convida amigos (Definições › Conta) */
+.cv-l{display:flex;gap:8px;flex-wrap:wrap}
+.cv-l .field{flex:1 1 220px;min-width:0;font-family:var(--mono,ui-monospace,monospace);font-size:.85rem}
+.em-fat{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}

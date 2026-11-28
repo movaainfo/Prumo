@@ -22,7 +22,7 @@ const RCM = { subs: {}, pedidos: 0 }, DCM = [];
 const LGM = { n: 0, rt: {}, ren: {}, tok: [], sair: [], curto: false };
 const ACCFN = {}; const ACCAPI = n => { if (!(n in ACCFN)) { try { ACCFN[n] = require(path.join(ROOT, 'api', n + '.js')); } catch (e) { ACCFN[n] = null; } } return ACCFN[n]; };
 // servidor estático + caixa de entrada simulada (Apps Script)
-const INBOX = [], STORE = {}, IAMOCK = [], INFL = new Map(), STRIPE = { calls: [], ses: {}, subs: {}, paid: new Set() }, MAILS = []; if (process.env.DEBUGAPI) setInterval(() => { const L = [...INFL.values()].map(f => f()).filter(x => +x.split(' ').pop().replace('ms', '') > 5000); if (L.length) console.log('    [api pendurada]', L.join(' | ')); }, 5000).unref();
+const IXM = [], INBOX = [], STORE = {}, IAMOCK = [], INFL = new Map(), STRIPE = { calls: [], ses: {}, subs: {}, paid: new Set() }, MAILS = []; if (process.env.DEBUGAPI) setInterval(() => { const L = [...INFL.values()].map(f => f()).filter(x => +x.split(' ').pop().replace('ms', '') > 5000); if (L.length) console.log('    [api pendurada]', L.join(' | ')); }, 5000).unref();
 // Google simulado: autorização (volta logo com um code), tokens (RT-1 e AT-n), Gmail (2 conversas) e Calendar (3 agendas, 1 escondida)
 const GM = { reset() { this.tokenCalls = []; this.queries = []; this.revoked = new Set(); this.reject = new Set(); this.issued = []; this.n = 0; },
   b64: s => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
@@ -111,12 +111,15 @@ const srv = http.createServer((req, res) => {
       INBOX.push({ id: crypto.randomUUID(), t: new Date().toISOString(), v, d: q.d || '', c: q.c || '' }); out('✓ registado', 1); });
     return; }
   // e-mails simulados (código de confirmação)
+  if (u.pathname.startsWith('/ixmock/')) { let body = ''; req.on('data', c => body += c); req.on('end', () => { let j = {}; try { j = body ? JSON.parse(body) : {}; } catch (e) { } IXM.push({ m: req.method, p: u.pathname.slice(7), q: u.query, j }); const J = (o, st = 200) => { res.writeHead(st, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); };
+    if (u.query.api_key !== 'chave-ix') return J({ errors: [{ error: 'Authentication Error' }] }, 401); if (u.pathname === '/ixmock/invoice_receipts.json' && req.method === 'POST') return J({ invoice: { id: 7000 + IXM.length, permalink: 'https://web.invoicexpress.com/documents/x' + IXM.length, status: 'draft' } }, 201); return J({ invoice: { id: 1, status: 'settled' } }); }); return; }
   if (u.pathname === '/emailmock') { let body = ''; req.on('data', c => body += c); req.on('end', () => { if (MAILS.falha) { res.writeHead(401, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ code: 'unauthorized', message: 'Unrecognised IP address 1.2.3.4' })); return; } try { MAILS.push(JSON.parse(body)); } catch (e) { } res.writeHead(200, { 'Content-Type': 'application/json' }); res.end('{"id":"m1"}'); }); return; }
   // Stripe simulado (planos e cobrança): produtos, pagamento, assinaturas e portal
   if (u.pathname.startsWith('/stripemock/v1/')) { let body = ''; req.on('data', c => body += c); req.on('end', () => { const P = u.pathname.slice('/stripemock/v1/'.length), f = Object.fromEntries(new URLSearchParams(req.method === 'GET' ? String(u.search || '').slice(1) : body)), J = (o, st = 200) => { res.writeHead(st, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); };
     STRIPE.calls.push({ m: req.method, p: P, f, auth: req.headers.authorization || '' }); const rid = n => n + '_' + crypto.randomBytes(6).toString('hex'), end = () => Math.floor(Date.now() / 1000) + 30 * 86400;
     const subOf = (meta, cur, amount) => { const id = rid('sub'), x = { id, object: 'subscription', customer: 'cus_' + (meta.uid || 'x').slice(0, 10), livemode: false, status: 'active', cancel_at_period_end: false, metadata: meta, currency: cur, items: { data: [{ id: rid('si'), current_period_end: end(), price: { currency: cur, unit_amount: amount } }] } }; STRIPE.subs[id] = x; return x; };
     if (P === 'products' && req.method === 'POST') return J({ id: rid('prod'), name: f.name });
+    { const mb = P.match(/^customers\/(cus_\w+)\/balance_transactions$/); if (mb && req.method === 'POST') return J({ id: rid('cbtxn'), object: 'customer_balance_transaction', customer: mb[1], amount: +f.amount, currency: f.currency }); }
     if (P === 'checkout/sessions' && req.method === 'POST' && STRIPE.semNada) return J({ error: { message: 'No valid payment method types for this Checkout Session. Please ensure that you have activated payment methods compatible with your chosen currency in your dashboard (https://dashboard.stripe.com/settings/payment_methods) or specify `payment_method_types`.' } }, 400);
     if (P === 'checkout/sessions' && req.method === 'POST' && STRIPE.semMarca && Object.keys(f).some(k => k.startsWith('branding_settings'))) return J({ error: { message: 'Received unknown parameter: branding_settings' } }, 400);
     if (P === 'checkout/sessions' && req.method === 'POST') { const id = rid('cs_test'); STRIPE.ses[id] = { id, f, status: 'open' }; return J({ id, url: 'https://checkout.stripe.test/c/' + id }); }
@@ -1152,6 +1155,48 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
           sair.st === 200 && /deixas de receber/.test(sair.t) && falso === 400 && off4 === true && /op=sair&e=[a-f0-9]{40}&s=/.test(lk) && pref.conta && pref.conta.mailOff === true && pref2.conta && pref2.conta.mailOff === false
           && est.ok && est.cfg && est.tipos.length === 5 && naoAdm._st === 403 && /Prumo/.test(ver.html || '') && /teste grátis acaba daqui a 3 dias/.test(ver.sub || '') && lig.cfg && lig.cfg.on === true && lig2.cfg && lig2.cfg.on === false,
           JSON.stringify({ sair: sair.st, falso, off4, lk: lk.slice(0, 60), pref: pref.conta && pref.conta.mailOff, est: est._st, naoAdm: naoAdm._st, ver: ver.sub, lig: lig.cfg, lig2: lig2.cfg }).slice(0, 600));
+      } finally { repor(); } }
+    // v4.03 · passos 5 e 6: números do negócio, Indique um amigo e faturas certificadas (InvoiceXpress)
+    { const N0 = require(path.join(ROOT, 'api', '_nuvem.js')), P0 = require(path.join(ROOT, 'api', '_planos.js')), EMM = require(path.join(ROOT, 'api', 'emails.js')), FAT = require(path.join(ROOT, 'api', '_faturas.js'));
+      const ENV = ['STRIPE_SECRET_KEY', 'NAUTILO_STRIPE_API', 'INVOICEXPRESS_ACCOUNT', 'INVOICEXPRESS_API_KEY', 'INVOICEXPRESS_API_BASE', 'NAUTILO_FATURA_IVA', 'NAUTILO_FATURAS'], old = Object.fromEntries(ENV.map(k => [k, process.env[k]])), repor = () => ENV.forEach(k => { if (old[k] == null) delete process.env[k]; else process.env[k] = old[k]; });
+      const lerA = async eid => N0.open(await N0.accKey(), (await N0.store().get('a/' + eid)).buf), porA = async (eid, r) => N0.store().put('a/' + eid, N0.seal(await N0.accKey(), r), {});
+      try { const now = Date.now(), DIA = 864e5;
+        // Indique um amigo: o link, o registo com o código e a recompensa quando o amigo paga
+        const X = await reg(); X.eid = await N0.emailId(X.email); const cv = await api('conta', { op: 'convite' }, { tok: X.tok }), cod = (cv.convite || {}).codigo, cv2 = await api('conta', { op: 'convite' }, { tok: X.tok });
+        const ye = 'atk' + crypto.randomBytes(5).toString('hex') + '@teste.pt', Y = await api('conta', { op: 'registar', email: ye, senha: 'segredo123', termos: TERMOS_V, saude: true, idade: true, ref: cod }), yeid = await N0.emailId(ye);
+        const ze = 'atk' + crypto.randomBytes(5).toString('hex') + '@teste.pt', Z = await api('conta', { op: 'registar', email: ze, senha: 'segredo123', termos: TERMOS_V, saude: true, idade: true, ref: 'ZZZZZZZ' }), zeid = await N0.emailId(ze);
+        const ry = await lerA(yeid), rz = await lerA(zeid), cv3 = await api('conta', { op: 'convite' }, { tok: X.tok });
+        const r0 = await EMM.run({ force: true, so: [yeid] });   // ainda não paga: nada
+        ry.plano = { id: 'avancado', estado: 'active', modo: P0.modo(), ate: now + 30 * DIA, at: now, ciclo: 'mes' }; await porA(yeid, ry);
+        const r1 = await EMM.run({ force: true, so: [yeid] }), r1b = await EMM.run({ force: true, so: [yeid] }), rx = await lerA(X.eid), ryd = await lerA(yeid), eu = await api('conta', { op: 'eu' }, { tok: X.tok });
+        ok('Indique um amigo: cada conta tem o seu link (sempre o mesmo); quem cria conta com ele fica ligado a quem convidou (um código falso não liga); quando o amigo passa a pagar, quem convidou ganha 1 mês (aqui o Completo por mais 30 dias, além do teste), com aviso no app; só uma vez',
+          /^[A-Z2-9]{7}$/.test(cod || '') && cv2.convite.codigo === cod && Y.token && ry.ref && ry.ref.eid === X.eid && !rz.ref && cv3.convite.entraram === 1 && r0.convites === 0 && r1.convites === 1 && r1b.convites === 0 && !!ryd.refOk
+          && rx.planoAdm && rx.planoAdm.id === 'completo' && rx.planoAdm.ate > now + 40 * DIA && rx.convPagos === 1 && (rx.avisos || []).some(a => a.t === 'convite' && a.como === 'mes') && eu.conta && eu.conta.plano && eu.conta.plano.oferta === 1,
+          JSON.stringify({ cod, Y: !!Y.token, ref: !!ry.ref, rz: !!rz.ref, ent: cv3.convite && cv3.convite.entraram, r0: r0.convites, r1: r1.convites, r1b: r1b.convites, adm: rx.planoAdm, pagos: rx.convPagos, plano: eu.conta && eu.conta.plano }).slice(0, 600));
+        // quem convidou e já paga no site: o mês sai como crédito no Stripe (saldo do cliente)
+        process.env.STRIPE_SECRET_KEY = 'sk_test_convite'; process.env.NAUTILO_STRIPE_API = 'http://localhost:' + PORT + '/stripemock';
+        const X2 = await reg(); X2.eid = await N0.emailId(X2.email); const rx2 = await lerA(X2.eid); rx2.plano = { id: 'essencial', estado: 'active', modo: P0.modo(), ate: now + 20 * DIA, at: now, sub: 'sub_conv1', cus: 'cus_conv1', ciclo: 'mes', cur: 'EUR' }; await porA(X2.eid, rx2);
+        const c2 = (await api('conta', { op: 'convite' }, { tok: X2.tok })).convite.codigo, we = 'atk' + crypto.randomBytes(5).toString('hex') + '@teste.pt'; await api('conta', { op: 'registar', email: we, senha: 'segredo123', termos: TERMOS_V, saude: true, idade: true, ref: c2 }); const weid = await N0.emailId(we), rw = await lerA(weid);
+        rw.plano = { id: 'completo', estado: 'active', modo: P0.modo(), ate: now + 30 * DIA, at: now, ciclo: 'ano' }; await porA(weid, rw); const n0 = STRIPE.calls.length, r2 = await EMM.run({ force: true, so: [weid] }), bt = STRIPE.calls.slice(n0).find(c => /balance_transactions/.test(c.p)), rx2b = await lerA(X2.eid);
+        ok('Indique um amigo: se quem convidou já paga no site, o mês grátis sai como desconto na próxima fatura (crédito do valor de 1 mês no Stripe)', r2.convites === 1 && bt && bt.p === 'customers/cus_conv1/balance_transactions' && bt.f.amount === '-599' && bt.f.currency === 'eur' && !rx2b.planoAdm && (rx2b.avisos || []).some(a => a.t === 'convite' && a.como === 'credito'),
+          JSON.stringify({ r2: r2.convites, bt: bt && { p: bt.p, f: bt.f }, adm: rx2b.planoAdm }).slice(0, 400));
+        repor();
+        // números do negócio na Administração
+        await api('conta', { op: 'uso', min: 1, dia: new Date().toISOString().slice(0, 10), vs: { financas: 3, habitos: 1, '<x>': 9 } }, { tok: X.tok });
+        const adm = await api('conta', { op: 'admin' }, { tok: ad.token }), ng = adm.negocio || {}, fin = (ng.abas || []).find(a => a.k === 'financas');
+        ok('Números do negócio na Administração: conversão do teste para pago, quanto entra por mês por moeda, quantos vão cancelar, contas novas e as abas mais usadas (só nomes de abas válidos e contagens)',
+          typeof ng.pagos === 'number' && ng.pagos >= 1 && typeof ng.testes === 'number' && (ng.conv === null || typeof ng.conv === 'number') && ng.mrr && ng.mrr.EUR > 0 && typeof ng.cancelar === 'number' && ng.novos >= 3 && fin && fin.p >= 1 && fin.n >= 3 && !(ng.abas || []).some(a => /</.test(a.k)),
+          JSON.stringify({ pagos: ng.pagos, testes: ng.testes, conv: ng.conv, mrr: ng.mrr, novos: ng.novos, abas: (ng.abas || []).slice(0, 4) }).slice(0, 400));
+        // faturas certificadas: desligadas sem a conta; ligadas, cada pagamento do Stripe vira fatura-recibo finalizada e enviada ao cliente, só uma vez
+        const des = await FAT.run({ faturas: [] });
+        Object.assign(process.env, { INVOICEXPRESS_ACCOUNT: 'prumo-teste', INVOICEXPRESS_API_KEY: 'chave-ix', INVOICEXPRESS_API_BASE: 'http://localhost:' + PORT + '/ixmock', NAUTILO_FATURA_IVA: '23', NAUTILO_FATURAS: '1' });
+        const fx = { id: 'in_teste_' + crypto.randomBytes(4).toString('hex'), number: 'PRUMO-0001', amount_paid: 999, currency: 'eur', customer: 'cus_ab', customer_email: 'cliente@teste.pt', customer_name: 'Cliente Teste', customer_tax_ids: [{ value: 'PT123456789' }], customer_address: { country: 'PT' }, status_transitions: { paid_at: Math.floor(now / 1000) }, lines: { data: [{ description: 'Avançado (mensal)', metadata: { plano: 'avancado' } }] } };
+        const i0 = IXM.length, f1 = await FAT.run({ faturas: [fx] }), f2 = await FAT.run({ faturas: [fx] }), R = IXM.slice(i0), cri = R.find(x => x.p === '/invoice_receipts.json'), fin2 = R.find(x => /change-state/.test(x.p)), em = R.find(x => /email-document/.test(x.p));
+        process.env.NAUTILO_FATURA_IVA = 'M10'; const dM = FAT._t.documento({ iva: 'M10' }, fx).invoice, est = await FAT.estado();
+        ok('Faturas certificadas (InvoiceXpress): desligadas sem a conta; ligadas, cada pagamento vira fatura-recibo com o cliente e o NIF, o valor sem IVA a 23% (9,99 → 8,12), finalizada e enviada ao cliente, uma vez só; em regime de isenção leva o motivo M10',
+          des.desligada === 1 && f1.emitidas === 1 && f2.emitidas === 0 && cri && cri.j.invoice.client.fiscal_id === '123456789' && cri.j.invoice.client.email === 'cliente@teste.pt' && cri.j.invoice.items[0].unit_price === 8.12 && cri.j.invoice.items[0].tax.value === 23 && /Avançado/.test(cri.j.invoice.items[0].name) && cri.j.proprietary_uid === 'stripe-' + fx.id
+          && fin2 && fin2.j.invoice.state === 'finalized' && em && em.j.message.client.email === 'cliente@teste.pt' && dM.tax_exemption_code === 'M10' && dM.items[0].tax.value === 0 && dM.items[0].unit_price === 9.99 && est.ligada && est.n >= 1,
+          JSON.stringify({ des, f1, f2, cri: cri && cri.j && { c: cri.j.invoice.client, it: cri.j.invoice.items }, fin: fin2 && fin2.j, em: em && em.j && em.j.message.client, dM: { t: dM.tax_exemption_code, it: dM.items } }).slice(0, 700));
       } finally { repor(); } }
     // v3.91: Sombras (a silhueta do dia, 3 tentativas, a imagem original só no fim, pontos e dias seguidos) e Sequência a dois (o dia só conta com os dois, recomeça se um falhar, recorde e medalhas)
     { const N0 = require(path.join(ROOT, 'api', '_nuvem.js')), ENV = ['NAUTILO_SB_POOL', 'NAUTILO_SB_LOCAL', 'NAUTILO_SEQ_AGORA'], old = Object.fromEntries(ENV.map(k => [k, process.env[k]])), repor = () => ENV.forEach(k => { if (old[k] == null) delete process.env[k]; else process.env[k] = old[k]; });
@@ -4045,6 +4090,18 @@ async function v401Tests(b) { cur = 'v4.01'; console.log('\n=== v4.01 ===');
     OS.act.foPlant(); await w(1200); r.pedidos = pedidos; r.tw = OS.Forest._tw(); r.run = !!OS.Forest.run(); OS.Forest.finish(false); await w(300); return r; });
   ok('Floresta: ao plantar abre sozinho o relógio flutuante (opção «Relógio flutuante ao plantar», que se pode desligar) e um relógio à parte continua a contar quando minimizas o app',
     fo.run && fo.tw && (fo.ok ? fo.cb && fo.lig && fo.desl && fo.relig && fo.pedidos >= 1 : fo.nota), JSON.stringify(fo));
+  // v4.03 · passo 4: a primeira semana guiada (só para perfis novos): um passo por dia e o menu a abrir aos poucos
+  const sm = await E(p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), U = OS.U, r = {};
+    r.antes = OS.Semana.ativa(); OS.setOne('semana', { ini: U.today(), vis: {}, abertas: [] }); await w(200);
+    const F = OS.Semana.feitos(), d = OS.Semana.dia(), primeiro = F.indexOf(false); r.dia = d; r.esperado = Math.max(1, primeiro < 0 ? 7 : primeiro + 1);
+    const fech = OS.Semana.fechadas(), DI = OS.Semana.DIAS; r.fechadasOk = DI.every((x, i) => x.abre.every(k => i < d ? !fech.has(k) : fech.has(k) || OS.one('semana').abertas.includes(k)));
+    r.menuSemUni = d < 5 ? OS.Areas.hidden().has('universidade') : true; r.visaoSempre = !OS.Areas.hidden().has('visao');
+    location.hash = 'visao'; await w(700); const c = document.querySelector('#view .sm-c'); r.cartao = !!c; r.txt = c ? c.innerText.replace(/\s+/g, ' ').slice(0, 160) : ''; r.itens = c ? c.querySelectorAll('.sm-l li').length : 0;
+    const k = [...fech][0]; r.k = k; if (k) { OS.act.areaOn({ dataset: { k } }); await w(100); r.abriu = !OS.Semana.fechadas().has(k) && !(OS.one('areas').hide || []).includes(k); }
+    window.confirm = () => true; OS.act.smTudo(); await w(100); r.tudo = OS.Semana.fechadas().size === 0 && !OS.Semana.ativa(); location.hash = 'visao'; await w(500); r.semCartao = !document.querySelector('#view .sm-c');
+    OS.setOne('semana', { ini: '', tudo: 0, fim: 0, vis: {}, abertas: [] }); return r; });
+  ok('A tua primeira semana: um passo por dia no Painel (7 passos, o de hoje com o botão), o menu começa só com o essencial e abre as áreas de cada dia; abrir uma área no Explorar não a esconde para sempre; «Mostrar tudo já» abre tudo e tira o cartão',
+    !sm.antes && sm.dia === sm.esperado && sm.fechadasOk && sm.menuSemUni && sm.visaoSempre && sm.cartao && sm.itens === 7 && /primeira semana/i.test(sm.txt) && (!sm.k || sm.abriu) && sm.tudo && sm.semCartao, JSON.stringify(sm).slice(0, 600));
   // Caça às assinaturas
   const as = await E(p, async () => { const w = ms => new Promise(r => setTimeout(r, ms)), U = OS.U, t = U.today(), acc = (OS.all('accounts').find(a => !a.archived) || OS.add('accounts', { name: 'Conta teste', type: 'Conta à ordem', cur: 'EUR' })).id;
     const L = []; for (let i = 1; i <= 3; i++) L.push(OS.add('transactions', { type: 'Despesa', amount: 12.99, date: U.addDays(t, -30 * i + 2), desc: 'NETFLIX.COM ' + (1000 + i), account: acc, cat: 'Lazer' }));
