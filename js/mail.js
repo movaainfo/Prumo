@@ -142,7 +142,7 @@ const P = {};
 P.faculdade = () => OS.UniMail ? OS.UniMail.view() : '';
 P[''] = when => { const L = Mail.items(), c = Mail.counts(), by = k => L.filter(x => x.c === k);
   if (!M.at) return ready() && ver() >= 9 ? `<div class="pn">${UI.empty('Ainda sem e-mails. Toca em Atualizar.')}</div>` : '';
-  return `<div class="kpis">${UI.kpi('Urgentes', c.urg, '', { tone: c.urg ? 'neg' : '' })}${UI.kpi('Para responder', c.resp)}${UI.kpi('Não lidos', c.unread)}${UI.kpi('Spam suspeito', c.spam, '', { tone: c.spam ? 'warn' : '' })}</div>
+  return `<div class="kpis">${UI.kpi('Urgentes', c.urg, '', { tone: c.urg ? 'neg' : '' })}${UI.kpi('Para responder', c.resp)}${UI.kpi('Não lidos', c.unread, c.unread ? `<button class="btn xs" data-act="mlAllRead">${UI.ic('check')}Marcar tudo como lido</button>` : 'tudo lido')}${UI.kpi('Spam suspeito', c.spam, '', { tone: c.spam ? 'warn' : '' })}</div>
   <div class="pn ml-sum"><div class="pn-h"><h3>${aiOn() ? 'Resumo' : 'Resumo'}</h3><small class="mut">${esc(when)}</small></div><p>${esc(M.sum || (aiOn() ? 'Toca em Atualizar para a IA ler os e-mails.' : 'Liga o Spyke (IA) em Definições → Spyke para teres o resumo escrito e a separação inteligente. Agora uso regras simples.'))}</p>${(OS.Spyke && OS.Spyke.say) ? `<button class="btn xs ghost" data-act="mlSay">${UI.ic('mic')}Spyke, lê-me isto</button>` : ''}</div>
   ${['urgente', 'responder', 'atencao'].map(k => by(k).length ? `<div class="pn"><div class="pn-h"><h3>${catL(k)[2]} · ${by(k).length}</h3></div><div class="ml-list">${by(k).map(x => row(x)).join('')}</div></div>` : '').join('')}
   ${by('urgente').length + by('responder').length + by('atencao').length ? '' : `<div class="pn">${UI.empty('Nada urgente nem à espera de resposta.')}</div>`}
@@ -226,6 +226,11 @@ A.mlRefresh = () => { const h = location.hash; if (/linkedin/.test(h)) refreshLi
 A.mlLi = () => refreshLi(true);
 A.mlDone = b => { const it = byId(b.dataset.id); M.done[b.dataset.id] = Date.now(); save(); if (it && it.u) act(it, 'lido'); UI.toast('Feito', 'pos'); OS.request(); };
 A.mlUndo = () => { M.done = {}; save(); OS.request(); };
+// v3.99: marcar tudo como lido de uma vez (no Prumo; com o script Google também no Gmail, aos poucos para não sobrecarregar)
+A.mlAllRead = async () => { const L = M.items.filter(x => x.u); if (!L.length) return UI.toast('Já não há e-mails por ler', 'pos');
+  L.forEach(x => { x.u = false; }); save(); OS.request(); let n = 0;
+  if (!viaG()) { for (let i = 0; i < L.length; i += 10) { const grp = L.slice(i, i + 10); const r = await Promise.all(grp.map(it => act(it, 'lido'))); n += r.filter(Boolean).length; } }
+  UI.toast(viaG() ? `${L.length} marcados como lidos no Prumo. No Gmail continuam como estavam (a ligação Google do Prumo só tem permissão de leitura).` : `${L.length} marcados como lidos${n ? ' (também no Gmail)' : ''}.`, 'pos'); };
 A.mlDo = async b => { const it = byId(b.dataset.id); if (!it) return; const a = b.dataset.a; b.disabled = true; const ok = await act(it, a); if (ok) { M.items = M.items.filter(x => x.id !== it.id); save(); UI.toast(a === 'spam' ? 'Enviado para o spam' : 'Arquivado', 'pos'); } else UI.toast('O script não conseguiu. Atualiza-o para a versão 9.', 'neg'); OS.request(); };
 A.mlBulk = b => { const L = Mail.items().filter(x => x.c === b.dataset.c), a = b.dataset.a; if (!L.length) return;
   UI.ask(a === 'spam' ? `Mandar ${L.length} e-mail(s) suspeito(s) para o spam?` : `Arquivar ${L.length} promoção(ões)?`, 'No Gmail. Podes desfazer lá.', a === 'spam' ? 'Mandar para spam' : 'Arquivar', async () => { let n = 0; for (const it of L) if (await act(it, a)) { n++; M.items = M.items.filter(x => x.id !== it.id); } save(); UI.toast(n + ' feito(s)', n ? 'pos' : 'neg'); OS.request(); }); };

@@ -1,7 +1,7 @@
-/* PRUMO — mais jogos (v3.90): Duelo de hábitos, Quiz relâmpago das 21h e Bolão da temporada.
+/* PRUMO — mais jogos (v3.90): Duelo de hábitos, Quiz relâmpago das 13h e Bolão da temporada.
    · Duelo de hábitos (#jogos.duelo): 7 dias contra um amigo. Conta o que fazes de verdade no app (hábitos cumpridos, treinos e corridas,
      tarefas feitas, minutos de foco e estudo). Só vão para o servidor os pontos de cada dia, nunca os nomes dos hábitos.
-   · Quiz relâmpago (#animes.quiz): às 21h de Lisboa, 10 perguntas de anime iguais para todos, 15 segundos cada; mais rápido = mais pontos.
+   · Quiz relâmpago (#animes.quiz): às 13h de Lisboa, 10 perguntas de anime iguais para todos, 15 segundos cada; mais rápido = mais pontos.
    · Bolão da temporada (#animes.bolao): prever o melhor e o mais popular da temporada e a nota final do mais esperado. */
 (() => {
 'use strict';
@@ -82,21 +82,21 @@ const pergHTML = (p, eu, fb) => { const el = Math.max(0, (qzAgora() - p.at) / 10
     <h2>${esc(p.t)}</h2><div class="qz-op">${p.op.map((o, k) => { const cls = fb ? (k === fb.certa ? ' certa' : k === fb.op ? ' errada' : ' off') : '';
       return `<button type="button" class="qz-b${cls}" data-act="qzResp" data-i="${p.i}" data-op="${k}" ${fb ? 'disabled' : ''}><i>${'ABCD'[k]}</i><span>${esc(o)}</span></button>`; }).join('')}</div>
     ${fb ? `<p class="qz-fb ${fb.ok ? 'pos' : 'neg'}">${fb.ok ? `Certo! +${fb.pts} pontos` : fb.tempo || fb.op < 0 ? 'Acabou o tempo.' : 'Não era essa.'}</p>` : ''}</section>`; };
-const qzPagina = () => { if (!conta()) return semConta('Quiz relâmpago', 'Todos os dias às 21h, 10 perguntas de anime.'); qzCarregar(false); const q = QS.d;
+const qzPagina = () => { if (!conta()) return semConta('Quiz relâmpago', 'Todos os dias às 13h (hora de almoço), 10 perguntas de anime.'); qzCarregar(false); const q = QS.d;
   if (!q) return `<section class="j2-pg"><p class="an-ld">${QS.err ? esc(QS.err) : '<span class="an-sp"></span>A abrir o quiz…'}</p></section>`;
-  const hero = (t, d) => `<div class="j2-hero qz-hero"><div><span class="j2-k">${UI.ic('bolt2')}Quiz relâmpago · todos os dias às 21h</span><h2>${t}</h2><p>${d}</p></div></div>`, regras = `<ul class="qz-reg"><li><b>10 perguntas</b> de anime, iguais para toda a gente</li><li><b>15 segundos</b> por pergunta</li><li>Certa vale 100 pontos e <b>até mais 50</b> pela rapidez</li><li>Às 21h15 sai o ranking: pontos para o ranking de animes e medalhas para os 3 primeiros</li></ul>`;
-  if (q.fase === 'espera') return `<section class="j2-pg">${hero('O quiz de hoje começa daqui a <span class="qz-cd" data-ate="' + q.abreAt + '">' + falta(q.abreAt) + '</span>', 'Prepara-te: às 21h de Lisboa abrem as perguntas e tens até às 21h12 para começar.')}${regras}
+  const hero = (t, d) => `<div class="j2-hero qz-hero"><div><span class="j2-k">${UI.ic('bolt2')}Quiz relâmpago · todos os dias às 13h</span><h2>${t}</h2><p>${d}</p></div></div>`, regras = `<ul class="qz-reg"><li><b>10 perguntas</b> de anime, iguais para toda a gente</li><li><b>15 segundos</b> por pergunta</li><li>Certa vale 100 pontos e <b>até mais 50</b> pela rapidez</li><li>Às 13h15 sai o ranking: pontos para o ranking de animes e medalhas para os 3 primeiros</li></ul>`;
+  if (q.fase === 'espera') return `<section class="j2-pg">${hero('O quiz de hoje começa daqui a <span class="qz-cd" data-ate="' + q.abreAt + '">' + falta(q.abreAt) + '</span>', 'Prepara-te: às 13h de Lisboa abrem as perguntas e tens até às 13h12 para começar.')}${regras}
     ${q.ontem && q.ontem.length ? `<section class="j2-sec"><h3>Os melhores de ontem</h3><ol class="qz-rk">${q.ontem.map((x, i) => `<li><b>${i + 1}.º</b><span>${esc(x.nome)}${x.user ? ` <small>@${esc(x.user)}</small>` : ''}</span><em>${nf(x.pts)}</em></li>`).join('')}</ol></section>` : ''}</section>`;
   if (q.fase === 'aberto') { if (QS.fb) return `<section class="j2-pg qz-pg">${pergHTML(QS.fb.p, q.eu, QS.fb)}</section>`;
     if (q.pergunta) { qzTempo(q.pergunta); return `<section class="j2-pg qz-pg">${pergHTML(q.pergunta, q.eu)}</section>`; }
-    if (q.eu && q.eu.fim) { const c = q.eu.r.filter(x => x.ok).length; return `<section class="j2-pg">${hero(`Fizeste ${nf(q.eu.pts)} pontos`, `${c} de ${q.n} certas. O ranking sai às 21h15, daqui a <span data-ate="${q.fechaAt}">${falta(q.fechaAt)}</span>.`)}<div class="qz-res">${q.eu.r.map((x, i) => `<span class="${x.ok ? 'ok' : ''}" title="Pergunta ${i + 1}: ${x.ok ? '+' + x.p : '0'}">${i + 1}</span>`).join('')}</div></section>`; }
+    if (q.eu && q.eu.fim) { const c = q.eu.r.filter(x => x.ok).length; return `<section class="j2-pg">${hero(`Fizeste ${nf(q.eu.pts)} pontos`, `${c} de ${q.n} certas. O ranking sai às 13h15, daqui a <span data-ate="${q.fechaAt}">${falta(q.fechaAt)}</span>.`)}<div class="qz-res">${q.eu.r.map((x, i) => `<span class="${x.ok ? 'ok' : ''}" title="Pergunta ${i + 1}: ${x.ok ? '+' + x.p : '0'}">${i + 1}</span>`).join('')}</div></section>`; }
     const tarde = qzAgora() >= q.ultimo;
-    return `<section class="j2-pg">${hero('O quiz está a decorrer', tarde ? 'Já não dá tempo de começar hoje. Amanhã às 21h há mais.' : `Fecha às 21h15. Podes começar até às 21h12 (daqui a <span data-ate="${q.ultimo}">${falta(q.ultimo)}</span>).`)}${regras}
+    return `<section class="j2-pg">${hero('O quiz está a decorrer', tarde ? 'Já não dá tempo de começar hoje. Amanhã às 13h há mais.' : `Fecha às 13h15. Podes começar até às 13h12 (daqui a <span data-ate="${q.ultimo}">${falta(q.ultimo)}</span>).`)}${regras}
       ${tarde ? '' : `<button type="button" class="btn pri qz-go" data-act="qzComecar">${UI.ic('bolt2')}Começar o quiz</button>`}</section>`; }
   const meu = q.res && q.pos ? q.res[q.pos - 1] : null;
-  return `<section class="j2-pg">${hero('Os resultados de hoje', meu ? `Ficaste em <b>${q.pos}.º</b> de ${q.res.length} com ${nf(meu.pts)} pontos (+${meu.rk} no ranking de animes).` : q.eu ? 'Jogaste, mas não chegaste a pontuar. Amanhã há mais.' : 'Não jogaste hoje. Amanhã às 21h há mais.')}
+  return `<section class="j2-pg">${hero('Os resultados de hoje', meu ? `Ficaste em <b>${q.pos}.º</b> de ${q.res.length} com ${nf(meu.pts)} pontos (+${meu.rk} no ranking de animes).` : q.eu ? 'Jogaste, mas não chegaste a pontuar. Amanhã há mais.' : 'Não jogaste hoje. Amanhã às 13h há mais.')}
     ${q.res && q.res.length ? `<ol class="qz-rk">${q.res.map((x, i) => `<li class="${x.eu ? 'eu' : ''}"><b>${i + 1}.º</b>${av(x, 28)}<span>${esc(x.nome)}${x.user ? ` <small>@${esc(x.user)}</small>` : ''}<small>${x.certas} de ${q.n} certas</small></span><em>${nf(x.pts)}</em></li>`).join('')}</ol>` : '<p class="mut">Ninguém jogou hoje.</p>'}
-    <p class="mut j2-n">O próximo quiz é amanhã às 21h (hora de Lisboa).</p></section>`; };
+    <p class="mut j2-n">O próximo quiz é amanhã às 13h (hora de Lisboa).</p></section>`; };
 A.qzComecar = async b => { b.disabled = true; try { const j = await call('quizComecar', {}); QS.d = j.quiz; QS.off = j.quiz.ts - Date.now(); QS.ti = -1; OS.request(); } catch (e) { UI.toast(e.message, 'neg'); qzCarregar(true); } };
 A.qzResp = b => { const p = QS.d && QS.d.pergunta; if (!p || +b.dataset.i !== p.i || QS.fb) return; responder(p.i, +b.dataset.op); };
 // quando a contagem chega ao fim (abre ou fecha), lê outra vez
@@ -196,10 +196,10 @@ OS.Sequencia = { pagina: sqPagina, carregar: sqCarregar, diaCumprido, _S: QQ };
 
 /* =================== a tela de Jogos: os 3 jogos novos e a página do Duelo =================== */
 const tiles = () => { const q = QS.d, b = BS.d; if (conta()) { qzCarregar(false); boCarregar(false); duCarregar(false); sbCarregar(false); sqCarregar(false); }
-  const qt = !q ? 'Todos os dias às 21h' : q.fase === 'espera' ? 'Começa daqui a ' + falta(q.abreAt) : q.fase === 'aberto' ? (q.eu ? (q.eu.fim ? 'Jogaste hoje: ' + nf(q.eu.pts) + ' pts' : 'A meio do quiz') : 'A decorrer agora') : 'Resultados de hoje';
+  const qt = !q ? 'Todos os dias às 13h' : q.fase === 'espera' ? 'Começa daqui a ' + falta(q.abreAt) : q.fase === 'aberto' ? (q.eu ? (q.eu.fim ? 'Jogaste hoje: ' + nf(q.eu.pts) + ' pts' : 'A meio do quiz') : 'A decorrer agora') : 'Resultados de hoje';
   const ab = b && b.boloes.find(o => o.estado === 'aberto'), du = DS.d && DS.d.duelos.filter(w => w.estado === 'ativa').length;
   return `<a class="jg-t j2-t du" href="#jogos.duelo"><span class="jg-ic">${UI.ic('swords')}</span><b>Duelo de hábitos</b><p>7 dias contra um amigo: ganha quem cumprir mais hábitos, treinos e tarefas.</p><small>${du ? du + (du === 1 ? ' duelo a decorrer' : ' duelos a decorrer') : 'Desafia um amigo'}</small></a>
-    <a class="jg-t j2-t qz${q && q.fase === 'aberto' ? ' on' : ''}" href="#animes.quiz"><span class="jg-ic">${UI.ic('bolt2')}</span><b>Quiz relâmpago</b><p>10 perguntas de anime às 21h, iguais para todos. Quanto mais rápido, mais pontos.</p><small>${esc(qt)}</small></a>
+    <a class="jg-t j2-t qz${q && q.fase === 'aberto' ? ' on' : ''}" href="#animes.quiz"><span class="jg-ic">${UI.ic('bolt2')}</span><b>Quiz relâmpago</b><p>10 perguntas de anime às 13h, iguais para todos. Quanto mais rápido, mais pontos.</p><small>${esc(qt)}</small></a>
     <a class="jg-t j2-t sb" href="#animes.sombras"><span class="jg-ic">${UI.ic('eye')}</span><b>Sombras</b><p>A silhueta de uma personagem de anime por dia. 3 tentativas para dizer quem é.</p><small>${SS.d ? (SS.d.fim ? (SS.d.ok ? 'Acertaste hoje' : 'Amanhã há outra') : 'A de hoje está à espera') : 'Uma por dia'}</small></a>
     <a class="jg-t j2-t sq" href="#jogos.sequencia"><span class="jg-ic">${UI.ic('flame')}</span><b>Sequência a dois</b><p>Uma sequência com um amigo: o dia só conta quando os dois cumprem.</p><small>${QQ.d && QQ.d.seqs.some(w => w.estado === 'ativa') ? 'Maior sequência: ' + Math.max(...QQ.d.seqs.filter(w => w.estado === 'ativa').map(w => w.cur)) + ' dias' : 'Convida um amigo'}</small></a>
     <a class="jg-t j2-t bo" href="#animes.bolao"><span class="jg-ic">${UI.ic('ticket')}</span><b>Bolão da temporada</b><p>Prevê o melhor e o mais popular da temporada de animes.</p><small>${ab ? 'Palpites até ' + dataC(ab.fecha) : 'Ver os bolões'}</small></a>`; };

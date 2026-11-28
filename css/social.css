@@ -295,3 +295,32 @@
 .so-all li>span:nth-child(2){display:flex;flex-direction:column;min-width:0}.so-all small{color:var(--mut);font-size:12px}
 .so-ali form{margin-top:10px}
 @media (max-width:480px){.so-all li{grid-template-columns:auto 1fr}.so-all li>button,.so-all li>.so-mbt{grid-column:1/-1;justify-self:start}}
+/* v3.99 · editar o clã e cargos */
+.so-cldesc{white-space:pre-line}
+.so-cled,.so-cgf{margin-top:12px;max-width:560px}
+.so-lb{display:flex;flex-direction:column;gap:4px}.so-lb span{font-size:12.5px;font-weight:700;opacity:.8}
+.so-lb textarea{resize:vertical;min-height:72px}
+.so-cg{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;font-style:normal;font-size:11px;font-weight:800;background:color-mix(in srgb,var(--gc,#6b7280) 30%,transparent);border:1px solid color-mix(in srgb,var(--gc,#6b7280) 60%,transparent);vertical-align:1px}
+.so-cg.ld{--gc:#D4A017}
+.so-cgl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.so-cgl li{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-left:3px solid var(--gc)}
+.so-cgn{display:flex;flex-direction:column;min-width:0}.so-cgn b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.so-cgn small{opacity:.7;font-size:11.5px}.so-cgn i{display:none}
+.so-cgp{display:flex;flex-wrap:wrap;gap:5px}.so-cgp em{font-style:normal;font-size:11.5px;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.07)}
+.so-cga{display:flex;gap:6px}
+.so-perms{border:0;padding:0;margin:4px 0;display:flex;flex-direction:column;gap:6px}
+.so-perms legend{font-size:12.5px;font-weight:700;opacity:.8;margin-bottom:4px}
+.so-perms label{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.so-perms input{margin-top:3px}
+.so-cgs select{font:inherit;font-size:12px;padding:4px 8px;border-radius:8px;background:rgba(0,0,0,.3);color:inherit;border:1px solid rgba(255,255,255,.15);max-width:140px}
+@media (max-width:640px){.so-cgl li{grid-template-columns:minmax(0,1fr)}.so-cga{justify-content:flex-start}}
+/* v3.99 · conquistas de vida no perfil (Mundo, troféus reais, livros) */
+.ap-conq{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:14px;background:var(--an-c1,rgba(255,255,255,.04))}
+.ap-conq>small{color:var(--an-mut,var(--mut))}
+.ap-conq ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.ap-conq li{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:center;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.ap-conq li b{display:block;font-size:13.5px;line-height:1.25}.ap-conq li small{display:block;font-size:11.5px;color:var(--an-mut,var(--mut));line-height:1.3}
+.ap-cqa .tf-art{width:36px;height:auto;display:block;margin:auto}
+.ap-cqi{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(140deg,#d4a017,#7a5a0c)}
+.ap-cqi .ic{width:19px;height:19px;color:#fff}
+.ap-conq li.c-mundo .ap-cqi{background:linear-gradient(140deg,#2e9e5b,#0e5a37)}
+.ap-conq li.c-leituras .ap-cqi{background:linear-gradient(140deg,#7b4fd6,#3d2380)}

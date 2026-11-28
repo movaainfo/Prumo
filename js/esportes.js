@@ -9,6 +9,7 @@
 (() => {
 'use strict';
 const OS = window.OS, U = OS.U, UI = OS.UI, A = OS.act, V = OS.views, { esc } = U;
+if (!UI.IP.tv) UI.IP.tv = 'M3 7h18v12H3zM8 3l4 4 4-4M10 11l4 2-4 2z';
 OS.ONE_DEF.sports = { teams: [], mine: ['nba', 'f1'] };
 const st = () => { const s = OS.one('sports'); if (!Array.isArray(s.teams)) s.teams = []; if (s.teams.some(t => t.lg === 'volei')) s.teams = s.teams.filter(t => t.lg !== 'volei'); // o voleibol saiu dos Desportos
   if (!Array.isArray(s.mine)) s.mine = []; if (s.mine.includes('ufc')) s.mine = [...new Set(s.mine.map(k => k === 'ufc' ? 'mma' : k))]; return s; };
@@ -93,9 +94,16 @@ const isMine = (lg, id) => st().teams.some(t => t.lg === lg && t.id === id);
 /* ---------- peças ---------- */
 const spIc = (sp, big) => `<span class="sp-ic${big ? ' big' : ''}" style="--sc:${sp[4]}">${UI.ic(sp[5])}</span>`;
 // cartão de um jogo (equipas): grande para o destaque, normal nas listas
+// v3.99: o estado do jogo em português (a ESPN manda "End of 2nd", "3:00 - 1st", "Halftime"…)
+const detPt = s => String(s || '').replace(/\bEnd of (\d+)(st|nd|rd|th)\b/gi, 'Fim do $1.º').replace(/\bStart of (\d+)(st|nd|rd|th)\b/gi, 'Início do $1.º').replace(/\bEnd of Period\b/gi, 'Fim do período')
+  .replace(/\b(\d+)(st|nd|rd|th)\b/g, '$1.º').replace(/\bHalftime\b/gi, 'Intervalo').replace(/\bFinal\/OT\b/gi, 'Final (prol.)').replace(/\bFinal\/SO\b/gi, 'Final (penáltis)').replace(/\bFinal\/(\d+)\b/gi, 'Final ($1 entradas)')
+  .replace(/\bOT\b/g, 'Prol.').replace(/\bTop\b/g, 'Alto').replace(/\bBot\b/g, 'Baixo').replace(/\bMid\b/g, 'Meio').replace(/\bEnd\b/g, 'Fim').replace(/\bDelayed\b/gi, 'Atrasado').replace(/\bPostponed\b/gi, 'Adiado').replace(/\bCanceled\b/gi, 'Cancelado').replace(/\bQuarter\b/gi, 'período').replace(/\bPeriod\b/gi, 'período');
+// os jogos que aparecem no ecrã (para abrir o detalhe ao tocar)
+const EVS = new Map();
 const gCard = (e, o) => { o = o || {}; const sp = spOf(e.lg), lv = isLive(e), done = e.st === 'post', sc = (x, y) => done && x.w ? ' win' : done && y.w ? ' lose' : '';
-  return `<div class="sp-g${lv ? ' live' : ''}${o.big ? ' big' : ''}" style="--sc:${sp ? sp[4] : '#64748b'};--hc:${e.h.c || '#334155'};--ac:${e.a.c || '#334155'}">
-    <div class="sp-gt">${o.lg ? `<span class="sp-gl">${sp ? UI.ic(sp[5]) : ''}${esc(e.liga || (sp ? sp[1] : ''))}</span>` : ''}<span class="sp-gs${lv ? ' on' : ''}">${lv ? '<i></i>Ao vivo · ' : ''}${esc(lv || done ? e.det : dayL(e.d))}</span></div>
+  const fut = e.lg === 'futebol'; if (!fut) EVS.set(e.lg + ':' + e.id, e);
+  return `<div class="sp-g${lv ? ' live' : ''}${o.big ? ' big' : ''}" style="--sc:${sp ? sp[4] : '#64748b'};--hc:${e.h.c || '#334155'};--ac:${e.a.c || '#334155'}" role="button" tabindex="0" data-act="${fut ? 'fbMatch' : 'dsJogo'}" data-lg="${esc(e.lg)}" data-id="${esc(e.id)}" aria-label="Ver o jogo ${esc(e.a.n)} contra ${esc(e.h.n)}">
+    <div class="sp-gt">${o.lg ? `<span class="sp-gl">${sp ? UI.ic(sp[5]) : ''}${esc(e.liga || (sp ? sp[1] : ''))}</span>` : ''}<span class="sp-gs${lv ? ' on' : ''}">${lv ? '<i></i>Ao vivo · ' : ''}${esc(lv || done ? detPt(e.det || e.clk) : dayL(e.d))}</span></div>
     ${[[e.a, e.h], [e.h, e.a]].map(([x, y], i) => `<div class="sp-gr${sc(x, y)}${isMine(e.lg, x.id) ? ' me' : ''}">${img(x.logo, 'sp-gi', x.ab || x.n)}<span class="sp-gn"><b>${esc(o.big ? x.n : x.sn)}</b>${x.rec ? `<small>${esc(x.rec)}</small>` : ''}${i ? '<small class="sp-ha">casa</small>' : ''}</span><b class="sp-gp">${esc(e.st === 'pre' ? '' : x.s)}</b></div>`).join('')}
   </div>`; };
 const sec = (t, body, more) => `<section class="sp-sec"><div class="sp-sh"><h3>${t}</h3>${more || ''}</div>${body}</section>`;
@@ -317,33 +325,127 @@ const avPanel = () => { const a = avS(), perm = 'Notification' in window ? Notif
     <p class="sp-note">Das equipas que segues: golo no hóquei, touchdown na NFL e corrida no basebol; no basquetebol, o começo, o intervalo e o fim. Na Fórmula 1, na MotoGP e no MMA, toca no sino. Os golos do futebol estão no Futebol. ${OS.Push && OS.Push.on() ? 'Chegam mesmo com o Prumo fechado.' : 'Liga as notificações para chegarem também com o Prumo fechado.'}</p>
     ${FEED.length ? `<ul class="sp-feed">${FEED.slice(0, 5).map(f => `<li><span class="sp-fi">${UI.ic('bell')}</span><span><b>${esc(f.title)}</b> ${esc(f.body)}</span><small>${esc(agoL(f.at))}</small></li>`).join('')}</ul>` : ''}</section>`; };
 
-/* ---------- início: ao vivo, as tuas equipas, os desportos, Olimpíadas ---------- */
-const hub = () => { const s = st(), mine = s.mine.map(spOf).filter(Boolean), teams = s.teams;
-  // ao vivo e a seguir: os quadros de hoje dos desportos de equipa que segues (e das tuas equipas)
-  // v3.78: o Agora a jogar mostra TODOS os jogos ao vivo, de todas as modalidades (não só das que segues), e todo o futebol ao vivo do mundo
+/* ---------- início: as tuas equipas a jogar, todos os jogos ao vivo, as tuas equipas por desporto, Olimpíadas ---------- */
+// v3.99: o Agora a jogar mostra só as tuas equipas (de qualquer desporto, futebol incluído); o Ao vivo agora mostra TODOS os jogos ao vivo,
+// arrumados por desporto; As tuas equipas junta as do Futebol às dos outros desportos, também arrumadas por desporto
+const lgName = lg => lg === 'futebol' ? 'Futebol' : (spOf(lg) || [])[1] || '';
+const gOrd = lg => { const i = SP.findIndex(x => x[0] === lg); return i < 0 ? 99 : i; };
+const resOf = (me, op) => { const a = parseFloat(me.s), b = parseFloat(op.s); if (!isFinite(a) || !isFinite(b)) return me.w ? 'w' : op.w ? 'l' : ''; return a > b ? 'w' : a < b ? 'l' : 'd'; };
+const RES_T = { w: 'Vitória', l: 'Derrota', d: 'Empate' };
+const tGroup = (sp, n, body) => `<div class="sp-tg"><h4>${spIc(sp)}<span>${esc(sp[1])}</span><small>${n}</small></h4>${body}</div>`;
+const hub = () => { const s = st(), teams = s.teams, ui = OS.ui.spAll || (OS.ui.spAll = {});
+  // os quadros de hoje de todos os desportos de equipa (para o Ao vivo agora) e todo o futebol ao vivo do mundo
   const lgs = SP.filter(x => x[2] && x[3] === 'team');
   const all = [].concat(...lgs.map(sp => { const j = need('b:' + sp[0] + ':hoje', 2e4, () => API.board(sp)); return j ? (j.events || []).map(e => tEv(e, sp[0])).filter(e => e.h && e.a) : []; }));
   const schedOf = t => { const sp = spOf(t.lg); return sp && sp[2] ? need('sc:' + t.lg + ':' + t.id, 10 * 6e4, () => API.sched(sp, t.id)) || [] : []; };
-  const nextOf = t => schedOf(t).find(e => e.st === 'pre' && e.d > Date.now() - 36e5);
-  const nexts = teams.map(nextOf).filter(Boolean).sort((a, b) => a.d - b.d);
-  let fut = []; try { fut = (OS.Futebol && OS.Futebol.vivos ? OS.Futebol.vivos() : []).map(e => Object.assign({}, e, { lg: 'futebol' })); } catch (e) { }
-  const meu = e => e.meu || isMine(e.lg, e.h.id) || isMine(e.lg, e.a.id);
-  const mineEv = all.filter(e => isMine(e.lg, e.h.id) || isMine(e.lg, e.a.id)), live = all.filter(isLive).concat(fut).sort((a, b) => meu(b) - meu(a) || (a.d || 0) - (b.d || 0));
-  const top = live.length ? live : nexts.slice(0, 1);
-  const o = olyNext();
-  const hero = `<section class="sp-hero"><div class="sp-hl"><span class="sp-ok">${live.length ? `<span class="sp-gs on"><i></i>${live.length} ${live.length === 1 ? 'jogo' : 'jogos'} ao vivo</span>` : 'Desportos'}</span><h2>${live.length ? 'Agora a jogar' : top.length ? 'A seguir' : 'Tudo o que segues, num só sítio'}</h2>${!top.length ? '<p>Futebol, NBA, Fórmula 1, ténis, UFC e mais: segue as tuas equipas e vê os resultados ao vivo, os próximos jogos e as classificações.</p>' : ''}</div>${top.length ? `<div class="sp-hg${top.length > 2 ? ' muitos' : ''}">${top.map(e => card(e, { big: 1, lg: 1 })).join('')}</div>` : ''}${live.length > 2 ? `<p class="sp-hn">${[...new Set(live.map(e => e.lg === 'futebol' ? 'Futebol' : (spOf(e.lg) || [])[1]).filter(Boolean))].join(' · ')}</p>` : ''}</section>`;
+  let fut = [], futM = []; try { fut = (OS.Futebol && OS.Futebol.vivos ? OS.Futebol.vivos() : []).map(e => Object.assign({}, e, { lg: 'futebol' })); } catch (e) { }
+  try { futM = OS.Futebol && OS.Futebol.minhas ? OS.Futebol.minhas() : []; } catch (e) { }
+  const futIds = new Set(futM.map(x => x.id)), meu = e => e.lg === 'futebol' ? !!(e.meu || futIds.has(e.h.id) || futIds.has(e.a.id)) : isMine(e.lg, e.h.id) || isMine(e.lg, e.a.id);
+  // os jogos ao vivo das tuas equipas de futebol que não vieram na lista do mundo
+  futM.forEach(x => { if (x.lv && !fut.some(e => e.id === x.lv.id)) fut.push(Object.assign({}, x.lv, { lg: 'futebol', meu: 1, liga: x.sub })); });
+  const live = all.filter(isLive).concat(fut), mineLive = live.filter(meu).sort((a, b) => (a.d || 0) - (b.d || 0));
+  const nexts = teams.map(t => schedOf(t).find(e => e.st === 'pre' && e.d > Date.now() - 36e5)).filter(Boolean)
+    .concat(futM.filter(x => x.nx).map(x => Object.assign({}, x.nx, { lg: 'futebol', meu: 1, liga: x.sub }))).sort((a, b) => a.d - b.d);
+  const seen = new Set(), top = (mineLive.length ? mineLive : nexts.slice(0, 2)).filter(e => !seen.has(e.lg + e.id) && seen.add(e.lg + e.id));
+  const nTeams = teams.length + futM.length, o = olyNext();
+  const hero = `<section class="sp-hero"><div class="sp-hl"><span class="sp-ok">${mineLive.length ? `<span class="sp-gs on"><i></i>${mineLive.length} ${mineLive.length === 1 ? 'jogo teu' : 'jogos teus'} ao vivo</span>` : live.length ? `<button type="button" class="sp-gs on sp-goav" data-act="dsAoVivo"><i></i>${live.length} ${live.length === 1 ? 'jogo' : 'jogos'} ao vivo no mundo</button>` : 'Desportos'}</span>`
+    + `<h2>${mineLive.length ? 'Agora a jogar' : top.length ? 'A seguir' : nTeams ? 'As tuas equipas não jogam hoje' : 'Tudo o que segues, num só sítio'}</h2>`
+    + (!nTeams ? '<p>Futebol, NBA, Fórmula 1, ténis, UFC e mais: segue as tuas equipas e vê os resultados ao vivo, os próximos jogos e as classificações.</p>' : !mineLive.length && live.length ? '<p class="sp-hsub">Nenhuma equipa tua está a jogar agora. Os jogos ao vivo de todos os desportos estão em Ao vivo agora.</p>' : '')
+    + `</div>${top.length ? `<div class="sp-hg${top.length > 2 ? ' muitos' : ''}">${top.map(e => card(e, { big: 1, lg: 1 })).join('')}</div>` : ''}</section>`;
   const sports = `<div class="sp-sps">${SP.map(sp => { const on = s.mine.includes(sp[0]); return `<a class="sp-spc${on ? ' on' : ''}" href="${sp[0] === 'futebol' ? '#futebol' : '#esportes.' + sp[0]}" style="--sc:${sp[4]}" title="${esc(sp[6])}">${spIc(sp)}<b>${esc(sp[1])}</b></a>`; }).join('')}</div>`;
-  // as tuas equipas: próximo jogo (ou ao vivo) e o último resultado
-  const tcards = teams.length ? `<div class="sp-mt">${teams.map(t => { const sp = spOf(t.lg); if (!sp) return ''; const S = schedOf(t), now = Date.now(), sl = e => `${esc(e.a.ab || e.a.sn)} ${esc(e.a.s)} – ${esc(e.h.s)} ${esc(e.h.ab || e.h.sn)}`;
-      const lv = all.find(e => isLive(e) && (e.h.id === t.id || e.a.id === t.id) && e.lg === t.lg), nx = S.find(e => e.st === 'pre' && e.d > now - 36e5), ls = [...S].reverse().find(e => e.st === 'post'), opp = e => e.h.id === t.id ? e.a : e.h;
-      return `<div class="sp-tc${lv ? ' live' : ''}" style="--tc:${t.c || sp[4]}"><div class="sp-tch">${img(t.logo, 'sp-tcl', t.ab)}<span><b>${esc(t.n)}</b><small>${spIc(sp)}${esc(sp[1])}</small></span><button type="button" class="sp-x" data-act="dsFollow" data-sp="${esc(t.lg)}" data-id="${esc(t.id)}" aria-label="Deixar de seguir ${esc(t.n)}">${UI.ic('x')}</button></div>
-        ${lv ? `<div class="sp-tcl2"><span class="sp-gs on"><i></i>${esc(lv.det)}</span><b>${sl(lv)}</b></div>` : nx ? `<div class="sp-tcl2"><small>Próximo</small><b>${nx.h.id === t.id ? 'vs' : '@'} ${esc(opp(nx).sn)}</b><span>${esc(dayL(nx.d))}</span></div>` : ''}
-        ${ls ? `<div class="sp-tcl2 last"><small>Último</small><b>${sl(ls)}</b><span class="${(ls.h.id === t.id ? ls.h : ls.a).w ? 'w' : 'l'}">${(ls.h.id === t.id ? ls.h : ls.a).w ? 'Vitória' : 'Derrota'}</span></div>` : ''}</div>`; }).join('')}</div>`
+  // as tuas equipas, por desporto: ao vivo (toca para ver o jogo), próximo jogo e último resultado
+  const sl = e => `${esc(e.a.ab || e.a.sn)} ${esc(e.a.s)} – ${esc(e.h.s)} ${esc(e.h.ab || e.h.sn)}`;
+  const tnF = OS.Futebol && OS.Futebol.tN || (x => x), slF = e => `${esc(tnF(e.h.sn || e.h.n))} ${esc(e.h.s)} – ${esc(e.a.s)} ${esc(tnF(e.a.sn || e.a.n))}`;
+  const espnCard = t => { const sp = spOf(t.lg); if (!sp) return ''; const S = schedOf(t), now = Date.now();
+    const lv = all.find(e => isLive(e) && (e.h.id === t.id || e.a.id === t.id) && e.lg === t.lg), nx = S.find(e => e.st === 'pre' && e.d > now - 36e5), ls = [...S].reverse().find(e => e.st === 'post'), opp = e => e.h.id === t.id ? e.a : e.h, me = e => e.h.id === t.id ? e.h : e.a;
+    if (lv) EVS.set(lv.lg + ':' + lv.id, lv); if (ls) EVS.set(ls.lg + ':' + ls.id, ls); const r = ls && resOf(me(ls), opp(ls));
+    return `<div class="sp-tc${lv ? ' live' : ''}" style="--tc:${t.c || sp[4]}"><div class="sp-tch">${img(t.logo, 'sp-tcl', t.ab)}<span><b>${esc(t.n)}</b><small>${spIc(sp)}${esc(sp[1])}</small></span><button type="button" class="sp-x" data-act="dsFollow" data-sp="${esc(t.lg)}" data-id="${esc(t.id)}" aria-label="Deixar de seguir ${esc(t.n)}">${UI.ic('x')}</button></div>
+      ${lv ? `<button type="button" class="sp-tcl2 sp-tgo" data-act="dsJogo" data-lg="${esc(lv.lg)}" data-id="${esc(lv.id)}"><span class="sp-gs on"><i></i>${esc(detPt(lv.det))}</span><b>${sl(lv)}</b></button>` : nx ? `<div class="sp-tcl2"><small>Próximo</small><b>${nx.h.id === t.id ? 'vs' : '@'} ${esc(opp(nx).sn)}</b><span>${esc(dayL(nx.d))}</span></div>` : ''}
+      ${ls ? `<button type="button" class="sp-tcl2 last sp-tgo" data-act="dsJogo" data-lg="${esc(ls.lg)}" data-id="${esc(ls.id)}"><small>Último</small><b>${sl(ls)}</b><span class="${r}">${RES_T[r] || ''}</span></button>` : ''}</div>`; };
+  const futCard = x => { const lv = x.lv, nx = x.nx, ls = x.ls, opp = e => e.h.id === x.id ? e.a : e.h, me = e => e.h.id === x.id ? e.h : e.a, r = ls && resOf(me(ls), opp(ls));
+    return `<div class="sp-tc${lv ? ' live' : ''}" style="--tc:#16a34a"><div class="sp-tch">${img(x.logo, 'sp-tcl', x.n)}<span><button type="button" class="sp-tn" data-act="fbTeam" data-id="${esc(x.id)}"><b>${esc(x.n)}</b></button><small>${spIc(SPK.futebol)}${esc(x.sub || 'Futebol')}</small></span><button type="button" class="sp-x" data-act="fbFollow" data-id="${esc(x.id)}" aria-label="Deixar de seguir ${esc(x.n)}">${UI.ic('x')}</button></div>
+      ${lv ? `<button type="button" class="sp-tcl2 sp-tgo" data-act="fbMatch" data-id="${esc(lv.id)}"><span class="sp-gs on"><i></i>${esc(lv.clk || detPt(lv.det) || 'Ao vivo')}</span><b>${slF(lv)}</b></button>` : nx ? `<button type="button" class="sp-tcl2 sp-tgo" data-act="fbMatch" data-id="${esc(nx.id)}"><small>Próximo</small><b>${nx.h.id === x.id ? 'vs' : '@'} ${esc(tnF(opp(nx).sn || opp(nx).n))}</b><span>${esc(dayL(nx.d))}</span></button>` : ''}
+      ${ls ? `<button type="button" class="sp-tcl2 last sp-tgo" data-act="fbMatch" data-id="${esc(ls.id)}"><small>Último</small><b>${slF(ls)}</b><span class="${r}">${RES_T[r] || ''}</span></button>` : ''}</div>`; };
+  const groups = [];
+  if (futM.length) groups.push(tGroup(SPK.futebol, futM.length, `<div class="sp-mt">${futM.map(futCard).join('')}</div>`));
+  [...new Set(teams.map(t => t.lg))].filter(spOf).sort((a, b) => gOrd(a) - gOrd(b)).forEach(lg => { const T = teams.filter(t => t.lg === lg); groups.push(tGroup(spOf(lg), T.length, `<div class="sp-mt">${T.map(espnCard).join('')}</div>`)); });
+  const tcards = groups.length ? `<div class="sp-tgs">${groups.join('')}</div>`
     : `<div class="sp-empty">${UI.ic('star')}<b>Ainda não segues nenhuma equipa</b><small>Abre um desporto (NBA, NFL, NHL…) › Equipas e toca nas que queres seguir. No futebol, segue em Futebol.</small></div>`;
+  // ao vivo agora: todos os jogos ao vivo, por desporto (os desportos com equipas tuas primeiro); 12 de cada e "Ver todos"
+  const byLg = {}; live.forEach(e => { (byLg[e.lg] = byLg[e.lg] || []).push(e); });
+  const lgL = Object.keys(byLg).sort((a, b) => (byLg[b].some(meu) - byLg[a].some(meu)) || gOrd(a) - gOrd(b));
+  const aov = live.length ? `<section class="sp-sec sp-aov" id="spAoVivo"><div class="sp-sh"><h3>Ao vivo agora</h3><span class="sp-gs on"><i></i>${live.length} ${live.length === 1 ? 'jogo' : 'jogos'}</span></div>
+    <div class="sp-lgchips">${lgL.map(lg => `<button type="button" class="sp-lgc" data-act="dsAoVivo" data-lg="${esc(lg)}" style="--sc:${(spOf(lg) || [])[4] || '#16a34a'}">${spOf(lg) ? UI.ic(spOf(lg)[5]) : ''}${esc(lgName(lg))}<b>${byLg[lg].length}</b></button>`).join('')}</div>
+    ${lgL.map(lg => { const L = byLg[lg].sort((a, b) => meu(b) - meu(a) || (a.d || 0) - (b.d || 0)), open = ui[lg], N = 12, sp = spOf(lg);
+      return `<div class="sp-avg" id="spAv-${esc(lg)}"><h4>${sp ? spIc(sp) : ''}<span>${esc(lgName(lg))}</span><small>${L.length} ao vivo</small></h4><div class="sp-gg">${(open ? L : L.slice(0, N)).map(e => card(e, { lg: 1 })).join('')}</div>${L.length > N ? `<button type="button" class="btn sm sp-more" data-act="dsAvMais" data-lg="${esc(lg)}">${open ? 'Mostrar menos' : `Ver todos (${L.length})`}</button>` : ''}</div>`; }).join('')}</section>` : '';
   const wi = OLY.find(x => x.tp === 'Inverno' && olyState(x) !== 'post'), cn = [copaNext('f'), copaNext('m')].filter(x => !x.vago).sort((a, b) => a.ini.localeCompare(b.ini))[0];
   const oly = `<div class="sp-bans"><a class="sp-olyb" href="#esportes.olimpiadas" style="--oc:${o.c}"><span class="sp-oring">${UI.ic('sp_oly')}</span><span><small>Olimpíadas</small><b>${esc(o.t)}</b><span>${esc(fmtR(o.ini, o.fim))}${wi && wi !== o ? ' · Inverno: ' + esc(wi.t) : ''}</span></span>${olyState(o) === 'pre' ? countdown(o) : '<span class="sp-gs on"><i></i>A decorrer</span>'}</a>`
     + (cn ? `<a class="sp-olyb sp-cupb" href="#esportes.copa" data-act="dsCopa" data-g="${cn === copaNext('f') ? 'f' : 'm'}" style="--oc:${cn.c}"><span class="sp-oring">${UI.ic('sp_cup')}</span><span><small>Copa do Mundo</small><b>${esc(cn.t)}</b><span>${esc(fmtR(cn.ini, cn.fim))} · ${esc(cn.sede)}</span></span>${edState(cn) === 'pre' ? countdown(cn) : '<span class="sp-gs on"><i></i>A decorrer</span>'}</a>` : '') + '</div>';
-  return hero + sec('As tuas equipas', tcards) + avPanel() + oly + sec('Desportos', sports) + (live.length > 2 ? sec('Ao vivo agora', `<div class="sp-gg">${live.slice(2, 14).map(e => card(e, { lg: 1 })).join('')}</div>`) : ''); };
+  return hero + sec('As tuas equipas', tcards) + aov + avPanel() + oly + sec('Desportos', sports); };
+A.dsAoVivo = b => { const lg = b.dataset.lg, el = document.getElementById(lg ? 'spAv-' + lg : 'spAoVivo'); if (el) el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
+A.dsAvMais = b => { const ui = OS.ui.spAll || (OS.ui.spAll = {}); ui[b.dataset.lg] = !ui[b.dataset.lg]; OS.request(); };
+
+/* ---------- detalhe de um jogo (NBA, NFL, NHL, MLB, WNBA, universitários, Copa): placar por períodos, líderes, estatísticas, jogadas ---------- */
+const ST_PT = { 'fieldGoalsMade-fieldGoalsAttempted': 'Lançamentos de campo', fieldGoalPct: 'Lançamentos de campo %', 'threePointFieldGoalsMade-threePointFieldGoalsAttempted': 'Triplos', threePointFieldGoalPct: 'Triplos %',
+  'freeThrowsMade-freeThrowsAttempted': 'Lances livres', freeThrowPct: 'Lances livres %', totalRebounds: 'Ressaltos', offensiveRebounds: 'Ressaltos ofensivos', defensiveRebounds: 'Ressaltos defensivos', assists: 'Assistências',
+  steals: 'Roubos de bola', blocks: 'Desarmes de lançamento', turnovers: 'Perdas de bola', totalTurnovers: 'Perdas de bola', fouls: 'Faltas', technicalFouls: 'Faltas técnicas', flagrantFouls: 'Faltas flagrantes', largestLead: 'Maior vantagem',
+  pointsInPaint: 'Pontos na área', fastBreakPoints: 'Pontos em contra-ataque', turnoverPoints: 'Pontos após perdas', hits: 'Batidas', blockedShots: 'Remates bloqueados', takeaways: 'Recuperações', giveaways: 'Perdas',
+  faceoffsWon: 'Faceoffs ganhos', faceoffPercent: 'Faceoffs %', powerPlayGoals: 'Golos em superioridade', powerPlayOpportunities: 'Superioridades', powerPlayPct: 'Superioridade %', shortHandedGoals: 'Golos em inferioridade',
+  penalties: 'Penalidades', penaltyMinutes: 'Minutos de penalidade', shotsTotal: 'Remates', totalShots: 'Remates', firstDowns: 'Primeiras descidas', totalYards: 'Jardas totais', netPassingYards: 'Jardas de passe', rushingYards: 'Jardas de corrida',
+  possessionTime: 'Tempo de posse', thirdDownEff: 'Conversões na 3.ª descida', fourthDownEff: 'Conversões na 4.ª descida', totalPenaltiesYards: 'Penalidades (jardas)', interceptions: 'Interceções', fumblesLost: 'Fumbles perdidos',
+  sacksYardsLost: 'Sacks sofridos', completionAttempts: 'Passes completos', redZoneAttempts: 'Zona vermelha', totalPlays: 'Jogadas', yardsPerPlay: 'Jardas por jogada', yardsPerPass: 'Jardas por passe', yardsPerRushAttempt: 'Jardas por corrida',
+  rushingAttempts: 'Corridas', defensiveTouchdowns: 'Touchdowns da defesa', runs: 'Corridas', errors: 'Erros', homeRuns: 'Home runs', strikeouts: 'Strikeouts', walks: 'Walks', possessionPct: 'Posse de bola %', wonCorners: 'Cantos',
+  foulsCommitted: 'Faltas', yellowCards: 'Amarelos', redCards: 'Vermelhos', offsides: 'Foras de jogo', shotsOnTarget: 'Remates à baliza', saves: 'Defesas', accuratePasses: 'Passes certos', totalPasses: 'Passes', passPct: 'Passes certos %' };
+const LD_PT = { points: 'Pontos', rebounds: 'Ressaltos', assists: 'Assistências', passingYards: 'Jardas de passe', rushingYards: 'Jardas de corrida', receivingYards: 'Jardas de receção', goals: 'Golos', saves: 'Defesas',
+  battingAverage: 'Média de batida', homeRuns: 'Home runs', RBIs: 'Corridas impulsionadas', ERA: 'ERA', strikeouts: 'Strikeouts', sacks: 'Sacks', tackles: 'Placagens', interceptions: 'Interceções', plusMinus: '+/−', shots: 'Remates', steals: 'Roubos', blocks: 'Desarmes' };
+const REG = { nba: 4, wnba: 4, ncaab: 2, nfl: 4, cfb: 4, nhl: 3, mlb: 9, copa: 2 };
+let jgT = 0;
+const jogoPath = e => e.lg === 'copa' ? (e.k ? 'soccer/' + e.k : '') : (spOf(e.lg) || [])[2] || '';
+const jogoHTML = (e, j, err) => { const sp = spOf(e.lg) || SPK.copa, lv = isLive(e), comp = j && j.header && (j.header.competitions || [])[0] || {}, cps = comp.competitors || [];
+  const side = x => cps.find(c => String((c.team || {}).id) === x.id) || {};
+  const row = (x, h) => `<div class="sp-mdt${(e.st === 'post' && x.w) ? ' win' : ''}">${img(x.logo, 'sp-mdl', x.ab || x.n)}<span><b>${esc(x.n)}</b><small>${esc(x.rec || ((side(x).record || [])[0] || {}).summary || '')}${h ? ' · casa' : ''}</small></span><b class="sp-mds">${esc(e.st === 'pre' ? '' : x.s)}</b></div>`;
+  let h = `<div class="sp-md" style="--sc:${sp[4]}"><div class="sp-mdh"><span class="sp-gs${lv ? ' on' : ''}">${lv ? '<i></i>Ao vivo · ' : ''}${esc(lv || e.st === 'post' ? detPt(e.det) : dayL(e.d))}</span>${row(e.a, 0)}${row(e.h, 1)}</div>`;
+  if (!j) return h + (err ? `<p class="sp-err">Não consegui buscar o detalhe deste jogo (${esc(err)}). Fecha e abre outra vez daqui a pouco.</p>` : loading('A buscar o detalhe do jogo…')) + '</div>';
+  // placar por períodos
+  const ls = [e.a, e.h].map(x => (side(x).linescores || []).map(l => l.displayValue != null ? l.displayValue : l.value != null ? l.value : ''));
+  const nP = Math.max(ls[0].length, ls[1].length), reg = REG[e.lg] || 4;
+  if (nP) h += `<div class="sp-mdb"><h4>Por ${e.lg === 'mlb' ? 'entradas' : e.lg === 'copa' ? 'partes' : 'períodos'}</h4><div class="sp-lsw"><table class="sp-ls"><thead><tr><th></th>${Array.from({ length: nP }, (_, i) => `<th>${i < reg || e.lg === 'mlb' ? i + 1 : nP - reg > 1 ? 'P' + (i - reg + 1) : 'P'}</th>`).join('')}<th>T</th></tr></thead><tbody>${[e.a, e.h].map((x, k) => `<tr><td>${esc(x.ab || x.sn)}</td>${Array.from({ length: nP }, (_, i) => `<td>${esc(ls[k][i] != null ? ls[k][i] : '')}</td>`).join('')}<td><b>${esc(x.s)}</b></td></tr>`).join('')}</tbody></table></div></div>`;
+  // probabilidade de vitória (ao vivo e antes do jogo, quando a ESPN a dá)
+  const wp = (j.winprobability || []).slice(-1)[0], pc = ((j.predictor || {}).homeTeam || {}).gameProjection;
+  const hp = wp && wp.homeWinPercentage != null ? wp.homeWinPercentage * 100 : pc != null ? parseFloat(pc) : null;
+  if (hp != null && isFinite(hp) && e.st !== 'post') h += `<div class="sp-mdb"><h4>Probabilidade de vitória</h4><div class="sp-wp"><span style="--w:${(100 - hp).toFixed(1)}%;--c:${e.a.c || '#64748b'}">${esc(e.a.ab || e.a.sn)} ${Math.round(100 - hp)}%</span><span style="--w:${hp.toFixed(1)}%;--c:${e.h.c || '#334155'}">${esc(e.h.ab || e.h.sn)} ${Math.round(hp)}%</span></div></div>`;
+  // líderes de cada equipa
+  const L = (j.leaders || []).filter(t => t.team && (t.leaders || []).length);
+  if (L.length) h += `<div class="sp-mdb"><h4>Destaques</h4><div class="sp-ldg">${[e.a, e.h].map(x => { const t = L.find(y => String(y.team.id) === x.id); if (!t) return ''; return `<div class="sp-ldt"><b class="sp-ldn">${img(x.logo, 'sp-ldl', x.ab)}${esc(x.sn)}</b>${t.leaders.slice(0, 3).map(c => { const z = (c.leaders || [])[0]; if (!z) return ''; const at = z.athlete || {}; return `<div class="sp-ldr"><small>${esc(LD_PT[c.name] || c.displayName || c.name || '')}</small><span>${esc(at.shortName || at.displayName || '')}</span><b>${esc(z.displayValue || '')}</b></div>`; }).join('')}</div>`; }).join('')}</div></div>`;
+  // estatísticas das equipas, lado a lado
+  const bt = ((j.boxscore || {}).teams || []), flat = t => [].concat(...(t.statistics || []).map(x => x.stats ? x.stats : [x])), A2 = bt.find(t => String((t.team || {}).id) === e.a.id), H2 = bt.find(t => String((t.team || {}).id) === e.h.id);
+  if (A2 && H2) { const sa = flat(A2), sh = flat(H2), rows = sa.map(x => { const y = sh.find(z => z.name === x.name); if (!y || x.displayValue == null) return ''; const va = parseFloat(String(x.displayValue).replace(',', '.')), vh = parseFloat(String(y.displayValue).replace(',', '.')), tot = (isFinite(va) ? va : 0) + (isFinite(vh) ? vh : 0), pa = tot > 0 ? (va / tot) * 100 : 50;
+      return `<div class="sp-str"><b>${esc(x.displayValue)}</b><span><small>${esc(ST_PT[x.name] || x.label || x.name)}</small><i style="--p:${(isFinite(pa) ? pa : 50).toFixed(1)}%"></i></span><b>${esc(y.displayValue)}</b></div>`; }).filter(Boolean).slice(0, 14);
+    if (rows.length) h += `<div class="sp-mdb"><h4>Estatísticas</h4><div class="sp-sth"><span>${esc(e.a.ab || e.a.sn)}</span><span>${esc(e.h.ab || e.h.sn)}</span></div>${rows.join('')}</div>`; }
+  // jogadas: no basquetebol as últimas; nos outros as que deram pontos/golos; no futebol os momentos do jogo
+  const bask = /^(nba|wnba|ncaab)$/.test(e.lg), plays = j.keyEvents && j.keyEvents.length ? j.keyEvents : bask ? (j.plays || []).slice(-10).reverse() : ((j.scoringPlays && j.scoringPlays.length ? j.scoringPlays : (j.plays || []).filter(p => p.scoringPlay)) || []).slice().reverse().slice(0, 15);
+  if (plays.length) h += `<div class="sp-mdb"><h4>${bask ? 'Últimas jogadas' : e.lg === 'copa' ? 'Momentos do jogo' : 'Pontuações'}</h4><ul class="sp-pl">${plays.map(p => { const tid = String((p.team || {}).id || ''), x = tid === e.h.id ? e.h : tid === e.a.id ? e.a : null, per = (p.period || {}).number, clk = (p.clock || {}).displayValue || '';
+      return `<li>${x ? img(x.logo, 'sp-pll', x.ab) : '<span class="sp-pll"></span>'}<span><small>${per ? esc(per + '.º') : ''}${clk ? ' · ' + esc(clk) : ''}</small>${esc(p.text || (p.type || {}).text || '')}</span>${p.awayScore != null && p.homeScore != null ? `<b>${esc(p.awayScore)}–${esc(p.homeScore)}</b>` : ''}</li>`; }).join('')}</ul></div>`;
+  // forma recente (últimos 5 jogos)
+  const l5 = (j.lastFiveGames || []).filter(t => t.team && (t.events || []).length);
+  if (l5.length && e.st === 'pre') h += `<div class="sp-mdb"><h4>Últimos 5 jogos</h4>${[e.a, e.h].map(x => { const t = l5.find(y => String(y.team.id) === x.id); if (!t) return ''; return `<div class="sp-l5"><b>${esc(x.sn)}</b>${t.events.slice(0, 5).map(g => `<i class="${g.gameResult === 'W' ? 'w' : g.gameResult === 'L' ? 'l' : 'd'}" title="${esc((g.opponent || {}).displayName || '')} ${esc(g.score || '')}">${g.gameResult === 'W' ? 'V' : g.gameResult === 'L' ? 'D' : 'E'}</i>`).join('')}</div>`; }).join('')}</div>`;
+  // onde e onde ver
+  const gi = j.gameInfo || {}, ven = (gi.venue || {}).fullName || e.ven, city = ((gi.venue || {}).address || {}).city, tv = [...new Set([].concat(...(comp.broadcasts || []).map(b => (b.media || {}).shortName || b.names || [])).filter(Boolean))].slice(0, 4);
+  const info = [ven ? `${UI.ic('pin')}<span>${esc(ven)}${city ? ', ' + esc(city) : ''}</span>` : '', gi.attendance ? `${UI.ic('users')}<span>${esc(Number(gi.attendance).toLocaleString('pt-PT'))} espectadores</span>` : '', tv.length ? `${UI.ic('tv')}<span>${esc(tv.join(', '))}</span>` : '', e.st === 'pre' ? `${UI.ic('clock')}<span>${esc(dayL(e.d))}</span>` : ''].filter(Boolean);
+  if (info.length) h += `<div class="sp-mdb sp-inf">${info.map(x => `<div>${x}</div>`).join('')}</div>`;
+  return h + '<p class="sp-note">Dados da ESPN.</p></div>'; };
+A.dsJogo = b => { const e = EVS.get(b.dataset.lg + ':' + b.dataset.id); if (!e) return UI.toast('A carregar este jogo… toca outra vez daqui a um instante');
+  const path = jogoPath(e), sp = spOf(e.lg); clearTimeout(jgT);
+  UI.modal(`<div class="row between" style="align-items:center"><h3 style="margin:0">${esc(e.liga || (sp ? sp[1] : 'Jogo'))}</h3><button type="button" class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div><div id="dsMd">${jogoHTML(e, null)}</div>`, 'sp-modal');
+  if (!path) { const box = document.getElementById('dsMd'); if (box) box.innerHTML = jogoHTML(e, null, 'sem fonte para este jogo'); return; }
+  const upd = async () => { if (!document.getElementById('dsMd')) return; let j = null, err = '';
+    try { j = await get(SITE + path + '/summary?event=' + encodeURIComponent(e.id), isLive(e) ? 12e3 : 5 * 6e4); } catch (x) { err = (x && x.message) || 'erro'; }
+    const box = document.getElementById('dsMd'); if (!box) return;
+    // o resumo traz o estado e o resultado mais recentes
+    try { const c = j && j.header && (j.header.competitions || [])[0]; if (c) { const ty = (c.status || {}).type || {}; if (ty.state) e.st = ty.state; if (ty.shortDetail || ty.detail) e.det = ty.shortDetail || ty.detail; (c.competitors || []).forEach(x => { const t = x.team || {}, y = String(t.id) === e.h.id ? e.h : String(t.id) === e.a.id ? e.a : null; if (y) { if (x.score != null) y.s = scoreOf(x.score); y.w = !!x.winner; } }); } } catch (x) { }
+    try { box.innerHTML = jogoHTML(e, j, err); } catch (x) { box.innerHTML = jogoHTML(e, null, (x && x.message) || 'erro'); }
+    if (isLive(e)) jgT = setTimeout(upd, 15e3); };
+  upd(); };
 
 /* ---------- planos: os Desportos completos são do Completo; o Futebol é de todos ---------- */
 const full = () => !OS.Plano || !OS.Plano.can || OS.Plano.can('desportos');

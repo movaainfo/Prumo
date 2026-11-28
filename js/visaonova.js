@@ -32,5 +32,5 @@ const cartoes = () => { const L = [];
   try { if (OS.Acc && OS.Acc.adm && OS.Acc.adm() && OS.Caixa) { const n = OS.Caixa.novos(); L.push(card('Caixa da Comunidade', `<div class="dc-big">${n}</div><div class="dc-sub">${n === 1 ? 'mensagem por ver' : 'mensagens por ver'}: sugestões, reclamações, pedidos e denúncias</div>`, { cls: 'span4', act: `<a class="dc-more" href="#admin" data-act="admTab" data-tab="caixa">Abrir ${UI.ic('right')}</a>` })); } } catch (e) { }
   return L.join(''); };
 OS.on('ready', () => { const V = OS.views, o = V.visao; if (!o || o._vn) return;
-  V.visao = sub => { const h = o(sub), k = '<div class="dash-grid">', i = h.indexOf(k); if (i < 0) return h; let c = ''; try { c = cartoes(); } catch (e) { } return h.slice(0, i + k.length) + c + h.slice(i + k.length); }; V.visao._vn = 1; });
+  V.visao = sub => { const h = o(sub), k = '<div class="dash-grid dg-novo">', i = h.indexOf(k); if (i < 0) return h; let c = ''; try { c = cartoes(); } catch (e) { } return h.slice(0, i + k.length) + c + h.slice(i + k.length); }; V.visao._vn = 1; });
 })();

@@ -39,10 +39,22 @@ const PERIODS = [['mes', 'Este mês'], ['mesant', 'Mês anterior'], ['3m', '3 me
 
 /* ================= FINANÇAS ================= */
 V.financas = sub => {
-  const head = UI.head('Finanças', 'Receitas, despesas, contas, cartões, parcelamentos, dívidas, orçamentos e reservas. Tudo o que registas alimenta metas, alertas e o património.', `${UI.addBtn('transactions', 'Movimento')}`, 'Dinheiro') + UI.tabs('financas', TABS, sub);
+  const head = UI.head('Finanças', 'Receitas, despesas, contas, cartões, parcelamentos, dívidas, orçamentos e reservas. Tudo o que registas alimenta metas, alertas e o património.', `${UI.addBtn('transactions', 'Movimento')}`, 'Dinheiro') + finBar(TABS.some(t => t[0] === (sub || '')) ? (sub || '') : '');
   if (!OS.all('accounts').length && sub !== 'contas' && sub !== 'banco') return head + UI.empty('Começa por criar as tuas contas (conta à ordem, reserva, cartão, corretora).', UI.addBtn('accounts', 'Criar conta'));
   return head + (FIN[sub || 'visao'] || FIN.visao)();
 };
+// v3.99: a barra das Finanças como a das Leituras: 5 atalhos com ícone e o resto no "Mais", por grupos
+const finBar = cur => UI.secBar({ base: 'financas', nome: 'Finanças', ic: 'wallet', cur,
+  main: [['', 'Visão', 'home'], ['transacoes', 'Transações', 'list'], ['contas', 'Contas', 'card'], ['orcamento', 'Orçamento', 'target'], ['inteligencia', 'Inteligência', 'brain']],
+  grupos: [['O dia a dia', [['', 'Visão', 'home', 'O mês, o saldo e para onde vai o dinheiro'], ['transacoes', 'Transações', 'list', 'Todos os movimentos, com filtros'], ['recorrentes', 'Recorrentes', 'repeat', 'Contas fixas e assinaturas']]],
+    ['As tuas contas', [['contas', 'Contas', 'card', 'Contas, cartões e reservas na carteira'], ['banco', 'Banco', 'bank', 'Ligar o banco ou importar extratos'], ['dividas', 'Dívidas', 'scale', 'O que deves e o plano para pagar']]],
+    ['Planear e entender', [['orcamento', 'Orçamento', 'target', 'Quanto podes gastar por categoria'], ['inteligencia', 'Inteligência', 'brain', 'Alertas, padrões e conselhos'], ['categorias', 'Categorias', 'tag', 'Arrumar e criar categorias']]]] });
+// os simuladores arrumados por para que servem
+const simBar = cur => UI.secBar({ base: 'simuladores', nome: 'Simuladores', ic: 'calc', cur,
+  main: [['', 'Juros compostos', 'trend'], ['compra', 'Impacto de uma compra', 'cart'], ['meta', 'Meta financeira', 'flag'], ['independencia', 'Independência', 'sun'], ['emprestimo', 'Empréstimo', 'bank']],
+  grupos: [['Fazer o dinheiro crescer', [['', 'Juros compostos', 'trend', 'Quanto fica o teu dinheiro com o tempo'], ['meta', 'Meta financeira', 'flag', 'Quanto pôr de lado por mês'], ['independencia', 'Independência financeira', 'sun', 'Quando podes viver dos rendimentos'], ['taxas', 'Comparar taxas', 'scale', 'Qual aplicação rende mais']]],
+    ['Antes de comprar', [['compra', 'Impacto de uma compra', 'cart', 'O que essa compra custa no futuro'], ['parcelado', 'Parcelado vs à vista', 'repeat', 'Qual compensa mais'], ['emprestimo', 'Empréstimo', 'bank', 'Prestação, juros e custo total']]],
+    ['Proteger o que tens', [['inflacao', 'Inflação', 'clock', 'Quanto o dinheiro parado perde']]]] });
 const FIN = {};
 FIN.banco = () => OS.Banco ? OS.Banco.view() : '';
 FIN.visao = () => {
@@ -316,6 +328,25 @@ INV.cotacoes = () => {
 OS.forms.setPrice = (f, v) => { const p = v('p'); if (p === '') return; OS.upd('assets', f.dataset.id, { price: U.num(p), priceDate: U.today() }); UI.toast('Preço atualizado', 'pos'); };
 
 /* ================= COMPRAS POR IMPULSO ================= */
+/* v3.99 · a IA ajuda a decidir cada compra: lê o produto, o preço, a necessidade e as tuas finanças (saldo, reserva, orçamento, dívidas, metas)
+   e diz se deves comprar já, esperar ou desistir, com as razões e uma alternativa. A decisão continua a ser tua. */
+const WAI = { busy: new Set(), err: {} };
+const WV = { comprar: ['Podes comprar', 'pos', 'check'], esperar: ['Espera um pouco', 'warn', 'clock'], nao: ['Melhor não comprar', 'neg', 'x'] };
+const wishAIBox = w => { const r = w.ai, b = WAI.busy.has(w.id), e = WAI.err[w.id];
+  if (b) return `<div class="wai wai-ld"><span class="spin"></span>A IA está a analisar esta compra com as tuas finanças…</div>`;
+  if (r && WV[r.v]) { const [t, tn, ic] = WV[r.v]; return `<div class="wai ${tn}"><div class="wai-h"><span class="wai-i">${UI.ic(ic)}</span><b>${esc(r.t || t)}</b><small>${esc(t)} · ${U.fmtD ? U.fmtD(String(r.at || '').slice(0, 10)) : ''}</small></div>${(r.r || []).length ? `<ul>${r.r.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}${r.alt ? `<p><b>Alternativa:</b> ${esc(r.alt)}</p>` : ''}${r.cond ? `<p><b>Compra se:</b> ${esc(r.cond)}</p>` : ''}<button class="btn xs ghost" data-act="wishAI" data-id="${w.id}">${UI.ic('repeat')}Perguntar outra vez</button></div>`; }
+  return `<div class="wai-cta">${e ? `<p class="neg" style="margin:0 0 6px">${esc(e)}</p>` : ''}<button class="btn sm" data-act="wishAI" data-id="${w.id}">${UI.ic('brain')}Devo comprar? Perguntar à IA</button><small class="mut">A IA vê o preço, a necessidade e as tuas finanças. A decisão é tua.</small></div>`; };
+A.wishAI = async b => { const w = OS.get('wishlist', b.dataset.id); if (!w || WAI.busy.has(w.id)) return; if (!OS.AI || !OS.AI.json) return UI.toast('A IA não está disponível neste aparelho', 'warn');
+  WAI.busy.add(w.id); delete WAI.err[w.id]; OS.request();
+  try { const Fin = OS.Fin, p = OS.one('profile') || {}, ym = U.ym(U.today()), m = Fin.month(ym), pm = Fin.month(U.addMonths(ym, -1)), im = I.wishImpact(w), r2 = v => Math.round((+v || 0) * 100) / 100;
+    const ctx = { produto: w.product, preco: r2(w.price), categoria: w.cat || '', necessidade_1a5: w.need || null, prioridade: w.prio || '', ja_tenho_algo_parecido: !!w.similar, nota_parecido: w.similarNote || '', motivo: w.reason || '', espera_regra: I.wishWait(w.price).label,
+      financas: { saldo_disponivel: r2(Fin.liquid()), reserva: r2(Fin.reserve()), reserva_alvo: r2(p.emergencyTarget || 0), receitas_mes: r2(m.inc), despesas_mes: r2(m.exp), receitas_mes_anterior: r2(pm.inc), despesas_mes_anterior: r2(pm.exp), divida_cartao: r2(Fin.cardDebt()), dividas: r2(Fin.debtsTotal()) },
+      impacto: { horas_de_trabalho: im.hours ? r2(im.hours) : null, parte_do_saldo_livre_do_mes: im.freeShare != null ? r2(im.freeShare) : null, orcamento_da_categoria_disponivel: im.budget ? r2(im.bLeft) : null, valor_em_5_anos_se_investido: r2(im.fv5), valor_em_10_anos_se_investido: r2(im.fv10), atrasa_meta: im.goal ? { meta: im.goal.title, dias: im.goalDelayDays } : null } };
+    const o = await OS.AI.json([{ text: `És um conselheiro financeiro prudente e honesto. Ajuda esta pessoa a decidir se deve fazer esta compra AGORA, tendo em conta as finanças dela. Regras: se não houver reserva de emergência suficiente ou houver dívida de cartão, sê muito cauteloso; se a compra cabe no orçamento, é uma necessidade real (4-5) e não atrasa metas, podes dizer que pode comprar; se for impulso, sugere esperar ou desistir. Não inventes números: usa só os dados. Escreve em português de Portugal, frases curtas, tratando por tu. Responde APENAS JSON {"v":"comprar|esperar|nao","t":"uma frase com a conclusão","r":["3 razões curtas com números dos dados"],"alt":"uma alternativa mais barata ou melhor (ou vazio)","cond":"em que condição faria sentido comprar (ou vazio)"}. Dados: ` + JSON.stringify(ctx) }], .2);
+    const v = ['comprar', 'esperar', 'nao'].includes(o && o.v) ? o.v : 'esperar';
+    OS.upd('wishlist', w.id, { ai: { v, t: String((o && o.t) || '').slice(0, 200), r: (Array.isArray(o && o.r) ? o.r : []).slice(0, 4).map(x => String(x).slice(0, 220)), alt: String((o && o.alt) || '').slice(0, 240), cond: String((o && o.cond) || '').slice(0, 240), at: new Date().toISOString() } }, { silent: true });
+  } catch (x) { WAI.err[w.id] = /não está ligada/i.test((x && x.message) || '') ? 'A IA ainda não está ligada: liga-a em Definições › IA.' : 'A IA não conseguiu analisar agora (' + ((x && x.message) || 'erro') + '). Tenta outra vez.'; }
+  finally { WAI.busy.delete(w.id); OS.request(); } };
 V.compras = () => {
   const W = OS.all('wishlist'), st = I.wishStats(), now = Date.now();
   const waiting = U.sortBy(W.filter(w => w.status === 'Em espera'), w => I.wishUntil(w)), hist = U.sortBy(W.filter(w => w.status !== 'Em espera'), w => w.decidedAt || w.created, -1);
@@ -325,7 +356,7 @@ V.compras = () => {
       <div class="divider"></div>
       <div class="two"><dl class="kv"><dt>Necessidade real</dt><dd>${w.need || '—'}/5</dd><dt>Prioridade</dt><dd>${esc(w.prio || '—')}</dd><dt>Já tenho algo semelhante</dt><dd>${w.similar ? 'Sim' + (w.similarNote ? ' · ' + esc(w.similarNote) : '') : 'Não'}</dd>${im.budget ? `<dt>Orçamento de ${esc(w.cat)} disponível</dt><dd class="${im.bLeft < w.price ? 'neg' : ''}">${U.eur(im.bLeft)}</dd>` : ''}</dl>
       <dl class="kv"><dt>Horas de trabalho</dt><dd>${im.hours ? U.nf(im.hours, 1) + ' h' : 'define o valor/hora'}</dd><dt>Do saldo mensal livre</dt><dd>${im.freeShare != null ? U.pct(im.freeShare) : '—'}</dd><dt>Custo de oportunidade <span class="est">6%/ano</span></dt><dd>${U.eurK(im.fv5)} em 5a · ${U.eurK(im.fv10)} em 10a</dd>${im.goal ? `<dt>Atrasa "${esc(im.goal.title)}"</dt><dd>${im.goalDelayDays != null ? '~' + im.goalDelayDays + ' dias' : '—'}</dd>` : ''}</dl></div>
-      ${w.reason ? `<div class="note" style="margin-top:10px"><b>Motivo:</b> ${esc(w.reason)}</div>` : ''}</div>`; };
+      ${w.reason ? `<div class="note" style="margin-top:10px"><b>Motivo:</b> ${esc(w.reason)}</div>` : ''}${wishAIBox(w)}</div>`; };
   return UI.head('Compras', 'Toda a compra fora do essencial entra em espera antes de decidires. Até € 50: 24 h. Até € 200: 3 dias úteis. Até € 1.000: 7 dias. Acima: 14 dias.', UI.addBtn('wishlist', 'Quero comprar…'), 'Dinheiro') +
   `<div class="kpis">${UI.kpi('Em espera', st.waiting, U.eur(U.sum(waiting, w => w.price)))}${UI.kpi('Poupado ao desistir', U.eur(st.saved), st.gaveUp + ' desistência(s)', { tone: 'pos' })}${UI.kpi('Comprado depois da espera', U.eur(st.bought))}${UI.kpi('Taxa de resistência', st.resist == null ? '—' : U.pct(st.resist), 'desistências / decisões')}</div>
   ${waiting.length ? `<div class="g g2">${waiting.map(card).join('')}</div>` : UI.empty('Nada em espera. Da próxima vez que quiseres comprar algo, regista aqui primeiro.')}
@@ -474,7 +505,7 @@ V.simuladores = sub => {
   return UI.head('Simuladores', 'Muda as variáveis e vê o resultado. Moeda, taxas, impostos e regras seguem o país escolhido.', '', 'Dinheiro') +
   `<div class="sim-top"><div class="ctry-bar sim-cty">${OS.Country ? OS.Country.btn() : ''}<small class="mut">${esc(cn)} · ${f.cur} · ${esc(f.taxL)}</small></div>${liveBar(f)}
   <div class="note sim-note">${f.note}${other ? ' <br><small class="mut">Os valores que vêm dos teus dados (investimentos, reserva) aparecem como os registaste, sem conversão de moeda.</small>' : ''}</div></div>` +
-  UI.tabs('simuladores', SIMS.map(([a, b]) => [a === 'juros' ? '' : a, b]), sub) +
+  simBar(sub && sub !== 'juros' ? sub : '') +
   `<div class="sim"><div class="pn sim-in">${inH}<button class="btn ghost sm" data-act="simReset" data-k="${skey(k)}">Repor valores</button></div><div class="pn sim-out">${out}</div></div>`;
 };
 A.simReset = b => { delete OS.ui['sim_' + b.dataset.k]; OS.setUI('sim_' + b.dataset.k, undefined); };

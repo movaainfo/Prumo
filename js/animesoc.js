@@ -24,12 +24,14 @@ const nomeUser = o => `<b>${esc(o.nome || 'Pessoa')}</b>${o.user ? `<small>@${es
 
 /* ---------- o perfil dos animes ---------- */
 const fundo = o => o && o.fu ? `background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.65)),url('api/social?op=img&k=fu&id=${encodeURIComponent(o.id)}&v=${o.fu}')` : '';
+// v3.99: o perfil mostra o nome do clã (cada pessoa está num só) e o cargo, em vez do número de clãs
+const claSpan = o => o.cla && o.cla.nome ? `<span class="pf-clan" style="--cc:${esc(o.cla.cor || '#9B1B30')}"><b>${esc(o.cla.nome)}</b>${o.cla.cargo ? esc(o.cla.cargo) : 'clã'}</span>` : `<span class="pf-clan sem"><b>—</b>sem clã</span>`;
 const cartao = (o, edita) => { if (!o) return `<div class="ap-card ap-ld"><span class="an-sp"></span></div>`;
   return `<div class="ap-card${o.fu ? ' com-fundo' : ''}" style="${fundo(o)}">${o.fu ? '' : '<img class="ap-ar" src="icons/phantom-aranha-olho.webp" alt="" aria-hidden="true">'}<span class="ap-mk">${SO().marca ? SO().marca('xs') : ''}</span>
     <div class="ap-who">${av(o, 64)}<div>${nomeUser(o)}${o.user ? '' : edita ? '<small class="ap-sem">Ainda sem @</small>' : ''}${o.cl ? `<em class="ap-cl">${esc(o.cl)}</em>` : ''}${o.pl && o.pl.n ? `<em class="ap-pl l${Math.min(9, +o.pl.lvl || 0)}" title="Plano do Prumo">${UI.ic('star')}${esc(o.pl.n === 'Grátis' ? 'Plano grátis' : o.pl.n === 'Administração' ? 'Administração' : 'Plano ' + o.pl.n)}</em>` : ''}</div></div>
-    <div class="ap-st"><span><b>${o.pts || 0}</b>pontos</span>${o.pos ? `<span><b>${o.pos}.º</b>no ranking</span>` : ''}${o.clas != null ? `<span><b>${o.clas}</b>${o.clas === 1 ? 'clã' : 'clãs'}</span>` : ''}</div>
+    <div class="ap-st"><span><b>${o.pts || 0}</b>pontos</span>${o.pos ? `<span><b>${o.pos}.º</b>no ranking</span>` : ''}${o.clas != null ? claSpan(o) : ''}</div>
     ${edita ? `<button type="button" class="btn sm ap-ed" data-act="apEditar">${UI.ic('edit')}Editar o perfil</button>` : ''}</div>`; };
-const meu = () => { const d = euD(); return d && d.eu ? Object.assign({ clas: (d.clas || []).length }, d.eu) : null; };
+const meu = () => { const d = euD(); return d && d.eu ? Object.assign({ clas: (d.clas || []).length, cla: (d.clas || [])[0] ? { id: d.clas[0].id, nome: d.clas[0].nome, cor: d.clas[0].cor, cargo: d.clas[0].meuCargo || '' } : null }, d.eu) : null; };
 // editar: o @ (uma vez), a foto e o fundo
 const reduz = (file, W, H, q, cobre) => new Promise((res, rej) => { const u = URL.createObjectURL(file), im = new Image(); im.onload = () => { const c = document.createElement('canvas'); let sw = im.width, sh = im.height, sx = 0, sy = 0;
     if (cobre) { const r = W / H; if (sw / sh > r) { sw = sh * r; sx = (im.width - sw) / 2; } else { sh = sw / r; sy = (im.height - sh) / 2; } c.width = W; c.height = H; } else { const k = Math.min(1, W / Math.max(sw, sh)); c.width = Math.round(sw * k); c.height = Math.round(sh * k); }
@@ -62,9 +64,9 @@ const gif64 = f => new Promise((res, rej) => { const r = new FileReader(); r.onl
 // passa também para os rankings, clãs e comentários.
 const umCartao = (h) => { const o = meu(), av0 = h.querySelector('.ac-av'), nome = (h.querySelector('b') || {}).textContent || '', mail = (h.querySelector('small') || {}).textContent || '';
   return `<div class="pf-one${o && o.fu ? ' com-fundo' : ''}" style="${fundo(o)}"><div class="pf-oh">${av0 ? av0.outerHTML : ''}<div><b>${esc(nome)}</b>${o && o.user ? `<span class="pf-at">@${esc(o.user)}</span>` : conta() ? `<button type="button" class="pf-sem" data-act="apUserPedir">Escolhe o teu @ (obrigatório)</button>` : ''}<small>${esc(mail)}</small>${o && o.cl ? `<span class="pf-cl">${esc(o.cl)}</span>` : ''}</div></div>
-    ${o ? `<div class="pf-st"><span><b>${o.pts || 0}</b>pontos</span>${o.pos ? `<span><b>${o.pos}.º</b>no ranking</span>` : ''}<span><b>${o.clas || 0}</b>${o.clas === 1 ? 'clã' : 'clãs'}</span>${OS.Selos ? (OS.Selos.carregar(false), `<a class="pf-sl" href="#selos" data-mclose><b>${OS.Selos.ic(16)}${OS.Selos._S && !OS.Selos._S.d ? '…' : OS.Selos.saldo() === Infinity ? '∞' : Number(OS.Selos.saldo()).toLocaleString('pt-PT')}</b>Selos</a>`) : ''}</div>` : ''}</div>`; };
+    ${o ? `<div class="pf-st"><span><b>${o.pts || 0}</b>pontos</span>${o.pos ? `<span><b>${o.pos}.º</b>no ranking</span>` : ''}${claSpan(o)}${OS.Selos ? (OS.Selos.carregar(false), `<a class="pf-sl" href="#selos" data-act="apSelos"><b>${OS.Selos.ic(16)}${OS.Selos._S && !OS.Selos._S.d ? '…' : OS.Selos.saldo() === Infinity ? '∞' : Number(OS.Selos.saldo()).toLocaleString('pt-PT')}</b>Selos</a>`) : ''}</div>` : ''}</div>`; };
 OS.on && OS.on('ready', () => { const am = A.accMenu; if (!am || am._ap) return; A.accMenu = () => { am(); const h = document.querySelector('#modal .ac-mh'); if (!h) return; if (conta() && SO().eu) SO().eu();
-  const box = document.createElement('div'); box.className = 'pf-wrap'; box.innerHTML = umCartao(h); h.replaceWith(box); const it = document.querySelector('#modal [data-act=accEdit] small'); if (it) it.textContent = 'Nome, @, foto (tua, do Dominus ou de anime), cor e fundo';
+  const box = document.createElement('div'); box.className = 'pf-wrap'; box.setAttribute('role', 'button'); box.tabIndex = 0; box.dataset.act = 'accVer'; box.setAttribute('aria-label', 'Ver o meu perfil'); box.title = 'Ver o meu perfil'; box.innerHTML = umCartao(h); h.replaceWith(box); const it = document.querySelector('#modal [data-act=accEdit] small'); if (it) it.textContent = 'Nome, @, foto (tua, do Dominus ou de anime), cor e fundo';
   const espera = setInterval(() => { if (!document.body.contains(box)) return clearInterval(espera); if (meu()) { box.innerHTML = umCartao(Object.assign(document.createElement('div'), { innerHTML: `<div>${(box.querySelector('.ac-av') || {}).outerHTML || ''}<b>${esc((box.querySelector('.pf-oh b') || {}).textContent || '')}</b><small>${esc((box.querySelector('.pf-oh small') || {}).textContent || '')}</small></div>` }).firstChild); clearInterval(espera); } }, 400); };
   A.accMenu._ap = 1;
   // o editor do perfil passa a ter tudo: o @ (obrigatório; escolhido uma vez) e o fundo do perfil
@@ -143,7 +145,8 @@ A.cmDen = async b => { const m = prompt('Denunciar este comentário? Diz porquê
 // tocar na foto de alguém: o perfil dos animes dessa pessoa
 A.apVerPerfil = async (b, e) => { if (e && e.preventDefault) e.preventDefault(); try { const j = await call('verPerfil', { id: b.dataset.id }), pf = j.perfil, A0 = OS.Trofeus && OS.Trofeus.art;
     const med = (pf.med || []).length && A0 ? `<div class="ap-med"><small>${pf.nmed} ${pf.nmed === 1 ? 'conquista' : 'conquistas'} no Prumo</small><div>${pf.med.map(m => `<span title="${esc(m.n + (m.d ? ' · ' + m.d : ''))}">${A0({ kind: m.kind === 'Medalha' ? 'Medalha' : m.kind === 'Distinção' ? 'Distinção' : 'Troféu', level: m.lvl, cat: m.cat, place: m.lugar || 0 })}<i>${esc(m.n)}</i></span>`).join('')}</div></div>` : '';
-    UI.modal(`<div class="ap-edit">${pf.meu ? '<p class="ap-vista">Assim é que os outros veem o teu perfil.</p>' : ''}${cartao(pf, false)}${med}<div class="row gap8">${pf.meu ? `<button type="button" class="btn pri" data-act="apEditar">${UI.ic('edit')}Editar o perfil</button>` : ''}<button type="button" class="btn" data-mclose>Fechar</button></div></div>`, 'ap-modal'); } catch (er) { UI.toast(er.message, 'neg'); } };
+    if (pf.meu) conqSync(); UI.modal(`<div class="ap-edit">${pf.meu ? '<p class="ap-vista">Assim é que os outros veem o teu perfil.</p>' : ''}${cartao(pf, false)}${conqHTML(pf)}${med}<div class="row gap8">${pf.meu ? `<button type="button" class="btn pri" data-act="apEditar">${UI.ic('edit')}Editar o perfil</button>` : ''}<button type="button" class="btn" data-mclose>Fechar</button></div></div>`, 'ap-modal'); } catch (er) { UI.toast(er.message, 'neg'); } };
+A.apSelos = (b, e) => { if (e && e.preventDefault) e.preventDefault(); try { UI.closeModal(); } catch (er) { } location.hash = 'selos'; };
 // v3.93: ver o meu perfil como os outros o veem (no menu do perfil)
 A.apVerMeu = (b, e) => { try { UI.closeModal && UI.closeModal(); } catch (er) { } return A.apVerPerfil({ dataset: { id: 'eu' } }, e); };
 
@@ -174,5 +177,23 @@ A.cuEquipa = async () => { const atual = (CS.eq || []).map(x => [x.nome, x.papel
   const L = t.split('\n').map(l => l.split('|').map(s => s.trim())).filter(p => p[0]).map(([nome, papel, user, desc]) => ({ nome, papel: papel || '', user: (user || '').replace(/^@/, ''), desc: desc || '' }));
   try { const j = await call('adminEquipa', { L }); CS.eq = j.equipa; UI.toast('Equipa guardada.', 'pos'); OS.request(); } catch (e) { UI.toast(e.message, 'neg'); } };
 OS.on && OS.on('render', () => { const r = OS.route(); if (!(r.base === 'animes' && r.sub === 'comunidade') && OS.ui.comT) OS.ui.comT = ''; });
-OS.AnimeSoc = { comentarios, comunidade, perfil, cartao, av, modos, reduz };
+/* ---------- v3.99 · conquistas importantes no perfil: os marcos da volta ao mundo, os troféus e medalhas reais (Eu › Troféus) e os livros lidos.
+   Calculam-se no aparelho e vão para o perfil público (só o título, a área e a data, nunca a história nem as fotos). ---------- */
+const MIL_LIV = [[1, 'Primeiro livro lido'], [10, '10 livros lidos'], [25, '25 livros lidos'], [50, '50 livros lidos'], [100, '100 livros lidos'], [250, '250 livros lidos']];
+const conquistas = () => { const out = [];
+  try { const M = OS.Mundo && OS.Mundo.stats && OS.Mundo.stats(); if (M) { [[1, 'Primeiro carimbo'], [5, 'Viajante'], [10, 'Explorador'], [25, 'Cidadão do mundo'], [50, 'Globetrotter'], [80, 'Os 80 de Fogg'], [100, 'Lenda das viagens'], [195, 'Volta ao mundo completa']].filter(([n]) => M.n >= n).forEach(([n, t]) => out.push({ id: 'mu' + n, n: t, d: n + (n === 1 ? ' país visitado' : ' países visitados'), c: 'Mundo', w: n }));
+    if (M.conts >= 6) out.push({ id: 'mucont', n: 'Os 6 continentes', d: 'Esteve em todos os continentes habitados', c: 'Mundo', w: 120 }); } } catch (e) { }
+  try { const T = (OS.all('trophies') || []).filter(r => r && r.title), pt = r => (r.fav ? 1000 : 0) + ({ Ouro: 300, Prata: 200, Bronze: 150, Mérito: 100, Participação: 20 }[r.level] || 0) + (r.place === 1 ? 200 : r.place === 2 ? 120 : r.place === 3 ? 80 : 0) + ({ Troféu: 40, Medalha: 30, Distinção: 30, Placa: 20, Certificado: 10 }[r.kind] || 0);
+    T.slice().sort((a, b) => pt(b) - pt(a) || String(b.date || '').localeCompare(String(a.date || ''))).slice(0, 8).forEach(r => out.push({ id: 'tr' + String(r.id || '').slice(-10), n: String(r.title).slice(0, 60), d: [r.kind, r.level, r.event].filter(Boolean).join(' · ').slice(0, 80), c: r.cat || 'Troféu', k: r.kind || 'Medalha', l: r.level || 'Ouro', p: +r.place || 0, at: r.date || '', w: 50 + pt(r) / 10 })); } catch (e) { }
+  try { const n = (OS.all('books') || []).filter(b => b && b.status === 'Lido').length; MIL_LIV.filter(([k]) => n >= k).slice(-2).forEach(([k, t]) => out.push({ id: 'lv' + k, n: t, d: n + (n === 1 ? ' livro lido' : ' livros lidos') + ' no total', c: 'Leituras', w: 10 + k / 3 })); } catch (e) { }
+  return out.sort((a, b) => b.w - a.w).slice(0, 24).map(({ w, ...x }) => x); };
+let conqT = 0, conqUlt = '';
+try { conqUlt = localStorage.getItem('nau:conqSent') || ''; } catch (e) { }
+const conqSync = () => { clearTimeout(conqT); conqT = setTimeout(async () => { if (!conta()) return; const L = conquistas(), k = JSON.stringify(L); if (k === conqUlt) return;
+  try { await call('conquistas', { L }); conqUlt = k; try { localStorage.setItem('nau:conqSent', k); } catch (e) { } } catch (e) { } }, 4000); };
+OS.on && OS.on('ready', () => { conqSync(); OS.on('change', conqSync); });
+const ICQ = { Mundo: 'globe', Leituras: 'book' };
+const conqHTML = pf => { const L = pf.conq || []; if (!L.length) return ''; const A0 = OS.Trofeus && OS.Trofeus.art;
+  return `<div class="ap-conq"><small>${L.length} ${L.length === 1 ? 'conquista' : 'conquistas'} de vida</small><ul>${L.map(x => `<li class="c-${esc(String(x.c || '').toLowerCase().replace(/[^a-z]/g, ''))}">${x.k && A0 ? `<span class="ap-cqa">${A0({ kind: x.k, level: x.l || 'Ouro', cat: x.c, place: x.p || 0 })}</span>` : `<span class="ap-cqi">${UI.ic(ICQ[x.c] || 'award')}</span>`}<span><b>${esc(x.n)}</b>${x.d ? `<small>${esc(x.d)}</small>` : ''}</span></li>`).join('')}</ul></div>`; };
+OS.AnimeSoc = { comentarios, comunidade, perfil, cartao, av, modos, reduz, conquistas, conqSync };
 })();

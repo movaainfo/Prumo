@@ -47,7 +47,7 @@ A.dsRank = () => { const D = S.d; if (!D) return; const d = D.desafio;
     ${D.eu ? '<button type="button" class="btn sm ghost" data-act="dsSair">Sair do desafio</button>' : ''}</div>`, 'ds-modal'); };
 OS.Desafio = { cartao, medir, carregar, _S: S };
 OS.on && OS.on('ready', () => {
-  const o = OS.views.visao; if (o && !o._ds) { OS.views.visao = sub => { const h = o(sub), k = '<div class="dash-grid">', i = h.indexOf(k); if (i < 0) return h; let c = ''; try { c = cartao('visao'); } catch (e) { } return c ? h.slice(0, i) + c + h.slice(i) : h; }; OS.views.visao._ds = 1; }
+  const o = OS.views.visao; if (o && !o._ds) { OS.views.visao = sub => { const h = o(sub), k = '<!--dg-->', i = h.indexOf(k); if (i < 0) return h; let c = ''; try { c = cartao('visao'); } catch (e) { } return c ? h.slice(0, i) + c + h.slice(i) : h; }; OS.views.visao._ds = 1; }
   const j = OS.views.jogos; if (j && !j._ds) { OS.views.jogos = sub => { const h = j(sub), k = '<section class="pc-hero', i = h.indexOf(k); let c = ''; try { c = cartao('jogos'); } catch (e) { } if (!c) return h; const e = h.indexOf('</section>', i); return i < 0 || e < 0 ? h + c : h.slice(0, e + 10) + c + h.slice(e + 10); }; OS.views.jogos._ds = 1; }
   document.addEventListener('visibilitychange', () => { if (!document.hidden && S.d) enviar(); }); });
 })();

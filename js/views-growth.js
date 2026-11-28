@@ -161,7 +161,7 @@ TR.divisao = () => {
 };
 
 /* ================= CORRIDA ================= */
-V.corrida = sub => UI.head('Corrida', 'Distância, tempo, ritmo, velocidade e frequência cardíaca. Recordes e evolução calculados sozinhos.', UI.addBtn('runs', 'Registar corrida'), 'Corpo') + UI.tabs('corrida', [['', 'Visão'], ['alongamentos', 'Alongamentos'], ['plano', 'Plano'], ['historico', 'Histórico']], sub) + (RN[sub || 'visao'] || RN.visao)();
+V.corrida = sub => UI.head('Corrida', 'Distância, tempo, ritmo, velocidade e frequência cardíaca. Recordes e evolução calculados sozinhos.', `<a class="btn ghost" href="#desporto">${UI.ic('left')}<span>Praticar desporto</span></a>` + UI.addBtn('runs', 'Registar corrida'), 'Corpo › Praticar desporto') + UI.tabs('corrida', [['', 'Visão'], ['alongamentos', 'Alongamentos'], ['plano', 'Plano'], ['historico', 'Histórico']], sub) + (RN[sub || 'visao'] || RN.visao)();
 const RN = {};
 RN.alongamentos = () => V.corridaAlong();
 RN.visao = () => {

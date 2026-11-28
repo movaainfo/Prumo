@@ -10,7 +10,7 @@ const NAV = [
   ['Fé', [['fe', 'Fé & Devoção', 'cross']]],
   ['Dinheiro', [['gasto', 'Gasto rápido', 'bolt'], ['financas', 'Finanças', 'wallet'], ['investimentos', 'Investimentos', 'trend'], ['relatorios', 'Relatórios', 'note', () => { const n = OS.Reports && OS.Reports.unseen(); return n ? [n, ''] : null; }], ['compras', 'Compras', 'cart', () => { const n = OS.all('wishlist').filter(w => w.status === 'Em espera').length; return n ? [n, ''] : null; }], ['simuladores', 'Simuladores', 'calc']]],
   ['Estudos', [['universidade', 'Universidade', 'school'], ['cursos', 'Cursos', 'play'], ['certificacoes', 'Certificações', 'shield'], ['leituras', 'Leituras', 'book', () => { const n = OS.all('books').filter(b => b.status === 'A ler').length; return n ? [n, ''] : null; }], ['aprendizagem', 'Trilhas e competências', 'brain'], ['conhecimento', 'Base de conhecimento', 'note']]],
-  ['Corpo', [['corpo', 'Visão do corpo', 'heart'], ['treino', 'Treino', 'dumbbell'], ['dieta', 'Dieta', 'apple'], ['corrida', 'Corrida', 'run'], ['desporto', 'Praticar desporto', 'target']]],
+  ['Corpo', [['corpo', 'Visão do corpo', 'heart'], ['treino', 'Treino', 'dumbbell'], ['dieta', 'Dieta', 'apple'], ['desporto', 'Praticar desporto', 'target']]],
   ['Carreira', [['trabalho', 'Trabalho', 'briefcase'], ['carreira', 'Carreira e contactos', 'users'], ['capital', 'Capital Profissional', 'star'], ['oportunidades', 'Oportunidades', 'door']]],
   ['Direção', [['next', 'Plano de vida', 'compass'], ['decisoes', 'Centro de decisões', 'scale'], ['revisao', 'Revisões', 'rewind']]]];
 OS.NAV = NAV; // a conta de administração junta o separador Admin no fim
@@ -19,6 +19,7 @@ const TITLES = { dominus: ['Dominus', 'Jogo'], definicoes: ['Definições', 'Sis
 Object.defineProperty(TITLES, 'seele', { enumerable: true, get: () => OS.Seele && OS.Seele.ve() ? ['seele', 'Parceria'] : ['Parceria', 'Parceria'] });
 NAV.forEach(([g, items]) => items.forEach(([k, l]) => TITLES[k] = [l, g]));
 TITLES.futebol = ['Futebol', 'Eu']; // o Futebol fica dentro de Desportos
+TITLES.corrida = ['Corrida', 'Corpo']; // v3.99: a Corrida fica dentro de Praticar desporto
 TITLES.control = ['Painel', 'Visão geral']; TITLES.painel = ['Painel', 'Visão geral'];
 TITLES.mova = [OS.one ? 'Mova' : 'Mova', 'Empresa'];
 

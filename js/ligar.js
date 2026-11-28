@@ -53,5 +53,5 @@ const whole = () => { const t = today(), w7 = U.addDays(t, -6), T = [];
   const L = T.filter(Boolean); if (!L.length) return '';
   return `<section class="v360"><div class="sech"><div><h2>O app inteiro</h2><p>Cada área, num olhar. Toca para ir lá.</p></div></div><div class="v360-g">${L.join('')}</div></section>`; };
 OS.Whole = whole;
-OS.on('ready', () => { const o = V.visao; if (!o || o._v360) return; V.visao = sub => { const h = o(sub), i = h.indexOf('<div class="dash-grid">'), w = safe(whole, ''); return i < 0 || !w ? h : h.slice(0, i) + w + h.slice(i); }; V.visao._v360 = 1; });
+OS.on('ready', () => { const o = V.visao; if (!o || o._v360) return; V.visao = sub => { const h = o(sub), i = h.indexOf('<!--dg-->'), w = safe(whole, ''); return i < 0 || !w ? h : h.slice(0, i) + w + h.slice(i); }; V.visao._v360 = 1; });
 })();

@@ -44,20 +44,25 @@ V.visao = () => {
   ${part('life')}
   ${part('control')}
   ${part('next')}
-  <div class="dash-grid">
-    ${card('Saldo do período', `<div class="dc-big ${net < 0 ? 'neg' : ''}">${U.eur(net)}</div><div class="dc-sub">receitas ${U.eur(inc, { dec: 0 })} · despesas ${U.eur(exp, { dec: 0 })}</div>${UI.spark(cum.length > 1 ? cum : [0, 0], '#7FE3F5', 300, 54)}`, { area: 'financas', cls: 'hero h-abyss span4' })}
-    ${card('Categorias', C.mount({ type: 'donut', data: cats.slice(0, 6), label: 'Gastos por categoria', centerSub: 'gastos', max: 5, empty: 'Sem despesas neste período.' }, 170), { area: 'financas', cls: 'span4', act: more('financas', 'Finanças') })}
-    ${card('Fluxo de caixa', `<div class="dc-mid ${acc < 0 ? 'neg' : ''}">${U.eur(acc)}</div>${C.mount({ type: 'line', labels: days.map(d => U.fmtDS(d)), series: [{ name: 'Saldo acumulado', data: cum, color: '#38BDF8' }], fmt: U.eurK, min0: false, empty: 'Sem movimentos.' }, 150)}`, { area: 'financas', cls: 'span4' })}
-    ${card('Saldo bancário total', `<div class="dc-big">${U.eur(bank)}</div><div class="dc-rows"><div><span>Disponível</span><b class="mono">${U.eur(liq, { dec: 0 })}</b></div><div><span>Património</span><b class="mono">${U.eur(nw, { dec: 0 })}</b></div></div><div class="dc-acts"><button class="btn sm" data-new="transactions" data-defs='{"type":"Receita"}'>${UI.ic('plus')}Receita</button><button class="btn sm" data-new="transactions" data-defs='{"type":"Despesa"}'>${UI.ic('plus')}Despesa</button></div>`, { area: 'financas investimentos', cls: 'hero h-tide span4', act: more('financas.contas', 'Contas') })}
-    ${card('Movimentação diária', C.mount({ type: 'bar', labels: days.map(d => U.fmtDS(d)), series: [{ name: 'Entradas', data: dIn, color: '#2DD4BF' }, { name: 'Saídas', data: dOut, color: '#3B82F6' }], fmt: U.eurK, empty: 'Sem movimentos neste período.' }, 190), { area: 'financas', cls: 'span8' })}
+  <!--dg-->
+  <section class="dash-sec ds-dia"><div class="dash-sh"><div><h2>O teu dia</h2><p>Tarefas, hábitos, sono, corpo e trabalho do período escolhido.</p></div></div><div class="dash-grid dg-dia">
     ${card('Tarefas', `<div class="dc-kp"><b class="mono">${OS.Tasks.open().length}</b><span>abertas</span><b class="mono">${doneP}</b><span>feitas no período</span></div>${tasks.map(x => `<div class="dc-li" data-edit="tasks:${x.id}"><input type="checkbox" class="cbx round" data-act="taskToggle" data-id="${x.id}" aria-label="Concluir ${esc(x.title)}"><b>${esc(x.title)}</b></div>`).join('') || '<p class="dc-empty">Nada para hoje.</p>'}`, { area: 'tarefas', cls: 'span4', act: more('tarefas') })}
+    ${card('Hábitos de hoje', `<div class="dc-big">${Math.round(habit * 100)}%</div><div class="dc-bar"><i style="width:${Math.round(habit * 100)}%"></i></div><div class="dc-sub">inegociáveis cumpridos</div>`, { area: 'habitos', cls: 'span4', act: more('habitos') })}
+    ${OS.Sono ? safe(() => OS.Sono.card(card), '') : ''}
     ${card('Corpo', `<div class="dc-tiles"><a href="#treino"><b class="mono">${wk}</b><span>treinos</span></a><a href="#corrida"><b class="mono">${U.nf(km, 1)}</b><span>km</span></a><a href="#dieta"><b class="mono">${U.nf(diet.kcal, 0)}</b><span>kcal hoje</span></a><a href="#dieta"><b class="mono">${U.nf(diet.p, 0)}<small>/${U.num(dg.p) || '—'}</small></b><span>proteína</span></a></div>`, { area: 'treino corrida dieta corpo', cls: 'hero h-reef span4', act: more('treino', 'Treino') })}
     ${work}
-    ${OS.Sono ? safe(() => OS.Sono.card(card), '') : ''}
-    ${card('Hábitos de hoje', `<div class="dc-big">${Math.round(habit * 100)}%</div><div class="dc-bar"><i style="width:${Math.round(habit * 100)}%"></i></div><div class="dc-sub">inegociáveis cumpridos</div>`, { area: 'habitos', cls: 'span4', act: more('habitos') })}
-    ${card('Dominus', `<div class="dc-big">Nível ${lvl}</div><div class="dc-sub">${dom.born ? esc(rank) : 'Cria o teu herói'}</div>`, { area: 'dominus', cls: 'hero h-deep span4', act: more('dominus', 'Jogar') })}
+  </div></section>
+  <section class="dash-sec ds-dinheiro"><div class="dash-sh"><div><h2>Dinheiro</h2><p>O saldo, para onde foi o dinheiro e os cartões.</p></div><a class="dc-more" href="#financas">Abrir Finanças ${UI.ic('right')}</a></div><div class="dash-grid dg-dinheiro">
+    ${card('Saldo do período', `<div class="dc-big ${net < 0 ? 'neg' : ''}">${U.eur(net)}</div><div class="dc-sub">receitas ${U.eur(inc, { dec: 0 })} · despesas ${U.eur(exp, { dec: 0 })}</div>${UI.spark(cum.length > 1 ? cum : [0, 0], '#7FE3F5', 300, 54)}`, { area: 'financas', cls: 'hero h-abyss span4' })}
+    ${card('Saldo bancário total', `<div class="dc-big">${U.eur(bank)}</div><div class="dc-rows"><div><span>Disponível</span><b class="mono">${U.eur(liq, { dec: 0 })}</b></div><div><span>Património</span><b class="mono">${U.eur(nw, { dec: 0 })}</b></div></div><div class="dc-acts"><button class="btn sm" data-new="transactions" data-defs='{"type":"Receita"}'>${UI.ic('plus')}Receita</button><button class="btn sm" data-new="transactions" data-defs='{"type":"Despesa"}'>${UI.ic('plus')}Despesa</button></div>`, { area: 'financas investimentos', cls: 'hero h-tide span4', act: more('financas.contas', 'Contas') })}
+    ${card('Categorias', C.mount({ type: 'donut', data: cats.slice(0, 6), label: 'Gastos por categoria', centerSub: 'gastos', max: 5, empty: 'Sem despesas neste período.' }, 170), { area: 'financas', cls: 'span4', act: more('financas', 'Finanças') })}
+    ${card('Fluxo de caixa', `<div class="dc-mid ${acc < 0 ? 'neg' : ''}">${U.eur(acc)}</div>${C.mount({ type: 'line', labels: days.map(d => U.fmtDS(d)), series: [{ name: 'Saldo acumulado', data: cum, color: '#38BDF8' }], fmt: U.eurK, min0: false, empty: 'Sem movimentos.' }, 150)}`, { area: 'financas', cls: 'span4' })}
+    ${card('Movimentação diária', C.mount({ type: 'bar', labels: days.map(d => U.fmtDS(d)), series: [{ name: 'Entradas', data: dIn, color: '#2DD4BF' }, { name: 'Saídas', data: dOut, color: '#3B82F6' }], fmt: U.eurK, empty: 'Sem movimentos neste período.' }, 190), { area: 'financas', cls: 'span8' })}
     ${cards.length ? card('Gastos por cartão', cards.map(c => `<div class="dc-li"><b>${esc(c.l)}</b><span class="mono">${U.eur(c.v)}</span></div>`).join(''), { area: 'financas', cls: 'span4' }) : ''}
-  </div>
+  </div></section>
+  <section class="dash-sec ds-novo"><div class="dash-sh"><div><h2>Jogos, parceria e novidades</h2><p>O teu herói, os jogos do dia e o que há de novo no Prumo.</p></div><a class="dc-more" href="#jogos">Todos os jogos ${UI.ic('right')}</a></div><div class="dash-grid dg-novo">
+    ${card('Dominus', `<div class="dc-big">Nível ${lvl}</div><div class="dc-sub">${dom.born ? esc(rank) : 'Cria o teu herói'}</div>`, { area: 'dominus', cls: 'hero h-deep span4', act: more('dominus', 'Jogar') })}
+  </div></section>
   <div data-area="financas investimentos" style="display:contents">${part('money')}</div>
   <div data-area="universidade" style="display:contents">${part('study')}</div>
   <div data-area="metas" style="display:contents">${part('goals')}</div>

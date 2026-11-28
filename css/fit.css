@@ -1688,3 +1688,35 @@ html.fb-on #fblk{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .rk-board .rk-n small{flex-wrap:wrap;row-gap:2px}
 @media (max-width:560px){.rk-board .rk-n small .rk-tm{flex-basis:100%;margin-left:0}}
 .rk-board .rk-n b{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere;line-height:1.25}
+/* v3.99 · Saúde da carteira arrumada: anel com a nota, resumo e lista com ícones alinhados */
+.inv-health{display:flex;flex-direction:column;gap:14px}
+.inv-health .ih-top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
+.ih-ring{--c:var(--accent);width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p) * 1%),color-mix(in srgb,var(--tx) 12%,transparent) 0)}
+.ih-ring.pos{--c:var(--pos)}.ih-ring.warn{--c:var(--warn)}.ih-ring.neg{--c:var(--neg)}
+.ih-ring>div{width:74px;height:74px;border-radius:50%;background:var(--pn,var(--bg));display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.ih-ring b{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}.ih-ring small{font-size:10.5px;color:var(--mut);margin-top:3px}
+.ih-sum{display:flex;flex-direction:column;gap:6px;min-width:0}.ih-sum b{font-size:15px}.ih-sum p{margin:0;font-size:13px;color:var(--tx2);line-height:1.45}.ih-sum .btn{align-self:flex-start}
+.ih-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.ih-list li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;padding:9px 11px;border-radius:12px;background:color-mix(in srgb,var(--tx) 5%,transparent);font-size:13px;line-height:1.4}
+.ih-i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;background:var(--neg)}
+.ih-i .ic{width:14px;height:14px}
+.ih-list li.pos .ih-i{background:var(--pos)}.ih-list li.warn .ih-i{background:var(--warn)}
+.ih-list li.pos{color:var(--tx2)}
+@media (max-width:480px){.inv-health .ih-top{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center}.ih-sum .btn{align-self:center}}
+/* v3.99 · guia de investir: tabelas e exercícios */
+.ig-tbl{overflow-x:auto;margin:0 0 12px}
+.ig-tbl table{width:100%;border-collapse:collapse;font-size:13px;min-width:460px}
+.ig-tbl th,.ig-tbl td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.ig-tbl th{font-size:12px;color:var(--mut);font-weight:700}
+.ig-ex{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 8px;background:rgba(255,255,255,.02)}
+.ig-ex summary{cursor:pointer;line-height:1.45}.ig-ex summary b{margin-right:4px}
+.ig-ex p{margin:8px 0 0;padding-top:8px;border-top:1px dashed var(--line);color:var(--tx2)}
+/* v3.99 · Compras: o conselho da IA em cada desejo */
+.wai-cta{display:flex;flex-direction:column;gap:6px;margin-top:12px;align-items:flex-start}.wai-cta small{font-size:12px}
+.wai{margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:color-mix(in srgb,var(--tx) 4%,transparent);display:flex;flex-direction:column;gap:8px}
+.wai.pos{border-color:color-mix(in srgb,var(--pos) 45%,var(--line))}.wai.warn{border-color:color-mix(in srgb,var(--warn) 45%,var(--line))}.wai.neg{border-color:color-mix(in srgb,var(--neg) 45%,var(--line))}
+.wai-h{display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:10px;align-items:center}.wai-h small{grid-column:2;font-size:11.5px;color:var(--mut)}
+.wai-i{grid-row:span 2;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff}.wai-i .ic{width:15px;height:15px}
+.wai.pos .wai-i{background:var(--pos)}.wai.warn .wai-i{background:var(--warn)}.wai.neg .wai-i{background:var(--neg)}
+.wai ul{margin:0;padding-left:18px;font-size:13px;line-height:1.5}.wai p{margin:0;font-size:13px;color:var(--tx2)}.wai .btn{align-self:flex-start}
+.wai-ld{flex-direction:row;align-items:center;font-size:13px;color:var(--tx2)}

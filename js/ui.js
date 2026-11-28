@@ -63,6 +63,14 @@ UI.ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden
 /* ================= BLOCOS ================= */
 UI.head = (title, sub, actions = '', eyebrow = '') => `<header class="phead"><div class="phead-t">${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}<h1>${title}</h1>${sub ? `<p>${sub}</p>` : ''}</div>${actions ? `<div class="phead-a">${actions}</div>` : ''}</header>`;
 UI.tabs = (base, items, cur) => `<nav class="tabs" aria-label="Secções">${items.map(([k, l]) => `<a href="#${base}${k ? '.' + k : ''}" class="${(cur || '') === k ? 'on' : ''}">${l}</a>`).join('')}</nav>`;
+// v4.00: as Definições deixam a fileira de abas e passam à barra visual por grupos (como as Leituras e as Finanças)
+const SETT_G = [['Tu e a conta', ['', 'conta', 'impostos']], ['Ligações e automações', ['ligacoes', 'email', 'atalhos', 'script']], ['O assistente', ['spyke']], ['Segurança e privacidade', ['protecao', 'legal']]];
+const SETT_I = { '': ['home', 'Sobre ti, país, língua, moeda e aparência'], conta: ['user', 'Senha, perfis e sincronização'], impostos: ['calc', 'Os impostos do teu país'], ligacoes: ['link', 'Agenda, banco, relógio e outros serviços'], email: ['mail', 'Gmail, faculdade e outras contas'], atalhos: ['zap', 'Siri e o app Saúde a enviar dados'], script: ['code', 'O teu script Google'], spyke: ['mic', 'Voz, memória, escuta e Siri'], protecao: ['shield', 'Antivírus e proteção dos dados'], legal: ['note', 'Os teus direitos e os documentos'] };
+const SETT_N = { spyke: 'Spyke', protecao: 'Proteção', legal: 'Privacidade' };
+const tabs0 = UI.tabs; UI.tabs = (base, items, cur) => { if (base !== 'definicoes' || !UI.secBar) return tabs0(base, items, cur); const ok = new Set(items.map(t => t[0])), lab = Object.fromEntries(items), ic = k => (SETT_I[k] || ['dots'])[0];
+  const main = ['', 'conta', 'ligacoes', 'spyke', 'protecao'].filter(k => ok.has(k)).map(k => [k, SETT_N[k] || lab[k], ic(k)]), soltos = items.map(t => t[0]).filter(k => !SETT_G.some(g => g[1].includes(k)));
+  const grupos = SETT_G.concat(soltos.length ? [['Outros', soltos]] : []).map(([g, L]) => [g, L.filter(k => ok.has(k)).map(k => [k, lab[k], ic(k), (SETT_I[k] || [])[1] || ''])]).filter(g => g[1].length);
+  return UI.secBar({ base: 'definicoes', nome: 'Definições', ic: 'gear', cur: cur || '', main, grupos }); };
 /* v3.84 · barra de secção (como a dos Animes): poucos atalhos com ícone e o "Mais" com tudo arrumado por grupos, em vez de uma fila de separadores em texto.
    o = { base, nome, ic, main: [[k, rótulo, ícone]], grupos: [[título, [[k, rótulo, ícone, descrição]]]], cur, dir: html à direita } */
 UI.secBar = o => { const cur = o.cur || '', href = k => '#' + o.base + (k ? '.' + k : ''), emMain = o.main.some(m => m[0] === cur);

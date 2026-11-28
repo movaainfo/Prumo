@@ -215,7 +215,7 @@ V.calendario = sub => {
       <div>${Array.from({ length: H1 - H0 }, (_, i) => `<div class="cal-hr">${U.pad(H0 + i)}:00</div>`).join('')}</div>${cols.map(c => c.html).join('')}</div></div>`;
   }
   const integ = OS.one('integ');
-  return UI.head('Calendário', 'Universidade, estudos, treinos, corridas, trabalho, Mova, tarefas, metas, contas e compromissos numa só agenda.', `${UI.addBtn('events', 'Compromisso', { date: cur })}${UI.addBtn('tasks', 'Tarefa', { sched: cur, status: 'Próxima' }, '')}`, 'Visão geral') +
+  return UI.head('Calendário', 'Universidade, estudos, treinos, corridas, trabalho, Mova, tarefas, metas, contas e compromissos numa só agenda.', `${UI.addBtn('events', 'Compromisso', { date: cur })}${UI.addBtn('tasks', 'Tarefa', { sched: cur, status: 'Próxima' }, '')}<button class="btn ghost" data-act="calLimpar">${UI.ic('trash')}<span>Limpar</span></button>`, 'Visão geral') +
   `<div class="row between gap12"><div class="row gap8"><button class="icon-btn" data-act="calMove" data-v="-1" aria-label="Anterior">${UI.ic('left')}</button><button class="btn sm" data-act="calToday">Hoje</button><button class="icon-btn" data-act="calMove" data-v="1" aria-label="Seguinte">${UI.ic('right')}</button><b style="font-size:15px;margin-left:6px">${title}</b></div>
    <div class="seg">${[['dia', 'Dia'], ['semana', 'Semana'], ['mes', 'Mês']].map(([k, l]) => `<button class="${view === k ? 'on' : ''}" data-act="calView" data-v="${k}">${l}</button>`).join('')}</div></div>
   <div class="src-chips">${Object.entries(Cal.src).filter(([k]) => k !== 'gcal' || integ.gcal).map(([k, [l, c]]) => `<button class="chip ${off[k] ? '' : 'on'}" data-act="calSrc" data-v="${k}"><i style="background:${c}"></i>${l}</button>`).join('')}</div>
@@ -226,6 +226,24 @@ A.calToday = () => OS.setUI('calDate', U.today());
 A.calMove = b => { const v = OS.ui.calView || OS.route().sub || 'semana', cur = OS.ui.calDate || U.today(), n = +b.dataset.v; OS.setUI('calDate', v === 'mes' ? U.addMonths(U.ym(cur), n) + '-01' : U.addDays(cur, n * (v === 'dia' ? 1 : 7))); };
 A.calSrc = b => { const o = Object.assign({}, OS.ui.calOff || {}); o[b.dataset.v] = !o[b.dataset.v]; OS.setUI('calOff', o); };
 A.calDay = (b, e) => { if (e.target.closest('[data-edit]')) return; OS.ui.calDate = b.dataset.d; OS.ui.calView = 'dia'; OS.go('calendario.dia'); };
+/* v3.99 · limpar o calendário: escolhes o que apagar (compromissos, turnos, folgas, datas dos e-mails) e de quando; pede sempre confirmação.
+   Tarefas, treinos, aulas e metas não se apagam daqui: têm as suas páginas. */
+const LIMPA = [['events', 'Compromissos', 'Os que criaste no calendário'], ['shifts', 'Turnos de trabalho', 'Os horários que enviaste ou escreveste'], ['dayoffs', 'Folgas, férias e feriados', 'Do Trabalho'], ['mailevents', 'Datas tiradas dos e-mails', 'Reuniões e prazos encontrados nos e-mails']];
+const limpaQuais = (k, per) => { const t = U.today(), m0 = t.slice(0, 7) + '-01'; return (OS.all(k) || []).filter(r => { const d = String(r.date || '').slice(0, 10); if (!d) return per === 'tudo'; return per === 'tudo' ? true : per === 'passado' ? d < t : per === 'futuro' ? d >= t : per === 'mes' ? d >= m0 && d <= U.addDays(U.addMonths(t.slice(0, 7), 1) + '-01', -1) : false; }); };
+const limpaHTML = () => { const per = OS.ui.calLP || 'passado', sel = OS.ui.calLS || {};
+  return `<div class="row between" style="align-items:center"><h3 style="margin:0">Limpar o calendário</h3><button type="button" class="icon-btn" data-mclose aria-label="Fechar">${UI.ic('x')}</button></div>
+    <p class="mut" style="margin:6px 0 12px">Escolhe o que queres apagar e de quando. Tarefas, treinos, aulas e metas ficam (apagam-se nas páginas deles).</p>
+    <div class="seg" role="radiogroup" aria-label="Período">${[['passado', 'Só o que já passou'], ['mes', 'Este mês'], ['futuro', 'De hoje em diante'], ['tudo', 'Tudo']].map(([k, l]) => `<button type="button" class="${per === k ? 'on' : ''}" data-act="calLP" data-v="${k}" aria-pressed="${per === k}">${l}</button>`).join('')}</div>
+    <div class="list cal-lp">${LIMPA.map(([k, l, d]) => { const n = limpaQuais(k, per).length; return `<label class="li"><input type="checkbox" data-act="calLS" data-k="${k}" ${sel[k] && n ? 'checked' : ''} ${n ? '' : 'disabled'}><div class="li-t"><b>${l}</b><small>${d}</small></div><span class="mono">${n}</span></label>`; }).join('')}</div>
+    ${(() => { const tot = LIMPA.reduce((a, [k]) => a + (sel[k] ? limpaQuais(k, per).length : 0), 0); return `<div class="row gap8" style="margin-top:12px"><button type="button" class="btn danger" data-act="calLGo" ${tot ? '' : 'disabled'}>${UI.ic('trash')}Apagar ${tot} ${tot === 1 ? 'registo' : 'registos'}</button><button type="button" class="btn ghost" data-mclose>Cancelar</button></div>`; })()}
+    ${(OS.one('integ') || {}).gcal ? '<p class="mut" style="font-size:12.5px;margin-top:10px">Os eventos do Google Calendar não se apagam daqui (são da tua conta Google). Para os esconder, toca no botão Google Calendar por cima do calendário.</p>' : ''}`; };
+const limpaRedraw = () => { const m = document.querySelector('#modal .cal-lmod'); if (m) m.innerHTML = limpaHTML(); };
+A.calLimpar = () => { OS.ui.calLS = {}; UI.modal(`<div class="cal-lmod">${limpaHTML()}</div>`, 'cal-lmodal'); };
+A.calLP = b => { OS.ui.calLP = b.dataset.v; limpaRedraw(); };
+A.calLS = b => { const s0 = OS.ui.calLS || (OS.ui.calLS = {}); s0[b.dataset.k] = b.checked; limpaRedraw(); };
+A.calLGo = () => { const per = OS.ui.calLP || 'passado', sel = OS.ui.calLS || {}, L = LIMPA.filter(([k]) => sel[k]).map(([k, l]) => [k, l, limpaQuais(k, per)]).filter(x => x[2].length), tot = L.reduce((a, x) => a + x[2].length, 0); if (!tot) return;
+  if (!confirm(`Apagar ${tot} ${tot === 1 ? 'registo' : 'registos'} do calendário?\n${L.map(x => '· ' + x[1] + ': ' + x[2].length).join('\n')}\n\nNão dá para desfazer.`)) return;
+  L.forEach(([k, , R]) => R.forEach(r => OS.del(k, r.id))); OS.ui.calLS = {}; UI.closeModal(); UI.toast(`Calendário limpo: ${tot} ${tot === 1 ? 'registo apagado' : 'registos apagados'}.`, 'pos'); OS.request(); };
 A.calSlot = (b, e) => { if (e.target.closest('[data-edit]')) return; const r = b.getBoundingClientRect(); const h = Math.floor((e.clientY - r.top) / 44) + 6; UI.openForm('events', null, { date: b.dataset.d, start: U.pad(h) + ':00', end: U.pad(h + 1) + ':00' }); };
 
 /* Integração Google Calendar: pelo teu script Google (Parte 3, versão 11), de qualquer aparelho; nas contas sem script pela conta Google ligada (google.js, só leitura); dentro do claude.ai também pelo conector */
