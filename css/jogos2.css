@@ -227,3 +227,25 @@
 .cv-l{display:flex;gap:8px;flex-wrap:wrap}
 .cv-l .field{flex:1 1 220px;min-width:0;font-family:var(--mono,ui-monospace,monospace);font-size:.85rem}
 .em-fat{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+/* v4.04 · Relatório financeiro mensal (Administração › Vendas) */
+.rf-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px}
+.rf-g h4{margin:0 0 6px;font-size:.95rem}
+.rf-t{width:100%;border-collapse:collapse;font-size:.86rem}
+.rf-t th{font-weight:600;color:var(--mut);text-align:right;font-size:.78rem;padding:2px 4px}
+.rf-t th:first-child{text-align:left}
+.rf-t td{padding:4px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.rf-t td+td{text-align:right;white-space:nowrap}
+.rf-t tr.rf-sub td:first-child{padding-left:16px;color:var(--mut)}
+.rf-t tr.rf-b td{font-weight:650;border-bottom-color:var(--line)}
+.rf-ass{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.rf-ass.ok{flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap}
+.rf-ass.ok img{width:200px;max-width:100%;height:auto;background:#fff;border-radius:8px;border:1px solid var(--line)}
+.rf-ck{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.rf-campos{display:flex;gap:10px;flex-wrap:wrap}
+.rf-campos label{flex:1 1 180px;font-size:.85rem;color:var(--mut);display:flex;flex-direction:column;gap:4px}
+.rf-sig{width:100%;max-width:560px;aspect-ratio:900/260;height:auto;background:#fff;border:1px dashed var(--mut);border-radius:10px;cursor:crosshair;touch-action:none}
+.rf-cus{margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
+.rf-cus summary{cursor:pointer;font-weight:600}
+.rf-nc{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:10px}
+.rf-nc .field{flex:1 1 140px;min-width:0}
+.rf-nc label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--mut);flex:1 1 200px}
