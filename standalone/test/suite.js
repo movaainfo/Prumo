@@ -4988,7 +4988,8 @@ async function accTests(b) { cur = 'Contas'; console.log('\n=== Contas e perfis 
   ok('Perfil novo começa limpo: nada do Ryan (sem disciplinas, candidaturas, contactos, metas), com o nome do perfil', a1.subj === 0 && a1.apps === 0 && a1.contacts === 0 && a1.goals === 0 && a1.short === 'Ana' && !a1.uni && a1.hab > 0 && a1.acc === 2 && a1.mova !== 'Mova', JSON.stringify(a1));
   ok('A bolinha do perfil aparece na barra de cima', a1.bub);
   await E(A, () => { OS.add('tasks', { title: 'Tarefa da Ana', status: 'Inbox' }); OS.add('transactions', { type: 'Despesa', amount: 12.5, date: OS.U.today(), desc: 'Almoço', cat: 'Alimentação' }); }); await sleep(1200);
-  const fl = await E(A, async () => await OS.Acc.flush()), pd = await E(A, () => ({ st: OS.Acc.sync.state, err: OS.Acc.sync.err }));
+  const fl = await E(A, async () => await OS.Acc.flush()), pd = await E(A, () => ({ st: OS.Acc.sync.state, err: OS.Acc.sync.err, nt: OS.all('tasks').filter(x => x.title === 'Tarefa da Ana').length, ntx: OS.all('transactions').filter(x => x.desc === 'Almoço').length, sh: (OS.all('tasks').find(x => x.title === 'Tarefa da Ana') || {})._s }));
+  for (let i = 0; i < 20 && !files().some(f => /[\\/]d[\\/]/.test(f) && /tasks/.test(f)); i++) await sleep(200);   // o servidor de testes grava em disco um pouco depois de responder
   const fz = files(), blob = fz.filter(f => /tasks/.test(f)).map(f => fs.readFileSync(f).toString('latin1')).join('');
   ok('O que registas vai para a conta, cifrado no servidor (sem texto legível)', fl && fz.some(f => /[\\/]d[\\/]/.test(f) && /tasks/.test(f)) && blob.length > 30 && !blob.includes('Tarefa da Ana'), fz.length + ' ficheiros · flush ' + fl + ' · ' + JSON.stringify(pd) + ' · ' + fz.filter(f => /[\\/]d[\\/]/.test(f)).map(f => path.basename(f)).join(','));
   // aparelho B (computador): entrar com a mesma conta
