@@ -537,9 +537,9 @@ const OPS = {
     pedidos.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     const sl = await spList(); contas.forEach(c => { c.sp = c.admin || sl.includes(N.normEmail(c.email)); });
     // v4.03 · passo 5: os números do negócio (sem a administração nem as contas de teste)
-    const negocio = (() => { const now = Date.now(), D30 = 30 * 864e5, reais = contas.filter(c => !c.admin && !TESTE.test(c.email || '')), PL = c => c.plano || {}, mrr = {}; let pagos = 0, loja = 0, testes = 0, acabou = 0, cancelar = 0, novos = 0, oferta = 0;
+    const negocio = (() => { const PP = require('./_planos'), now = Date.now(), D30 = 30 * 864e5, reais = contas.filter(c => !c.admin && !TESTE.test(c.email || '')), PL = c => c.plano || {}, mrr = {}; let pagos = 0, loja = 0, testes = 0, acabou = 0, cancelar = 0, novos = 0, oferta = 0;
       reais.forEach(c => { const p = PL(c); if (Date.parse(c.criado || '') > now - D30) novos++; if (p.oferta) oferta++;
-        if (p.pago) { pagos++; if (p.cancelar) cancelar++; if (p.loja) loja++; else { const pl = P.byId(p.id); if (pl) { const pr = P.preco(pl, p.ciclo === 'ano' ? 'ano' : 'mes', p.cur), v = p.ciclo === 'ano' ? pr.v / 12 : pr.v; mrr[pr.cur] = (mrr[pr.cur] || 0) + v; } } }
+        if (p.pago) { pagos++; if (p.cancelar) cancelar++; if (p.loja) loja++; else { const pl = PP.byId(p.id); if (pl) { const pr = PP.preco(pl, p.ciclo === 'ano' ? 'ano' : 'mes', p.cur), v = p.ciclo === 'ano' ? pr.v / 12 : pr.v; mrr[pr.cur] = (mrr[pr.cur] || 0) + v; } } }
         else if (p.teste) testes++; else if (p.acabou) acabou++; });
       const fim = pagos + acabou, abas = {}, mk = new Date().toISOString().slice(0, 7);
       Object.values(uso).forEach(u => { const M = (u.abas || {})[mk]; if (!M) return; Object.entries(M).forEach(([k, n]) => { const a = abas[k] = abas[k] || { n: 0, p: 0 }; a.n += n; a.p++; }); });
