@@ -17,6 +17,8 @@
 <link rel="preload" href="vendor/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.classList.add('js')</script>
 <script>
+/* v4.03: convite de um amigo (?ref=CÓDIGO): fica guardado 60 dias para a conta nova ficar ligada a quem convidou */
+(function () { try { var m = /[?&]ref=([A-Za-z2-9]{7})\b/.exec(location.search); if (m) localStorage.setItem('nau:ref', JSON.stringify({ c: m[1].toUpperCase(), at: Date.now() })); } catch (e) { } })();
 /* quem já usa o Prumo neste navegador vai direto para a app (os dados da app estão aqui) */
 (function () { try { var ls = localStorage, k, i, has = false; for (i = 0; i < ls.length; i++) { k = ls.key(i); if (/^(nau:s|nau:p|os2:)/.test(k)) { has = true; break; } }
   if (has && !/[?&]ver=1\b/.test(location.search)) { document.cookie = 'prumo_app=1; Max-Age=31536000; Path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); location.replace('./?app=1' + location.hash); } } catch (e) { } })();

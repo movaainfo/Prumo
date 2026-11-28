@@ -70,17 +70,21 @@ const enviarUm = async (eid, r, u, x) => { const L = lg(u.lg), d = Object.assign
 // atualiza do Stripe as assinaturas que acabaram o período ou estão em atraso (a pessoa pode não abrir o app)
 const refrescar = async (eid, r, now) => { const p = r.plano; if (!P.cobranca() || !p || !p.sub || !P.mesmo(p) || now - (p.at || 0) < 12 * H) return r; if (!((p.ate || 0) < now + DIA || /^(past_due|unpaid)$/.test(p.estado || ''))) return r;
   try { const sub = await P.stripe('subscriptions/' + p.sub, null, 'GET'), st = Object.assign(P.doStripe(sub), { id: (sub.metadata && sub.metadata.plano) || p.id, ciclo: (sub.metadata && sub.metadata.ciclo) || p.ciclo }); return await C.change(eid, rr => { rr.plano = st; }); } catch (e) { return r; } };
-const run = async (o = {}) => { const now = o.now || Date.now(), cfg = await cfgLer(); if (!cfg.on && !o.forcarLigado) return { ok: true, desligado: 1 };
-  if (!o.force) { const h = lisboaHora(now); if (h < 9 || h >= 21) return { ok: true, fora: 1 }; }
+// v4.03 · passo 6: quem foi convidado e passou a pagar dá 1 mês a quem convidou (uma vez por conta; corre sempre, mesmo com os e-mails desligados)
+const convite = async (eid, r) => { if (!r.ref || r.refOk || !r.ref.eid || !P.efetivo(r).pago) return null; let ja = false;
+  await C.change(eid, rr => { if (rr.refOk) { ja = true; return false; } rr.refOk = Date.now(); }); if (ja) return null;
+  try { return await C.convRecompensar(r.ref.eid); } catch (e) { console.error('convite', e.message); return null; } };
+const run = async (o = {}) => { const now = o.now || Date.now(), cfg = await cfgLer(), ligado = cfg.on || !!o.forcarLigado, hora = lisboaHora(now), deDia = !!o.force || (hora >= 9 && hora < 21);
+  const mandar = ligado && deDia, conv = { n: 0 };
   const s = N.store(), key = await N.accKey(), A = o.so ? o.so.map(e => ({ pathname: 'a/' + e })) : await s.list('a/'), Us = {}, out = { ok: true, vistos: 0, enviados: {} }, t0 = Date.now();
   (await s.list('u/')).forEach(x => { Us[x.pathname.slice(2)] = x.pathname; });
   let i = 0; await Promise.all(Array.from({ length: Math.min(8, A.length) }, async () => { while (i < A.length && Date.now() - t0 < 50e3) { const x = A[i++]; try {
     const g = await s.get(x.pathname); if (!g) continue; const eid = x.pathname.slice(2); let r = N.open(key, g.buf);
     if (P.isAdmin(r.email) || (TESTE.test(r.email || '') && !process.env.NAUTILO_EMAIL_TESTES)) continue; out.vistos++;
     const gu = Us[r.uid] ? await s.get(Us[r.uid]).catch(() => null) : null, u = gu ? (() => { try { return N.open(key, gu.buf); } catch (e) { return {}; } })() : {};
-    r = await refrescar(eid, r, now); const dx = decidir(r, u, cfg, now); if (!dx) continue;
+    r = await refrescar(eid, r, now); if (await convite(eid, r)) conv.n++; if (!mandar) continue; const dx = decidir(r, u, cfg, now); if (!dx) continue;
     if (await enviarUm(eid, r, u, dx)) out.enviados[dx.k] = (out.enviados[dx.k] || 0) + 1; } catch (e) { console.error('emails', e.message); } } }));
-  return out; };
+  out.convites = conv.n; if (!ligado) out.desligado = 1; else if (!deDia) out.fora = 1; return out; };
 
 /* ---------- pedidos: cron (Vercel), deixar de receber (link do e-mail) e a administração ---------- */
 const sairPagina = (ok, L) => `<!doctype html><html lang="pt"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prumo</title><body style="font-family:system-ui,Arial,sans-serif;background:#f3f5f8;margin:0;padding:40px 16px"><div style="max-width:440px;margin:auto;background:#fff;border-radius:14px;padding:28px 24px;color:#1b1f24"><p style="font-weight:700;color:#24527a;margin:0 0 14px">Prumo</p><p style="margin:0">${ok ? 'Pronto: deixas de receber os e-mails de boas-vindas, lembretes e novidades do Prumo. Os avisos de pagamento continuam a chegar. Podes voltar a ligá-los em Definições › Conta.' : 'Este link não é válido. Abre o Prumo e muda em Definições › Conta.'}</p></div></body></html>`;
@@ -92,11 +96,11 @@ module.exports = N.handler(async (req, res) => { const q = req.query || {}, ua =
     res.statusCode = ok ? 200 : 400; res.setHeader('content-type', 'text/html; charset=utf-8'); res.setHeader('cache-control', 'no-store'); return res.end(sairPagina(ok)); }
   if (req.method === 'GET' && (q.op === 'cron' || /vercel-cron/i.test(ua))) { const sec = process.env.CRON_SECRET, auth = String(req.headers.authorization || '');
     if (sec ? auth !== 'Bearer ' + sec : !/vercel-cron/i.test(ua)) { N.sec('emails_negado', req); return N.send(res, 403, { ok: false }); }
-    return N.send(res, 200, await run()); }
+    const out = await run(); out.faturas = await require('./_faturas').run().catch(e => ({ erro: String(e.message || e).slice(0, 200) })); return N.send(res, 200, out); }
   if (req.method !== 'POST' || !N.allowed(req)) return N.send(res, 405, { ok: false, msg: 'Só POST.' });
   if (N.limit(req, 'emails', 60, 60e3)) return N.send(res, 429, { ok: false, msg: 'Demasiados pedidos. Espera um pouco.' });
   const b = await N.body(req), op = String(b.op || ''), r = await admin(req), cfg = await cfgLer();
-  if (op === 'estado') return N.send(res, 200, { ok: true, cfg, log: (await ler(LOG, []) || []).slice(0, 40), via: !!(process.env.RESEND_API_KEY || process.env.BREVO_API_KEY || process.env.NAUTILO_EMAIL_MOCK), tipos: TIPOS });
+  if (op === 'estado') return N.send(res, 200, { ok: true, cfg, log: (await ler(LOG, []) || []).slice(0, 40), via: !!(process.env.RESEND_API_KEY || process.env.BREVO_API_KEY || process.env.NAUTILO_EMAIL_MOCK), tipos: TIPOS, faturas: await require('./_faturas').estado().catch(() => null) });
   if (op === 'ligar') { cfg.on = !!b.on; cfg.at = Date.now(); await gravar(CFG, cfg); return N.send(res, 200, { ok: true, cfg }); }
   if (op === 'tipo') { const k = String(b.k || ''); if (!TIPOS.includes(k)) throw N.err('emails', 'Tipo desconhecido.', 400); cfg.t[k] = !!b.on; await gravar(CFG, cfg); return N.send(res, 200, { ok: true, cfg }); }
   if (op === 'ver' || op === 'teste') { const k = String(b.k || ''), L = ['pt', 'br', 'en'].includes(b.lg) ? b.lg : 'pt'; if (!TIPOS.includes(k)) throw N.err('emails', 'Tipo desconhecido.', 400);
