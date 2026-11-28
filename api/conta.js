@@ -15,7 +15,7 @@ const termsOf = b => { if (!TV.test(String(b.termos || '')) || b.saude !== true 
 const planoPub = r => { const e = P.efetivo(r), o = { id: e.id, n: e.n, lvl: e.lvl, perfis: e.perfis, ia: e.ia, cobranca: P.cobranca() };
   ['admin', 'oferta', 'pago', 'teste', 'cancelar', 'semCobranca', 'acabou', 'contaTeste'].forEach(k => { if (e[k]) o[k] = 1; }); ['ate', 'testeAcabou', 'ciclo', 'cur', 'loja'].forEach(k => { if (e[k]) o[k] = e[k]; });
   if (P.mesmo(r.plano) && r.plano.cus) o.cliente = 1; return o; };
-const pub = (r, eid) => ({ plano: planoPub(r), verificar: r.verif ? 1 : 0, trocar: !!r.trocar, avisos: (r.avisos || []).slice(-5), email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', pin: p.pin ? 6 : 0, inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
+const pub = (r, eid) => ({ mailOff: !!r.mailOff, plano: planoPub(r), verificar: r.verif ? 1 : 0, trocar: !!r.trocar, avisos: (r.avisos || []).slice(-5), email: r.email, nome: r.nome || '', criado: r.criado, adm: isAdmin(r.email), termos: (r.termos || {}).v || '', termosAt: (r.termos || {}).at || '', perfis: (r.perfis || []).map(p => ({ id: p.id, nome: p.nome, cor: p.cor, av: p.av || '', lk: p.lk || '', pin: p.pin ? 6 : 0, inf: !!p.inf, ps: !!p.ps, img: p.img || '', criado: p.criado })) });
 const cleanName = (s, max) => String(s || '').replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
 const cleanProfile = (p, old) => { const o = Object.assign({}, old || {});
   if (p.nome != null) o.nome = cleanName(p.nome, 24);
@@ -208,6 +208,8 @@ const OPS = {
     await cPut(email, eid); N.count(TESTE.test(email) ? 'registo_teste' : 'registo');
     return { token: await N.signToken(rec, eid), conta: pub(rec), recuperacao: code, verificar: rec.verif ? 1 : 0 }; },
   // confirmar o e-mail com o código de 6 números
+  // v4.02: a pessoa liga ou desliga os e-mails automáticos (boas-vindas, lembretes, «sentimos a tua falta»); os avisos de pagamento chegam sempre
+  async emails(req, b) { const s = await session(req); const rec = await change(s.eid, r => { if (b.off) r.mailOff = true; else delete r.mailOff; }); return { conta: pub(rec) }; },
   async verificarEmail(req, b) { const s = await session(req), v = s.rec.verif; if (!v) return { conta: pub(s.rec) };
     if (v.n >= 6) throw N.err('tentativas', 'Muitas tentativas erradas: pede um código novo.', 429);
     if (Date.now() > v.exp) throw N.err('expirou', 'O código expirou: pede um código novo.', 400);
@@ -476,7 +478,7 @@ const OPS = {
     for (let i = 0; i < 4; i++) { const g = await s.get(p); let u = { dias: {}, ult: 0, a: t.a }; try { if (g) u = N.open(key, g.buf); } catch (e) { }
       u.dias = u.dias || {}; if (u.tot == null) u.tot = Object.values(u.dias).reduce((a, x) => a + (Number(x) || 0), 0);
       const add = Math.max(0, Math.min(min, 1440 - (u.dias[day] || 0)));   // v3.62: um dia tem no máximo 1440 minutos
-      u.dias[day] = (u.dias[day] || 0) + add; u.tot += add; u.ult = Date.now(); u.a = t.a;
+      u.dias[day] = (u.dias[day] || 0) + add; u.tot += add; u.ult = Date.now(); u.a = t.a; if (typeof b.lg === 'string' && /^[a-z]{2}(-[A-Z]{2})?$/.test(b.lg)) u.lg = b.lg;
       // presença: "abrir" marca a entrada no app; "fim" quando a app sai do ecrã; o resto é sinal de que está a ser usada
       if (b.ev === 'abrir') u.ab = u.ult; u.on = b.ev === 'fim' ? 0 : 1;
       // tempo de uso de cada perfil (para o ranking); o primeiro perfil herda o histórico que já havia
@@ -612,6 +614,7 @@ module.exports = N.handler(async (req, res) => {
   N.send(res, 200, Object.assign({ ok: true }, await op(req, b)));
 });
 module.exports.mailRaw = (...a) => mailRaw(...a);
+module.exports.contaDe = eid => readAcc(eid); module.exports.change = (eid, fn) => change(eid, fn);   // v4.02: e-mails automáticos (api/emails.js)
 // v3.71: usados pelo api/revenuecat (compras nas lojas)
 module.exports.existe = async eid => /^[a-f0-9]{40}$/.test(String(eid || '')) && !!(await readAcc(eid));
 module.exports.planoLoja = async (eid, pl) => change(eid, r => { if (pl) r.planoLoja = pl; else delete r.planoLoja; });
