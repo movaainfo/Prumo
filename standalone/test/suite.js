@@ -213,7 +213,7 @@ const srv = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify(body)); }
   if (u.pathname.startsWith('/rssmock/')) { const q = u.query.q || '', n = (k) => `<item><title>${k} - Jornal Teste</title><link>https://exemplo.pt/${encodeURIComponent(k)}</link><pubDate>${new Date().toUTCString()}</pubDate><source url="https://exemplo.pt">Jornal Teste</source><description></description></item>`;
     res.writeHead(200, { 'Content-Type': 'application/rss+xml' }); return res.end(`<?xml version="1.0"?><rss><channel>${[1, 2, 3].map(i => n((q ? 'Pesquisa ' : 'Notícia da conta ') + i)).join('')}</channel></rss>`); }
-  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua|futebol|banco|anime|push|backup|saude|liga|revenuecat|premios|social|livros)$/);
+  const am = u.pathname.match(/^\/Oceanum\/api\/(conta|dados|atalho|noticias|ia|google|lingua|futebol|banco|anime|push|backup|saude|liga|revenuecat|premios|social|livros|emails)$/);
   if (am) { const fn = ACCAPI(am[1]); if (!fn) { res.writeHead(404); return res.end(); } req.query = u.query;
     if (process.env.DEBUGAPI) { const t0 = Date.now(), id = Math.random().toString(36).slice(2, 7); let op = ''; const oe = req.emit; req.emit = function (ev, ch) { if (ev === 'data' && !op) op = String(ch).slice(0, 40); return oe.apply(this, arguments); };
       INFL.set(id, () => am[1] + ' ' + op + ' ' + (Date.now() - t0) + 'ms'); res.on('finish', () => { INFL.delete(id); if (Date.now() - t0 > 2500) console.log('    [api lenta]', am[1], op, Date.now() - t0, 'ms'); }); }
@@ -1130,7 +1130,7 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
       const ENV = ['NAUTILO_EMAIL_MOCK', 'NAUTILO_EMAIL_TESTES', 'STRIPE_SECRET_KEY', 'NAUTILO_PLANOS_DESDE'], old = Object.fromEntries(ENV.map(k => [k, process.env[k]])), repor = () => ENV.forEach(k => { if (old[k] == null) delete process.env[k]; else process.env[k] = old[k]; });
       const lerA = async eid => N0.open(await N0.accKey(), (await N0.store().get('a/' + eid)).buf), porA = async (eid, r) => N0.store().put('a/' + eid, N0.seal(await N0.accKey(), r), {}), porU = async (uid, u) => N0.store().put('u/' + uid, N0.seal(await N0.accKey(), u), {});
       try { process.env.NAUTILO_EMAIL_MOCK = 'http://localhost:' + PORT + '/emailmock'; process.env.NAUTILO_EMAIL_TESTES = '1'; process.env.NAUTILO_PLANOS_DESDE = '2020-01-01'; if (!process.env.STRIPE_SECRET_KEY) process.env.STRIPE_SECRET_KEY = 'sk_test_emails';
-        const R = []; for (let i = 0; i < 6; i++) { const x = await reg(); x.eid = await N0.emailId(x.email); R.push(x); }
+        const R = []; for (let i = 0; i < 6; i++) { const x = await reg(); x.eid = await N0.emailId(x.email); R.push(x); const r0 = await lerA(x.eid); delete r0.verif; await porA(x.eid, r0); }   // contas já confirmadas
         const now = Date.now(), DIA = 864e5, [E1, E2, E3, E4, E5, E6] = R, mexe = async (x, f) => { const r = await lerA(x.eid); f(r); await porA(x.eid, r); return r; };
         await mexe(E2, r => { r.criado = new Date(now - 11.5 * DIA).toISOString(); }); const r2 = await lerA(E2.eid); await porU(r2.uid, { dias: {}, ult: now - 3600e3, a: E2.eid, lg: 'pt-BR' });
         await mexe(E3, r => { r.criado = new Date(now - 13.5 * DIA).toISOString(); });
@@ -1142,7 +1142,7 @@ async function ataqueTests(b) { cur = 'Ataque'; console.log('\n=== Ataque contro
         ok('E-mails automáticos: desligados não sai nada; ligados, cada pessoa recebe só o que lhe toca (boas-vindas a quem chegou, «acaba daqui a 3 dias» na língua da app, «acaba amanhã», «sentimos a tua falta» a quem está há 20 dias sem abrir, «o pagamento falhou» mesmo a quem desligou os outros) e nunca o mesmo duas vezes; de noite não envia',
           desl.desligado === 1 && r1.enviados.bv === 1 && r1.enviados.t3 === 1 && r1.enviados.t1 === 1 && r1.enviados.fa === 1 && r1.enviados.pf === 1 && /Bem-vindo ao Prumo/.test(de(E1.email)[0] || '') && de(E2.email)[0] === 'Seu teste grátis acaba em 3 dias'
           && de(E3.email)[0] === 'O teu teste grátis acaba amanhã' && de(E4.email)[0] === 'Sentimos a tua falta no Prumo' && de(E5.email)[0] === 'Não conseguimos cobrar a tua assinatura do Prumo' && !de(E6.email).length && !Object.keys(r1b.enviados).length && noite.fora === 1,
-          JSON.stringify({ desl, r1: r1.enviados, r1b: r1b.enviados, noite, s: R.map(x => de(x.email)) }).slice(0, 700));
+          JSON.stringify({ desl, vistos: r1.vistos, r1: r1.enviados, r1b: r1b.enviados, noite, s: R.map(x => de(x.email)) }).slice(0, 700));
         // deixar de receber (link do e-mail), assinatura, preferência na conta e a administração
         const m4 = novos.find(m => m.to === E4.email) || {}, lk = ((m4.text || '').match(/https?:\/\/\S+op=sair\S+/) || [''])[0], qs = lk.slice(lk.indexOf('?'));
         const sair = await fetch(BASE + 'api/emails' + qs).then(async r => ({ st: r.status, t: await r.text() })), falso = await fetch(BASE + 'api/emails' + qs.replace(/s=[^&]+/, 's=' + 'x'.repeat(32))).then(r => r.status), off4 = (await lerA(E4.eid)).mailOff;
