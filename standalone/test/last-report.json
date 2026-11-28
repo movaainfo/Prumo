@@ -1,415 +1,61 @@
 [
  {
-  "p": "Contas",
-  "name": "Aparelho novo: abre o ecrã da conta (criar conta ou entrar) e não o código pessoal",
+  "p": "v4",
+  "name": "Corrida dentro de Praticar desporto: saiu do menu Corpo; o cartão da Corrida abre a página da Corrida (com o caminho de volta)",
   "pass": true,
-  "info": "{\"gate\":true,\"lock\":false,\"mode\":true}"
+  "info": "{\"corpo\":[\"corpo\",\"treino\",\"dieta\",\"desporto\"],\"card\":true,\"hash\":\"#corrida\",\"back\":true,\"title\":\"Corrida\"}"
  },
  {
-  "p": "Contas",
-  "name": "Criar conta sem aceitar os termos: não cria (as três caixas são obrigatórias)",
+  "p": "v4",
+  "name": "Finanças e Simuladores: barra visual (5 atalhos e o Mais por grupos) no lugar da fileira de abas",
   "pass": true,
-  "info": "{\"gate\":true,\"msg\":\" Please check this box if you want to proceed.\"}"
+  "info": "{\"fin\":true,\"main\":5,\"grupos\":[\"O dia a dia\",\"As tuas contas\",\"Planear e entender\"],\"mais\":true,\"tabs\":false,\"sim\":true,\"simG\":3}"
  },
  {
-  "p": "Contas",
-  "name": "Criar conta: \"O que é isto?\" em cada caixa explica em linguagem simples (sem marcar a caixa)",
+  "p": "v4",
+  "name": "Compras: \"Devo comprar?\" pergunta à IA com o produto e as finanças (saldo, reserva, orçamento) e mostra o conselho com as razões e uma alternativa",
   "pass": true,
-  "info": "{\"open\":true,\"t\":\"Sono, treino, alimentação, peso e a tua religião são \\\"dados sensíveis\\\" na lei (RGPD na Europa, LGPD no Brasil), por isso temos de te pedir autorização à parte. Servem só para o Pru"
+  "info": "{\"bt\":true,\"t\":\"Espera até ao fim do mês: a reserva ainda não chega. Espera um pouco · 28/11/2026 A reserva está abaixo do alvo Custa 12 horas de trabalho Atrasa a meta em 20 dias Alternativa: Ver usados Compra se: Quando a reserva estiver completa Perguntar outra vez\",\"ped\":true,\"saved\":\"esperar\"}"
  },
  {
-  "p": "Contas",
-  "name": "Criar conta: mostra o código de recuperação (só uma vez)",
+  "p": "v4",
+  "name": "Calendário › Limpar: escolhe o que apagar e de quando (aqui os compromissos que já passaram), pede confirmação e não toca nos outros",
   "pass": true,
-  "info": "88HQ-AWN2-EACK-D6WT"
+  "info": "{\"n\":\"Apagar 1 registo\",\"velho\":false,\"novo\":true}"
  },
  {
-  "p": "Contas",
-  "name": "Depois pede o primeiro perfil, já com o nome",
+  "p": "v4",
+  "name": "Trabalho: o valor da hora no topo; vários trabalhos (part-time e freelance) cada um com o valor da hora e o total do mês; o turno usa o valor do trabalho dele",
   "pass": true,
-  "info": ""
+  "info": "{\"semJob\":true,\"pay\":[32,40,6],\"cards\":2,\"txt\":\"Os teus trabalhos Trabalho Loja Teste Part-time € 8,00 por hora 4,0 h este mês € 32,00 ganho no mês Design freelance Freelancer / independente € 20,00 por hora 2,0 h este mês € 300,00 por mês A tua hora vale, na prática, € 150,00 (o que ganhas a dividir pelas horas que registaste). 1 turno deste mês sem trabalho escolhido contam com o valor da hora principal. Tudo junto este mês € 338,00 7,0 h trabalhadas O valor da tua hora (principal) por hora\",\""
  },
  {
-  "p": "Contas",
-  "name": "Perfil novo: o código são 6 casinhas com teclado numérico (só números)",
+  "p": "v4",
+  "name": "Trabalho › Apagar horários e folgas: apaga a última escala importada (turnos e folgas) e deixa os turnos escritos à mão",
   "pass": true,
-  "info": ""
+  "info": "{\"lb\":true,\"go\":\"Apagar 2\",\"f1\":false,\"f2\":false,\"s1\":true}"
  },
  {
-  "p": "Contas",
-  "name": "Só aceita números: as letras não entram e as casas acendem pelo que foi escrito",
+  "p": "v4",
+  "name": "Guia de investir: capítulos novos para decidir sozinho (método, analisar um produto, ETFs, carteira, cabeça do investidor, reforma) e exercícios com a solução",
   "pass": true,
-  "info": ""
+  "info": "{\"n\":18,\"ids\":7,\"ex\":5}"
  },
  {
-  "p": "Contas",
-  "name": "Ao 6.º número passa sozinho para a casa seguinte (Repete o código)",
+  "p": "v4",
+  "name": "Painel arrumado: blocos com título (O teu dia, Dinheiro, Jogos e novidades), cada cartão no seu bloco e nada solto",
   "pass": true,
-  "info": ""
+  "info": "{\"secs\":[\"O teu dia\",\"Dinheiro\",\"Jogos, parceria e novidades\"],\"jogos\":true,\"dom\":true,\"din\":true,\"dia\":true,\"solto\":0}"
  },
  {
-  "p": "Contas",
-  "name": "Códigos diferentes: avisa e não cria",
+  "p": "v4",
+  "name": "Definições arrumadas: barra visual com 5 atalhos e o Mais por grupos (Tu e a conta, Ligações e automações, O assistente, Segurança e privacidade)",
   "pass": true,
-  "info": ""
+  "info": "{\"bar\":true,\"tabs\":false,\"main\":5,\"grupos\":[\"Tu e a conta\",\"Ligações e automações\",\"O assistente\",\"Segurança e privacidade\"],\"on\":true}"
  },
  {
-  "p": "Contas",
-  "name": "Perfis como na Netflix: \"Quem está a usar\", a bolinha do perfil e \"Adicionar perfil\"",
-  "pass": true,
-  "info": "{\"n\":1,\"name\":\"Ana\",\"av\":\"🌊\",\"add\":true,\"title\":\"Quem está a usar o Prumo?\"}"
- },
- {
-  "p": "Contas",
-  "name": "Escolher o perfil abre o mesmo ecrã de bloqueio, com o nome do perfil e \"Trocar de perfil\"",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Ecrã do código numa conta geral: 6 casinhas, teclado numérico e sem botão (entra sozinho)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Código errado: entra sozinho ao 6.º número, diz \"incorreto\" e limpa as casas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Perfil novo começa limpo: nada do Ryan (sem disciplinas, candidaturas, contactos, metas), com o nome do perfil",
-  "pass": true,
-  "info": "{\"subj\":0,\"apps\":0,\"contacts\":0,\"goals\":0,\"short\":\"Ana\",\"uni\":\"\",\"hab\":6,\"acc\":2,\"bub\":true,\"mova\":\"O meu negócio\"}"
- },
- {
-  "p": "Contas",
-  "name": "A bolinha do perfil aparece na barra de cima",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "O que registas vai para a conta, cifrado no servidor (sem texto legível)",
-  "pass": true,
-  "info": "20 ficheiros · flush true · {\"st\":\"sincronizada\",\"err\":\"\"} · accounts~0,exercises~0,habits~0,one~fin,one~fit,one~meta,one~profile,one~security,one~spyke,one~tax,snapshots~0,tasks~0,transactions~0"
- },
- {
-  "p": "Contas",
-  "name": "Senha errada: mensagem clara",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Noutro aparelho (computador): entra com a mesma conta e vê os mesmos dados",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Sincroniza nos dois sentidos em segundos (computador → telemóvel)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Segundo perfil na mesma conta: dados separados (não vê as tarefas da Ana)",
-  "pass": true,
-  "info": "{\"t\":[],\"short\":\"Bruno\",\"p\":\"Bruno\"}"
- },
- {
-  "p": "Contas",
-  "name": "Definições › Conta e perfis: blocos fechados com seta; abertos mostram e-mail, perfis, sincronização, senha, sair e apagar a conta",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Editar perfil: escolher um personagem do Dominus (heróis e, à medida que os derrotas, monstros e chefes) passa a ser a bolinha do perfil",
-  "pass": true,
-  "info": "{\"n\":12,\"ok\":true,\"unl\":true,\"img\":\"data:image/png;base64,\",\"bub\":true,\"modal\":false}"
- },
- {
-  "p": "Contas",
-  "name": "Editar perfil: uma foto tua fica cortada em quadrado (160 px, leve) e guardada no perfil, em todos os aparelhos",
-  "pass": true,
-  "info": "[{\"jpg\":true,\"len\":2183,\"prev\":true},{\"w\":160,\"h\":160,\"jpg\":true}]"
- },
- {
-  "p": "Contas",
-  "name": "Ecrã \"Quem está a usar\": o perfil aparece com a foto",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Gerir perfis › Editar: tirar a foto volta ao emoji",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Conta de administração: aparece o separador \"Admin\" no fim do menu (ou em \"Mais\", se não couber)",
-  "pass": true,
-  "info": "{\"adm\":true,\"nav\":\"Admin\",\"shown\":true,\"side\":true}"
- },
- {
-  "p": "Contas",
-  "name": "Parceria Prumo & seele (sem campanhas publicadas): a administração vê a entrada no menu, a página com o selo do Prumo, o logótipo da seele sem fundo azul, \"O teu esforço ganha asas\", os 4 caminhos (Ranking, foco, Leituras, Jogos dos Animes), os 4 passos da lagarta à borboleta, as perguntas e a secção Gerir prémios",
-  "pass": true,
-  "info": "{\"menu\":true,\"img\":true,\"nome\":true,\"azul\":false,\"selo\":true,\"fases\":4,\"agora\":\"O teu esforço ganha asas.\",\"caminhos\":4,\"faq\":5,\"aviso\":true,\"titulo\":true}"
- },
- {
-  "p": "Contas",
-  "name": "Administração: lista as contas (e-mail, nome, perfis), último acesso, última entrada e minutos por dia, sem senhas",
-  "pass": true,
-  "info": "{\"r\":[\"ana teste ana@exemplo.pt ana bruno\"],\"contas\":true,\"ana\":true,\"hoje\":true,\"kpi\":4,\"senha\":false}"
- },
- {
-  "p": "Contas",
-  "name": "Administração arrumada: \"Precisa de ti\" em cima e 8 separadores (Contas, Visitas, Vendas, Comunidade, Agenda, Pedidos, Servidor, Ajustes), a abrir em Contas",
-  "pass": true,
-  "info": "{\"n\":8,\"sel\":\"Contas1\",\"al\":true,\"lista\":true}"
- },
- {
-  "p": "Contas",
-  "name": "Administração › Agenda: o que vai acontecer por ordem (Recap, Prémios dos livros e de anime, temas das festas, Ano Novo, estações), os desafios das próximas 6 semanas e a prévia de cada um só neste aparelho (tema de Natal, contagem do Ano Novo)",
-  "pass": true,
-  "info": "{\"ag\":{\"n\":18,\"ds\":6,\"bt\":19,\"t\":\"O que vai acontecer só neste aparelho; ninguém mais vê as prévias Parar as prévias Tudo o que tem data marcada, por ordem. Toca para ver antes de ir ao ar: os temas ficam 10 minutos só aqui, os avisos\"},\"tm\":\"natal\",\"fx\":{\"on\":true,\"n\":\"10\"}}"
- },
- {
-  "p": "Contas",
-  "name": "Administração › Visitas: visitantes por dia, funil (visitantes → cliques → registos → pagamentos), origens, países e aparelhos",
-  "pass": true,
-  "info": "{\"t\":\"Visitas\\n7 dias\\n14 dias\\n30 dias\\n0\\nvisitantes na página\\n0\\nvisitas à página\\n2\\npessoas a abrir o app\\n1\\nregistos\\n0\\npagamentos\\n0%\\nvisitantes que se registam\\n22\\n23\\n24\\n25\\n26\\n27\\n28\\n\\nvisitantes\\nregistos\\n\\nVisitantes\\n0\\nCliques em Começar\\n0\\n—\\nRegistos\\n1\\n—\\nPagamentos\\n0\\n—"
- },
- {
-  "p": "Contas",
-  "name": "A resposta do servidor para a administração não traz senhas, códigos nem chaves",
-  "pass": true,
-  "info": "{\"ok\":true,\"contas\":[{\"uid\":\"28e0fdf7125072c79f12a4ca\",\"email\":\"ana@exemplo.pt\",\"nome\":\"Ana Teste\",\"criado\":\"2026-11-28T03:39:23.974Z\",\"perfis\":[\"Ana\",\"Bruno\"],"
- },
- {
-  "p": "Contas",
-  "name": "Tempo de uso: os minutos com a app aberta contam por dia e o último acesso fica registado",
-  "pass": true,
-  "info": "{\"ult\":1795837189042,\"ent\":1,\"dias\":{\"2026-11-28\":71}}"
- },
- {
-  "p": "Contas",
-  "name": "Tocar numa conta mostra o detalhe: perfis, criada, última entrada, último acesso e o gráfico dos 30 dias",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Modo pessoal (aparelho que já tinha o Prumo): igual a antes, sem ecrã de conta nem bolinha",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Sair da conta limpa este aparelho e volta ao ecrã de entrar",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Esqueci a senha: o código de recuperação muda a senha e dá um código novo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Com a senha mudada, os outros aparelhos pedem para entrar outra vez",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Atalho de gastos do iPhone numa conta sem script: o link do perfil regista e o gasto entra nas finanças desse perfil",
-  "pass": true,
-  "info": "✓ 12,4 € registado no Prumo / 403"
- },
- {
-  "p": "Contas",
-  "name": "Definições › Atalhos do iPhone mostra o link do perfil (sem pedir o script Google)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Sono numa conta: o atalho do app Saúde envia para o link do perfil (tipo=sono) e a noite entra no Painel",
-  "pass": true,
-  "info": "{\"lk\":true,\"r1\":\"✓ Sono enviado para o Prumo\",\"sl\":[{\"d\":\"2026-11-28\",\"m\":450,\"src\":\"saude\"}]}"
- },
- {
-  "p": "Contas",
-  "name": "Jornal numa conta sem script: as notícias vêm do servidor do Prumo",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Conta nova: pergunta o nome da IA uma vez, e a IA já está ligada sem chave nenhuma",
-  "pass": true,
-  "info": "{\"ask\":true,\"key\":\"nautilo-servidor\",\"own\":\"\"}"
- },
- {
-  "p": "Contas",
-  "name": "Nome da IA: \"Luna\" (é ela) — chama-se por voz pelo nome e o texto fica no feminino",
-  "pass": true,
-  "info": "{\"n\":\"Luna\",\"f\":true,\"w1\":true,\"w2\":false,\"t\":\"Cérebro da Luna · fala com a Luna\"}"
- },
- {
-  "p": "Contas",
-  "name": "Definições: o separador e os blocos usam o nome da IA (sem \"Spyke\")",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "IA sem configurar (servidor do Prumo → IA grátis): responde, e o pedido leva o nome dela",
-  "pass": true,
-  "info": "Olá! Aqui é a tua IA. · {\"model\":\"openai\",\"messages\":[{\"role\":\"user\",\"content\":\"Diz olá à Luna\"}],\"temperature\":0.4,\"private\":true,\"referrer\":\"nautilo\"}"
- },
- {
-  "p": "Contas",
-  "name": "IA sem configurar: pedidos em JSON (decisões, resumos, tutor) também funcionam",
-  "pass": true,
-  "info": "{\"ok\":true,\"resposta\":\"feito\"}"
- },
- {
-  "p": "Contas",
-  "name": "IA de reserva numa conta: se a ligação do aparelho falhar (\"Failed to fetch\", limite da grátis), responde pelo servidor do Prumo (api/ia?p=livre)",
-  "pass": true,
-  "info": "{\"t\":\"Olá! Aqui é a tua IA.\",\"direct\":1,\"eng\":\"reserva\"}"
- },
- {
-  "p": "Contas",
-  "name": "Modelos: o que respondeu bem passa à frente e o sobrecarregado fica 10 min de lado",
-  "pass": true,
-  "info": "{\"L\":[\"gemini-3.5-flash\",\"gemini-flash-lite-latest\"],\"mins\":10}"
- },
- {
-  "p": "Contas",
-  "name": "Fotos sem a chave Google: mensagem clara a explicar como ligar (sem ficar a carregar)",
-  "pass": true,
-  "info": "A IA não respondeu (Ler fotos, PDFs e voz precisa da IA do Google. Liga a tua chave grátis em Definições › Spyke › Cérebro.)."
- },
- {
-  "p": "Contas",
-  "name": "A IA do servidor só responde a quem tem sessão numa conta",
-  "pass": true,
-  "info": "401"
- },
- {
-  "p": "Contas",
-  "name": "Modo pessoal: Definições tem \"Conta Prumo\" para guardar o Prumo numa conta",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Ao guardar numa conta nova, o código de recuperação da senha aparece uma vez",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Guardar na conta: este aparelho passa a usar a conta com o mesmo código e os mesmos dados; o perfil continua o do Ryan (marcos e textos dele)",
-  "pass": true,
-  "info": "{\"on\":true,\"pub\":false,\"ps\":true,\"t\":true,\"g\":true,\"short\":\"Ryan\",\"leg\":100,\"who\":\"o Ryan (brasileiro)\",\"bub\":true}"
- },
- {
-  "p": "Contas",
-  "name": "Conta sem administração: sem o separador \"Admin\" e o servidor recusa a lista de contas",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Noutro aparelho: entra na conta do Ryan e aparece tudo o que estava no Prumo pessoal",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Outro aparelho no modo pessoal: \"Entrar na conta neste aparelho\" leva ao ecrã de entrar, com o e-mail (os dados pessoais deste aparelho saem)",
-  "pass": true,
-  "info": "{\"has\":true,\"em\":\"ryan@exemplo.pt\",\"keys\":[],\"meta\":null,\"tasks\":0}"
- },
- {
-  "p": "Contas",
-  "name": "O servidor recusa criar conta sem a aceitação dos termos",
-  "pass": true,
-  "info": "{\"_st\":400,\"ok\":false,\"msg\":\"Para usar o Prumo tens de aceitar os Termos de Serviço e a Política de Privacidade e confirmar as outras duas caixas.\",\"code\":\"term"
- },
- {
-  "p": "Contas",
-  "name": "Ecrã de entrar: Termos, Privacidade, Cookies e Acessibilidade abrem por cima (LGPD e RGPD, ANPD e CNPD) e fecham com Esc",
-  "pass": true,
-  "info": "{\"open\":true,\"t\":\"Política de Privacidade\",\"lgpd\":true,\"tabs\":6}"
- },
- {
-  "p": "Contas",
-  "name": "Conta que ainda não aceitou esta versão: ao entrar, pede para aceitar os termos uma vez",
-  "pass": true,
-  "info": "{\"termos\":true,\"boxes\":3}"
- },
- {
-  "p": "Contas",
-  "name": "Aceitar fica guardado na conta (versão e data) e segue para os perfis",
-  "pass": true,
-  "info": "{\"still\":true,\"t\":\"2026-11-21\"}"
- },
- {
-  "p": "Contas",
-  "name": "Depois de aceitar não volta a pedir (nem ao recarregar)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Definições › Privacidade e termos: os 6 documentos, o que aceitaste e quando",
-  "pass": true,
-  "info": "{\"tab\":true,\"docs\":6,\"ac\":true}"
- },
- {
-  "p": "Contas",
-  "name": "Fazer um pedido LGPD/RGPD: recebe um número de protocolo",
-  "pass": true,
-  "info": "20261128034028-8eee61"
- },
- {
-  "p": "Contas",
-  "name": "Administração: o pedido aparece (tipo, e-mail, texto) para responder em 15 dias",
-  "pass": true,
-  "info": "{\"id\":\"20261128034028-8eee61\",\"uid\":\"528c38ea456d2e8806629ad0\",\"email\":\"lia@exemplo.pt\",\"nome\":\"Lia\",\"tipo\":\"acesso\",\"msg\":\"Quero saber que dados meus guardam.\""
- },
- {
-  "p": "Contas",
-  "name": "Administração: marcar o pedido como respondido; o que falta configurar (chave da IA, Stripe e e-mail) só para o administrador; o Gmail já não está pendente (chave do Google verificada)",
-  "pass": true,
-  "info": ""
- },
- {
-  "p": "Contas",
-  "name": "Parceria seele: sem campanhas publicadas, uma conta normal não vê a entrada no menu nem a página (nem o nome)",
-  "pass": true,
-  "info": "{\"adm\":false,\"menu\":false,\"hero\":false,\"fechada\":true,\"nome\":false}"
- },
- {
-  "p": "Contas",
-  "name": "Contas públicas mostram as mesmas fotos dos alimentos",
-  "pass": true,
-  "info": "{\"pub\":true,\"pin\":true}"
- },
- {
-  "p": "Contas",
-  "name": "sem erros de JavaScript",
+  "p": "v4",
+  "name": "v4.00: sem erros de JavaScript",
   "pass": true,
   "info": ""
  }
